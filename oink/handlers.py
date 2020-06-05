@@ -1,12 +1,17 @@
-from ..grpc import service_pb2
+class DataPlane:
+    """
+    Internal implementation of handlers, used by both the gRPC and REST
+    servers.
+    """
 
+    def live(self) -> bool:
+        return True
 
-class ServerHandlers:
-    def live():
-        return service_pb2.ServerLiveResponse(live=True)
+    def ready(self) -> bool:
+        return True
 
-    def ready():
-        return service_pb2.ServerReadyResponse(ready=True)
+    def metadata(self):
+        pass
 
-    def metadata():
+    def infer(self, model_name: str):
         pass

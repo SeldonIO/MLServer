@@ -86,11 +86,12 @@ paths:
         name: MODEL_VERSION
         in: path
         required: true
-    get:
-      summary: Your GET endpoint
-      tags: []
-      responses: {}
-      operationId: get-v2-models-$-modelName-versions-$-modelVersion-infer
+    post:
+      summary: ''
+      operationId: post-v2-models-$-MODEL_NAME-versions-$-MODEL_VERSION-infer
+      responses:
+        '200':
+          description: OK
 components:
   schemas:
     metadata_server_response:
