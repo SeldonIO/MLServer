@@ -49,13 +49,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/metadataServerResponse'
+                $ref: '#/components/schemas/metadata_server_response'
         '400':
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/metadataServerErrorResponse'
+                $ref: '#/components/schemas/metadata_server_error_response'
       operationId: get-v2
   '/v2/models/${MODEL_NAME}/versions/${MODEL_VERSION}':
     parameters:
@@ -134,7 +134,7 @@ components:
         inputs:
           type: array
           items:
-            $ref: '#/components/schemas/metadataTensor'
+            $ref: '#/components/schemas/metadata_tensor'
       required:
         - name
         - platform
@@ -211,17 +211,17 @@ components:
         inputs:
           type: array
           items:
-            $ref: '#/components/schemas/requestInput'
+            $ref: '#/components/schemas/request_input'
         outputs:
           type: array
           items:
-            $ref: '#/components/schemas/requestOutput'
+            $ref: '#/components/schemas/request_output'
       required:
         - inputs
     parameters:
       title: parameters
-      type: object
       x-examples: {}
+      type: object
     request_input:
       title: request_input
       type: object
@@ -237,7 +237,7 @@ components:
         parameters:
           $ref: '#/components/schemas/parameters'
         data:
-          $ref: '#/components/schemas/tensorData'
+          $ref: '#/components/schemas/tensor_data'
       required:
         - name
         - shape
@@ -247,11 +247,13 @@ components:
       title: tensor_data
       type: array
       items:
-        type:
-          - number
-          - integer
-          - array
-        items: {}
+        anyOf:
+          - $ref: '#/components/schemas/tensor_data'
+          - type:
+              - number
+              - integer
+              - string
+              - boolean
     request_output:
       title: request_output
       type: object
@@ -275,7 +277,7 @@ components:
         parameters:
           $ref: '#/components/schemas/parameters'
         data:
-          $ref: '#/components/schemas/tensorData'
+          $ref: '#/components/schemas/tensor_data'
       required:
         - name
         - shape
@@ -296,7 +298,7 @@ components:
         outputs:
           type: array
           items:
-            $ref: '#/components/schemas/responseOutput'
+            $ref: '#/components/schemas/response_output'
       required:
         - model_name
         - id
