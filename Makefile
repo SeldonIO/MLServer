@@ -6,3 +6,6 @@ install:
 
 generate:
 	./hack/generate-types.sh
+
+run: 
+	python -m oink
