@@ -1,0 +1,309 @@
+openapi: 3.0.0
+info:
+  title: Data Plane
+  version: '2.0'
+  description: 'https://github.com/kubeflow/kfserving/blob/master/docs/predict-api/v2/required_api.md'
+servers:
+  - url: 'http://localhost:3000'
+paths:
+  /v2/health/live:
+    get:
+      summary: Your GET endpoint
+      responses:
+        '200':
+          description: OK
+      operationId: get-v2-health-live
+      description: ''
+  /v2/health/ready:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+      operationId: get-v2-health-ready
+  '/v2/models/${MODEL_NAME}/versions/${MODEL_VERSION}/ready':
+    parameters:
+      - schema:
+          type: string
+        name: MODEL_NAME
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: MODEL_VERSION
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses: {}
+      operationId: get-v2-models-$-modelName-versions-$-modelVersion-ready
+  /v2/:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/metadataServerResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/metadataServerErrorResponse'
+      operationId: get-v2
+  '/v2/models/${MODEL_NAME}/versions/${MODEL_VERSION}':
+    parameters:
+      - schema:
+          type: string
+        name: MODEL_NAME
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: MODEL_VERSION
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses: {}
+      operationId: get-v2-models-$-modelName-versions-$-modelVersion
+  '/v2/models/${MODEL_NAME}/versions/${MODEL_VERSION}/infer':
+    parameters:
+      - schema:
+          type: string
+        name: MODEL_NAME
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: MODEL_VERSION
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses: {}
+      operationId: get-v2-models-$-modelName-versions-$-modelVersion-infer
+components:
+  schemas:
+    metadata_server_response:
+      title: metadata_server_response
+      type: object
+      description: ''
+      x-examples: {}
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+        extensions:
+          type: array
+          items:
+            type: string
+      required:
+        - name
+        - version
+        - extensions
+    metadata_server_error_response:
+      title: metadata_server_error_response
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+    metadata_model_response:
+      title: metadata_model_response
+      type: object
+      properties:
+        name:
+          type: string
+        versions:
+          type: array
+          items:
+            type: string
+        platform:
+          type: string
+        inputs:
+          type: array
+          items:
+            $ref: '#/components/schemas/metadataTensor'
+      required:
+        - name
+        - platform
+        - inputs
+    metadata_tensor:
+      title: metadata_tensor
+      type: object
+      properties:
+        name:
+          type: string
+        datatype:
+          type: string
+        shape:
+          type: array
+          items:
+            type: number
+      required:
+        - name
+        - datatype
+        - shape
+    metadata_model_error_response:
+      title: metadata_model_error_response
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+    inference_request:
+      title: inference_request
+      type: object
+      x-examples:
+        Example 1:
+          id: '42'
+          inputs:
+            - name: input0
+              shape:
+                - 2
+                - 2
+              datatype: UINT32
+              data:
+                - 1
+                - 2
+                - 3
+                - 4
+            - name: input1
+              shape:
+                - 3
+              datatype: BOOL
+              data:
+                - true
+          outputs:
+            - name: output0
+        Example 2:
+          id: '42'
+          outputs:
+            - name: output0
+              shape:
+                - 3
+                - 2
+              datatype: FP32
+              data:
+                - 1
+                - 1.1
+                - 2
+                - 2.1
+                - 3
+                - 3.1
+      properties:
+        id:
+          type: string
+        parameters:
+          $ref: '#/components/schemas/parameters'
+        inputs:
+          type: array
+          items:
+            $ref: '#/components/schemas/requestInput'
+        outputs:
+          type: array
+          items:
+            $ref: '#/components/schemas/requestOutput'
+      required:
+        - inputs
+    parameters:
+      title: parameters
+      type: object
+      x-examples: {}
+    request_input:
+      title: request_input
+      type: object
+      properties:
+        name:
+          type: string
+        shape:
+          type: array
+          items:
+            type: number
+        datatype:
+          type: string
+        parameters:
+          $ref: '#/components/schemas/parameters'
+        data:
+          $ref: '#/components/schemas/tensorData'
+      required:
+        - name
+        - shape
+        - datatype
+        - data
+    tensor_data:
+      title: tensor_data
+      type: array
+      items:
+        type:
+          - number
+          - integer
+          - array
+        items: {}
+    request_output:
+      title: request_output
+      type: object
+      properties:
+        name:
+          type: string
+        parameters:
+          $ref: '#/components/schemas/parameters'
+    response_output:
+      title: response_output
+      type: object
+      properties:
+        name:
+          type: string
+        shape:
+          type: array
+          items:
+            type: number
+        datatype:
+          type: string
+        parameters:
+          $ref: '#/components/schemas/parameters'
+        data:
+          $ref: '#/components/schemas/tensorData'
+      required:
+        - name
+        - shape
+        - datatype
+        - data
+    inference_response:
+      title: inference_response
+      type: object
+      properties:
+        model_name:
+          type: string
+        model_version:
+          type: string
+        id:
+          type: string
+        parameters:
+          $ref: '#/components/schemas/parameters'
+        outputs:
+          type: array
+          items:
+            $ref: '#/components/schemas/responseOutput'
+      required:
+        - model_name
+        - id
+        - outputs
+    inference_error_response:
+      title: inference_error_response
+      type: object
+      properties:
+        error:
+          type: string
