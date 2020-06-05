@@ -1,3 +1,4 @@
 -r requirements.txt
 
 grpcio-tools==1.29.0
+datamodel-code-generator==0.5.1
