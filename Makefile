@@ -1,9 +1,8 @@
 install-dev:
 	pip install -r requirements-dev.txt
 
+install:
+	pip install -r requirements.txt
+
 generate:
-	python -m grpc_tools.protoc \
-		-I./proto \
-		--python_out=./oink/grpc \
-		--grpc_python_out=./oink/grpc \
-		./proto/service.proto
+	./hack/generate-types.sh
