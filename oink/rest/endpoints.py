@@ -15,5 +15,5 @@ class Endpoints:
         self._data_plane = data_plane
 
     def live(self) -> Response:
-        #  is_live = self._handlers.live()
+        #  is_live = self._data_plane.live()
         return Response(status_code=status.HTTP_200_OK)
