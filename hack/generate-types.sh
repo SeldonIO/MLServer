@@ -6,6 +6,11 @@ _generate_pb() {
     --python_out="${ROOT_FOLDER}/mlserver/grpc" \
     --grpc_python_out="${ROOT_FOLDER}/mlserver/grpc" \
     "${ROOT_FOLDER}/proto/dataplane.proto"
+
+  # Change to relative import
+  # https://github.com/protocolbuffers/protobuf/issues/1491
+  sed -i "s/import dataplane/from . import dataplane/" \
+    "${ROOT_FOLDER}/mlserver/grpc/dataplane_pb2_grpc.py"
 }
 
 _generate_pydantic() {
