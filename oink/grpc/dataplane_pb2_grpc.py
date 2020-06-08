@@ -17,32 +17,32 @@ class GRPCInferenceServiceStub(object):
             channel: A grpc.Channel.
         """
         self.ServerLive = channel.unary_unary(
-            "/oink.inferenceserver.GRPCInferenceService/ServerLive",
+            "/oink.dataplane.GRPCInferenceService/ServerLive",
             request_serializer=dataplane__pb2.ServerLiveRequest.SerializeToString,
             response_deserializer=dataplane__pb2.ServerLiveResponse.FromString,
         )
         self.ServerReady = channel.unary_unary(
-            "/oink.inferenceserver.GRPCInferenceService/ServerReady",
+            "/oink.dataplane.GRPCInferenceService/ServerReady",
             request_serializer=dataplane__pb2.ServerReadyRequest.SerializeToString,
             response_deserializer=dataplane__pb2.ServerReadyResponse.FromString,
         )
         self.ModelReady = channel.unary_unary(
-            "/oink.inferenceserver.GRPCInferenceService/ModelReady",
+            "/oink.dataplane.GRPCInferenceService/ModelReady",
             request_serializer=dataplane__pb2.ModelReadyRequest.SerializeToString,
             response_deserializer=dataplane__pb2.ModelReadyResponse.FromString,
         )
         self.ServerMetadata = channel.unary_unary(
-            "/oink.inferenceserver.GRPCInferenceService/ServerMetadata",
+            "/oink.dataplane.GRPCInferenceService/ServerMetadata",
             request_serializer=dataplane__pb2.ServerMetadataRequest.SerializeToString,
             response_deserializer=dataplane__pb2.ServerMetadataResponse.FromString,
         )
         self.ModelMetadata = channel.unary_unary(
-            "/oink.inferenceserver.GRPCInferenceService/ModelMetadata",
+            "/oink.dataplane.GRPCInferenceService/ModelMetadata",
             request_serializer=dataplane__pb2.ModelMetadataRequest.SerializeToString,
             response_deserializer=dataplane__pb2.ModelMetadataResponse.FromString,
         )
         self.ModelInfer = channel.unary_unary(
-            "/oink.inferenceserver.GRPCInferenceService/ModelInfer",
+            "/oink.dataplane.GRPCInferenceService/ModelInfer",
             request_serializer=dataplane__pb2.ModelInferRequest.SerializeToString,
             response_deserializer=dataplane__pb2.ModelInferResponse.FromString,
         )
@@ -131,7 +131,7 @@ def add_GRPCInferenceServiceServicer_to_server(servicer, server):
         ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-        "oink.inferenceserver.GRPCInferenceService", rpc_method_handlers
+        "oink.dataplane.GRPCInferenceService", rpc_method_handlers
     )
     server.add_generic_rpc_handlers((generic_handler,))
 
@@ -158,7 +158,7 @@ class GRPCInferenceService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            "/oink.inferenceserver.GRPCInferenceService/ServerLive",
+            "/oink.dataplane.GRPCInferenceService/ServerLive",
             dataplane__pb2.ServerLiveRequest.SerializeToString,
             dataplane__pb2.ServerLiveResponse.FromString,
             options,
@@ -185,7 +185,7 @@ class GRPCInferenceService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            "/oink.inferenceserver.GRPCInferenceService/ServerReady",
+            "/oink.dataplane.GRPCInferenceService/ServerReady",
             dataplane__pb2.ServerReadyRequest.SerializeToString,
             dataplane__pb2.ServerReadyResponse.FromString,
             options,
@@ -212,7 +212,7 @@ class GRPCInferenceService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            "/oink.inferenceserver.GRPCInferenceService/ModelReady",
+            "/oink.dataplane.GRPCInferenceService/ModelReady",
             dataplane__pb2.ModelReadyRequest.SerializeToString,
             dataplane__pb2.ModelReadyResponse.FromString,
             options,
@@ -239,7 +239,7 @@ class GRPCInferenceService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            "/oink.inferenceserver.GRPCInferenceService/ServerMetadata",
+            "/oink.dataplane.GRPCInferenceService/ServerMetadata",
             dataplane__pb2.ServerMetadataRequest.SerializeToString,
             dataplane__pb2.ServerMetadataResponse.FromString,
             options,
@@ -266,7 +266,7 @@ class GRPCInferenceService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            "/oink.inferenceserver.GRPCInferenceService/ModelMetadata",
+            "/oink.dataplane.GRPCInferenceService/ModelMetadata",
             dataplane__pb2.ModelMetadataRequest.SerializeToString,
             dataplane__pb2.ModelMetadataResponse.FromString,
             options,
@@ -293,7 +293,7 @@ class GRPCInferenceService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            "/oink.inferenceserver.GRPCInferenceService/ModelInfer",
+            "/oink.dataplane.GRPCInferenceService/ModelInfer",
             dataplane__pb2.ModelInferRequest.SerializeToString,
             dataplane__pb2.ModelInferResponse.FromString,
             options,
