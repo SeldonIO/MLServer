@@ -13,23 +13,23 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor.FileDescriptor(
-  name='dataplane.proto',
-  package='oink.dataplane',
-  syntax='proto3',
-  serialized_options=None,
-  serialized_pb=b'\n\x0f\x64\x61taplane.proto\x12\x0eoink.dataplane\"\x13\n\x11ServerLiveRequest\"\"\n\x12ServerLiveResponse\x12\x0c\n\x04live\x18\x01 \x01(\x08\"\x14\n\x12ServerReadyRequest\"$\n\x13ServerReadyResponse\x12\r\n\x05ready\x18\x01 \x01(\x08\"2\n\x11ModelReadyRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\"#\n\x12ModelReadyResponse\x12\r\n\x05ready\x18\x01 \x01(\x08\"\x17\n\x15ServerMetadataRequest\"K\n\x16ServerMetadataResponse\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\x12\x12\n\nextensions\x18\x03 \x03(\t\"5\n\x14ModelMetadataRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\"\x97\x02\n\x15ModelMetadataResponse\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08versions\x18\x02 \x03(\t\x12\x10\n\x08platform\x18\x03 \x01(\t\x12\x44\n\x06inputs\x18\x04 \x03(\x0b\x32\x34.oink.dataplane.ModelMetadataResponse.TensorMetadata\x12\x45\n\x07outputs\x18\x05 \x03(\x0b\x32\x34.oink.dataplane.ModelMetadataResponse.TensorMetadata\x1a?\n\x0eTensorMetadata\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08\x64\x61tatype\x18\x02 \x01(\t\x12\r\n\x05shape\x18\x03 \x03(\x03\"\xff\x06\n\x11ModelInferRequest\x12\x12\n\nmodel_name\x18\x01 \x01(\t\x12\x15\n\rmodel_version\x18\x02 \x01(\t\x12\n\n\x02id\x18\x03 \x01(\t\x12\x45\n\nparameters\x18\x04 \x03(\x0b\x32\x31.oink.dataplane.ModelInferRequest.ParametersEntry\x12\x42\n\x06inputs\x18\x05 \x03(\x0b\x32\x32.oink.dataplane.ModelInferRequest.InferInputTensor\x12M\n\x07outputs\x18\x06 \x03(\x0b\x32<.oink.dataplane.ModelInferRequest.InferRequestedOutputTensor\x1a\xa3\x02\n\x10InferInputTensor\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08\x64\x61tatype\x18\x02 \x01(\t\x12\r\n\x05shape\x18\x03 \x03(\x03\x12V\n\nparameters\x18\x04 \x03(\x0b\x32\x42.oink.dataplane.ModelInferRequest.InferInputTensor.ParametersEntry\x12\x35\n\x08\x63ontents\x18\x05 \x01(\x0b\x32#.oink.dataplane.InferTensorContents\x1aQ\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12-\n\x05value\x18\x02 \x01(\x0b\x32\x1e.oink.dataplane.InferParameter:\x02\x38\x01\x1a\xdf\x01\n\x1aInferRequestedOutputTensor\x12\x0c\n\x04name\x18\x01 \x01(\t\x12`\n\nparameters\x18\x02 \x03(\x0b\x32L.oink.dataplane.ModelInferRequest.InferRequestedOutputTensor.ParametersEntry\x1aQ\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12-\n\x05value\x18\x02 \x01(\x0b\x32\x1e.oink.dataplane.InferParameter:\x02\x38\x01\x1aQ\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12-\n\x05value\x18\x02 \x01(\x0b\x32\x1e.oink.dataplane.InferParameter:\x02\x38\x01\"\xd6\x04\n\x12ModelInferResponse\x12\x12\n\nmodel_name\x18\x01 \x01(\t\x12\x15\n\rmodel_version\x18\x02 \x01(\t\x12\n\n\x02id\x18\x03 \x01(\t\x12\x46\n\nparameters\x18\x04 \x03(\x0b\x32\x32.oink.dataplane.ModelInferResponse.ParametersEntry\x12\x45\n\x07outputs\x18\x05 \x03(\x0b\x32\x34.oink.dataplane.ModelInferResponse.InferOutputTensor\x1a\xa6\x02\n\x11InferOutputTensor\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08\x64\x61tatype\x18\x02 \x01(\t\x12\r\n\x05shape\x18\x03 \x03(\x03\x12X\n\nparameters\x18\x04 \x03(\x0b\x32\x44.oink.dataplane.ModelInferResponse.InferOutputTensor.ParametersEntry\x12\x35\n\x08\x63ontents\x18\x05 \x01(\x0b\x32#.oink.dataplane.InferTensorContents\x1aQ\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12-\n\x05value\x18\x02 \x01(\x0b\x32\x1e.oink.dataplane.InferParameter:\x02\x38\x01\x1aQ\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12-\n\x05value\x18\x02 \x01(\x0b\x32\x1e.oink.dataplane.InferParameter:\x02\x38\x01\"i\n\x0eInferParameter\x12\x14\n\nbool_param\x18\x01 \x01(\x08H\x00\x12\x15\n\x0bint64_param\x18\x02 \x01(\x03H\x00\x12\x16\n\x0cstring_param\x18\x03 \x01(\tH\x00\x42\x12\n\x10parameter_choice\"\xe6\x01\n\x13InferTensorContents\x12\x14\n\x0craw_contents\x18\x01 \x01(\x0c\x12\x15\n\rbool_contents\x18\x02 \x03(\x08\x12\x14\n\x0cint_contents\x18\x03 \x03(\x05\x12\x16\n\x0eint64_contents\x18\x04 \x03(\x03\x12\x15\n\ruint_contents\x18\x05 \x03(\r\x12\x17\n\x0fuint64_contents\x18\x06 \x03(\x04\x12\x15\n\rfp32_contents\x18\x07 \x03(\x02\x12\x15\n\rfp64_contents\x18\x08 \x03(\x01\x12\x16\n\x0e\x62ytes_contents\x18\t \x03(\x0c\x32\xb8\x04\n\x14GRPCInferenceService\x12U\n\nServerLive\x12!.oink.dataplane.ServerLiveRequest\x1a\".oink.dataplane.ServerLiveResponse\"\x00\x12X\n\x0bServerReady\x12\".oink.dataplane.ServerReadyRequest\x1a#.oink.dataplane.ServerReadyResponse\"\x00\x12U\n\nModelReady\x12!.oink.dataplane.ModelReadyRequest\x1a\".oink.dataplane.ModelReadyResponse\"\x00\x12\x61\n\x0eServerMetadata\x12%.oink.dataplane.ServerMetadataRequest\x1a&.oink.dataplane.ServerMetadataResponse\"\x00\x12^\n\rModelMetadata\x12$.oink.dataplane.ModelMetadataRequest\x1a%.oink.dataplane.ModelMetadataResponse\"\x00\x12U\n\nModelInfer\x12!.oink.dataplane.ModelInferRequest\x1a\".oink.dataplane.ModelInferResponse\"\x00\x62\x06proto3'
-)
+ESCRIPTOR = _descriptor.FileDescriptor(
+ name='dataplane.proto',
+ package='oink.dataplane',
+ syntax='proto3',
+ serialized_options=None,
+ serialized_pb=b'\n\x0f\x64\x61taplane.proto\x12\x0eoink.dataplane\"\x13\n\x11ServerLiveRequest\"\"\n\x12ServerLiveResponse\x12\x0c\n\x04live\x18\x01 \x01(\x08\"\x14\n\x12ServerReadyRequest\"$\n\x13ServerReadyResponse\x12\r\n\x05ready\x18\x01 \x01(\x08\"2\n\x11ModelReadyRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\"#\n\x12ModelReadyResponse\x12\r\n\x05ready\x18\x01 \x01(\x08\"\x17\n\x15ServerMetadataRequest\"K\n\x16ServerMetadataResponse\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\x12\x12\n\nextensions\x18\x03 \x03(\t\"5\n\x14ModelMetadataRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\"\x97\x02\n\x15ModelMetadataResponse\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08versions\x18\x02 \x03(\t\x12\x10\n\x08platform\x18\x03 \x01(\t\x12\x44\n\x06inputs\x18\x04 \x03(\x0b\x32\x34.oink.dataplane.ModelMetadataResponse.TensorMetadata\x12\x45\n\x07outputs\x18\x05 \x03(\x0b\x32\x34.oink.dataplane.ModelMetadataResponse.TensorMetadata\x1a?\n\x0eTensorMetadata\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08\x64\x61tatype\x18\x02 \x01(\t\x12\r\n\x05shape\x18\x03 \x03(\x03\"\xff\x06\n\x11ModelInferRequest\x12\x12\n\nmodel_name\x18\x01 \x01(\t\x12\x15\n\rmodel_version\x18\x02 \x01(\t\x12\n\n\x02id\x18\x03 \x01(\t\x12\x45\n\nparameters\x18\x04 \x03(\x0b\x32\x31.oink.dataplane.ModelInferRequest.ParametersEntry\x12\x42\n\x06inputs\x18\x05 \x03(\x0b\x32\x32.oink.dataplane.ModelInferRequest.InferInputTensor\x12M\n\x07outputs\x18\x06 \x03(\x0b\x32<.oink.dataplane.ModelInferRequest.InferRequestedOutputTensor\x1a\xa3\x02\n\x10InferInputTensor\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08\x64\x61tatype\x18\x02 \x01(\t\x12\r\n\x05shape\x18\x03 \x03(\x03\x12V\n\nparameters\x18\x04 \x03(\x0b\x32\x42.oink.dataplane.ModelInferRequest.InferInputTensor.ParametersEntry\x12\x35\n\x08\x63ontents\x18\x05 \x01(\x0b\x32#.oink.dataplane.InferTensorContents\x1aQ\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12-\n\x05value\x18\x02 \x01(\x0b\x32\x1e.oink.dataplane.InferParameter:\x02\x38\x01\x1a\xdf\x01\n\x1aInferRequestedOutputTensor\x12\x0c\n\x04name\x18\x01 \x01(\t\x12`\n\nparameters\x18\x02 \x03(\x0b\x32L.oink.dataplane.ModelInferRequest.InferRequestedOutputTensor.ParametersEntry\x1aQ\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12-\n\x05value\x18\x02 \x01(\x0b\x32\x1e.oink.dataplane.InferParameter:\x02\x38\x01\x1aQ\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12-\n\x05value\x18\x02 \x01(\x0b\x32\x1e.oink.dataplane.InferParameter:\x02\x38\x01\"\xd6\x04\n\x12ModelInferResponse\x12\x12\n\nmodel_name\x18\x01 \x01(\t\x12\x15\n\rmodel_version\x18\x02 \x01(\t\x12\n\n\x02id\x18\x03 \x01(\t\x12\x46\n\nparameters\x18\x04 \x03(\x0b\x32\x32.oink.dataplane.ModelInferResponse.ParametersEntry\x12\x45\n\x07outputs\x18\x05 \x03(\x0b\x32\x34.oink.dataplane.ModelInferResponse.InferOutputTensor\x1a\xa6\x02\n\x11InferOutputTensor\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08\x64\x61tatype\x18\x02 \x01(\t\x12\r\n\x05shape\x18\x03 \x03(\x03\x12X\n\nparameters\x18\x04 \x03(\x0b\x32\x44.oink.dataplane.ModelInferResponse.InferOutputTensor.ParametersEntry\x12\x35\n\x08\x63ontents\x18\x05 \x01(\x0b\x32#.oink.dataplane.InferTensorContents\x1aQ\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12-\n\x05value\x18\x02 \x01(\x0b\x32\x1e.oink.dataplane.InferParameter:\x02\x38\x01\x1aQ\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12-\n\x05value\x18\x02 \x01(\x0b\x32\x1e.oink.dataplane.InferParameter:\x02\x38\x01\"i\n\x0eInferParameter\x12\x14\n\nbool_param\x18\x01 \x01(\x08H\x00\x12\x15\n\x0bint64_param\x18\x02 \x01(\x03H\x00\x12\x16\n\x0cstring_param\x18\x03 \x01(\tH\x00\x42\x12\n\x10parameter_choice\"\xe6\x01\n\x13InferTensorContents\x12\x14\n\x0craw_contents\x18\x01 \x01(\x0c\x12\x15\n\rbool_contents\x18\x02 \x03(\x08\x12\x14\n\x0cint_contents\x18\x03 \x03(\x05\x12\x16\n\x0eint64_contents\x18\x04 \x03(\x03\x12\x15\n\ruint_contents\x18\x05 \x03(\r\x12\x17\n\x0fuint64_contents\x18\x06 \x03(\x04\x12\x15\n\rfp32_contents\x18\x07 \x03(\x02\x12\x15\n\rfp64_contents\x18\x08 \x03(\x01\x12\x16\n\x0e\x62ytes_contents\x18\t \x03(\x0c\x32\xb8\x04\n\x14GRPCInferenceService\x12U\n\nServerLive\x12!.oink.dataplane.ServerLiveRequest\x1a\".oink.dataplane.ServerLiveResponse\"\x00\x12X\n\x0bServerReady\x12\".oink.dataplane.ServerReadyRequest\x1a#.oink.dataplane.ServerReadyResponse\"\x00\x12U\n\nModelReady\x12!.oink.dataplane.ModelReadyRequest\x1a\".oink.dataplane.ModelReadyResponse\"\x00\x12\x61\n\x0eServerMetadata\x12%.oink.dataplane.ServerMetadataRequest\x1a&.oink.dataplane.ServerMetadataResponse\"\x00\x12^\n\rModelMetadata\x12$.oink.dataplane.ModelMetadataRequest\x1a%.oink.dataplane.ModelMetadataResponse\"\x00\x12U\n\nModelInfer\x12!.oink.dataplane.ModelInferRequest\x1a\".oink.dataplane.ModelInferResponse\"\x00\x62\x06proto3'
 
 
 
 
-_SERVERLIVEREQUEST = _descriptor.Descriptor(
-  name='ServerLiveRequest',
-  full_name='oink.dataplane.ServerLiveRequest',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
+
+SERVERLIVEREQUEST = _descriptor.Descriptor(
+ name='ServerLiveRequest',
+ full_name='oink.dataplane.ServerLiveRequest',
+ filename=None,
+ file=DESCRIPTOR,
+ containing_type=None,
   fields=[
   ],
   extensions=[
@@ -48,18 +48,18 @@ _SERVERLIVEREQUEST = _descriptor.Descriptor(
 )
 
 
-_SERVERLIVERESPONSE = _descriptor.Descriptor(
-  name='ServerLiveResponse',
-  full_name='oink.dataplane.ServerLiveResponse',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='live', full_name='oink.dataplane.ServerLiveResponse.live', index=0,
-      number=1, type=8, cpp_type=7, label=1,
-      has_default_value=False, default_value=False,
-      message_type=None, enum_type=None, containing_type=None,
+SERVERLIVERESPONSE = _descriptor.Descriptor(
+ name='ServerLiveResponse',
+ full_name='oink.dataplane.ServerLiveResponse',
+ filename=None,
+ file=DESCRIPTOR,
+ containing_type=None,
+ fields=[
+   _descriptor.FieldDescriptor(
+     name='live', full_name='oink.dataplane.ServerLiveResponse.live', index=0,
+     number=1, type=8, cpp_type=7, label=1,
+     has_default_value=False, default_value=False,
+     message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
   ],
@@ -79,12 +79,12 @@ _SERVERLIVERESPONSE = _descriptor.Descriptor(
 )
 
 
-_SERVERREADYREQUEST = _descriptor.Descriptor(
-  name='ServerReadyRequest',
-  full_name='oink.dataplane.ServerReadyRequest',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
+SERVERREADYREQUEST = _descriptor.Descriptor(
+ name='ServerReadyRequest',
+ full_name='oink.dataplane.ServerReadyRequest',
+ filename=None,
+ file=DESCRIPTOR,
+ containing_type=None,
   fields=[
   ],
   extensions=[
@@ -103,18 +103,18 @@ _SERVERREADYREQUEST = _descriptor.Descriptor(
 )
 
 
-_SERVERREADYRESPONSE = _descriptor.Descriptor(
-  name='ServerReadyResponse',
-  full_name='oink.dataplane.ServerReadyResponse',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='ready', full_name='oink.dataplane.ServerReadyResponse.ready', index=0,
-      number=1, type=8, cpp_type=7, label=1,
-      has_default_value=False, default_value=False,
-      message_type=None, enum_type=None, containing_type=None,
+SERVERREADYRESPONSE = _descriptor.Descriptor(
+ name='ServerReadyResponse',
+ full_name='oink.dataplane.ServerReadyResponse',
+ filename=None,
+ file=DESCRIPTOR,
+ containing_type=None,
+ fields=[
+   _descriptor.FieldDescriptor(
+     name='ready', full_name='oink.dataplane.ServerReadyResponse.ready', index=0,
+     number=1, type=8, cpp_type=7, label=1,
+     has_default_value=False, default_value=False,
+     message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
   ],
@@ -134,25 +134,25 @@ _SERVERREADYRESPONSE = _descriptor.Descriptor(
 )
 
 
-_MODELREADYREQUEST = _descriptor.Descriptor(
-  name='ModelReadyRequest',
-  full_name='oink.dataplane.ModelReadyRequest',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='name', full_name='oink.dataplane.ModelReadyRequest.name', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='version', full_name='oink.dataplane.ModelReadyRequest.version', index=1,
-      number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
+MODELREADYREQUEST = _descriptor.Descriptor(
+ name='ModelReadyRequest',
+ full_name='oink.dataplane.ModelReadyRequest',
+ filename=None,
+ file=DESCRIPTOR,
+ containing_type=None,
+ fields=[
+   _descriptor.FieldDescriptor(
+     name='name', full_name='oink.dataplane.ModelReadyRequest.name', index=0,
+     number=1, type=9, cpp_type=9, label=1,
+     has_default_value=False, default_value=b"".decode('utf-8'),
+     message_type=None, enum_type=None, containing_type=None,
+     is_extension=False, extension_scope=None,
+     serialized_options=None, file=DESCRIPTOR),
+   _descriptor.FieldDescriptor(
+     name='version', full_name='oink.dataplane.ModelReadyRequest.version', index=1,
+     number=2, type=9, cpp_type=9, label=1,
+     has_default_value=False, default_value=b"".decode('utf-8'),
+     message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
   ],
@@ -172,18 +172,18 @@ _MODELREADYREQUEST = _descriptor.Descriptor(
 )
 
 
-_MODELREADYRESPONSE = _descriptor.Descriptor(
-  name='ModelReadyResponse',
-  full_name='oink.dataplane.ModelReadyResponse',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='ready', full_name='oink.dataplane.ModelReadyResponse.ready', index=0,
-      number=1, type=8, cpp_type=7, label=1,
-      has_default_value=False, default_value=False,
-      message_type=None, enum_type=None, containing_type=None,
+MODELREADYRESPONSE = _descriptor.Descriptor(
+ name='ModelReadyResponse',
+ full_name='oink.dataplane.ModelReadyResponse',
+ filename=None,
+ file=DESCRIPTOR,
+ containing_type=None,
+ fields=[
+   _descriptor.FieldDescriptor(
+     name='ready', full_name='oink.dataplane.ModelReadyResponse.ready', index=0,
+     number=1, type=8, cpp_type=7, label=1,
+     has_default_value=False, default_value=False,
+     message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
   ],
@@ -203,12 +203,12 @@ _MODELREADYRESPONSE = _descriptor.Descriptor(
 )
 
 
-_SERVERMETADATAREQUEST = _descriptor.Descriptor(
-  name='ServerMetadataRequest',
-  full_name='oink.dataplane.ServerMetadataRequest',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
+SERVERMETADATAREQUEST = _descriptor.Descriptor(
+ name='ServerMetadataRequest',
+ full_name='oink.dataplane.ServerMetadataRequest',
+ filename=None,
+ file=DESCRIPTOR,
+ containing_type=None,
   fields=[
   ],
   extensions=[
@@ -227,32 +227,32 @@ _SERVERMETADATAREQUEST = _descriptor.Descriptor(
 )
 
 
-_SERVERMETADATARESPONSE = _descriptor.Descriptor(
-  name='ServerMetadataResponse',
-  full_name='oink.dataplane.ServerMetadataResponse',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='name', full_name='oink.dataplane.ServerMetadataResponse.name', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='version', full_name='oink.dataplane.ServerMetadataResponse.version', index=1,
-      number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='extensions', full_name='oink.dataplane.ServerMetadataResponse.extensions', index=2,
-      number=3, type=9, cpp_type=9, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
+SERVERMETADATARESPONSE = _descriptor.Descriptor(
+ name='ServerMetadataResponse',
+ full_name='oink.dataplane.ServerMetadataResponse',
+ filename=None,
+ file=DESCRIPTOR,
+ containing_type=None,
+ fields=[
+   _descriptor.FieldDescriptor(
+     name='name', full_name='oink.dataplane.ServerMetadataResponse.name', index=0,
+     number=1, type=9, cpp_type=9, label=1,
+     has_default_value=False, default_value=b"".decode('utf-8'),
+     message_type=None, enum_type=None, containing_type=None,
+     is_extension=False, extension_scope=None,
+     serialized_options=None, file=DESCRIPTOR),
+   _descriptor.FieldDescriptor(
+     name='version', full_name='oink.dataplane.ServerMetadataResponse.version', index=1,
+     number=2, type=9, cpp_type=9, label=1,
+     has_default_value=False, default_value=b"".decode('utf-8'),
+     message_type=None, enum_type=None, containing_type=None,
+     is_extension=False, extension_scope=None,
+     serialized_options=None, file=DESCRIPTOR),
+   _descriptor.FieldDescriptor(
+     name='extensions', full_name='oink.dataplane.ServerMetadataResponse.extensions', index=2,
+     number=3, type=9, cpp_type=9, label=3,
+     has_default_value=False, default_value=[],
+     message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
   ],
@@ -272,25 +272,25 @@ _SERVERMETADATARESPONSE = _descriptor.Descriptor(
 )
 
 
-_MODELMETADATAREQUEST = _descriptor.Descriptor(
-  name='ModelMetadataRequest',
-  full_name='oink.dataplane.ModelMetadataRequest',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='name', full_name='oink.dataplane.ModelMetadataRequest.name', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='version', full_name='oink.dataplane.ModelMetadataRequest.version', index=1,
-      number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
+MODELMETADATAREQUEST = _descriptor.Descriptor(
+ name='ModelMetadataRequest',
+ full_name='oink.dataplane.ModelMetadataRequest',
+ filename=None,
+ file=DESCRIPTOR,
+ containing_type=None,
+ fields=[
+   _descriptor.FieldDescriptor(
+     name='name', full_name='oink.dataplane.ModelMetadataRequest.name', index=0,
+     number=1, type=9, cpp_type=9, label=1,
+     has_default_value=False, default_value=b"".decode('utf-8'),
+     message_type=None, enum_type=None, containing_type=None,
+     is_extension=False, extension_scope=None,
+     serialized_options=None, file=DESCRIPTOR),
+   _descriptor.FieldDescriptor(
+     name='version', full_name='oink.dataplane.ModelMetadataRequest.version', index=1,
+     number=2, type=9, cpp_type=9, label=1,
+     has_default_value=False, default_value=b"".decode('utf-8'),
+     message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
   ],
@@ -310,32 +310,32 @@ _MODELMETADATAREQUEST = _descriptor.Descriptor(
 )
 
 
-_MODELMETADATARESPONSE_TENSORMETADATA = _descriptor.Descriptor(
-  name='TensorMetadata',
-  full_name='oink.dataplane.ModelMetadataResponse.TensorMetadata',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='name', full_name='oink.dataplane.ModelMetadataResponse.TensorMetadata.name', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='datatype', full_name='oink.dataplane.ModelMetadataResponse.TensorMetadata.datatype', index=1,
-      number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='shape', full_name='oink.dataplane.ModelMetadataResponse.TensorMetadata.shape', index=2,
-      number=3, type=3, cpp_type=2, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
+MODELMETADATARESPONSE_TENSORMETADATA = _descriptor.Descriptor(
+ name='TensorMetadata',
+ full_name='oink.dataplane.ModelMetadataResponse.TensorMetadata',
+ filename=None,
+ file=DESCRIPTOR,
+ containing_type=None,
+ fields=[
+   _descriptor.FieldDescriptor(
+     name='name', full_name='oink.dataplane.ModelMetadataResponse.TensorMetadata.name', index=0,
+     number=1, type=9, cpp_type=9, label=1,
+     has_default_value=False, default_value=b"".decode('utf-8'),
+     message_type=None, enum_type=None, containing_type=None,
+     is_extension=False, extension_scope=None,
+     serialized_options=None, file=DESCRIPTOR),
+   _descriptor.FieldDescriptor(
+     name='datatype', full_name='oink.dataplane.ModelMetadataResponse.TensorMetadata.datatype', index=1,
+     number=2, type=9, cpp_type=9, label=1,
+     has_default_value=False, default_value=b"".decode('utf-8'),
+     message_type=None, enum_type=None, containing_type=None,
+     is_extension=False, extension_scope=None,
+     serialized_options=None, file=DESCRIPTOR),
+   _descriptor.FieldDescriptor(
+     name='shape', full_name='oink.dataplane.ModelMetadataResponse.TensorMetadata.shape', index=2,
+     number=3, type=3, cpp_type=2, label=3,
+     has_default_value=False, default_value=[],
+     message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
   ],
@@ -354,46 +354,46 @@ _MODELMETADATARESPONSE_TENSORMETADATA = _descriptor.Descriptor(
   serialized_end=678,
 )
 
-_MODELMETADATARESPONSE = _descriptor.Descriptor(
-  name='ModelMetadataResponse',
-  full_name='oink.dataplane.ModelMetadataResponse',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='name', full_name='oink.dataplane.ModelMetadataResponse.name', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='versions', full_name='oink.dataplane.ModelMetadataResponse.versions', index=1,
-      number=2, type=9, cpp_type=9, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='platform', full_name='oink.dataplane.ModelMetadataResponse.platform', index=2,
-      number=3, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='inputs', full_name='oink.dataplane.ModelMetadataResponse.inputs', index=3,
-      number=4, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='outputs', full_name='oink.dataplane.ModelMetadataResponse.outputs', index=4,
-      number=5, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
+MODELMETADATARESPONSE = _descriptor.Descriptor(
+ name='ModelMetadataResponse',
+ full_name='oink.dataplane.ModelMetadataResponse',
+ filename=None,
+ file=DESCRIPTOR,
+ containing_type=None,
+ fields=[
+   _descriptor.FieldDescriptor(
+     name='name', full_name='oink.dataplane.ModelMetadataResponse.name', index=0,
+     number=1, type=9, cpp_type=9, label=1,
+     has_default_value=False, default_value=b"".decode('utf-8'),
+     message_type=None, enum_type=None, containing_type=None,
+     is_extension=False, extension_scope=None,
+     serialized_options=None, file=DESCRIPTOR),
+   _descriptor.FieldDescriptor(
+     name='versions', full_name='oink.dataplane.ModelMetadataResponse.versions', index=1,
+     number=2, type=9, cpp_type=9, label=3,
+     has_default_value=False, default_value=[],
+     message_type=None, enum_type=None, containing_type=None,
+     is_extension=False, extension_scope=None,
+     serialized_options=None, file=DESCRIPTOR),
+   _descriptor.FieldDescriptor(
+     name='platform', full_name='oink.dataplane.ModelMetadataResponse.platform', index=2,
+     number=3, type=9, cpp_type=9, label=1,
+     has_default_value=False, default_value=b"".decode('utf-8'),
+     message_type=None, enum_type=None, containing_type=None,
+     is_extension=False, extension_scope=None,
+     serialized_options=None, file=DESCRIPTOR),
+   _descriptor.FieldDescriptor(
+     name='inputs', full_name='oink.dataplane.ModelMetadataResponse.inputs', index=3,
+     number=4, type=11, cpp_type=10, label=3,
+     has_default_value=False, default_value=[],
+     message_type=None, enum_type=None, containing_type=None,
+     is_extension=False, extension_scope=None,
+     serialized_options=None, file=DESCRIPTOR),
+   _descriptor.FieldDescriptor(
+     name='outputs', full_name='oink.dataplane.ModelMetadataResponse.outputs', index=4,
+     number=5, type=11, cpp_type=10, label=3,
+     has_default_value=False, default_value=[],
+     message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
   ],
@@ -413,25 +413,25 @@ _MODELMETADATARESPONSE = _descriptor.Descriptor(
 )
 
 
-_MODELINFERREQUEST_INFERINPUTTENSOR_PARAMETERSENTRY = _descriptor.Descriptor(
-  name='ParametersEntry',
-  full_name='oink.dataplane.ModelInferRequest.InferInputTensor.ParametersEntry',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='key', full_name='oink.dataplane.ModelInferRequest.InferInputTensor.ParametersEntry.key', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='value', full_name='oink.dataplane.ModelInferRequest.InferInputTensor.ParametersEntry.value', index=1,
-      number=2, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
+MODELINFERREQUEST_INFERINPUTTENSOR_PARAMETERSENTRY = _descriptor.Descriptor(
+ name='ParametersEntry',
+ full_name='oink.dataplane.ModelInferRequest.InferInputTensor.ParametersEntry',
+ filename=None,
+ file=DESCRIPTOR,
+ containing_type=None,
+ fields=[
+   _descriptor.FieldDescriptor(
+     name='key', full_name='oink.dataplane.ModelInferRequest.InferInputTensor.ParametersEntry.key', index=0,
+     number=1, type=9, cpp_type=9, label=1,
+     has_default_value=False, default_value=b"".decode('utf-8'),
+     message_type=None, enum_type=None, containing_type=None,
+     is_extension=False, extension_scope=None,
+     serialized_options=None, file=DESCRIPTOR),
+   _descriptor.FieldDescriptor(
+     name='value', full_name='oink.dataplane.ModelInferRequest.InferInputTensor.ParametersEntry.value', index=1,
+     number=2, type=11, cpp_type=10, label=1,
+     has_default_value=False, default_value=None,
+     message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
   ],
@@ -450,46 +450,46 @@ _MODELINFERREQUEST_INFERINPUTTENSOR_PARAMETERSENTRY = _descriptor.Descriptor(
   serialized_end=1267,
 )
 
-_MODELINFERREQUEST_INFERINPUTTENSOR = _descriptor.Descriptor(
-  name='InferInputTensor',
-  full_name='oink.dataplane.ModelInferRequest.InferInputTensor',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='name', full_name='oink.dataplane.ModelInferRequest.InferInputTensor.name', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='datatype', full_name='oink.dataplane.ModelInferRequest.InferInputTensor.datatype', index=1,
-      number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='shape', full_name='oink.dataplane.ModelInferRequest.InferInputTensor.shape', index=2,
-      number=3, type=3, cpp_type=2, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='parameters', full_name='oink.dataplane.ModelInferRequest.InferInputTensor.parameters', index=3,
-      number=4, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='contents', full_name='oink.dataplane.ModelInferRequest.InferInputTensor.contents', index=4,
-      number=5, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
+MODELINFERREQUEST_INFERINPUTTENSOR = _descriptor.Descriptor(
+ name='InferInputTensor',
+ full_name='oink.dataplane.ModelInferRequest.InferInputTensor',
+ filename=None,
+ file=DESCRIPTOR,
+ containing_type=None,
+ fields=[
+   _descriptor.FieldDescriptor(
+     name='name', full_name='oink.dataplane.ModelInferRequest.InferInputTensor.name', index=0,
+     number=1, type=9, cpp_type=9, label=1,
+     has_default_value=False, default_value=b"".decode('utf-8'),
+     message_type=None, enum_type=None, containing_type=None,
+     is_extension=False, extension_scope=None,
+     serialized_options=None, file=DESCRIPTOR),
+   _descriptor.FieldDescriptor(
+     name='datatype', full_name='oink.dataplane.ModelInferRequest.InferInputTensor.datatype', index=1,
+     number=2, type=9, cpp_type=9, label=1,
+     has_default_value=False, default_value=b"".decode('utf-8'),
+     message_type=None, enum_type=None, containing_type=None,
+     is_extension=False, extension_scope=None,
+     serialized_options=None, file=DESCRIPTOR),
+   _descriptor.FieldDescriptor(
+     name='shape', full_name='oink.dataplane.ModelInferRequest.InferInputTensor.shape', index=2,
+     number=3, type=3, cpp_type=2, label=3,
+     has_default_value=False, default_value=[],
+     message_type=None, enum_type=None, containing_type=None,
+     is_extension=False, extension_scope=None,
+     serialized_options=None, file=DESCRIPTOR),
+   _descriptor.FieldDescriptor(
+     name='parameters', full_name='oink.dataplane.ModelInferRequest.InferInputTensor.parameters', index=3,
+     number=4, type=11, cpp_type=10, label=3,
+     has_default_value=False, default_value=[],
+     message_type=None, enum_type=None, containing_type=None,
+     is_extension=False, extension_scope=None,
+     serialized_options=None, file=DESCRIPTOR),
+   _descriptor.FieldDescriptor(
+     name='contents', full_name='oink.dataplane.ModelInferRequest.InferInputTensor.contents', index=4,
+     number=5, type=11, cpp_type=10, label=1,
+     has_default_value=False, default_value=None,
+     message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
   ],
@@ -508,25 +508,25 @@ _MODELINFERREQUEST_INFERINPUTTENSOR = _descriptor.Descriptor(
   serialized_end=1267,
 )
 
-_MODELINFERREQUEST_INFERREQUESTEDOUTPUTTENSOR_PARAMETERSENTRY = _descriptor.Descriptor(
-  name='ParametersEntry',
-  full_name='oink.dataplane.ModelInferRequest.InferRequestedOutputTensor.ParametersEntry',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='key', full_name='oink.dataplane.ModelInferRequest.InferRequestedOutputTensor.ParametersEntry.key', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='value', full_name='oink.dataplane.ModelInferRequest.InferRequestedOutputTensor.ParametersEntry.value', index=1,
-      number=2, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
+MODELINFERREQUEST_INFERREQUESTEDOUTPUTTENSOR_PARAMETERSENTRY = _descriptor.Descriptor(
+ name='ParametersEntry',
+ full_name='oink.dataplane.ModelInferRequest.InferRequestedOutputTensor.ParametersEntry',
+ filename=None,
+ file=DESCRIPTOR,
+ containing_type=None,
+ fields=[
+   _descriptor.FieldDescriptor(
+     name='key', full_name='oink.dataplane.ModelInferRequest.InferRequestedOutputTensor.ParametersEntry.key', index=0,
+     number=1, type=9, cpp_type=9, label=1,
+     has_default_value=False, default_value=b"".decode('utf-8'),
+     message_type=None, enum_type=None, containing_type=None,
+     is_extension=False, extension_scope=None,
+     serialized_options=None, file=DESCRIPTOR),
+   _descriptor.FieldDescriptor(
+     name='value', full_name='oink.dataplane.ModelInferRequest.InferRequestedOutputTensor.ParametersEntry.value', index=1,
+     number=2, type=11, cpp_type=10, label=1,
+     has_default_value=False, default_value=None,
+     message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
   ],
@@ -545,25 +545,25 @@ _MODELINFERREQUEST_INFERREQUESTEDOUTPUTTENSOR_PARAMETERSENTRY = _descriptor.Desc
   serialized_end=1267,
 )
 
-_MODELINFERREQUEST_INFERREQUESTEDOUTPUTTENSOR = _descriptor.Descriptor(
-  name='InferRequestedOutputTensor',
-  full_name='oink.dataplane.ModelInferRequest.InferRequestedOutputTensor',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='name', full_name='oink.dataplane.ModelInferRequest.InferRequestedOutputTensor.name', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='parameters', full_name='oink.dataplane.ModelInferRequest.InferRequestedOutputTensor.parameters', index=1,
-      number=2, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
+MODELINFERREQUEST_INFERREQUESTEDOUTPUTTENSOR = _descriptor.Descriptor(
+ name='InferRequestedOutputTensor',
+ full_name='oink.dataplane.ModelInferRequest.InferRequestedOutputTensor',
+ filename=None,
+ file=DESCRIPTOR,
+ containing_type=None,
+ fields=[
+   _descriptor.FieldDescriptor(
+     name='name', full_name='oink.dataplane.ModelInferRequest.InferRequestedOutputTensor.name', index=0,
+     number=1, type=9, cpp_type=9, label=1,
+     has_default_value=False, default_value=b"".decode('utf-8'),
+     message_type=None, enum_type=None, containing_type=None,
+     is_extension=False, extension_scope=None,
+     serialized_options=None, file=DESCRIPTOR),
+   _descriptor.FieldDescriptor(
+     name='parameters', full_name='oink.dataplane.ModelInferRequest.InferRequestedOutputTensor.parameters', index=1,
+     number=2, type=11, cpp_type=10, label=3,
+     has_default_value=False, default_value=[],
+     message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
   ],
@@ -582,25 +582,25 @@ _MODELINFERREQUEST_INFERREQUESTEDOUTPUTTENSOR = _descriptor.Descriptor(
   serialized_end=1493,
 )
 
-_MODELINFERREQUEST_PARAMETERSENTRY = _descriptor.Descriptor(
-  name='ParametersEntry',
-  full_name='oink.dataplane.ModelInferRequest.ParametersEntry',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='key', full_name='oink.dataplane.ModelInferRequest.ParametersEntry.key', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='value', full_name='oink.dataplane.ModelInferRequest.ParametersEntry.value', index=1,
-      number=2, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
+MODELINFERREQUEST_PARAMETERSENTRY = _descriptor.Descriptor(
+ name='ParametersEntry',
+ full_name='oink.dataplane.ModelInferRequest.ParametersEntry',
+ filename=None,
+ file=DESCRIPTOR,
+ containing_type=None,
+ fields=[
+   _descriptor.FieldDescriptor(
+     name='key', full_name='oink.dataplane.ModelInferRequest.ParametersEntry.key', index=0,
+     number=1, type=9, cpp_type=9, label=1,
+     has_default_value=False, default_value=b"".decode('utf-8'),
+     message_type=None, enum_type=None, containing_type=None,
+     is_extension=False, extension_scope=None,
+     serialized_options=None, file=DESCRIPTOR),
+   _descriptor.FieldDescriptor(
+     name='value', full_name='oink.dataplane.ModelInferRequest.ParametersEntry.value', index=1,
+     number=2, type=11, cpp_type=10, label=1,
+     has_default_value=False, default_value=None,
+     message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
   ],
@@ -619,53 +619,53 @@ _MODELINFERREQUEST_PARAMETERSENTRY = _descriptor.Descriptor(
   serialized_end=1267,
 )
 
-_MODELINFERREQUEST = _descriptor.Descriptor(
-  name='ModelInferRequest',
-  full_name='oink.dataplane.ModelInferRequest',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='model_name', full_name='oink.dataplane.ModelInferRequest.model_name', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='model_version', full_name='oink.dataplane.ModelInferRequest.model_version', index=1,
-      number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='id', full_name='oink.dataplane.ModelInferRequest.id', index=2,
-      number=3, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='parameters', full_name='oink.dataplane.ModelInferRequest.parameters', index=3,
-      number=4, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='inputs', full_name='oink.dataplane.ModelInferRequest.inputs', index=4,
-      number=5, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='outputs', full_name='oink.dataplane.ModelInferRequest.outputs', index=5,
-      number=6, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
+MODELINFERREQUEST = _descriptor.Descriptor(
+ name='ModelInferRequest',
+ full_name='oink.dataplane.ModelInferRequest',
+ filename=None,
+ file=DESCRIPTOR,
+ containing_type=None,
+ fields=[
+   _descriptor.FieldDescriptor(
+     name='model_name', full_name='oink.dataplane.ModelInferRequest.model_name', index=0,
+     number=1, type=9, cpp_type=9, label=1,
+     has_default_value=False, default_value=b"".decode('utf-8'),
+     message_type=None, enum_type=None, containing_type=None,
+     is_extension=False, extension_scope=None,
+     serialized_options=None, file=DESCRIPTOR),
+   _descriptor.FieldDescriptor(
+     name='model_version', full_name='oink.dataplane.ModelInferRequest.model_version', index=1,
+     number=2, type=9, cpp_type=9, label=1,
+     has_default_value=False, default_value=b"".decode('utf-8'),
+     message_type=None, enum_type=None, containing_type=None,
+     is_extension=False, extension_scope=None,
+     serialized_options=None, file=DESCRIPTOR),
+   _descriptor.FieldDescriptor(
+     name='id', full_name='oink.dataplane.ModelInferRequest.id', index=2,
+     number=3, type=9, cpp_type=9, label=1,
+     has_default_value=False, default_value=b"".decode('utf-8'),
+     message_type=None, enum_type=None, containing_type=None,
+     is_extension=False, extension_scope=None,
+     serialized_options=None, file=DESCRIPTOR),
+   _descriptor.FieldDescriptor(
+     name='parameters', full_name='oink.dataplane.ModelInferRequest.parameters', index=3,
+     number=4, type=11, cpp_type=10, label=3,
+     has_default_value=False, default_value=[],
+     message_type=None, enum_type=None, containing_type=None,
+     is_extension=False, extension_scope=None,
+     serialized_options=None, file=DESCRIPTOR),
+   _descriptor.FieldDescriptor(
+     name='inputs', full_name='oink.dataplane.ModelInferRequest.inputs', index=4,
+     number=5, type=11, cpp_type=10, label=3,
+     has_default_value=False, default_value=[],
+     message_type=None, enum_type=None, containing_type=None,
+     is_extension=False, extension_scope=None,
+     serialized_options=None, file=DESCRIPTOR),
+   _descriptor.FieldDescriptor(
+     name='outputs', full_name='oink.dataplane.ModelInferRequest.outputs', index=5,
+     number=6, type=11, cpp_type=10, label=3,
+     has_default_value=False, default_value=[],
+     message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
   ],
@@ -685,25 +685,25 @@ _MODELINFERREQUEST = _descriptor.Descriptor(
 )
 
 
-_MODELINFERRESPONSE_INFEROUTPUTTENSOR_PARAMETERSENTRY = _descriptor.Descriptor(
-  name='ParametersEntry',
-  full_name='oink.dataplane.ModelInferResponse.InferOutputTensor.ParametersEntry',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='key', full_name='oink.dataplane.ModelInferResponse.InferOutputTensor.ParametersEntry.key', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='value', full_name='oink.dataplane.ModelInferResponse.InferOutputTensor.ParametersEntry.value', index=1,
-      number=2, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
+MODELINFERRESPONSE_INFEROUTPUTTENSOR_PARAMETERSENTRY = _descriptor.Descriptor(
+ name='ParametersEntry',
+ full_name='oink.dataplane.ModelInferResponse.InferOutputTensor.ParametersEntry',
+ filename=None,
+ file=DESCRIPTOR,
+ containing_type=None,
+ fields=[
+   _descriptor.FieldDescriptor(
+     name='key', full_name='oink.dataplane.ModelInferResponse.InferOutputTensor.ParametersEntry.key', index=0,
+     number=1, type=9, cpp_type=9, label=1,
+     has_default_value=False, default_value=b"".decode('utf-8'),
+     message_type=None, enum_type=None, containing_type=None,
+     is_extension=False, extension_scope=None,
+     serialized_options=None, file=DESCRIPTOR),
+   _descriptor.FieldDescriptor(
+     name='value', full_name='oink.dataplane.ModelInferResponse.InferOutputTensor.ParametersEntry.value', index=1,
+     number=2, type=11, cpp_type=10, label=1,
+     has_default_value=False, default_value=None,
+     message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
   ],
@@ -722,46 +722,46 @@ _MODELINFERRESPONSE_INFEROUTPUTTENSOR_PARAMETERSENTRY = _descriptor.Descriptor(
   serialized_end=1267,
 )
 
-_MODELINFERRESPONSE_INFEROUTPUTTENSOR = _descriptor.Descriptor(
-  name='InferOutputTensor',
-  full_name='oink.dataplane.ModelInferResponse.InferOutputTensor',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='name', full_name='oink.dataplane.ModelInferResponse.InferOutputTensor.name', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='datatype', full_name='oink.dataplane.ModelInferResponse.InferOutputTensor.datatype', index=1,
-      number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='shape', full_name='oink.dataplane.ModelInferResponse.InferOutputTensor.shape', index=2,
-      number=3, type=3, cpp_type=2, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='parameters', full_name='oink.dataplane.ModelInferResponse.InferOutputTensor.parameters', index=3,
-      number=4, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='contents', full_name='oink.dataplane.ModelInferResponse.InferOutputTensor.contents', index=4,
-      number=5, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
+MODELINFERRESPONSE_INFEROUTPUTTENSOR = _descriptor.Descriptor(
+ name='InferOutputTensor',
+ full_name='oink.dataplane.ModelInferResponse.InferOutputTensor',
+ filename=None,
+ file=DESCRIPTOR,
+ containing_type=None,
+ fields=[
+   _descriptor.FieldDescriptor(
+     name='name', full_name='oink.dataplane.ModelInferResponse.InferOutputTensor.name', index=0,
+     number=1, type=9, cpp_type=9, label=1,
+     has_default_value=False, default_value=b"".decode('utf-8'),
+     message_type=None, enum_type=None, containing_type=None,
+     is_extension=False, extension_scope=None,
+     serialized_options=None, file=DESCRIPTOR),
+   _descriptor.FieldDescriptor(
+     name='datatype', full_name='oink.dataplane.ModelInferResponse.InferOutputTensor.datatype', index=1,
+     number=2, type=9, cpp_type=9, label=1,
+     has_default_value=False, default_value=b"".decode('utf-8'),
+     message_type=None, enum_type=None, containing_type=None,
+     is_extension=False, extension_scope=None,
+     serialized_options=None, file=DESCRIPTOR),
+   _descriptor.FieldDescriptor(
+     name='shape', full_name='oink.dataplane.ModelInferResponse.InferOutputTensor.shape', index=2,
+     number=3, type=3, cpp_type=2, label=3,
+     has_default_value=False, default_value=[],
+     message_type=None, enum_type=None, containing_type=None,
+     is_extension=False, extension_scope=None,
+     serialized_options=None, file=DESCRIPTOR),
+   _descriptor.FieldDescriptor(
+     name='parameters', full_name='oink.dataplane.ModelInferResponse.InferOutputTensor.parameters', index=3,
+     number=4, type=11, cpp_type=10, label=3,
+     has_default_value=False, default_value=[],
+     message_type=None, enum_type=None, containing_type=None,
+     is_extension=False, extension_scope=None,
+     serialized_options=None, file=DESCRIPTOR),
+   _descriptor.FieldDescriptor(
+     name='contents', full_name='oink.dataplane.ModelInferResponse.InferOutputTensor.contents', index=4,
+     number=5, type=11, cpp_type=10, label=1,
+     has_default_value=False, default_value=None,
+     message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
   ],
@@ -780,25 +780,25 @@ _MODELINFERRESPONSE_INFEROUTPUTTENSOR = _descriptor.Descriptor(
   serialized_end=2094,
 )
 
-_MODELINFERRESPONSE_PARAMETERSENTRY = _descriptor.Descriptor(
-  name='ParametersEntry',
-  full_name='oink.dataplane.ModelInferResponse.ParametersEntry',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='key', full_name='oink.dataplane.ModelInferResponse.ParametersEntry.key', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='value', full_name='oink.dataplane.ModelInferResponse.ParametersEntry.value', index=1,
-      number=2, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
+MODELINFERRESPONSE_PARAMETERSENTRY = _descriptor.Descriptor(
+ name='ParametersEntry',
+ full_name='oink.dataplane.ModelInferResponse.ParametersEntry',
+ filename=None,
+ file=DESCRIPTOR,
+ containing_type=None,
+ fields=[
+   _descriptor.FieldDescriptor(
+     name='key', full_name='oink.dataplane.ModelInferResponse.ParametersEntry.key', index=0,
+     number=1, type=9, cpp_type=9, label=1,
+     has_default_value=False, default_value=b"".decode('utf-8'),
+     message_type=None, enum_type=None, containing_type=None,
+     is_extension=False, extension_scope=None,
+     serialized_options=None, file=DESCRIPTOR),
+   _descriptor.FieldDescriptor(
+     name='value', full_name='oink.dataplane.ModelInferResponse.ParametersEntry.value', index=1,
+     number=2, type=11, cpp_type=10, label=1,
+     has_default_value=False, default_value=None,
+     message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
   ],
