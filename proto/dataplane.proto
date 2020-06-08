@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package oink.dataplane;
+package mlserver.dataplane;
 
 //
 // Inference Server GRPC endpoints.

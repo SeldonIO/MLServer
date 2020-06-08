@@ -8,4 +8,4 @@ generate:
 	./hack/generate-types.sh
 
 run: 
-	python -m oink
+	python -m mlserver
