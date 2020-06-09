@@ -16,7 +16,8 @@ _generate_pb() {
 _generate_pydantic() {
   datamodel-codegen \
     --input "${ROOT_FOLDER}/openapi/dataplane.yaml" \
-    --output "${ROOT_FOLDER}/mlserver/types.py"
+    --output "${ROOT_FOLDER}/mlserver/types.py" \
+    --custom-template-dir "${ROOT_FOLDER}/hack/templates"
 }
 
 _generate_pb
