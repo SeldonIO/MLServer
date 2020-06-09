@@ -8,16 +8,6 @@
 *.pyc
 bin
 
-# Test binary, build with `go test -c`
-*.test
-
-# Output of the go coverage tool, specifically when used with LiteIDE
-*.out
-
-# Kubernetes Generated files - skip generated files, except for vendored files
-
-!vendor/**/zz_generated.*
-
 # Mac file system
 **/.DS_Store
  
@@ -31,6 +21,10 @@ bin
 
 # Python dev
 .mypy_cache
+eggs/
+.eggs/
+*.egg-info/
+./pytest_cache
 
 # Notebook Checkpoints
 .ipynb_checkpoints
