@@ -10,3 +10,6 @@ generate:
 
 run: 
 	python -m mlserver
+
+test:
+	pytest

@@ -16,7 +16,6 @@ class SumModel(Model):
     def predict(self, payload: InferenceRequest) -> InferenceResponse:
         total = 0
         for inp in payload.inputs:
-            print(inp.data)
             total += sum(inp.data)
 
         output = ResponseOutput(name="total", shape=[1], datatype="INT32", data=[total])
@@ -30,7 +29,7 @@ def sum_model() -> SumModel:
 
 @pytest.fixture
 def inference_request() -> InferenceRequest:
-    payload_path = os.path.join(TESTDATA_PATH, "inference_request.json")
+    payload_path = os.path.join(TESTDATA_PATH, "inference-request.json")
     return InferenceRequest.parse_file(payload_path)
 
 

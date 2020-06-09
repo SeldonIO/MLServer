@@ -22,5 +22,5 @@ class DataPlane:
 
     def infer(self, model_name: str, payload: InferenceRequest) -> InferenceResponse:
         model = self._model_registry.get_model(model_name)
-        # TODO: Handle errors: prediction and model not found
+        # TODO: Handle errors: on prediction and model not found
         return model.predict(payload)
