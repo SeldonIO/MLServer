@@ -32,6 +32,6 @@ class InferenceServicer(GRPCInferenceServiceServicer):
         self, request: pb.ModelInferRequest, context
     ) -> pb.ModelInferResponse:
         payload = ModelInferRequestConverter.to_types(request)
-        result = self.data_plane.infer(model_name=request.model_name, payload=payload)
-        response = ModelInferResponseConverter.to_types(result)
+        result = self._data_plane.infer(model_name=request.model_name, payload=payload)
+        response = ModelInferResponseConverter.from_types(result)
         return response

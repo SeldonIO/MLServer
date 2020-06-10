@@ -1,5 +1,5 @@
 {
-  "model_name": "foo",
+  "model_name": "sum-model",
   "model_version": "1.2.3",
   "inputs": [
     {
