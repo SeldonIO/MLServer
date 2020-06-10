@@ -24,8 +24,19 @@ class ModelInferRequestConverter:
         )
 
     @classmethod
-    def from_types(cls, type_object: types.InferenceRequest) -> pb.ModelInferRequest:
-        pass
+    def from_types(
+        cls, type_object: types.InferenceRequest, model_name: str, model_version: str
+    ) -> pb.ModelInferRequest:
+        return pb.ModelInferRequest(
+            model_name=model_name,
+            model_version=model_version,
+            id=type_object.id,
+            # TODO: Add parameters,
+            inputs=[
+                InferInputTensorConverter.from_types(inp) for inp in type_object.inputs
+            ],
+            # TODO: Add ouputs,
+        )
 
 
 class InferInputTensorConverter:
@@ -45,7 +56,15 @@ class InferInputTensorConverter:
     def from_types(
         cls, type_object: types.RequestInput
     ) -> pb.ModelInferRequest.InferInputTensor:
-        pass
+        return pb.ModelInferRequest.InferInputTensor(
+            name=type_object.name,
+            shape=type_object.shape,
+            datatype=type_object.datatype,
+            # TODO: Add parameters,
+            contents=InferTensorContentsConverter.from_types(
+                type_object.data, datatype=type_object.datatype
+            ),
+        )
 
 
 class InferTensorContentsConverter:
