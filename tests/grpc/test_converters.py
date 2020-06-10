@@ -1,5 +1,10 @@
+from google.protobuf import json_format
 from mlserver import types
-from mlserver.grpc.converters import ModelInferRequestConverter
+from mlserver.grpc.converters import (
+    ModelInferRequestConverter,
+    ModelInferResponseConverter,
+)
+from mlserver.grpc import dataplane_pb2 as pb
 
 
 def test_modelinferrequest_to_types(model_infer_request):
@@ -31,3 +36,25 @@ def test_modelinferrequest_to_types(model_infer_request):
 
     assert type(inference_request) is types.InferenceRequest
     assert dict(inference_request) == dict(expected)
+
+
+def test_modelinferresponse_from_types(inference_response):
+    model_infer_response = ModelInferResponseConverter.from_types(inference_response)
+
+    expected = pb.ModelInferResponse(
+        model_name="sum-model",
+        id="123",
+        outputs=[
+            pb.ModelInferResponse.InferOutputTensor(
+                name="output-0",
+                datatype="FP32",
+                shape=[1],
+                contents=pb.InferTensorContents(fp32_contents=[21.0]),
+            )
+        ],
+    )
+
+    assert type(model_infer_response) is pb.ModelInferResponse
+    assert json_format.MessageToDict(model_infer_response) == json_format.MessageToDict(
+        expected
+    )

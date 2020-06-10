@@ -1,5 +1,6 @@
 from . import dataplane_pb2 as pb
 from .dataplane_pb2_grpc import GRPCInferenceServiceServicer
+from .converters import ModelInferRequestConverter
 
 from ..handlers import DataPlane
 
@@ -30,6 +31,6 @@ class InferenceServicer(GRPCInferenceServiceServicer):
     def ModelInfer(
         self, request: pb.ModelInferRequest, context
     ) -> pb.ModelInferResponse:
-        breakpoint()
-        result = self.data_plane.infer(model_name=request.model_name)
+        payload = ModelInferRequestConverter.to_types(request)
+        result = self.data_plane.infer(model_name=request.model_name, payload=payload)
         return result

@@ -4,6 +4,12 @@ from . import dataplane_pb2 as pb
 
 from .. import types
 
+_FIELDS = {
+    "INT32": "int_contents",
+    "FP32": "fp32_contents",
+    # TODO: Add rest of types
+}
+
 
 class ModelInferRequestConverter:
     @classmethod
@@ -59,5 +65,55 @@ class InferTensorContentsConverter:
         return list(field_value)
 
     @classmethod
-    def from_types(cls, type_object: types.TensorData) -> pb.InferTensorContents:
+    def from_types(
+        cls, type_object: types.TensorData, datatype: str
+    ) -> pb.InferTensorContents:
+        contents = cls._get_contents(type_object, datatype)
+        return pb.InferTensorContents(**contents)
+
+    @classmethod
+    def _get_contents(cls, type_object: types.TensorData, datatype: str) -> dict:
+        field = _FIELDS[datatype]
+        # TODO: Flatten object!
+        return {field: type_object}
+
+
+class ModelInferResponseConverter:
+    @classmethod
+    def to_types(cls, pb_object: pb.ModelInferResponse) -> types.InferenceResponse:
         pass
+
+    @classmethod
+    def from_types(cls, type_object: types.InferenceResponse) -> pb.ModelInferResponse:
+        return pb.ModelInferResponse(
+            model_name=type_object.model_name,
+            model_version=type_object.model_version,
+            id=type_object.id,
+            # TODO: Add parameters
+            outputs=[
+                InferOutputTensorConverter.from_types(output)
+                for output in type_object.outputs
+            ],
+        )
+
+
+class InferOutputTensorConverter:
+    @classmethod
+    def to_types(
+        cls, pb_object: pb.ModelInferResponse.InferOutputTensor
+    ) -> types.ResponseOutput:
+        pass
+
+    @classmethod
+    def from_types(
+        cls, type_object: types.ResponseOutput
+    ) -> pb.ModelInferResponse.InferOutputTensor:
+        return pb.ModelInferResponse.InferOutputTensor(
+            name=type_object.name,
+            shape=type_object.shape,
+            datatype=type_object.datatype,
+            # TODO: Add parameters
+            contents=InferTensorContentsConverter.from_types(
+                type_object.data, datatype=type_object.datatype
+            ),
+        )

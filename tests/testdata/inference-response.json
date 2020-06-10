@@ -1,0 +1,12 @@
+{
+  "model_name": "sum-model",
+  "id": "123",
+  "outputs": [
+    {
+      "name": "output-0",
+      "shape": [1],
+      "datatype": "FP32",
+      "data": [21.0]
+    }
+  ]
+}

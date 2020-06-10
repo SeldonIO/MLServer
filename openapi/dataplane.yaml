@@ -151,7 +151,7 @@ components:
         shape:
           type: array
           items:
-            type: number
+            type: integer
       required:
         - name
         - datatype
@@ -232,7 +232,7 @@ components:
         shape:
           type: array
           items:
-            type: number
+            type: integer
         datatype:
           type: string
         parameters:
@@ -272,7 +272,7 @@ components:
         shape:
           type: array
           items:
-            type: number
+            type: integer
         datatype:
           type: string
         parameters:
