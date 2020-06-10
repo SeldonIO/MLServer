@@ -1,14 +1,8 @@
 from mlserver import types
 from mlserver.grpc.converters import ModelInferRequestConverter
-from mlserver.grpc import dataplane_pb2 as pb
-
-from .utils import read_testdata_pb
 
 
-def test_modelinferrequest_to_types():
-    model_infer_request = read_testdata_pb(
-        "model-infer-request.json", pb.ModelInferRequest
-    )
+def test_modelinferrequest_to_types(model_infer_request):
     inference_request = ModelInferRequestConverter.to_types(model_infer_request)
 
     expected = types.InferenceRequest(
