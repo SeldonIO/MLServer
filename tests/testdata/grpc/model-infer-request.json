@@ -1,0 +1,24 @@
+{
+  "model_name": "foo",
+  "model_version": "1.2.3",
+  "inputs": [
+    {
+      "name": "input-0",
+      "datatype": "INT32",
+      "shape": [3],
+      "contents": { "int_contents": [1, 2, 3] }
+    },
+    {
+      "name": "input-1",
+      "datatype": "INT32",
+      "shape": [1],
+      "contents": { "int_contents": [4] }
+    },
+    {
+      "name": "input-2",
+      "datatype": "INT32",
+      "shape": [2],
+      "contents": { "int_contents": [5, 6] }
+    }
+  ]
+}

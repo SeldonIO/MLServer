@@ -27,5 +27,9 @@ class InferenceServicer(GRPCInferenceServiceServicer):
     def ModelMetadata(self, request, context):
         pass
 
-    def ModelInfer(self, request, context):
-        pass
+    def ModelInfer(
+        self, request: pb.ModelInferRequest, context
+    ) -> pb.ModelInferResponse:
+        breakpoint()
+        result = self.data_plane.infer(model_name=request.model_name)
+        return result
