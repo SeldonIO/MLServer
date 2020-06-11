@@ -72,7 +72,13 @@ paths:
     get:
       summary: Your GET endpoint
       tags: []
-      responses: {}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/metadata_model_response'
       operationId: get-v2-models-$-modelName-versions-$-modelVersion
   '/v2/models/${MODEL_NAME}/versions/${MODEL_VERSION}/infer':
     parameters:
@@ -87,11 +93,26 @@ paths:
         in: path
         required: true
     post:
-      summary: ''
+      summary: Inference endpoint
       operationId: post-v2-models-$-MODEL_NAME-versions-$-MODEL_VERSION-infer
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inference_response'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inference_error_response'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/inference_request'
 components:
   schemas:
     metadata_server_response:
