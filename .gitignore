@@ -29,3 +29,5 @@ eggs/
 # Notebook Checkpoints
 .ipynb_checkpoints
 
+# Benchmarking and profiling
+*.prof
