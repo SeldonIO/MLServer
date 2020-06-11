@@ -12,5 +12,6 @@ benchmark-grpc:
 		--insecure \
 		--proto ../proto/dataplane.proto \
 		--call mlserver.dataplane.GRPCInferenceService/ModelInfer \
-		--data-file ./data/grpc-requests.json \
+		--binary-file ./data/grpc-requests.pb \
+		--total 500 \
 		localhost:8081

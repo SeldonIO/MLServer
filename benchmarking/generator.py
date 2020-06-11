@@ -6,7 +6,7 @@ import json
 import numpy as np
 
 from typing import List
-from google.protobuf import json_format
+from google.protobuf.internal.encoder import _VarintBytes
 from mlserver import types
 from mlserver.grpc import converters
 
@@ -16,7 +16,7 @@ DATA_PATH = os.path.join(os.path.dirname(__file__), "data")
 
 
 def generate_test_requests() -> List[types.InferenceRequest]:
-    contents_lens = np.power(2, np.arange(0, 15)).astype(int)
+    contents_lens = np.power(2, np.arange(10, 16)).astype(int)
     max_value = 9999
 
     requests = []
@@ -45,19 +45,26 @@ def save_grpc_requests(requests: List[types.InferenceRequest]):
         )
         for req in requests
     ]
-    infer_requests_dict = [json_format.MessageToDict(req) for req in infer_requests]
-    _save_data("grpc-requests.json", infer_requests_dict)
+
+    requests_file_path = os.path.join(DATA_PATH, "grpc-requests.pb")
+    with open(requests_file_path, "wb") as requests_file:
+        for req in infer_requests:
+            # To stream multiple messages we need to prefix each one with its
+            # size
+            # https://ghz.sh/docs/options#-b---binary
+            size = req.ByteSize()
+            size_varint = _VarintBytes(size)
+            requests_file.write(size_varint)
+
+            serialised = req.SerializeToString()
+            requests_file.write(serialised)
 
 
 def save_rest_requests(requests: List[types.InferenceRequest]):
     infer_requests_dict = [req.dict() for req in requests]
-    _save_data("rest-requests.json", infer_requests_dict)
-
-
-def _save_data(filename: str, payload):
-    file_path = os.path.join(DATA_PATH, filename)
-    with open(file_path, "w") as request_file:
-        json.dump(payload, request_file)
+    requests_file_path = os.path.join(DATA_PATH, "rest-requests.json")
+    with open(requests_file_path, "w") as requests_file:
+        json.dump(infer_requests_dict, requests_file)
 
 
 def main():
