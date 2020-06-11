@@ -79,8 +79,10 @@ class InferTensorContentsConverter:
         if len(fields) == 0:
             return []
 
-        field_name, field_value = fields[0]
         # TODO: log which field_name we are choosing
+        field_name, field_value = fields[0]
+        # We return and use the pb list as-is to avoid copying the tensor
+        # contents.
         return field_value
 
     @classmethod
