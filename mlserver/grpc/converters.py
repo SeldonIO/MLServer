@@ -81,7 +81,7 @@ class InferTensorContentsConverter:
 
         field_name, field_value = fields[0]
         # TODO: log which field_name we are choosing
-        return list(field_value)
+        return field_value
 
     @classmethod
     def from_types(
