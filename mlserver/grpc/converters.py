@@ -14,7 +14,7 @@ _FIELDS = {
 class ModelInferRequestConverter:
     @classmethod
     def to_types(cls, pb_object: pb.ModelInferRequest) -> types.InferenceRequest:
-        return types.InferenceRequest(
+        return types.InferenceRequest.construct(
             id=pb_object.id,
             # TODO: Add parameters,
             inputs=[
@@ -44,7 +44,7 @@ class InferInputTensorConverter:
     def to_types(
         cls, pb_object: pb.ModelInferRequest.InferInputTensor
     ) -> types.RequestInput:
-        return types.RequestInput(
+        return types.RequestInput.construct(
             name=pb_object.name,
             shape=list(pb_object.shape),
             datatype=pb_object.datatype,
