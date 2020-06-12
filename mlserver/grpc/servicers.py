@@ -16,11 +16,17 @@ class InferenceServicer(GRPCInferenceServiceServicer):
         is_live = self._data_plane.live()
         return pb.ServerLiveResponse(live=is_live)
 
-    def ServerReady(self, request, context):
-        pass
+    def ServerReady(
+        self, request: pb.ServerReadyRequest, context
+    ) -> pb.ServerReadyResponse:
+        is_ready = self._data_plane.ready()
+        return pb.ServerReadyResponse(ready=is_ready)
 
-    def ModelReady(self, request, context):
-        pass
+    def ModelReady(
+        self, request: pb.ModelReadyRequest, context
+    ) -> pb.ModelReadyResponse:
+        is_model_ready = self._data_plane.model_ready(model_name=request.name)
+        return pb.ModelReadyResponse(ready=is_model_ready)
 
     def ServerMetadata(self, request, context):
         pass
