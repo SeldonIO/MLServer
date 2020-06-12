@@ -12,6 +12,6 @@ class SumModel(Model):
             total += sum(inp.data)
 
         output = types.ResponseOutput(
-            name="total", shape=[1], datatype="INT32", data=[total]
+            name="total", shape=[1], datatype="FP32", data=[total]
         )
         return types.InferenceResponse(model_name=self.name, id="1", outputs=[output])
