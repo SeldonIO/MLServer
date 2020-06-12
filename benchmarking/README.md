@@ -19,6 +19,21 @@ To install the pre-requisites, you can run:
 make install-dev
 ```
 
+## Data
+
+You can find pre-generated requests under the [`/data`](./data) folder.
+These are formed by payloads with a single input tensor, which varies in length
+from `1024` to `65536`.
+
+### Generate
+
+You can re-generate the test requests by using the
+[`generator.py`](./generator.py) script:
+
+```shell
+python generator.py
+```
+
 ## Usage
 
 For any load test, the first step will be to spin up the test server, which we
