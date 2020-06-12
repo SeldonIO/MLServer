@@ -6,7 +6,7 @@ from .models import SumModel
 
 
 @pytest.mark.parametrize("ready", [True, False])
-def test_dataplane_ready(monkeypatch, data_plane, model_registry, ready):
+def test_ready(monkeypatch, data_plane, model_registry, ready):
     new_model = SumModel("sum-model-2")
     model_registry.load(model_name=new_model.name, model=new_model)
 
@@ -18,7 +18,7 @@ def test_dataplane_ready(monkeypatch, data_plane, model_registry, ready):
 
 
 @pytest.mark.parametrize("ready", [True, False])
-def test_dataplane_model_ready(monkeypatch, data_plane, sum_model, ready):
+def test_model_ready(monkeypatch, data_plane, sum_model, ready):
     monkeypatch.setattr(sum_model, "ready", lambda: ready)
 
     model_ready = data_plane.model_ready(sum_model.name)
@@ -26,7 +26,7 @@ def test_dataplane_model_ready(monkeypatch, data_plane, sum_model, ready):
     assert model_ready == ready
 
 
-def test_dataplane_infer(data_plane, sum_model, inference_request):
+def test_infer(data_plane, sum_model, inference_request):
     prediction = data_plane.infer(sum_model.name, inference_request)
 
     expected = TensorData.parse_obj([21.0])
