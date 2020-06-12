@@ -3,25 +3,12 @@ import os
 
 from mlserver.handlers import DataPlane
 from mlserver.registry import ModelRegistry
-from mlserver.model import Model
 from mlserver import types
+
+from .models import SumModel
 
 TESTS_PATH = os.path.dirname(__file__)
 TESTDATA_PATH = os.path.join(TESTS_PATH, "testdata")
-
-
-class SumModel(Model):
-    name = "sum-model"
-
-    def predict(self, payload: types.InferenceRequest) -> types.InferenceResponse:
-        total = 0
-        for inp in payload.inputs:
-            total += sum(inp.data)
-
-        output = types.ResponseOutput(
-            name="total", shape=[1], datatype="INT32", data=[total]
-        )
-        return types.InferenceResponse(model_name=self.name, id="1", outputs=[output])
 
 
 @pytest.fixture

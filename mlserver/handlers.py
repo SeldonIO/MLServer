@@ -15,12 +15,25 @@ class DataPlane:
         return True
 
     def ready(self) -> bool:
-        return True
+        models = self._model_registry.get_models()
+        return all([model.ready() for model in models])
+
+    def model_ready(self, model_name: str) -> bool:
+        # TODO: Handle model version
+        model = self._model_registry.get_model(model_name)
+        # TODO: Handle model not found errors
+        return model.ready()
 
     def metadata(self):
         pass
 
+    def model_metadata(self, model_name: str):
+        # TODO: Handle model version
+        pass
+
     def infer(self, model_name: str, payload: InferenceRequest) -> InferenceResponse:
+        # TODO: Handle model version
         model = self._model_registry.get_model(model_name)
-        # TODO: Handle errors: on prediction and model not found
+        # TODO: Handle model not found errors
+        # TODO: Handle prediction errors
         return model.predict(payload)

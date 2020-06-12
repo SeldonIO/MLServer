@@ -1,3 +1,5 @@
+from typing import List
+
 from .model import Model
 
 
@@ -23,3 +25,6 @@ class ModelRegistry:
         # TODO: Check if model exists
         # TODO: Handle model version
         return self._models[model_name]
+
+    def get_models(self) -> List[Model]:
+        return self._models.values()
