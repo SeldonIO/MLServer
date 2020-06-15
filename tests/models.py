@@ -1,11 +1,7 @@
-from mlserver.model import Model
-from mlserver import types
+from mlserver import types, MLModel
 
 
-class SumModel(Model):
-    def __init__(self, name: str = "sum-model"):
-        self.name = name
-
+class SumModel(MLModel):
     def predict(self, payload: types.InferenceRequest) -> types.InferenceResponse:
         total = 0
         for inp in payload.inputs:

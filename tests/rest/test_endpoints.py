@@ -16,16 +16,14 @@ def test_ready(rest_client):
 
 
 def test_model_ready(rest_client, sum_model):
-    version = "1.2.3"
-    endpoint = f"/v2/models/{sum_model.name}/versions/{version}/ready"
+    endpoint = f"/v2/models/{sum_model.name}/versions/{sum_model.version}/ready"
     response = rest_client.get(endpoint)
 
     assert response.status_code == 200
 
 
 def test_infer(rest_client, sum_model, inference_request):
-    version = "1.2.3"
-    endpoint = f"/v2/models/{sum_model.name}/versions/{version}/infer"
+    endpoint = f"/v2/models/{sum_model.name}/versions/{sum_model.version}/infer"
     response = rest_client.post(endpoint, json=inference_request.dict())
 
     expected = types.TensorData.parse_obj([21.0])

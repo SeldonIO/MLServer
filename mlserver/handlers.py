@@ -16,13 +16,13 @@ class DataPlane:
 
     def ready(self) -> bool:
         models = self._model_registry.get_models()
-        return all([model.ready() for model in models])
+        return all([model.ready for model in models])
 
     def model_ready(self, model_name: str) -> bool:
         # TODO: Handle model version
         model = self._model_registry.get_model(model_name)
         # TODO: Handle model not found errors
-        return model.ready()
+        return model.ready
 
     def metadata(self):
         pass

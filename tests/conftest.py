@@ -13,7 +13,7 @@ TESTDATA_PATH = os.path.join(TESTS_PATH, "testdata")
 
 @pytest.fixture
 def sum_model() -> SumModel:
-    return SumModel()
+    return SumModel("sum-model", "1.2.3")
 
 
 @pytest.fixture
