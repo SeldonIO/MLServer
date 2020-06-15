@@ -1,8 +1,9 @@
-from fastapi import status
 from fastapi.responses import Response
 
 from ..types import InferenceRequest, InferenceResponse
 from ..handlers import DataPlane
+
+from .utils import to_status_code
 
 
 class Endpoints:
@@ -16,8 +17,16 @@ class Endpoints:
         self._data_plane = data_plane
 
     def live(self) -> Response:
-        #  is_live = self._data_plane.live()
-        return Response(status_code=status.HTTP_200_OK)
+        is_live = self._data_plane.live()
+        return Response(status_code=to_status_code(is_live))
+
+    def ready(self) -> Response:
+        is_ready = self._data_plane.ready()
+        return Response(status_code=to_status_code(is_ready))
+
+    def model_ready(self, model_name: str, model_version: str) -> Response:
+        is_ready = self._data_plane.model_ready(model_name)
+        return Response(status_code=to_status_code(is_ready))
 
     def infer(
         self, model_name: str, model_version: str, payload: InferenceRequest
