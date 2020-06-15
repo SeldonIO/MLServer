@@ -273,7 +273,6 @@ components:
           - $ref: '#/components/schemas/tensor_data'
           - type:
               - number
-              - integer
               - string
               - boolean
     request_output:
