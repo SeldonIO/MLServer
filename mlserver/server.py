@@ -1,6 +1,6 @@
 import uvicorn
 import multiprocessing
-from typing import List, Union
+from typing import List
 
 from .model import MLModel
 from .settings import Settings
@@ -11,13 +11,10 @@ from .grpc import create_server
 
 
 class MLServer:
-    def __init__(self, settings: Settings, models: Union[List[MLModel], MLModel] = []):
+    def __init__(self, settings: Settings, models: List[MLModel] = []):
         self._model_registry = ModelRegistry()
         self._settings = settings
         self._data_plane = DataPlane(self._model_registry)
-
-        if not isinstance(models, list):
-            models = [models]
 
         for model in models:
             self._model_registry.load(model.name, model)
