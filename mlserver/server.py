@@ -20,6 +20,8 @@ class MLServer:
             self._model_registry.load(model.name, model)
 
     def start(self):
+        # TODO: Explore using gRPC's AsyncIO support to run on single event
+        # loop
         self._rest_process = self._start(self._rest)
         self._grpc_process = self._start(self._grpc)
 
