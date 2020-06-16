@@ -30,4 +30,5 @@ eggs/
 .ipynb_checkpoints
 
 # Benchmarking and profiling
+benchmarking/profiles/
 *.prof
