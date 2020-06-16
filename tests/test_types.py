@@ -7,20 +7,10 @@ from mlserver import types
 @pytest.mark.parametrize(
     "data",
     [
-        pytest.param(
-            [1, 2, 3],
-            marks=pytest.mark.xfail(
-                reason="unable to differentiate between int and float"
-            ),
-        ),
+        [1, 2, 3],
         [1.0, 2.0, 3.0],
         [34.5, 8.4],
-        pytest.param(
-            [True, False, True],
-            marks=pytest.mark.xfail(
-                reason="unable to differentiate between bool and number"
-            ),
-        ),
+        [True, False, True],
         ["one", "two", "three"],
     ],
 )
