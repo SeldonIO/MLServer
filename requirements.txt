@@ -1,4 +1,5 @@
 grpcio==1.29.0
 fastapi==0.55.1
 uvicorn==0.11.5
+orjson==3.1.0
 
