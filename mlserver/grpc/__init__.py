@@ -1,3 +1,3 @@
-from .server import create_server
+from .server import GRPCServer
 
-__all__ = [create_server]
+__all__ = [GRPCServer]

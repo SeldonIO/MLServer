@@ -1,3 +1,3 @@
-from .app import create_app
+from .server import RESTServer
 
-__all__ = [create_app]
+__all__ = [RESTServer]

@@ -8,13 +8,20 @@ from .servicers import InferenceServicer
 from .dataplane_pb2_grpc import add_GRPCInferenceServiceServicer_to_server
 
 
-def create_server(settings: Settings, data_plane: DataPlane) -> grpc.Server:
-    servicer = InferenceServicer(data_plane)
+class GRPCServer:
+    def __init__(self, settings: Settings, data_plane: DataPlane):
+        self._setttings = settings
+        self._data_plane = data_plane
 
-    server = grpc.server(ThreadPoolExecutor(max_workers=settings.grpc_workers))
+    def start(self):
+        self._servicer = InferenceServicer(self._data_plane)
+        self._server = grpc.server(
+            ThreadPoolExecutor(max_workers=self._settings.grpc_workers)
+        )
 
-    add_GRPCInferenceServiceServicer_to_server(servicer, server)
+        add_GRPCInferenceServiceServicer_to_server(self._servicer, self._server)
 
-    server.add_insecure_port(f"[::]:{settings.grpc_port}")
+        self._server.add_insecure_port(f"[::]:{self._settings.grpc_port}")
 
-    return server
+        self._server.start()
+        self._server.wait_for_termination()
