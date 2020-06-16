@@ -7,7 +7,7 @@ from mlserver.handlers import DataPlane
 from mlserver.settings import Settings
 from mlserver.grpc import dataplane_pb2 as pb
 from mlserver.grpc.dataplane_pb2_grpc import GRPCInferenceServiceStub
-from mlserver.grpc import create_server
+from mlserver.grpc import GRPCServer
 
 from ..conftest import TESTDATA_PATH
 
@@ -41,10 +41,10 @@ def inference_service_stub(grpc_server, grpc_settings) -> GRPCInferenceServiceSt
 
 @pytest.fixture
 def grpc_server(grpc_settings, data_plane: DataPlane):
-    server = create_server(grpc_settings, data_plane)
-    server.start()
+    server = GRPCServer(grpc_settings, data_plane)
+    server._server.start()
 
     yield server
 
-    ev = server.stop(grace=None)
+    ev = server._server.stop(grace=None)
     ev.wait()

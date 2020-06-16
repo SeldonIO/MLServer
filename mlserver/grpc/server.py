@@ -10,10 +10,11 @@ from .dataplane_pb2_grpc import add_GRPCInferenceServiceServicer_to_server
 
 class GRPCServer:
     def __init__(self, settings: Settings, data_plane: DataPlane):
-        self._setttings = settings
+        self._settings = settings
         self._data_plane = data_plane
+        self._create_server()
 
-    def start(self):
+    def _create_server(self):
         self._servicer = InferenceServicer(self._data_plane)
         self._server = grpc.server(
             ThreadPoolExecutor(max_workers=self._settings.grpc_workers)
@@ -23,5 +24,6 @@ class GRPCServer:
 
         self._server.add_insecure_port(f"[::]:{self._settings.grpc_port}")
 
+    def start(self):
         self._server.start()
         self._server.wait_for_termination()

@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.routing import APIRoute
+from fastapi.responses import ORJSONResponse
 
 from .endpoints import Endpoints
 
@@ -23,6 +24,8 @@ def create_app(settings: Settings, data_plane: DataPlane) -> FastAPI:
         ),
     ]
 
-    app = FastAPI(debug=settings.debug, routes=routes)
+    app = FastAPI(
+        debug=settings.debug, routes=routes, default_response_class=ORJSONResponse
+    )
 
     return app

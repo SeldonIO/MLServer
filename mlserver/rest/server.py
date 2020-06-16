@@ -8,9 +8,14 @@ from .app import create_app
 
 class RESTServer:
     def __init__(self, settings: Settings, data_plane: DataPlane):
-        self._setttings = settings
+        self._settings = settings
         self._data_plane = data_plane
+        self._app = create_app(self._settings, self._data_plane)
 
     def start(self):
-        self._app = create_app(self._settings, self._data_plane)
-        uvicorn.run(self._app, port=self._settings.http_port)
+        uvicorn.run(
+            self._app,
+            port=self._settings.http_port,
+            #  workers=self._settings.http_workers,
+            #  loop="uvloop",
+        )
