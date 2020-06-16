@@ -61,7 +61,10 @@ def save_grpc_requests(requests: List[types.InferenceRequest]):
 
 
 def save_rest_requests(requests: List[types.InferenceRequest]):
-    infer_requests_dict = [req.dict() for req in requests]
+    # infer_requests_dict = [req.dict() for req in requests]
+    # wrk doesn't work with multiple payloads, so take the last one.
+    # We should consider moving to locust.
+    infer_requests_dict = requests[-1].dict()
     requests_file_path = os.path.join(DATA_PATH, "rest-requests.json")
     with open(requests_file_path, "w") as requests_file:
         json.dump(infer_requests_dict, requests_file)

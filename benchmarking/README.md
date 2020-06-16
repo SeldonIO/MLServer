@@ -12,7 +12,8 @@ These load tests are run locally against a local server.
 
 ## Setup
 
-The gRPC benchmark uses [`ghz`](https://ghz.sh/).
+The gRPC benchmark uses [`ghz`](https://ghz.sh/) and the HTTP benchmark uses
+[`hey`](https://github.com/rakyll/hey).
 To install the pre-requisites, you can run:
 
 ```shell
