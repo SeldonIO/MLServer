@@ -3,6 +3,8 @@ Template coming from
 https://github.com/koxudaxi/datamodel-code-generator/blob/master/datamodel_code_generator/model/template/pydantic/BaseModel_root.jinja2.
 We override it to inject `__iter__` and `__getitem__`, as per
 https://pydantic-docs.helpmanual.io/usage/models/#custom-root-types
+
+**NOTE: We also disable validation**
 #}
 {% for decorator in decorators -%}
 {{ decorator }}
@@ -25,4 +27,14 @@ class {{ class_name }}({{ base_class }}):
 
     def __getitem__(self, idx):
         return self.__root__[idx]
+
+    @classmethod
+    def __get_validators__(cls):
+        yield cls.validate
+
+    @classmethod
+    def validate(cls, v):
+        if isinstance(v, dict):
+            return v.get("__root__", [])
+        return v
 {%- endif %}
