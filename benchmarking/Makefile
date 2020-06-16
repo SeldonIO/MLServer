@@ -1,6 +1,12 @@
 start-testserver:
 	python testserver.py
 
+profile-testserver:
+	mkdir -p profiles
+	python -m cProfile \
+		-o "profiles/$(shell date +'%Y-%m-%dT%H:%M:%S').prof" \
+		testserver.py
+
 install-dev:
 	GO111MODULE=on go get github.com/bojand/ghz/cmd/ghz@v0.55.0
 	GO111MODULE=on go get github.com/rakyll/hey@v0.1.3
