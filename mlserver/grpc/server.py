@@ -12,7 +12,6 @@ class GRPCServer:
     def __init__(self, settings: Settings, data_plane: DataPlane):
         self._settings = settings
         self._data_plane = data_plane
-        self._create_server()
 
     def _create_server(self):
         self._servicer = InferenceServicer(self._data_plane)
@@ -24,6 +23,9 @@ class GRPCServer:
 
         self._server.add_insecure_port(f"[::]:{self._settings.grpc_port}")
 
+        return self._server
+
     def start(self):
+        self._create_server()
         self._server.start()
         self._server.wait_for_termination()

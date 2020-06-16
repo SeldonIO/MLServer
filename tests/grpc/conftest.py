@@ -1,7 +1,6 @@
 import os
 import pytest
 import grpc
-
 from google.protobuf import json_format
 from mlserver.handlers import DataPlane
 from mlserver.settings import Settings
@@ -42,6 +41,7 @@ def inference_service_stub(grpc_server, grpc_settings) -> GRPCInferenceServiceSt
 @pytest.fixture
 def grpc_server(grpc_settings, data_plane: DataPlane):
     server = GRPCServer(grpc_settings, data_plane)
+    server._create_server()
     server._server.start()
 
     yield server
