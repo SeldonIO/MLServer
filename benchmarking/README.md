@@ -8,7 +8,8 @@ These load tests are run locally against a local server.
 
 |      | Requests/sec | Average (ms) | Slowest (ms) | Fastest (ms) |
 | ---- | ------------ | ------------ | ------------ | ------------ |
-| gRPC | 1183.49      | 40.48        | 189.93       | 0.78         |
+| gRPC | 1259.10      | 78.74        | 513.39       | 0.60         |
+| REST | 272.33       | 183.2        | 332.3        | 34.7         |
 
 ## Setup
 
@@ -23,8 +24,7 @@ make install-dev
 ## Data
 
 You can find pre-generated requests under the [`/data`](./data) folder.
-These are formed by payloads with a single input tensor, which varies in length
-from `1024` to `65536`.
+These are formed by payloads with a single input tensor, which varies in length from `1024` to `65536`.
 
 ### Generate
 
