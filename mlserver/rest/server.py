@@ -14,8 +14,5 @@ class RESTServer:
 
     def start(self):
         uvicorn.run(
-            self._app,
-            port=self._settings.http_port,
-            #  workers=self._settings.http_workers,
-            #  loop="uvloop",
+            self._app, port=self._settings.http_port,
         )
