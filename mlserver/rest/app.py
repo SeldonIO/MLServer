@@ -1,11 +1,28 @@
-from fastapi import FastAPI
-from fastapi.routing import APIRoute
+from typing import Callable
+from fastapi import FastAPI, Request, Response
+from fastapi.routing import APIRoute as FastAPIRoute
 from fastapi.responses import ORJSONResponse
 
 from .endpoints import Endpoints
+from .requests import ORJSONRequest
 
 from ..settings import Settings
 from ..handlers import DataPlane
+
+
+class APIRoute(FastAPIRoute):
+    """
+    Custom route to use ORJSONRequest handler.
+    """
+
+    def get_route_handler(self) -> Callable:
+        original_route_handler = super().get_route_handler()
+
+        async def custom_route_handler(request: Request) -> Response:
+            request = ORJSONRequest(request.scope, request.receive)
+            return await original_route_handler(request)
+
+        return custom_route_handler
 
 
 def create_app(settings: Settings, data_plane: DataPlane) -> FastAPI:
