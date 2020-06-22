@@ -13,7 +13,9 @@ class MLServer:
     def __init__(self, settings: Settings, models: List[MLModel] = []):
         self._model_registry = ModelRegistry()
         self._settings = settings
-        self._data_plane = DataPlane(self._model_registry)
+        self._data_plane = DataPlane(
+            settings=self._settings, model_registry=self._model_registry
+        )
 
         for model in models:
             self._model_registry.load(model.name, model)
