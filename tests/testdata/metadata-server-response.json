@@ -1,0 +1,5 @@
+{
+  "name": "mlserver",
+  "version": "v0.1.0",
+  "extensions": ["metrics"]
+}

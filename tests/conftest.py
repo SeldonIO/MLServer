@@ -17,6 +17,12 @@ def sum_model() -> SumModel:
 
 
 @pytest.fixture
+def metadata_server_response() -> types.MetadataServerResponse:
+    payload_path = os.path.join(TESTDATA_PATH, "metadata-server-response.json")
+    return types.MetadataServerResponse.parse_file(payload_path)
+
+
+@pytest.fixture
 def inference_request() -> types.InferenceRequest:
     payload_path = os.path.join(TESTDATA_PATH, "inference-request.json")
     return types.InferenceRequest.parse_file(payload_path)

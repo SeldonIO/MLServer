@@ -11,6 +11,24 @@ _FIELDS = {
 }
 
 
+class ServerMetadataResponseConverter:
+    @classmethod
+    def to_types(
+        cls, pb_object: pb.ServerMetadataResponse
+    ) -> types.MetadataServerResponse:
+        pass
+
+    @classmethod
+    def from_types(
+        cls, type_object: types.MetadataServerResponse
+    ) -> pb.ServerMetadataResponse:
+        return pb.ServerMetadataResponse(
+            name=type_object.name,
+            version=type_object.version,
+            extensions=type_object.extensions,
+        )
+
+
 class ModelInferRequestConverter:
     @classmethod
     def to_types(cls, pb_object: pb.ModelInferRequest) -> types.InferenceRequest:

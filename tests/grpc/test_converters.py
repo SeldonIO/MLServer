@@ -3,8 +3,17 @@ from mlserver import types
 from mlserver.grpc.converters import (
     ModelInferRequestConverter,
     ModelInferResponseConverter,
+    ServerMetadataResponseConverter,
 )
 from mlserver.grpc import dataplane_pb2 as pb
+
+
+def test_servermetadataresponse_from_types(metadata_server_response):
+    metadata = ServerMetadataResponseConverter.from_types(metadata_server_response)
+
+    assert metadata.name == metadata_server_response.name
+    assert metadata.version == metadata_server_response.version
+    assert metadata.extensions == metadata_server_response.extensions
 
 
 def test_modelinferrequest_to_types(model_infer_request):
