@@ -1,4 +1,5 @@
 from mlserver.grpc import dataplane_pb2 as pb
+from mlserver import __version__
 
 
 def test_server_live(inference_service_stub):
@@ -20,6 +21,15 @@ def test_server_model_ready(inference_service_stub, sum_model):
     response = inference_service_stub.ModelReady(req)
 
     assert response.ready
+
+
+def test_server_metadata(inference_service_stub):
+    req = pb.ServerMetadataRequest()
+    response = inference_service_stub.ServerMetadata(req)
+
+    assert response.name == "mlserver"
+    assert response.version == __version__
+    assert response.extensions == []
 
 
 def test_model_infer(inference_service_stub, model_infer_request):

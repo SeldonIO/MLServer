@@ -1,6 +1,10 @@
 from . import dataplane_pb2 as pb
 from .dataplane_pb2_grpc import GRPCInferenceServiceServicer
-from .converters import ModelInferRequestConverter, ModelInferResponseConverter
+from .converters import (
+    ModelInferRequestConverter,
+    ModelInferResponseConverter,
+    ServerMetadataResponseConverter,
+)
 
 from ..handlers import DataPlane
 
@@ -28,8 +32,11 @@ class InferenceServicer(GRPCInferenceServiceServicer):
         is_model_ready = self._data_plane.model_ready(model_name=request.name)
         return pb.ModelReadyResponse(ready=is_model_ready)
 
-    def ServerMetadata(self, request, context):
-        pass
+    def ServerMetadata(
+        self, request: pb.ServerMetadataRequest, context
+    ) -> pb.ServerMetadataResponse:
+        metadata = self._data_plane.metadata()
+        return ServerMetadataResponseConverter.from_types(metadata)
 
     def ModelMetadata(self, request, context):
         pass
