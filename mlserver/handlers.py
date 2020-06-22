@@ -1,5 +1,6 @@
+from .settings import Settings
 from .registry import ModelRegistry
-from .types import InferenceRequest, InferenceResponse
+from .types import MetadataServerResponse, InferenceRequest, InferenceResponse
 
 
 class DataPlane:
@@ -8,7 +9,8 @@ class DataPlane:
     servers.
     """
 
-    def __init__(self, model_registry: ModelRegistry):
+    def __init__(self, settings: Settings, model_registry: ModelRegistry):
+        self._settings = settings
         self._model_registry = model_registry
 
     def live(self) -> bool:
@@ -24,8 +26,12 @@ class DataPlane:
         # TODO: Handle model not found errors
         return model.ready
 
-    def metadata(self):
-        pass
+    def metadata(self) -> MetadataServerResponse:
+        return MetadataServerResponse(
+            name=self._settings.server_name,
+            version=self._settings.server_version,
+            extensions=self._settings.extensions,
+        )
 
     def model_metadata(self, model_name: str):
         # TODO: Handle model version

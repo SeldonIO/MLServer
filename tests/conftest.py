@@ -3,7 +3,7 @@ import os
 
 from mlserver.handlers import DataPlane
 from mlserver.registry import ModelRegistry
-from mlserver import types
+from mlserver import types, Settings
 
 from .models import SumModel
 
@@ -36,5 +36,11 @@ def model_registry(sum_model: SumModel) -> ModelRegistry:
 
 
 @pytest.fixture
-def data_plane(model_registry: ModelRegistry) -> DataPlane:
-    return DataPlane(model_registry=model_registry)
+def settings() -> Settings:
+    settings = Settings(debug=True)
+    return settings
+
+
+@pytest.fixture
+def data_plane(settings: Settings, model_registry: ModelRegistry) -> DataPlane:
+    return DataPlane(settings=settings, model_registry=model_registry)
