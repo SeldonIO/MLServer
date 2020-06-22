@@ -1,6 +1,6 @@
 from fastapi.responses import Response
 
-from ..types import InferenceRequest, InferenceResponse
+from ..types import MetadataServerResponse, InferenceRequest, InferenceResponse
 from ..handlers import DataPlane
 
 from .utils import to_status_code
@@ -27,6 +27,9 @@ class Endpoints:
     def model_ready(self, model_name: str, model_version: str) -> Response:
         is_ready = self._data_plane.model_ready(model_name)
         return Response(status_code=to_status_code(is_ready))
+
+    def metadata(self) -> MetadataServerResponse:
+        return self._data_plane.metadata()
 
     def infer(
         self, model_name: str, model_version: str, payload: InferenceRequest

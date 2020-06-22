@@ -34,6 +34,7 @@ def create_app(settings: Settings, data_plane: DataPlane) -> FastAPI:
             "/v2/models/{model_name}/versions/{model_version}/ready",
             endpoints.model_ready,
         ),
+        APIRoute("/v2", endpoints.metadata,),
         APIRoute(
             "/v2/models/{model_name}/versions/{model_version}/infer",
             endpoints.infer,

@@ -1,4 +1,4 @@
-from mlserver import types
+from mlserver import types, __version__
 
 
 def test_live(rest_client):
@@ -20,6 +20,17 @@ def test_model_ready(rest_client, sum_model):
     response = rest_client.get(endpoint)
 
     assert response.status_code == 200
+
+
+def test_metadata(rest_client):
+    endpoint = "/v2"
+    response = rest_client.get(endpoint)
+
+    metadata = types.MetadataServerResponse.parse_obj(response.json())
+
+    assert metadata.name == "mlserver"
+    assert metadata.version == __version__
+    assert metadata.extensions == []
 
 
 def test_infer(rest_client, sum_model, inference_request):
