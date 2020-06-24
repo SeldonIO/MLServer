@@ -1,6 +1,11 @@
 from .settings import Settings
 from .repository import ModelRepository
-from .types import MetadataServerResponse, InferenceRequest, InferenceResponse
+from .types import (
+    MetadataModelResponse,
+    MetadataServerResponse,
+    InferenceRequest,
+    InferenceResponse,
+)
 
 
 class DataPlane:
@@ -33,9 +38,11 @@ class DataPlane:
             extensions=self._settings.extensions,
         )
 
-    def model_metadata(self, model_name: str):
+    def model_metadata(self, model_name: str) -> MetadataModelResponse:
         # TODO: Handle model version
-        pass
+        model = self._model_repository.get_model(model_name)
+        # TODO: Handle model not found errors
+        return model.metadata()
 
     def infer(self, model_name: str, payload: InferenceRequest) -> InferenceResponse:
         # TODO: Handle model version

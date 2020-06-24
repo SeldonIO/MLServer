@@ -20,12 +20,11 @@ class MLModel:
     def version(self) -> str:
         return self._settings.version
 
-    @property
     def metadata(self) -> MetadataModelResponse:
         return MetadataModelResponse(
             name=self.name,
-            versions=self._settings.versions,
             platform=self._settings.platform,
+            versions=self._settings.versions,
             inputs=self._settings.inputs,
         )
 
