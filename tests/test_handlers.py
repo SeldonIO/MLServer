@@ -7,8 +7,8 @@ from .models import SumModel
 
 @pytest.mark.parametrize("ready", [True, False])
 def test_ready(data_plane, model_repository, ready):
-    model_settings = ModelSettings(name="sum-model-2")
-    new_model = SumModel(model_settings, "1.2.3")
+    model_settings = ModelSettings(name="sum-model-2", version="v1.2.3")
+    new_model = SumModel(model_settings)
     model_repository.load(new_model)
 
     new_model.ready = ready

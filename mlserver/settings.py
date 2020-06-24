@@ -21,6 +21,7 @@ class Settings(BaseSettings):
 
 class ModelSettings(BaseSettings):
     name: str
+    version: str
 
     # Model metadata
     platform: str = ""

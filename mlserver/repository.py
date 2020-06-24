@@ -1,7 +1,6 @@
 from typing import List
 
 from .model import MLModel
-from .settings import ModelSettings
 
 
 class ModelRepository:

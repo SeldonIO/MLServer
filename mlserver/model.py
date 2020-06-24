@@ -8,14 +8,17 @@ class MLModel:
     models.
     """
 
-    def __init__(self, settings: ModelSettings, version: str):
+    def __init__(self, settings: ModelSettings):
         self._settings = settings
-        self.version = version
         self.ready = False
 
     @property
     def name(self) -> str:
         return self._settings.name
+
+    @property
+    def version(self) -> str:
+        return self._settings.version
 
     @property
     def metadata(self) -> MetadataModelResponse:
