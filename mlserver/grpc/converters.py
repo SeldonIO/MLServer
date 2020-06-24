@@ -29,6 +29,48 @@ class ServerMetadataResponseConverter:
         )
 
 
+class ModelMetadataResponseConverter:
+    @classmethod
+    def to_types(
+        cls, pb_object: pb.ModelMetadataResponse
+    ) -> types.MetadataModelResponse:
+        pass
+
+    @classmethod
+    def from_types(
+        cls, type_object: types.MetadataModelResponse
+    ) -> pb.ModelMetadataResponse:
+        return pb.ModelMetadataResponse(
+            name=type_object.name,
+            platform=type_object.platform,
+            versions=type_object.versions,
+            inputs=[
+                TensorMetadataConverter.from_types(inp) for inp in type_object.inputs
+            ],
+            outputs=[
+                TensorMetadataConverter.from_types(out) for out in type_object.outputs
+            ],
+        )
+
+
+class TensorMetadataConverter:
+    @classmethod
+    def to_types(
+        cls, pb_object: pb.ModelMetadataResponse.TensorMetadata
+    ) -> types.MetadataTensor:
+        pass
+
+    @classmethod
+    def from_types(
+        cls, type_object: types.MetadataTensor
+    ) -> pb.ModelMetadataResponse.TensorMetadata:
+        return pb.ModelMetadataResponse.TensorMetadata(
+            name=type_object.name,
+            datatype=type_object.datatype,
+            shape=type_object.shape,
+        )
+
+
 class ModelInferRequestConverter:
     @classmethod
     def to_types(cls, pb_object: pb.ModelInferRequest) -> types.InferenceRequest:

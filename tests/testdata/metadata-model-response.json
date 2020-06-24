@@ -1,0 +1,19 @@
+{
+  "name": "sum-model",
+  "versions": ["sum-model/v1.2.3"],
+  "platform": "mlserver",
+  "inputs": [
+    {
+      "datatype": "FP32",
+      "name": "input-0",
+      "shape": [128]
+    }
+  ],
+  "outputs": [
+    {
+      "datatype": "FP32",
+      "name": "output-0",
+      "shape": [1]
+    }
+  ]
+}
