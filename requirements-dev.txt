@@ -13,4 +13,6 @@ numpy==1.18.5
 # Linting
 flake8==3.8.3
 flake8-black==0.2.0
+mypy==0.782
+mypy-protobuf==1.23
 

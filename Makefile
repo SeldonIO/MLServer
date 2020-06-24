@@ -16,3 +16,4 @@ test:
 
 lint:
 	flake8 .
+	mypy .

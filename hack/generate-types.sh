@@ -5,6 +5,7 @@ _generate_pb() {
     -I"${ROOT_FOLDER}/proto" \
     --python_out="${ROOT_FOLDER}/mlserver/grpc" \
     --grpc_python_out="${ROOT_FOLDER}/mlserver/grpc" \
+    --mypy_out="${ROOT_FOLDER}/mlserver/grpc" \
     "${ROOT_FOLDER}/proto/dataplane.proto"
 
   # Change to relative import
