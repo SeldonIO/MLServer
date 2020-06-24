@@ -4,6 +4,7 @@ from .converters import (
     ModelInferRequestConverter,
     ModelInferResponseConverter,
     ServerMetadataResponseConverter,
+    ModelMetadataResponseConverter,
 )
 
 from ..handlers import DataPlane
@@ -38,8 +39,11 @@ class InferenceServicer(GRPCInferenceServiceServicer):
         metadata = self._data_plane.metadata()
         return ServerMetadataResponseConverter.from_types(metadata)
 
-    def ModelMetadata(self, request, context):
-        pass
+    def ModelMetadata(
+        self, request: pb.ModelMetadataRequest, context
+    ) -> pb.ModelMetadataResponse:
+        metadata = self._data_plane.model_metadata(model_name=request.name)
+        return ModelMetadataResponseConverter.from_types(metadata)
 
     def ModelInfer(
         self, request: pb.ModelInferRequest, context

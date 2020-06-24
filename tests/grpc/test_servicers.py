@@ -16,7 +16,7 @@ def test_server_ready(inference_service_stub):
     assert response.ready
 
 
-def test_server_model_ready(inference_service_stub, sum_model):
+def test_model_ready(inference_service_stub, sum_model):
     req = pb.ModelReadyRequest(name=sum_model.name)
     response = inference_service_stub.ModelReady(req)
 
@@ -30,6 +30,15 @@ def test_server_metadata(inference_service_stub):
     assert response.name == "mlserver"
     assert response.version == __version__
     assert response.extensions == []
+
+
+def test_model_metadata(inference_service_stub, sum_model_settings):
+    req = pb.ModelMetadataRequest(name=sum_model_settings.name)
+    response = inference_service_stub.ModelMetadata(req)
+
+    assert response.name == sum_model_settings.name
+    assert response.platform == sum_model_settings.platform
+    assert response.versions == sum_model_settings.versions
 
 
 def test_model_infer(inference_service_stub, model_infer_request):
