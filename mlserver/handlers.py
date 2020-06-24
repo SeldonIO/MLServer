@@ -1,5 +1,5 @@
 from .settings import Settings
-from .registry import ModelRegistry
+from .repository import ModelRepository
 from .types import MetadataServerResponse, InferenceRequest, InferenceResponse
 
 
@@ -9,20 +9,20 @@ class DataPlane:
     servers.
     """
 
-    def __init__(self, settings: Settings, model_registry: ModelRegistry):
+    def __init__(self, settings: Settings, model_repository: ModelRepository):
         self._settings = settings
-        self._model_registry = model_registry
+        self._model_repository = model_repository
 
     def live(self) -> bool:
         return True
 
     def ready(self) -> bool:
-        models = self._model_registry.get_models()
+        models = self._model_repository.get_models()
         return all([model.ready for model in models])
 
     def model_ready(self, model_name: str) -> bool:
         # TODO: Handle model version
-        model = self._model_registry.get_model(model_name)
+        model = self._model_repository.get_model(model_name)
         # TODO: Handle model not found errors
         return model.ready
 
@@ -39,7 +39,7 @@ class DataPlane:
 
     def infer(self, model_name: str, payload: InferenceRequest) -> InferenceResponse:
         # TODO: Handle model version
-        model = self._model_registry.get_model(model_name)
+        model = self._model_repository.get_model(model_name)
         # TODO: Handle model not found errors
         # TODO: Handle prediction errors
         return model.predict(payload)

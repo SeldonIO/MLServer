@@ -3,9 +3,9 @@ from typing import List
 from .model import MLModel
 
 
-class ModelRegistry:
+class ModelRepository:
     """
-    Model registry interface, inspired in NVIDIA Triton's `model-repository`
+    Model repository interface, inspired in NVIDIA Triton's `model-repository`
     extension.
     """
 

@@ -3,7 +3,7 @@ from typing import List
 
 from .model import MLModel
 from .settings import Settings
-from .registry import ModelRegistry
+from .repository import ModelRepository
 from .handlers import DataPlane
 from .rest import RESTServer
 from .grpc import GRPCServer
@@ -11,14 +11,14 @@ from .grpc import GRPCServer
 
 class MLServer:
     def __init__(self, settings: Settings, models: List[MLModel] = []):
-        self._model_registry = ModelRegistry()
+        self._model_repository = ModelRepository()
         self._settings = settings
         self._data_plane = DataPlane(
-            settings=self._settings, model_registry=self._model_registry
+            settings=self._settings, model_repository=self._model_repository
         )
 
         for model in models:
-            self._model_registry.load(model.name, model)
+            self._model_repository.load(model.name, model)
 
     def start(self):
         # TODO: Explore using gRPC's AsyncIO support to run on single event
