@@ -26,6 +26,7 @@ class MLModel:
             platform=self._settings.platform,
             versions=self._settings.versions,
             inputs=self._settings.inputs,
+            outputs=self._settings.outputs,
         )
 
     def load(self) -> bool:

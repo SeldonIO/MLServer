@@ -27,3 +27,4 @@ class ModelSettings(BaseSettings):
     platform: str = ""
     versions: Optional[List[str]] = []
     inputs: Optional[List[MetadataTensor]] = []
+    outputs: Optional[List[MetadataTensor]] = []
