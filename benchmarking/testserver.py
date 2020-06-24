@@ -1,7 +1,7 @@
 """
 Starts an inference server.
 """
-from mlserver import types, MLServer, MLModel, Settings
+from mlserver import types, MLServer, MLModel, ModelSettings, Settings
 
 
 class SumModel(MLModel):
@@ -18,7 +18,8 @@ class SumModel(MLModel):
 
 def main():
     settings = Settings(debug=False)
-    sum_model = SumModel(name="sum-model", version="v1.2.3")
+    model_settings = ModelSettings(name="sum-model", version="v1.2.3")
+    sum_model = SumModel(model_settings)
 
     server = MLServer(settings, models=[sum_model])
     server.start()
