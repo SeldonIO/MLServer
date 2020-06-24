@@ -1,12 +1,15 @@
 import pytest
 
+from mlserver import ModelSettings
+
 from .models import SumModel
 
 
 @pytest.mark.parametrize("ready", [True, False])
-def test_ready(data_plane, model_registry, ready):
-    new_model = SumModel("sum-model-2", "1.2.3")
-    model_registry.load(model_name=new_model.name, model=new_model)
+def test_ready(data_plane, model_repository, ready):
+    model_settings = ModelSettings(name="sum-model-2")
+    new_model = SumModel(model_settings, "1.2.3")
+    model_repository.load(new_model)
 
     new_model.ready = ready
 

@@ -1,4 +1,5 @@
-from .types import InferenceRequest, InferenceResponse
+from .types import InferenceRequest, InferenceResponse, MetadataModelResponse
+from .settings import ModelSettings
 
 
 class MLModel:
@@ -7,12 +8,25 @@ class MLModel:
     models.
     """
 
-    def __init__(self, name: str, version: str):
-        self.name = name
+    def __init__(self, settings: ModelSettings, version: str):
+        self._settings = settings
         self.version = version
         self.ready = False
 
-    def load(self):
+    @property
+    def name(self) -> str:
+        return self._settings.name
+
+    @property
+    def metadata(self) -> MetadataModelResponse:
+        return MetadataModelResponse(
+            name=self.name,
+            versions=self._settings.versions,
+            platform=self._settings.platform,
+            inputs=self._settings.inputs,
+        )
+
+    def load(self) -> bool:
         self.ready = True
 
     def predict(self, payload: InferenceRequest) -> InferenceResponse:

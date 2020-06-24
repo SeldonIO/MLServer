@@ -2,8 +2,8 @@ import pytest
 import os
 
 from mlserver.handlers import DataPlane
-from mlserver.registry import ModelRegistry
-from mlserver import types, Settings
+from mlserver.repository import ModelRepository
+from mlserver import types, Settings, ModelSettings
 
 from .models import SumModel
 
@@ -13,7 +13,8 @@ TESTDATA_PATH = os.path.join(TESTS_PATH, "testdata")
 
 @pytest.fixture
 def sum_model() -> SumModel:
-    return SumModel("sum-model", "1.2.3")
+    model_settings = ModelSettings(name="sum-model")
+    return SumModel(settings=model_settings, version="1.2.3")
 
 
 @pytest.fixture
@@ -35,10 +36,10 @@ def inference_response() -> types.InferenceResponse:
 
 
 @pytest.fixture
-def model_registry(sum_model: SumModel) -> ModelRegistry:
-    model_registry = ModelRegistry()
-    model_registry.load(sum_model.name, sum_model)
-    return model_registry
+def model_repository(sum_model: SumModel) -> ModelRepository:
+    model_repository = ModelRepository()
+    model_repository.load(sum_model)
+    return model_repository
 
 
 @pytest.fixture
@@ -48,5 +49,5 @@ def settings() -> Settings:
 
 
 @pytest.fixture
-def data_plane(settings: Settings, model_registry: ModelRegistry) -> DataPlane:
-    return DataPlane(settings=settings, model_registry=model_registry)
+def data_plane(settings: Settings, model_repository: ModelRepository) -> DataPlane:
+    return DataPlane(settings=settings, model_repository=model_repository)

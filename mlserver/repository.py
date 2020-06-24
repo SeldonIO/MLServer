@@ -1,6 +1,7 @@
 from typing import List
 
 from .model import MLModel
+from .settings import ModelSettings
 
 
 class ModelRepository:
@@ -15,9 +16,9 @@ class ModelRepository:
     def index(self):
         pass
 
-    def load(self, model_name: str, model: MLModel):
+    def load(self, model: MLModel):
         model.load()
-        self._models[model_name] = model
+        self._models[model.name] = model
 
     def unload(self):
         pass
