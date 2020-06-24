@@ -13,3 +13,6 @@ run:
 
 test:
 	pytest
+
+lint:
+	flake8 .

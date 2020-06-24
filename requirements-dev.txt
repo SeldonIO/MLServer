@@ -1,7 +1,16 @@
 -r requirements.txt
 
+# Code generation
 grpcio-tools==1.29.0
 datamodel-code-generator==0.5.1
+
+# Testing
 pytest==5.4.3
+
+# Benchmarking
 numpy==1.18.5
+
+# Linting
+flake8==3.8.3
+flake8-black==0.2.0
 
