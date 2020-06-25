@@ -35,7 +35,7 @@ def metadata_server_response() -> types.MetadataServerResponse:
 
 
 @pytest.fixture
-def metadata_model_response() -> types.MetadataServerResponse:
+def metadata_model_response() -> types.MetadataModelResponse:
     payload_path = os.path.join(TESTDATA_PATH, "metadata-model-response.json")
     return types.MetadataModelResponse.parse_file(payload_path)
 

@@ -98,7 +98,7 @@ class InferenceRequest(BaseModel):
     id: Optional[str] = None
     parameters: Optional[Parameters] = None
     inputs: List[RequestInput]
-    outputs: Optional[List[RequestOutput]] = None
+    outputs: Optional[List[RequestOutput]] = []
 
 
 TensorData.update_forward_refs()

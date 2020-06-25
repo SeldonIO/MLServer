@@ -1,5 +1,5 @@
 import multiprocessing
-from typing import List
+from typing import List, Callable
 
 from .model import MLModel
 from .settings import Settings
@@ -18,7 +18,7 @@ class MLServer:
         )
 
         for model in models:
-            self._model_repository.load(model.name, model)
+            self._model_repository.load(model)
 
     def start(self):
         # TODO: Explore using gRPC's AsyncIO support to run on single event
@@ -32,7 +32,7 @@ class MLServer:
         self._rest_process.join()
         self._grpc_process.join()
 
-    def _start(self, target: str):
+    def _start(self, target: Callable):
         p = multiprocessing.Process(target=target)
         p.start()
         return p

@@ -1,3 +1,3 @@
 from .server import RESTServer
 
-__all__ = [RESTServer]
+__all__ = ["RESTServer"]

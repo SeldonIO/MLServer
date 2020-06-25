@@ -40,17 +40,23 @@ class ModelMetadataResponseConverter:
     def from_types(
         cls, type_object: types.MetadataModelResponse
     ) -> pb.ModelMetadataResponse:
-        return pb.ModelMetadataResponse(
+        metadata = pb.ModelMetadataResponse(
             name=type_object.name,
             platform=type_object.platform,
             versions=type_object.versions,
-            inputs=[
-                TensorMetadataConverter.from_types(inp) for inp in type_object.inputs
-            ],
-            outputs=[
-                TensorMetadataConverter.from_types(out) for out in type_object.outputs
-            ],
         )
+
+        if type_object.inputs is not None:
+            metadata.inputs.extend(
+                [TensorMetadataConverter.from_types(inp) for inp in type_object.inputs]
+            )
+
+        if type_object.outputs is not None:
+            metadata.outputs.extend(
+                [TensorMetadataConverter.from_types(out) for out in type_object.outputs]
+            )
+
+        return metadata
 
 
 class TensorMetadataConverter:

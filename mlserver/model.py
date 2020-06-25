@@ -31,6 +31,7 @@ class MLModel:
 
     def load(self) -> bool:
         self.ready = True
+        return self.ready
 
     def predict(self, payload: InferenceRequest) -> InferenceResponse:
         raise NotImplementedError("predict() method not implemented")

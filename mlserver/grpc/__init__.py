@@ -1,3 +1,3 @@
 from .server import GRPCServer
 
-__all__ = [GRPCServer]
+__all__ = ["GRPCServer"]
