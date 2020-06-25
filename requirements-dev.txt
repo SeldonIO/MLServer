@@ -10,9 +10,11 @@ pytest==5.4.3
 # Benchmarking
 numpy==1.18.5
 
-# Linting
+# Linting and formatting
 flake8==3.8.3
 flake8-black==0.2.0
 mypy==0.782
 mypy-protobuf==1.23
+black==19.10b0
+
 

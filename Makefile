@@ -17,3 +17,8 @@ test:
 lint:
 	flake8 .
 	mypy .
+
+fmt:
+	black . \
+		--exclude "(mlserver/grpc/dataplane_pb2*)"
+  
