@@ -1,7 +1,11 @@
 import pytest
 
 from mlserver import ModelSettings
-from mlserver.types import MetadataTensor
+from mlserver.types import (
+    MetadataTensor,
+    MetadataModelErrorResponse,
+    InferenceErrorResponse,
+)
 
 from .models import SumModel
 
@@ -80,8 +84,22 @@ def test_model_metadata(sum_model_settings, data_plane, platform, versions, inpu
     assert metadata.inputs == sum_model_settings.inputs
 
 
+def test_model_metadata_not_found(data_plane):
+    err = data_plane.model_metadata(name="my-model", version="v0")
+
+    assert type(err) == MetadataModelErrorResponse
+    assert err.error == "Model my-model with version v0 not found"
+
+
 def test_infer(data_plane, sum_model, inference_request):
     prediction = data_plane.infer(sum_model.name, sum_model.version, inference_request)
 
     assert len(prediction.outputs) == 1
     assert prediction.outputs[0].data == [21]
+
+
+def test_infer_not_found(data_plane, inference_request):
+    err = data_plane.infer("my-model", "v0", inference_request)
+
+    assert type(err) == InferenceErrorResponse
+    assert err.error == "Model my-model with version v0 not found"
