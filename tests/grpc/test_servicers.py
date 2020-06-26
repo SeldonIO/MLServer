@@ -1,3 +1,6 @@
+import pytest
+import grpc
+
 from mlserver.grpc import dataplane_pb2 as pb
 from mlserver import __version__
 
@@ -50,3 +53,12 @@ def test_model_infer(inference_service_stub, model_infer_request):
 
     assert len(prediction.outputs) == 1
     assert prediction.outputs[0].contents == expected
+
+
+def test_model_infer_error(inference_service_stub, model_infer_request):
+    with pytest.raises(grpc.RpcError) as err:
+        model_infer_request.model_name = "my-model"
+        inference_service_stub.ModelInfer(model_infer_request)
+
+        assert err.status == grpc.Status.INVALID_ARGUMENT
+        assert err.details == "Model my-model with version v1.2.3 not found"

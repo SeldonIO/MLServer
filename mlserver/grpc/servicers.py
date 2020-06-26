@@ -1,3 +1,7 @@
+import grpc
+
+from typing import Callable
+
 from . import dataplane_pb2 as pb
 from .dataplane_pb2_grpc import GRPCInferenceServiceServicer
 from .converters import (
@@ -8,6 +12,18 @@ from .converters import (
 )
 
 from ..handlers import DataPlane
+from ..errors import MLServerError
+
+
+def _handle_mlserver_error(f: Callable):
+    def _inner(self, request, context):
+        try:
+            return f(self, request, context)
+        except MLServerError as err:
+            # TODO: Log error and stacktrace
+            context.abort(code=grpc.StatusCode.INVALID_ARGUMENT, details=str(err))
+
+    return _inner
 
 
 class InferenceServicer(GRPCInferenceServiceServicer):
@@ -41,6 +57,7 @@ class InferenceServicer(GRPCInferenceServiceServicer):
         metadata = self._data_plane.metadata()
         return ServerMetadataResponseConverter.from_types(metadata)
 
+    @_handle_mlserver_error
     def ModelMetadata(
         self, request: pb.ModelMetadataRequest, context
     ) -> pb.ModelMetadataResponse:
@@ -49,6 +66,7 @@ class InferenceServicer(GRPCInferenceServiceServicer):
         )
         return ModelMetadataResponseConverter.from_types(metadata)
 
+    @_handle_mlserver_error
     def ModelInfer(
         self, request: pb.ModelInferRequest, context
     ) -> pb.ModelInferResponse:

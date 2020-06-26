@@ -7,8 +7,10 @@ from mlserver.errors import ModelNotFound
     "name, version", [("sum-model", "v0"), ("sum-model-2", "v0"), ("sum-model", "v2")]
 )
 def test_get_model_not_found(model_repository, name, version):
-    with pytest.raises(ModelNotFound, match=f"{name} with version {version}"):
+    with pytest.raises(ModelNotFound) as err:
         model_repository.get_model(name, version)
+
+        assert err.message == f"Model {name} with version {version} not found"
 
 
 def test_get_model(model_repository, sum_model):
