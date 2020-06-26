@@ -1,34 +1,11 @@
-from typing import Type, Union, Callable
-
 from .settings import Settings
 from .repository import ModelRepository
-from .errors import ModelNotFound
 from .types import (
     MetadataModelResponse,
-    MetadataModelErrorResponse,
     MetadataServerResponse,
     InferenceRequest,
     InferenceResponse,
-    InferenceErrorResponse,
 )
-
-
-def _wrap_exception(
-    response_class: Union[
-        Type[InferenceErrorResponse], Type[MetadataModelErrorResponse]
-    ]
-):
-    def _outer(f):
-        def _inner(*args, **kwargs):
-            try:
-                return f(*args, **kwargs)
-            except ModelNotFound as err:
-                # TODO: Log stacktrace
-                return response_class(error=str(err))
-
-        return _inner
-
-    return _outer
 
 
 class DataPlane:
@@ -59,14 +36,12 @@ class DataPlane:
             extensions=self._settings.extensions,
         )
 
-    @_wrap_exception(MetadataModelErrorResponse)
     def model_metadata(self, name: str, version: str) -> MetadataModelResponse:
         model = self._model_repository.get_model(name, version)
         return model.metadata()
 
-    @_wrap_exception(InferenceErrorResponse)
     def infer(
         self, name: str, version: str, payload: InferenceRequest
-    ) -> Union[InferenceResponse, InferenceErrorResponse]:
+    ) -> InferenceResponse:
         model = self._model_repository.get_model(name, version)
         return model.predict(payload)
