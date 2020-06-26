@@ -5,6 +5,7 @@ from fastapi.responses import ORJSONResponse
 
 from .endpoints import Endpoints
 from .requests import ORJSONRequest
+from .errors import _EXCEPTION_HANDLERS
 
 from ..settings import Settings
 from ..handlers import DataPlane
@@ -50,6 +51,7 @@ def create_app(settings: Settings, data_plane: DataPlane) -> FastAPI:
         debug=settings.debug,
         routes=routes,  # type: ignore
         default_response_class=ORJSONResponse,
+        exception_handlers=_EXCEPTION_HANDLERS,
     )
 
     return app

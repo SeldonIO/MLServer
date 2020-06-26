@@ -56,3 +56,11 @@ def test_infer(rest_client, sum_model, inference_request):
     prediction = types.InferenceResponse.parse_obj(response.json())
     assert len(prediction.outputs) == 1
     assert prediction.outputs[0].data == [21]
+
+
+def test_infer_error(rest_client, inference_request):
+    endpoint = "/v2/models/my-model/versions/v0/infer"
+    response = rest_client.post(endpoint, json=inference_request.dict())
+
+    assert response.status_code == 400
+    assert response.json()["error"] == "Model my-model with version v0 not found"
