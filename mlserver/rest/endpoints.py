@@ -30,7 +30,7 @@ class Endpoints:
         return Response(status_code=to_status_code(is_ready))
 
     def model_ready(self, model_name: str, model_version: str) -> Response:
-        is_ready = self._data_plane.model_ready(model_name)
+        is_ready = self._data_plane.model_ready(model_name, model_version)
         return Response(status_code=to_status_code(is_ready))
 
     def metadata(self) -> MetadataServerResponse:
@@ -39,9 +39,9 @@ class Endpoints:
     def model_metadata(
         self, model_name: str, model_version: str
     ) -> MetadataModelResponse:
-        return self._data_plane.model_metadata(model_name)
+        return self._data_plane.model_metadata(model_name, model_version)
 
     def infer(
         self, model_name: str, model_version: str, payload: InferenceRequest
     ) -> InferenceResponse:
-        return self._data_plane.infer(model_name, payload)
+        return self._data_plane.infer(model_name, model_version, payload)

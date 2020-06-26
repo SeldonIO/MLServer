@@ -30,7 +30,9 @@ class InferenceServicer(GRPCInferenceServiceServicer):
     def ModelReady(
         self, request: pb.ModelReadyRequest, context
     ) -> pb.ModelReadyResponse:
-        is_model_ready = self._data_plane.model_ready(model_name=request.name)
+        is_model_ready = self._data_plane.model_ready(
+            name=request.name, version=request.version
+        )
         return pb.ModelReadyResponse(ready=is_model_ready)
 
     def ServerMetadata(
@@ -42,13 +44,17 @@ class InferenceServicer(GRPCInferenceServiceServicer):
     def ModelMetadata(
         self, request: pb.ModelMetadataRequest, context
     ) -> pb.ModelMetadataResponse:
-        metadata = self._data_plane.model_metadata(model_name=request.name)
+        metadata = self._data_plane.model_metadata(
+            name=request.name, version=request.version
+        )
         return ModelMetadataResponseConverter.from_types(metadata)
 
     def ModelInfer(
         self, request: pb.ModelInferRequest, context
     ) -> pb.ModelInferResponse:
         payload = ModelInferRequestConverter.to_types(request)
-        result = self._data_plane.infer(model_name=request.model_name, payload=payload)
+        result = self._data_plane.infer(
+            name=request.model_name, version=request.model_version, payload=payload
+        )
         response = ModelInferResponseConverter.from_types(result)
         return response

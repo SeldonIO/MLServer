@@ -17,7 +17,7 @@ def test_server_ready(inference_service_stub):
 
 
 def test_model_ready(inference_service_stub, sum_model):
-    req = pb.ModelReadyRequest(name=sum_model.name)
+    req = pb.ModelReadyRequest(name=sum_model.name, version=sum_model.version)
     response = inference_service_stub.ModelReady(req)
 
     assert response.ready
@@ -33,7 +33,9 @@ def test_server_metadata(inference_service_stub):
 
 
 def test_model_metadata(inference_service_stub, sum_model_settings):
-    req = pb.ModelMetadataRequest(name=sum_model_settings.name)
+    req = pb.ModelMetadataRequest(
+        name=sum_model_settings.name, version=sum_model_settings.version
+    )
     response = inference_service_stub.ModelMetadata(req)
 
     assert response.name == sum_model_settings.name
