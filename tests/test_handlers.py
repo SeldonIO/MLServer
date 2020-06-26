@@ -22,7 +22,7 @@ def test_ready(data_plane, model_repository, ready):
 @pytest.mark.parametrize("ready", [True, False])
 def test_model_ready(data_plane, sum_model, ready):
     sum_model.ready = ready
-    model_ready = data_plane.model_ready(sum_model.name)
+    model_ready = data_plane.model_ready(sum_model.name, sum_model.version)
 
     assert model_ready == ready
 
@@ -70,7 +70,9 @@ def test_model_metadata(sum_model_settings, data_plane, platform, versions, inpu
     if inputs is not None:
         sum_model_settings.inputs = inputs
 
-    metadata = data_plane.model_metadata(model_name=sum_model_settings.name)
+    metadata = data_plane.model_metadata(
+        name=sum_model_settings.name, version=sum_model_settings.version
+    )
 
     assert metadata.name == sum_model_settings.name
     assert metadata.platform == sum_model_settings.platform
@@ -79,7 +81,7 @@ def test_model_metadata(sum_model_settings, data_plane, platform, versions, inpu
 
 
 def test_infer(data_plane, sum_model, inference_request):
-    prediction = data_plane.infer(sum_model.name, inference_request)
+    prediction = data_plane.infer(sum_model.name, sum_model.version, inference_request)
 
     assert len(prediction.outputs) == 1
     assert prediction.outputs[0].data == [21]

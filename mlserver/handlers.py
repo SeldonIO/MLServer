@@ -25,10 +25,8 @@ class DataPlane:
         models = self._model_repository.get_models()
         return all([model.ready for model in models])
 
-    def model_ready(self, model_name: str) -> bool:
-        # TODO: Handle model version
-        model = self._model_repository.get_model(model_name)
-        # TODO: Handle model not found errors
+    def model_ready(self, name: str, version: str) -> bool:
+        model = self._model_repository.get_model(name, version)
         return model.ready
 
     def metadata(self) -> MetadataServerResponse:
@@ -38,15 +36,13 @@ class DataPlane:
             extensions=self._settings.extensions,
         )
 
-    def model_metadata(self, model_name: str) -> MetadataModelResponse:
-        # TODO: Handle model version
-        model = self._model_repository.get_model(model_name)
-        # TODO: Handle model not found errors
+    def model_metadata(self, name: str, version: str) -> MetadataModelResponse:
+        model = self._model_repository.get_model(name, version)
         return model.metadata()
 
-    def infer(self, model_name: str, payload: InferenceRequest) -> InferenceResponse:
-        # TODO: Handle model version
-        model = self._model_repository.get_model(model_name)
-        # TODO: Handle model not found errors
+    def infer(
+        self, name: str, version: str, payload: InferenceRequest
+    ) -> InferenceResponse:
+        model = self._model_repository.get_model(name, version)
         # TODO: Handle prediction errors
         return model.predict(payload)
