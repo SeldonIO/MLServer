@@ -5,9 +5,19 @@ from . import dataplane_pb2 as pb
 from .. import types
 
 _FIELDS = {
+    "BOOL": "bool_contents",
+    "UINT8": "uint_contents",
+    "UINT16": "uint_contents",
+    "UINT32": "uint_contents",
+    "UINT64": "uint64_contents",
+    "INT8": "int_contents",
+    "INT16": "int_contents",
     "INT32": "int_contents",
+    "INT64": "int64_contents",
+    "FP16": "raw_contents",
     "FP32": "fp32_contents",
-    # TODO: Add rest of types
+    "FP64": "fp64_contents",
+    "BYTES": "bytes_contents",
 }
 
 
