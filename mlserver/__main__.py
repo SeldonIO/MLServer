@@ -35,13 +35,27 @@ def _import_model(model_module: str) -> Type[MLModel]:
 @click.command("serve", help="Start serving a machine learning model")
 @click.argument("model", nargs=1)
 @click.option(
-    "--model-settings", type=click.Path(exists=True), help="Model settings to load"
+    "--model-settings",
+    type=click.Path(exists=True),
+    required=True,
+    help="Model settings to load",
 )
-def serve(model: str, model_settings: str):
+@click.option("--debug/--production", default=False, help="Run in debug mode")
+@click.option("--http_port", type=int, help="Port for the HTTP server")
+@click.option("--grpc_port", type=int, help="Port for the gRPC server")
+def serve(model: str, model_settings: str, debug: bool, http_port: int, grpc_port: int):
     model_object = _instantiate_model(
         model_module=model, model_settings_path=model_settings
     )
-    settings = Settings()
+
+    print(debug)
+    settings = Settings(debug=debug)
+
+    if http_port is not None:
+        settings.http_port = http_port
+
+    if grpc_port is not None:
+        settings.grpc_port = grpc_port
 
     server = MLServer(settings, models=[model_object])
     server.start()
