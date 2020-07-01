@@ -12,37 +12,16 @@ from .model import MLModel
 from .settings import Settings, ModelSettings
 
 
-def _instantiate_model(model_module: str, model_settings_path: str) -> MLModel:
-    model_class = _import_model(model_module)
-    model_settings = ModelSettings.parse_file(model_settings_path)
-
-    return model_class(model_settings)
-
-
-def _import_model(model_module: str) -> Type[MLModel]:
-    # NOTE: Insert current directory into syspath to load specified model.
-    # TODO: Make model-dir configurable.
-    sys.path.insert(0, ".")
-
-    model_package, model_class_name = model_module.rsplit(".", 1)
-
-    module = importlib.import_module(model_package)
-    model_class = getattr(module, model_class_name)
-
-    # TODO: Validate that `model_class` is a subtype of MLModel
-    return model_class
-
-
 @click.group()
 @click.version_option()
-def main():
+def root():
     """
     Command-line interface to manage MLServer models.
     """
     pass
 
 
-@main.command("serve")
+@root.command("serve")
 @click.argument("model", nargs=1)
 @click.option(
     "--model-settings",
@@ -71,6 +50,31 @@ def serve(model: str, model_settings: str, debug: bool, http_port: int, grpc_por
 
     server = MLServer(settings, models=[model_object])
     server.start()
+
+
+def _instantiate_model(model_module: str, model_settings_path: str) -> MLModel:
+    model_class = _import_model(model_module)
+    model_settings = ModelSettings.parse_file(model_settings_path)
+
+    return model_class(model_settings)
+
+
+def _import_model(model_module: str) -> Type[MLModel]:
+    # NOTE: Insert current directory into syspath to load specified model.
+    # TODO: Make model-dir configurable.
+    sys.path.insert(0, ".")
+
+    model_package, model_class_name = model_module.rsplit(".", 1)
+
+    module = importlib.import_module(model_package)
+    model_class = getattr(module, model_class_name)
+
+    # TODO: Validate that `model_class` is a subtype of MLModel
+    return model_class
+
+
+def main():
+    root()
 
 
 if __name__ == "__main__":
