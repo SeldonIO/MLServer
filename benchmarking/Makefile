@@ -1,5 +1,7 @@
 start-testserver:
-	python -m mlserver 'models.SumModel' --model-settings ../tests/testdata/model-settings.json
+	mlserver serve \
+		'models.SumModel' \
+		--model-settings ../tests/testdata/model-settings.json
 
 install-dev:
 	GO111MODULE=on go get github.com/bojand/ghz/cmd/ghz@v0.55.0

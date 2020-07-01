@@ -1,8 +1,9 @@
 """
-Starts an inference server.
+Command-line interface to manage MLServer models.
 """
 import click
 import importlib
+import sys
 
 from typing import Type
 
@@ -23,6 +24,10 @@ def _instantiate_model(model_module: str, model_settings_path: str) -> MLModel:
 
 
 def _import_model(model_module: str) -> Type[MLModel]:
+    # NOTE: Insert current directory into syspath to load specified model.
+    # TODO: Make model-dir configurable.
+    sys.path.insert(0, ".")
+
     model_package, model_class_name = model_module.rsplit(".", 1)
 
     module = importlib.import_module(model_package)
@@ -41,7 +46,7 @@ def main():
     pass
 
 
-@main.command("serve", help="Start serving a machine learning model")
+@main.command("serve")
 @click.argument("model", nargs=1)
 @click.option(
     "--model-settings",
@@ -53,6 +58,9 @@ def main():
 @click.option("--http_port", type=int, help="Port for the HTTP server")
 @click.option("--grpc_port", type=int, help="Port for the gRPC server")
 def serve(model: str, model_settings: str, debug: bool, http_port: int, grpc_port: int):
+    """
+    Start serving a machine learning model with MLServer.
+    """
     model_object = _instantiate_model(
         model_module=model, model_settings_path=model_settings
     )

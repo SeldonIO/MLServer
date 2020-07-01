@@ -9,7 +9,9 @@ generate:
 	./hack/generate-types.sh
 
 run: 
-	python -m mlserver
+	mlserver serve \
+		'tests.models.SumModel' \
+		--model-settings ./tests/testdata/model-settings.json
 
 test:
 	pytest
