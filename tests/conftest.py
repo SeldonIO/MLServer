@@ -13,14 +13,8 @@ TESTDATA_PATH = os.path.join(TESTS_PATH, "testdata")
 
 @pytest.fixture
 def sum_model_settings() -> ModelSettings:
-    return ModelSettings(
-        name="sum-model",
-        version="1.2.3",
-        platform="mlserver",
-        versions=["sum-model/v1.2.3"],
-        inputs=[types.MetadataTensor(datatype="FP32", name="input-0", shape=[128],)],
-        outputs=[types.MetadataTensor(datatype="FP32", name="output-0", shape=[1],)],
-    )
+    model_settings_path = os.path.join(TESTDATA_PATH, "model-settings.json")
+    return ModelSettings.parse_file(model_settings_path)
 
 
 @pytest.fixture

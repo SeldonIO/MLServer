@@ -14,11 +14,7 @@ from .settings import Settings, ModelSettings
 
 def _instantiate_model(model_module: str, model_settings_path: str) -> MLModel:
     model_class = _import_model(model_module)
-
-    model_settings = None
-    with open(model_settings_path) as model_settings_file:
-        json_content = model_settings_file.read()
-        model_settings = ModelSettings.parse_raw(json_content)
+    model_settings = ModelSettings.parse_file(model_settings_path)
 
     return model_class(model_settings)
 
