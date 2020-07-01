@@ -32,7 +32,16 @@ def _import_model(model_module: str) -> Type[MLModel]:
     return model_class
 
 
-@click.command("serve", help="Start serving a machine learning model")
+@click.group()
+@click.version_option()
+def main():
+    """
+    Command-line interface to manage MLServer models.
+    """
+    pass
+
+
+@main.command("serve", help="Start serving a machine learning model")
 @click.argument("model", nargs=1)
 @click.option(
     "--model-settings",
@@ -58,11 +67,6 @@ def serve(model: str, model_settings: str, debug: bool, http_port: int, grpc_por
 
     server = MLServer(settings, models=[model_object])
     server.start()
-
-
-@click.group()
-def main():
-    pass
 
 
 if __name__ == "__main__":

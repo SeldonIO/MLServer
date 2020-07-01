@@ -36,4 +36,5 @@ setup(
     description="ML server",
     packages=find_packages(),
     install_requires=_load_requirements(),
+    entry_points={"console_scripts": ["mlserver=mlserver.cli:main"]},
 )
