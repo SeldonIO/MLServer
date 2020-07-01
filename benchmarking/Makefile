@@ -1,11 +1,5 @@
 start-testserver:
-	python testserver.py
-
-profile-testserver:
-	mkdir -p profiles
-	python -m cProfile \
-		-o "profiles/$(shell date +'%Y-%m-%dT%H:%M:%S').prof" \
-		testserver.py
+	python -m mlserver 'models.SumModel' --model-settings ../tests/testdata/model-settings.json
 
 install-dev:
 	GO111MODULE=on go get github.com/bojand/ghz/cmd/ghz@v0.55.0

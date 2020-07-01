@@ -1,7 +1,4 @@
-"""
-Starts an inference server.
-"""
-from mlserver import types, MLServer, MLModel, ModelSettings, Settings
+from mlserver import types, MLModel
 
 
 class SumModel(MLModel):
@@ -14,16 +11,3 @@ class SumModel(MLModel):
             name="total", shape=[1], datatype="FP32", data=[total]
         )
         return types.InferenceResponse(model_name=self.name, id="1", outputs=[output])
-
-
-def main():
-    settings = Settings(debug=False)
-    model_settings = ModelSettings(name="sum-model", version="v1.2.3")
-    sum_model = SumModel(model_settings)
-
-    server = MLServer(settings, models=[sum_model])
-    server.start()
-
-
-if __name__ == "__main__":
-    main()

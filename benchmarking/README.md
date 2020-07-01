@@ -9,7 +9,7 @@ These load tests are run locally against a local server.
 |      | Requests/sec | Average (ms) | Slowest (ms) | Fastest (ms) |
 | ---- | ------------ | ------------ | ------------ | ------------ |
 | gRPC | 2806.48      | 35.54        | 132.29       | 0.57         |
-| REST | 1439.73      | 69.2         | 201.6        | 0.8          |
+| REST | 1550.82      | 64.2         | 193.5        | 0.8          |
 
 ## Setup
 
