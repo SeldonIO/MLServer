@@ -16,8 +16,8 @@ generate:
 
 benchmark-rest:
 	hey \
-		-n 10000 \
-		-c 50 \
+		-n 100000 \
+		-c 100 \
 		-m POST \
 		-T 'application/json' \
 		-D ./data/rest-requests.json \

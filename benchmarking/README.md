@@ -8,8 +8,8 @@ These load tests are run locally against a local server.
 
 |      | Requests/sec | Average (ms) | Slowest (ms) | Fastest (ms) |
 | ---- | ------------ | ------------ | ------------ | ------------ |
-| gRPC | 1259.10      | 78.74        | 513.39       | 0.60         |
-| REST | 272.33       | 183.2        | 332.3        | 34.7         |
+| gRPC | 2806.48      | 35.54        | 132.29       | 0.57         |
+| REST | 1439.73      | 69.2         | 201.6        | 0.8          |
 
 ## Setup
 
@@ -25,6 +25,10 @@ make install-dev
 
 You can find pre-generated requests under the [`/data`](./data) folder.
 These are formed by payloads with a single input tensor, which varies in length from `1024` to `65536`.
+
+> **NOTE**: To work around some limitations of
+> [`hey`](https://github.com/rakyll/hey), we will only be using the smallest
+> payload (i.e. with `1024` tensors) as the payload for both gRPC and HTTP.
 
 ### Generate
 
@@ -48,6 +52,16 @@ The test server will start both the REST and gRPC APIs and will pre-load a test
 model which sums over all the elements of the input and returns the total as a
 result.
 
+### HTTP
+
+To run the HTTP benchmark:
+
+```shell
+make benchmark-rest
+```
+
+This will run 100000 requests across 100 workers.
+
 ### gRPC
 
 To run the gRPC benchmark:
@@ -56,4 +70,4 @@ To run the gRPC benchmark:
 make benchmark-grpc
 ```
 
-This will run 10000 requests across 10 connections shared by 50 workers.
+This will run 100000 requests across 50 connections shared by 100 workers.

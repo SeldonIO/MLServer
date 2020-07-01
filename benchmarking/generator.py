@@ -11,7 +11,7 @@ from mlserver import types
 from mlserver.grpc import converters
 
 MODEL_NAME = "sum-model"
-MODEL_VERSION = "1.2.3"
+MODEL_VERSION = "v1.2.3"
 DATA_PATH = os.path.join(os.path.dirname(__file__), "data")
 
 
@@ -43,7 +43,8 @@ def save_grpc_requests(requests: List[types.InferenceRequest]):
         converters.ModelInferRequestConverter.from_types(
             req, model_name=MODEL_NAME, model_version=MODEL_VERSION
         )
-        for req in requests
+        # Use only the first request to make results comparable to HTTP.
+        for req in requests[:1]
     ]
 
     requests_file_path = os.path.join(DATA_PATH, "grpc-requests.pb")
@@ -62,9 +63,9 @@ def save_grpc_requests(requests: List[types.InferenceRequest]):
 
 def save_rest_requests(requests: List[types.InferenceRequest]):
     # infer_requests_dict = [req.dict() for req in requests]
-    # wrk doesn't work with multiple payloads, so take the last one.
-    # We should consider moving to locust.
-    infer_requests_dict = requests[-1].dict()
+    # wrk doesn't work with multiple payloads, so take the smallest one.
+    # We should consider moving to locust or vegeta.
+    infer_requests_dict = requests[0].dict()
     requests_file_path = os.path.join(DATA_PATH, "rest-requests.json")
     with open(requests_file_path, "w") as requests_file:
         json.dump(infer_requests_dict, requests_file)
