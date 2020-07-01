@@ -48,7 +48,6 @@ def serve(model: str, model_settings: str, debug: bool, http_port: int, grpc_por
         model_module=model, model_settings_path=model_settings
     )
 
-    print(debug)
     settings = Settings(debug=debug)
 
     if http_port is not None:
