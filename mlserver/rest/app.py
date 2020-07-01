@@ -51,7 +51,7 @@ def create_app(settings: Settings, data_plane: DataPlane) -> FastAPI:
         debug=settings.debug,
         routes=routes,  # type: ignore
         default_response_class=ORJSONResponse,
-        exception_handlers=_EXCEPTION_HANDLERS,
+        exception_handlers=_EXCEPTION_HANDLERS,  # type: ignore
     )
 
     return app

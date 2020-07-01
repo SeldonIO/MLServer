@@ -1,11 +1,7 @@
 import pytest
 
 from mlserver import ModelSettings
-from mlserver.types import (
-    MetadataTensor,
-    MetadataModelErrorResponse,
-    InferenceErrorResponse,
-)
+from mlserver.types import MetadataTensor
 
 from .models import SumModel
 
