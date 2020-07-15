@@ -18,6 +18,9 @@ class Settings(BaseSettings):
     grpc_port: int = 8081
     grpc_workers: int = 10
 
+    # Custom model class
+    model_class: str = "mlserver.models.MLModel"
+
 
 class ModelSettings(BaseSettings):
     name: str
