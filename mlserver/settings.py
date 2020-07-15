@@ -18,9 +18,6 @@ class Settings(BaseSettings):
     grpc_port: int = 8081
     grpc_workers: int = 10
 
-    # Custom model class
-    model_class: str = "mlserver.models.MLModel"
-
 
 class ModelSettings(BaseSettings):
     name: str
@@ -31,3 +28,6 @@ class ModelSettings(BaseSettings):
     versions: Optional[List[str]] = []
     inputs: Optional[List[MetadataTensor]] = []
     outputs: Optional[List[MetadataTensor]] = []
+
+    # Custom model class implementation
+    implementation: str = "mlserver.models.MLModel"

@@ -4,6 +4,7 @@ Command-line interface to manage MLServer models.
 import click
 import importlib
 import sys
+import os
 
 from typing import Type
 
@@ -19,6 +20,40 @@ def root():
     Command-line interface to manage MLServer models.
     """
     pass
+
+
+@root.command("build")
+@click.argument("folder")
+@click.option(
+    "--settings",
+    type=click.Path(exists=True),
+    help=(
+        "Global settings for the inference server."
+        "By default, these will get loaded from `:folder/settings.json`"
+    ),
+)
+@click.option(
+    "--model-settings",
+    type=click.Path(exists=True),
+    help=(
+        "Model-specific settings including name and metadata."
+        "By default, these will get loaded from `:folder/model-settings.json`"
+    ),
+)
+def build(folder: str, settings: str, model_settings: str):
+    """
+    Build a Docker image to serve a machine learning model.
+
+    Parameters
+    -----
+    folder : str
+        Folder containing your model server code and config.
+    """
+    if settings == "":
+        settings = os.path.join(folder, "settings.json")
+
+    if model_settings == "":
+        model_settings = os.path.join(folder, "model-settings.json")
 
 
 @root.command("serve")
