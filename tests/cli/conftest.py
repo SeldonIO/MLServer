@@ -19,9 +19,7 @@ def model_folder(tmp_path):
 
 @pytest.fixture
 def model_folder_with_reqs(model_folder):
-    reqs_txt = "requirements.txt"
-    src = os.path.join(TESTDATA_PATH, reqs_txt)
-    dst = model_folder.join_path(reqs_txt)
-    shutil.copyfile(src, dst)
+    reqs_txt = model_folder / "requirements.txt"
+    reqs_txt.write_text("numpy==1.18.5")
 
     return model_folder
