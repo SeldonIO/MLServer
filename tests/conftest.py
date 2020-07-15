@@ -55,8 +55,8 @@ def model_repository(sum_model: SumModel) -> ModelRepository:
 
 @pytest.fixture
 def settings() -> Settings:
-    settings = Settings(debug=True)
-    return settings
+    settings_path = os.path.join(TESTDATA_PATH, "settings.json")
+    return Settings.parse_file(settings_path)
 
 
 @pytest.fixture
