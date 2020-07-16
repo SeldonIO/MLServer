@@ -4,13 +4,14 @@ Command-line interface to manage MLServer models.
 import click
 import importlib
 import sys
-import os
 
 from typing import Type
 
-from .server import MLServer
-from .model import MLModel
-from .settings import Settings, ModelSettings
+from ..server import MLServer
+from ..model import MLModel
+from ..settings import Settings, ModelSettings
+
+from .build import generate_dockerfile
 
 
 @click.group()
@@ -33,7 +34,7 @@ def build(folder: str):
     folder : str
         Folder containing your model server code and config.
     """
-    pass
+    print(generate_dockerfile(folder))
 
 
 @root.command("serve")
