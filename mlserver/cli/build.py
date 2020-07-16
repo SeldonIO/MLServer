@@ -37,6 +37,26 @@ COPY_LOCAL_BLOCK = dedent(
 )
 CMD_BLOCK = 'CMD ["mlserver", "serve", "."]'
 
+DOCKERIGNORE = [
+    "__pycache__",
+    "*.pyc",
+    "*.pyo",
+    "*.pyd",
+    ".Python",
+    "env",
+    "pip-log.txt",
+    "pip-delete-this-directory.txt",
+    ".tox",
+    ".coverage",
+    ".coverage.*",
+    ".cache",
+    "nosetests.xml",
+    "coverage.xml",
+    "*,cover",
+    "*.log",
+    ".git",
+]
+
 
 def generate_dockerfile(folder: str) -> str:
     """
@@ -70,12 +90,19 @@ def generate_bundle(folder: str, bundle_folder: str = None) -> str:
     shutil.rmtree(bundle_folder, ignore_errors=True)
 
     # Copy build context to bundle
-    shutil.copytree(folder, bundle_folder)
+    ignore = shutil.ignore_patterns(bundle_folder, *DOCKERIGNORE)
+    shutil.copytree(folder, bundle_folder, ignore=ignore)
 
     # Write Dockerfile
     dockerfile_path = os.path.join(bundle_folder, "Dockerfile")
     with open(dockerfile_path, "w") as dockerfile:
         dockerfile_content = generate_dockerfile(folder)
         dockerfile.write(dockerfile_content)
+
+    # Write .dockerignore
+    dockerignore_path = os.path.join(bundle_folder, ".dockerignore")
+    with open(dockerignore_path, "w") as dockerignore:
+        dockerignore_content = "\n".join(DOCKERIGNORE)
+        dockerignore.write(dockerignore_content)
 
     return bundle_folder

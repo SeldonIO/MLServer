@@ -25,7 +25,12 @@ def test_generate_bundle(model_folder: str, tmp_path):
     bundle_path = tmp_path / BUNDLE_NAME
     generated_bundle_path = generate_bundle(model_folder, bundle_path)
 
-    files_to_assert = ["Dockerfile", "settings.json", "model-settings.json"]
+    files_to_assert = [
+        ".dockerignore",
+        "Dockerfile",
+        "settings.json",
+        "model-settings.json",
+    ]
     for file in files_to_assert:
         file_path = os.path.join(generated_bundle_path, file)
         assert os.path.isfile(file_path)
