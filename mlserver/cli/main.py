@@ -11,7 +11,7 @@ from ..server import MLServer
 from ..model import MLModel
 from ..settings import Settings, ModelSettings
 
-from .build import generate_dockerfile
+from .build import bundle
 
 
 @click.group()
@@ -23,18 +23,19 @@ def root():
     pass
 
 
-@root.command("build")
+@root.command("bundle")
 @click.argument("folder")
-def build(folder: str):
+def bundle(folder: str):
     """
-    Build a Docker image to serve a machine learning model.
+    Generates a bundle which can be used to build a Docker image to serve a
+    machine learning model.
 
     Parameters
     -----
     folder : str
         Folder containing your model server code and config.
     """
-    print(generate_dockerfile(folder))
+    bundle(folder)
 
 
 @root.command("serve")

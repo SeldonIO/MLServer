@@ -2,8 +2,11 @@
 Tools to containerise a machine learning inference server.
 """
 import os
+import shutil
 
 from textwrap import dedent
+
+BUNDLE_NAME = "_bundle"
 
 BASE_IMAGE_BLOCK = "FROM registry.access.redhat.com/ubi8/python-38"
 UPGRADE_BLOCK = dedent(
@@ -53,3 +56,27 @@ def generate_dockerfile(folder: str) -> str:
     blocks.extend([COPY_LOCAL_BLOCK, CMD_BLOCK])
 
     return "\n".join(blocks)
+
+
+def generate_bundle(folder: str, bundle_folder: str) -> str:
+    # Empty bundle folder
+    shutil.rmtree(bundle_folder, ignore_errors=True)
+
+    # Copy build context to bundle
+    shutil.copytree(folder, bundle_folder)
+
+    # Write Dockerfile
+    dockerfile_path = os.path.join(bundle_folder, "Dockerfile")
+    with open(dockerfile_path, "w") as dockerfile:
+        dockerfile_content = generate_dockerfile(folder)
+        dockerfile.write(dockerfile_content)
+
+    return bundle_folder
+
+
+def bundle(folder: str) -> str:
+    """
+    Bundles your code and config into a folder.
+    """
+    bundle_folder = os.path.join(folder, "_bundle")
+    return generate_bundle(folder, bundle_folder)
