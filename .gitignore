@@ -32,3 +32,6 @@ eggs/
 # Benchmarking and profiling
 benchmarking/profiles/
 *.prof
+
+# Bundle folders
+_bundle

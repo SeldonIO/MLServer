@@ -11,7 +11,7 @@ from ..server import MLServer
 from ..model import MLModel
 from ..settings import Settings, ModelSettings
 
-from .build import bundle
+from .build import generate_bundle
 
 
 @click.group()
@@ -35,7 +35,7 @@ def bundle(folder: str):
     folder : str
         Folder containing your model server code and config.
     """
-    bundle(folder)
+    generate_bundle(folder)
 
 
 @root.command("serve")

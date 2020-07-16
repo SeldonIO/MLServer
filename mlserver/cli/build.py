@@ -58,7 +58,14 @@ def generate_dockerfile(folder: str) -> str:
     return "\n".join(blocks)
 
 
-def generate_bundle(folder: str, bundle_folder: str) -> str:
+def generate_bundle(folder: str, bundle_folder: str = None) -> str:
+    """
+    Bundles your code and config into a folder.
+    """
+    if bundle_folder is None:
+        # Default to _bundle
+        bundle_folder = os.path.join(folder, BUNDLE_NAME)
+
     # Empty bundle folder
     shutil.rmtree(bundle_folder, ignore_errors=True)
 
@@ -72,11 +79,3 @@ def generate_bundle(folder: str, bundle_folder: str) -> str:
         dockerfile.write(dockerfile_content)
 
     return bundle_folder
-
-
-def bundle(folder: str) -> str:
-    """
-    Bundles your code and config into a folder.
-    """
-    bundle_folder = os.path.join(folder, "_bundle")
-    return generate_bundle(folder, bundle_folder)
