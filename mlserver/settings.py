@@ -30,4 +30,4 @@ class ModelSettings(BaseSettings):
     outputs: Optional[List[MetadataTensor]] = []
 
     # Custom model class implementation
-    implementation: str = "mlserver.models.MLModel"
+    implementation: str = "mlserver.model.MLModel"
