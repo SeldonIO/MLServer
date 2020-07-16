@@ -16,6 +16,11 @@ def init_mlserver(folder: str) -> MLServer:
     """
     Instantiate a MLServer instance from a folder's config.
     """
+    # NOTE: Insert current directory and model folder into syspath to load
+    # specified model.
+    sys.path.insert(0, ".")
+    sys.path.insert(0, folder)
+
     model_settings_path = os.path.join(folder, DEFAULT_MODEL_SETTINGS_FILENAME)
     model_settings = ModelSettings.parse_file(model_settings_path)
 
@@ -33,10 +38,6 @@ def _init_model(model_settings: ModelSettings) -> MLModel:
 
 
 def _import_model(model_module: str) -> Type[MLModel]:
-    # NOTE: Insert current directory into syspath to load specified model.
-    # TODO: Make model-dir configurable.
-    sys.path.insert(0, ".")
-
     model_package, model_class_name = model_module.rsplit(".", 1)
 
     module = importlib.import_module(model_package)

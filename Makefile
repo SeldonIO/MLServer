@@ -10,8 +10,7 @@ generate:
 
 run: 
 	mlserver serve \
-		'tests.models.SumModel' \
-		--model-settings ./tests/testdata/model-settings.json
+		./tests/testdata
 
 test:
 	pytest
