@@ -1,5 +1,5 @@
 # Install mlserver package
---editable .
+--editable .[all]
 
 # Code generation
 grpcio-tools==1.29.0

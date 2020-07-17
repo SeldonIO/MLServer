@@ -1,6 +1,7 @@
 import os
+import itertools
 
-from typing import Dict
+from typing import Dict, List
 from setuptools import setup, find_packages
 
 ROOT_PATH = os.path.dirname(__file__)
@@ -19,6 +20,16 @@ def _load_version() -> str:
     return version
 
 
+def _extras() -> Dict[str, List[str]]:
+    extras = {"sklearn": ["scikit-learn==0.23.1"]}
+
+    # Inject key 'all' with all dependencies
+    all_extras = set(itertools.chain(*extras.values()))
+    extras.update({"all": list(all_extras)})
+
+    return extras
+
+
 setup(
     name=PKG_NAME,
     version=_load_version(),
@@ -35,6 +46,6 @@ setup(
         "orjson==3.1.0",
         "click==7.1.2",
     ],
-    extras_require={"sklearn": ["scikit-learn==0.23.1"]},
+    extras_require=_extras(),
     entry_points={"console_scripts": ["mlserver=mlserver.cli:main"]},
 )
