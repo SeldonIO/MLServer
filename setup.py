@@ -19,22 +19,22 @@ def _load_version() -> str:
     return version
 
 
-def _load_requirements():
-    requirements_path = os.path.join(ROOT_PATH, "requirements.txt")
-    with open(requirements_path) as f:
-        return f.readlines()
-
-
-version = _load_version()
-requires = _load_requirements()
 setup(
     name=PKG_NAME,
-    version=version,
+    version=_load_version(),
     url=f"https://github.com/seldonio/{PKG_NAME}.git",
     author="Seldon Technologies Ltd.",
     author_email="hello@seldon.io",
     description="ML server",
     packages=find_packages(),
-    install_requires=_load_requirements(),
+    install_requires=[
+        "grpcio==1.29.0",
+        "protobuf==3.12.2",
+        "fastapi==0.55.1",
+        "uvicorn==0.11.5",
+        "orjson==3.1.0",
+        "click==7.1.2",
+    ],
+    extras_require={"sklearn": ["scikit-learn==0.23.1"]},
     entry_points={"console_scripts": ["mlserver=mlserver.cli:main"]},
 )
