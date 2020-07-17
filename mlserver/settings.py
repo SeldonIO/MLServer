@@ -19,6 +19,17 @@ class Settings(BaseSettings):
     grpc_workers: int = 10
 
 
+class ModelParameters(BaseSettings):
+    """
+    Parameters that apply only to a particular instance of a model.
+    This can include things like model weights.
+    The main difference with respect to ModelSettings is that parameters can
+    change on each instance (e.g. each version) of the model.
+    """
+
+    model_uri: Optional[str] = None
+
+
 class ModelSettings(BaseSettings):
     name: str
     version: str
@@ -31,3 +42,7 @@ class ModelSettings(BaseSettings):
 
     # Custom model class implementation
     implementation: str = "mlserver.model.MLModel"
+
+    # Model parameters are meant to be set directly by the MLServer runtime.
+    # However, it's also possible to override them manually.
+    parameters: Optional[ModelParameters] = None
