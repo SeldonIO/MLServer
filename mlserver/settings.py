@@ -27,7 +27,7 @@ class ModelParameters(BaseSettings):
     change on each instance (e.g. each version) of the model.
     """
 
-    model_uri: Optional[str] = None
+    uri: Optional[str] = None
 
 
 class ModelSettings(BaseSettings):

@@ -3,7 +3,7 @@ import pytest
 from mlserver import ModelSettings
 from mlserver.types import MetadataTensor
 
-from .models import SumModel
+from .fixtures import SumModel
 
 
 @pytest.mark.parametrize("ready", [True, False])
