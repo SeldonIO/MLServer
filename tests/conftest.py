@@ -5,7 +5,7 @@ from mlserver.handlers import DataPlane
 from mlserver.repository import ModelRepository
 from mlserver import types, Settings, ModelSettings
 
-from .models import SumModel
+from .fixtures import SumModel
 
 TESTS_PATH = os.path.dirname(__file__)
 TESTDATA_PATH = os.path.join(TESTS_PATH, "testdata")

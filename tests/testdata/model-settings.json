@@ -2,7 +2,7 @@
   "name": "sum-model",
   "version": "v1.2.3",
 
-  "implementation": "tests.models.SumModel",
+  "implementation": "tests.fixtures.SumModel",
 
   "versions": ["sum-model/v1.2.3"],
   "platform": "mlserver",
