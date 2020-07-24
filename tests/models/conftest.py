@@ -18,7 +18,7 @@ def sklearn_model_uri(tmp_path) -> str:
     X = np.random.rand(n)
     y = np.random.rand(n)
 
-    clf = DummyClassifier()
+    clf = DummyClassifier(strategy="prior")
     clf.fit(X, y)
 
     model_uri = os.path.join(tmp_path, "model.joblib")
