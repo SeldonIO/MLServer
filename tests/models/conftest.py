@@ -3,6 +3,7 @@ import os
 
 from mlserver.models.sklearn import _SKLEARN_PRESENT, SKLearnModel
 from mlserver.settings import ModelSettings, ModelParameters
+from mlserver.types import InferenceRequest
 
 if _SKLEARN_PRESENT:
     import joblib
@@ -33,4 +34,15 @@ def sklearn_model(sklearn_model_uri: str) -> SKLearnModel:
         version="v1.2.3",
         parameters=ModelParameters(uri=sklearn_model_uri),
     )
-    return SKLearnModel(model_settings)
+    model = SKLearnModel(model_settings)
+    model.load()
+
+    return model
+
+
+@pytest.fixture
+def sklearn_inference_request(inference_request: InferenceRequest) -> InferenceRequest:
+    # Keep only a single input
+    inference_request.inputs = inference_request.inputs[:1]
+
+    return inference_request
