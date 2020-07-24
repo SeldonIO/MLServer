@@ -1,5 +1,6 @@
 install-dev:
 	pip install -r requirements-dev.txt
+	pip install --editable .[all]
 
 generate:
 	./hack/generate-types.sh
@@ -9,7 +10,7 @@ run:
 		./tests/testdata
 
 test:
-	pytest
+	tox
 
 lint:
 	flake8 .

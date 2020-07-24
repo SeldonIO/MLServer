@@ -1,12 +1,10 @@
-# Install mlserver package
---editable .[all]
-
 # Code generation
 grpcio-tools==1.29.0
 datamodel-code-generator==0.5.1
 
 # Testing
 pytest==5.4.3
+tox==3.18.0
 
 # Benchmarking
 numpy==1.18.5
