@@ -21,6 +21,10 @@ Since this is a probabilistic model, during training we will compute an approxim
 
 
 ```python
+# Original source code and more details can be found in:
+# https://nbviewer.jupyter.org/github/pyro-ppl/numpyro/blob/master/notebooks/source/bayesian_regression.ipynb
+
+
 import numpyro
 import numpy as np
 import pandas as pd
