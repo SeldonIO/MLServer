@@ -12,7 +12,7 @@ your own model.
 To start serving your model, you can run:
 
 ```shell
-mlserver serve .
+mlserver start .
 ```
 
 ## Building

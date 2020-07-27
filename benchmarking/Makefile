@@ -1,5 +1,5 @@
 start-testserver:
-	mlserver serve ./testserver
+	mlserver start ./testserver
 
 install-dev:
 	GO111MODULE=on go get github.com/bojand/ghz/cmd/ghz@v0.55.0

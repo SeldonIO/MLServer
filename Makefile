@@ -6,7 +6,7 @@ generate:
 	./hack/generate-types.sh
 
 run: 
-	mlserver serve \
+	mlserver start \
 		./tests/testdata
 
 test:

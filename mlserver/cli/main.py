@@ -31,9 +31,9 @@ def bundle(folder: str):
     generate_bundle(folder)
 
 
-@root.command("serve")
+@root.command("start")
 @click.argument("folder", nargs=1)
-def serve(folder: str):
+def start(folder: str):
     """
     Start serving a machine learning model with MLServer.
     """
