@@ -78,7 +78,10 @@ class SKLearnModel(MLModel):
             # TODO: Set datatype (cast from numpy?)
             outputs.append(
                 types.ResponseOutput(
-                    name=request_output.name, shape=y.shape, datatype="FP32", data=y
+                    name=request_output.name,
+                    shape=y.shape,
+                    datatype="FP32",
+                    data=y.tolist(),
                 )
             )
 

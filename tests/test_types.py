@@ -9,6 +9,7 @@ from mlserver import types
     [
         [1, 2, 3],
         [1.0, 2.0, 3.0],
+        [[1.0, 2.0, 3.0]],
         [34.5, 8.4],
         [True, False, True],
         ["one", "two", "three"],
