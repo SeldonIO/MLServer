@@ -13,3 +13,11 @@ spec.
 
 You can read more about the goals of this project on the [inital design
 document](https://docs.google.com/document/d/1C2uf4SaAtwLTlBCciOhvdiKQ2Eay4U72VxAD4bXe7iU/edit?usp=sharing).
+
+## Examples
+
+On the list below, you can find a few examples on how you can leverage
+`mlserver` to start serving your machine learning models.
+
+- [Serving a `scikit-learn` model](./examples/sklearn/README.md)
+- [Serving a custom model](./examples/custom/README.md)
