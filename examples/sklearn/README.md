@@ -38,13 +38,6 @@ X_train, X_test, y_train, y_test = train_test_split(
 classifier.fit(X_train, y_train)
 ```
 
-
-
-
-    SVC(gamma=0.001)
-
-
-
 ### Saving our trained model
 
 To save our trained model, we will serialise it using `joblib`.
@@ -59,13 +52,6 @@ import joblib
 model_file_name = "mnist-svm.joblib"
 joblib.dump(classifier, model_file_name)
 ```
-
-
-
-
-    ['mnist-svm.joblib']
-
-
 
 ## Serving
 
@@ -85,9 +71,6 @@ For that, we will need to create 2 configuration files:
 }
 ```
 
-    Overwriting settings.json
-
-
 ### `model-settings.json`
 
 
@@ -102,9 +85,6 @@ For that, we will need to create 2 configuration files:
     }
 }
 ```
-
-    Overwriting model-settings.json
-
 
 ### Send test inference request
 
@@ -136,34 +116,12 @@ response = requests.post(endpoint, json=inference_request)
 response.json()
 ```
 
-
-
-
-    {'model_name': 'mnist-svm',
-     'model_version': 'v0.1.0',
-     'id': 'request-1',
-     'parameters': None,
-     'outputs': [{'name': 'predict',
-       'shape': [1],
-       'datatype': 'FP32',
-       'parameters': None,
-       'data': [8]}]}
-
-
-
 As we can see above, the model predicted the input as the number `8`, which matches what's on the test set.
 
 
 ```python
 y_test[0]
 ```
-
-
-
-
-    8
-
-
 
 
 ```python
