@@ -88,7 +88,13 @@ For that, we will need to create 2 configuration files:
 
 ### Start serving our model
 
-Now that we have our config in-place, we can start the server by runnin `mlserver start .`. Note that this needs to be ran from the same directory where our config files are.
+Now that we have our config in-place, we can start the server by running `mlserver start .`. This needs to either be ran from the same directory where our config files are or pointing to the folder where they are.
+
+```shell
+mlserver start .
+```
+
+Since this command will start the server and block the terminal, waiting for requests, this will need to be ran in the background on a separate terminal.
 
 ### Send test inference request
 
