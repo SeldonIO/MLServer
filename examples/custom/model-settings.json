@@ -1,23 +1,8 @@
 {
-  "name": "sum-model",
-  "version": "v1.2.3",
-
-  "implementation": "models.SumModel",
-
-  "versions": ["sum-model/v1.2.3"],
-  "platform": "mlserver",
-  "inputs": [
-    {
-      "datatype": "FP32",
-      "name": "input-0",
-      "shape": [128]
+    "name": "numpyro-divorce",
+    "version": "v0.1.0",
+    "implementation": "models.NumpyroModel",
+    "parameters": {
+        "uri": "./numpyro-divorce.json"
     }
-  ],
-  "outputs": [
-    {
-      "datatype": "FP32",
-      "name": "output-0",
-      "shape": [1]
-    }
-  ]
 }
