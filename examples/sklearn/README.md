@@ -86,6 +86,10 @@ For that, we will need to create 2 configuration files:
 }
 ```
 
+### Start serving our model
+
+Now that we have our config in-place, we can start the server by runnin `mlserver start .`. Note that this needs to be ran from the same directory where our config files are.
+
 ### Send test inference request
 
 We now have our model being served by `mlserver`.
