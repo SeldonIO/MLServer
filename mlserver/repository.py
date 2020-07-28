@@ -36,7 +36,8 @@ class ModelRepository:
         if name not in self._models:
             raise ModelNotFound(name, version)
 
-        if version is not None:
+        # Check that `version` is neither None nor an empty string
+        if version:
             models = self._models[name]
             if version not in models:
                 raise ModelNotFound(name, version)

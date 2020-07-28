@@ -1,3 +1,5 @@
+import pytest
+
 from mlserver import types, __version__
 
 
@@ -47,8 +49,13 @@ def test_model_metadata(rest_client, sum_model_settings):
     assert metadata.inputs == sum_model_settings.inputs
 
 
-def test_infer(rest_client, sum_model, inference_request):
-    endpoint = f"/v2/models/{sum_model.name}/versions/{sum_model.version}/infer"
+@pytest.mark.parametrize(
+    "model_name,model_version", [("sum-model", "v1.2.3"), ("sum-model", None)]
+)
+def test_infer(rest_client, inference_request, model_name, model_version):
+    endpoint = f"/v2/models/{model_name}/infer"
+    if model_version is not None:
+        endpoint = f"/v2/models/{model_name}/versions/{model_version}/infer"
     response = rest_client.post(endpoint, json=inference_request.dict())
 
     assert response.status_code == 200

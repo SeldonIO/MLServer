@@ -46,7 +46,18 @@ def test_model_metadata(inference_service_stub, sum_model_settings):
     assert response.versions == sum_model_settings.versions
 
 
-def test_model_infer(inference_service_stub, model_infer_request):
+@pytest.mark.parametrize(
+    "model_name,model_version", [("sum-model", "v1.2.3"), ("sum-model", None)]
+)
+def test_model_infer(
+    inference_service_stub, model_infer_request, model_name, model_version
+):
+    model_infer_request.model_name = model_name
+    if model_version is not None:
+        model_infer_request.model_version = model_version
+    else:
+        model_infer_request.ClearField("model_version")
+
     prediction = inference_service_stub.ModelInfer(model_infer_request)
 
     expected = pb.InferTensorContents(fp32_contents=[21.0])
