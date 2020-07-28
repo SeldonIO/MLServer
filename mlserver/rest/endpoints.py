@@ -29,7 +29,7 @@ class Endpoints:
         is_ready = self._data_plane.ready()
         return Response(status_code=to_status_code(is_ready))
 
-    def model_ready(self, model_name: str, model_version: str) -> Response:
+    def model_ready(self, model_name: str, model_version: str = None) -> Response:
         is_ready = self._data_plane.model_ready(model_name, model_version)
         return Response(status_code=to_status_code(is_ready))
 
@@ -37,11 +37,11 @@ class Endpoints:
         return self._data_plane.metadata()
 
     def model_metadata(
-        self, model_name: str, model_version: str
+        self, model_name: str, model_version: str = None
     ) -> MetadataModelResponse:
         return self._data_plane.model_metadata(model_name, model_version)
 
     def infer(
-        self, model_name: str, model_version: str, payload: InferenceRequest
+        self, payload: InferenceRequest, model_name: str, model_version: str = None,
     ) -> InferenceResponse:
-        return self._data_plane.infer(model_name, model_version, payload)
+        return self._data_plane.infer(payload, model_name, model_version)

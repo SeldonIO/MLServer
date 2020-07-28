@@ -81,7 +81,9 @@ def test_model_metadata(sum_model_settings, data_plane, platform, versions, inpu
 
 
 def test_infer(data_plane, sum_model, inference_request):
-    prediction = data_plane.infer(sum_model.name, sum_model.version, inference_request)
+    prediction = data_plane.infer(
+        payload=inference_request, name=sum_model.name, version=sum_model.version
+    )
 
     assert len(prediction.outputs) == 1
     assert prediction.outputs[0].data == [21]

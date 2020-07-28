@@ -25,7 +25,7 @@ class DataPlane:
         models = self._model_repository.get_models()
         return all([model.ready for model in models])
 
-    def model_ready(self, name: str, version: str) -> bool:
+    def model_ready(self, name: str, version: str = None) -> bool:
         model = self._model_repository.get_model(name, version)
         return model.ready
 
@@ -36,12 +36,12 @@ class DataPlane:
             extensions=self._settings.extensions,
         )
 
-    def model_metadata(self, name: str, version: str) -> MetadataModelResponse:
+    def model_metadata(self, name: str, version: str = None) -> MetadataModelResponse:
         model = self._model_repository.get_model(name, version)
         return model.metadata()
 
     def infer(
-        self, name: str, version: str, payload: InferenceRequest
+        self, payload: InferenceRequest, name: str, version: str = None
     ) -> InferenceResponse:
         model = self._model_repository.get_model(name, version)
         return model.predict(payload)

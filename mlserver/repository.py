@@ -26,7 +26,7 @@ class ModelRepository:
     def unload(self):
         pass
 
-    def get_model(self, name: str, version: str) -> MLModel:
+    def get_model(self, name: str, version: str = None) -> MLModel:
         model_key = self._get_key(name, version)
         if model_key not in self._models:
             raise ModelNotFound(name, version)
