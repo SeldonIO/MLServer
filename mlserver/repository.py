@@ -1,4 +1,5 @@
 from typing import List
+from collections import defaultdict
 
 from .model import MLModel
 from .errors import ModelNotFound
@@ -11,7 +12,9 @@ class ModelRepository:
     """
 
     def __init__(self):
-        self._models = {}
+        self._models = defaultdict(dict)
+        self._default_models = {}
+        self._flat_models = []
 
     def index(self):
         pass
@@ -20,21 +23,25 @@ class ModelRepository:
         model.load()
 
         # TODO: Raise warning if model already exists
-        model_key = self._get_key(model.name, model.version)
-        self._models[model_key] = model
+        self._models[model.name][model.version] = model
+
+        # TODO: Improve logic to choose default version of the model
+        self._default_models[model.name] = model
+        self._flat_models.append(model)
 
     def unload(self):
         pass
 
     def get_model(self, name: str, version: str = None) -> MLModel:
-        model_key = self._get_key(name, version)
-        if model_key not in self._models:
-            raise ModelNotFound(name, version)
+        if name not in self._models:
+            raise ModelNotFound(name)
 
-        return self._models[model_key]
+        if version is not None:
+            models = self._models[name]
+            if version not in models:
+                raise ModelNotFound(name, version)
 
-    def _get_key(self, name: str, version: str) -> str:
-        return f"{name}-{version}"
+        return self._default_models[name]
 
     def get_models(self) -> List[MLModel]:
-        return self._models.values()
+        return self._flat_models
