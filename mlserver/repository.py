@@ -34,7 +34,7 @@ class ModelRepository:
 
     def get_model(self, name: str, version: str = None) -> MLModel:
         if name not in self._models:
-            raise ModelNotFound(name)
+            raise ModelNotFound(name, version)
 
         if version is not None:
             models = self._models[name]

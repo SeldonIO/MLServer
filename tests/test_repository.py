@@ -16,11 +16,14 @@ def test_get_model_not_found(model_repository, name, version):
     with pytest.raises(ModelNotFound) as err:
         model_repository.get_model(name, version)
 
-        assert err.message == f"Model {name} with version {version} not found"
+        if version is not None:
+            assert err.message == f"Model {name} with version {version} not found"
+        else:
+            assert err.message == f"Model {name} not found"
 
 
 @pytest.mark.parametrize(
-    "name, version", [("sum-model", "v0"), ("sum-model", None)],
+    "name, version", [("sum-model", "v1.2.3"), ("sum-model", None)],
 )
 def test_get_model(model_repository, sum_model, name, version):
     found_model = model_repository.get_model(name, version)
