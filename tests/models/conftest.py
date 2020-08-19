@@ -55,8 +55,9 @@ def sklearn_inference_request(inference_request: InferenceRequest) -> InferenceR
 @pytest.fixture
 def xgboost_model_uri(tmp_path) -> str:
     n = 4
+    d = 3
 
-    dtrain = xgb.DMatrix(data=np.random.rand(n, 1), label=np.random.rand(n))
+    dtrain = xgb.DMatrix(data=np.random.rand(n, d), label=np.random.rand(n))
     bst = xgb.train(params={}, dtrain=dtrain)
 
     model_uri = os.path.join(tmp_path, "xgboost-model.json")
@@ -76,3 +77,15 @@ def xgboost_model(xgboost_model_uri: str) -> XGBoostModel:
     model.load()
 
     return model
+
+
+@pytest.fixture
+def xgboost_inference_request(inference_request: InferenceRequest) -> InferenceRequest:
+    # Reshape to 2D array, matching the input data to xgboost_model
+    single_input = inference_request.inputs[0]
+    single_input.data = single_input.data = [[1, 2, 3]]
+
+    # Keep only a single input
+    inference_request.inputs = [single_input]
+
+    return inference_request
