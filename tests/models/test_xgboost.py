@@ -19,4 +19,4 @@ def test_xgboost_predict(
     response = xgboost_model.predict(xgboost_inference_request)
 
     assert len(response.outputs) == 1
-    breakpoint()
+    assert 0 <= response.outputs[0].data[0] <= 1

@@ -45,7 +45,7 @@ class XGBoostModel(MLModel):
                     name="predict",
                     shape=prediction.shape,
                     datatype="FP32",
-                    data=prediction,
+                    data=prediction.tolist(),
                 )
             ],
         )
