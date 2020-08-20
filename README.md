@@ -20,4 +20,5 @@ On the list below, you can find a few examples on how you can leverage
 `mlserver` to start serving your machine learning models.
 
 - [Serving a `scikit-learn` model](./examples/sklearn/README.md)
+- [Serving a `xgboost` model](./examples/xgboost/README.md)
 - [Serving a custom model](./examples/custom/README.md)
