@@ -1,11 +1,13 @@
 import pytest
-import xgboost as xgb
 
-from mlserver.models.xgboost import XGBoostModel
+from mlserver.models.xgboost import XGBoostModel, _XGBOOST_PRESENT
 from mlserver.errors import InferenceError
 from mlserver.types import InferenceRequest
 
 from .helpers import skipif_xgboost_missing
+
+if _XGBOOST_PRESENT:
+    import xgboost as xgb
 
 
 @skipif_xgboost_missing

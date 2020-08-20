@@ -8,12 +8,14 @@ from mlserver.types import InferenceRequest
 
 if _SKLEARN_PRESENT:
     import joblib
-    import numpy as np
 
     from sklearn.dummy import DummyClassifier
 
 if _XGBOOST_PRESENT:
     import xgboost as xgb
+
+if _SKLEARN_PRESENT or _XGBOOST_PRESENT:
+    import numpy as np
 
 
 @pytest.fixture
