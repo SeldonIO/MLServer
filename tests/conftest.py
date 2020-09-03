@@ -47,9 +47,9 @@ def inference_response() -> types.InferenceResponse:
 
 
 @pytest.fixture
-def model_repository(sum_model: SumModel) -> ModelRepository:
+async def model_repository(sum_model: SumModel) -> ModelRepository:
     model_repository = ModelRepository()
-    model_repository.load(sum_model)
+    await model_repository.load(sum_model)
     return model_repository
 
 

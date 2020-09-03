@@ -16,11 +16,11 @@ class ModelRepository:
         self._default_models = {}
         self._flat_models = []
 
-    def index(self):
+    async def index(self):
         pass
 
-    def load(self, model: MLModel):
-        model.load()
+    async def load(self, model: MLModel):
+        await model.load()
 
         # TODO: Raise warning if model already exists
         self._models[model.name][model.version] = model
@@ -29,10 +29,10 @@ class ModelRepository:
         self._default_models[model.name] = model
         self._flat_models.append(model)
 
-    def unload(self):
+    async def unload(self):
         pass
 
-    def get_model(self, name: str, version: str = None) -> MLModel:
+    async def get_model(self, name: str, version: str = None) -> MLModel:
         if name not in self._models:
             raise ModelNotFound(name, version)
 
@@ -44,5 +44,5 @@ class ModelRepository:
 
         return self._default_models[name]
 
-    def get_models(self) -> List[MLModel]:
+    async def get_models(self) -> List[MLModel]:
         return self._flat_models

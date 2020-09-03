@@ -20,7 +20,7 @@ class MLModel:
     def version(self) -> str:
         return self._settings.version
 
-    def metadata(self) -> MetadataModelResponse:
+    async def metadata(self) -> MetadataModelResponse:
         return MetadataModelResponse(
             name=self.name,
             platform=self._settings.platform,
@@ -29,9 +29,9 @@ class MLModel:
             outputs=self._settings.outputs,
         )
 
-    def load(self) -> bool:
+    async def load(self) -> bool:
         self.ready = True
         return self.ready
 
-    def predict(self, payload: InferenceRequest) -> InferenceResponse:
+    async def predict(self, payload: InferenceRequest) -> InferenceResponse:
         raise NotImplementedError("predict() method not implemented")

@@ -18,30 +18,32 @@ class DataPlane:
         self._settings = settings
         self._model_repository = model_repository
 
-    def live(self) -> bool:
+    async def live(self) -> bool:
         return True
 
-    def ready(self) -> bool:
-        models = self._model_repository.get_models()
+    async def ready(self) -> bool:
+        models = await self._model_repository.get_models()
         return all([model.ready for model in models])
 
-    def model_ready(self, name: str, version: str = None) -> bool:
-        model = self._model_repository.get_model(name, version)
+    async def model_ready(self, name: str, version: str = None) -> bool:
+        model = await self._model_repository.get_model(name, version)
         return model.ready
 
-    def metadata(self) -> MetadataServerResponse:
+    async def metadata(self) -> MetadataServerResponse:
         return MetadataServerResponse(
             name=self._settings.server_name,
             version=self._settings.server_version,
             extensions=self._settings.extensions,
         )
 
-    def model_metadata(self, name: str, version: str = None) -> MetadataModelResponse:
-        model = self._model_repository.get_model(name, version)
-        return model.metadata()
+    async def model_metadata(
+        self, name: str, version: str = None
+    ) -> MetadataModelResponse:
+        model = await self._model_repository.get_model(name, version)
+        return await model.metadata()
 
-    def infer(
+    async def infer(
         self, payload: InferenceRequest, name: str, version: str = None
     ) -> InferenceResponse:
-        model = self._model_repository.get_model(name, version)
-        return model.predict(payload)
+        model = await self._model_repository.get_model(name, version)
+        return await model.predict(payload)
