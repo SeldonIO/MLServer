@@ -19,7 +19,7 @@ class XGBoostModel(MLModel):
     Implementationof the MLModel interface to load and serve `xgboost` models.
     """
 
-    def load(self) -> bool:
+    async def load(self) -> bool:
         # TODO: Log info message
         model_uri = self._settings.parameters.uri
         self._model = xgb.Booster(model_file=model_uri)
@@ -27,7 +27,7 @@ class XGBoostModel(MLModel):
         self.ready = True
         return self.ready
 
-    def predict(self, payload: types.InferenceRequest) -> types.InferenceResponse:
+    async def predict(self, payload: types.InferenceRequest) -> types.InferenceResponse:
         payload = self._check_request(payload)
 
         # _check_request will convert the data to `xgboost.DMatrix`

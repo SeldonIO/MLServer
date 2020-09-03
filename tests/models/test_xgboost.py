@@ -17,18 +17,18 @@ def test_xgboost_load(xgboost_model: XGBoostModel):
 
 
 @skipif_xgboost_missing
-def test_xgboost_predict(
+async def test_xgboost_predict(
     xgboost_model: XGBoostModel, xgboost_inference_request: InferenceRequest
 ):
-    response = xgboost_model.predict(xgboost_inference_request)
+    response = await xgboost_model.predict(xgboost_inference_request)
 
     assert len(response.outputs) == 1
     assert 0 <= response.outputs[0].data[0] <= 1
 
 
 @skipif_xgboost_missing
-def test_xgboost_multiple_inputs_error(
+async def test_xgboost_multiple_inputs_error(
     xgboost_model: XGBoostModel, inference_request: InferenceRequest
 ):
     with pytest.raises(InferenceError):
-        xgboost_model.predict(inference_request)
+        await xgboost_model.predict(inference_request)

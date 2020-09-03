@@ -34,14 +34,14 @@ def sklearn_model_uri(tmp_path) -> str:
 
 
 @pytest.fixture
-def sklearn_model(sklearn_model_uri: str) -> SKLearnModel:
+async def sklearn_model(sklearn_model_uri: str) -> SKLearnModel:
     model_settings = ModelSettings(
         name="sklearn-model",
         version="v1.2.3",
         parameters=ModelParameters(uri=sklearn_model_uri),
     )
     model = SKLearnModel(model_settings)
-    model.load()
+    await model.load()
 
     return model
 
@@ -69,14 +69,14 @@ def xgboost_model_uri(tmp_path) -> str:
 
 
 @pytest.fixture
-def xgboost_model(xgboost_model_uri: str) -> XGBoostModel:
+async def xgboost_model(xgboost_model_uri: str) -> XGBoostModel:
     model_settings = ModelSettings(
         name="xgboost-model",
         version="v1.2.3",
         parameters=ModelParameters(uri=xgboost_model_uri),
     )
     model = XGBoostModel(model_settings)
-    model.load()
+    await model.load()
 
     return model
 

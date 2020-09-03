@@ -12,9 +12,9 @@ from mlserver.errors import ModelNotFound
         ("sum-model-2", None),
     ],
 )
-def test_get_model_not_found(model_repository, name, version):
+async def test_get_model_not_found(model_repository, name, version):
     with pytest.raises(ModelNotFound) as err:
-        model_repository.get_model(name, version)
+        await model_repository.get_model(name, version)
 
         if version is not None:
             assert err.message == f"Model {name} with version {version} not found"
@@ -25,6 +25,6 @@ def test_get_model_not_found(model_repository, name, version):
 @pytest.mark.parametrize(
     "name, version", [("sum-model", "v1.2.3"), ("sum-model", None), ("sum-model", "")],
 )
-def test_get_model(model_repository, sum_model, name, version):
-    found_model = model_repository.get_model(name, version)
+async def test_get_model(model_repository, sum_model, name, version):
+    found_model = await model_repository.get_model(name, version)
     assert found_model == sum_model

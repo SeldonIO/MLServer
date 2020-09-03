@@ -5,14 +5,12 @@ from mlserver.types import MetadataTensor
 
 from .fixtures import SumModel
 
-pytestmark = pytest.mark.asyncio
-
 
 @pytest.mark.parametrize("ready", [True, False])
 async def test_ready(data_plane, model_repository, ready):
     model_settings = ModelSettings(name="sum-model-2", version="v1.2.3")
     new_model = SumModel(model_settings)
-    model_repository.load(new_model)
+    await model_repository.load(new_model)
 
     new_model.ready = ready
 

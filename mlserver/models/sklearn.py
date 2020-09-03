@@ -25,7 +25,7 @@ class SKLearnModel(MLModel):
     models persisted with `joblib`.
     """
 
-    def load(self) -> bool:
+    async def load(self) -> bool:
         # TODO: Log info message
         model_uri = self._settings.parameters.uri
         self._model = joblib.load(model_uri)
@@ -33,7 +33,7 @@ class SKLearnModel(MLModel):
         self.ready = True
         return self.ready
 
-    def predict(self, payload: types.InferenceRequest) -> types.InferenceResponse:
+    async def predict(self, payload: types.InferenceRequest) -> types.InferenceResponse:
         payload = self._check_request(payload)
 
         return types.InferenceResponse(

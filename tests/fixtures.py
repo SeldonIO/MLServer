@@ -2,7 +2,7 @@ from mlserver import types, MLModel
 
 
 class SumModel(MLModel):
-    def predict(self, payload: types.InferenceRequest) -> types.InferenceResponse:
+    async def predict(self, payload: types.InferenceRequest) -> types.InferenceResponse:
         total = 0
         for inp in payload.inputs:
             total += sum(inp.data)

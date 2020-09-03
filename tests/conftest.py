@@ -11,6 +11,14 @@ TESTS_PATH = os.path.dirname(__file__)
 TESTDATA_PATH = os.path.join(TESTS_PATH, "testdata")
 
 
+def pytest_collection_modifyitems(items):
+    """
+    Add pytest.mark.asyncio marker to every test.
+    """
+    for item in items:
+        item.add_marker("asyncio")
+
+
 @pytest.fixture
 def sum_model_settings() -> ModelSettings:
     model_settings_path = os.path.join(TESTDATA_PATH, "model-settings.json")

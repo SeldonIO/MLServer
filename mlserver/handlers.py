@@ -40,10 +40,12 @@ class DataPlane:
         self, name: str, version: str = None
     ) -> MetadataModelResponse:
         model = await self._model_repository.get_model(name, version)
+        # TODO: Make await optional for sync methods
         return await model.metadata()
 
     async def infer(
         self, payload: InferenceRequest, name: str, version: str = None
     ) -> InferenceResponse:
         model = await self._model_repository.get_model(name, version)
+        # TODO: Make await optional for sync methods
         return await model.predict(payload)

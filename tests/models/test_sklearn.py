@@ -22,19 +22,21 @@ def test_sklearn_load(sklearn_model: SKLearnModel):
 
 
 @skipif_sklearn_missing
-def test_sklearn_multiple_inputs_error(sklearn_model: SKLearnModel, inference_request):
+async def test_sklearn_multiple_inputs_error(
+    sklearn_model: SKLearnModel, inference_request
+):
     with pytest.raises(InferenceError):
-        sklearn_model.predict(inference_request)
+        await sklearn_model.predict(inference_request)
 
 
 @skipif_sklearn_missing
-def test_sklearn_invalid_output_error(
+async def test_sklearn_invalid_output_error(
     sklearn_model: SKLearnModel, sklearn_inference_request
 ):
     sklearn_inference_request.outputs.append(RequestOutput(name="something_else"))
 
     with pytest.raises(InferenceError):
-        sklearn_model.predict(sklearn_inference_request)
+        await sklearn_model.predict(sklearn_inference_request)
 
 
 @skipif_sklearn_missing
@@ -47,13 +49,13 @@ def test_sklearn_invalid_output_error(
         [PREDICT_OUTPUT, PREDICT_PROBA_OUTPUT],
     ],
 )
-def test_sklearn_predict(
+async def test_sklearn_predict(
     sklearn_model: SKLearnModel, sklearn_inference_request, req_outputs
 ):
     for req_output in req_outputs:
         sklearn_inference_request.outputs.append(RequestOutput(name=req_output))
 
-    response = sklearn_model.predict(sklearn_inference_request)
+    response = await sklearn_model.predict(sklearn_inference_request)
 
     input_data = sklearn_inference_request.inputs[0].data
     if len(req_outputs) == 0:
