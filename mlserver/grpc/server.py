@@ -1,4 +1,6 @@
-import grpc
+import asyncio
+
+from grpc.experimental import aio
 from concurrent.futures import ThreadPoolExecutor
 
 from ..handlers import DataPlane
@@ -15,7 +17,7 @@ class GRPCServer:
 
     def _create_server(self):
         self._servicer = InferenceServicer(self._data_plane)
-        self._server = grpc.server(
+        self._server = aio.server(
             ThreadPoolExecutor(max_workers=self._settings.grpc_workers)
         )
 
@@ -26,6 +28,9 @@ class GRPCServer:
         return self._server
 
     def start(self):
+        print("#### this shouldn't get called #####")
         self._create_server()
-        self._server.start()
-        self._server.wait_for_termination()
+
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._server.start())
+        loop.run_until_complete(self._server.wait_for_termination())

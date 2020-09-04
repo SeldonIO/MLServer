@@ -10,6 +10,10 @@ from .fixtures import SumModel
 TESTS_PATH = os.path.dirname(__file__)
 TESTDATA_PATH = os.path.join(TESTS_PATH, "testdata")
 
+# Temporary fix for an issue with gRPC
+# https://github.com/googleapis/gapic-generator-python/pull/493
+_test_event_loop = asyncio.new_event_loop()
+
 
 def pytest_collection_modifyitems(items):
     """

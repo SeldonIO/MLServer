@@ -5,10 +5,12 @@ from mlserver.grpc import dataplane_pb2 as pb
 from mlserver import __version__
 
 
-def test_server_live(inference_service_stub):
+async def test_server_live(inference_service_stub):
     req = pb.ServerLiveRequest()
-    response = inference_service_stub.ServerLive(req)
+    print("Sending live request")
+    response = await inference_service_stub.ServerLive(req)
 
+    print("Asserting return value of live request")
     assert response.live
 
 

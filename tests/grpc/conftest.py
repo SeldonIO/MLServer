@@ -1,6 +1,9 @@
 import os
 import pytest
-import grpc
+
+#  import grpc
+
+from grpc.experimental import aio
 from google.protobuf import json_format
 from mlserver.handlers import DataPlane
 from mlserver.settings import Settings
@@ -34,20 +37,25 @@ def grpc_settings(settings: Settings) -> Settings:
 
 
 @pytest.fixture
-def inference_service_stub(
+async def inference_service_stub(
     grpc_server, grpc_settings: Settings
 ) -> GRPCInferenceServiceStub:
-    channel = grpc.insecure_channel(f"[::]:{grpc_settings.grpc_port}")
-    return GRPCInferenceServiceStub(channel)
+    async with aio.insecure_channel(f"[::]:{grpc_settings.grpc_port}") as channel:
+        yield GRPCInferenceServiceStub(channel)
 
 
 @pytest.fixture
-def grpc_server(grpc_settings: Settings, data_plane: DataPlane):
+async def grpc_server(grpc_settings: Settings, data_plane: DataPlane):
+    aio.init_grpc_aio()
+
     server = GRPCServer(grpc_settings, data_plane)
     server._create_server()
-    server._server.start()
+    print("Starting server")
+    await server._server.start()
 
     yield server
 
-    ev = server._server.stop(grace=None)
-    ev.wait()
+    print("Stopping server")
+    await server._server.stop(grace=None)
+
+    aio.shutdown_grpc_aio()
