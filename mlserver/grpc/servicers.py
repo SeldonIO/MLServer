@@ -34,9 +34,7 @@ class InferenceServicer(GRPCInferenceServiceServicer):
     async def ServerLive(
         self, request: pb.ServerLiveRequest, context
     ) -> pb.ServerLiveResponse:
-        print("Calling data plane")
         is_live = await self._data_plane.live()
-        print("Returning response from data plane")
         return pb.ServerLiveResponse(live=is_live)
 
     async def ServerReady(

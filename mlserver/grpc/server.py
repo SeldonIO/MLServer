@@ -1,5 +1,3 @@
-import asyncio
-
 from grpc.experimental import aio
 from concurrent.futures import ThreadPoolExecutor
 
@@ -32,3 +30,7 @@ class GRPCServer:
 
         await self._server.start()
         await self._server.wait_for_termination()
+
+    async def stop(self):
+        # TODO: Read from config
+        await self._server.stop(grace=5)

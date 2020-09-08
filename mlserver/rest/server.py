@@ -6,6 +6,11 @@ from ..handlers import DataPlane
 from .app import create_app
 
 
+class _NoSignalServer(uvicorn.Server):
+    def install_signal_handlers(self):
+        pass
+
+
 class RESTServer:
     def __init__(self, settings: Settings, data_plane: DataPlane):
         self._settings = settings
@@ -13,6 +18,9 @@ class RESTServer:
         self._app = create_app(self._settings, self._data_plane)
 
     async def start(self):
-        uvicorn.run(
-            self._app, port=self._settings.http_port,
-        )
+        cfg = uvicorn.Config(self._app, port=self._settings.http_port)
+        self._server = _NoSignalServer(cfg)
+        await self._server.serve()
+
+    async def stop(self):
+        self._server.handle_exit(sig=None, frame=None)
