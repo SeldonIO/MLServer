@@ -1,11 +1,10 @@
-from mlserver.cli.serve import init_mlserver
+from mlserver.cli.serve import read_folder
 from mlserver.settings import ModelSettings
 
 
-async def test_init_mlserver(sum_model_settings: ModelSettings, model_folder: str):
-    server = await init_mlserver(model_folder)
+def test_read_folder(sum_model_settings: ModelSettings, model_folder: str):
+    _, models = read_folder(model_folder)
 
-    model = await server._model_repository.get_model(
-        name=sum_model_settings.name, version=sum_model_settings.version
-    )
-    assert model is not None
+    assert len(models) == 1
+    assert models[0].name == sum_model_settings.name
+    assert models[0].version == sum_model_settings.version

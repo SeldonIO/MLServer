@@ -2,9 +2,8 @@ import os
 import importlib
 import sys
 
-from typing import Type
+from typing import Type, List
 
-from ..server import MLServer
 from ..model import MLModel
 from ..settings import Settings, ModelSettings
 
@@ -12,29 +11,24 @@ DEFAULT_SETTINGS_FILENAME = "settings.json"
 DEFAULT_MODEL_SETTINGS_FILENAME = "model-settings.json"
 
 
-async def init_mlserver(folder: str) -> MLServer:
+def read_folder(folder: str) -> (Settings, List[MLModel]):
     """
-    Instantiate a MLServer instance from a folder's config.
+    Read a folder's config.
     """
     # NOTE: Insert current directory and model folder into syspath to load
     # specified model.
     sys.path.insert(0, ".")
     sys.path.insert(0, folder)
 
+    settings_path = os.path.join(folder, DEFAULT_SETTINGS_FILENAME)
+    settings = Settings.parse_file(settings_path)
+
     model_settings_path = os.path.join(folder, DEFAULT_MODEL_SETTINGS_FILENAME)
     model_settings = ModelSettings.parse_file(model_settings_path)
 
     model_object = _init_model(model_settings)
 
-    settings_path = os.path.join(folder, DEFAULT_SETTINGS_FILENAME)
-    settings = Settings.parse_file(settings_path)
-
-    server = MLServer(settings)
-
-    # TODO: Clean up interface to load models
-    await server._model_repository.load(model_object)
-
-    return server
+    return settings, [model_object]
 
 
 def _init_model(model_settings: ModelSettings) -> MLModel:

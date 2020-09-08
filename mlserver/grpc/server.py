@@ -27,10 +27,8 @@ class GRPCServer:
 
         return self._server
 
-    def start(self):
-        print("#### this shouldn't get called #####")
+    async def start(self):
         self._create_server()
 
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._server.start())
-        loop.run_until_complete(self._server.wait_for_termination())
+        await self._server.start()
+        await self._server.wait_for_termination()

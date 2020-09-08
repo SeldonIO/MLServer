@@ -12,7 +12,7 @@ class RESTServer:
         self._data_plane = data_plane
         self._app = create_app(self._settings, self._data_plane)
 
-    def start(self):
+    async def start(self):
         uvicorn.run(
             self._app, port=self._settings.http_port,
         )

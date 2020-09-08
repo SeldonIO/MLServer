@@ -2,9 +2,22 @@
 Command-line interface to manage MLServer models.
 """
 import click
+import asyncio
+
+from functools import wraps
+
+from ..server import MLServer
 
 from .build import generate_bundle
-from .serve import init_mlserver
+from .serve import read_folder
+
+
+def click_async(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        return asyncio.run(f(*args, **kwargs))
+
+    return wrapper
 
 
 @click.group()
@@ -33,12 +46,15 @@ def bundle(folder: str):
 
 @root.command("start")
 @click.argument("folder", nargs=1)
+@click_async
 async def start(folder: str):
     """
     Start serving a machine learning model with MLServer.
     """
-    server = await init_mlserver(folder)
-    server.start()
+    settings, models = read_folder(folder)
+
+    server = MLServer(settings)
+    await server.start(models)
 
 
 def main():
