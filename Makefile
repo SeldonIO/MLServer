@@ -15,6 +15,9 @@ run:
 build:
 	docker build . -t ${IMAGE_NAME}:${VERSION}
 
+push:
+	docker push ${IMAGE_NAME}:${VERSION}
+
 test:
 	tox
 
