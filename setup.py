@@ -42,7 +42,7 @@ setup(
     description="ML server",
     packages=find_packages(),
     install_requires=[
-        "grpcio==1.30.0",
+        "grpcio==1.31.0",
         "protobuf==3.12.2",
         "fastapi==0.60.1",
         "uvicorn==0.11.6",
