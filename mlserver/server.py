@@ -17,8 +17,9 @@ class MLServer:
             settings=self._settings, model_repository=self._model_repository
         )
 
-        for model in models:
-            self._model_repository.load(model)
+        # TODO: Figure out how to load async on startup
+        #  for model in models:
+        #  self._model_repository.load(model)
 
     def start(self):
         # TODO: Explore using gRPC's AsyncIO support to run on single event

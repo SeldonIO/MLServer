@@ -16,12 +16,12 @@ from ..errors import MLServerError
 
 
 def _handle_mlserver_error(f: Callable):
-    def _inner(self, request, context):
+    async def _inner(self, request, context):
         try:
-            return f(self, request, context)
+            return await f(self, request, context)
         except MLServerError as err:
             # TODO: Log error and stacktrace
-            context.abort(code=grpc.StatusCode.INVALID_ARGUMENT, details=str(err))
+            await context.abort(code=grpc.StatusCode.INVALID_ARGUMENT, details=str(err))
 
     return _inner
 

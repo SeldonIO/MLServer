@@ -12,7 +12,7 @@ DEFAULT_SETTINGS_FILENAME = "settings.json"
 DEFAULT_MODEL_SETTINGS_FILENAME = "model-settings.json"
 
 
-def init_mlserver(folder: str) -> MLServer:
+async def init_mlserver(folder: str) -> MLServer:
     """
     Instantiate a MLServer instance from a folder's config.
     """
@@ -29,7 +29,12 @@ def init_mlserver(folder: str) -> MLServer:
     settings_path = os.path.join(folder, DEFAULT_SETTINGS_FILENAME)
     settings = Settings.parse_file(settings_path)
 
-    return MLServer(settings, models=[model_object])
+    server = MLServer(settings)
+
+    # TODO: Clean up interface to load models
+    await server._model_repository.load(model_object)
+
+    return server
 
 
 def _init_model(model_settings: ModelSettings) -> MLModel:

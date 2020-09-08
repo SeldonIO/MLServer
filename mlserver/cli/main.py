@@ -33,11 +33,11 @@ def bundle(folder: str):
 
 @root.command("start")
 @click.argument("folder", nargs=1)
-def start(folder: str):
+async def start(folder: str):
     """
     Start serving a machine learning model with MLServer.
     """
-    server = init_mlserver(folder)
+    server = await init_mlserver(folder)
     server.start()
 
 
