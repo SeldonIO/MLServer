@@ -6,7 +6,8 @@ from .types import MetadataTensor
 
 
 class Settings(BaseSettings):
-    env_prefix = "mlserver_"
+    class Config:
+        env_prefix = "mlserver_"
 
     debug: bool = True
 
@@ -29,13 +30,15 @@ class ModelParameters(BaseSettings):
     change on each instance (e.g. each version) of the model.
     """
 
-    env_prefix = "mlserver_model_"
+    class Config:
+        env_prefix = "mlserver_model_"
 
     uri: Optional[str] = None
 
 
 class ModelSettings(BaseSettings):
-    env_prefix = "mlserver_model_"
+    class Config:
+        env_prefix = "mlserver_model_"
 
     name: str
     version: str
