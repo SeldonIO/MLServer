@@ -4,10 +4,13 @@ from pydantic import BaseSettings, PyObject
 from .version import __version__
 from .types import MetadataTensor
 
+ENV_PREFIX_SETTINGS = "MLSERVER_"
+ENV_PREFIX_MODEL_SETTINGS = "MLSERVER_MODEL_"
+
 
 class Settings(BaseSettings):
     class Config:
-        env_prefix = "mlserver_"
+        env_prefix = ENV_PREFIX_SETTINGS
 
     debug: bool = True
 
@@ -31,14 +34,14 @@ class ModelParameters(BaseSettings):
     """
 
     class Config:
-        env_prefix = "mlserver_model_"
+        env_prefix = ENV_PREFIX_MODEL_SETTINGS
 
     uri: Optional[str] = None
 
 
 class ModelSettings(BaseSettings):
     class Config:
-        env_prefix = "mlserver_model_"
+        env_prefix = ENV_PREFIX_MODEL_SETTINGS
 
     name: str
     version: str

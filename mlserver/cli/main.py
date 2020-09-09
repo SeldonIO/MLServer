@@ -9,7 +9,7 @@ from functools import wraps
 from ..server import MLServer
 
 from .build import generate_bundle
-from .serve import read_folder
+from .serve import load_settings
 
 
 def click_async(f):
@@ -51,7 +51,7 @@ async def start(folder: str):
     """
     Start serving a machine learning model with MLServer.
     """
-    settings, models = read_folder(folder)
+    settings, models = load_settings(folder)
 
     server = MLServer(settings)
     await server.start(models)
