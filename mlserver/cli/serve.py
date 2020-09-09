@@ -1,8 +1,7 @@
 import os
-import importlib
 import sys
 
-from typing import Type, List
+from typing import List
 
 from ..model import MLModel
 from ..settings import Settings, ModelSettings
@@ -32,15 +31,5 @@ def read_folder(folder: str) -> (Settings, List[MLModel]):
 
 
 def _init_model(model_settings: ModelSettings) -> MLModel:
-    model_class = _import_model(model_settings.implementation)
+    model_class = model_settings.implementation
     return model_class(model_settings)
-
-
-def _import_model(model_module: str) -> Type[MLModel]:
-    model_package, model_class_name = model_module.rsplit(".", 1)
-
-    module = importlib.import_module(model_package)
-    model_class = getattr(module, model_class_name)
-
-    # TODO: Validate that `model_class` is a subtype of MLModel
-    return model_class

@@ -1,11 +1,13 @@
 from typing import List, Optional
-from pydantic import BaseSettings
+from pydantic import BaseSettings, PyObject
 
 from .version import __version__
 from .types import MetadataTensor
 
 
 class Settings(BaseSettings):
+    env_prefix = "mlserver_"
+
     debug: bool = True
 
     # Server metadata
@@ -27,10 +29,14 @@ class ModelParameters(BaseSettings):
     change on each instance (e.g. each version) of the model.
     """
 
+    env_prefix = "mlserver_model_"
+
     uri: Optional[str] = None
 
 
 class ModelSettings(BaseSettings):
+    env_prefix = "mlserver_model_"
+
     name: str
     version: str
 
@@ -41,7 +47,7 @@ class ModelSettings(BaseSettings):
     outputs: Optional[List[MetadataTensor]] = []
 
     # Custom model class implementation
-    implementation: str = "mlserver.model.MLModel"
+    implementation: PyObject = "mlserver.model.MLModel"
 
     # Model parameters are meant to be set directly by the MLServer runtime.
     # However, it's also possible to override them manually.
