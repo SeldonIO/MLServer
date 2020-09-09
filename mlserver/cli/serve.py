@@ -12,7 +12,7 @@ DEFAULT_MODEL_SETTINGS_FILENAME = "model-settings.json"
 
 def load_settings(folder: str) -> (Settings, List[MLModel]):
     """
-    Read a folder's config.
+    Load server and model settings.
     """
     # NOTE: Insert current directory and model folder into syspath to load
     # specified model.
@@ -27,6 +27,12 @@ def load_settings(folder: str) -> (Settings, List[MLModel]):
     else:
         settings = Settings()
 
+    models = _load_models(folder)
+
+    return settings, models
+
+
+def _load_models(folder: str) -> List[MLModel]:
     model_settings_path = os.path.join(folder, DEFAULT_MODEL_SETTINGS_FILENAME)
 
     model_settings = None
@@ -38,7 +44,7 @@ def load_settings(folder: str) -> (Settings, List[MLModel]):
 
     model_object = _init_model(model_settings)
 
-    return settings, [model_object]
+    return [model_object]
 
 
 def _init_model(model_settings: ModelSettings) -> MLModel:
