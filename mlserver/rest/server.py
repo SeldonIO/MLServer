@@ -18,7 +18,9 @@ class RESTServer:
         self._app = create_app(self._settings, self._data_plane)
 
     async def start(self):
-        cfg = uvicorn.Config(self._app, port=self._settings.http_port)
+        cfg = uvicorn.Config(
+            self._app, host=self._settings.host, port=self._settings.http_port
+        )
         self._server = _NoSignalServer(cfg)
         await self._server.serve()
 

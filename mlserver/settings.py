@@ -1,3 +1,5 @@
+import ipaddress
+
 from typing import List, Optional
 from pydantic import BaseSettings, PyObject
 
@@ -20,6 +22,7 @@ class Settings(BaseSettings):
     extensions: List[str] = []
 
     # Server settings
+    host: str = "0.0.0.0"
     http_port: int = 8080
     grpc_port: int = 8081
     grpc_workers: int = 10
