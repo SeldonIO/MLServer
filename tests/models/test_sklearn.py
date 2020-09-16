@@ -1,11 +1,14 @@
 import pytest
+import os
 
 from mlserver.models.sklearn import (
     _SKLEARN_PRESENT,
     SKLearnModel,
     PREDICT_OUTPUT,
     PREDICT_PROBA_OUTPUT,
+    WELLKNOWN_MODEL_FILENAMES,
 )
+from mlserver.settings import ModelSettings
 from mlserver.errors import InferenceError
 from mlserver.types import RequestOutput
 
@@ -19,6 +22,24 @@ if _SKLEARN_PRESENT:
 def test_sklearn_load(sklearn_model: SKLearnModel):
     assert sklearn_model.ready
     assert type(sklearn_model._model) == DummyClassifier
+
+
+@skipif_sklearn_missing
+@pytest.mark.parametrize("fname", WELLKNOWN_MODEL_FILENAMES)
+async def test_sklearn_load_folder(
+    fname, sklearn_model_uri: str, sklearn_model_settings: ModelSettings
+):
+    model_uri = os.path.dirname(sklearn_model_uri)
+    model_path = os.path.join(model_uri, fname)
+    os.rename(sklearn_model_uri, model_path)
+
+    sklearn_model_settings.parameters.uri = model_uri
+
+    model = SKLearnModel(sklearn_model_settings)
+    await model.load()
+
+    assert model.ready
+    assert type(model._model) == DummyClassifier
 
 
 @skipif_sklearn_missing

@@ -34,13 +34,17 @@ def sklearn_model_uri(tmp_path) -> str:
 
 
 @pytest.fixture
-async def sklearn_model(sklearn_model_uri: str) -> SKLearnModel:
-    model_settings = ModelSettings(
+def sklearn_model_settings(sklearn_model_uri: str) -> ModelSettings:
+    return ModelSettings(
         name="sklearn-model",
         version="v1.2.3",
         parameters=ModelParameters(uri=sklearn_model_uri),
     )
-    model = SKLearnModel(model_settings)
+
+
+@pytest.fixture
+async def sklearn_model(sklearn_model_settings: ModelSettings) -> SKLearnModel:
+    model = SKLearnModel(sklearn_model_settings)
     await model.load()
 
     return model
