@@ -65,9 +65,9 @@ class SKLearnModel(MLModel):
                 f"({len(payload.inputs)} were received)"
             )
 
-        if len(payload.outputs) == 0:
+        if not payload.outputs:
             # By default, only return the result of `predict()`
-            payload.outputs.append(types.RequestOutput(name=PREDICT_OUTPUT))
+            payload.outputs = [types.RequestOutput(name=PREDICT_OUTPUT)]
         else:
             for request_output in payload.outputs:
                 if request_output.name not in VALID_OUTPUTS:
