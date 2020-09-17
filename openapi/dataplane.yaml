@@ -330,7 +330,6 @@ components:
             $ref: '#/components/schemas/response_output'
       required:
         - model_name
-        - id
         - outputs
     inference_error_response:
       title: inference_error_response
