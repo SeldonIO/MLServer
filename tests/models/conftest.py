@@ -73,13 +73,17 @@ def xgboost_model_uri(tmp_path) -> str:
 
 
 @pytest.fixture
-async def xgboost_model(xgboost_model_uri: str) -> XGBoostModel:
-    model_settings = ModelSettings(
+def xgboost_model_settings(xgboost_model_uri: str) -> ModelSettings:
+    return ModelSettings(
         name="xgboost-model",
         version="v1.2.3",
         parameters=ModelParameters(uri=xgboost_model_uri),
     )
-    model = XGBoostModel(model_settings)
+
+
+@pytest.fixture
+async def xgboost_model(xgboost_model_settings: ModelSettings) -> XGBoostModel:
+    model = XGBoostModel(xgboost_model_settings)
     await model.load()
 
     return model
