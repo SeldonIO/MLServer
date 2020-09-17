@@ -54,7 +54,7 @@ async def test_sklearn_multiple_inputs_error(
 async def test_sklearn_invalid_output_error(
     sklearn_model: SKLearnModel, sklearn_inference_request
 ):
-    sklearn_inference_request.outputs.append(RequestOutput(name="something_else"))
+    sklearn_inference_request.outputs = [RequestOutput(name="something_else")]
 
     with pytest.raises(InferenceError):
         await sklearn_model.predict(sklearn_inference_request)
@@ -73,8 +73,9 @@ async def test_sklearn_invalid_output_error(
 async def test_sklearn_predict(
     sklearn_model: SKLearnModel, sklearn_inference_request, req_outputs
 ):
-    for req_output in req_outputs:
-        sklearn_inference_request.outputs.append(RequestOutput(name=req_output))
+    sklearn_inference_request.outputs = [
+        RequestOutput(name=req_output) for req_output in req_outputs
+    ]
 
     response = await sklearn_model.predict(sklearn_inference_request)
 

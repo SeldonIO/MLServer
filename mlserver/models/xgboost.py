@@ -37,7 +37,6 @@ class XGBoostModel(MLModel):
 
         # TODO: Set datatype (cast from numpy?)
         return types.InferenceResponse(
-            id=payload.id,
             model_name=self.name,
             model_version=self.version,
             outputs=[

@@ -1,3 +1,5 @@
+import uuid
+
 from .settings import Settings
 from .repository import ModelRepository
 from .types import (
@@ -46,6 +48,14 @@ class DataPlane:
     async def infer(
         self, payload: InferenceRequest, name: str, version: str = None
     ) -> InferenceResponse:
+        if payload.id is None:
+            payload.id = str(uuid.uuid4())
+
         model = await self._model_repository.get_model(name, version)
         # TODO: Make await optional for sync methods
-        return await model.predict(payload)
+        prediction = await model.predict(payload)
+
+        # Ensure ID matches
+        prediction.id = payload.id
+
+        return prediction

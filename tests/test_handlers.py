@@ -1,4 +1,5 @@
 import pytest
+import uuid
 
 from mlserver import ModelSettings
 from mlserver.types import MetadataTensor
@@ -89,3 +90,13 @@ async def test_infer(data_plane, sum_model, inference_request):
 
     assert len(prediction.outputs) == 1
     assert prediction.outputs[0].data == [21]
+
+
+async def test_infer_generates_uuid(data_plane, sum_model, inference_request):
+    inference_request.id = None
+    prediction = await data_plane.infer(
+        payload=inference_request, name=sum_model.name, version=sum_model.version
+    )
+
+    assert prediction.id is not None
+    assert prediction.id == str(uuid.UUID(prediction.id))

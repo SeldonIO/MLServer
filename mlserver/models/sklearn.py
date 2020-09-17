@@ -53,7 +53,6 @@ class SKLearnModel(MLModel):
         payload = self._check_request(payload)
 
         return types.InferenceResponse(
-            id=payload.id,
             model_name=self.name,
             model_version=self.version,
             outputs=self._predict_outputs(payload),
