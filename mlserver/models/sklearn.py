@@ -1,10 +1,10 @@
-import os
-
 from typing import List
 
 from .. import types
 from ..model import MLModel
 from ..errors import InferenceError
+
+from .utils import get_model_uri
 
 _SKLEARN_PRESENT = False
 
@@ -31,23 +31,13 @@ class SKLearnModel(MLModel):
 
     async def load(self) -> bool:
         # TODO: Log info message
-        model_uri = await self._get_model_uri()
+        model_uri = await get_model_uri(
+            self._settings, wellknown_filenames=WELLKNOWN_MODEL_FILENAMES
+        )
         self._model = joblib.load(model_uri)
 
         self.ready = True
         return self.ready
-
-    async def _get_model_uri(self) -> str:
-        model_uri = self._settings.parameters.uri
-
-        # If model_uri is a folder, search for a well-known model filename
-        if os.path.isdir(model_uri):
-            for fname in WELLKNOWN_MODEL_FILENAMES:
-                model_path = os.path.join(model_uri, fname)
-                if os.path.isfile(model_path):
-                    return model_path
-
-        return model_uri
 
     async def predict(self, payload: types.InferenceRequest) -> types.InferenceResponse:
         payload = self._check_request(payload)
