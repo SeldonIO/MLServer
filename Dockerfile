@@ -13,7 +13,5 @@ COPY setup.py .
 COPY ./mlserver/ ./mlserver/
 RUN pip install .[all]
 
-COPY ./mlserver/ ./mlserver/
-
 CMD mlserver start $MODELS_DIR
 
