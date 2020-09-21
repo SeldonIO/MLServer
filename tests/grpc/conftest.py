@@ -1,6 +1,5 @@
 import os
 import pytest
-import grpc
 
 from grpc.experimental import aio
 

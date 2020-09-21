@@ -1,6 +1,5 @@
 import pytest
 import os
-import asyncio
 
 from mlserver.handlers import DataPlane
 from mlserver.repository import ModelRepository
