@@ -39,7 +39,7 @@ class XGBoostModel(MLModel):
 
         # _check_request will convert the data to `xgboost.DMatrix`
         model_input = payload.inputs[0]
-        dmatrix_data = model_input.parameters["dmatrix_data"]
+        dmatrix_data = model_input.parameters["dmatrix_data"]  # type: ignore
         prediction = self._model.predict(dmatrix_data)
 
         # TODO: Set datatype (cast from numpy?)
@@ -70,6 +70,7 @@ class XGBoostModel(MLModel):
             array_data = np.array(model_input.data)
             dmatrix_data = xgb.DMatrix(array_data)
 
+            # TODO: Use Parameters object
             model_input.parameters = {"dmatrix_data": dmatrix_data}
         except Exception as e:
             # There are a few things that can go wrong here, e.g. less than 2-D

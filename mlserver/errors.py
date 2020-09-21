@@ -4,7 +4,7 @@ class MLServerError(Exception):
 
 
 class InvalidModelURI(MLServerError):
-    def __init__(self, name: str, model_uri: str):
+    def __init__(self, name: str, model_uri: str = None):
         msg = f"Invalid URI specified for model {name}"
         if model_uri:
             msg += f" ({model_uri})"

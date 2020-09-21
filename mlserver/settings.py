@@ -54,7 +54,7 @@ class ModelSettings(BaseSettings):
     outputs: Optional[List[MetadataTensor]] = []
 
     # Custom model class implementation
-    implementation: PyObject = "mlserver.model.MLModel"
+    implementation: PyObject = "mlserver.model.MLModel"  # type: ignore
 
     # Model parameters are meant to be set directly by the MLServer runtime.
     # However, it's also possible to override them manually.
