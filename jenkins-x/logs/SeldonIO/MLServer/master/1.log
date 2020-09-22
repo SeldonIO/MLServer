@@ -1,0 +1,39 @@
+
+Showing logs for build [32mseldonio-mlserver-master-g7vsl-1[0m stage [32mfrom-build-pack[0m and container [32mstep-credential-initializer-tmwrz[0m
+{"level":"info","ts":1600777343.0140707,"logger":"fallback-logger","caller":"logging/config.go:69","msg":"Fetch GitHub commit ID from kodata failed: open /var/run/ko/refs/heads/0.8.0-ns-support: no such file or directory"}
+{"level":"info","ts":1600777343.0148013,"logger":"fallback-logger","caller":"creds-init/main.go:40","msg":"Credentials initialized."}
+
+Showing logs for build [32mseldonio-mlserver-master-g7vsl-1[0m stage [32mfrom-build-pack[0m and container [32mstep-working-dir-initializer-ffbmb[0m
+{"level":"info","ts":1600777344.074486,"logger":"fallback-logger","caller":"logging/config.go:69","msg":"Fetch GitHub commit ID from kodata failed: open /var/run/ko/HEAD: no such file or directory"}
+{"level":"info","ts":1600777344.076383,"logger":"fallback-logger","caller":"bash/main.go:64","msg":"Successfully executed command \"sh -c mkdir -p /workspace/source\"; output "}
+
+Showing logs for build [32mseldonio-mlserver-master-g7vsl-1[0m stage [32mfrom-build-pack[0m and container [32mstep-place-tools[0m
+
+Showing logs for build [32mseldonio-mlserver-master-g7vsl-1[0m stage [32mfrom-build-pack[0m and container [32mstep-git-source-seldonio-mlserver-master-g7vsl-2nk6c[0m
+{"level":"info","ts":1600777369.5116172,"logger":"fallback-logger","caller":"logging/config.go:69","msg":"Fetch GitHub commit ID from kodata failed: open /var/run/ko/refs/heads/0.8.0-ns-support: no such file or directory"}
+{"level":"info","ts":1600777371.0170045,"logger":"fallback-logger","caller":"git/git.go:103","msg":"Successfully cloned https://github.com/SeldonIO/MLServer.git @ v0.1.0 in path /workspace/source"}
+
+Showing logs for build [32mseldonio-mlserver-master-g7vsl-1[0m stage [32mfrom-build-pack[0m and container [32mstep-setup-builder-home[0m
+
+Showing logs for build [32mseldonio-mlserver-master-g7vsl-1[0m stage [32mfrom-build-pack[0m and container [32mstep-git-merge[0m
+Using SHAs from PULL_REFS=master:
+WARNING: no SHAs to merge, falling back to initial cloned commit
+
+Showing logs for build [32mseldonio-mlserver-master-g7vsl-1[0m stage [32mfrom-build-pack[0m and container [32mstep-setup-jx-git-credentials[0m
+Generated Git credentials file /workspace/xdg_config/git/credentials
+
+Showing logs for build [32mseldonio-mlserver-master-g7vsl-1[0m stage [32mfrom-build-pack[0m and container [32mstep-build-python-unittest[0m
+
+----------------------------------------------------------------------
+Ran 0 tests in 0.000s
+
+OK
+
+Showing logs for build [32mseldonio-mlserver-master-g7vsl-1[0m stage [32mfrom-build-pack[0m and container [32mstep-build-container-build[0m
+E0922 12:22:57.195798      10 aws_credentials.go:77] while getting AWS credentials NoCredentialProviders: no valid providers in chain. Deprecated.
+	For verbose messaging see aws.Config.CredentialsChainVerboseErrors
+E0922 12:22:57.215389      10 metadata.go:154] while reading 'google-dockercfg' metadata: http status code: 404 while fetching url http://metadata.google.internal./computeMetadata/v1/instance/attributes/google-dockercfg
+E0922 12:22:57.220943      10 metadata.go:166] while reading 'google-dockercfg-url' metadata: http status code: 404 while fetching url http://metadata.google.internal./computeMetadata/v1/instance/attributes/google-dockercfg-url
+error checking push permissions -- make sure you entered the correct tag name, and that you are authenticated correctly, and try again: checking push permission for "gcr.io/seldon-core-ops/mlserver:0.1.0": creating push check transport for gcr.io failed: GET https://gcr.io/v2/token?scope=repository%3Aseldon-core-ops%2Fmlserver%3Apush%2Cpull&service=gcr.io: DENIED: Token exchange failed for project 'seldon-core-ops'. Caller does not have permission 'storage.buckets.create'. To configure permissions, follow instructions at: https://cloud.google.com/container-registry/docs/access-control
+[31m
+Pipeline failed on stage 'from-build-pack' : container 'step-build-container-build'. The execution of the pipeline has stopped.[0m
