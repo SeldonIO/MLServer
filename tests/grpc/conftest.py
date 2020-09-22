@@ -40,7 +40,9 @@ def grpc_settings(settings: Settings) -> Settings:
 async def inference_service_stub(
     grpc_server, grpc_settings: Settings
 ) -> GRPCInferenceServiceStub:
-    async with aio.insecure_channel(f"[::]:{grpc_settings.grpc_port}") as channel:
+    async with aio.insecure_channel(
+        f"{grpc_settings.host}:{grpc_settings.grpc_port}"
+    ) as channel:
         yield GRPCInferenceServiceStub(channel)
 
 

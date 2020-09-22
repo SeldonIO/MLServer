@@ -1,5 +1,5 @@
-VERSION=0.1.0
-IMAGE_NAME=seldonio/mlserver
+VERSION = $(shell sed 's/^__version__ = "\(.*\)"/\1/' ./mlserver/version.py)
+IMAGE_NAME =seldonio/mlserver
 
 install-dev:
 	pip install -r requirements-dev.txt
@@ -28,4 +28,7 @@ lint:
 fmt:
 	black . \
 		--exclude "(mlserver/grpc/dataplane_pb2*)"
+
+version:
+	@echo ${VERSION}
   
