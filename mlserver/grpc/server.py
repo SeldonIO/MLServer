@@ -21,7 +21,9 @@ class GRPCServer:
 
         add_GRPCInferenceServiceServicer_to_server(self._servicer, self._server)
 
-        self._server.add_insecure_port(f"[::]:{self._settings.grpc_port}")
+        self._server.add_insecure_port(
+            f"{self._settings.host}:{self._settings.grpc_port}"
+        )
 
         return self._server
 
