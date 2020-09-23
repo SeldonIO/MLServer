@@ -93,7 +93,7 @@ async def xgboost_model(xgboost_model_settings: ModelSettings) -> XGBoostModel:
 def xgboost_inference_request(inference_request: InferenceRequest) -> InferenceRequest:
     # Reshape to 2D array, matching the input data to xgboost_model
     single_input = inference_request.inputs[0]
-    single_input.data = single_input.data = [[1, 2, 3]]
+    single_input.data = [[1, 2, 3]]  # type: ignore
 
     # Keep only a single input
     inference_request.inputs = [single_input]

@@ -3,6 +3,15 @@ class MLServerError(Exception):
         super().__init__(msg)
 
 
+class InvalidModelURI(MLServerError):
+    def __init__(self, name: str, model_uri: str = None):
+        msg = f"Invalid URI specified for model {name}"
+        if model_uri:
+            msg += f" ({model_uri})"
+
+        super().__init__(msg)
+
+
 class ModelNotFound(MLServerError):
     def __init__(self, name: str, version: str = None):
         msg = f"Model {name} not found"

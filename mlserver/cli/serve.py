@@ -1,7 +1,7 @@
 import os
 import sys
 
-from typing import List
+from typing import List, Tuple, Union
 
 from ..model import MLModel
 from ..settings import Settings, ModelParameters, ModelSettings
@@ -10,7 +10,7 @@ DEFAULT_SETTINGS_FILENAME = "settings.json"
 DEFAULT_MODEL_SETTINGS_FILENAME = "model-settings.json"
 
 
-def load_settings(folder: str = None) -> (Settings, List[MLModel]):
+def load_settings(folder: str = None) -> Tuple[Settings, List[MLModel]]:
     """
     Load server and model settings.
     """
@@ -23,7 +23,7 @@ def load_settings(folder: str = None) -> (Settings, List[MLModel]):
 
     settings = None
     if _path_exists(folder, DEFAULT_SETTINGS_FILENAME):
-        settings_path = os.path.join(folder, DEFAULT_SETTINGS_FILENAME)
+        settings_path = os.path.join(folder, DEFAULT_SETTINGS_FILENAME)  # type: ignore
         settings = Settings.parse_file(settings_path)
     else:
         settings = Settings()
@@ -33,10 +33,12 @@ def load_settings(folder: str = None) -> (Settings, List[MLModel]):
     return settings, models
 
 
-def _load_models(folder: str) -> List[MLModel]:
+def _load_models(folder: str = None) -> List[MLModel]:
     model_settings = None
     if _path_exists(folder, DEFAULT_MODEL_SETTINGS_FILENAME):
-        model_settings_path = os.path.join(folder, DEFAULT_MODEL_SETTINGS_FILENAME)
+        model_settings_path = os.path.join(
+            folder, DEFAULT_MODEL_SETTINGS_FILENAME  # type: ignore
+        )
         model_settings = ModelSettings.parse_file(model_settings_path)
     else:
         model_settings = ModelSettings()
@@ -47,7 +49,7 @@ def _load_models(folder: str) -> List[MLModel]:
     return [model_object]
 
 
-def _path_exists(folder: str, file: str) -> bool:
+def _path_exists(folder: Union[str, None], file: str) -> bool:
     if folder is None:
         return False
 
@@ -57,4 +59,4 @@ def _path_exists(folder: str, file: str) -> bool:
 
 def _init_model(model_settings: ModelSettings) -> MLModel:
     model_class = model_settings.implementation
-    return model_class(model_settings)
+    return model_class(model_settings)  # type: ignore

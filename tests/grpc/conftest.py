@@ -1,9 +1,9 @@
 import os
 import pytest
-import grpc
 
 from grpc.experimental import aio
 
+from typing import AsyncGenerator
 from google.protobuf import json_format
 from mlserver.handlers import DataPlane
 from mlserver.settings import Settings
@@ -39,7 +39,7 @@ def grpc_settings(settings: Settings) -> Settings:
 @pytest.fixture
 async def inference_service_stub(
     grpc_server, grpc_settings: Settings
-) -> GRPCInferenceServiceStub:
+) -> AsyncGenerator[GRPCInferenceServiceStub, None]:
     async with aio.insecure_channel(
         f"{grpc_settings.host}:{grpc_settings.grpc_port}"
     ) as channel:
