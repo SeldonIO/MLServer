@@ -46,7 +46,7 @@ setup(
         "protobuf==3.12.2",
         "fastapi==0.60.1",
         "uvicorn==0.11.8",
-        "orjson==3.3.0",
+        "orjson==3.3.1",
         "click==7.1.2",
     ],
     extras_require=_extras(),
