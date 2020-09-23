@@ -31,7 +31,7 @@ async def test_xgboost_load_folder(
     model_path = os.path.join(model_uri, fname)
     os.rename(xgboost_model_uri, model_path)
 
-    xgboost_model_settings.parameters.uri = model_uri
+    xgboost_model_settings.parameters.uri = model_uri  # type: ignore
 
     model = XGBoostModel(xgboost_model_settings)
     await model.load()

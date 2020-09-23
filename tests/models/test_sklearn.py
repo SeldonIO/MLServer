@@ -33,7 +33,7 @@ async def test_sklearn_load_folder(
     model_path = os.path.join(model_uri, fname)
     os.rename(sklearn_model_uri, model_path)
 
-    sklearn_model_settings.parameters.uri = model_uri
+    sklearn_model_settings.parameters.uri = model_uri  # type: ignore
 
     model = SKLearnModel(sklearn_model_settings)
     await model.load()
@@ -87,4 +87,4 @@ async def test_sklearn_predict(
     assert len(response.outputs) == len(req_outputs)
     for req_output, output in zip(req_outputs, response.outputs):
         assert output.name == req_output
-        assert len(output.data) == len(input_data)
+        assert len(output.data) == len(input_data)  # type: ignore
