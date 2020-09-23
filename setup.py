@@ -45,7 +45,7 @@ setup(
         "grpcio==1.31.0",
         "protobuf==3.12.2",
         "fastapi==0.60.1",
-        "uvicorn==0.11.6",
+        "uvicorn==0.11.8",
         "orjson==3.3.0",
         "click==7.1.2",
     ],
