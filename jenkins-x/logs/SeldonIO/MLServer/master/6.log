@@ -1,0 +1,24 @@
+
+Showing logs for build [32mseldonio-mlserver-master-releas-f9kdr-6[0m stage [32mbuild-and-push[0m and container [32mstep-credential-initializer-4t7sn[0m
+{"level":"info","ts":1600869491.2224116,"logger":"fallback-logger","caller":"logging/config.go:69","msg":"Fetch GitHub commit ID from kodata failed: open /var/run/ko/refs/heads/0.8.0-ns-support: no such file or directory"}
+{"level":"info","ts":1600869491.2236362,"logger":"fallback-logger","caller":"creds-init/main.go:40","msg":"Credentials initialized."}
+
+Showing logs for build [32mseldonio-mlserver-master-releas-f9kdr-6[0m stage [32mbuild-and-push[0m and container [32mstep-working-dir-initializer-4gxpg[0m
+{"level":"info","ts":1600869492.4434226,"logger":"fallback-logger","caller":"logging/config.go:69","msg":"Fetch GitHub commit ID from kodata failed: open /var/run/ko/HEAD: no such file or directory"}
+{"level":"info","ts":1600869492.4461253,"logger":"fallback-logger","caller":"bash/main.go:64","msg":"Successfully executed command \"sh -c mkdir -p /workspace/source\"; output "}
+
+Showing logs for build [32mseldonio-mlserver-master-releas-f9kdr-6[0m stage [32mbuild-and-push[0m and container [32mstep-place-tools[0m
+
+Showing logs for build [32mseldonio-mlserver-master-releas-f9kdr-6[0m stage [32mbuild-and-push[0m and container [32mstep-git-source-seldonio-mlserver-master-releas-f9kdr-qsclj[0m
+{"level":"info","ts":1600869498.305643,"logger":"fallback-logger","caller":"logging/config.go:69","msg":"Fetch GitHub commit ID from kodata failed: open /var/run/ko/refs/heads/0.8.0-ns-support: no such file or directory"}
+{"level":"info","ts":1600869499.7600002,"logger":"fallback-logger","caller":"git/git.go:103","msg":"Successfully cloned https://github.com/SeldonIO/MLServer.git @ v0.1.0 in path /workspace/source"}
+
+Showing logs for build [32mseldonio-mlserver-master-releas-f9kdr-6[0m stage [32mbuild-and-push[0m and container [32mstep-setup-builder-home[0m
+
+Showing logs for build [32mseldonio-mlserver-master-releas-f9kdr-6[0m stage [32mbuild-and-push[0m and container [32mstep-git-merge[0m
+Using SHAs from PULL_REFS=master:f9d8a069bc1fdad594b2274ae488e4d286e6b49b
+WARNING: no SHAs to merge, falling back to initial cloned commit
+
+Showing logs for build [32mseldonio-mlserver-master-releas-f9kdr-6[0m stage [32mbuild-and-push[0m and container [32mstep-exit-with-error-to-avoid-auto-changelog[0m
+[31m
+Pipeline failed on stage 'build-and-push' : container 'step-exit-with-error-to-avoid-auto-changelog'. The execution of the pipeline has stopped.[0m
