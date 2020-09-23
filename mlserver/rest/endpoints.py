@@ -42,6 +42,9 @@ class Endpoints:
         return await self._data_plane.model_metadata(model_name, model_version)
 
     async def infer(
-        self, payload: InferenceRequest, model_name: str, model_version: str = None,
+        self,
+        payload: InferenceRequest,
+        model_name: str,
+        model_version: str = None,
     ) -> InferenceResponse:
         return await self._data_plane.infer(payload, model_name, model_version)
