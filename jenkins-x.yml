@@ -12,12 +12,17 @@ pipelineConfig:
         agent:
           image: seldonio/core-builder:0.18
         stages:
-          - name: build-and-test
+          - name: lint-and-test
             parallel:
-              - name: test-python
+              - name: lint
                 steps:
-                  - name: test-python
-                    command: make
+                  - command: make
+                    args:
+                      - install-dev
+                      - lint
+              - name: test
+                steps:
+                  - command: make
                     args:
                       - install-dev
                       - test
