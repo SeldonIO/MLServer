@@ -1,0 +1,24 @@
+
+Showing logs for build [32mseldonio-mlserver-master-releas-nlmgn-10[0m stage [32mbuild-and-push[0m and container [32mstep-credential-initializer-2jrbt[0m
+{"level":"info","ts":1600872043.1294298,"logger":"fallback-logger","caller":"logging/config.go:69","msg":"Fetch GitHub commit ID from kodata failed: open /var/run/ko/refs/heads/0.8.0-ns-support: no such file or directory"}
+{"level":"info","ts":1600872043.1301985,"logger":"fallback-logger","caller":"creds-init/main.go:40","msg":"Credentials initialized."}
+
+Showing logs for build [32mseldonio-mlserver-master-releas-nlmgn-10[0m stage [32mbuild-and-push[0m and container [32mstep-working-dir-initializer-ddphv[0m
+{"level":"info","ts":1600872044.1677434,"logger":"fallback-logger","caller":"logging/config.go:69","msg":"Fetch GitHub commit ID from kodata failed: open /var/run/ko/HEAD: no such file or directory"}
+{"level":"info","ts":1600872044.1718855,"logger":"fallback-logger","caller":"bash/main.go:64","msg":"Successfully executed command \"sh -c mkdir -p /workspace/source\"; output "}
+
+Showing logs for build [32mseldonio-mlserver-master-releas-nlmgn-10[0m stage [32mbuild-and-push[0m and container [32mstep-place-tools[0m
+
+Showing logs for build [32mseldonio-mlserver-master-releas-nlmgn-10[0m stage [32mbuild-and-push[0m and container [32mstep-git-source-seldonio-mlserver-master-releas-nlmgn-nvbmt[0m
+{"level":"info","ts":1600872049.3905938,"logger":"fallback-logger","caller":"logging/config.go:69","msg":"Fetch GitHub commit ID from kodata failed: open /var/run/ko/refs/heads/0.8.0-ns-support: no such file or directory"}
+{"level":"info","ts":1600872050.766516,"logger":"fallback-logger","caller":"git/git.go:103","msg":"Successfully cloned https://github.com/SeldonIO/MLServer.git @ v0.1.0 in path /workspace/source"}
+
+Showing logs for build [32mseldonio-mlserver-master-releas-nlmgn-10[0m stage [32mbuild-and-push[0m and container [32mstep-setup-builder-home[0m
+
+Showing logs for build [32mseldonio-mlserver-master-releas-nlmgn-10[0m stage [32mbuild-and-push[0m and container [32mstep-git-merge[0m
+Using SHAs from PULL_REFS=master:eabbb4eb5ea6394443c18bb6ba6e3afe9c6ff779
+WARNING: no SHAs to merge, falling back to initial cloned commit
+
+Showing logs for build [32mseldonio-mlserver-master-releas-nlmgn-10[0m stage [32mbuild-and-push[0m and container [32mstep-exit-with-error-to-avoid-auto-changelog[0m
+[31m
+Pipeline failed on stage 'build-and-push' : container 'step-exit-with-error-to-avoid-auto-changelog'. The execution of the pipeline has stopped.[0m
