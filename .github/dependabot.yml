@@ -1,0 +1,17 @@
+version: 2
+
+updates:
+  - package-ecosystem: "pip"
+    directory: "/"
+    # Check the npm registry for updates every day (weekdays)
+    schedule:
+      interval: "weekly"
+    reviewers:
+      - adriangonz
+
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    reviewers:
+      - adriangonz
