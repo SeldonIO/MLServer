@@ -23,7 +23,8 @@ async def test_get_model_not_found(model_repository, name, version):
 
 
 @pytest.mark.parametrize(
-    "name, version", [("sum-model", "v1.2.3"), ("sum-model", None), ("sum-model", "")],
+    "name, version",
+    [("sum-model", "v1.2.3"), ("sum-model", None), ("sum-model", "")],
 )
 async def test_get_model(model_repository, sum_model, name, version):
     found_model = await model_repository.get_model(name, version)

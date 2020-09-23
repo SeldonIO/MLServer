@@ -30,20 +30,30 @@ def create_app(settings: Settings, data_plane: DataPlane) -> FastAPI:
     endpoints = Endpoints(data_plane)
     routes = [
         # Model ready
-        APIRoute("/v2/models/{model_name}/ready", endpoints.model_ready,),
+        APIRoute(
+            "/v2/models/{model_name}/ready",
+            endpoints.model_ready,
+        ),
         APIRoute(
             "/v2/models/{model_name}/versions/{model_version}/ready",
             endpoints.model_ready,
         ),
         # Model infer
-        APIRoute("/v2/models/{model_name}/infer", endpoints.infer, methods=["POST"],),
+        APIRoute(
+            "/v2/models/{model_name}/infer",
+            endpoints.infer,
+            methods=["POST"],
+        ),
         APIRoute(
             "/v2/models/{model_name}/versions/{model_version}/infer",
             endpoints.infer,
             methods=["POST"],
         ),
         # Model metadata
-        APIRoute("/v2/models/{model_name}", endpoints.model_metadata,),
+        APIRoute(
+            "/v2/models/{model_name}",
+            endpoints.model_metadata,
+        ),
         APIRoute(
             "/v2/models/{model_name}/versions/{model_version}",
             endpoints.model_metadata,
@@ -52,7 +62,10 @@ def create_app(settings: Settings, data_plane: DataPlane) -> FastAPI:
         APIRoute("/v2/health/live", endpoints.live),
         APIRoute("/v2/health/ready", endpoints.ready),
         # Server metadata
-        APIRoute("/v2", endpoints.metadata,),
+        APIRoute(
+            "/v2",
+            endpoints.metadata,
+        ),
     ]
 
     app = FastAPI(
