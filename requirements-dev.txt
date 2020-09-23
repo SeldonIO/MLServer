@@ -8,7 +8,7 @@ pytest-asyncio==0.14.0
 tox==3.18.0
 
 # Benchmarking
-numpy==1.18.5
+numpy==1.19.2
 
 # Linting and formatting
 flake8==3.8.3
