@@ -1,0 +1,579 @@
+
+Showing logs for build [32mseldonio-mlserver-pr-10-pr-buil-vzvms-1[0m stage [32mlint[0m and container [32mstep-credential-initializer-t2h5w[0m
+{"level":"info","ts":1600870517.0603318,"logger":"fallback-logger","caller":"logging/config.go:69","msg":"Fetch GitHub commit ID from kodata failed: open /var/run/ko/refs/heads/0.8.0-ns-support: no such file or directory"}
+{"level":"info","ts":1600870517.0611098,"logger":"fallback-logger","caller":"creds-init/main.go:40","msg":"Credentials initialized."}
+
+Showing logs for build [32mseldonio-mlserver-pr-10-pr-buil-vzvms-1[0m stage [32mlint[0m and container [32mstep-working-dir-initializer-2v7qd[0m
+{"level":"info","ts":1600870518.8314142,"logger":"fallback-logger","caller":"logging/config.go:69","msg":"Fetch GitHub commit ID from kodata failed: open /var/run/ko/HEAD: no such file or directory"}
+{"level":"info","ts":1600870518.8342333,"logger":"fallback-logger","caller":"bash/main.go:64","msg":"Successfully executed command \"sh -c mkdir -p /workspace/source\"; output "}
+
+Showing logs for build [32mseldonio-mlserver-pr-10-pr-buil-vzvms-1[0m stage [32mlint[0m and container [32mstep-place-tools[0m
+
+Showing logs for build [32mseldonio-mlserver-pr-10-pr-buil-vzvms-1[0m stage [32mlint[0m and container [32mstep-git-source-seldonio-mlserver-pr-10-pr-buil-vzvms-687k9[0m
+{"level":"info","ts":1600870525.3249078,"logger":"fallback-logger","caller":"logging/config.go:69","msg":"Fetch GitHub commit ID from kodata failed: open /var/run/ko/refs/heads/0.8.0-ns-support: no such file or directory"}
+{"level":"info","ts":1600870526.7683427,"logger":"fallback-logger","caller":"git/git.go:103","msg":"Successfully cloned https://github.com/SeldonIO/MLServer.git @ master in path /workspace/source"}
+
+Showing logs for build [32mseldonio-mlserver-pr-10-pr-buil-vzvms-1[0m stage [32mlint[0m and container [32mstep-setup-builder-home[0m
+
+Showing logs for build [32mseldonio-mlserver-pr-10-pr-buil-vzvms-1[0m stage [32mlint[0m and container [32mstep-git-merge[0m
+Using SHAs from PULL_REFS=master:360d91f7ab7911ff24502e1fba81130140b2d52c,10:2c74dd0acca71133426bf81aa8f43ad692e3d4f5
+DEBUG: LC_ALL=C JX_LOG_LEVEL=error git fetch origin --unshallow 2c74dd0acca71133426bf81aa8f43ad692e3d4f5: 360d91f7ab7911ff24502e1fba81130140b2d52c:
+DEBUG: ran git fetch --unshallow origin 2c74dd0acca71133426bf81aa8f43ad692e3d4f5: 360d91f7ab7911ff24502e1fba81130140b2d52c: in 
+DEBUG: LC_ALL=C JX_LOG_LEVEL=error git branch
+DEBUG: LC_ALL=C JX_LOG_LEVEL=error git checkout master
+DEBUG: ran git checkout master in 
+DEBUG: LC_ALL=C JX_LOG_LEVEL=error git reset --hard 360d91f7ab7911ff24502e1fba81130140b2d52c
+DEBUG: ran git reset --hard 360d91f7ab7911ff24502e1fba81130140b2d52c in 
+DEBUG: LC_ALL=C JX_LOG_LEVEL=error git clean -fd .
+DEBUG: ran clean --force -d . in 
+DEBUG: LC_ALL=C JX_LOG_LEVEL=error git merge 2c74dd0acca71133426bf81aa8f43ad692e3d4f5
+DEBUG: ran git merge 2c74dd0acca71133426bf81aa8f43ad692e3d4f5 in 
+DEBUG: JX_LOG_LEVEL=error LC_ALL=C git log --format=%H%x1f%an%x1f%ae%x1f%cn%x1f%ce%x1f%s%n%b%x1e 360d91f7ab7911ff24502e1fba81130140b2d52c..HEAD
+Merged SHA 34298e226e56d5f03bf56fab023b3f8338199474 with commit message 'Merge commit '2c74dd0acca71133426bf81aa8f43ad692e3d4f5'' into base branch master
+Merged SHA 2c74dd0acca71133426bf81aa8f43ad692e3d4f5 with commit message 'Bump uvicorn from 0.11.6 to 0.11.8' into base branch master
+
+Showing logs for build [32mseldonio-mlserver-pr-10-pr-buil-vzvms-1[0m stage [32mlint[0m and container [32mstep-step2[0m
+pip install -r requirements-dev.txt
+Collecting grpcio-tools==1.29.0
+  Downloading grpcio_tools-1.29.0-cp36-cp36m-manylinux2010_x86_64.whl (2.4 MB)
+Collecting datamodel-code-generator==0.5.34
+  Downloading datamodel_code_generator-0.5.34-py3-none-any.whl (120 kB)
+Collecting pytest==6.0.2
+  Downloading pytest-6.0.2-py3-none-any.whl (270 kB)
+Collecting pytest-asyncio==0.14.0
+  Downloading pytest_asyncio-0.14.0-py3-none-any.whl (11 kB)
+Collecting tox==3.18.0
+  Downloading tox-3.18.0-py2.py3-none-any.whl (82 kB)
+Collecting numpy==1.18.5
+  Downloading numpy-1.18.5-cp36-cp36m-manylinux1_x86_64.whl (20.1 MB)
+Collecting flake8==3.8.3
+  Downloading flake8-3.8.3-py2.py3-none-any.whl (72 kB)
+Collecting flake8-black==0.2.0
+  Downloading flake8-black-0.2.0.tar.gz (8.6 kB)
+Collecting mypy==0.782
+  Downloading mypy-0.782-cp36-cp36m-manylinux1_x86_64.whl (20.8 MB)
+Collecting mypy-protobuf==1.23
+  Downloading mypy_protobuf-1.23-py3-none-any.whl (7.4 kB)
+Collecting black==20.8b1
+  Downloading black-20.8b1.tar.gz (1.1 MB)
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+    Preparing wheel metadata: started
+    Preparing wheel metadata: finished with status 'done'
+Requirement already satisfied: grpcio>=1.29.0 in /usr/local/lib/python3.6/site-packages (from grpcio-tools==1.29.0->-r requirements-dev.txt (line 2)) (1.32.0)
+Requirement already satisfied: protobuf>=3.5.0.post1 in /usr/local/lib/python3.6/site-packages (from grpcio-tools==1.29.0->-r requirements-dev.txt (line 2)) (3.13.0)
+Collecting openapi-spec-validator<0.3,>=0.2.8
+  Downloading openapi_spec_validator-0.2.9-py3-none-any.whl (25 kB)
+Collecting inflect<5.0,>=4.1.0
+  Downloading inflect-4.1.0-py3-none-any.whl (31 kB)
+Collecting genson<2.0,>=1.2.1
+  Downloading genson-1.2.2.tar.gz (34 kB)
+Collecting pydantic[email]<2.0,>=1.5.1
+  Downloading pydantic-1.6.1-cp36-cp36m-manylinux2014_x86_64.whl (8.7 MB)
+Collecting PySnooper<1.0.0,>=0.4.1
+  Downloading PySnooper-0.4.2-py2.py3-none-any.whl (14 kB)
+Collecting isort<5.0,>=4.3.21
+  Downloading isort-4.3.21-py2.py3-none-any.whl (42 kB)
+Requirement already satisfied: jinja2<3.0,>=2.10.1 in /usr/local/lib/python3.6/site-packages (from datamodel-code-generator==0.5.34->-r requirements-dev.txt (line 3)) (2.11.2)
+Collecting argcomplete<2.0,>=1.10
+  Downloading argcomplete-1.12.0-py2.py3-none-any.whl (38 kB)
+Collecting toml<1.0.0,>=0.10.0
+  Downloading toml-0.10.1-py2.py3-none-any.whl (19 kB)
+Collecting prance<1.0,>=0.18.2
+  Downloading prance-0.19.0-py2.py3-none-any.whl (33 kB)
+Collecting iniconfig
+  Downloading iniconfig-1.0.1-py3-none-any.whl (4.2 kB)
+Requirement already satisfied: importlib-metadata>=0.12; python_version < "3.8" in /usr/local/lib/python3.6/site-packages (from pytest==6.0.2->-r requirements-dev.txt (line 6)) (1.7.0)
+Requirement already satisfied: pluggy<1.0,>=0.12 in /usr/local/lib/python3.6/site-packages (from pytest==6.0.2->-r requirements-dev.txt (line 6)) (0.13.1)
+Requirement already satisfied: more-itertools>=4.0.0 in /usr/local/lib/python3.6/site-packages (from pytest==6.0.2->-r requirements-dev.txt (line 6)) (8.5.0)
+Requirement already satisfied: attrs>=17.4.0 in /usr/local/lib/python3.6/site-packages (from pytest==6.0.2->-r requirements-dev.txt (line 6)) (20.2.0)
+Requirement already satisfied: py>=1.8.2 in /usr/local/lib/python3.6/site-packages (from pytest==6.0.2->-r requirements-dev.txt (line 6)) (1.9.0)
+Requirement already satisfied: packaging in /usr/local/lib/python3.6/site-packages (from pytest==6.0.2->-r requirements-dev.txt (line 6)) (20.4)
+Requirement already satisfied: six>=1.14.0 in /usr/local/lib/python3.6/site-packages (from tox==3.18.0->-r requirements-dev.txt (line 8)) (1.15.0)
+Collecting virtualenv!=20.0.0,!=20.0.1,!=20.0.2,!=20.0.3,!=20.0.4,!=20.0.5,!=20.0.6,!=20.0.7,>=16.0.0
+  Downloading virtualenv-20.0.31-py2.py3-none-any.whl (4.9 MB)
+Collecting filelock>=3.0.0
+  Downloading filelock-3.0.12-py3-none-any.whl (7.6 kB)
+Collecting pycodestyle<2.7.0,>=2.6.0a1
+  Downloading pycodestyle-2.6.0-py2.py3-none-any.whl (41 kB)
+Collecting pyflakes<2.3.0,>=2.2.0
+  Downloading pyflakes-2.2.0-py2.py3-none-any.whl (66 kB)
+Collecting mccabe<0.7.0,>=0.6.0
+  Downloading mccabe-0.6.1-py2.py3-none-any.whl (8.6 kB)
+Requirement already satisfied: typing-extensions>=3.7.4 in /usr/local/lib/python3.6/site-packages (from mypy==0.782->-r requirements-dev.txt (line 16)) (3.7.4.3)
+Collecting typed-ast<1.5.0,>=1.4.0
+  Downloading typed_ast-1.4.1-cp36-cp36m-manylinux1_x86_64.whl (737 kB)
+Collecting mypy-extensions<0.5.0,>=0.4.3
+  Downloading mypy_extensions-0.4.3-py2.py3-none-any.whl (4.5 kB)
+Collecting pathspec<1,>=0.6
+  Downloading pathspec-0.8.0-py2.py3-none-any.whl (28 kB)
+Collecting appdirs
+  Downloading appdirs-1.4.4-py2.py3-none-any.whl (9.6 kB)
+Collecting dataclasses>=0.6; python_version < "3.7"
+  Downloading dataclasses-0.7-py3-none-any.whl (18 kB)
+Collecting click>=7.1.2
+  Downloading click-7.1.2-py2.py3-none-any.whl (82 kB)
+Collecting regex>=2020.1.8
+  Downloading regex-2020.7.14-cp36-cp36m-manylinux2010_x86_64.whl (660 kB)
+Requirement already satisfied: setuptools in /usr/local/lib/python3.6/site-packages (from protobuf>=3.5.0.post1->grpcio-tools==1.29.0->-r requirements-dev.txt (line 2)) (50.3.0)
+Requirement already satisfied: jsonschema in /usr/local/lib/python3.6/site-packages (from openapi-spec-validator<0.3,>=0.2.8->datamodel-code-generator==0.5.34->-r requirements-dev.txt (line 3)) (3.2.0)
+Requirement already satisfied: PyYAML>=5.1 in /usr/local/lib/python3.6/site-packages (from openapi-spec-validator<0.3,>=0.2.8->datamodel-code-generator==0.5.34->-r requirements-dev.txt (line 3)) (5.3.1)
+Collecting email-validator>=1.0.3; extra == "email"
+  Downloading email_validator-1.1.1-py2.py3-none-any.whl (17 kB)
+Requirement already satisfied: MarkupSafe>=0.23 in /usr/local/lib/python3.6/site-packages (from jinja2<3.0,>=2.10.1->datamodel-code-generator==0.5.34->-r requirements-dev.txt (line 3)) (1.1.1)
+Collecting semver~=2.9
+  Downloading semver-2.10.2-py2.py3-none-any.whl (12 kB)
+Requirement already satisfied: requests~=2.22 in /usr/local/lib/python3.6/site-packages (from prance<1.0,>=0.18.2->datamodel-code-generator==0.5.34->-r requirements-dev.txt (line 3)) (2.24.0)
+Requirement already satisfied: chardet~=3.0 in /usr/local/lib/python3.6/site-packages (from prance<1.0,>=0.18.2->datamodel-code-generator==0.5.34->-r requirements-dev.txt (line 3)) (3.0.4)
+Requirement already satisfied: zipp>=0.5 in /usr/local/lib/python3.6/site-packages (from importlib-metadata>=0.12; python_version < "3.8"->pytest==6.0.2->-r requirements-dev.txt (line 6)) (3.1.0)
+Requirement already satisfied: pyparsing>=2.0.2 in /usr/local/lib/python3.6/site-packages (from packaging->pytest==6.0.2->-r requirements-dev.txt (line 6)) (2.4.7)
+Collecting distlib<1,>=0.3.1
+  Downloading distlib-0.3.1-py2.py3-none-any.whl (335 kB)
+Collecting importlib-resources>=1.0; python_version < "3.7"
+  Downloading importlib_resources-3.0.0-py2.py3-none-any.whl (23 kB)
+Requirement already satisfied: pyrsistent>=0.14.0 in /usr/local/lib/python3.6/site-packages (from jsonschema->openapi-spec-validator<0.3,>=0.2.8->datamodel-code-generator==0.5.34->-r requirements-dev.txt (line 3)) (0.17.3)
+Collecting dnspython>=1.15.0
+  Downloading dnspython-2.0.0-py3-none-any.whl (208 kB)
+Requirement already satisfied: idna>=2.0.0 in /usr/local/lib/python3.6/site-packages (from email-validator>=1.0.3; extra == "email"->pydantic[email]<2.0,>=1.5.1->datamodel-code-generator==0.5.34->-r requirements-dev.txt (line 3)) (2.10)
+Requirement already satisfied: urllib3!=1.25.0,!=1.25.1,<1.26,>=1.21.1 in /usr/local/lib/python3.6/site-packages (from requests~=2.22->prance<1.0,>=0.18.2->datamodel-code-generator==0.5.34->-r requirements-dev.txt (line 3)) (1.25.10)
+Requirement already satisfied: certifi>=2017.4.17 in /usr/local/lib/python3.6/site-packages (from requests~=2.22->prance<1.0,>=0.18.2->datamodel-code-generator==0.5.34->-r requirements-dev.txt (line 3)) (2020.6.20)
+Building wheels for collected packages: flake8-black, black, genson
+  Building wheel for flake8-black (setup.py): started
+  Building wheel for flake8-black (setup.py): finished with status 'done'
+  Created wheel for flake8-black: filename=flake8_black-0.2.0-py2.py3-none-any.whl size=8436 sha256=506fe3a6cec4e547a9d686d38d3954fdfbaf5186c9159668c20ae34907ebf447
+  Stored in directory: /builder/home/.cache/pip/wheels/28/82/99/c48b63c1de77baee90f68c9f527a3f81abd214bb890712f084
+  Building wheel for black (PEP 517): started
+  Building wheel for black (PEP 517): finished with status 'done'
+  Created wheel for black: filename=black-20.8b1-py3-none-any.whl size=124186 sha256=a7af90540c854bd03c6e2378ab9fd8848a7df3894430fffa82ddb24d73b8265b
+  Stored in directory: /builder/home/.cache/pip/wheels/dd/c8/94/e774504958e4667180d81202d1d45cdc35d6222ae39229871b
+  Building wheel for genson (setup.py): started
+  Building wheel for genson (setup.py): finished with status 'done'
+  Created wheel for genson: filename=genson-1.2.2-py2.py3-none-any.whl size=21261 sha256=c05a31bf6199cbc5de070689c52e512be662c92942b9c2a816d27432763467bc
+  Stored in directory: /builder/home/.cache/pip/wheels/17/8e/f6/70b78333e594fdb9a14a41c225743d4cad09bcdbf9ebd3a90b
+Successfully built flake8-black black genson
+Installing collected packages: grpcio-tools, openapi-spec-validator, inflect, genson, dataclasses, dnspython, email-validator, pydantic, PySnooper, isort, argcomplete, toml, pathspec, appdirs, typed-ast, click, regex, mypy-extensions, black, semver, prance, datamodel-code-generator, iniconfig, pytest, pytest-asyncio, distlib, filelock, importlib-resources, virtualenv, tox, numpy, pycodestyle, pyflakes, mccabe, flake8, flake8-black, mypy, mypy-protobuf
+  Attempting uninstall: grpcio-tools
+    Found existing installation: grpcio-tools 1.32.0
+    Uninstalling grpcio-tools-1.32.0:
+      Successfully uninstalled grpcio-tools-1.32.0
+  Attempting uninstall: pytest
+    Found existing installation: pytest 5.3.1
+    Uninstalling pytest-5.3.1:
+      Successfully uninstalled pytest-5.3.1
+  Attempting uninstall: numpy
+    Found existing installation: numpy 1.19.2
+    Uninstalling numpy-1.19.2:
+      Successfully uninstalled numpy-1.19.2
+ERROR: After October 2020 you may experience errors when installing or updating packages. This is because pip will change the way that it resolves dependency conflicts.
+
+We recommend you use --use-feature=2020-resolver to test your packages with the new resolver before it becomes the default.
+
+alibi 0.5.2 requires tensorflow>=2.0, but you'll have tensorflow 1.15.2 which is incompatible.
+datamodel-code-generator 0.5.34 requires black<20,>=19.10b0, but you'll have black 20.8b1 which is incompatible.
+Successfully installed PySnooper-0.4.2 appdirs-1.4.4 argcomplete-1.12.0 black-20.8b1 click-7.1.2 dataclasses-0.7 datamodel-code-generator-0.5.34 distlib-0.3.1 dnspython-2.0.0 email-validator-1.1.1 filelock-3.0.12 flake8-3.8.3 flake8-black-0.2.0 genson-1.2.2 grpcio-tools-1.29.0 importlib-resources-3.0.0 inflect-4.1.0 iniconfig-1.0.1 isort-4.3.21 mccabe-0.6.1 mypy-0.782 mypy-extensions-0.4.3 mypy-protobuf-1.23 numpy-1.18.5 openapi-spec-validator-0.2.9 pathspec-0.8.0 prance-0.19.0 pycodestyle-2.6.0 pydantic-1.6.1 pyflakes-2.2.0 pytest-6.0.2 pytest-asyncio-0.14.0 regex-2020.7.14 semver-2.10.2 toml-0.10.1 tox-3.18.0 typed-ast-1.4.1 virtualenv-20.0.31
+pip install --editable .[all]
+Obtaining file:///workspace/source
+Collecting grpcio==1.31.0
+  Downloading grpcio-1.31.0-cp36-cp36m-manylinux2014_x86_64.whl (3.4 MB)
+Collecting protobuf==3.12.2
+  Downloading protobuf-3.12.2-cp36-cp36m-manylinux1_x86_64.whl (1.3 MB)
+Collecting fastapi==0.60.1
+  Downloading fastapi-0.60.1-py3-none-any.whl (49 kB)
+Collecting uvicorn==0.11.8
+  Downloading uvicorn-0.11.8-py3-none-any.whl (43 kB)
+Collecting orjson==3.3.0
+  Downloading orjson-3.3.0-cp36-cp36m-manylinux1_x86_64.whl (207 kB)
+Requirement already satisfied: click==7.1.2 in /usr/local/lib/python3.6/site-packages (from mlserver==0.1.0) (7.1.2)
+Requirement already satisfied: joblib==0.16.0 in /usr/local/lib/python3.6/site-packages (from mlserver==0.1.0) (0.16.0)
+Collecting scikit-learn==0.23.1
+  Downloading scikit_learn-0.23.1-cp36-cp36m-manylinux1_x86_64.whl (6.8 MB)
+Collecting xgboost==1.1.1
+  Downloading xgboost-1.1.1-py3-none-manylinux2010_x86_64.whl (127.6 MB)
+Requirement already satisfied: numpy==1.18.5 in /usr/local/lib/python3.6/site-packages (from mlserver==0.1.0) (1.18.5)
+Requirement already satisfied: six>=1.5.2 in /usr/local/lib/python3.6/site-packages (from grpcio==1.31.0->mlserver==0.1.0) (1.15.0)
+Requirement already satisfied: setuptools in /usr/local/lib/python3.6/site-packages (from protobuf==3.12.2->mlserver==0.1.0) (50.3.0)
+Requirement already satisfied: pydantic<2.0.0,>=0.32.2 in /usr/local/lib/python3.6/site-packages (from fastapi==0.60.1->mlserver==0.1.0) (1.6.1)
+Collecting starlette==0.13.6
+  Downloading starlette-0.13.6-py3-none-any.whl (59 kB)
+Collecting websockets==8.*
+  Downloading websockets-8.1-cp36-cp36m-manylinux2010_x86_64.whl (78 kB)
+Collecting h11<0.10,>=0.8
+  Downloading h11-0.9.0-py2.py3-none-any.whl (53 kB)
+Collecting uvloop>=0.14.0; sys_platform != "win32" and sys_platform != "cygwin" and platform_python_implementation != "PyPy"
+  Downloading uvloop-0.14.0-cp36-cp36m-manylinux2010_x86_64.whl (3.9 MB)
+Collecting httptools==0.1.*; sys_platform != "win32" and sys_platform != "cygwin" and platform_python_implementation != "PyPy"
+  Downloading httptools-0.1.1-cp36-cp36m-manylinux1_x86_64.whl (216 kB)
+Requirement already satisfied: threadpoolctl>=2.0.0 in /usr/local/lib/python3.6/site-packages (from scikit-learn==0.23.1->mlserver==0.1.0) (2.1.0)
+Requirement already satisfied: scipy>=0.19.1 in /usr/local/lib/python3.6/site-packages (from scikit-learn==0.23.1->mlserver==0.1.0) (1.5.2)
+Requirement already satisfied: dataclasses>=0.6; python_version < "3.7" in /usr/local/lib/python3.6/site-packages (from pydantic<2.0.0,>=0.32.2->fastapi==0.60.1->mlserver==0.1.0) (0.7)
+Installing collected packages: grpcio, protobuf, starlette, fastapi, websockets, h11, uvloop, httptools, uvicorn, orjson, scikit-learn, xgboost, mlserver
+  Attempting uninstall: grpcio
+    Found existing installation: grpcio 1.32.0
+    Uninstalling grpcio-1.32.0:
+      Successfully uninstalled grpcio-1.32.0
+  Attempting uninstall: protobuf
+    Found existing installation: protobuf 3.13.0
+    Uninstalling protobuf-3.13.0:
+      Successfully uninstalled protobuf-3.13.0
+  Attempting uninstall: scikit-learn
+    Found existing installation: scikit-learn 0.23.2
+    Uninstalling scikit-learn-0.23.2:
+      Successfully uninstalled scikit-learn-0.23.2
+  Running setup.py develop for mlserver
+ERROR: After October 2020 you may experience errors when installing or updating packages. This is because pip will change the way that it resolves dependency conflicts.
+
+We recommend you use --use-feature=2020-resolver to test your packages with the new resolver before it becomes the default.
+
+alibi 0.5.2 requires tensorflow>=2.0, but you'll have tensorflow 1.15.2 which is incompatible.
+Successfully installed fastapi-0.60.1 grpcio-1.31.0 h11-0.9.0 httptools-0.1.1 mlserver orjson-3.3.0 protobuf-3.12.2 scikit-learn-0.23.1 starlette-0.13.6 uvicorn-0.11.8 uvloop-0.14.0 websockets-8.1 xgboost-1.1.1
+flake8 .
+mypy .
+Success: no issues found in 55 source files
+
+Showing logs for build [32mseldonio-mlserver-pr-10-pr-buil-vzvms-1[0m stage [32mtest[0m and container [32mstep-credential-initializer-hwrw4[0m
+{"level":"info","ts":1600870517.234918,"logger":"fallback-logger","caller":"logging/config.go:69","msg":"Fetch GitHub commit ID from kodata failed: open /var/run/ko/refs/heads/0.8.0-ns-support: no such file or directory"}
+{"level":"info","ts":1600870517.2353988,"logger":"fallback-logger","caller":"creds-init/main.go:40","msg":"Credentials initialized."}
+
+Showing logs for build [32mseldonio-mlserver-pr-10-pr-buil-vzvms-1[0m stage [32mtest[0m and container [32mstep-working-dir-initializer-5pq5w[0m
+{"level":"info","ts":1600870518.8429286,"logger":"fallback-logger","caller":"logging/config.go:69","msg":"Fetch GitHub commit ID from kodata failed: open /var/run/ko/HEAD: no such file or directory"}
+{"level":"info","ts":1600870518.848563,"logger":"fallback-logger","caller":"bash/main.go:64","msg":"Successfully executed command \"sh -c mkdir -p /workspace/source\"; output "}
+
+Showing logs for build [32mseldonio-mlserver-pr-10-pr-buil-vzvms-1[0m stage [32mtest[0m and container [32mstep-place-tools[0m
+
+Showing logs for build [32mseldonio-mlserver-pr-10-pr-buil-vzvms-1[0m stage [32mtest[0m and container [32mstep-git-source-seldonio-mlserver-pr-10-pr-buil-vzvms-22xf5[0m
+{"level":"info","ts":1600870525.335555,"logger":"fallback-logger","caller":"logging/config.go:69","msg":"Fetch GitHub commit ID from kodata failed: open /var/run/ko/refs/heads/0.8.0-ns-support: no such file or directory"}
+{"level":"info","ts":1600870526.768128,"logger":"fallback-logger","caller":"git/git.go:103","msg":"Successfully cloned https://github.com/SeldonIO/MLServer.git @ master in path /workspace/source"}
+
+Showing logs for build [32mseldonio-mlserver-pr-10-pr-buil-vzvms-1[0m stage [32mtest[0m and container [32mstep-setup-builder-home[0m
+
+Showing logs for build [32mseldonio-mlserver-pr-10-pr-buil-vzvms-1[0m stage [32mtest[0m and container [32mstep-git-merge[0m
+Using SHAs from PULL_REFS=master:360d91f7ab7911ff24502e1fba81130140b2d52c,10:2c74dd0acca71133426bf81aa8f43ad692e3d4f5
+DEBUG: LC_ALL=C JX_LOG_LEVEL=error git fetch origin --unshallow 2c74dd0acca71133426bf81aa8f43ad692e3d4f5: 360d91f7ab7911ff24502e1fba81130140b2d52c:
+DEBUG: ran git fetch --unshallow origin 2c74dd0acca71133426bf81aa8f43ad692e3d4f5: 360d91f7ab7911ff24502e1fba81130140b2d52c: in 
+DEBUG: JX_LOG_LEVEL=error LC_ALL=C git branch
+DEBUG: LC_ALL=C JX_LOG_LEVEL=error git checkout master
+DEBUG: ran git checkout master in 
+DEBUG: LC_ALL=C JX_LOG_LEVEL=error git reset --hard 360d91f7ab7911ff24502e1fba81130140b2d52c
+DEBUG: ran git reset --hard 360d91f7ab7911ff24502e1fba81130140b2d52c in 
+DEBUG: LC_ALL=C JX_LOG_LEVEL=error git clean -fd .
+DEBUG: ran clean --force -d . in 
+DEBUG: LC_ALL=C JX_LOG_LEVEL=error git merge 2c74dd0acca71133426bf81aa8f43ad692e3d4f5
+DEBUG: ran git merge 2c74dd0acca71133426bf81aa8f43ad692e3d4f5 in 
+DEBUG: JX_LOG_LEVEL=error LC_ALL=C git log --format=%H%x1f%an%x1f%ae%x1f%cn%x1f%ce%x1f%s%n%b%x1e 360d91f7ab7911ff24502e1fba81130140b2d52c..HEAD
+Merged SHA 34298e226e56d5f03bf56fab023b3f8338199474 with commit message 'Merge commit '2c74dd0acca71133426bf81aa8f43ad692e3d4f5'' into base branch master
+Merged SHA 2c74dd0acca71133426bf81aa8f43ad692e3d4f5 with commit message 'Bump uvicorn from 0.11.6 to 0.11.8' into base branch master
+
+Showing logs for build [32mseldonio-mlserver-pr-10-pr-buil-vzvms-1[0m stage [32mtest[0m and container [32mstep-step2[0m
+pip install -r requirements-dev.txt
+Collecting grpcio-tools==1.29.0
+  Downloading grpcio_tools-1.29.0-cp36-cp36m-manylinux2010_x86_64.whl (2.4 MB)
+Collecting datamodel-code-generator==0.5.34
+  Downloading datamodel_code_generator-0.5.34-py3-none-any.whl (120 kB)
+Collecting pytest==6.0.2
+  Downloading pytest-6.0.2-py3-none-any.whl (270 kB)
+Collecting pytest-asyncio==0.14.0
+  Downloading pytest_asyncio-0.14.0-py3-none-any.whl (11 kB)
+Collecting tox==3.18.0
+  Downloading tox-3.18.0-py2.py3-none-any.whl (82 kB)
+Collecting numpy==1.18.5
+  Downloading numpy-1.18.5-cp36-cp36m-manylinux1_x86_64.whl (20.1 MB)
+Collecting flake8==3.8.3
+  Downloading flake8-3.8.3-py2.py3-none-any.whl (72 kB)
+Collecting flake8-black==0.2.0
+  Downloading flake8-black-0.2.0.tar.gz (8.6 kB)
+Collecting mypy==0.782
+  Downloading mypy-0.782-cp36-cp36m-manylinux1_x86_64.whl (20.8 MB)
+Collecting mypy-protobuf==1.23
+  Downloading mypy_protobuf-1.23-py3-none-any.whl (7.4 kB)
+Collecting black==20.8b1
+  Downloading black-20.8b1.tar.gz (1.1 MB)
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+    Preparing wheel metadata: started
+    Preparing wheel metadata: finished with status 'done'
+Requirement already satisfied: protobuf>=3.5.0.post1 in /usr/local/lib/python3.6/site-packages (from grpcio-tools==1.29.0->-r requirements-dev.txt (line 2)) (3.13.0)
+Requirement already satisfied: grpcio>=1.29.0 in /usr/local/lib/python3.6/site-packages (from grpcio-tools==1.29.0->-r requirements-dev.txt (line 2)) (1.32.0)
+Requirement already satisfied: jinja2<3.0,>=2.10.1 in /usr/local/lib/python3.6/site-packages (from datamodel-code-generator==0.5.34->-r requirements-dev.txt (line 3)) (2.11.2)
+Collecting openapi-spec-validator<0.3,>=0.2.8
+  Downloading openapi_spec_validator-0.2.9-py3-none-any.whl (25 kB)
+Collecting pydantic[email]<2.0,>=1.5.1
+  Downloading pydantic-1.6.1-cp36-cp36m-manylinux2014_x86_64.whl (8.7 MB)
+Collecting inflect<5.0,>=4.1.0
+  Downloading inflect-4.1.0-py3-none-any.whl (31 kB)
+Collecting argcomplete<2.0,>=1.10
+  Downloading argcomplete-1.12.0-py2.py3-none-any.whl (38 kB)
+Collecting prance<1.0,>=0.18.2
+  Downloading prance-0.19.0-py2.py3-none-any.whl (33 kB)
+Collecting isort<5.0,>=4.3.21
+  Downloading isort-4.3.21-py2.py3-none-any.whl (42 kB)
+Collecting PySnooper<1.0.0,>=0.4.1
+  Downloading PySnooper-0.4.2-py2.py3-none-any.whl (14 kB)
+Collecting genson<2.0,>=1.2.1
+  Downloading genson-1.2.2.tar.gz (34 kB)
+Collecting toml<1.0.0,>=0.10.0
+  Downloading toml-0.10.1-py2.py3-none-any.whl (19 kB)
+Requirement already satisfied: importlib-metadata>=0.12; python_version < "3.8" in /usr/local/lib/python3.6/site-packages (from pytest==6.0.2->-r requirements-dev.txt (line 6)) (1.7.0)
+Requirement already satisfied: py>=1.8.2 in /usr/local/lib/python3.6/site-packages (from pytest==6.0.2->-r requirements-dev.txt (line 6)) (1.9.0)
+Requirement already satisfied: pluggy<1.0,>=0.12 in /usr/local/lib/python3.6/site-packages (from pytest==6.0.2->-r requirements-dev.txt (line 6)) (0.13.1)
+Requirement already satisfied: packaging in /usr/local/lib/python3.6/site-packages (from pytest==6.0.2->-r requirements-dev.txt (line 6)) (20.4)
+Requirement already satisfied: attrs>=17.4.0 in /usr/local/lib/python3.6/site-packages (from pytest==6.0.2->-r requirements-dev.txt (line 6)) (20.2.0)
+Collecting iniconfig
+  Downloading iniconfig-1.0.1-py3-none-any.whl (4.2 kB)
+Requirement already satisfied: more-itertools>=4.0.0 in /usr/local/lib/python3.6/site-packages (from pytest==6.0.2->-r requirements-dev.txt (line 6)) (8.5.0)
+Requirement already satisfied: six>=1.14.0 in /usr/local/lib/python3.6/site-packages (from tox==3.18.0->-r requirements-dev.txt (line 8)) (1.15.0)
+Collecting filelock>=3.0.0
+  Downloading filelock-3.0.12-py3-none-any.whl (7.6 kB)
+Collecting virtualenv!=20.0.0,!=20.0.1,!=20.0.2,!=20.0.3,!=20.0.4,!=20.0.5,!=20.0.6,!=20.0.7,>=16.0.0
+  Downloading virtualenv-20.0.31-py2.py3-none-any.whl (4.9 MB)
+Collecting pyflakes<2.3.0,>=2.2.0
+  Downloading pyflakes-2.2.0-py2.py3-none-any.whl (66 kB)
+Collecting pycodestyle<2.7.0,>=2.6.0a1
+  Downloading pycodestyle-2.6.0-py2.py3-none-any.whl (41 kB)
+Collecting mccabe<0.7.0,>=0.6.0
+  Downloading mccabe-0.6.1-py2.py3-none-any.whl (8.6 kB)
+Collecting typed-ast<1.5.0,>=1.4.0
+  Downloading typed_ast-1.4.1-cp36-cp36m-manylinux1_x86_64.whl (737 kB)
+Collecting mypy-extensions<0.5.0,>=0.4.3
+  Downloading mypy_extensions-0.4.3-py2.py3-none-any.whl (4.5 kB)
+Requirement already satisfied: typing-extensions>=3.7.4 in /usr/local/lib/python3.6/site-packages (from mypy==0.782->-r requirements-dev.txt (line 16)) (3.7.4.3)
+Collecting click>=7.1.2
+  Downloading click-7.1.2-py2.py3-none-any.whl (82 kB)
+Collecting regex>=2020.1.8
+  Downloading regex-2020.7.14-cp36-cp36m-manylinux2010_x86_64.whl (660 kB)
+Collecting dataclasses>=0.6; python_version < "3.7"
+  Downloading dataclasses-0.7-py3-none-any.whl (18 kB)
+Collecting appdirs
+  Downloading appdirs-1.4.4-py2.py3-none-any.whl (9.6 kB)
+Collecting pathspec<1,>=0.6
+  Downloading pathspec-0.8.0-py2.py3-none-any.whl (28 kB)
+Requirement already satisfied: setuptools in /usr/local/lib/python3.6/site-packages (from protobuf>=3.5.0.post1->grpcio-tools==1.29.0->-r requirements-dev.txt (line 2)) (50.3.0)
+Requirement already satisfied: MarkupSafe>=0.23 in /usr/local/lib/python3.6/site-packages (from jinja2<3.0,>=2.10.1->datamodel-code-generator==0.5.34->-r requirements-dev.txt (line 3)) (1.1.1)
+Requirement already satisfied: jsonschema in /usr/local/lib/python3.6/site-packages (from openapi-spec-validator<0.3,>=0.2.8->datamodel-code-generator==0.5.34->-r requirements-dev.txt (line 3)) (3.2.0)
+Requirement already satisfied: PyYAML>=5.1 in /usr/local/lib/python3.6/site-packages (from openapi-spec-validator<0.3,>=0.2.8->datamodel-code-generator==0.5.34->-r requirements-dev.txt (line 3)) (5.3.1)
+Collecting email-validator>=1.0.3; extra == "email"
+  Downloading email_validator-1.1.1-py2.py3-none-any.whl (17 kB)
+Collecting semver~=2.9
+  Downloading semver-2.10.2-py2.py3-none-any.whl (12 kB)
+Requirement already satisfied: chardet~=3.0 in /usr/local/lib/python3.6/site-packages (from prance<1.0,>=0.18.2->datamodel-code-generator==0.5.34->-r requirements-dev.txt (line 3)) (3.0.4)
+Requirement already satisfied: requests~=2.22 in /usr/local/lib/python3.6/site-packages (from prance<1.0,>=0.18.2->datamodel-code-generator==0.5.34->-r requirements-dev.txt (line 3)) (2.24.0)
+Requirement already satisfied: zipp>=0.5 in /usr/local/lib/python3.6/site-packages (from importlib-metadata>=0.12; python_version < "3.8"->pytest==6.0.2->-r requirements-dev.txt (line 6)) (3.1.0)
+Requirement already satisfied: pyparsing>=2.0.2 in /usr/local/lib/python3.6/site-packages (from packaging->pytest==6.0.2->-r requirements-dev.txt (line 6)) (2.4.7)
+Collecting importlib-resources>=1.0; python_version < "3.7"
+  Downloading importlib_resources-3.0.0-py2.py3-none-any.whl (23 kB)
+Collecting distlib<1,>=0.3.1
+  Downloading distlib-0.3.1-py2.py3-none-any.whl (335 kB)
+Requirement already satisfied: pyrsistent>=0.14.0 in /usr/local/lib/python3.6/site-packages (from jsonschema->openapi-spec-validator<0.3,>=0.2.8->datamodel-code-generator==0.5.34->-r requirements-dev.txt (line 3)) (0.17.3)
+Collecting dnspython>=1.15.0
+  Downloading dnspython-2.0.0-py3-none-any.whl (208 kB)
+Requirement already satisfied: idna>=2.0.0 in /usr/local/lib/python3.6/site-packages (from email-validator>=1.0.3; extra == "email"->pydantic[email]<2.0,>=1.5.1->datamodel-code-generator==0.5.34->-r requirements-dev.txt (line 3)) (2.10)
+Requirement already satisfied: certifi>=2017.4.17 in /usr/local/lib/python3.6/site-packages (from requests~=2.22->prance<1.0,>=0.18.2->datamodel-code-generator==0.5.34->-r requirements-dev.txt (line 3)) (2020.6.20)
+Requirement already satisfied: urllib3!=1.25.0,!=1.25.1,<1.26,>=1.21.1 in /usr/local/lib/python3.6/site-packages (from requests~=2.22->prance<1.0,>=0.18.2->datamodel-code-generator==0.5.34->-r requirements-dev.txt (line 3)) (1.25.10)
+Building wheels for collected packages: flake8-black, black, genson
+  Building wheel for flake8-black (setup.py): started
+  Building wheel for flake8-black (setup.py): finished with status 'done'
+  Created wheel for flake8-black: filename=flake8_black-0.2.0-py2.py3-none-any.whl size=8436 sha256=b896abf492c8fee4f424e6c6b767c1ec09594f3334c064e94005e5b849cd5cdd
+  Stored in directory: /builder/home/.cache/pip/wheels/28/82/99/c48b63c1de77baee90f68c9f527a3f81abd214bb890712f084
+  Building wheel for black (PEP 517): started
+  Building wheel for black (PEP 517): finished with status 'done'
+  Created wheel for black: filename=black-20.8b1-py3-none-any.whl size=124186 sha256=6a6493289701209a783245202cc3381ef73de65431af6b678b994817e420ffef
+  Stored in directory: /builder/home/.cache/pip/wheels/dd/c8/94/e774504958e4667180d81202d1d45cdc35d6222ae39229871b
+  Building wheel for genson (setup.py): started
+  Building wheel for genson (setup.py): finished with status 'done'
+  Created wheel for genson: filename=genson-1.2.2-py2.py3-none-any.whl size=21261 sha256=c05a31bf6199cbc5de070689c52e512be662c92942b9c2a816d27432763467bc
+  Stored in directory: /builder/home/.cache/pip/wheels/17/8e/f6/70b78333e594fdb9a14a41c225743d4cad09bcdbf9ebd3a90b
+Successfully built flake8-black black genson
+Installing collected packages: grpcio-tools, openapi-spec-validator, dataclasses, dnspython, email-validator, pydantic, click, regex, toml, mypy-extensions, appdirs, pathspec, typed-ast, black, inflect, argcomplete, semver, prance, isort, PySnooper, genson, datamodel-code-generator, iniconfig, pytest, pytest-asyncio, filelock, importlib-resources, distlib, virtualenv, tox, numpy, pyflakes, pycodestyle, mccabe, flake8, flake8-black, mypy, mypy-protobuf
+  Attempting uninstall: grpcio-tools
+    Found existing installation: grpcio-tools 1.32.0
+    Uninstalling grpcio-tools-1.32.0:
+      Successfully uninstalled grpcio-tools-1.32.0
+  Attempting uninstall: pytest
+    Found existing installation: pytest 5.3.1
+    Uninstalling pytest-5.3.1:
+      Successfully uninstalled pytest-5.3.1
+  Attempting uninstall: numpy
+    Found existing installation: numpy 1.19.2
+    Uninstalling numpy-1.19.2:
+      Successfully uninstalled numpy-1.19.2
+Successfully installed PySnooper-0.4.2 appdirs-1.4.4 argcomplete-1.12.0 black-20.8b1 click-7.1.2 dataclasses-0.7 datamodel-code-generator-0.5.34 distlib-0.3.1 dnspython-2.0.0 email-validator-1.1.1 filelock-3.0.12 flake8-3.8.3 flake8-black-0.2.0 genson-1.2.2 grpcio-tools-1.29.0 importlib-resources-3.0.0 inflect-4.1.0 iniconfig-1.0.1 isort-4.3.21 mccabe-0.6.1 mypy-0.782 mypy-extensions-0.4.3 mypy-protobuf-1.23 numpy-1.18.5 openapi-spec-validator-0.2.9 pathspec-0.8.0 prance-0.19.0 pycodestyle-2.6.0 pydantic-1.6.1 pyflakes-2.2.0 pytest-6.0.2 pytest-asyncio-0.14.0 regex-2020.7.14 semver-2.10.2 toml-0.10.1 tox-3.18.0 typed-ast-1.4.1 virtualenv-20.0.31
+ERROR: After October 2020 you may experience errors when installing or updating packages. This is because pip will change the way that it resolves dependency conflicts.
+
+We recommend you use --use-feature=2020-resolver to test your packages with the new resolver before it becomes the default.
+
+alibi 0.5.2 requires tensorflow>=2.0, but you'll have tensorflow 1.15.2 which is incompatible.
+datamodel-code-generator 0.5.34 requires black<20,>=19.10b0, but you'll have black 20.8b1 which is incompatible.
+pip install --editable .[all]
+Obtaining file:///workspace/source
+Collecting grpcio==1.31.0
+  Downloading grpcio-1.31.0-cp36-cp36m-manylinux2014_x86_64.whl (3.4 MB)
+Collecting protobuf==3.12.2
+  Downloading protobuf-3.12.2-cp36-cp36m-manylinux1_x86_64.whl (1.3 MB)
+Collecting fastapi==0.60.1
+  Downloading fastapi-0.60.1-py3-none-any.whl (49 kB)
+Collecting uvicorn==0.11.8
+  Downloading uvicorn-0.11.8-py3-none-any.whl (43 kB)
+Collecting orjson==3.3.0
+  Downloading orjson-3.3.0-cp36-cp36m-manylinux1_x86_64.whl (207 kB)
+Requirement already satisfied: click==7.1.2 in /usr/local/lib/python3.6/site-packages (from mlserver==0.1.0) (7.1.2)
+Collecting xgboost==1.1.1
+  Downloading xgboost-1.1.1-py3-none-manylinux2010_x86_64.whl (127.6 MB)
+Requirement already satisfied: numpy==1.18.5 in /usr/local/lib/python3.6/site-packages (from mlserver==0.1.0) (1.18.5)
+Collecting scikit-learn==0.23.1
+  Downloading scikit_learn-0.23.1-cp36-cp36m-manylinux1_x86_64.whl (6.8 MB)
+Requirement already satisfied: joblib==0.16.0 in /usr/local/lib/python3.6/site-packages (from mlserver==0.1.0) (0.16.0)
+Requirement already satisfied: six>=1.5.2 in /usr/local/lib/python3.6/site-packages (from grpcio==1.31.0->mlserver==0.1.0) (1.15.0)
+Requirement already satisfied: setuptools in /usr/local/lib/python3.6/site-packages (from protobuf==3.12.2->mlserver==0.1.0) (50.3.0)
+Collecting starlette==0.13.6
+  Downloading starlette-0.13.6-py3-none-any.whl (59 kB)
+Requirement already satisfied: pydantic<2.0.0,>=0.32.2 in /usr/local/lib/python3.6/site-packages (from fastapi==0.60.1->mlserver==0.1.0) (1.6.1)
+Collecting httptools==0.1.*; sys_platform != "win32" and sys_platform != "cygwin" and platform_python_implementation != "PyPy"
+  Downloading httptools-0.1.1-cp36-cp36m-manylinux1_x86_64.whl (216 kB)
+Collecting h11<0.10,>=0.8
+  Downloading h11-0.9.0-py2.py3-none-any.whl (53 kB)
+Collecting uvloop>=0.14.0; sys_platform != "win32" and sys_platform != "cygwin" and platform_python_implementation != "PyPy"
+  Downloading uvloop-0.14.0-cp36-cp36m-manylinux2010_x86_64.whl (3.9 MB)
+Collecting websockets==8.*
+  Downloading websockets-8.1-cp36-cp36m-manylinux2010_x86_64.whl (78 kB)
+Requirement already satisfied: scipy in /usr/local/lib/python3.6/site-packages (from xgboost==1.1.1->mlserver==0.1.0) (1.5.2)
+Requirement already satisfied: threadpoolctl>=2.0.0 in /usr/local/lib/python3.6/site-packages (from scikit-learn==0.23.1->mlserver==0.1.0) (2.1.0)
+Requirement already satisfied: dataclasses>=0.6; python_version < "3.7" in /usr/local/lib/python3.6/site-packages (from pydantic<2.0.0,>=0.32.2->fastapi==0.60.1->mlserver==0.1.0) (0.7)
+Installing collected packages: grpcio, protobuf, starlette, fastapi, httptools, h11, uvloop, websockets, uvicorn, orjson, xgboost, scikit-learn, mlserver
+  Attempting uninstall: grpcio
+    Found existing installation: grpcio 1.32.0
+    Uninstalling grpcio-1.32.0:
+      Successfully uninstalled grpcio-1.32.0
+  Attempting uninstall: protobuf
+    Found existing installation: protobuf 3.13.0
+    Uninstalling protobuf-3.13.0:
+      Successfully uninstalled protobuf-3.13.0
+  Attempting uninstall: scikit-learn
+    Found existing installation: scikit-learn 0.23.2
+    Uninstalling scikit-learn-0.23.2:
+      Successfully uninstalled scikit-learn-0.23.2
+  Running setup.py develop for mlserver
+ERROR: After October 2020 you may experience errors when installing or updating packages. This is because pip will change the way that it resolves dependency conflicts.
+
+We recommend you use --use-feature=2020-resolver to test your packages with the new resolver before it becomes the default.
+
+alibi 0.5.2 requires tensorflow>=2.0, but you'll have tensorflow 1.15.2 which is incompatible.
+Successfully installed fastapi-0.60.1 grpcio-1.31.0 h11-0.9.0 httptools-0.1.1 mlserver orjson-3.3.0 protobuf-3.12.2 scikit-learn-0.23.1 starlette-0.13.6 uvicorn-0.11.8 uvloop-0.14.0 websockets-8.1 xgboost-1.1.1
+tox
+GLOB sdist-make: /workspace/source/setup.py
+py3 create: /workspace/source/.tox/py3
+py3 installdeps: -r/workspace/source/requirements-dev.txt
+py3 inst: /workspace/source/.tox/.tmp/package/1/mlserver-0.1.0.zip
+py3 installed: appdirs==1.4.4,argcomplete==1.12.0,attrs==20.2.0,black==20.8b1,certifi==2020.6.20,chardet==3.0.4,click==7.1.2,dataclasses==0.7,datamodel-code-generator==0.5.34,distlib==0.3.1,dnspython==2.0.0,email-validator==1.1.1,fastapi==0.60.1,filelock==3.0.12,flake8==3.8.3,flake8-black==0.2.0,genson==1.2.2,grpcio==1.31.0,grpcio-tools==1.29.0,h11==0.9.0,httptools==0.1.1,idna==2.10,importlib-metadata==2.0.0,importlib-resources==3.0.0,inflect==4.1.0,iniconfig==1.0.1,isort==4.3.21,Jinja2==2.11.2,jsonschema==3.2.0,MarkupSafe==1.1.1,mccabe==0.6.1,mlserver @ file:///workspace/source/.tox/.tmp/package/1/mlserver-0.1.0.zip,more-itertools==8.5.0,mypy==0.782,mypy-extensions==0.4.3,mypy-protobuf==1.23,numpy==1.18.5,openapi-spec-validator==0.2.9,orjson==3.3.0,packaging==20.4,pathspec==0.8.0,pluggy==0.13.1,prance==0.19.0,protobuf==3.12.2,py==1.9.0,pycodestyle==2.6.0,pydantic==1.6.1,pyflakes==2.2.0,pyparsing==2.4.7,pyrsistent==0.17.3,PySnooper==0.4.2,pytest==6.0.2,pytest-asyncio==0.14.0,PyYAML==5.3.1,regex==2020.7.14,requests==2.24.0,semver==2.10.2,six==1.15.0,starlette==0.13.6,toml==0.10.1,tox==3.18.0,typed-ast==1.4.1,typing-extensions==3.7.4.3,urllib3==1.25.10,uvicorn==0.11.8,uvloop==0.14.0,virtualenv==20.0.31,websockets==8.1,zipp==3.2.0
+py3 run-test-pre: PYTHONHASHSEED='354668380'
+py3 run-test: commands[0] | pytest
+============================= test session starts ==============================
+platform linux -- Python 3.6.10, pytest-6.0.2, py-1.9.0, pluggy-0.13.1
+cachedir: .tox/py3/.pytest_cache
+rootdir: /workspace/source
+plugins: asyncio-0.14.0
+collected 65 items
+
+tests/test_handlers.py ...........                                       [ 16%]
+tests/test_repository.py .......                                         [ 27%]
+tests/test_settings.py ..                                                [ 30%]
+tests/test_types.py ......                                               [ 40%]
+tests/cli/test_build.py ...                                              [ 44%]
+tests/cli/test_serve.py ..                                               [ 47%]
+tests/grpc/test_converters.py ....                                       [ 53%]
+tests/grpc/test_servicers.py ........                                    [ 66%]
+tests/models/test_sklearn.py ssssssss                                    [ 78%]
+tests/models/test_xgboost.py ssss                                        [ 84%]
+tests/rest/test_endpoints.py ........                                    [ 96%]
+tests/rest/test_utils.py ..                                              [100%]
+
+======================== 53 passed, 12 skipped in 0.62s ========================
+sklearn create: /workspace/source/.tox/sklearn
+sklearn installdeps: -r/workspace/source/requirements-dev.txt
+sklearn inst: /workspace/source/.tox/.tmp/package/1/mlserver-0.1.0.zip
+sklearn installed: appdirs==1.4.4,argcomplete==1.12.0,attrs==20.2.0,black==20.8b1,certifi==2020.6.20,chardet==3.0.4,click==7.1.2,dataclasses==0.7,datamodel-code-generator==0.5.34,distlib==0.3.1,dnspython==2.0.0,email-validator==1.1.1,fastapi==0.60.1,filelock==3.0.12,flake8==3.8.3,flake8-black==0.2.0,genson==1.2.2,grpcio==1.31.0,grpcio-tools==1.29.0,h11==0.9.0,httptools==0.1.1,idna==2.10,importlib-metadata==2.0.0,importlib-resources==3.0.0,inflect==4.1.0,iniconfig==1.0.1,isort==4.3.21,Jinja2==2.11.2,joblib==0.16.0,jsonschema==3.2.0,MarkupSafe==1.1.1,mccabe==0.6.1,mlserver @ file:///workspace/source/.tox/.tmp/package/1/mlserver-0.1.0.zip,more-itertools==8.5.0,mypy==0.782,mypy-extensions==0.4.3,mypy-protobuf==1.23,numpy==1.18.5,openapi-spec-validator==0.2.9,orjson==3.3.0,packaging==20.4,pathspec==0.8.0,pluggy==0.13.1,prance==0.19.0,protobuf==3.12.2,py==1.9.0,pycodestyle==2.6.0,pydantic==1.6.1,pyflakes==2.2.0,pyparsing==2.4.7,pyrsistent==0.17.3,PySnooper==0.4.2,pytest==6.0.2,pytest-asyncio==0.14.0,PyYAML==5.3.1,regex==2020.7.14,requests==2.24.0,scikit-learn==0.23.1,scipy==1.5.2,semver==2.10.2,six==1.15.0,starlette==0.13.6,threadpoolctl==2.1.0,toml==0.10.1,tox==3.18.0,typed-ast==1.4.1,typing-extensions==3.7.4.3,urllib3==1.25.10,uvicorn==0.11.8,uvloop==0.14.0,virtualenv==20.0.31,websockets==8.1,zipp==3.2.0
+sklearn run-test-pre: PYTHONHASHSEED='354668380'
+sklearn run-test: commands[0] | pytest
+============================= test session starts ==============================
+platform linux -- Python 3.6.10, pytest-6.0.2, py-1.9.0, pluggy-0.13.1
+cachedir: .tox/sklearn/.pytest_cache
+rootdir: /workspace/source
+plugins: asyncio-0.14.0
+collected 65 items
+
+tests/test_handlers.py ...........                                       [ 16%]
+tests/test_repository.py .......                                         [ 27%]
+tests/test_settings.py ..                                                [ 30%]
+tests/test_types.py ......                                               [ 40%]
+tests/cli/test_build.py ...                                              [ 44%]
+tests/cli/test_serve.py ..                                               [ 47%]
+tests/grpc/test_converters.py ....                                       [ 53%]
+tests/grpc/test_servicers.py ........                                    [ 66%]
+tests/models/test_sklearn.py ........                                    [ 78%]
+tests/models/test_xgboost.py ssss                                        [ 84%]
+tests/rest/test_endpoints.py ........                                    [ 96%]
+tests/rest/test_utils.py ..                                              [100%]
+
+======================== 61 passed, 4 skipped in 1.14s =========================
+xgboost create: /workspace/source/.tox/xgboost
+xgboost installdeps: -r/workspace/source/requirements-dev.txt
+xgboost inst: /workspace/source/.tox/.tmp/package/1/mlserver-0.1.0.zip
+xgboost installed: appdirs==1.4.4,argcomplete==1.12.0,attrs==20.2.0,black==20.8b1,certifi==2020.6.20,chardet==3.0.4,click==7.1.2,dataclasses==0.7,datamodel-code-generator==0.5.34,distlib==0.3.1,dnspython==2.0.0,email-validator==1.1.1,fastapi==0.60.1,filelock==3.0.12,flake8==3.8.3,flake8-black==0.2.0,genson==1.2.2,grpcio==1.31.0,grpcio-tools==1.29.0,h11==0.9.0,httptools==0.1.1,idna==2.10,importlib-metadata==2.0.0,importlib-resources==3.0.0,inflect==4.1.0,iniconfig==1.0.1,isort==4.3.21,Jinja2==2.11.2,jsonschema==3.2.0,MarkupSafe==1.1.1,mccabe==0.6.1,mlserver @ file:///workspace/source/.tox/.tmp/package/1/mlserver-0.1.0.zip,more-itertools==8.5.0,mypy==0.782,mypy-extensions==0.4.3,mypy-protobuf==1.23,numpy==1.18.5,openapi-spec-validator==0.2.9,orjson==3.3.0,packaging==20.4,pathspec==0.8.0,pluggy==0.13.1,prance==0.19.0,protobuf==3.12.2,py==1.9.0,pycodestyle==2.6.0,pydantic==1.6.1,pyflakes==2.2.0,pyparsing==2.4.7,pyrsistent==0.17.3,PySnooper==0.4.2,pytest==6.0.2,pytest-asyncio==0.14.0,PyYAML==5.3.1,regex==2020.7.14,requests==2.24.0,scipy==1.5.2,semver==2.10.2,six==1.15.0,starlette==0.13.6,toml==0.10.1,tox==3.18.0,typed-ast==1.4.1,typing-extensions==3.7.4.3,urllib3==1.25.10,uvicorn==0.11.8,uvloop==0.14.0,virtualenv==20.0.31,websockets==8.1,xgboost==1.1.1,zipp==3.2.0
+xgboost run-test-pre: PYTHONHASHSEED='354668380'
+xgboost run-test: commands[0] | pytest
+============================= test session starts ==============================
+platform linux -- Python 3.6.10, pytest-6.0.2, py-1.9.0, pluggy-0.13.1
+cachedir: .tox/xgboost/.pytest_cache
+rootdir: /workspace/source
+plugins: asyncio-0.14.0
+collected 65 items
+
+tests/test_handlers.py ...........                                       [ 16%]
+tests/test_repository.py .......                                         [ 27%]
+tests/test_settings.py ..                                                [ 30%]
+tests/test_types.py ......                                               [ 40%]
+tests/cli/test_build.py ...                                              [ 44%]
+tests/cli/test_serve.py ..                                               [ 47%]
+tests/grpc/test_converters.py ....                                       [ 53%]
+tests/grpc/test_servicers.py ........                                    [ 66%]
+tests/models/test_sklearn.py ssssssss                                    [ 78%]
+tests/models/test_xgboost.py ....                                        [ 84%]
+tests/rest/test_endpoints.py ........                                    [ 96%]
+tests/rest/test_utils.py ..                                              [100%]
+
+======================== 57 passed, 8 skipped in 3.53s =========================
+all create: /workspace/source/.tox/all
+all installdeps: -r/workspace/source/requirements-dev.txt
+all inst: /workspace/source/.tox/.tmp/package/1/mlserver-0.1.0.zip
+all installed: appdirs==1.4.4,argcomplete==1.12.0,attrs==20.2.0,black==20.8b1,certifi==2020.6.20,chardet==3.0.4,click==7.1.2,dataclasses==0.7,datamodel-code-generator==0.5.34,distlib==0.3.1,dnspython==2.0.0,email-validator==1.1.1,fastapi==0.60.1,filelock==3.0.12,flake8==3.8.3,flake8-black==0.2.0,genson==1.2.2,grpcio==1.31.0,grpcio-tools==1.29.0,h11==0.9.0,httptools==0.1.1,idna==2.10,importlib-metadata==2.0.0,importlib-resources==3.0.0,inflect==4.1.0,iniconfig==1.0.1,isort==4.3.21,Jinja2==2.11.2,joblib==0.16.0,jsonschema==3.2.0,MarkupSafe==1.1.1,mccabe==0.6.1,mlserver @ file:///workspace/source/.tox/.tmp/package/1/mlserver-0.1.0.zip,more-itertools==8.5.0,mypy==0.782,mypy-extensions==0.4.3,mypy-protobuf==1.23,numpy==1.18.5,openapi-spec-validator==0.2.9,orjson==3.3.0,packaging==20.4,pathspec==0.8.0,pluggy==0.13.1,prance==0.19.0,protobuf==3.12.2,py==1.9.0,pycodestyle==2.6.0,pydantic==1.6.1,pyflakes==2.2.0,pyparsing==2.4.7,pyrsistent==0.17.3,PySnooper==0.4.2,pytest==6.0.2,pytest-asyncio==0.14.0,PyYAML==5.3.1,regex==2020.7.14,requests==2.24.0,scikit-learn==0.23.1,scipy==1.5.2,semver==2.10.2,six==1.15.0,starlette==0.13.6,threadpoolctl==2.1.0,toml==0.10.1,tox==3.18.0,typed-ast==1.4.1,typing-extensions==3.7.4.3,urllib3==1.25.10,uvicorn==0.11.8,uvloop==0.14.0,virtualenv==20.0.31,websockets==8.1,xgboost==1.1.1,zipp==3.2.0
+all run-test-pre: PYTHONHASHSEED='354668380'
+all run-test: commands[0] | pytest
+============================= test session starts ==============================
+platform linux -- Python 3.6.10, pytest-6.0.2, py-1.9.0, pluggy-0.13.1
+cachedir: .tox/all/.pytest_cache
+rootdir: /workspace/source
+plugins: asyncio-0.14.0
+collected 65 items
+
+tests/test_handlers.py ...........                                       [ 16%]
+tests/test_repository.py .......                                         [ 27%]
+tests/test_settings.py ..                                                [ 30%]
+tests/test_types.py ......                                               [ 40%]
+tests/cli/test_build.py ...                                              [ 44%]
+tests/cli/test_serve.py ..                                               [ 47%]
+tests/grpc/test_converters.py ....                                       [ 53%]
+tests/grpc/test_servicers.py ........                                    [ 66%]
+tests/models/test_sklearn.py ........                                    [ 78%]
+tests/models/test_xgboost.py ....                                        [ 84%]
+tests/rest/test_endpoints.py ........                                    [ 96%]
+tests/rest/test_utils.py ..                                              [100%]
+
+============================== 65 passed in 6.13s ==============================
+___________________________________ summary ____________________________________
+  py3: commands succeeded
+  sklearn: commands succeeded
+  xgboost: commands succeeded
+  all: commands succeeded
+  congratulations :)
