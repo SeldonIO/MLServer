@@ -71,7 +71,7 @@ class XGBoostModel(MLModel):
             dmatrix_data = xgb.DMatrix(array_data)
 
             # TODO: Use Parameters object
-            model_input.parameters = {"dmatrix_data": dmatrix_data}
+            model_input.parameters = {"dmatrix_data": dmatrix_data}  # type: ignore
         except Exception as e:
             # There are a few things that can go wrong here, e.g. less than 2-D
             # in the array), or input data not compatible with a numpy array

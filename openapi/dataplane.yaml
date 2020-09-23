@@ -291,6 +291,8 @@ components:
           type: string
         parameters:
           $ref: '#/components/schemas/parameters'
+      required:
+        - name
     response_output:
       title: response_output
       type: object

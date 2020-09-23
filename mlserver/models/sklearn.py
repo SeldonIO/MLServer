@@ -76,7 +76,7 @@ class SKLearnModel(MLModel):
         model_input = payload.inputs[0]
 
         outputs = []
-        for request_output in payload.outputs:
+        for request_output in payload.outputs:  # type: ignore
             predict_fn = getattr(self._model, request_output.name)
             y = predict_fn(model_input.data)
 
