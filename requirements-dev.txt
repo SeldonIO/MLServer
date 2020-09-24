@@ -5,7 +5,7 @@ datamodel-code-generator==0.5.34
 # Testing
 pytest==6.0.2
 pytest-asyncio==0.14.0
-tox==3.18.0
+tox==3.20.0
 
 # Benchmarking
 numpy==1.19.2
