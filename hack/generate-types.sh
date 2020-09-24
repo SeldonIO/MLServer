@@ -1,4 +1,4 @@
-ROOT_FOLDER="$(dirname "${BASH_SOURCE}")/.."
+ROOT_FOLDER="$(dirname "${0}")/.."
 
 _generate_pb() {
   python -m grpc_tools.protoc \
@@ -19,6 +19,7 @@ _generate_pydantic() {
     --input "${ROOT_FOLDER}/openapi/dataplane.yaml" \
     --output "${ROOT_FOLDER}/mlserver/types.py" \
     --custom-template-dir "${ROOT_FOLDER}/hack/templates" \
+    --disable-timestamp \
     --target-python-version 3.6
 }
 

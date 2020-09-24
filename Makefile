@@ -5,8 +5,10 @@ install-dev:
 	pip install -r requirements-dev.txt
 	pip install --editable .[all]
 
-generate:
+_generate: # "private" target to call `fmt` after `generate`
 	./hack/generate-types.sh
+
+generate: | _generate fmt
 
 run: 
 	mlserver start \
@@ -21,9 +23,14 @@ push:
 test:
 	tox
 
-lint:
+lint: generate
 	flake8 .
 	mypy .
+	# Check if something has changed after generation
+	git \
+		--no-pager diff \
+		--exit-code \
+		.
 
 fmt:
 	black . \
