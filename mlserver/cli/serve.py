@@ -1,5 +1,6 @@
 import os
 import sys
+import glob
 
 from typing import List, Tuple, Union
 
@@ -34,19 +35,26 @@ def load_settings(folder: str = None) -> Tuple[Settings, List[MLModel]]:
 
 
 def _load_models(folder: str = None) -> List[MLModel]:
-    model_settings = None
-    if _path_exists(folder, DEFAULT_MODEL_SETTINGS_FILENAME):
-        model_settings_path = os.path.join(
-            folder, DEFAULT_MODEL_SETTINGS_FILENAME  # type: ignore
-        )
-        model_settings = ModelSettings.parse_file(model_settings_path)
-    else:
+    model_objects = []
+
+    if folder:
+        pattern = os.path.join(folder, "**", DEFAULT_MODEL_SETTINGS_FILENAME)
+        matches = glob.glob(pattern, recursive=True)
+
+        for model_settings_path in matches:
+            model_settings = ModelSettings.parse_file(model_settings_path)
+            model_object = _init_model(model_settings)
+
+            model_objects.append(model_object)
+
+    # If there were no matches, try to load model from environment
+    if not model_objects:
         model_settings = ModelSettings()
         model_settings.parameters = ModelParameters()
+        model_object = _init_model(model_settings)
+        model_objects.append(model_object)
 
-    model_object = _init_model(model_settings)
-
-    return [model_object]
+    return model_objects
 
 
 def _path_exists(folder: Union[str, None], file: str) -> bool:
