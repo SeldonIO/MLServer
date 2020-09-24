@@ -1,7 +1,7 @@
 import os
 import pytest
 
-from grpc.experimental import aio
+from grpc import aio
 
 from typing import AsyncGenerator
 from google.protobuf import json_format

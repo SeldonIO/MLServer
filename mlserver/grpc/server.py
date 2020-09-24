@@ -1,4 +1,4 @@
-from grpc.experimental import aio
+from grpc import aio
 from concurrent.futures import ThreadPoolExecutor
 
 from ..handlers import DataPlane
