@@ -1,4 +1,4 @@
-ROOT_FOLDER="$(dirname "${BASH_SOURCE}")/.."
+ROOT_FOLDER="$(dirname "${0}")/.."
 
 _generate_pb() {
   python -m grpc_tools.protoc \
