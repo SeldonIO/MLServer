@@ -227,7 +227,6 @@ import requests
 
 x_0 = [28.0]
 inference_request = {
-    "id": "request-1",
     "inputs": [
         {
           "name": "marriage",

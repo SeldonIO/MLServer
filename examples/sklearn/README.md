@@ -109,7 +109,6 @@ import requests
 
 x_0 = X_test[0:1]
 inference_request = {
-    "id": "request-1",
     "inputs": [
         {
           "name": "predict",
