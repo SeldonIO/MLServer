@@ -22,3 +22,4 @@ On the list below, you can find a few examples on how you can leverage
 - [Serving a `scikit-learn` model](./examples/sklearn/README.md)
 - [Serving a `xgboost` model](./examples/xgboost/README.md)
 - [Serving a custom model](./examples/custom/README.md)
+- [Multi-Model Serving with multiple frameworks](./examples/mms/README.md)
