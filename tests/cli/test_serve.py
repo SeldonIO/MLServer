@@ -24,11 +24,12 @@ def test_load_model_settings(sum_model_settings: ModelSettings, model_folder: st
 
 def test_load_settings_multi_model(multi_model_folder: str):
     _, models = load_settings(multi_model_folder)
+    models.sort(key=lambda m: m.version)
 
     assert len(models) == 5
     for idx, model in enumerate(models):
         # Models get read in reverse
-        assert model.version == f"v{4 - idx}"
+        assert model.version == f"v{idx}"
 
 
 def test_load_model_settings_fallback(
