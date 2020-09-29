@@ -15,11 +15,11 @@ _sym_db = _symbol_database.Default()
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='dataplane.proto',
-  package='mlserver.dataplane',
+  package='inference',
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x0f\x64\x61taplane.proto\x12\x12mlserver.dataplane\"\x13\n\x11ServerLiveRequest\"\"\n\x12ServerLiveResponse\x12\x0c\n\x04live\x18\x01 \x01(\x08\"\x14\n\x12ServerReadyRequest\"$\n\x13ServerReadyResponse\x12\r\n\x05ready\x18\x01 \x01(\x08\"2\n\x11ModelReadyRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\"#\n\x12ModelReadyResponse\x12\r\n\x05ready\x18\x01 \x01(\x08\"\x17\n\x15ServerMetadataRequest\"K\n\x16ServerMetadataResponse\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\x12\x12\n\nextensions\x18\x03 \x03(\t\"5\n\x14ModelMetadataRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\"\x9f\x02\n\x15ModelMetadataResponse\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08versions\x18\x02 \x03(\t\x12\x10\n\x08platform\x18\x03 \x01(\t\x12H\n\x06inputs\x18\x04 \x03(\x0b\x32\x38.mlserver.dataplane.ModelMetadataResponse.TensorMetadata\x12I\n\x07outputs\x18\x05 \x03(\x0b\x32\x38.mlserver.dataplane.ModelMetadataResponse.TensorMetadata\x1a?\n\x0eTensorMetadata\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08\x64\x61tatype\x18\x02 \x01(\t\x12\r\n\x05shape\x18\x03 \x03(\x03\"\xa3\x07\n\x11ModelInferRequest\x12\x12\n\nmodel_name\x18\x01 \x01(\t\x12\x15\n\rmodel_version\x18\x02 \x01(\t\x12\n\n\x02id\x18\x03 \x01(\t\x12I\n\nparameters\x18\x04 \x03(\x0b\x32\x35.mlserver.dataplane.ModelInferRequest.ParametersEntry\x12\x46\n\x06inputs\x18\x05 \x03(\x0b\x32\x36.mlserver.dataplane.ModelInferRequest.InferInputTensor\x12Q\n\x07outputs\x18\x06 \x03(\x0b\x32@.mlserver.dataplane.ModelInferRequest.InferRequestedOutputTensor\x1a\xaf\x02\n\x10InferInputTensor\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08\x64\x61tatype\x18\x02 \x01(\t\x12\r\n\x05shape\x18\x03 \x03(\x03\x12Z\n\nparameters\x18\x04 \x03(\x0b\x32\x46.mlserver.dataplane.ModelInferRequest.InferInputTensor.ParametersEntry\x12\x39\n\x08\x63ontents\x18\x05 \x01(\x0b\x32\'.mlserver.dataplane.InferTensorContents\x1aU\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\x31\n\x05value\x18\x02 \x01(\x0b\x32\".mlserver.dataplane.InferParameter:\x02\x38\x01\x1a\xe7\x01\n\x1aInferRequestedOutputTensor\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x64\n\nparameters\x18\x02 \x03(\x0b\x32P.mlserver.dataplane.ModelInferRequest.InferRequestedOutputTensor.ParametersEntry\x1aU\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\x31\n\x05value\x18\x02 \x01(\x0b\x32\".mlserver.dataplane.InferParameter:\x02\x38\x01\x1aU\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\x31\n\x05value\x18\x02 \x01(\x0b\x32\".mlserver.dataplane.InferParameter:\x02\x38\x01\"\xee\x04\n\x12ModelInferResponse\x12\x12\n\nmodel_name\x18\x01 \x01(\t\x12\x15\n\rmodel_version\x18\x02 \x01(\t\x12\n\n\x02id\x18\x03 \x01(\t\x12J\n\nparameters\x18\x04 \x03(\x0b\x32\x36.mlserver.dataplane.ModelInferResponse.ParametersEntry\x12I\n\x07outputs\x18\x05 \x03(\x0b\x32\x38.mlserver.dataplane.ModelInferResponse.InferOutputTensor\x1a\xb2\x02\n\x11InferOutputTensor\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08\x64\x61tatype\x18\x02 \x01(\t\x12\r\n\x05shape\x18\x03 \x03(\x03\x12\\\n\nparameters\x18\x04 \x03(\x0b\x32H.mlserver.dataplane.ModelInferResponse.InferOutputTensor.ParametersEntry\x12\x39\n\x08\x63ontents\x18\x05 \x01(\x0b\x32\'.mlserver.dataplane.InferTensorContents\x1aU\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\x31\n\x05value\x18\x02 \x01(\x0b\x32\".mlserver.dataplane.InferParameter:\x02\x38\x01\x1aU\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\x31\n\x05value\x18\x02 \x01(\x0b\x32\".mlserver.dataplane.InferParameter:\x02\x38\x01\"i\n\x0eInferParameter\x12\x14\n\nbool_param\x18\x01 \x01(\x08H\x00\x12\x15\n\x0bint64_param\x18\x02 \x01(\x03H\x00\x12\x16\n\x0cstring_param\x18\x03 \x01(\tH\x00\x42\x12\n\x10parameter_choice\"\xe6\x01\n\x13InferTensorContents\x12\x14\n\x0craw_contents\x18\x01 \x01(\x0c\x12\x15\n\rbool_contents\x18\x02 \x03(\x08\x12\x14\n\x0cint_contents\x18\x03 \x03(\x05\x12\x16\n\x0eint64_contents\x18\x04 \x03(\x03\x12\x15\n\ruint_contents\x18\x05 \x03(\r\x12\x17\n\x0fuint64_contents\x18\x06 \x03(\x04\x12\x15\n\rfp32_contents\x18\x07 \x03(\x02\x12\x15\n\rfp64_contents\x18\x08 \x03(\x01\x12\x16\n\x0e\x62ytes_contents\x18\t \x03(\x0c\x32\xe8\x04\n\x14GRPCInferenceService\x12]\n\nServerLive\x12%.mlserver.dataplane.ServerLiveRequest\x1a&.mlserver.dataplane.ServerLiveResponse\"\x00\x12`\n\x0bServerReady\x12&.mlserver.dataplane.ServerReadyRequest\x1a\'.mlserver.dataplane.ServerReadyResponse\"\x00\x12]\n\nModelReady\x12%.mlserver.dataplane.ModelReadyRequest\x1a&.mlserver.dataplane.ModelReadyResponse\"\x00\x12i\n\x0eServerMetadata\x12).mlserver.dataplane.ServerMetadataRequest\x1a*.mlserver.dataplane.ServerMetadataResponse\"\x00\x12\x66\n\rModelMetadata\x12(.mlserver.dataplane.ModelMetadataRequest\x1a).mlserver.dataplane.ModelMetadataResponse\"\x00\x12]\n\nModelInfer\x12%.mlserver.dataplane.ModelInferRequest\x1a&.mlserver.dataplane.ModelInferResponse\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\x0f\x64\x61taplane.proto\x12\tinference\"\x13\n\x11ServerLiveRequest\"\"\n\x12ServerLiveResponse\x12\x0c\n\x04live\x18\x01 \x01(\x08\"\x14\n\x12ServerReadyRequest\"$\n\x13ServerReadyResponse\x12\r\n\x05ready\x18\x01 \x01(\x08\"2\n\x11ModelReadyRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\"#\n\x12ModelReadyResponse\x12\r\n\x05ready\x18\x01 \x01(\x08\"\x17\n\x15ServerMetadataRequest\"K\n\x16ServerMetadataResponse\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\x12\x12\n\nextensions\x18\x03 \x03(\t\"5\n\x14ModelMetadataRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\"\x8d\x02\n\x15ModelMetadataResponse\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08versions\x18\x02 \x03(\t\x12\x10\n\x08platform\x18\x03 \x01(\t\x12?\n\x06inputs\x18\x04 \x03(\x0b\x32/.inference.ModelMetadataResponse.TensorMetadata\x12@\n\x07outputs\x18\x05 \x03(\x0b\x32/.inference.ModelMetadataResponse.TensorMetadata\x1a?\n\x0eTensorMetadata\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08\x64\x61tatype\x18\x02 \x01(\t\x12\r\n\x05shape\x18\x03 \x03(\x03\"\xd2\x06\n\x11ModelInferRequest\x12\x12\n\nmodel_name\x18\x01 \x01(\t\x12\x15\n\rmodel_version\x18\x02 \x01(\t\x12\n\n\x02id\x18\x03 \x01(\t\x12@\n\nparameters\x18\x04 \x03(\x0b\x32,.inference.ModelInferRequest.ParametersEntry\x12=\n\x06inputs\x18\x05 \x03(\x0b\x32-.inference.ModelInferRequest.InferInputTensor\x12H\n\x07outputs\x18\x06 \x03(\x0b\x32\x37.inference.ModelInferRequest.InferRequestedOutputTensor\x1a\x94\x02\n\x10InferInputTensor\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08\x64\x61tatype\x18\x02 \x01(\t\x12\r\n\x05shape\x18\x03 \x03(\x03\x12Q\n\nparameters\x18\x04 \x03(\x0b\x32=.inference.ModelInferRequest.InferInputTensor.ParametersEntry\x12\x30\n\x08\x63ontents\x18\x05 \x01(\x0b\x32\x1e.inference.InferTensorContents\x1aL\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12(\n\x05value\x18\x02 \x01(\x0b\x32\x19.inference.InferParameter:\x02\x38\x01\x1a\xd5\x01\n\x1aInferRequestedOutputTensor\x12\x0c\n\x04name\x18\x01 \x01(\t\x12[\n\nparameters\x18\x02 \x03(\x0b\x32G.inference.ModelInferRequest.InferRequestedOutputTensor.ParametersEntry\x1aL\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12(\n\x05value\x18\x02 \x01(\x0b\x32\x19.inference.InferParameter:\x02\x38\x01\x1aL\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12(\n\x05value\x18\x02 \x01(\x0b\x32\x19.inference.InferParameter:\x02\x38\x01\"\xb8\x04\n\x12ModelInferResponse\x12\x12\n\nmodel_name\x18\x01 \x01(\t\x12\x15\n\rmodel_version\x18\x02 \x01(\t\x12\n\n\x02id\x18\x03 \x01(\t\x12\x41\n\nparameters\x18\x04 \x03(\x0b\x32-.inference.ModelInferResponse.ParametersEntry\x12@\n\x07outputs\x18\x05 \x03(\x0b\x32/.inference.ModelInferResponse.InferOutputTensor\x1a\x97\x02\n\x11InferOutputTensor\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08\x64\x61tatype\x18\x02 \x01(\t\x12\r\n\x05shape\x18\x03 \x03(\x03\x12S\n\nparameters\x18\x04 \x03(\x0b\x32?.inference.ModelInferResponse.InferOutputTensor.ParametersEntry\x12\x30\n\x08\x63ontents\x18\x05 \x01(\x0b\x32\x1e.inference.InferTensorContents\x1aL\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12(\n\x05value\x18\x02 \x01(\x0b\x32\x19.inference.InferParameter:\x02\x38\x01\x1aL\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12(\n\x05value\x18\x02 \x01(\x0b\x32\x19.inference.InferParameter:\x02\x38\x01\"i\n\x0eInferParameter\x12\x14\n\nbool_param\x18\x01 \x01(\x08H\x00\x12\x15\n\x0bint64_param\x18\x02 \x01(\x03H\x00\x12\x16\n\x0cstring_param\x18\x03 \x01(\tH\x00\x42\x12\n\x10parameter_choice\"\xe6\x01\n\x13InferTensorContents\x12\x14\n\x0craw_contents\x18\x01 \x01(\x0c\x12\x15\n\rbool_contents\x18\x02 \x03(\x08\x12\x14\n\x0cint_contents\x18\x03 \x03(\x05\x12\x16\n\x0eint64_contents\x18\x04 \x03(\x03\x12\x15\n\ruint_contents\x18\x05 \x03(\r\x12\x17\n\x0fuint64_contents\x18\x06 \x03(\x04\x12\x15\n\rfp32_contents\x18\x07 \x03(\x02\x12\x15\n\rfp64_contents\x18\x08 \x03(\x01\x12\x16\n\x0e\x62ytes_contents\x18\t \x03(\x0c\x32\xfc\x03\n\x14GRPCInferenceService\x12K\n\nServerLive\x12\x1c.inference.ServerLiveRequest\x1a\x1d.inference.ServerLiveResponse\"\x00\x12N\n\x0bServerReady\x12\x1d.inference.ServerReadyRequest\x1a\x1e.inference.ServerReadyResponse\"\x00\x12K\n\nModelReady\x12\x1c.inference.ModelReadyRequest\x1a\x1d.inference.ModelReadyResponse\"\x00\x12W\n\x0eServerMetadata\x12 .inference.ServerMetadataRequest\x1a!.inference.ServerMetadataResponse\"\x00\x12T\n\rModelMetadata\x12\x1f.inference.ModelMetadataRequest\x1a .inference.ModelMetadataResponse\"\x00\x12K\n\nModelInfer\x12\x1c.inference.ModelInferRequest\x1a\x1d.inference.ModelInferResponse\"\x00\x62\x06proto3'
 )
 
 
@@ -27,7 +27,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
 
 _SERVERLIVEREQUEST = _descriptor.Descriptor(
   name='ServerLiveRequest',
-  full_name='mlserver.dataplane.ServerLiveRequest',
+  full_name='inference.ServerLiveRequest',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
@@ -45,21 +45,21 @@ _SERVERLIVEREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=39,
-  serialized_end=58,
+  serialized_start=30,
+  serialized_end=49,
 )
 
 
 _SERVERLIVERESPONSE = _descriptor.Descriptor(
   name='ServerLiveResponse',
-  full_name='mlserver.dataplane.ServerLiveResponse',
+  full_name='inference.ServerLiveResponse',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='live', full_name='mlserver.dataplane.ServerLiveResponse.live', index=0,
+      name='live', full_name='inference.ServerLiveResponse.live', index=0,
       number=1, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
@@ -77,14 +77,14 @@ _SERVERLIVERESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=60,
-  serialized_end=94,
+  serialized_start=51,
+  serialized_end=85,
 )
 
 
 _SERVERREADYREQUEST = _descriptor.Descriptor(
   name='ServerReadyRequest',
-  full_name='mlserver.dataplane.ServerReadyRequest',
+  full_name='inference.ServerReadyRequest',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
@@ -102,21 +102,21 @@ _SERVERREADYREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=96,
-  serialized_end=116,
+  serialized_start=87,
+  serialized_end=107,
 )
 
 
 _SERVERREADYRESPONSE = _descriptor.Descriptor(
   name='ServerReadyResponse',
-  full_name='mlserver.dataplane.ServerReadyResponse',
+  full_name='inference.ServerReadyResponse',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='ready', full_name='mlserver.dataplane.ServerReadyResponse.ready', index=0,
+      name='ready', full_name='inference.ServerReadyResponse.ready', index=0,
       number=1, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
@@ -134,28 +134,28 @@ _SERVERREADYRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=118,
-  serialized_end=154,
+  serialized_start=109,
+  serialized_end=145,
 )
 
 
 _MODELREADYREQUEST = _descriptor.Descriptor(
   name='ModelReadyRequest',
-  full_name='mlserver.dataplane.ModelReadyRequest',
+  full_name='inference.ModelReadyRequest',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='name', full_name='mlserver.dataplane.ModelReadyRequest.name', index=0,
+      name='name', full_name='inference.ModelReadyRequest.name', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='version', full_name='mlserver.dataplane.ModelReadyRequest.version', index=1,
+      name='version', full_name='inference.ModelReadyRequest.version', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -173,21 +173,21 @@ _MODELREADYREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=156,
-  serialized_end=206,
+  serialized_start=147,
+  serialized_end=197,
 )
 
 
 _MODELREADYRESPONSE = _descriptor.Descriptor(
   name='ModelReadyResponse',
-  full_name='mlserver.dataplane.ModelReadyResponse',
+  full_name='inference.ModelReadyResponse',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='ready', full_name='mlserver.dataplane.ModelReadyResponse.ready', index=0,
+      name='ready', full_name='inference.ModelReadyResponse.ready', index=0,
       number=1, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
@@ -205,14 +205,14 @@ _MODELREADYRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=208,
-  serialized_end=243,
+  serialized_start=199,
+  serialized_end=234,
 )
 
 
 _SERVERMETADATAREQUEST = _descriptor.Descriptor(
   name='ServerMetadataRequest',
-  full_name='mlserver.dataplane.ServerMetadataRequest',
+  full_name='inference.ServerMetadataRequest',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
@@ -230,35 +230,35 @@ _SERVERMETADATAREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=245,
-  serialized_end=268,
+  serialized_start=236,
+  serialized_end=259,
 )
 
 
 _SERVERMETADATARESPONSE = _descriptor.Descriptor(
   name='ServerMetadataResponse',
-  full_name='mlserver.dataplane.ServerMetadataResponse',
+  full_name='inference.ServerMetadataResponse',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='name', full_name='mlserver.dataplane.ServerMetadataResponse.name', index=0,
+      name='name', full_name='inference.ServerMetadataResponse.name', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='version', full_name='mlserver.dataplane.ServerMetadataResponse.version', index=1,
+      name='version', full_name='inference.ServerMetadataResponse.version', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='extensions', full_name='mlserver.dataplane.ServerMetadataResponse.extensions', index=2,
+      name='extensions', full_name='inference.ServerMetadataResponse.extensions', index=2,
       number=3, type=9, cpp_type=9, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -276,28 +276,28 @@ _SERVERMETADATARESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=270,
-  serialized_end=345,
+  serialized_start=261,
+  serialized_end=336,
 )
 
 
 _MODELMETADATAREQUEST = _descriptor.Descriptor(
   name='ModelMetadataRequest',
-  full_name='mlserver.dataplane.ModelMetadataRequest',
+  full_name='inference.ModelMetadataRequest',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='name', full_name='mlserver.dataplane.ModelMetadataRequest.name', index=0,
+      name='name', full_name='inference.ModelMetadataRequest.name', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='version', full_name='mlserver.dataplane.ModelMetadataRequest.version', index=1,
+      name='version', full_name='inference.ModelMetadataRequest.version', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -315,35 +315,35 @@ _MODELMETADATAREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=347,
-  serialized_end=400,
+  serialized_start=338,
+  serialized_end=391,
 )
 
 
 _MODELMETADATARESPONSE_TENSORMETADATA = _descriptor.Descriptor(
   name='TensorMetadata',
-  full_name='mlserver.dataplane.ModelMetadataResponse.TensorMetadata',
+  full_name='inference.ModelMetadataResponse.TensorMetadata',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='name', full_name='mlserver.dataplane.ModelMetadataResponse.TensorMetadata.name', index=0,
+      name='name', full_name='inference.ModelMetadataResponse.TensorMetadata.name', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='datatype', full_name='mlserver.dataplane.ModelMetadataResponse.TensorMetadata.datatype', index=1,
+      name='datatype', full_name='inference.ModelMetadataResponse.TensorMetadata.datatype', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='shape', full_name='mlserver.dataplane.ModelMetadataResponse.TensorMetadata.shape', index=2,
+      name='shape', full_name='inference.ModelMetadataResponse.TensorMetadata.shape', index=2,
       number=3, type=3, cpp_type=2, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -361,48 +361,48 @@ _MODELMETADATARESPONSE_TENSORMETADATA = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=627,
-  serialized_end=690,
+  serialized_start=600,
+  serialized_end=663,
 )
 
 _MODELMETADATARESPONSE = _descriptor.Descriptor(
   name='ModelMetadataResponse',
-  full_name='mlserver.dataplane.ModelMetadataResponse',
+  full_name='inference.ModelMetadataResponse',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='name', full_name='mlserver.dataplane.ModelMetadataResponse.name', index=0,
+      name='name', full_name='inference.ModelMetadataResponse.name', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='versions', full_name='mlserver.dataplane.ModelMetadataResponse.versions', index=1,
+      name='versions', full_name='inference.ModelMetadataResponse.versions', index=1,
       number=2, type=9, cpp_type=9, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='platform', full_name='mlserver.dataplane.ModelMetadataResponse.platform', index=2,
+      name='platform', full_name='inference.ModelMetadataResponse.platform', index=2,
       number=3, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='inputs', full_name='mlserver.dataplane.ModelMetadataResponse.inputs', index=3,
+      name='inputs', full_name='inference.ModelMetadataResponse.inputs', index=3,
       number=4, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='outputs', full_name='mlserver.dataplane.ModelMetadataResponse.outputs', index=4,
+      name='outputs', full_name='inference.ModelMetadataResponse.outputs', index=4,
       number=5, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -420,28 +420,28 @@ _MODELMETADATARESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=403,
-  serialized_end=690,
+  serialized_start=394,
+  serialized_end=663,
 )
 
 
 _MODELINFERREQUEST_INFERINPUTTENSOR_PARAMETERSENTRY = _descriptor.Descriptor(
   name='ParametersEntry',
-  full_name='mlserver.dataplane.ModelInferRequest.InferInputTensor.ParametersEntry',
+  full_name='inference.ModelInferRequest.InferInputTensor.ParametersEntry',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='key', full_name='mlserver.dataplane.ModelInferRequest.InferInputTensor.ParametersEntry.key', index=0,
+      name='key', full_name='inference.ModelInferRequest.InferInputTensor.ParametersEntry.key', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='value', full_name='mlserver.dataplane.ModelInferRequest.InferInputTensor.ParametersEntry.value', index=1,
+      name='value', full_name='inference.ModelInferRequest.InferInputTensor.ParametersEntry.value', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -459,48 +459,48 @@ _MODELINFERREQUEST_INFERINPUTTENSOR_PARAMETERSENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1218,
-  serialized_end=1303,
+  serialized_start=1146,
+  serialized_end=1222,
 )
 
 _MODELINFERREQUEST_INFERINPUTTENSOR = _descriptor.Descriptor(
   name='InferInputTensor',
-  full_name='mlserver.dataplane.ModelInferRequest.InferInputTensor',
+  full_name='inference.ModelInferRequest.InferInputTensor',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='name', full_name='mlserver.dataplane.ModelInferRequest.InferInputTensor.name', index=0,
+      name='name', full_name='inference.ModelInferRequest.InferInputTensor.name', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='datatype', full_name='mlserver.dataplane.ModelInferRequest.InferInputTensor.datatype', index=1,
+      name='datatype', full_name='inference.ModelInferRequest.InferInputTensor.datatype', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='shape', full_name='mlserver.dataplane.ModelInferRequest.InferInputTensor.shape', index=2,
+      name='shape', full_name='inference.ModelInferRequest.InferInputTensor.shape', index=2,
       number=3, type=3, cpp_type=2, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='parameters', full_name='mlserver.dataplane.ModelInferRequest.InferInputTensor.parameters', index=3,
+      name='parameters', full_name='inference.ModelInferRequest.InferInputTensor.parameters', index=3,
       number=4, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='contents', full_name='mlserver.dataplane.ModelInferRequest.InferInputTensor.contents', index=4,
+      name='contents', full_name='inference.ModelInferRequest.InferInputTensor.contents', index=4,
       number=5, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -518,27 +518,27 @@ _MODELINFERREQUEST_INFERINPUTTENSOR = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1000,
-  serialized_end=1303,
+  serialized_start=946,
+  serialized_end=1222,
 )
 
 _MODELINFERREQUEST_INFERREQUESTEDOUTPUTTENSOR_PARAMETERSENTRY = _descriptor.Descriptor(
   name='ParametersEntry',
-  full_name='mlserver.dataplane.ModelInferRequest.InferRequestedOutputTensor.ParametersEntry',
+  full_name='inference.ModelInferRequest.InferRequestedOutputTensor.ParametersEntry',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='key', full_name='mlserver.dataplane.ModelInferRequest.InferRequestedOutputTensor.ParametersEntry.key', index=0,
+      name='key', full_name='inference.ModelInferRequest.InferRequestedOutputTensor.ParametersEntry.key', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='value', full_name='mlserver.dataplane.ModelInferRequest.InferRequestedOutputTensor.ParametersEntry.value', index=1,
+      name='value', full_name='inference.ModelInferRequest.InferRequestedOutputTensor.ParametersEntry.value', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -556,27 +556,27 @@ _MODELINFERREQUEST_INFERREQUESTEDOUTPUTTENSOR_PARAMETERSENTRY = _descriptor.Desc
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1218,
-  serialized_end=1303,
+  serialized_start=1146,
+  serialized_end=1222,
 )
 
 _MODELINFERREQUEST_INFERREQUESTEDOUTPUTTENSOR = _descriptor.Descriptor(
   name='InferRequestedOutputTensor',
-  full_name='mlserver.dataplane.ModelInferRequest.InferRequestedOutputTensor',
+  full_name='inference.ModelInferRequest.InferRequestedOutputTensor',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='name', full_name='mlserver.dataplane.ModelInferRequest.InferRequestedOutputTensor.name', index=0,
+      name='name', full_name='inference.ModelInferRequest.InferRequestedOutputTensor.name', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='parameters', full_name='mlserver.dataplane.ModelInferRequest.InferRequestedOutputTensor.parameters', index=1,
+      name='parameters', full_name='inference.ModelInferRequest.InferRequestedOutputTensor.parameters', index=1,
       number=2, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -594,27 +594,27 @@ _MODELINFERREQUEST_INFERREQUESTEDOUTPUTTENSOR = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1306,
-  serialized_end=1537,
+  serialized_start=1225,
+  serialized_end=1438,
 )
 
 _MODELINFERREQUEST_PARAMETERSENTRY = _descriptor.Descriptor(
   name='ParametersEntry',
-  full_name='mlserver.dataplane.ModelInferRequest.ParametersEntry',
+  full_name='inference.ModelInferRequest.ParametersEntry',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='key', full_name='mlserver.dataplane.ModelInferRequest.ParametersEntry.key', index=0,
+      name='key', full_name='inference.ModelInferRequest.ParametersEntry.key', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='value', full_name='mlserver.dataplane.ModelInferRequest.ParametersEntry.value', index=1,
+      name='value', full_name='inference.ModelInferRequest.ParametersEntry.value', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -632,55 +632,55 @@ _MODELINFERREQUEST_PARAMETERSENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1218,
-  serialized_end=1303,
+  serialized_start=1146,
+  serialized_end=1222,
 )
 
 _MODELINFERREQUEST = _descriptor.Descriptor(
   name='ModelInferRequest',
-  full_name='mlserver.dataplane.ModelInferRequest',
+  full_name='inference.ModelInferRequest',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='model_name', full_name='mlserver.dataplane.ModelInferRequest.model_name', index=0,
+      name='model_name', full_name='inference.ModelInferRequest.model_name', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='model_version', full_name='mlserver.dataplane.ModelInferRequest.model_version', index=1,
+      name='model_version', full_name='inference.ModelInferRequest.model_version', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='id', full_name='mlserver.dataplane.ModelInferRequest.id', index=2,
+      name='id', full_name='inference.ModelInferRequest.id', index=2,
       number=3, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='parameters', full_name='mlserver.dataplane.ModelInferRequest.parameters', index=3,
+      name='parameters', full_name='inference.ModelInferRequest.parameters', index=3,
       number=4, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='inputs', full_name='mlserver.dataplane.ModelInferRequest.inputs', index=4,
+      name='inputs', full_name='inference.ModelInferRequest.inputs', index=4,
       number=5, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='outputs', full_name='mlserver.dataplane.ModelInferRequest.outputs', index=5,
+      name='outputs', full_name='inference.ModelInferRequest.outputs', index=5,
       number=6, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -698,28 +698,28 @@ _MODELINFERREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=693,
-  serialized_end=1624,
+  serialized_start=666,
+  serialized_end=1516,
 )
 
 
 _MODELINFERRESPONSE_INFEROUTPUTTENSOR_PARAMETERSENTRY = _descriptor.Descriptor(
   name='ParametersEntry',
-  full_name='mlserver.dataplane.ModelInferResponse.InferOutputTensor.ParametersEntry',
+  full_name='inference.ModelInferResponse.InferOutputTensor.ParametersEntry',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='key', full_name='mlserver.dataplane.ModelInferResponse.InferOutputTensor.ParametersEntry.key', index=0,
+      name='key', full_name='inference.ModelInferResponse.InferOutputTensor.ParametersEntry.key', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='value', full_name='mlserver.dataplane.ModelInferResponse.InferOutputTensor.ParametersEntry.value', index=1,
+      name='value', full_name='inference.ModelInferResponse.InferOutputTensor.ParametersEntry.value', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -737,48 +737,48 @@ _MODELINFERRESPONSE_INFEROUTPUTTENSOR_PARAMETERSENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1218,
-  serialized_end=1303,
+  serialized_start=1146,
+  serialized_end=1222,
 )
 
 _MODELINFERRESPONSE_INFEROUTPUTTENSOR = _descriptor.Descriptor(
   name='InferOutputTensor',
-  full_name='mlserver.dataplane.ModelInferResponse.InferOutputTensor',
+  full_name='inference.ModelInferResponse.InferOutputTensor',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='name', full_name='mlserver.dataplane.ModelInferResponse.InferOutputTensor.name', index=0,
+      name='name', full_name='inference.ModelInferResponse.InferOutputTensor.name', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='datatype', full_name='mlserver.dataplane.ModelInferResponse.InferOutputTensor.datatype', index=1,
+      name='datatype', full_name='inference.ModelInferResponse.InferOutputTensor.datatype', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='shape', full_name='mlserver.dataplane.ModelInferResponse.InferOutputTensor.shape', index=2,
+      name='shape', full_name='inference.ModelInferResponse.InferOutputTensor.shape', index=2,
       number=3, type=3, cpp_type=2, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='parameters', full_name='mlserver.dataplane.ModelInferResponse.InferOutputTensor.parameters', index=3,
+      name='parameters', full_name='inference.ModelInferResponse.InferOutputTensor.parameters', index=3,
       number=4, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='contents', full_name='mlserver.dataplane.ModelInferResponse.InferOutputTensor.contents', index=4,
+      name='contents', full_name='inference.ModelInferResponse.InferOutputTensor.contents', index=4,
       number=5, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -796,27 +796,27 @@ _MODELINFERRESPONSE_INFEROUTPUTTENSOR = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1856,
-  serialized_end=2162,
+  serialized_start=1730,
+  serialized_end=2009,
 )
 
 _MODELINFERRESPONSE_PARAMETERSENTRY = _descriptor.Descriptor(
   name='ParametersEntry',
-  full_name='mlserver.dataplane.ModelInferResponse.ParametersEntry',
+  full_name='inference.ModelInferResponse.ParametersEntry',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='key', full_name='mlserver.dataplane.ModelInferResponse.ParametersEntry.key', index=0,
+      name='key', full_name='inference.ModelInferResponse.ParametersEntry.key', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='value', full_name='mlserver.dataplane.ModelInferResponse.ParametersEntry.value', index=1,
+      name='value', full_name='inference.ModelInferResponse.ParametersEntry.value', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -834,48 +834,48 @@ _MODELINFERRESPONSE_PARAMETERSENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1218,
-  serialized_end=1303,
+  serialized_start=1146,
+  serialized_end=1222,
 )
 
 _MODELINFERRESPONSE = _descriptor.Descriptor(
   name='ModelInferResponse',
-  full_name='mlserver.dataplane.ModelInferResponse',
+  full_name='inference.ModelInferResponse',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='model_name', full_name='mlserver.dataplane.ModelInferResponse.model_name', index=0,
+      name='model_name', full_name='inference.ModelInferResponse.model_name', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='model_version', full_name='mlserver.dataplane.ModelInferResponse.model_version', index=1,
+      name='model_version', full_name='inference.ModelInferResponse.model_version', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='id', full_name='mlserver.dataplane.ModelInferResponse.id', index=2,
+      name='id', full_name='inference.ModelInferResponse.id', index=2,
       number=3, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='parameters', full_name='mlserver.dataplane.ModelInferResponse.parameters', index=3,
+      name='parameters', full_name='inference.ModelInferResponse.parameters', index=3,
       number=4, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='outputs', full_name='mlserver.dataplane.ModelInferResponse.outputs', index=4,
+      name='outputs', full_name='inference.ModelInferResponse.outputs', index=4,
       number=5, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -893,35 +893,35 @@ _MODELINFERRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1627,
-  serialized_end=2249,
+  serialized_start=1519,
+  serialized_end=2087,
 )
 
 
 _INFERPARAMETER = _descriptor.Descriptor(
   name='InferParameter',
-  full_name='mlserver.dataplane.InferParameter',
+  full_name='inference.InferParameter',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='bool_param', full_name='mlserver.dataplane.InferParameter.bool_param', index=0,
+      name='bool_param', full_name='inference.InferParameter.bool_param', index=0,
       number=1, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='int64_param', full_name='mlserver.dataplane.InferParameter.int64_param', index=1,
+      name='int64_param', full_name='inference.InferParameter.int64_param', index=1,
       number=2, type=3, cpp_type=2, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='string_param', full_name='mlserver.dataplane.InferParameter.string_param', index=2,
+      name='string_param', full_name='inference.InferParameter.string_param', index=2,
       number=3, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -939,82 +939,82 @@ _INFERPARAMETER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
     _descriptor.OneofDescriptor(
-      name='parameter_choice', full_name='mlserver.dataplane.InferParameter.parameter_choice',
+      name='parameter_choice', full_name='inference.InferParameter.parameter_choice',
       index=0, containing_type=None,
       create_key=_descriptor._internal_create_key,
     fields=[]),
   ],
-  serialized_start=2251,
-  serialized_end=2356,
+  serialized_start=2089,
+  serialized_end=2194,
 )
 
 
 _INFERTENSORCONTENTS = _descriptor.Descriptor(
   name='InferTensorContents',
-  full_name='mlserver.dataplane.InferTensorContents',
+  full_name='inference.InferTensorContents',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='raw_contents', full_name='mlserver.dataplane.InferTensorContents.raw_contents', index=0,
+      name='raw_contents', full_name='inference.InferTensorContents.raw_contents', index=0,
       number=1, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=b"",
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='bool_contents', full_name='mlserver.dataplane.InferTensorContents.bool_contents', index=1,
+      name='bool_contents', full_name='inference.InferTensorContents.bool_contents', index=1,
       number=2, type=8, cpp_type=7, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='int_contents', full_name='mlserver.dataplane.InferTensorContents.int_contents', index=2,
+      name='int_contents', full_name='inference.InferTensorContents.int_contents', index=2,
       number=3, type=5, cpp_type=1, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='int64_contents', full_name='mlserver.dataplane.InferTensorContents.int64_contents', index=3,
+      name='int64_contents', full_name='inference.InferTensorContents.int64_contents', index=3,
       number=4, type=3, cpp_type=2, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='uint_contents', full_name='mlserver.dataplane.InferTensorContents.uint_contents', index=4,
+      name='uint_contents', full_name='inference.InferTensorContents.uint_contents', index=4,
       number=5, type=13, cpp_type=3, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='uint64_contents', full_name='mlserver.dataplane.InferTensorContents.uint64_contents', index=5,
+      name='uint64_contents', full_name='inference.InferTensorContents.uint64_contents', index=5,
       number=6, type=4, cpp_type=4, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='fp32_contents', full_name='mlserver.dataplane.InferTensorContents.fp32_contents', index=6,
+      name='fp32_contents', full_name='inference.InferTensorContents.fp32_contents', index=6,
       number=7, type=2, cpp_type=6, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='fp64_contents', full_name='mlserver.dataplane.InferTensorContents.fp64_contents', index=7,
+      name='fp64_contents', full_name='inference.InferTensorContents.fp64_contents', index=7,
       number=8, type=1, cpp_type=5, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='bytes_contents', full_name='mlserver.dataplane.InferTensorContents.bytes_contents', index=8,
+      name='bytes_contents', full_name='inference.InferTensorContents.bytes_contents', index=8,
       number=9, type=12, cpp_type=9, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -1032,8 +1032,8 @@ _INFERTENSORCONTENTS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2359,
-  serialized_end=2589,
+  serialized_start=2197,
+  serialized_end=2427,
 )
 
 _MODELMETADATARESPONSE_TENSORMETADATA.containing_type = _MODELMETADATARESPONSE
@@ -1090,63 +1090,63 @@ _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 ServerLiveRequest = _reflection.GeneratedProtocolMessageType('ServerLiveRequest', (_message.Message,), {
   'DESCRIPTOR' : _SERVERLIVEREQUEST,
   '__module__' : 'dataplane_pb2'
-  # @@protoc_insertion_point(class_scope:mlserver.dataplane.ServerLiveRequest)
+  # @@protoc_insertion_point(class_scope:inference.ServerLiveRequest)
   })
 _sym_db.RegisterMessage(ServerLiveRequest)
 
 ServerLiveResponse = _reflection.GeneratedProtocolMessageType('ServerLiveResponse', (_message.Message,), {
   'DESCRIPTOR' : _SERVERLIVERESPONSE,
   '__module__' : 'dataplane_pb2'
-  # @@protoc_insertion_point(class_scope:mlserver.dataplane.ServerLiveResponse)
+  # @@protoc_insertion_point(class_scope:inference.ServerLiveResponse)
   })
 _sym_db.RegisterMessage(ServerLiveResponse)
 
 ServerReadyRequest = _reflection.GeneratedProtocolMessageType('ServerReadyRequest', (_message.Message,), {
   'DESCRIPTOR' : _SERVERREADYREQUEST,
   '__module__' : 'dataplane_pb2'
-  # @@protoc_insertion_point(class_scope:mlserver.dataplane.ServerReadyRequest)
+  # @@protoc_insertion_point(class_scope:inference.ServerReadyRequest)
   })
 _sym_db.RegisterMessage(ServerReadyRequest)
 
 ServerReadyResponse = _reflection.GeneratedProtocolMessageType('ServerReadyResponse', (_message.Message,), {
   'DESCRIPTOR' : _SERVERREADYRESPONSE,
   '__module__' : 'dataplane_pb2'
-  # @@protoc_insertion_point(class_scope:mlserver.dataplane.ServerReadyResponse)
+  # @@protoc_insertion_point(class_scope:inference.ServerReadyResponse)
   })
 _sym_db.RegisterMessage(ServerReadyResponse)
 
 ModelReadyRequest = _reflection.GeneratedProtocolMessageType('ModelReadyRequest', (_message.Message,), {
   'DESCRIPTOR' : _MODELREADYREQUEST,
   '__module__' : 'dataplane_pb2'
-  # @@protoc_insertion_point(class_scope:mlserver.dataplane.ModelReadyRequest)
+  # @@protoc_insertion_point(class_scope:inference.ModelReadyRequest)
   })
 _sym_db.RegisterMessage(ModelReadyRequest)
 
 ModelReadyResponse = _reflection.GeneratedProtocolMessageType('ModelReadyResponse', (_message.Message,), {
   'DESCRIPTOR' : _MODELREADYRESPONSE,
   '__module__' : 'dataplane_pb2'
-  # @@protoc_insertion_point(class_scope:mlserver.dataplane.ModelReadyResponse)
+  # @@protoc_insertion_point(class_scope:inference.ModelReadyResponse)
   })
 _sym_db.RegisterMessage(ModelReadyResponse)
 
 ServerMetadataRequest = _reflection.GeneratedProtocolMessageType('ServerMetadataRequest', (_message.Message,), {
   'DESCRIPTOR' : _SERVERMETADATAREQUEST,
   '__module__' : 'dataplane_pb2'
-  # @@protoc_insertion_point(class_scope:mlserver.dataplane.ServerMetadataRequest)
+  # @@protoc_insertion_point(class_scope:inference.ServerMetadataRequest)
   })
 _sym_db.RegisterMessage(ServerMetadataRequest)
 
 ServerMetadataResponse = _reflection.GeneratedProtocolMessageType('ServerMetadataResponse', (_message.Message,), {
   'DESCRIPTOR' : _SERVERMETADATARESPONSE,
   '__module__' : 'dataplane_pb2'
-  # @@protoc_insertion_point(class_scope:mlserver.dataplane.ServerMetadataResponse)
+  # @@protoc_insertion_point(class_scope:inference.ServerMetadataResponse)
   })
 _sym_db.RegisterMessage(ServerMetadataResponse)
 
 ModelMetadataRequest = _reflection.GeneratedProtocolMessageType('ModelMetadataRequest', (_message.Message,), {
   'DESCRIPTOR' : _MODELMETADATAREQUEST,
   '__module__' : 'dataplane_pb2'
-  # @@protoc_insertion_point(class_scope:mlserver.dataplane.ModelMetadataRequest)
+  # @@protoc_insertion_point(class_scope:inference.ModelMetadataRequest)
   })
 _sym_db.RegisterMessage(ModelMetadataRequest)
 
@@ -1155,12 +1155,12 @@ ModelMetadataResponse = _reflection.GeneratedProtocolMessageType('ModelMetadataR
   'TensorMetadata' : _reflection.GeneratedProtocolMessageType('TensorMetadata', (_message.Message,), {
     'DESCRIPTOR' : _MODELMETADATARESPONSE_TENSORMETADATA,
     '__module__' : 'dataplane_pb2'
-    # @@protoc_insertion_point(class_scope:mlserver.dataplane.ModelMetadataResponse.TensorMetadata)
+    # @@protoc_insertion_point(class_scope:inference.ModelMetadataResponse.TensorMetadata)
     })
   ,
   'DESCRIPTOR' : _MODELMETADATARESPONSE,
   '__module__' : 'dataplane_pb2'
-  # @@protoc_insertion_point(class_scope:mlserver.dataplane.ModelMetadataResponse)
+  # @@protoc_insertion_point(class_scope:inference.ModelMetadataResponse)
   })
 _sym_db.RegisterMessage(ModelMetadataResponse)
 _sym_db.RegisterMessage(ModelMetadataResponse.TensorMetadata)
@@ -1172,12 +1172,12 @@ ModelInferRequest = _reflection.GeneratedProtocolMessageType('ModelInferRequest'
     'ParametersEntry' : _reflection.GeneratedProtocolMessageType('ParametersEntry', (_message.Message,), {
       'DESCRIPTOR' : _MODELINFERREQUEST_INFERINPUTTENSOR_PARAMETERSENTRY,
       '__module__' : 'dataplane_pb2'
-      # @@protoc_insertion_point(class_scope:mlserver.dataplane.ModelInferRequest.InferInputTensor.ParametersEntry)
+      # @@protoc_insertion_point(class_scope:inference.ModelInferRequest.InferInputTensor.ParametersEntry)
       })
     ,
     'DESCRIPTOR' : _MODELINFERREQUEST_INFERINPUTTENSOR,
     '__module__' : 'dataplane_pb2'
-    # @@protoc_insertion_point(class_scope:mlserver.dataplane.ModelInferRequest.InferInputTensor)
+    # @@protoc_insertion_point(class_scope:inference.ModelInferRequest.InferInputTensor)
     })
   ,
 
@@ -1186,24 +1186,24 @@ ModelInferRequest = _reflection.GeneratedProtocolMessageType('ModelInferRequest'
     'ParametersEntry' : _reflection.GeneratedProtocolMessageType('ParametersEntry', (_message.Message,), {
       'DESCRIPTOR' : _MODELINFERREQUEST_INFERREQUESTEDOUTPUTTENSOR_PARAMETERSENTRY,
       '__module__' : 'dataplane_pb2'
-      # @@protoc_insertion_point(class_scope:mlserver.dataplane.ModelInferRequest.InferRequestedOutputTensor.ParametersEntry)
+      # @@protoc_insertion_point(class_scope:inference.ModelInferRequest.InferRequestedOutputTensor.ParametersEntry)
       })
     ,
     'DESCRIPTOR' : _MODELINFERREQUEST_INFERREQUESTEDOUTPUTTENSOR,
     '__module__' : 'dataplane_pb2'
-    # @@protoc_insertion_point(class_scope:mlserver.dataplane.ModelInferRequest.InferRequestedOutputTensor)
+    # @@protoc_insertion_point(class_scope:inference.ModelInferRequest.InferRequestedOutputTensor)
     })
   ,
 
   'ParametersEntry' : _reflection.GeneratedProtocolMessageType('ParametersEntry', (_message.Message,), {
     'DESCRIPTOR' : _MODELINFERREQUEST_PARAMETERSENTRY,
     '__module__' : 'dataplane_pb2'
-    # @@protoc_insertion_point(class_scope:mlserver.dataplane.ModelInferRequest.ParametersEntry)
+    # @@protoc_insertion_point(class_scope:inference.ModelInferRequest.ParametersEntry)
     })
   ,
   'DESCRIPTOR' : _MODELINFERREQUEST,
   '__module__' : 'dataplane_pb2'
-  # @@protoc_insertion_point(class_scope:mlserver.dataplane.ModelInferRequest)
+  # @@protoc_insertion_point(class_scope:inference.ModelInferRequest)
   })
 _sym_db.RegisterMessage(ModelInferRequest)
 _sym_db.RegisterMessage(ModelInferRequest.InferInputTensor)
@@ -1219,24 +1219,24 @@ ModelInferResponse = _reflection.GeneratedProtocolMessageType('ModelInferRespons
     'ParametersEntry' : _reflection.GeneratedProtocolMessageType('ParametersEntry', (_message.Message,), {
       'DESCRIPTOR' : _MODELINFERRESPONSE_INFEROUTPUTTENSOR_PARAMETERSENTRY,
       '__module__' : 'dataplane_pb2'
-      # @@protoc_insertion_point(class_scope:mlserver.dataplane.ModelInferResponse.InferOutputTensor.ParametersEntry)
+      # @@protoc_insertion_point(class_scope:inference.ModelInferResponse.InferOutputTensor.ParametersEntry)
       })
     ,
     'DESCRIPTOR' : _MODELINFERRESPONSE_INFEROUTPUTTENSOR,
     '__module__' : 'dataplane_pb2'
-    # @@protoc_insertion_point(class_scope:mlserver.dataplane.ModelInferResponse.InferOutputTensor)
+    # @@protoc_insertion_point(class_scope:inference.ModelInferResponse.InferOutputTensor)
     })
   ,
 
   'ParametersEntry' : _reflection.GeneratedProtocolMessageType('ParametersEntry', (_message.Message,), {
     'DESCRIPTOR' : _MODELINFERRESPONSE_PARAMETERSENTRY,
     '__module__' : 'dataplane_pb2'
-    # @@protoc_insertion_point(class_scope:mlserver.dataplane.ModelInferResponse.ParametersEntry)
+    # @@protoc_insertion_point(class_scope:inference.ModelInferResponse.ParametersEntry)
     })
   ,
   'DESCRIPTOR' : _MODELINFERRESPONSE,
   '__module__' : 'dataplane_pb2'
-  # @@protoc_insertion_point(class_scope:mlserver.dataplane.ModelInferResponse)
+  # @@protoc_insertion_point(class_scope:inference.ModelInferResponse)
   })
 _sym_db.RegisterMessage(ModelInferResponse)
 _sym_db.RegisterMessage(ModelInferResponse.InferOutputTensor)
@@ -1246,14 +1246,14 @@ _sym_db.RegisterMessage(ModelInferResponse.ParametersEntry)
 InferParameter = _reflection.GeneratedProtocolMessageType('InferParameter', (_message.Message,), {
   'DESCRIPTOR' : _INFERPARAMETER,
   '__module__' : 'dataplane_pb2'
-  # @@protoc_insertion_point(class_scope:mlserver.dataplane.InferParameter)
+  # @@protoc_insertion_point(class_scope:inference.InferParameter)
   })
 _sym_db.RegisterMessage(InferParameter)
 
 InferTensorContents = _reflection.GeneratedProtocolMessageType('InferTensorContents', (_message.Message,), {
   'DESCRIPTOR' : _INFERTENSORCONTENTS,
   '__module__' : 'dataplane_pb2'
-  # @@protoc_insertion_point(class_scope:mlserver.dataplane.InferTensorContents)
+  # @@protoc_insertion_point(class_scope:inference.InferTensorContents)
   })
 _sym_db.RegisterMessage(InferTensorContents)
 
@@ -1266,17 +1266,17 @@ _MODELINFERRESPONSE_PARAMETERSENTRY._options = None
 
 _GRPCINFERENCESERVICE = _descriptor.ServiceDescriptor(
   name='GRPCInferenceService',
-  full_name='mlserver.dataplane.GRPCInferenceService',
+  full_name='inference.GRPCInferenceService',
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=2592,
-  serialized_end=3208,
+  serialized_start=2430,
+  serialized_end=2938,
   methods=[
   _descriptor.MethodDescriptor(
     name='ServerLive',
-    full_name='mlserver.dataplane.GRPCInferenceService.ServerLive',
+    full_name='inference.GRPCInferenceService.ServerLive',
     index=0,
     containing_service=None,
     input_type=_SERVERLIVEREQUEST,
@@ -1286,7 +1286,7 @@ _GRPCINFERENCESERVICE = _descriptor.ServiceDescriptor(
   ),
   _descriptor.MethodDescriptor(
     name='ServerReady',
-    full_name='mlserver.dataplane.GRPCInferenceService.ServerReady',
+    full_name='inference.GRPCInferenceService.ServerReady',
     index=1,
     containing_service=None,
     input_type=_SERVERREADYREQUEST,
@@ -1296,7 +1296,7 @@ _GRPCINFERENCESERVICE = _descriptor.ServiceDescriptor(
   ),
   _descriptor.MethodDescriptor(
     name='ModelReady',
-    full_name='mlserver.dataplane.GRPCInferenceService.ModelReady',
+    full_name='inference.GRPCInferenceService.ModelReady',
     index=2,
     containing_service=None,
     input_type=_MODELREADYREQUEST,
@@ -1306,7 +1306,7 @@ _GRPCINFERENCESERVICE = _descriptor.ServiceDescriptor(
   ),
   _descriptor.MethodDescriptor(
     name='ServerMetadata',
-    full_name='mlserver.dataplane.GRPCInferenceService.ServerMetadata',
+    full_name='inference.GRPCInferenceService.ServerMetadata',
     index=3,
     containing_service=None,
     input_type=_SERVERMETADATAREQUEST,
@@ -1316,7 +1316,7 @@ _GRPCINFERENCESERVICE = _descriptor.ServiceDescriptor(
   ),
   _descriptor.MethodDescriptor(
     name='ModelMetadata',
-    full_name='mlserver.dataplane.GRPCInferenceService.ModelMetadata',
+    full_name='inference.GRPCInferenceService.ModelMetadata',
     index=4,
     containing_service=None,
     input_type=_MODELMETADATAREQUEST,
@@ -1326,7 +1326,7 @@ _GRPCINFERENCESERVICE = _descriptor.ServiceDescriptor(
   ),
   _descriptor.MethodDescriptor(
     name='ModelInfer',
-    full_name='mlserver.dataplane.GRPCInferenceService.ModelInfer',
+    full_name='inference.GRPCInferenceService.ModelInfer',
     index=5,
     containing_service=None,
     input_type=_MODELINFERREQUEST,
