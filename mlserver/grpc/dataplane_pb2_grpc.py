@@ -18,32 +18,32 @@ class GRPCInferenceServiceStub(object):
             channel: A grpc.Channel.
         """
         self.ServerLive = channel.unary_unary(
-                '/mlserver.dataplane.GRPCInferenceService/ServerLive',
+                '/inference.GRPCInferenceService/ServerLive',
                 request_serializer=dataplane__pb2.ServerLiveRequest.SerializeToString,
                 response_deserializer=dataplane__pb2.ServerLiveResponse.FromString,
                 )
         self.ServerReady = channel.unary_unary(
-                '/mlserver.dataplane.GRPCInferenceService/ServerReady',
+                '/inference.GRPCInferenceService/ServerReady',
                 request_serializer=dataplane__pb2.ServerReadyRequest.SerializeToString,
                 response_deserializer=dataplane__pb2.ServerReadyResponse.FromString,
                 )
         self.ModelReady = channel.unary_unary(
-                '/mlserver.dataplane.GRPCInferenceService/ModelReady',
+                '/inference.GRPCInferenceService/ModelReady',
                 request_serializer=dataplane__pb2.ModelReadyRequest.SerializeToString,
                 response_deserializer=dataplane__pb2.ModelReadyResponse.FromString,
                 )
         self.ServerMetadata = channel.unary_unary(
-                '/mlserver.dataplane.GRPCInferenceService/ServerMetadata',
+                '/inference.GRPCInferenceService/ServerMetadata',
                 request_serializer=dataplane__pb2.ServerMetadataRequest.SerializeToString,
                 response_deserializer=dataplane__pb2.ServerMetadataResponse.FromString,
                 )
         self.ModelMetadata = channel.unary_unary(
-                '/mlserver.dataplane.GRPCInferenceService/ModelMetadata',
+                '/inference.GRPCInferenceService/ModelMetadata',
                 request_serializer=dataplane__pb2.ModelMetadataRequest.SerializeToString,
                 response_deserializer=dataplane__pb2.ModelMetadataResponse.FromString,
                 )
         self.ModelInfer = channel.unary_unary(
-                '/mlserver.dataplane.GRPCInferenceService/ModelInfer',
+                '/inference.GRPCInferenceService/ModelInfer',
                 request_serializer=dataplane__pb2.ModelInferRequest.SerializeToString,
                 response_deserializer=dataplane__pb2.ModelInferResponse.FromString,
                 )
@@ -132,7 +132,7 @@ def add_GRPCInferenceServiceServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'mlserver.dataplane.GRPCInferenceService', rpc_method_handlers)
+            'inference.GRPCInferenceService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
@@ -154,7 +154,7 @@ class GRPCInferenceService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/mlserver.dataplane.GRPCInferenceService/ServerLive',
+        return grpc.experimental.unary_unary(request, target, '/inference.GRPCInferenceService/ServerLive',
             dataplane__pb2.ServerLiveRequest.SerializeToString,
             dataplane__pb2.ServerLiveResponse.FromString,
             options, channel_credentials,
@@ -171,7 +171,7 @@ class GRPCInferenceService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/mlserver.dataplane.GRPCInferenceService/ServerReady',
+        return grpc.experimental.unary_unary(request, target, '/inference.GRPCInferenceService/ServerReady',
             dataplane__pb2.ServerReadyRequest.SerializeToString,
             dataplane__pb2.ServerReadyResponse.FromString,
             options, channel_credentials,
@@ -188,7 +188,7 @@ class GRPCInferenceService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/mlserver.dataplane.GRPCInferenceService/ModelReady',
+        return grpc.experimental.unary_unary(request, target, '/inference.GRPCInferenceService/ModelReady',
             dataplane__pb2.ModelReadyRequest.SerializeToString,
             dataplane__pb2.ModelReadyResponse.FromString,
             options, channel_credentials,
@@ -205,7 +205,7 @@ class GRPCInferenceService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/mlserver.dataplane.GRPCInferenceService/ServerMetadata',
+        return grpc.experimental.unary_unary(request, target, '/inference.GRPCInferenceService/ServerMetadata',
             dataplane__pb2.ServerMetadataRequest.SerializeToString,
             dataplane__pb2.ServerMetadataResponse.FromString,
             options, channel_credentials,
@@ -222,7 +222,7 @@ class GRPCInferenceService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/mlserver.dataplane.GRPCInferenceService/ModelMetadata',
+        return grpc.experimental.unary_unary(request, target, '/inference.GRPCInferenceService/ModelMetadata',
             dataplane__pb2.ModelMetadataRequest.SerializeToString,
             dataplane__pb2.ModelMetadataResponse.FromString,
             options, channel_credentials,
@@ -239,7 +239,7 @@ class GRPCInferenceService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/mlserver.dataplane.GRPCInferenceService/ModelInfer',
+        return grpc.experimental.unary_unary(request, target, '/inference.GRPCInferenceService/ModelInfer',
             dataplane__pb2.ModelInferRequest.SerializeToString,
             dataplane__pb2.ModelInferResponse.FromString,
             options, channel_credentials,
