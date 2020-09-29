@@ -21,7 +21,7 @@ benchmark-grpc:
 	ghz \
 		--insecure \
 		--proto ../proto/dataplane.proto \
-		--call mlserver.dataplane.GRPCInferenceService/ModelInfer \
+		--call inference.GRPCInferenceService/ModelInfer \
 		--binary-file ./data/grpc-requests.pb \
 		--total 100000 \
 		--connections 50 \
