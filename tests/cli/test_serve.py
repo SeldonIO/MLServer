@@ -41,7 +41,7 @@ def test_load_model_settings_fallback(
     )
     monkeypatch.setenv(
         f"{ENV_PREFIX_MODEL_SETTINGS}IMPLEMENTATION",
-        get_import_path(sum_model_settings.implementation),
+        get_import_path(sum_model_settings.implementation),  # type: ignore
     )
 
     model_settings_path = os.path.join(model_folder, DEFAULT_MODEL_SETTINGS_FILENAME)
