@@ -9,7 +9,7 @@ service ModelRepositoryService
           returns (RepositoryIndexResponse) {}
 
   // Load or reload a model from a repository.
-  rpc RepositoryModelLoad(RepositoryModeLoadRequest)
+  rpc RepositoryModelLoad(RepositoryModelLoadRequest)
           returns (RepositoryModelLoadResponse) {}
 
   // Unload a model.
