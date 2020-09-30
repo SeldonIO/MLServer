@@ -3,8 +3,7 @@ info:
   title: Data Plane
   version: '2.0'
   description: 'https://github.com/kubeflow/kfserving/blob/master/docs/predict-api/v2/required_api.md'
-servers:
-  - url: 'http://localhost:3000'
+servers: []
 paths:
   /v2/health/live:
     get:
