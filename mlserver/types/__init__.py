@@ -14,7 +14,17 @@ from .dataplane import (
     InferenceRequest,
 )
 
+from .model_repository import (
+    RepositoryIndexRequest,
+    RepositoryIndexResponseItem,
+    RepositoryIndexResponse,
+    RepositoryIndexErrorResponse,
+    RepositoryLoadErrorResponse,
+    RepositoryUnloadErrorResponse,
+)
+
 __all__ = [
+    # Dataplane
     "MetadataServerResponse",
     "MetadataServerErrorResponse",
     "MetadataTensor",
@@ -28,4 +38,11 @@ __all__ = [
     "MetadataModelResponse",
     "RequestInput",
     "InferenceRequest",
+    # Model Repository
+    "RepositoryIndexRequest",
+    "RepositoryIndexResponseItem",
+    "RepositoryIndexResponse",
+    "RepositoryIndexErrorResponse",
+    "RepositoryLoadErrorResponse",
+    "RepositoryUnloadErrorResponse",
 ]
