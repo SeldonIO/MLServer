@@ -16,7 +16,7 @@ class ModelRepository:
         self._default_models = {}
         self._flat_models = []
 
-    async def index(self):
+    async def index(self) -> RepositoryIndexResponse:
         pass
 
     async def load(self, model: MLModel):
