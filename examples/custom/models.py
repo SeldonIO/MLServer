@@ -10,7 +10,7 @@ from numpyro import distributions as dist
 
 
 class NumpyroModel(MLModel):
-    def load(self) -> bool:
+    async def load(self) -> bool:
         model_uri = self._settings.parameters.uri
         with open(model_uri) as model_file:
             raw_samples = json.load(model_file)
@@ -24,7 +24,7 @@ class NumpyroModel(MLModel):
         self.ready = True
         return self.ready
 
-    def predict(self, payload: types.InferenceRequest) -> types.InferenceResponse:
+    async def predict(self, payload: types.InferenceRequest) -> types.InferenceResponse:
         inputs = self._extract_inputs(payload)
         predictions = self._predictive(rng_key=random.PRNGKey(0), **inputs)
 
