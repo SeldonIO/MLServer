@@ -14,7 +14,7 @@ _FIELDS = {
     "INT16": "int_contents",
     "INT32": "int_contents",
     "INT64": "int64_contents",
-    "FP16": "raw_contents",
+    "FP16": "bytes_contents",
     "FP32": "fp32_contents",
     "FP64": "fp64_contents",
     "BYTES": "bytes_contents",

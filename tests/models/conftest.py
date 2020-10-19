@@ -4,7 +4,7 @@ import os
 from mlserver.models.sklearn import _SKLEARN_PRESENT, SKLearnModel
 from mlserver.models.xgboost import _XGBOOST_PRESENT, XGBoostModel
 from mlserver.settings import ModelSettings, ModelParameters
-from mlserver.types import InferenceRequest
+from mlserver.types import InferenceRequest, TensorData
 
 if _SKLEARN_PRESENT:
     import joblib
@@ -93,7 +93,8 @@ async def xgboost_model(xgboost_model_settings: ModelSettings) -> XGBoostModel:
 def xgboost_inference_request(inference_request: InferenceRequest) -> InferenceRequest:
     # Reshape to 2D array, matching the input data to xgboost_model
     single_input = inference_request.inputs[0]
-    single_input.data = [[1, 2, 3]]  # type: ignore
+    single_input.data = TensorData.parse_obj([[1, 2, 3]])
+    single_input.shape = [1, 3]
 
     # Keep only a single input
     inference_request.inputs = [single_input]

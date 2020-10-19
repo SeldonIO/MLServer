@@ -4,6 +4,7 @@ start-testserver:
 install-dev:
 	GO111MODULE=on go get github.com/bojand/ghz/cmd/ghz@v0.55.0
 	GO111MODULE=on go get github.com/rakyll/hey@v0.1.3
+	pip install -r requirements.txt
 
 generate:
 	python generator.py

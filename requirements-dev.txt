@@ -7,9 +7,6 @@ pytest==6.1.0
 pytest-asyncio==0.14.0
 tox==3.20.0
 
-# Benchmarking
-numpy==1.19.2
-
 # Linting and formatting
 flake8==3.8.3
 flake8-black==0.2.1
