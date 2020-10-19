@@ -70,6 +70,7 @@ class InferenceServicer(GRPCInferenceServiceServicer):
     async def ModelInfer(
         self, request: pb.ModelInferRequest, context
     ) -> pb.ModelInferResponse:
+        breakpoint()
         payload = ModelInferRequestConverter.to_types(request)
         result = await self._data_plane.infer(
             payload=payload, name=request.model_name, version=request.model_version

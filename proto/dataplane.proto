@@ -253,54 +253,45 @@ message InferParameter
 //
 message InferTensorContents
 {
-  // Raw representation of the tensor contents. The size of this
-  // content must match what is expected by the tensor's shape
-  // and data type. The raw data must be the flattened, one-dimensional,
-  // row-major order of the tensor elements without any stride or padding
-  // between the elements. Note that the FP16 data type must be
-  // represented as raw content as there is no standard support for a
-  // 16-bit float type.
-  bytes raw_contents = 1;
-
   // Representation for BOOL data type. The size must match what is
   // expected by the tensor's shape. The contents must be the flattened,
   // one-dimensional, row-major order of the tensor elements.
-  repeated bool bool_contents = 2;
+  repeated bool bool_contents = 1;
 
   // Representation for INT8, INT16, and INT32 data types. The size
   // must match what is expected by the tensor's shape. The contents
   // must be the flattened, one-dimensional, row-major order of the
   // tensor elements.
-  repeated int32 int_contents = 3;
+  repeated int32 int_contents = 2;
 
   // Representation for INT64 data types. The size must match what
   // is expected by the tensor's shape. The contents must be the
   // flattened, one-dimensional, row-major order of the tensor elements.
-  repeated int64 int64_contents = 4;
+  repeated int64 int64_contents = 3;
 
   // Representation for UINT8, UINT16, and UINT32 data types. The size
   // must match what is expected by the tensor's shape. The contents
   // must be the flattened, one-dimensional, row-major order of the
   // tensor elements.
-  repeated uint32 uint_contents = 5;
+  repeated uint32 uint_contents = 4;
 
   // Representation for UINT64 data types. The size must match what
   // is expected by the tensor's shape. The contents must be the
   // flattened, one-dimensional, row-major order of the tensor elements.
-  repeated uint64 uint64_contents = 6;
+  repeated uint64 uint64_contents = 5;
 
   // Representation for FP32 data type. The size must match what is
   // expected by the tensor's shape. The contents must be the flattened,
   // one-dimensional, row-major order of the tensor elements.
-  repeated float fp32_contents = 7;
+  repeated float fp32_contents = 6;
 
   // Representation for FP64 data type. The size must match what is
   // expected by the tensor's shape. The contents must be the flattened,
   // one-dimensional, row-major order of the tensor elements.
-  repeated double fp64_contents = 8;
+  repeated double fp64_contents = 7;
 
   // Representation for BYTES data type. The size must match what is
   // expected by the tensor's shape. The contents must be the flattened,
   // one-dimensional, row-major order of the tensor elements.
-  repeated bytes bytes_contents = 9;
+  repeated bytes bytes_contents = 8;
 }
