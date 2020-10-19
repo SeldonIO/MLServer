@@ -10,7 +10,6 @@ _SKLEARN_PRESENT = False
 
 try:
     import joblib
-    import numpy as np
 
     _SKLEARN_PRESENT = True
 except ImportError:
