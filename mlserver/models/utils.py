@@ -59,7 +59,9 @@ async def get_model_uri(
 
 def to_ndarray(request_input: RequestInput) -> "np.ndarray":
     dtype = to_dtype(request_input.datatype)
-    model_data = np.array(request_input.data.__root__, dtype=dtype)
+    data = getattr(request_input.data, "__root__", request_input.data)
+
+    model_data = np.array(data, dtype=dtype)
 
     # TODO: Check if reshape not valid
     return model_data.reshape(request_input.shape)

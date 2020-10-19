@@ -4,12 +4,13 @@ from .. import types
 from ..model import MLModel
 from ..errors import InferenceError
 
-from .utils import get_model_uri
+from .utils import get_model_uri, to_ndarray
 
 _SKLEARN_PRESENT = False
 
 try:
     import joblib
+    import numpy as np
 
     _SKLEARN_PRESENT = True
 except ImportError:
@@ -72,13 +73,13 @@ class SKLearnModel(MLModel):
     def _predict_outputs(
         self, payload: types.InferenceRequest
     ) -> List[types.ResponseOutput]:
-        # TODO: Does this need to be a numpy array?
         model_input = payload.inputs[0]
+        input_data = to_ndarray(model_input)
 
         outputs = []
         for request_output in payload.outputs:  # type: ignore
             predict_fn = getattr(self._model, request_output.name)
-            y = predict_fn(model_input.data)
+            y = predict_fn(input_data)
 
             # TODO: Set datatype (cast from numpy?)
             outputs.append(

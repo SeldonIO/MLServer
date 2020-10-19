@@ -2,13 +2,12 @@ from .. import types
 from ..model import MLModel
 from ..errors import InferenceError
 
-from .utils import get_model_uri
+from .utils import get_model_uri, to_ndarray
 
 _XGBOOST_PRESENT = False
 
 try:
     import xgboost as xgb
-    import numpy as np
 
     _XGBOOST_PRESENT = True
 except ImportError:
@@ -67,7 +66,7 @@ class XGBoostModel(MLModel):
         # TODO: Move this out to "types conversion" pipeline, once it's there.
         try:
             model_input = payload.inputs[0]
-            array_data = np.array(model_input.data)
+            array_data = to_ndarray(model_input)
             dmatrix_data = xgb.DMatrix(array_data)
 
             # TODO: Use Parameters object

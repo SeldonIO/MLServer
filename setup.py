@@ -22,7 +22,7 @@ def _load_version() -> str:
 
 def _extras() -> Dict[str, List[str]]:
     extras = {
-        "sklearn": ["scikit-learn==0.23.1", "joblib==0.16.0"],
+        "sklearn": ["scikit-learn==0.23.1", "joblib==0.16.0", "numpy==1.18.5"],
         "xgboost": ["xgboost==1.1.1", "numpy==1.18.5"],
     }
 
