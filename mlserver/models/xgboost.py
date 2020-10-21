@@ -15,7 +15,7 @@ except ImportError:
     pass
 
 
-WELLKNOWN_MODEL_FILENAMES = ["model.bst"]
+WELLKNOWN_MODEL_FILENAMES = ["model.bst", "model.json"]
 
 
 class XGBoostModel(MLModel):
