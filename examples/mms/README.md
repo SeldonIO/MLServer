@@ -148,10 +148,7 @@ That is,
 {
     "name": "mnist-svm",
     "version": "v0.1.0",
-    "implementation": "mlserver.models.SKLearnModel",
-    "parameters": {
-        "uri": "./models/mnist-svm/model.joblib"
-    }
+    "implementation": "mlserver.models.SKLearnModel"
 }
 ```
 
@@ -163,10 +160,7 @@ That is,
 {
     "name": "mushroom-xgboost",
     "version": "v0.1.0",
-    "implementation": "mlserver.models.XGBoostModel",
-    "parameters": {
-        "uri": "./models/mushroom-xgboost/model.json"
-    }
+    "implementation": "mlserver.models.XGBoostModel"
 }
 
 ```
