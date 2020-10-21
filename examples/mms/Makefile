@@ -6,5 +6,5 @@ README.md: README.ipynb
 		--output README.md
 
 upload:
-	gsutil cp -r models gs://seldon-models/mlserver
+	gsutil cp -r models/* gs://seldon-models/mlserver
 
