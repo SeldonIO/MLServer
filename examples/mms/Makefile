@@ -6,5 +6,7 @@ README.md: README.ipynb
 		--output README.md
 
 upload:
-	gsutil cp -r models/* gs://seldon-models/mlserver
+	gsutil cp -r models/* gs://seldon-models/mlserver/mms
+	gsutil cp -r models/mnist-svm gs://seldon-models/mlserver/mms-sklearn
+	gsutil cp -r models/mushroom-xgboost gs://seldon-models/mlserver/mms-xgboost
 
