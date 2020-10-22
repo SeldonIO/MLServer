@@ -14,7 +14,7 @@ from mlserver.settings import (
 from .helpers import get_import_path
 
 
-def test_load_model_settings(sum_model_settings: ModelSettings, model_folder: str):
+def test_load_models(sum_model_settings: ModelSettings, model_folder: str):
     _, models = load_settings(model_folder)
 
     assert len(models) == 1
@@ -22,7 +22,15 @@ def test_load_model_settings(sum_model_settings: ModelSettings, model_folder: st
     assert models[0].version == sum_model_settings.version
 
 
-def test_load_settings_multi_model(multi_model_folder: str):
+def test_load_model_settings(model_folder: str):
+    _, models = load_settings(model_folder)
+
+    model_settings = models[0]._settings
+    assert model_settings.parameters
+    assert model_settings.parameters.uri == str(model_folder)
+
+
+def test_load_multi_model(multi_model_folder: str):
     _, models = load_settings(multi_model_folder)
     models.sort(key=lambda m: m.version)
 
