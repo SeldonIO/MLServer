@@ -1,9 +1,9 @@
 {
     "name": "spark-mllib",
     "version": "v0.1.0",
-    "implementation": "mlservermllib.models.MLlibModel",
+    "implementation": "mlserver-mllib.MLlibModel",
     "parameters": {
-        "uri": "/Users/Fog/Desktop/work/go/src/github.com/SeldonIO/MLServer/examples/mllib",
+        "uri": "./",
         "format": "LogisticRegression"
     }
 }
