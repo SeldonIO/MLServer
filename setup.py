@@ -44,7 +44,7 @@ setup(
     install_requires=[
         "grpcio==1.33.2",
         "protobuf==3.13.0",
-        "fastapi==0.61.1",
+        "fastapi==0.61.2",
         "uvicorn==0.12.1",
         "orjson==3.4.3",
         "click==7.1.2",
