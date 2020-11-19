@@ -36,9 +36,7 @@ def test_metadata(rest_client):
 
 
 def test_model_metadata(rest_client, sum_model_settings):
-    endpoint = (
-        f"v2/models/{sum_model_settings.name}/versions/{sum_model_settings.version}"
-    )
+    endpoint = f"v2/models/{sum_model_settings.name}"
     response = rest_client.get(endpoint)
 
     metadata = types.MetadataModelResponse.parse_obj(response.json())

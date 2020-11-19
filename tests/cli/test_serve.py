@@ -19,7 +19,7 @@ def test_load_models(sum_model_settings: ModelSettings, model_folder: str):
 
     assert len(models) == 1
     assert models[0].name == sum_model_settings.name
-    assert models[0].version == sum_model_settings.version
+    assert models[0].version == sum_model_settings.parameters.version
 
 
 def test_load_model_settings(model_folder: str):
@@ -45,7 +45,7 @@ def test_load_model_settings_fallback(
 ):
     monkeypatch.setenv(f"{ENV_PREFIX_MODEL_SETTINGS}NAME", sum_model_settings.name)
     monkeypatch.setenv(
-        f"{ENV_PREFIX_MODEL_SETTINGS}VERSION", sum_model_settings.version
+        f"{ENV_PREFIX_MODEL_SETTINGS}VERSION", sum_model_settings.parameters.version
     )
     monkeypatch.setenv(
         f"{ENV_PREFIX_MODEL_SETTINGS}IMPLEMENTATION",
@@ -59,7 +59,7 @@ def test_load_model_settings_fallback(
 
     assert len(models) == 1
     assert models[0].name == sum_model_settings.name
-    assert models[0].version == sum_model_settings.version
+    assert models[0].version == sum_model_settings.parameters.version
 
 
 def test_load_settings_fallback(

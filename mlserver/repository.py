@@ -3,6 +3,7 @@ from collections import defaultdict
 
 from .model import MLModel
 from .errors import ModelNotFound
+from .types import RepositoryIndexResponse
 
 
 class ModelRepository:

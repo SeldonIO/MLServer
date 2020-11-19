@@ -37,8 +37,7 @@ def sklearn_model_uri(tmp_path) -> str:
 def sklearn_model_settings(sklearn_model_uri: str) -> ModelSettings:
     return ModelSettings(
         name="sklearn-model",
-        version="v1.2.3",
-        parameters=ModelParameters(uri=sklearn_model_uri),
+        parameters=ModelParameters(uri=sklearn_model_uri, version="v1.2.3"),
     )
 
 
@@ -76,8 +75,7 @@ def xgboost_model_uri(tmp_path) -> str:
 def xgboost_model_settings(xgboost_model_uri: str) -> ModelSettings:
     return ModelSettings(
         name="xgboost-model",
-        version="v1.2.3",
-        parameters=ModelParameters(uri=xgboost_model_uri),
+        parameters=ModelParameters(uri=xgboost_model_uri, version="v1.2.3"),
     )
 
 

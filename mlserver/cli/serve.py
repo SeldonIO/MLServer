@@ -60,9 +60,12 @@ def _load_model_settings(model_settings_path: str) -> ModelSettings:
     model_settings = ModelSettings.parse_file(model_settings_path)
 
     if not model_settings.parameters:
+        model_settings.parameters = ModelParameters()
+
+    if not model_settings.parameters.uri:
         # If not specified, default to its own folder
         default_model_uri = os.path.dirname(model_settings_path)
-        model_settings.parameters = ModelParameters(uri=default_model_uri)
+        model_settings.parameters.uri = default_model_uri
 
     return model_settings
 

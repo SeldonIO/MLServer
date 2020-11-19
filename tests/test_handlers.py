@@ -1,7 +1,7 @@
 import pytest
 import uuid
 
-from mlserver import ModelSettings
+from mlserver.settings import ModelSettings, ModelParameters
 from mlserver.types import MetadataTensor
 
 from .fixtures import SumModel
@@ -9,7 +9,9 @@ from .fixtures import SumModel
 
 @pytest.mark.parametrize("ready", [True, False])
 async def test_ready(data_plane, model_repository, ready):
-    model_settings = ModelSettings(name="sum-model-2", version="v1.2.3")
+    model_settings = ModelSettings(
+        name="sum-model-2", parameters=ModelParameters(version="v1.2.3")
+    )
     new_model = SumModel(model_settings)
     await model_repository.load(new_model)
 
@@ -74,7 +76,7 @@ async def test_model_metadata(
         sum_model_settings.inputs = inputs
 
     metadata = await data_plane.model_metadata(
-        name=sum_model_settings.name, version=sum_model_settings.version
+        name=sum_model_settings.name, version=sum_model_settings.parameters.version
     )
 
     assert metadata.name == sum_model_settings.name

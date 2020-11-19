@@ -37,7 +37,7 @@ async def test_server_metadata(inference_service_stub):
 
 async def test_model_metadata(inference_service_stub, sum_model_settings):
     req = pb.ModelMetadataRequest(
-        name=sum_model_settings.name, version=sum_model_settings.version
+        name=sum_model_settings.name, version=sum_model_settings.parameters.version
     )
     response = await inference_service_stub.ModelMetadata(req)
 

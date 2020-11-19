@@ -30,12 +30,12 @@ def multi_model_folder(model_folder, sum_model_settings):
 
     num_models = 5
     for idx in range(num_models):
-        sum_model_settings.version = f"v{idx}"
+        sum_model_settings.parameters.version = f"v{idx}"
 
         model_version_folder = os.path.join(
             model_folder,
             "sum-model",
-            sum_model_settings.version,
+            sum_model_settings.parameters.version,
         )
         os.makedirs(model_version_folder)
 

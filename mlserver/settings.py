@@ -38,6 +38,7 @@ class ModelParameters(BaseSettings):
         env_prefix = ENV_PREFIX_MODEL_SETTINGS
 
     uri: Optional[str] = None
+    version: Optional[str] = None
     format: Optional[str] = None
 
 
@@ -46,7 +47,6 @@ class ModelSettings(BaseSettings):
         env_prefix = ENV_PREFIX_MODEL_SETTINGS
 
     name: str
-    version: str
 
     # Model metadata
     platform: str = ""

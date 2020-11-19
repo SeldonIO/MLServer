@@ -23,5 +23,5 @@ def test_model_settings_from_env(monkeypatch):
     model_settings.parameters = ModelParameters()
 
     assert model_settings.name == model_name
-    assert model_settings.version == model_version
+    assert model_settings.parameters.version == model_version
     assert model_settings.parameters.uri == model_uri
