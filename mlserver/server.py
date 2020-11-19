@@ -5,7 +5,7 @@ from typing import List
 
 from .model import MLModel
 from .settings import Settings
-from .repository import ModelRepository
+from .repository import MultiModelRepository
 from .handlers import DataPlane
 from .rest import RESTServer
 from .grpc import GRPCServer
@@ -15,7 +15,7 @@ HANDLED_SIGNALS = [signal.SIGINT, signal.SIGTERM]
 
 class MLServer:
     def __init__(self, settings: Settings):
-        self._model_repository = ModelRepository()
+        self._model_repository = MultiModelRepository()
         self._settings = settings
         self._data_plane = DataPlane(
             settings=self._settings, model_repository=self._model_repository

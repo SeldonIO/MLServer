@@ -2,7 +2,7 @@ import pytest
 import os
 
 from mlserver.handlers import DataPlane
-from mlserver.repository import ModelRepository
+from mlserver.repository import MultiModelRepository
 from mlserver import types, Settings, ModelSettings
 
 from .fixtures import SumModel
@@ -55,8 +55,8 @@ def inference_response() -> types.InferenceResponse:
 
 
 @pytest.fixture
-async def model_repository(sum_model: SumModel) -> ModelRepository:
-    model_repository = ModelRepository()
+async def model_repository(sum_model: SumModel) -> MultiModelRepository:
+    model_repository = MultiModelRepository()
     await model_repository.load(sum_model)
     return model_repository
 
@@ -68,5 +68,5 @@ def settings() -> Settings:
 
 
 @pytest.fixture
-def data_plane(settings: Settings, model_repository: ModelRepository) -> DataPlane:
+def data_plane(settings: Settings, model_repository: MultiModelRepository) -> DataPlane:
     return DataPlane(settings=settings, model_repository=model_repository)

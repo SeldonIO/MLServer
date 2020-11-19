@@ -1,7 +1,7 @@
 import uuid
 
 from .settings import Settings
-from .repository import ModelRepository
+from .repository import MultiModelRepository
 from .types import (
     MetadataModelResponse,
     MetadataServerResponse,
@@ -16,7 +16,7 @@ class DataPlane:
     servers.
     """
 
-    def __init__(self, settings: Settings, model_repository: ModelRepository):
+    def __init__(self, settings: Settings, model_repository: MultiModelRepository):
         self._settings = settings
         self._model_repository = model_repository
 
