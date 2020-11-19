@@ -1,9 +1,9 @@
 {
-    "name": "spark-mllib",
-    "version": "v0.1.0",
-    "implementation": "mlserver-mllib.MLlibModel",
-    "parameters": {
-        "uri": "./",
-        "format": "LogisticRegression"
-    }
+  "name": "spark-mllib",
+  "implementation": "mlserver-mllib.MLlibModel",
+  "parameters": {
+    "uri": "./",
+    "format": "LogisticRegression",
+    "version": "v0.1.0"
+  }
 }
