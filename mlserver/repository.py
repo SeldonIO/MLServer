@@ -4,6 +4,7 @@ import glob
 from typing import List
 
 from .settings import ModelParameters, ModelSettings
+from .errors import ModelNotFound
 
 DEFAULT_MODEL_SETTINGS_FILENAME = "model-settings.json"
 
@@ -17,7 +18,7 @@ class ModelRepository:
     def __init__(self, root: str = None):
         self._root = root
 
-    def list(self) -> List[ModelSettings]:
+    async def list(self) -> List[ModelSettings]:
         all_model_settings = []
 
         # TODO: Use an async alternative for filesys ops
@@ -51,5 +52,11 @@ class ModelRepository:
 
         return model_settings
 
-    def find(self, name: str) -> ModelSettings:
-        pass
+    async def find(self, name: str) -> ModelSettings:
+        all_settings = await self.list()
+        for model_settings in all_settings:
+            if model_settings.name == name:
+                # TODO: Implement version policy
+                return model_settings
+
+        raise ModelNotFound(name)

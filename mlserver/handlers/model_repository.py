@@ -10,7 +10,7 @@ class ModelRepositoryHandlers:
         self._model_registry = model_registry
 
     async def index(self) -> RepositoryIndexResponse:
-        all_model_settings = self._repository.list()
+        all_model_settings = await self._repository.list()
         repository_items = [
             self._to_item(model_settings) for model_settings in all_model_settings
         ]
@@ -32,7 +32,17 @@ class ModelRepositoryHandlers:
         return item
 
     async def load(self, name: str) -> bool:
-        pass
+        model_settings = await self._repository.find(name)
+
+        # TODO: Move to separate method
+        model_class = model_settings.implementation
+        model = model_class(model_settings)
+
+        await self._model_registry.load(model)
+
+        return True
 
     async def unload(self, name: str) -> bool:
-        pass
+        await self._model_registry.unload(name)
+
+        return True

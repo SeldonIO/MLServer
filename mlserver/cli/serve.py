@@ -10,7 +10,7 @@ from ..settings import Settings, ModelSettings
 DEFAULT_SETTINGS_FILENAME = "settings.json"
 
 
-def load_settings(folder: str = None) -> Tuple[Settings, List[MLModel]]:
+async def load_settings(folder: str = None) -> Tuple[Settings, List[MLModel]]:
     """
     Load server and model settings.
     """
@@ -32,7 +32,8 @@ def load_settings(folder: str = None) -> Tuple[Settings, List[MLModel]]:
         settings.model_repository_root = folder
 
     repository = ModelRepository(settings.model_repository_root)
-    models = [_init_model(model) for model in repository.list()]
+    available_models = await repository.list()
+    models = [_init_model(model) for model in available_models]
 
     return settings, models
 
