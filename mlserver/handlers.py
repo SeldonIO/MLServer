@@ -1,7 +1,7 @@
 import uuid
 
 from .settings import Settings
-from .repository import MultiModelRepository
+from .registry import MultiModelRegistry
 from .types import (
     MetadataModelResponse,
     MetadataServerResponse,
@@ -16,19 +16,19 @@ class DataPlane:
     servers.
     """
 
-    def __init__(self, settings: Settings, model_repository: MultiModelRepository):
+    def __init__(self, settings: Settings, model_registry: MultiModelRegistry):
         self._settings = settings
-        self._model_repository = model_repository
+        self._model_registry = model_registry
 
     async def live(self) -> bool:
         return True
 
     async def ready(self) -> bool:
-        models = await self._model_repository.get_models()
+        models = await self._model_registry.get_models()
         return all([model.ready for model in models])
 
     async def model_ready(self, name: str, version: str = None) -> bool:
-        model = await self._model_repository.get_model(name, version)
+        model = await self._model_registry.get_model(name, version)
         return model.ready
 
     async def metadata(self) -> MetadataServerResponse:
@@ -41,7 +41,7 @@ class DataPlane:
     async def model_metadata(
         self, name: str, version: str = None
     ) -> MetadataModelResponse:
-        model = await self._model_repository.get_model(name, version)
+        model = await self._model_registry.get_model(name, version)
         # TODO: Make await optional for sync methods
         return await model.metadata()
 
@@ -51,7 +51,7 @@ class DataPlane:
         if payload.id is None:
             payload.id = str(uuid.uuid4())
 
-        model = await self._model_repository.get_model(name, version)
+        model = await self._model_registry.get_model(name, version)
         # TODO: Make await optional for sync methods
         prediction = await model.predict(payload)
 

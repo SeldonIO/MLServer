@@ -4,11 +4,10 @@ import sys
 from typing import List, Tuple, Union
 
 from ..model import MLModel
-from ..loader import ModelSettingsLoader
+from ..repository import ModelRepository
 from ..settings import Settings, ModelSettings
 
 DEFAULT_SETTINGS_FILENAME = "settings.json"
-DEFAULT_MODEL_SETTINGS_FILENAME = "model-settings.json"
 
 
 def load_settings(folder: str = None) -> Tuple[Settings, List[MLModel]]:
@@ -29,8 +28,11 @@ def load_settings(folder: str = None) -> Tuple[Settings, List[MLModel]]:
     else:
         settings = Settings()
 
-    model_settings_loader = ModelSettingsLoader(folder)
-    models = [_init_model(model) for model in model_settings_loader.list()]
+    if folder is not None:
+        settings.model_repository_root = folder
+
+    repository = ModelRepository(settings.model_repository_root)
+    models = [_init_model(model) for model in repository.list()]
 
     return settings, models
 

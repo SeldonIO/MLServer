@@ -4,8 +4,8 @@ import os
 import shutil
 
 from mlserver.handlers import DataPlane
-from mlserver.repository import MultiModelRepository
-from mlserver.loader import ModelSettingsLoader, DEFAULT_MODEL_SETTINGS_FILENAME
+from mlserver.registry import MultiModelRegistry
+from mlserver.repository import ModelRepository, DEFAULT_MODEL_SETTINGS_FILENAME
 from mlserver import types, Settings, ModelSettings
 
 from .fixtures import SumModel
@@ -59,10 +59,10 @@ def inference_response() -> types.InferenceResponse:
 
 
 @pytest.fixture
-async def model_repository(sum_model: SumModel) -> MultiModelRepository:
-    model_repository = MultiModelRepository()
-    await model_repository.load(sum_model)
-    return model_repository
+async def model_registry(sum_model: SumModel) -> MultiModelRegistry:
+    model_registry = MultiModelRegistry()
+    await model_registry.load(sum_model)
+    return model_registry
 
 
 @pytest.fixture
@@ -72,8 +72,8 @@ def settings() -> Settings:
 
 
 @pytest.fixture
-def data_plane(settings: Settings, model_repository: MultiModelRepository) -> DataPlane:
-    return DataPlane(settings=settings, model_repository=model_repository)
+def data_plane(settings: Settings, model_registry: MultiModelRegistry) -> DataPlane:
+    return DataPlane(settings=settings, model_registry=model_registry)
 
 
 @pytest.fixture
@@ -119,5 +119,5 @@ def multi_model_folder(model_folder, sum_model_settings):
 
 
 @pytest.fixture
-def model_settings_loader(model_folder):
-    return ModelSettingsLoader(model_folder)
+def model_repository(model_folder):
+    return ModelRepository(model_folder)

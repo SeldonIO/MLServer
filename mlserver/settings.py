@@ -14,6 +14,9 @@ class Settings(BaseSettings):
 
     debug: bool = True
 
+    # Model repository folder
+    model_repository_root: str = "."
+
     # Server metadata
     server_name: str = "mlserver"
     server_version: str = __version__
