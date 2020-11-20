@@ -60,9 +60,6 @@ class MultiModelRegistry:
     def __init__(self):
         self._models = {}
 
-    async def index(self) -> RepositoryIndexResponse:
-        pass
-
     async def load(self, model: MLModel):
         if model.name not in self._models:
             self._models[model.name] = SingleModelRegistry(model)

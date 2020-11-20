@@ -3,7 +3,7 @@ import pytest
 import os
 import shutil
 
-from mlserver.handlers import DataPlane
+from mlserver.handlers import DataPlane, ModelRepositoryHandlers
 from mlserver.registry import MultiModelRegistry
 from mlserver.repository import ModelRepository, DEFAULT_MODEL_SETTINGS_FILENAME
 from mlserver import types, Settings, ModelSettings
@@ -74,6 +74,15 @@ def settings() -> Settings:
 @pytest.fixture
 def data_plane(settings: Settings, model_registry: MultiModelRegistry) -> DataPlane:
     return DataPlane(settings=settings, model_registry=model_registry)
+
+
+@pytest.fixture
+def model_repository_handlers(
+    model_repository: ModelRepository, model_registry: MultiModelRegistry
+) -> ModelRepositoryHandlers:
+    return ModelRepositoryHandlers(
+        repository=model_repository, model_registry=model_registry
+    )
 
 
 @pytest.fixture
