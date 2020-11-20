@@ -4,7 +4,7 @@ import uuid
 from mlserver.settings import ModelSettings, ModelParameters
 from mlserver.types import MetadataTensor
 
-from .fixtures import SumModel
+from ..fixtures import SumModel
 
 
 @pytest.mark.parametrize("ready", [True, False])

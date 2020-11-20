@@ -10,8 +10,8 @@ DEFAULT_MODEL_SETTINGS_FILENAME = "model-settings.json"
 
 class ModelRepository:
     """
-    Model repository, responsible for discovery of models which can be loaded
-    onto the model registry.
+    Model repository, responsible of the discovery of models which can be
+    loaded onto the model registry.
     """
 
     def __init__(self, root: str = None):

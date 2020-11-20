@@ -1,8 +1,8 @@
 import uuid
 
-from .settings import Settings
-from .registry import MultiModelRegistry
-from .types import (
+from ..settings import Settings
+from ..registry import MultiModelRegistry
+from ..types import (
     MetadataModelResponse,
     MetadataServerResponse,
     InferenceRequest,
