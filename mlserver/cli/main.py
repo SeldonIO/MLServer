@@ -8,7 +8,6 @@ from functools import wraps
 
 from ..server import MLServer
 
-from .build import generate_bundle
 from .serve import load_settings
 
 
@@ -27,21 +26,6 @@ def root():
     Command-line interface to manage MLServer models.
     """
     pass
-
-
-@root.command("bundle")
-@click.argument("folder", nargs=1)
-def bundle(folder: str):
-    """
-    Generates a bundle which can be used to build a Docker image to serve a
-    machine learning model.
-
-    Parameters
-    -----
-    folder : str
-        Folder containing your model server code and config.
-    """
-    generate_bundle(folder)
 
 
 @root.command("start")
