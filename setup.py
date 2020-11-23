@@ -43,7 +43,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         "grpcio==1.33.2",
-        "protobuf==3.13.0",
+        "protobuf==3.14.0",
         "fastapi==0.61.2",
         "uvicorn==0.12.1",
         "orjson==3.4.3",
