@@ -17,6 +17,7 @@ from .dataplane import (
 from .model_repository import (
     RepositoryIndexRequest,
     RepositoryIndexResponseItem,
+    State,
     RepositoryIndexResponse,
     RepositoryIndexErrorResponse,
     RepositoryLoadErrorResponse,
@@ -41,6 +42,7 @@ __all__ = [
     # Model Repository
     "RepositoryIndexRequest",
     "RepositoryIndexResponseItem",
+    "State",
     "RepositoryIndexResponse",
     "RepositoryIndexErrorResponse",
     "RepositoryLoadErrorResponse",
