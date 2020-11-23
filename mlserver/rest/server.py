@@ -1,7 +1,7 @@
 import uvicorn
 
 from ..settings import Settings
-from ..handlers import DataPlane
+from ..handlers import DataPlane, ModelRepositoryHandlers
 
 from .app import create_app
 
@@ -12,10 +12,20 @@ class _NoSignalServer(uvicorn.Server):
 
 
 class RESTServer:
-    def __init__(self, settings: Settings, data_plane: DataPlane):
+    def __init__(
+        self,
+        settings: Settings,
+        data_plane: DataPlane,
+        model_repository_handlers: ModelRepositoryHandlers,
+    ):
         self._settings = settings
         self._data_plane = data_plane
-        self._app = create_app(self._settings, self._data_plane)
+        self._model_repository_handlers = model_repository_handlers
+        self._app = create_app(
+            self._settings,
+            data_plane=self._data_plane,
+            model_repository_handlers=self._model_repository_handlers,
+        )
 
     async def start(self):
         cfg = uvicorn.Config(

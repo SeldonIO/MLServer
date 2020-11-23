@@ -12,7 +12,16 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/repository_index_response'
       description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/repository_index_request'
   '/v2/repository/models/${MODEL_NAME}/load':
     parameters:
       - schema:

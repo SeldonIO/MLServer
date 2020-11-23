@@ -31,9 +31,7 @@ class Parameters(BaseModel):
 
 
 class TensorData(BaseModel):
-    __root__: List[Union["TensorData", Union[float, str, bool]]] = Field(
-        ..., title="tensor_data"
-    )
+    __root__: List[Union["TensorData", Union[float, str, bool]]]
 
     def __iter__(self):
         return iter(self.__root__)

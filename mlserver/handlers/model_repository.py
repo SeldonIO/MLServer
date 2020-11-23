@@ -1,7 +1,11 @@
 from ..settings import ModelSettings
 from ..registry import MultiModelRegistry
 from ..repository import ModelRepository
-from ..types import RepositoryIndexResponse, RepositoryIndexResponseItem
+from ..types import (
+    RepositoryIndexRequest,
+    RepositoryIndexResponse,
+    RepositoryIndexResponseItem,
+)
 
 
 class ModelRepositoryHandlers:
@@ -9,7 +13,8 @@ class ModelRepositoryHandlers:
         self._repository = repository
         self._model_registry = model_registry
 
-    async def index(self) -> RepositoryIndexResponse:
+    async def index(self, payload: RepositoryIndexRequest) -> RepositoryIndexResponse:
+        # TODO: Filter by payload.ready flag
         all_model_settings = await self._repository.list()
         repository_items = [
             self._to_item(model_settings) for model_settings in all_model_settings

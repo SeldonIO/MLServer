@@ -69,3 +69,13 @@ def test_infer_error(rest_client, inference_request):
 
     assert response.status_code == 400
     assert response.json()["error"] == "Model my-model with version v0 not found"
+
+
+def test_model_repository_index(rest_client, repository_index_request):
+    endpoint = "/v2/repository/index"
+    response = rest_client.get(endpoint, json=repository_index_request.dict())
+
+    assert response.status_code == 200
+
+    models = response.json()
+    assert len(models) == 1

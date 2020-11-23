@@ -128,5 +128,10 @@ def multi_model_folder(model_folder, sum_model_settings):
 
 
 @pytest.fixture
-def model_repository(model_folder):
+def model_repository(model_folder: str) -> ModelRepository:
     return ModelRepository(model_folder)
+
+
+@pytest.fixture
+def repository_index_request() -> types.RepositoryIndexRequest:
+    return types.RepositoryIndexRequest(ready=False)

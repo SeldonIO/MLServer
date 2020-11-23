@@ -4,13 +4,15 @@ from mlserver.errors import ModelNotFound
 from mlserver.registry import MultiModelRegistry
 from mlserver.handlers import ModelRepositoryHandlers
 from mlserver.settings import ModelSettings
+from mlserver.types import RepositoryIndexRequest
 
 
 async def test_index(
     model_repository_handlers: ModelRepositoryHandlers,
+    repository_index_request: RepositoryIndexRequest,
     sum_model_settings: ModelSettings,
 ):
-    repo_index = list(await model_repository_handlers.index())
+    repo_index = list(await model_repository_handlers.index(repository_index_request))
 
     assert len(repo_index) == 1
     assert repo_index[0].name == sum_model_settings.name

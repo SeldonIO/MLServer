@@ -5,7 +5,7 @@ from grpc import aio
 
 from typing import AsyncGenerator
 from google.protobuf import json_format
-from mlserver.handlers import DataPlane
+from mlserver.handlers import DataPlane, ModelRepositoryHandlers
 from mlserver.settings import Settings
 from mlserver.grpc import dataplane_pb2 as pb
 from mlserver.grpc.dataplane_pb2_grpc import GRPCInferenceServiceStub
@@ -47,8 +47,16 @@ async def inference_service_stub(
 
 
 @pytest.fixture
-async def grpc_server(grpc_settings: Settings, data_plane: DataPlane):
-    server = GRPCServer(grpc_settings, data_plane)
+async def grpc_server(
+    grpc_settings: Settings,
+    data_plane: DataPlane,
+    model_repository_handlers: ModelRepositoryHandlers,
+):
+    server = GRPCServer(
+        grpc_settings,
+        data_plane=data_plane,
+        model_repository_handlers=model_repository_handlers,
+    )
     server._create_server()
     await server._server.start()
 
