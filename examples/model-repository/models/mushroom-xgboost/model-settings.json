@@ -1,0 +1,7 @@
+{
+    "name": "mushroom-xgboost",
+    "implementation": "mlserver.models.XGBoostModel",
+    "parameters": {
+        "version": "v0.1.0"
+    }
+}
