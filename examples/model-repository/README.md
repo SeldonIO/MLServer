@@ -1,7 +1,10 @@
 # Model Repository API
 
-MLServer supports [Triton's Model Repository extension](https://github.com/triton-inference-server/server/blob/master/docs/protocol/extension_model_repository.md).
-This extension to the V2 Dataplane, builds on top of [Multi-Model Serving support](../mms/README.md), to allow you to load / unload models dynamically.
+MLServer supports loading and unloading models dynamically from a models repository.
+This allows you to enable and disable the models accessible by MLServer on demand.
+This extension builds on top of the support for [Multi-Model Serving](../mms/README.md), letting you change at runtime which models is MLServer currently serving.
+
+The API to manage the model repository is modelled after [Triton's Model Repository extension](https://github.com/triton-inference-server/server/blob/master/docs/protocol/extension_model_repository.md) to the V2 Dataplane and is thus fully compatible with it.
 
 This notebook will walk you through an example using the Model Repository API.
 
