@@ -79,14 +79,17 @@ def create_app(
         APIRoute(
             "/v2/repository/index",
             model_repository_endpoints.index,
+            methods=["POST"],
         ),
         APIRoute(
             "/v2/repository/models/{model_name}/load",
             model_repository_endpoints.load,
+            methods=["POST"],
         ),
         APIRoute(
             "/v2/repository/models/{model_name}/unload",
             model_repository_endpoints.unload,
+            methods=["POST"],
         ),
     ]
 

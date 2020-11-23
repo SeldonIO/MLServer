@@ -73,9 +73,31 @@ def test_infer_error(rest_client, inference_request):
 
 def test_model_repository_index(rest_client, repository_index_request):
     endpoint = "/v2/repository/index"
-    response = rest_client.get(endpoint, json=repository_index_request.dict())
+    response = rest_client.post(endpoint, json=repository_index_request.dict())
 
     assert response.status_code == 200
 
     models = response.json()
     assert len(models) == 1
+
+
+def test_model_repository_unload(rest_client, sum_model_settings):
+    endpoint = f"/v2/repository/models/{sum_model_settings.name}/unload"
+    response = rest_client.post(endpoint)
+
+    assert response.status_code == 200
+
+    model_metadata = rest_client.get(f"/v2/models/{sum_model_settings.name}")
+    assert model_metadata.status_code == 400
+
+
+def test_model_repository_load(rest_client, sum_model_settings):
+    rest_client.post(f"/v2/repository/models/{sum_model_settings.name}/unload")
+
+    endpoint = f"/v2/repository/models/{sum_model_settings.name}/load"
+    response = rest_client.post(endpoint)
+
+    assert response.status_code == 200
+
+    model_metadata = rest_client.get(f"/v2/models/{sum_model_settings.name}")
+    assert model_metadata.status_code == 200
