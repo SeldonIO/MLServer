@@ -73,3 +73,13 @@ async def test_model_infer_error(inference_service_stub, model_infer_request):
 
         assert err.status == grpc.Status.INVALID_ARGUMENT
         assert err.details == "Model my-model with version v1.2.3 not found"
+
+
+async def test_repository_index(
+    model_repository_service_stub, grpc_repository_index_request
+):
+    index = await model_repository_service_stub.RepositoryIndex(
+        grpc_repository_index_request
+    )
+
+    assert len(index.models) == 1
