@@ -1,0 +1,1191 @@
+
+Showing logs for build [32mseldonio-mlserver-pr-70-pr-buil-gb8tq-3[0m stage [32mlint[0m and container [32mstep-credential-initializer-7jdf5[0m
+{"level":"info","ts":1606153618.7803397,"logger":"fallback-logger","caller":"logging/config.go:69","msg":"Fetch GitHub commit ID from kodata failed: open /var/run/ko/refs/heads/0.8.0-ns-support: no such file or directory"}
+{"level":"info","ts":1606153618.7821472,"logger":"fallback-logger","caller":"creds-init/main.go:40","msg":"Credentials initialized."}
+
+Showing logs for build [32mseldonio-mlserver-pr-70-pr-buil-gb8tq-3[0m stage [32mlint[0m and container [32mstep-working-dir-initializer-bsrpg[0m
+{"level":"info","ts":1606153619.8880537,"logger":"fallback-logger","caller":"logging/config.go:69","msg":"Fetch GitHub commit ID from kodata failed: open /var/run/ko/HEAD: no such file or directory"}
+{"level":"info","ts":1606153619.8893013,"logger":"fallback-logger","caller":"bash/main.go:64","msg":"Successfully executed command \"sh -c mkdir -p /workspace/source\"; output "}
+
+Showing logs for build [32mseldonio-mlserver-pr-70-pr-buil-gb8tq-3[0m stage [32mlint[0m and container [32mstep-place-tools[0m
+
+Showing logs for build [32mseldonio-mlserver-pr-70-pr-buil-gb8tq-3[0m stage [32mlint[0m and container [32mstep-git-source-seldonio-mlserver-pr-70-pr-buil-gb8tq-ntz2h[0m
+{"level":"info","ts":1606153625.402271,"logger":"fallback-logger","caller":"logging/config.go:69","msg":"Fetch GitHub commit ID from kodata failed: open /var/run/ko/refs/heads/0.8.0-ns-support: no such file or directory"}
+{"level":"info","ts":1606153627.5485382,"logger":"fallback-logger","caller":"git/git.go:103","msg":"Successfully cloned https://github.com/SeldonIO/MLServer.git @ master in path /workspace/source"}
+
+Showing logs for build [32mseldonio-mlserver-pr-70-pr-buil-gb8tq-3[0m stage [32mlint[0m and container [32mstep-setup-builder-home[0m
+
+Showing logs for build [32mseldonio-mlserver-pr-70-pr-buil-gb8tq-3[0m stage [32mlint[0m and container [32mstep-git-merge[0m
+Using SHAs from PULL_REFS=master:9ea9774a892de7111e335104083d5b7041968fa2,70:0e9483f040cbc9bd5845d7d1aabcd21f25cf9a8b
+DEBUG: LC_ALL=C JX_LOG_LEVEL=error git fetch origin --unshallow 0e9483f040cbc9bd5845d7d1aabcd21f25cf9a8b: 9ea9774a892de7111e335104083d5b7041968fa2:
+DEBUG: ran git fetch --unshallow origin 0e9483f040cbc9bd5845d7d1aabcd21f25cf9a8b: 9ea9774a892de7111e335104083d5b7041968fa2: in 
+DEBUG: LC_ALL=C JX_LOG_LEVEL=error git branch
+DEBUG: JX_LOG_LEVEL=error LC_ALL=C git checkout master
+DEBUG: ran git checkout master in 
+DEBUG: LC_ALL=C JX_LOG_LEVEL=error git reset --hard 9ea9774a892de7111e335104083d5b7041968fa2
+DEBUG: ran git reset --hard 9ea9774a892de7111e335104083d5b7041968fa2 in 
+DEBUG: LC_ALL=C JX_LOG_LEVEL=error git clean -fd .
+DEBUG: ran clean --force -d . in 
+DEBUG: LC_ALL=C JX_LOG_LEVEL=error git merge 0e9483f040cbc9bd5845d7d1aabcd21f25cf9a8b
+DEBUG: ran git merge 0e9483f040cbc9bd5845d7d1aabcd21f25cf9a8b in 
+DEBUG: LC_ALL=C JX_LOG_LEVEL=error git log --format=%H%x1f%an%x1f%ae%x1f%cn%x1f%ce%x1f%s%n%b%x1e 9ea9774a892de7111e335104083d5b7041968fa2..HEAD
+Merged SHA 0e9483f040cbc9bd5845d7d1aabcd21f25cf9a8b with commit message 'Remove extra improt' into base branch master
+Merged SHA c50e5ae4e4f4d9f94840f1979c98e7036f743bd1 with commit message 'Add filtering and state to index items' into base branch master
+Merged SHA 752952225859eac69ac5a26e31195d9e3e507a6e with commit message 'Add tests for other grpc endpoints' into base branch master
+Merged SHA d4b2240ba4630f1fa027c0e6f9e2abd75d77184c with commit message 'Add test for index' into base branch master
+Merged SHA 973b611f67ecc75baa4e8f981a0c17100a76050c with commit message 'Add converters for grpc types' into base branch master
+Merged SHA 64f735e4c5d5f3f37eda383465fac27d124bc6ad with commit message 'Add len to BaseModel with custom root' into base branch master
+Merged SHA 89c3cba8de4f17ea2f290265d5b7fd2bbf9a9771 with commit message 'Add tests for REST endpoints' into base branch master
+Merged SHA db4aef7317c0954fa9104146b527d620ce39536c with commit message 'Add other endpoints' into base branch master
+Merged SHA 0db8e5711abd9d6294cd5958558686af085356c7 with commit message 'Start to add endpoints for model repository' into base branch master
+Merged SHA b51b627545baf355e5054baa699b4af211d4f640 with commit message 'Add tests for not found' into base branch master
+Merged SHA de1bfe0c1d2992f2181e2e17f6def8ef8461c294 with commit message 'Add load / unload to handlers' into base branch master
+Merged SHA 7581955d441ec963c250edd5d6fc73fd11c287ba with commit message 'Add initial implementation of ModelRepositoryHandlers' into base branch master
+Merged SHA 5f2930994d587d13d6e4b5f4a37b3abf7f9ad11c with commit message 'Convert handlers into package' into base branch master
+Merged SHA 83ffff8fad212c7273af501bff8d0d0bed38b479 with commit message 'Decouple registry and repository' into base branch master
+Merged SHA c9bc1d00275b153cbeda7512ff6750e89559cf24 with commit message 'Change serve to use ModelSettingsLoader' into base branch master
+Merged SHA b49b253d74679e45a901351166de40365cdb7eff with commit message 'Removed a couple more things' into base branch master
+Merged SHA 5b21621465b1fe2564a89edc274f9c728b9ed672 with commit message 'Split MultiModelRepository and SingleModelRepository in 2 classes' into base branch master
+Merged SHA 38e09a6222abe7de54e90d8258a15b6ab108ee45 with commit message 'Update benchmark' into base branch master
+Merged SHA 7eafb67be4f9bac08199a108c1eb4d9212ad7623 with commit message 'Update model-settings.json' into base branch master
+Merged SHA 886c064a1bcdf21c3cc172b7982cd62fc929e025 with commit message 'Move version into model parameters' into base branch master
+Merged SHA b9a80319a14de6a8c7920a453ac1711c6d7b5025 with commit message 'WIP' into base branch master
+Merged SHA 6bceee5e298ca8b79aa019c46312da0e7ffc9415 with commit message 'Add types for model repository' into base branch master
+Merged SHA 824e87efa897a3f437c49139bae0e219ed776156 with commit message 'Re-structure how types are organised and add model_repository types' into base branch master
+Merged SHA d1843e26b93bab7cfe760d731c8074136a1d8826 with commit message 'Add generated types for API' into base branch master
+Merged SHA 397000dea8d99b55960d218d3fa3f96bb5facbdd with commit message 'WIP adding new API for model repo' into base branch master
+
+Showing logs for build [32mseldonio-mlserver-pr-70-pr-buil-gb8tq-3[0m stage [32mlint[0m and container [32mstep-step2[0m
+pip install -r requirements-dev.txt
+Collecting grpcio-tools==1.33.2
+  Downloading grpcio_tools-1.33.2-cp36-cp36m-manylinux2014_x86_64.whl (2.5 MB)
+Collecting datamodel-code-generator==0.5.35
+  Downloading datamodel_code_generator-0.5.35-py3-none-any.whl (121 kB)
+Collecting pytest==6.1.2
+  Downloading pytest-6.1.2-py3-none-any.whl (272 kB)
+Collecting pytest-asyncio==0.14.0
+  Downloading pytest_asyncio-0.14.0-py3-none-any.whl (11 kB)
+Collecting tox==3.20.0
+  Downloading tox-3.20.0-py2.py3-none-any.whl (83 kB)
+Collecting flake8==3.8.3
+  Downloading flake8-3.8.3-py2.py3-none-any.whl (72 kB)
+Collecting flake8-black==0.2.1
+  Downloading flake8-black-0.2.1.tar.gz (9.1 kB)
+Collecting mypy==0.790
+  Downloading mypy-0.790-cp36-cp36m-manylinux1_x86_64.whl (21.0 MB)
+Collecting mypy-protobuf==1.23
+  Downloading mypy_protobuf-1.23-py3-none-any.whl (7.4 kB)
+Collecting black==20.8b1
+  Downloading black-20.8b1.tar.gz (1.1 MB)
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+    Preparing wheel metadata: started
+    Preparing wheel metadata: finished with status 'done'
+Requirement already satisfied: protobuf<4.0dev,>=3.5.0.post1 in /usr/local/lib/python3.6/site-packages (from grpcio-tools==1.33.2->-r requirements-dev.txt (line 2)) (3.13.0)
+Collecting grpcio>=1.33.2
+  Downloading grpcio-1.33.2-cp36-cp36m-manylinux2014_x86_64.whl (3.8 MB)
+Collecting pydantic[email]<2.0,>=1.5.1
+  Downloading pydantic-1.7.2-cp36-cp36m-manylinux2014_x86_64.whl (9.2 MB)
+Collecting PySnooper<1.0.0,>=0.4.1
+  Downloading PySnooper-0.4.2-py2.py3-none-any.whl (14 kB)
+Collecting toml<1.0.0,>=0.10.0
+  Downloading toml-0.10.2-py2.py3-none-any.whl (16 kB)
+Collecting isort<5.0,>=4.3.21
+  Downloading isort-4.3.21-py2.py3-none-any.whl (42 kB)
+Requirement already satisfied: jinja2<3.0,>=2.10.1 in /usr/local/lib/python3.6/site-packages (from datamodel-code-generator==0.5.35->-r requirements-dev.txt (line 3)) (2.11.2)
+Collecting inflect<5.0,>=4.1.0
+  Downloading inflect-4.1.1-py3-none-any.whl (31 kB)
+Collecting openapi-spec-validator<0.3,>=0.2.8
+  Downloading openapi_spec_validator-0.2.9-py3-none-any.whl (25 kB)
+Collecting prance<1.0,>=0.18.2
+  Downloading prance-0.19.0-py2.py3-none-any.whl (33 kB)
+Collecting genson<2.0,>=1.2.1
+  Downloading genson-1.2.2.tar.gz (34 kB)
+Collecting argcomplete<2.0,>=1.10
+  Downloading argcomplete-1.12.1-py2.py3-none-any.whl (38 kB)
+Requirement already satisfied: importlib-metadata>=0.12; python_version < "3.8" in /usr/local/lib/python3.6/site-packages (from pytest==6.1.2->-r requirements-dev.txt (line 6)) (1.7.0)
+Requirement already satisfied: packaging in /usr/local/lib/python3.6/site-packages (from pytest==6.1.2->-r requirements-dev.txt (line 6)) (20.4)
+Requirement already satisfied: py>=1.8.2 in /usr/local/lib/python3.6/site-packages (from pytest==6.1.2->-r requirements-dev.txt (line 6)) (1.9.0)
+Requirement already satisfied: attrs>=17.4.0 in /usr/local/lib/python3.6/site-packages (from pytest==6.1.2->-r requirements-dev.txt (line 6)) (20.2.0)
+Requirement already satisfied: pluggy<1.0,>=0.12 in /usr/local/lib/python3.6/site-packages (from pytest==6.1.2->-r requirements-dev.txt (line 6)) (0.13.1)
+Collecting iniconfig
+  Downloading iniconfig-1.1.1-py2.py3-none-any.whl (5.0 kB)
+Collecting virtualenv!=20.0.0,!=20.0.1,!=20.0.2,!=20.0.3,!=20.0.4,!=20.0.5,!=20.0.6,!=20.0.7,>=16.0.0
+  Downloading virtualenv-20.2.1-py2.py3-none-any.whl (4.9 MB)
+Requirement already satisfied: six>=1.14.0 in /usr/local/lib/python3.6/site-packages (from tox==3.20.0->-r requirements-dev.txt (line 8)) (1.15.0)
+Collecting filelock>=3.0.0
+  Downloading filelock-3.0.12-py3-none-any.whl (7.6 kB)
+Collecting pyflakes<2.3.0,>=2.2.0
+  Downloading pyflakes-2.2.0-py2.py3-none-any.whl (66 kB)
+Collecting pycodestyle<2.7.0,>=2.6.0a1
+  Downloading pycodestyle-2.6.0-py2.py3-none-any.whl (41 kB)
+Collecting mccabe<0.7.0,>=0.6.0
+  Downloading mccabe-0.6.1-py2.py3-none-any.whl (8.6 kB)
+Collecting mypy-extensions<0.5.0,>=0.4.3
+  Downloading mypy_extensions-0.4.3-py2.py3-none-any.whl (4.5 kB)
+Requirement already satisfied: typing-extensions>=3.7.4 in /usr/local/lib/python3.6/site-packages (from mypy==0.790->-r requirements-dev.txt (line 13)) (3.7.4.3)
+Collecting typed-ast<1.5.0,>=1.4.0
+  Downloading typed_ast-1.4.1-cp36-cp36m-manylinux1_x86_64.whl (737 kB)
+Collecting click>=7.1.2
+  Downloading click-7.1.2-py2.py3-none-any.whl (82 kB)
+Collecting appdirs
+  Downloading appdirs-1.4.4-py2.py3-none-any.whl (9.6 kB)
+Collecting regex>=2020.1.8
+  Downloading regex-2020.11.13-cp36-cp36m-manylinux2014_x86_64.whl (723 kB)
+Collecting dataclasses>=0.6; python_version < "3.7"
+  Downloading dataclasses-0.8-py3-none-any.whl (19 kB)
+Collecting pathspec<1,>=0.6
+  Downloading pathspec-0.8.1-py2.py3-none-any.whl (28 kB)
+Requirement already satisfied: setuptools in /usr/local/lib/python3.6/site-packages (from protobuf<4.0dev,>=3.5.0.post1->grpcio-tools==1.33.2->-r requirements-dev.txt (line 2)) (50.3.0)
+Collecting email-validator>=1.0.3; extra == "email"
+  Downloading email_validator-1.1.2-py2.py3-none-any.whl (17 kB)
+Requirement already satisfied: MarkupSafe>=0.23 in /usr/local/lib/python3.6/site-packages (from jinja2<3.0,>=2.10.1->datamodel-code-generator==0.5.35->-r requirements-dev.txt (line 3)) (1.1.1)
+Requirement already satisfied: PyYAML>=5.1 in /usr/local/lib/python3.6/site-packages (from openapi-spec-validator<0.3,>=0.2.8->datamodel-code-generator==0.5.35->-r requirements-dev.txt (line 3)) (5.3.1)
+Requirement already satisfied: jsonschema in /usr/local/lib/python3.6/site-packages (from openapi-spec-validator<0.3,>=0.2.8->datamodel-code-generator==0.5.35->-r requirements-dev.txt (line 3)) (3.2.0)
+Requirement already satisfied: chardet~=3.0 in /usr/local/lib/python3.6/site-packages (from prance<1.0,>=0.18.2->datamodel-code-generator==0.5.35->-r requirements-dev.txt (line 3)) (3.0.4)
+Requirement already satisfied: requests~=2.22 in /usr/local/lib/python3.6/site-packages (from prance<1.0,>=0.18.2->datamodel-code-generator==0.5.35->-r requirements-dev.txt (line 3)) (2.24.0)
+Collecting semver~=2.9
+  Downloading semver-2.13.0-py2.py3-none-any.whl (12 kB)
+Requirement already satisfied: zipp>=0.5 in /usr/local/lib/python3.6/site-packages (from importlib-metadata>=0.12; python_version < "3.8"->pytest==6.1.2->-r requirements-dev.txt (line 6)) (3.1.0)
+Requirement already satisfied: pyparsing>=2.0.2 in /usr/local/lib/python3.6/site-packages (from packaging->pytest==6.1.2->-r requirements-dev.txt (line 6)) (2.4.7)
+Collecting distlib<1,>=0.3.1
+  Downloading distlib-0.3.1-py2.py3-none-any.whl (335 kB)
+Collecting importlib-resources>=1.0; python_version < "3.7"
+  Downloading importlib_resources-3.3.0-py2.py3-none-any.whl (26 kB)
+Requirement already satisfied: idna>=2.0.0 in /usr/local/lib/python3.6/site-packages (from email-validator>=1.0.3; extra == "email"->pydantic[email]<2.0,>=1.5.1->datamodel-code-generator==0.5.35->-r requirements-dev.txt (line 3)) (2.10)
+Collecting dnspython>=1.15.0
+  Downloading dnspython-2.0.0-py3-none-any.whl (208 kB)
+Requirement already satisfied: pyrsistent>=0.14.0 in /usr/local/lib/python3.6/site-packages (from jsonschema->openapi-spec-validator<0.3,>=0.2.8->datamodel-code-generator==0.5.35->-r requirements-dev.txt (line 3)) (0.17.3)
+Requirement already satisfied: certifi>=2017.4.17 in /usr/local/lib/python3.6/site-packages (from requests~=2.22->prance<1.0,>=0.18.2->datamodel-code-generator==0.5.35->-r requirements-dev.txt (line 3)) (2020.6.20)
+Requirement already satisfied: urllib3!=1.25.0,!=1.25.1,<1.26,>=1.21.1 in /usr/local/lib/python3.6/site-packages (from requests~=2.22->prance<1.0,>=0.18.2->datamodel-code-generator==0.5.35->-r requirements-dev.txt (line 3)) (1.25.10)
+Building wheels for collected packages: flake8-black, black, genson
+  Building wheel for flake8-black (setup.py): started
+  Building wheel for flake8-black (setup.py): finished with status 'done'
+  Created wheel for flake8-black: filename=flake8_black-0.2.1-py2.py3-none-any.whl size=8873 sha256=2dec512205185ce04f013b7c2579af4ea2373930286cbce205dd663d25f56ce3
+  Stored in directory: /builder/home/.cache/pip/wheels/f3/71/20/4bcba7c464da12f8e2d5009d9da66d732d32498be89b8f9d10
+  Building wheel for black (PEP 517): started
+  Building wheel for black (PEP 517): finished with status 'done'
+  Created wheel for black: filename=black-20.8b1-py3-none-any.whl size=124186 sha256=a5f5f80ffcddfe9888531aef31be065d75bfdb34ee15e3202ed303317958bd08
+  Stored in directory: /builder/home/.cache/pip/wheels/dd/c8/94/e774504958e4667180d81202d1d45cdc35d6222ae39229871b
+  Building wheel for genson (setup.py): started
+  Building wheel for genson (setup.py): finished with status 'done'
+  Created wheel for genson: filename=genson-1.2.2-py2.py3-none-any.whl size=21261 sha256=c02e4d78ce6211433bb30cef533073a2709367be171cff42367fe65d74b8bec4
+  Stored in directory: /builder/home/.cache/pip/wheels/17/8e/f6/70b78333e594fdb9a14a41c225743d4cad09bcdbf9ebd3a90b
+Successfully built flake8-black black genson
+Installing collected packages: grpcio, grpcio-tools, dataclasses, dnspython, email-validator, pydantic, PySnooper, toml, isort, inflect, openapi-spec-validator, semver, prance, genson, argcomplete, typed-ast, click, appdirs, regex, mypy-extensions, pathspec, black, datamodel-code-generator, iniconfig, pytest, pytest-asyncio, filelock, distlib, importlib-resources, virtualenv, tox, pyflakes, pycodestyle, mccabe, flake8, flake8-black, mypy, mypy-protobuf
+  Attempting uninstall: grpcio
+    Found existing installation: grpcio 1.32.0
+    Uninstalling grpcio-1.32.0:
+      Successfully uninstalled grpcio-1.32.0
+  Attempting uninstall: grpcio-tools
+    Found existing installation: grpcio-tools 1.32.0
+    Uninstalling grpcio-tools-1.32.0:
+      Successfully uninstalled grpcio-tools-1.32.0
+  Attempting uninstall: pytest
+    Found existing installation: pytest 5.3.1
+    Uninstalling pytest-5.3.1:
+      Successfully uninstalled pytest-5.3.1
+ERROR: After October 2020 you may experience errors when installing or updating packages. This is because pip will change the way that it resolves dependency conflicts.
+
+We recommend you use --use-feature=2020-resolver to test your packages with the new resolver before it becomes the default.
+Successfully installed PySnooper-0.4.2 appdirs-1.4.4 argcomplete-1.12.1 black-20.8b1 click-7.1.2 dataclasses-0.8 datamodel-code-generator-0.5.35 distlib-0.3.1 dnspython-2.0.0 email-validator-1.1.2 filelock-3.0.12 flake8-3.8.3 flake8-black-0.2.1 genson-1.2.2 grpcio-1.33.2 grpcio-tools-1.33.2 importlib-resources-3.3.0 inflect-4.1.1 iniconfig-1.1.1 isort-4.3.21 mccabe-0.6.1 mypy-0.790 mypy-extensions-0.4.3 mypy-protobuf-1.23 openapi-spec-validator-0.2.9 pathspec-0.8.1 prance-0.19.0 pycodestyle-2.6.0 pydantic-1.7.2 pyflakes-2.2.0 pytest-6.1.2 pytest-asyncio-0.14.0 regex-2020.11.13 semver-2.13.0 toml-0.10.2 tox-3.20.0 typed-ast-1.4.1 virtualenv-20.2.1
+
+alibi 0.5.2 requires tensorflow>=2.0, but you'll have tensorflow 1.15.2 which is incompatible.
+datamodel-code-generator 0.5.35 requires black<20,>=19.10b0, but you'll have black 20.8b1 which is incompatible.
+WARNING: You are using pip version 20.2.3; however, version 20.2.4 is available.
+You should consider upgrading via the '/usr/local/bin/python -m pip install --upgrade pip' command.
+pip install --editable .[all]
+Obtaining file:///workspace/source
+Requirement already satisfied: grpcio==1.33.2 in /usr/local/lib/python3.6/site-packages (from mlserver==0.1.2) (1.33.2)
+Requirement already satisfied: protobuf==3.13.0 in /usr/local/lib/python3.6/site-packages (from mlserver==0.1.2) (3.13.0)
+Collecting fastapi==0.61.2
+  Downloading fastapi-0.61.2-py3-none-any.whl (48 kB)
+Collecting uvicorn==0.12.1
+  Downloading uvicorn-0.12.1-py3-none-any.whl (44 kB)
+Collecting orjson==3.4.3
+  Downloading orjson-3.4.3-cp36-cp36m-manylinux2014_x86_64.whl (232 kB)
+Requirement already satisfied: click==7.1.2 in /usr/local/lib/python3.6/site-packages (from mlserver==0.1.2) (7.1.2)
+Requirement already satisfied: joblib==0.16.0 in /usr/local/lib/python3.6/site-packages (from mlserver==0.1.2) (0.16.0)
+Collecting xgboost==1.1.1
+  Downloading xgboost-1.1.1-py3-none-manylinux2010_x86_64.whl (127.6 MB)
+Collecting scikit-learn==0.23.1
+  Downloading scikit_learn-0.23.1-cp36-cp36m-manylinux1_x86_64.whl (6.8 MB)
+Requirement already satisfied: six>=1.5.2 in /usr/local/lib/python3.6/site-packages (from grpcio==1.33.2->mlserver==0.1.2) (1.15.0)
+Requirement already satisfied: setuptools in /usr/local/lib/python3.6/site-packages (from protobuf==3.13.0->mlserver==0.1.2) (50.3.0)
+Requirement already satisfied: pydantic<2.0.0,>=1.0.0 in /usr/local/lib/python3.6/site-packages (from fastapi==0.61.2->mlserver==0.1.2) (1.7.2)
+Collecting starlette==0.13.6
+  Downloading starlette-0.13.6-py3-none-any.whl (59 kB)
+Collecting h11>=0.8
+  Downloading h11-0.11.0-py2.py3-none-any.whl (54 kB)
+Requirement already satisfied: typing-extensions; python_version < "3.8" in /usr/local/lib/python3.6/site-packages (from uvicorn==0.12.1->mlserver==0.1.2) (3.7.4.3)
+Requirement already satisfied: numpy in /usr/local/lib/python3.6/site-packages (from xgboost==1.1.1->mlserver==0.1.2) (1.19.2)
+Requirement already satisfied: scipy in /usr/local/lib/python3.6/site-packages (from xgboost==1.1.1->mlserver==0.1.2) (1.5.2)
+Requirement already satisfied: threadpoolctl>=2.0.0 in /usr/local/lib/python3.6/site-packages (from scikit-learn==0.23.1->mlserver==0.1.2) (2.1.0)
+Requirement already satisfied: dataclasses>=0.6; python_version < "3.7" in /usr/local/lib/python3.6/site-packages (from pydantic<2.0.0,>=1.0.0->fastapi==0.61.2->mlserver==0.1.2) (0.8)
+Installing collected packages: starlette, fastapi, h11, uvicorn, orjson, xgboost, scikit-learn, mlserver
+  Attempting uninstall: scikit-learn
+    Found existing installation: scikit-learn 0.23.2
+    Uninstalling scikit-learn-0.23.2:
+      Successfully uninstalled scikit-learn-0.23.2
+  Running setup.py develop for mlserver
+ERROR: After October 2020 you may experience errors when installing or updating packages. This is because pip will change the way that it resolves dependency conflicts.
+
+We recommend you use --use-feature=2020-resolver to test your packages with the new resolver before it becomes the default.
+
+alibi 0.5.2 requires tensorflow>=2.0, but you'll have tensorflow 1.15.2 which is incompatible.
+Successfully installed fastapi-0.61.2 h11-0.11.0 mlserver orjson-3.4.3 scikit-learn-0.23.1 starlette-0.13.6 uvicorn-0.12.1 xgboost-1.1.1
+WARNING: You are using pip version 20.2.3; however, version 20.2.4 is available.
+You should consider upgrading via the '/usr/local/bin/python -m pip install --upgrade pip' command.
+./hack/generate-types.sh
+Writing mypy to dataplane_pb2.pyi
+Writing mypy to model_repository_pb2.pyi
+black . \
+	--exclude "(mlserver/grpc/dataplane_pb2*)"
+reformatted /workspace/source/mlserver/types/model_repository.py
+reformatted /workspace/source/mlserver/grpc/model_repository_pb2.pyi
+reformatted /workspace/source/mlserver/types/dataplane.py
+reformatted /workspace/source/mlserver/grpc/model_repository_pb2_grpc.py
+reformatted /workspace/source/mlserver/grpc/model_repository_pb2.py
+All done! ✨ 🍰 ✨
+5 files reformatted, 67 files left unchanged.
+flake8 .
+./mlserver/grpc/model_repository_pb2_grpc.py:19:89: E501 line too long (95 > 88 characters)
+./mlserver/grpc/model_repository_pb2_grpc.py:20:89: E501 line too long (92 > 88 characters)
+./mlserver/grpc/model_repository_pb2_grpc.py:24:89: E501 line too long (99 > 88 characters)
+./mlserver/grpc/model_repository_pb2_grpc.py:25:89: E501 line too long (96 > 88 characters)
+./mlserver/grpc/model_repository_pb2_grpc.py:29:89: E501 line too long (101 > 88 characters)
+./mlserver/grpc/model_repository_pb2_grpc.py:30:89: E501 line too long (98 > 88 characters)
+./mlserver/grpc/model_repository_pb2_grpc.py:60:89: E501 line too long (90 > 88 characters)
+./mlserver/grpc/model_repository_pb2_grpc.py:61:89: E501 line too long (97 > 88 characters)
+./mlserver/grpc/model_repository_pb2_grpc.py:65:89: E501 line too long (94 > 88 characters)
+./mlserver/grpc/model_repository_pb2_grpc.py:66:89: E501 line too long (101 > 88 characters)
+./mlserver/grpc/model_repository_pb2_grpc.py:70:89: E501 line too long (96 > 88 characters)
+./mlserver/grpc/model_repository_pb2_grpc.py:71:89: E501 line too long (103 > 88 characters)
+./mlserver/grpc/model_repository_pb2.py:21:89: E501 line too long (1346 > 88 characters)
+./mlserver/grpc/model_repository_pb2.py:35:89: E501 line too long (90 > 88 characters)
+./mlserver/grpc/model_repository_pb2.py:95:89: E501 line too long (91 > 88 characters)
+./mlserver/grpc/model_repository_pb2.py:114:89: E501 line too long (94 > 88 characters)
+./mlserver/grpc/model_repository_pb2.py:133:89: E501 line too long (92 > 88 characters)
+./mlserver/grpc/model_repository_pb2.py:152:89: E501 line too long (93 > 88 characters)
+./mlserver/grpc/model_repository_pb2.py:235:89: E501 line too long (94 > 88 characters)
+./mlserver/grpc/model_repository_pb2.py:254:89: E501 line too long (89 > 88 characters)
+./mlserver/grpc/model_repository_pb2.py:316:89: E501 line too long (96 > 88 characters)
+./mlserver/grpc/model_repository_pb2.py:335:89: E501 line too long (91 > 88 characters)
+./mlserver/grpc/model_repository_pb2.py:495:89: E501 line too long (90 > 88 characters)
+./mlserver/grpc/model_repository_pb2.py:505:89: E501 line too long (94 > 88 characters)
+./mlserver/grpc/model_repository_pb2.py:515:89: E501 line too long (96 > 88 characters)
+make: *** [Makefile:27: lint] Error 1
+[31m
+Pipeline failed on stage 'lint' : container 'step-step2'. The execution of the pipeline has stopped.[0m
+
+Showing logs for build [32mseldonio-mlserver-pr-70-pr-buil-gb8tq-3[0m stage [32mtest[0m and container [32mstep-credential-initializer-pm725[0m
+{"level":"info","ts":1606153618.7826526,"logger":"fallback-logger","caller":"logging/config.go:69","msg":"Fetch GitHub commit ID from kodata failed: open /var/run/ko/refs/heads/0.8.0-ns-support: no such file or directory"}
+{"level":"info","ts":1606153618.7832155,"logger":"fallback-logger","caller":"creds-init/main.go:40","msg":"Credentials initialized."}
+
+Showing logs for build [32mseldonio-mlserver-pr-70-pr-buil-gb8tq-3[0m stage [32mtest[0m and container [32mstep-working-dir-initializer-8sb2z[0m
+{"level":"info","ts":1606153619.8682005,"logger":"fallback-logger","caller":"logging/config.go:69","msg":"Fetch GitHub commit ID from kodata failed: open /var/run/ko/HEAD: no such file or directory"}
+{"level":"info","ts":1606153619.870038,"logger":"fallback-logger","caller":"bash/main.go:64","msg":"Successfully executed command \"sh -c mkdir -p /workspace/source\"; output "}
+
+Showing logs for build [32mseldonio-mlserver-pr-70-pr-buil-gb8tq-3[0m stage [32mtest[0m and container [32mstep-place-tools[0m
+
+Showing logs for build [32mseldonio-mlserver-pr-70-pr-buil-gb8tq-3[0m stage [32mtest[0m and container [32mstep-git-source-seldonio-mlserver-pr-70-pr-buil-gb8tq-s8gwp[0m
+{"level":"info","ts":1606153626.4841762,"logger":"fallback-logger","caller":"logging/config.go:69","msg":"Fetch GitHub commit ID from kodata failed: open /var/run/ko/refs/heads/0.8.0-ns-support: no such file or directory"}
+{"level":"info","ts":1606153627.9529352,"logger":"fallback-logger","caller":"git/git.go:103","msg":"Successfully cloned https://github.com/SeldonIO/MLServer.git @ master in path /workspace/source"}
+
+Showing logs for build [32mseldonio-mlserver-pr-70-pr-buil-gb8tq-3[0m stage [32mtest[0m and container [32mstep-setup-builder-home[0m
+
+Showing logs for build [32mseldonio-mlserver-pr-70-pr-buil-gb8tq-3[0m stage [32mtest[0m and container [32mstep-git-merge[0m
+Using SHAs from PULL_REFS=master:9ea9774a892de7111e335104083d5b7041968fa2,70:0e9483f040cbc9bd5845d7d1aabcd21f25cf9a8b
+DEBUG: LC_ALL=C JX_LOG_LEVEL=error git fetch origin --unshallow 0e9483f040cbc9bd5845d7d1aabcd21f25cf9a8b: 9ea9774a892de7111e335104083d5b7041968fa2:
+DEBUG: ran git fetch --unshallow origin 0e9483f040cbc9bd5845d7d1aabcd21f25cf9a8b: 9ea9774a892de7111e335104083d5b7041968fa2: in 
+DEBUG: JX_LOG_LEVEL=error LC_ALL=C git branch
+DEBUG: LC_ALL=C JX_LOG_LEVEL=error git checkout master
+DEBUG: ran git checkout master in 
+DEBUG: LC_ALL=C JX_LOG_LEVEL=error git reset --hard 9ea9774a892de7111e335104083d5b7041968fa2
+DEBUG: ran git reset --hard 9ea9774a892de7111e335104083d5b7041968fa2 in 
+DEBUG: LC_ALL=C JX_LOG_LEVEL=error git clean -fd .
+DEBUG: ran clean --force -d . in 
+DEBUG: LC_ALL=C JX_LOG_LEVEL=error git merge 0e9483f040cbc9bd5845d7d1aabcd21f25cf9a8b
+DEBUG: ran git merge 0e9483f040cbc9bd5845d7d1aabcd21f25cf9a8b in 
+DEBUG: LC_ALL=C JX_LOG_LEVEL=error git log --format=%H%x1f%an%x1f%ae%x1f%cn%x1f%ce%x1f%s%n%b%x1e 9ea9774a892de7111e335104083d5b7041968fa2..HEAD
+Merged SHA 0e9483f040cbc9bd5845d7d1aabcd21f25cf9a8b with commit message 'Remove extra improt' into base branch master
+Merged SHA c50e5ae4e4f4d9f94840f1979c98e7036f743bd1 with commit message 'Add filtering and state to index items' into base branch master
+Merged SHA 752952225859eac69ac5a26e31195d9e3e507a6e with commit message 'Add tests for other grpc endpoints' into base branch master
+Merged SHA d4b2240ba4630f1fa027c0e6f9e2abd75d77184c with commit message 'Add test for index' into base branch master
+Merged SHA 973b611f67ecc75baa4e8f981a0c17100a76050c with commit message 'Add converters for grpc types' into base branch master
+Merged SHA 64f735e4c5d5f3f37eda383465fac27d124bc6ad with commit message 'Add len to BaseModel with custom root' into base branch master
+Merged SHA 89c3cba8de4f17ea2f290265d5b7fd2bbf9a9771 with commit message 'Add tests for REST endpoints' into base branch master
+Merged SHA db4aef7317c0954fa9104146b527d620ce39536c with commit message 'Add other endpoints' into base branch master
+Merged SHA 0db8e5711abd9d6294cd5958558686af085356c7 with commit message 'Start to add endpoints for model repository' into base branch master
+Merged SHA b51b627545baf355e5054baa699b4af211d4f640 with commit message 'Add tests for not found' into base branch master
+Merged SHA de1bfe0c1d2992f2181e2e17f6def8ef8461c294 with commit message 'Add load / unload to handlers' into base branch master
+Merged SHA 7581955d441ec963c250edd5d6fc73fd11c287ba with commit message 'Add initial implementation of ModelRepositoryHandlers' into base branch master
+Merged SHA 5f2930994d587d13d6e4b5f4a37b3abf7f9ad11c with commit message 'Convert handlers into package' into base branch master
+Merged SHA 83ffff8fad212c7273af501bff8d0d0bed38b479 with commit message 'Decouple registry and repository' into base branch master
+Merged SHA c9bc1d00275b153cbeda7512ff6750e89559cf24 with commit message 'Change serve to use ModelSettingsLoader' into base branch master
+Merged SHA b49b253d74679e45a901351166de40365cdb7eff with commit message 'Removed a couple more things' into base branch master
+Merged SHA 5b21621465b1fe2564a89edc274f9c728b9ed672 with commit message 'Split MultiModelRepository and SingleModelRepository in 2 classes' into base branch master
+Merged SHA 38e09a6222abe7de54e90d8258a15b6ab108ee45 with commit message 'Update benchmark' into base branch master
+Merged SHA 7eafb67be4f9bac08199a108c1eb4d9212ad7623 with commit message 'Update model-settings.json' into base branch master
+Merged SHA 886c064a1bcdf21c3cc172b7982cd62fc929e025 with commit message 'Move version into model parameters' into base branch master
+Merged SHA b9a80319a14de6a8c7920a453ac1711c6d7b5025 with commit message 'WIP' into base branch master
+Merged SHA 6bceee5e298ca8b79aa019c46312da0e7ffc9415 with commit message 'Add types for model repository' into base branch master
+Merged SHA 824e87efa897a3f437c49139bae0e219ed776156 with commit message 'Re-structure how types are organised and add model_repository types' into base branch master
+Merged SHA d1843e26b93bab7cfe760d731c8074136a1d8826 with commit message 'Add generated types for API' into base branch master
+Merged SHA 397000dea8d99b55960d218d3fa3f96bb5facbdd with commit message 'WIP adding new API for model repo' into base branch master
+
+Showing logs for build [32mseldonio-mlserver-pr-70-pr-buil-gb8tq-3[0m stage [32mtest[0m and container [32mstep-step2[0m
+pip install -r requirements-dev.txt
+Collecting grpcio-tools==1.33.2
+  Downloading grpcio_tools-1.33.2-cp36-cp36m-manylinux2014_x86_64.whl (2.5 MB)
+Collecting datamodel-code-generator==0.5.35
+  Downloading datamodel_code_generator-0.5.35-py3-none-any.whl (121 kB)
+Collecting pytest==6.1.2
+  Downloading pytest-6.1.2-py3-none-any.whl (272 kB)
+Collecting pytest-asyncio==0.14.0
+  Downloading pytest_asyncio-0.14.0-py3-none-any.whl (11 kB)
+Collecting tox==3.20.0
+  Downloading tox-3.20.0-py2.py3-none-any.whl (83 kB)
+Collecting flake8==3.8.3
+  Downloading flake8-3.8.3-py2.py3-none-any.whl (72 kB)
+Collecting flake8-black==0.2.1
+  Downloading flake8-black-0.2.1.tar.gz (9.1 kB)
+Collecting mypy==0.790
+  Downloading mypy-0.790-cp36-cp36m-manylinux1_x86_64.whl (21.0 MB)
+Collecting mypy-protobuf==1.23
+  Downloading mypy_protobuf-1.23-py3-none-any.whl (7.4 kB)
+Collecting black==20.8b1
+  Downloading black-20.8b1.tar.gz (1.1 MB)
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+    Preparing wheel metadata: started
+    Preparing wheel metadata: finished with status 'done'
+Requirement already satisfied: protobuf<4.0dev,>=3.5.0.post1 in /usr/local/lib/python3.6/site-packages (from grpcio-tools==1.33.2->-r requirements-dev.txt (line 2)) (3.13.0)
+Collecting grpcio>=1.33.2
+  Downloading grpcio-1.33.2-cp36-cp36m-manylinux2014_x86_64.whl (3.8 MB)
+Collecting prance<1.0,>=0.18.2
+  Downloading prance-0.19.0-py2.py3-none-any.whl (33 kB)
+Collecting isort<5.0,>=4.3.21
+  Downloading isort-4.3.21-py2.py3-none-any.whl (42 kB)
+Collecting PySnooper<1.0.0,>=0.4.1
+  Downloading PySnooper-0.4.2-py2.py3-none-any.whl (14 kB)
+Collecting openapi-spec-validator<0.3,>=0.2.8
+  Downloading openapi_spec_validator-0.2.9-py3-none-any.whl (25 kB)
+Collecting inflect<5.0,>=4.1.0
+  Downloading inflect-4.1.1-py3-none-any.whl (31 kB)
+Collecting pydantic[email]<2.0,>=1.5.1
+  Downloading pydantic-1.7.2-cp36-cp36m-manylinux2014_x86_64.whl (9.2 MB)
+Collecting genson<2.0,>=1.2.1
+  Downloading genson-1.2.2.tar.gz (34 kB)
+Collecting argcomplete<2.0,>=1.10
+  Downloading argcomplete-1.12.1-py2.py3-none-any.whl (38 kB)
+Requirement already satisfied: jinja2<3.0,>=2.10.1 in /usr/local/lib/python3.6/site-packages (from datamodel-code-generator==0.5.35->-r requirements-dev.txt (line 3)) (2.11.2)
+Collecting toml<1.0.0,>=0.10.0
+  Downloading toml-0.10.2-py2.py3-none-any.whl (16 kB)
+Requirement already satisfied: packaging in /usr/local/lib/python3.6/site-packages (from pytest==6.1.2->-r requirements-dev.txt (line 6)) (20.4)
+Requirement already satisfied: py>=1.8.2 in /usr/local/lib/python3.6/site-packages (from pytest==6.1.2->-r requirements-dev.txt (line 6)) (1.9.0)
+Requirement already satisfied: attrs>=17.4.0 in /usr/local/lib/python3.6/site-packages (from pytest==6.1.2->-r requirements-dev.txt (line 6)) (20.2.0)
+Collecting iniconfig
+  Downloading iniconfig-1.1.1-py2.py3-none-any.whl (5.0 kB)
+Requirement already satisfied: pluggy<1.0,>=0.12 in /usr/local/lib/python3.6/site-packages (from pytest==6.1.2->-r requirements-dev.txt (line 6)) (0.13.1)
+Requirement already satisfied: importlib-metadata>=0.12; python_version < "3.8" in /usr/local/lib/python3.6/site-packages (from pytest==6.1.2->-r requirements-dev.txt (line 6)) (1.7.0)
+Collecting virtualenv!=20.0.0,!=20.0.1,!=20.0.2,!=20.0.3,!=20.0.4,!=20.0.5,!=20.0.6,!=20.0.7,>=16.0.0
+  Downloading virtualenv-20.2.1-py2.py3-none-any.whl (4.9 MB)
+Collecting filelock>=3.0.0
+  Downloading filelock-3.0.12-py3-none-any.whl (7.6 kB)
+Requirement already satisfied: six>=1.14.0 in /usr/local/lib/python3.6/site-packages (from tox==3.20.0->-r requirements-dev.txt (line 8)) (1.15.0)
+Collecting pycodestyle<2.7.0,>=2.6.0a1
+  Downloading pycodestyle-2.6.0-py2.py3-none-any.whl (41 kB)
+Collecting pyflakes<2.3.0,>=2.2.0
+  Downloading pyflakes-2.2.0-py2.py3-none-any.whl (66 kB)
+Collecting mccabe<0.7.0,>=0.6.0
+  Downloading mccabe-0.6.1-py2.py3-none-any.whl (8.6 kB)
+Requirement already satisfied: typing-extensions>=3.7.4 in /usr/local/lib/python3.6/site-packages (from mypy==0.790->-r requirements-dev.txt (line 13)) (3.7.4.3)
+Collecting typed-ast<1.5.0,>=1.4.0
+  Downloading typed_ast-1.4.1-cp36-cp36m-manylinux1_x86_64.whl (737 kB)
+Collecting mypy-extensions<0.5.0,>=0.4.3
+  Downloading mypy_extensions-0.4.3-py2.py3-none-any.whl (4.5 kB)
+Collecting click>=7.1.2
+  Downloading click-7.1.2-py2.py3-none-any.whl (82 kB)
+Collecting appdirs
+  Downloading appdirs-1.4.4-py2.py3-none-any.whl (9.6 kB)
+Collecting pathspec<1,>=0.6
+  Downloading pathspec-0.8.1-py2.py3-none-any.whl (28 kB)
+Collecting dataclasses>=0.6; python_version < "3.7"
+  Downloading dataclasses-0.8-py3-none-any.whl (19 kB)
+Collecting regex>=2020.1.8
+  Downloading regex-2020.11.13-cp36-cp36m-manylinux2014_x86_64.whl (723 kB)
+Requirement already satisfied: setuptools in /usr/local/lib/python3.6/site-packages (from protobuf<4.0dev,>=3.5.0.post1->grpcio-tools==1.33.2->-r requirements-dev.txt (line 2)) (50.3.0)
+Requirement already satisfied: PyYAML~=5.3 in /usr/local/lib/python3.6/site-packages (from prance<1.0,>=0.18.2->datamodel-code-generator==0.5.35->-r requirements-dev.txt (line 3)) (5.3.1)
+Requirement already satisfied: chardet~=3.0 in /usr/local/lib/python3.6/site-packages (from prance<1.0,>=0.18.2->datamodel-code-generator==0.5.35->-r requirements-dev.txt (line 3)) (3.0.4)
+Requirement already satisfied: requests~=2.22 in /usr/local/lib/python3.6/site-packages (from prance<1.0,>=0.18.2->datamodel-code-generator==0.5.35->-r requirements-dev.txt (line 3)) (2.24.0)
+Collecting semver~=2.9
+  Downloading semver-2.13.0-py2.py3-none-any.whl (12 kB)
+Requirement already satisfied: jsonschema in /usr/local/lib/python3.6/site-packages (from openapi-spec-validator<0.3,>=0.2.8->datamodel-code-generator==0.5.35->-r requirements-dev.txt (line 3)) (3.2.0)
+Collecting email-validator>=1.0.3; extra == "email"
+  Downloading email_validator-1.1.2-py2.py3-none-any.whl (17 kB)
+Requirement already satisfied: MarkupSafe>=0.23 in /usr/local/lib/python3.6/site-packages (from jinja2<3.0,>=2.10.1->datamodel-code-generator==0.5.35->-r requirements-dev.txt (line 3)) (1.1.1)
+Requirement already satisfied: pyparsing>=2.0.2 in /usr/local/lib/python3.6/site-packages (from packaging->pytest==6.1.2->-r requirements-dev.txt (line 6)) (2.4.7)
+Requirement already satisfied: zipp>=0.5 in /usr/local/lib/python3.6/site-packages (from importlib-metadata>=0.12; python_version < "3.8"->pytest==6.1.2->-r requirements-dev.txt (line 6)) (3.1.0)
+Collecting importlib-resources>=1.0; python_version < "3.7"
+  Downloading importlib_resources-3.3.0-py2.py3-none-any.whl (26 kB)
+Collecting distlib<1,>=0.3.1
+  Downloading distlib-0.3.1-py2.py3-none-any.whl (335 kB)
+Requirement already satisfied: certifi>=2017.4.17 in /usr/local/lib/python3.6/site-packages (from requests~=2.22->prance<1.0,>=0.18.2->datamodel-code-generator==0.5.35->-r requirements-dev.txt (line 3)) (2020.6.20)
+Requirement already satisfied: idna<3,>=2.5 in /usr/local/lib/python3.6/site-packages (from requests~=2.22->prance<1.0,>=0.18.2->datamodel-code-generator==0.5.35->-r requirements-dev.txt (line 3)) (2.10)
+Requirement already satisfied: urllib3!=1.25.0,!=1.25.1,<1.26,>=1.21.1 in /usr/local/lib/python3.6/site-packages (from requests~=2.22->prance<1.0,>=0.18.2->datamodel-code-generator==0.5.35->-r requirements-dev.txt (line 3)) (1.25.10)
+Requirement already satisfied: pyrsistent>=0.14.0 in /usr/local/lib/python3.6/site-packages (from jsonschema->openapi-spec-validator<0.3,>=0.2.8->datamodel-code-generator==0.5.35->-r requirements-dev.txt (line 3)) (0.17.3)
+Collecting dnspython>=1.15.0
+  Downloading dnspython-2.0.0-py3-none-any.whl (208 kB)
+Building wheels for collected packages: flake8-black, black, genson
+  Building wheel for flake8-black (setup.py): started
+  Building wheel for flake8-black (setup.py): finished with status 'done'
+  Created wheel for flake8-black: filename=flake8_black-0.2.1-py2.py3-none-any.whl size=8873 sha256=2dec512205185ce04f013b7c2579af4ea2373930286cbce205dd663d25f56ce3
+  Stored in directory: /builder/home/.cache/pip/wheels/f3/71/20/4bcba7c464da12f8e2d5009d9da66d732d32498be89b8f9d10
+  Building wheel for black (PEP 517): started
+  Building wheel for black (PEP 517): finished with status 'done'
+  Created wheel for black: filename=black-20.8b1-py3-none-any.whl size=124186 sha256=f4b71c4423889a626701f89a84ecf623c86ff1181dbd0ac5556ef85b953aedfb
+  Stored in directory: /builder/home/.cache/pip/wheels/dd/c8/94/e774504958e4667180d81202d1d45cdc35d6222ae39229871b
+  Building wheel for genson (setup.py): started
+  Building wheel for genson (setup.py): finished with status 'done'
+  Created wheel for genson: filename=genson-1.2.2-py2.py3-none-any.whl size=21261 sha256=c02e4d78ce6211433bb30cef533073a2709367be171cff42367fe65d74b8bec4
+  Stored in directory: /builder/home/.cache/pip/wheels/17/8e/f6/70b78333e594fdb9a14a41c225743d4cad09bcdbf9ebd3a90b
+Successfully built flake8-black black genson
+Installing collected packages: grpcio, grpcio-tools, semver, prance, isort, PySnooper, openapi-spec-validator, inflect, dataclasses, dnspython, email-validator, pydantic, click, appdirs, pathspec, toml, typed-ast, mypy-extensions, regex, black, genson, argcomplete, datamodel-code-generator, iniconfig, pytest, pytest-asyncio, importlib-resources, distlib, filelock, virtualenv, tox, pycodestyle, pyflakes, mccabe, flake8, flake8-black, mypy, mypy-protobuf
+  Attempting uninstall: grpcio
+    Found existing installation: grpcio 1.32.0
+    Uninstalling grpcio-1.32.0:
+      Successfully uninstalled grpcio-1.32.0
+  Attempting uninstall: grpcio-tools
+    Found existing installation: grpcio-tools 1.32.0
+    Uninstalling grpcio-tools-1.32.0:
+      Successfully uninstalled grpcio-tools-1.32.0
+  Attempting uninstall: pytest
+    Found existing installation: pytest 5.3.1
+    Uninstalling pytest-5.3.1:
+      Successfully uninstalled pytest-5.3.1
+ERROR: After October 2020 you may experience errors when installing or updating packages. This is because pip will change the way that it resolves dependency conflicts.
+
+We recommend you use --use-feature=2020-resolver to test your packages with the new resolver before it becomes the default.
+
+alibi 0.5.2 requires tensorflow>=2.0, but you'll have tensorflow 1.15.2 which is incompatible.
+datamodel-code-generator 0.5.35 requires black<20,>=19.10b0, but you'll have black 20.8b1 which is incompatible.
+Successfully installed PySnooper-0.4.2 appdirs-1.4.4 argcomplete-1.12.1 black-20.8b1 click-7.1.2 dataclasses-0.8 datamodel-code-generator-0.5.35 distlib-0.3.1 dnspython-2.0.0 email-validator-1.1.2 filelock-3.0.12 flake8-3.8.3 flake8-black-0.2.1 genson-1.2.2 grpcio-1.33.2 grpcio-tools-1.33.2 importlib-resources-3.3.0 inflect-4.1.1 iniconfig-1.1.1 isort-4.3.21 mccabe-0.6.1 mypy-0.790 mypy-extensions-0.4.3 mypy-protobuf-1.23 openapi-spec-validator-0.2.9 pathspec-0.8.1 prance-0.19.0 pycodestyle-2.6.0 pydantic-1.7.2 pyflakes-2.2.0 pytest-6.1.2 pytest-asyncio-0.14.0 regex-2020.11.13 semver-2.13.0 toml-0.10.2 tox-3.20.0 typed-ast-1.4.1 virtualenv-20.2.1
+WARNING: You are using pip version 20.2.3; however, version 20.2.4 is available.
+You should consider upgrading via the '/usr/local/bin/python -m pip install --upgrade pip' command.
+pip install --editable .[all]
+Obtaining file:///workspace/source
+Requirement already satisfied: grpcio==1.33.2 in /usr/local/lib/python3.6/site-packages (from mlserver==0.1.2) (1.33.2)
+Requirement already satisfied: protobuf==3.13.0 in /usr/local/lib/python3.6/site-packages (from mlserver==0.1.2) (3.13.0)
+Collecting fastapi==0.61.2
+  Downloading fastapi-0.61.2-py3-none-any.whl (48 kB)
+Collecting uvicorn==0.12.1
+  Downloading uvicorn-0.12.1-py3-none-any.whl (44 kB)
+Collecting orjson==3.4.3
+  Downloading orjson-3.4.3-cp36-cp36m-manylinux2014_x86_64.whl (232 kB)
+Requirement already satisfied: click==7.1.2 in /usr/local/lib/python3.6/site-packages (from mlserver==0.1.2) (7.1.2)
+Collecting scikit-learn==0.23.1
+  Downloading scikit_learn-0.23.1-cp36-cp36m-manylinux1_x86_64.whl (6.8 MB)
+Collecting xgboost==1.1.1
+  Downloading xgboost-1.1.1-py3-none-manylinux2010_x86_64.whl (127.6 MB)
+Requirement already satisfied: joblib==0.16.0 in /usr/local/lib/python3.6/site-packages (from mlserver==0.1.2) (0.16.0)
+Requirement already satisfied: six>=1.5.2 in /usr/local/lib/python3.6/site-packages (from grpcio==1.33.2->mlserver==0.1.2) (1.15.0)
+Requirement already satisfied: setuptools in /usr/local/lib/python3.6/site-packages (from protobuf==3.13.0->mlserver==0.1.2) (50.3.0)
+Collecting starlette==0.13.6
+  Downloading starlette-0.13.6-py3-none-any.whl (59 kB)
+Requirement already satisfied: pydantic<2.0.0,>=1.0.0 in /usr/local/lib/python3.6/site-packages (from fastapi==0.61.2->mlserver==0.1.2) (1.7.2)
+Requirement already satisfied: typing-extensions; python_version < "3.8" in /usr/local/lib/python3.6/site-packages (from uvicorn==0.12.1->mlserver==0.1.2) (3.7.4.3)
+Collecting h11>=0.8
+  Downloading h11-0.11.0-py2.py3-none-any.whl (54 kB)
+Requirement already satisfied: numpy>=1.13.3 in /usr/local/lib/python3.6/site-packages (from scikit-learn==0.23.1->mlserver==0.1.2) (1.19.2)
+Requirement already satisfied: scipy>=0.19.1 in /usr/local/lib/python3.6/site-packages (from scikit-learn==0.23.1->mlserver==0.1.2) (1.5.2)
+Requirement already satisfied: threadpoolctl>=2.0.0 in /usr/local/lib/python3.6/site-packages (from scikit-learn==0.23.1->mlserver==0.1.2) (2.1.0)
+Requirement already satisfied: dataclasses>=0.6; python_version < "3.7" in /usr/local/lib/python3.6/site-packages (from pydantic<2.0.0,>=1.0.0->fastapi==0.61.2->mlserver==0.1.2) (0.8)
+Installing collected packages: starlette, fastapi, h11, uvicorn, orjson, scikit-learn, xgboost, mlserver
+  Attempting uninstall: scikit-learn
+    Found existing installation: scikit-learn 0.23.2
+    Uninstalling scikit-learn-0.23.2:
+      Successfully uninstalled scikit-learn-0.23.2
+  Running setup.py develop for mlserver
+ERROR: After October 2020 you may experience errors when installing or updating packages. This is because pip will change the way that it resolves dependency conflicts.
+
+We recommend you use --use-feature=2020-resolver to test your packages with the new resolver before it becomes the default.
+
+alibi 0.5.2 requires tensorflow>=2.0, but you'll have tensorflow 1.15.2 which is incompatible.
+Successfully installed fastapi-0.61.2 h11-0.11.0 mlserver orjson-3.4.3 scikit-learn-0.23.1 starlette-0.13.6 uvicorn-0.12.1 xgboost-1.1.1
+WARNING: You are using pip version 20.2.3; however, version 20.2.4 is available.
+You should consider upgrading via the '/usr/local/bin/python -m pip install --upgrade pip' command.
+tox
+GLOB sdist-make: /workspace/source/setup.py
+py3 create: /workspace/source/.tox/py3
+py3 installdeps: -r/workspace/source/requirements-dev.txt
+py3 inst: /workspace/source/.tox/.tmp/package/1/mlserver-0.1.2.zip
+py3 installed: appdirs==1.4.4,argcomplete==1.12.1,attrs==20.3.0,black==20.8b1,certifi==2020.11.8,chardet==3.0.4,click==7.1.2,dataclasses==0.8,datamodel-code-generator==0.5.35,distlib==0.3.1,dnspython==2.0.0,email-validator==1.1.2,fastapi==0.61.2,filelock==3.0.12,flake8==3.8.3,flake8-black==0.2.1,genson==1.2.2,grpcio==1.33.2,grpcio-tools==1.33.2,h11==0.11.0,idna==2.10,importlib-metadata==3.0.0,importlib-resources==3.3.0,inflect==4.1.1,iniconfig==1.1.1,isort==4.3.21,Jinja2==2.11.2,jsonschema==3.2.0,MarkupSafe==1.1.1,mccabe==0.6.1,mlserver @ file:///workspace/source/.tox/.tmp/package/1/mlserver-0.1.2.zip,mypy==0.790,mypy-extensions==0.4.3,mypy-protobuf==1.23,openapi-spec-validator==0.2.9,orjson==3.4.3,packaging==20.4,pathspec==0.8.1,pluggy==0.13.1,prance==0.19.0,protobuf==3.13.0,py==1.9.0,pycodestyle==2.6.0,pydantic==1.7.2,pyflakes==2.2.0,pyparsing==2.4.7,pyrsistent==0.17.3,PySnooper==0.4.2,pytest==6.1.2,pytest-asyncio==0.14.0,PyYAML==5.3.1,regex==2020.11.13,requests==2.25.0,semver==2.13.0,six==1.15.0,starlette==0.13.6,toml==0.10.2,tox==3.20.0,typed-ast==1.4.1,typing-extensions==3.7.4.3,urllib3==1.26.2,uvicorn==0.12.1,virtualenv==20.2.1,zipp==3.4.0
+py3 run-test-pre: PYTHONHASHSEED='792409907'
+py3 run-test: commands[0] | pytest
+============================= test session starts ==============================
+platform linux -- Python 3.6.10, pytest-6.1.2, py-1.9.0, pluggy-0.13.1
+cachedir: .tox/py3/.pytest_cache
+rootdir: /workspace/source
+plugins: asyncio-0.14.0
+collected 100 items
+
+tests/test_registry.py .......                                           [  7%]
+tests/test_repository.py ....                                            [ 11%]
+tests/test_settings.py ..                                                [ 13%]
+tests/test_types.py ......                                               [ 19%]
+tests/cli/test_serve.py .                                                [ 20%]
+tests/grpc/test_converters.py .....E                                     [ 26%]
+tests/grpc/test_servicers.py ........F...                                [ 38%]
+tests/handlers/test_dataplane.py ...........                             [ 49%]
+tests/handlers/test_model_repository.py F.......                         [ 57%]
+tests/models/test_sklearn.py ssssssss                                    [ 65%]
+tests/models/test_utils.py ssssssssssssssss                              [ 81%]
+tests/models/test_xgboost.py sssss                                       [ 86%]
+tests/rest/test_endpoints.py ........F...                                [ 98%]
+tests/rest/test_utils.py ..                                              [100%]
+
+==================================== ERRORS ====================================
+___________ ERROR at setup of test_repositoryindexresponse_to_types ____________
+
+sum_model_settings = ModelSettings(name='sum-model', platform='mlserver', versions=['sum-model/v1.2.3'], inputs=[MetadataTensor(name='input... implementation=<class 'tests.fixtures.SumModel'>, parameters=ModelParameters(uri=None, version='v1.2.3', format=None))
+
+    @pytest.fixture
+    def repository_index_response(sum_model_settings) -> types.RepositoryIndexResponse:
+        return types.RepositoryIndexResponse(
+            __root__=[
+                types.RepositoryIndexResponseItem(
+                    name=sum_model_settings.name,
+                    version=sum_model_settings.parameters.version,
+                    state="",
+>                   reason="",
+                ),
+            ]
+        )
+
+tests/conftest.py:148: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+>   ???
+E   pydantic.error_wrappers.ValidationError: 1 validation error for RepositoryIndexResponseItem
+E   state
+E     value is not a valid enumeration member; permitted: 'UNKNOWN', 'READY', 'UNAVAILABLE', 'LOADING', 'UNLOADING' (type=type_error.enum; enum_values=[<State.UNKNOWN: 'UNKNOWN'>, <State.READY: 'READY'>, <State.UNAVAILABLE: 'UNAVAILABLE'>, <State.LOADING: 'LOADING'>, <State.UNLOADING: 'UNLOADING'>])
+
+pydantic/main.py:362: ValidationError
+=================================== FAILURES ===================================
+_________________________ test_model_repository_index __________________________
+
+model_repository_service_stub = <mlserver.grpc.model_repository_pb2_grpc.ModelRepositoryServiceStub object at 0x7f741accaac8>
+grpc_repository_index_request = ready: true
+
+
+    async def test_model_repository_index(
+        model_repository_service_stub, grpc_repository_index_request
+    ):
+        index = await model_repository_service_stub.RepositoryIndex(
+>           grpc_repository_index_request
+        )
+
+tests/grpc/test_servicers.py:83: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <_AioCall of RPC that terminated with:
+	status = Unexpected <class 'TypeError'>: <State.READY: 'READY'> has type State...ed <class 'TypeError'>: <State.READY: 'READY'> has type State, but expected one of: bytes, unicode","grpc_status":2}"
+>
+
+    def __await__(self) -> ResponseType:
+        """Wait till the ongoing RPC request finishes."""
+        try:
+            response = yield from self._call_response
+        except asyncio.CancelledError:
+            # Even if we caught all other CancelledError, there is still
+            # this corner case. If the application cancels immediately after
+            # the Call object is created, we will observe this
+            # `CancelledError`.
+            if not self.cancelled():
+                self.cancel()
+            raise
+    
+        # NOTE(lidiz) If we raise RpcError in the task, and users doesn't
+        # 'await' on it. AsyncIO will log 'Task exception was never retrieved'.
+        # Instead, if we move the exception raising here, the spam stops.
+        # Unfortunately, there can only be one 'yield from' in '__await__'. So,
+        # we need to access the private instance variable.
+        if response is cygrpc.EOF:
+            if self._cython_call.is_locally_cancelled():
+                raise asyncio.CancelledError()
+            else:
+                raise _create_rpc_error(self._cython_call._initial_metadata,
+>                                       self._cython_call._status)
+E               grpc.aio._call.AioRpcError: <AioRpcError of RPC that terminated with:
+E               	status = StatusCode.UNKNOWN
+E               	details = "Unexpected <class 'TypeError'>: <State.READY: 'READY'> has type State, but expected one of: bytes, unicode"
+E               	debug_error_string = "{"created":"@1606153750.368579377","description":"Error received from peer ipv4:127.0.0.1:8081","file":"src/core/lib/surface/call.cc","file_line":1061,"grpc_message":"Unexpected <class 'TypeError'>: <State.READY: 'READY'> has type State, but expected one of: bytes, unicode","grpc_status":2}"
+E               >
+
+.tox/py3/lib/python3.6/site-packages/grpc/aio/_call.py:286: AioRpcError
+------------------------------ Captured log call -------------------------------
+ERROR    grpc._cython.cygrpc:events.py:145 Unexpected [TypeError] raised by servicer method [/inference.model_repository.ModelRepositoryService/RepositoryIndex]
+Traceback (most recent call last):
+  File "src/python/grpcio/grpc/_cython/_cygrpc/aio/server.pyx.pxi", line 646, in grpc._cython.cygrpc._handle_exceptions
+  File "src/python/grpcio/grpc/_cython/_cygrpc/aio/server.pyx.pxi", line 745, in _handle_rpc
+  File "src/python/grpcio/grpc/_cython/_cygrpc/aio/server.pyx.pxi", line 511, in _handle_unary_unary_rpc
+  File "src/python/grpcio/grpc/_cython/_cygrpc/aio/server.pyx.pxi", line 368, in _finish_handler_with_unary_response
+  File "/workspace/source/mlserver/grpc/servicers.py", line 94, in RepositoryIndex
+    return RepositoryIndexResponseConverter.from_types(index)
+  File "/workspace/source/mlserver/grpc/converters.py", line 250, in from_types
+    for model in type_object
+  File "/workspace/source/mlserver/grpc/converters.py", line 250, in <listcomp>
+    for model in type_object
+  File "/workspace/source/mlserver/grpc/converters.py", line 270, in from_types
+    reason=type_object.reason,
+TypeError: <State.READY: 'READY'> has type State, but expected one of: bytes, unicode
+__________________________________ test_index __________________________________
+
+model_repository_handlers = <mlserver.handlers.model_repository.ModelRepositoryHandlers object at 0x7f741b413390>
+repository_index_request = RepositoryIndexRequest(ready=False)
+sum_model_settings = ModelSettings(name='sum-model', platform='mlserver', versions=['sum-model/v1.2.3'], inputs=[MetadataTensor(name='input... implementation=<class 'tests.fixtures.SumModel'>, parameters=ModelParameters(uri=None, version='v1.2.3', format=None))
+
+    async def test_index(
+        model_repository_handlers: ModelRepositoryHandlers,
+        repository_index_request: RepositoryIndexRequest,
+        sum_model_settings: ModelSettings,
+    ):
+        repo_index = list(await model_repository_handlers.index(repository_index_request))
+    
+>       assert len(repo_index) == 1
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+tests/handlers/test_model_repository.py:19: AssertionError
+_________________________ test_model_repository_index __________________________
+
+rest_client = <starlette.testclient.TestClient object at 0x7f7418b7e198>
+repository_index_request = RepositoryIndexRequest(ready=False)
+
+    def test_model_repository_index(rest_client, repository_index_request):
+        endpoint = "/v2/repository/index"
+        response = rest_client.post(endpoint, json=repository_index_request.dict())
+    
+        assert response.status_code == 200
+    
+        models = response.json()
+>       assert len(models) == 1
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+tests/rest/test_endpoints.py:81: AssertionError
+=========================== short test summary info ============================
+FAILED tests/grpc/test_servicers.py::test_model_repository_index - grpc.aio._...
+FAILED tests/handlers/test_model_repository.py::test_index - assert 0 == 1
+FAILED tests/rest/test_endpoints.py::test_model_repository_index - assert 0 == 1
+ERROR tests/grpc/test_converters.py::test_repositoryindexresponse_to_types - ...
+============== 3 failed, 67 passed, 29 skipped, 1 error in 1.64s ===============
+ERROR: InvocationError for command /workspace/source/.tox/py3/bin/pytest (exited with code 1)
+sklearn create: /workspace/source/.tox/sklearn
+sklearn installdeps: -r/workspace/source/requirements-dev.txt
+sklearn inst: /workspace/source/.tox/.tmp/package/1/mlserver-0.1.2.zip
+sklearn installed: appdirs==1.4.4,argcomplete==1.12.1,attrs==20.3.0,black==20.8b1,certifi==2020.11.8,chardet==3.0.4,click==7.1.2,dataclasses==0.8,datamodel-code-generator==0.5.35,distlib==0.3.1,dnspython==2.0.0,email-validator==1.1.2,fastapi==0.61.2,filelock==3.0.12,flake8==3.8.3,flake8-black==0.2.1,genson==1.2.2,grpcio==1.33.2,grpcio-tools==1.33.2,h11==0.11.0,idna==2.10,importlib-metadata==3.0.0,importlib-resources==3.3.0,inflect==4.1.1,iniconfig==1.1.1,isort==4.3.21,Jinja2==2.11.2,joblib==0.16.0,jsonschema==3.2.0,MarkupSafe==1.1.1,mccabe==0.6.1,mlserver @ file:///workspace/source/.tox/.tmp/package/1/mlserver-0.1.2.zip,mypy==0.790,mypy-extensions==0.4.3,mypy-protobuf==1.23,numpy==1.19.4,openapi-spec-validator==0.2.9,orjson==3.4.3,packaging==20.4,pathspec==0.8.1,pluggy==0.13.1,prance==0.19.0,protobuf==3.13.0,py==1.9.0,pycodestyle==2.6.0,pydantic==1.7.2,pyflakes==2.2.0,pyparsing==2.4.7,pyrsistent==0.17.3,PySnooper==0.4.2,pytest==6.1.2,pytest-asyncio==0.14.0,PyYAML==5.3.1,regex==2020.11.13,requests==2.25.0,scikit-learn==0.23.1,scipy==1.5.4,semver==2.13.0,six==1.15.0,starlette==0.13.6,threadpoolctl==2.1.0,toml==0.10.2,tox==3.20.0,typed-ast==1.4.1,typing-extensions==3.7.4.3,urllib3==1.26.2,uvicorn==0.12.1,virtualenv==20.2.1,zipp==3.4.0
+sklearn run-test-pre: PYTHONHASHSEED='792409907'
+sklearn run-test: commands[0] | pytest
+============================= test session starts ==============================
+platform linux -- Python 3.6.10, pytest-6.1.2, py-1.9.0, pluggy-0.13.1
+cachedir: .tox/sklearn/.pytest_cache
+rootdir: /workspace/source
+plugins: asyncio-0.14.0
+collected 100 items
+
+tests/test_registry.py .......                                           [  7%]
+tests/test_repository.py ....                                            [ 11%]
+tests/test_settings.py ..                                                [ 13%]
+tests/test_types.py ......                                               [ 19%]
+tests/cli/test_serve.py .                                                [ 20%]
+tests/grpc/test_converters.py .....E                                     [ 26%]
+tests/grpc/test_servicers.py ........F...                                [ 38%]
+tests/handlers/test_dataplane.py ...........                             [ 49%]
+tests/handlers/test_model_repository.py F.......                         [ 57%]
+tests/models/test_sklearn.py ........                                    [ 65%]
+tests/models/test_utils.py ................                              [ 81%]
+tests/models/test_xgboost.py sssss                                       [ 86%]
+tests/rest/test_endpoints.py ........F...                                [ 98%]
+tests/rest/test_utils.py ..                                              [100%]
+
+==================================== ERRORS ====================================
+___________ ERROR at setup of test_repositoryindexresponse_to_types ____________
+
+sum_model_settings = ModelSettings(name='sum-model', platform='mlserver', versions=['sum-model/v1.2.3'], inputs=[MetadataTensor(name='input... implementation=<class 'tests.fixtures.SumModel'>, parameters=ModelParameters(uri=None, version='v1.2.3', format=None))
+
+    @pytest.fixture
+    def repository_index_response(sum_model_settings) -> types.RepositoryIndexResponse:
+        return types.RepositoryIndexResponse(
+            __root__=[
+                types.RepositoryIndexResponseItem(
+                    name=sum_model_settings.name,
+                    version=sum_model_settings.parameters.version,
+                    state="",
+>                   reason="",
+                ),
+            ]
+        )
+
+tests/conftest.py:148: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+>   ???
+E   pydantic.error_wrappers.ValidationError: 1 validation error for RepositoryIndexResponseItem
+E   state
+E     value is not a valid enumeration member; permitted: 'UNKNOWN', 'READY', 'UNAVAILABLE', 'LOADING', 'UNLOADING' (type=type_error.enum; enum_values=[<State.UNKNOWN: 'UNKNOWN'>, <State.READY: 'READY'>, <State.UNAVAILABLE: 'UNAVAILABLE'>, <State.LOADING: 'LOADING'>, <State.UNLOADING: 'UNLOADING'>])
+
+pydantic/main.py:362: ValidationError
+=================================== FAILURES ===================================
+_________________________ test_model_repository_index __________________________
+
+model_repository_service_stub = <mlserver.grpc.model_repository_pb2_grpc.ModelRepositoryServiceStub object at 0x7f95fe4ab4a8>
+grpc_repository_index_request = ready: true
+
+
+    async def test_model_repository_index(
+        model_repository_service_stub, grpc_repository_index_request
+    ):
+        index = await model_repository_service_stub.RepositoryIndex(
+>           grpc_repository_index_request
+        )
+
+tests/grpc/test_servicers.py:83: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <_AioCall of RPC that terminated with:
+	status = Unexpected <class 'TypeError'>: <State.READY: 'READY'> has type State...ed <class 'TypeError'>: <State.READY: 'READY'> has type State, but expected one of: bytes, unicode","grpc_status":2}"
+>
+
+    def __await__(self) -> ResponseType:
+        """Wait till the ongoing RPC request finishes."""
+        try:
+            response = yield from self._call_response
+        except asyncio.CancelledError:
+            # Even if we caught all other CancelledError, there is still
+            # this corner case. If the application cancels immediately after
+            # the Call object is created, we will observe this
+            # `CancelledError`.
+            if not self.cancelled():
+                self.cancel()
+            raise
+    
+        # NOTE(lidiz) If we raise RpcError in the task, and users doesn't
+        # 'await' on it. AsyncIO will log 'Task exception was never retrieved'.
+        # Instead, if we move the exception raising here, the spam stops.
+        # Unfortunately, there can only be one 'yield from' in '__await__'. So,
+        # we need to access the private instance variable.
+        if response is cygrpc.EOF:
+            if self._cython_call.is_locally_cancelled():
+                raise asyncio.CancelledError()
+            else:
+                raise _create_rpc_error(self._cython_call._initial_metadata,
+>                                       self._cython_call._status)
+E               grpc.aio._call.AioRpcError: <AioRpcError of RPC that terminated with:
+E               	status = StatusCode.UNKNOWN
+E               	details = "Unexpected <class 'TypeError'>: <State.READY: 'READY'> has type State, but expected one of: bytes, unicode"
+E               	debug_error_string = "{"created":"@1606153801.161445707","description":"Error received from peer ipv4:127.0.0.1:8081","file":"src/core/lib/surface/call.cc","file_line":1061,"grpc_message":"Unexpected <class 'TypeError'>: <State.READY: 'READY'> has type State, but expected one of: bytes, unicode","grpc_status":2}"
+E               >
+
+.tox/sklearn/lib/python3.6/site-packages/grpc/aio/_call.py:286: AioRpcError
+------------------------------ Captured log call -------------------------------
+ERROR    grpc._cython.cygrpc:events.py:145 Unexpected [TypeError] raised by servicer method [/inference.model_repository.ModelRepositoryService/RepositoryIndex]
+Traceback (most recent call last):
+  File "src/python/grpcio/grpc/_cython/_cygrpc/aio/server.pyx.pxi", line 646, in grpc._cython.cygrpc._handle_exceptions
+  File "src/python/grpcio/grpc/_cython/_cygrpc/aio/server.pyx.pxi", line 745, in _handle_rpc
+  File "src/python/grpcio/grpc/_cython/_cygrpc/aio/server.pyx.pxi", line 511, in _handle_unary_unary_rpc
+  File "src/python/grpcio/grpc/_cython/_cygrpc/aio/server.pyx.pxi", line 368, in _finish_handler_with_unary_response
+  File "/workspace/source/mlserver/grpc/servicers.py", line 94, in RepositoryIndex
+    return RepositoryIndexResponseConverter.from_types(index)
+  File "/workspace/source/mlserver/grpc/converters.py", line 250, in from_types
+    for model in type_object
+  File "/workspace/source/mlserver/grpc/converters.py", line 250, in <listcomp>
+    for model in type_object
+  File "/workspace/source/mlserver/grpc/converters.py", line 270, in from_types
+    reason=type_object.reason,
+TypeError: <State.READY: 'READY'> has type State, but expected one of: bytes, unicode
+__________________________________ test_index __________________________________
+
+model_repository_handlers = <mlserver.handlers.model_repository.ModelRepositoryHandlers object at 0x7f95fe4dbe80>
+repository_index_request = RepositoryIndexRequest(ready=False)
+sum_model_settings = ModelSettings(name='sum-model', platform='mlserver', versions=['sum-model/v1.2.3'], inputs=[MetadataTensor(name='input... implementation=<class 'tests.fixtures.SumModel'>, parameters=ModelParameters(uri=None, version='v1.2.3', format=None))
+
+    async def test_index(
+        model_repository_handlers: ModelRepositoryHandlers,
+        repository_index_request: RepositoryIndexRequest,
+        sum_model_settings: ModelSettings,
+    ):
+        repo_index = list(await model_repository_handlers.index(repository_index_request))
+    
+>       assert len(repo_index) == 1
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+tests/handlers/test_model_repository.py:19: AssertionError
+_________________________ test_model_repository_index __________________________
+
+rest_client = <starlette.testclient.TestClient object at 0x7f95fc457eb8>
+repository_index_request = RepositoryIndexRequest(ready=False)
+
+    def test_model_repository_index(rest_client, repository_index_request):
+        endpoint = "/v2/repository/index"
+        response = rest_client.post(endpoint, json=repository_index_request.dict())
+    
+        assert response.status_code == 200
+    
+        models = response.json()
+>       assert len(models) == 1
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+tests/rest/test_endpoints.py:81: AssertionError
+=========================== short test summary info ============================
+FAILED tests/grpc/test_servicers.py::test_model_repository_index - grpc.aio._...
+FAILED tests/handlers/test_model_repository.py::test_index - assert 0 == 1
+FAILED tests/rest/test_endpoints.py::test_model_repository_index - assert 0 == 1
+ERROR tests/grpc/test_converters.py::test_repositoryindexresponse_to_types - ...
+=============== 3 failed, 91 passed, 5 skipped, 1 error in 2.89s ===============
+ERROR: InvocationError for command /workspace/source/.tox/sklearn/bin/pytest (exited with code 1)
+xgboost create: /workspace/source/.tox/xgboost
+xgboost installdeps: -r/workspace/source/requirements-dev.txt
+xgboost inst: /workspace/source/.tox/.tmp/package/1/mlserver-0.1.2.zip
+xgboost installed: appdirs==1.4.4,argcomplete==1.12.1,attrs==20.3.0,black==20.8b1,certifi==2020.11.8,chardet==3.0.4,click==7.1.2,dataclasses==0.8,datamodel-code-generator==0.5.35,distlib==0.3.1,dnspython==2.0.0,email-validator==1.1.2,fastapi==0.61.2,filelock==3.0.12,flake8==3.8.3,flake8-black==0.2.1,genson==1.2.2,grpcio==1.33.2,grpcio-tools==1.33.2,h11==0.11.0,idna==2.10,importlib-metadata==3.0.0,importlib-resources==3.3.0,inflect==4.1.1,iniconfig==1.1.1,isort==4.3.21,Jinja2==2.11.2,jsonschema==3.2.0,MarkupSafe==1.1.1,mccabe==0.6.1,mlserver @ file:///workspace/source/.tox/.tmp/package/1/mlserver-0.1.2.zip,mypy==0.790,mypy-extensions==0.4.3,mypy-protobuf==1.23,numpy==1.19.4,openapi-spec-validator==0.2.9,orjson==3.4.3,packaging==20.4,pathspec==0.8.1,pluggy==0.13.1,prance==0.19.0,protobuf==3.13.0,py==1.9.0,pycodestyle==2.6.0,pydantic==1.7.2,pyflakes==2.2.0,pyparsing==2.4.7,pyrsistent==0.17.3,PySnooper==0.4.2,pytest==6.1.2,pytest-asyncio==0.14.0,PyYAML==5.3.1,regex==2020.11.13,requests==2.25.0,scipy==1.5.4,semver==2.13.0,six==1.15.0,starlette==0.13.6,toml==0.10.2,tox==3.20.0,typed-ast==1.4.1,typing-extensions==3.7.4.3,urllib3==1.26.2,uvicorn==0.12.1,virtualenv==20.2.1,xgboost==1.1.1,zipp==3.4.0
+xgboost run-test-pre: PYTHONHASHSEED='792409907'
+xgboost run-test: commands[0] | pytest
+============================= test session starts ==============================
+platform linux -- Python 3.6.10, pytest-6.1.2, py-1.9.0, pluggy-0.13.1
+cachedir: .tox/xgboost/.pytest_cache
+rootdir: /workspace/source
+plugins: asyncio-0.14.0
+collected 100 items
+
+tests/test_registry.py .......                                           [  7%]
+tests/test_repository.py ....                                            [ 11%]
+tests/test_settings.py ..                                                [ 13%]
+tests/test_types.py ......                                               [ 19%]
+tests/cli/test_serve.py .                                                [ 20%]
+tests/grpc/test_converters.py .....E                                     [ 26%]
+tests/grpc/test_servicers.py ........F...                                [ 38%]
+tests/handlers/test_dataplane.py ...........                             [ 49%]
+tests/handlers/test_model_repository.py F.......                         [ 57%]
+tests/models/test_sklearn.py ssssssss                                    [ 65%]
+tests/models/test_utils.py ................                              [ 81%]
+tests/models/test_xgboost.py .....                                       [ 86%]
+tests/rest/test_endpoints.py ........F...                                [ 98%]
+tests/rest/test_utils.py ..                                              [100%]
+
+==================================== ERRORS ====================================
+___________ ERROR at setup of test_repositoryindexresponse_to_types ____________
+
+sum_model_settings = ModelSettings(name='sum-model', platform='mlserver', versions=['sum-model/v1.2.3'], inputs=[MetadataTensor(name='input... implementation=<class 'tests.fixtures.SumModel'>, parameters=ModelParameters(uri=None, version='v1.2.3', format=None))
+
+    @pytest.fixture
+    def repository_index_response(sum_model_settings) -> types.RepositoryIndexResponse:
+        return types.RepositoryIndexResponse(
+            __root__=[
+                types.RepositoryIndexResponseItem(
+                    name=sum_model_settings.name,
+                    version=sum_model_settings.parameters.version,
+                    state="",
+>                   reason="",
+                ),
+            ]
+        )
+
+tests/conftest.py:148: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+>   ???
+E   pydantic.error_wrappers.ValidationError: 1 validation error for RepositoryIndexResponseItem
+E   state
+E     value is not a valid enumeration member; permitted: 'UNKNOWN', 'READY', 'UNAVAILABLE', 'LOADING', 'UNLOADING' (type=type_error.enum; enum_values=[<State.UNKNOWN: 'UNKNOWN'>, <State.READY: 'READY'>, <State.UNAVAILABLE: 'UNAVAILABLE'>, <State.LOADING: 'LOADING'>, <State.UNLOADING: 'UNLOADING'>])
+
+pydantic/main.py:362: ValidationError
+=================================== FAILURES ===================================
+_________________________ test_model_repository_index __________________________
+
+model_repository_service_stub = <mlserver.grpc.model_repository_pb2_grpc.ModelRepositoryServiceStub object at 0x7f4efb4b3470>
+grpc_repository_index_request = ready: true
+
+
+    async def test_model_repository_index(
+        model_repository_service_stub, grpc_repository_index_request
+    ):
+        index = await model_repository_service_stub.RepositoryIndex(
+>           grpc_repository_index_request
+        )
+
+tests/grpc/test_servicers.py:83: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <_AioCall of RPC that terminated with:
+	status = Unexpected <class 'TypeError'>: <State.READY: 'READY'> has type State...ed <class 'TypeError'>: <State.READY: 'READY'> has type State, but expected one of: bytes, unicode","grpc_status":2}"
+>
+
+    def __await__(self) -> ResponseType:
+        """Wait till the ongoing RPC request finishes."""
+        try:
+            response = yield from self._call_response
+        except asyncio.CancelledError:
+            # Even if we caught all other CancelledError, there is still
+            # this corner case. If the application cancels immediately after
+            # the Call object is created, we will observe this
+            # `CancelledError`.
+            if not self.cancelled():
+                self.cancel()
+            raise
+    
+        # NOTE(lidiz) If we raise RpcError in the task, and users doesn't
+        # 'await' on it. AsyncIO will log 'Task exception was never retrieved'.
+        # Instead, if we move the exception raising here, the spam stops.
+        # Unfortunately, there can only be one 'yield from' in '__await__'. So,
+        # we need to access the private instance variable.
+        if response is cygrpc.EOF:
+            if self._cython_call.is_locally_cancelled():
+                raise asyncio.CancelledError()
+            else:
+                raise _create_rpc_error(self._cython_call._initial_metadata,
+>                                       self._cython_call._status)
+E               grpc.aio._call.AioRpcError: <AioRpcError of RPC that terminated with:
+E               	status = StatusCode.UNKNOWN
+E               	details = "Unexpected <class 'TypeError'>: <State.READY: 'READY'> has type State, but expected one of: bytes, unicode"
+E               	debug_error_string = "{"created":"@1606153866.946974150","description":"Error received from peer ipv4:127.0.0.1:8081","file":"src/core/lib/surface/call.cc","file_line":1061,"grpc_message":"Unexpected <class 'TypeError'>: <State.READY: 'READY'> has type State, but expected one of: bytes, unicode","grpc_status":2}"
+E               >
+
+.tox/xgboost/lib/python3.6/site-packages/grpc/aio/_call.py:286: AioRpcError
+------------------------------ Captured log call -------------------------------
+ERROR    grpc._cython.cygrpc:events.py:145 Unexpected [TypeError] raised by servicer method [/inference.model_repository.ModelRepositoryService/RepositoryIndex]
+Traceback (most recent call last):
+  File "src/python/grpcio/grpc/_cython/_cygrpc/aio/server.pyx.pxi", line 646, in grpc._cython.cygrpc._handle_exceptions
+  File "src/python/grpcio/grpc/_cython/_cygrpc/aio/server.pyx.pxi", line 745, in _handle_rpc
+  File "src/python/grpcio/grpc/_cython/_cygrpc/aio/server.pyx.pxi", line 511, in _handle_unary_unary_rpc
+  File "src/python/grpcio/grpc/_cython/_cygrpc/aio/server.pyx.pxi", line 368, in _finish_handler_with_unary_response
+  File "/workspace/source/mlserver/grpc/servicers.py", line 94, in RepositoryIndex
+    return RepositoryIndexResponseConverter.from_types(index)
+  File "/workspace/source/mlserver/grpc/converters.py", line 250, in from_types
+    for model in type_object
+  File "/workspace/source/mlserver/grpc/converters.py", line 250, in <listcomp>
+    for model in type_object
+  File "/workspace/source/mlserver/grpc/converters.py", line 270, in from_types
+    reason=type_object.reason,
+TypeError: <State.READY: 'READY'> has type State, but expected one of: bytes, unicode
+__________________________________ test_index __________________________________
+
+model_repository_handlers = <mlserver.handlers.model_repository.ModelRepositoryHandlers object at 0x7f4efb6037b8>
+repository_index_request = RepositoryIndexRequest(ready=False)
+sum_model_settings = ModelSettings(name='sum-model', platform='mlserver', versions=['sum-model/v1.2.3'], inputs=[MetadataTensor(name='input... implementation=<class 'tests.fixtures.SumModel'>, parameters=ModelParameters(uri=None, version='v1.2.3', format=None))
+
+    async def test_index(
+        model_repository_handlers: ModelRepositoryHandlers,
+        repository_index_request: RepositoryIndexRequest,
+        sum_model_settings: ModelSettings,
+    ):
+        repo_index = list(await model_repository_handlers.index(repository_index_request))
+    
+>       assert len(repo_index) == 1
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+tests/handlers/test_model_repository.py:19: AssertionError
+_________________________ test_model_repository_index __________________________
+
+rest_client = <starlette.testclient.TestClient object at 0x7f4ef9360ac8>
+repository_index_request = RepositoryIndexRequest(ready=False)
+
+    def test_model_repository_index(rest_client, repository_index_request):
+        endpoint = "/v2/repository/index"
+        response = rest_client.post(endpoint, json=repository_index_request.dict())
+    
+        assert response.status_code == 200
+    
+        models = response.json()
+>       assert len(models) == 1
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+tests/rest/test_endpoints.py:81: AssertionError
+=========================== short test summary info ============================
+FAILED tests/grpc/test_servicers.py::test_model_repository_index - grpc.aio._...
+FAILED tests/handlers/test_model_repository.py::test_index - assert 0 == 1
+FAILED tests/rest/test_endpoints.py::test_model_repository_index - assert 0 == 1
+ERROR tests/grpc/test_converters.py::test_repositoryindexresponse_to_types - ...
+=============== 3 failed, 88 passed, 8 skipped, 1 error in 7.71s ===============
+ERROR: InvocationError for command /workspace/source/.tox/xgboost/bin/pytest (exited with code 1)
+all create: /workspace/source/.tox/all
+all installdeps: -r/workspace/source/requirements-dev.txt
+all inst: /workspace/source/.tox/.tmp/package/1/mlserver-0.1.2.zip
+all installed: appdirs==1.4.4,argcomplete==1.12.1,attrs==20.3.0,black==20.8b1,certifi==2020.11.8,chardet==3.0.4,click==7.1.2,dataclasses==0.8,datamodel-code-generator==0.5.35,distlib==0.3.1,dnspython==2.0.0,email-validator==1.1.2,fastapi==0.61.2,filelock==3.0.12,flake8==3.8.3,flake8-black==0.2.1,genson==1.2.2,grpcio==1.33.2,grpcio-tools==1.33.2,h11==0.11.0,idna==2.10,importlib-metadata==3.0.0,importlib-resources==3.3.0,inflect==4.1.1,iniconfig==1.1.1,isort==4.3.21,Jinja2==2.11.2,joblib==0.16.0,jsonschema==3.2.0,MarkupSafe==1.1.1,mccabe==0.6.1,mlserver @ file:///workspace/source/.tox/.tmp/package/1/mlserver-0.1.2.zip,mypy==0.790,mypy-extensions==0.4.3,mypy-protobuf==1.23,numpy==1.19.4,openapi-spec-validator==0.2.9,orjson==3.4.3,packaging==20.4,pathspec==0.8.1,pluggy==0.13.1,prance==0.19.0,protobuf==3.13.0,py==1.9.0,pycodestyle==2.6.0,pydantic==1.7.2,pyflakes==2.2.0,pyparsing==2.4.7,pyrsistent==0.17.3,PySnooper==0.4.2,pytest==6.1.2,pytest-asyncio==0.14.0,PyYAML==5.3.1,regex==2020.11.13,requests==2.25.0,scikit-learn==0.23.1,scipy==1.5.4,semver==2.13.0,six==1.15.0,starlette==0.13.6,threadpoolctl==2.1.0,toml==0.10.2,tox==3.20.0,typed-ast==1.4.1,typing-extensions==3.7.4.3,urllib3==1.26.2,uvicorn==0.12.1,virtualenv==20.2.1,xgboost==1.1.1,zipp==3.4.0
+all run-test-pre: PYTHONHASHSEED='792409907'
+all run-test: commands[0] | pytest
+============================= test session starts ==============================
+platform linux -- Python 3.6.10, pytest-6.1.2, py-1.9.0, pluggy-0.13.1
+cachedir: .tox/all/.pytest_cache
+rootdir: /workspace/source
+plugins: asyncio-0.14.0
+collected 100 items
+
+tests/test_registry.py .......                                           [  7%]
+tests/test_repository.py ....                                            [ 11%]
+tests/test_settings.py ..                                                [ 13%]
+tests/test_types.py ......                                               [ 19%]
+tests/cli/test_serve.py .                                                [ 20%]
+tests/grpc/test_converters.py .....E                                     [ 26%]
+tests/grpc/test_servicers.py ........F...                                [ 38%]
+tests/handlers/test_dataplane.py ...........                             [ 49%]
+tests/handlers/test_model_repository.py F.......                         [ 57%]
+tests/models/test_sklearn.py ........                                    [ 65%]
+tests/models/test_utils.py ................                              [ 81%]
+tests/models/test_xgboost.py .....                                       [ 86%]
+tests/rest/test_endpoints.py ........F...                                [ 98%]
+tests/rest/test_utils.py ..                                              [100%]
+
+==================================== ERRORS ====================================
+___________ ERROR at setup of test_repositoryindexresponse_to_types ____________
+
+sum_model_settings = ModelSettings(name='sum-model', platform='mlserver', versions=['sum-model/v1.2.3'], inputs=[MetadataTensor(name='input... implementation=<class 'tests.fixtures.SumModel'>, parameters=ModelParameters(uri=None, version='v1.2.3', format=None))
+
+    @pytest.fixture
+    def repository_index_response(sum_model_settings) -> types.RepositoryIndexResponse:
+        return types.RepositoryIndexResponse(
+            __root__=[
+                types.RepositoryIndexResponseItem(
+                    name=sum_model_settings.name,
+                    version=sum_model_settings.parameters.version,
+                    state="",
+>                   reason="",
+                ),
+            ]
+        )
+
+tests/conftest.py:148: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+>   ???
+E   pydantic.error_wrappers.ValidationError: 1 validation error for RepositoryIndexResponseItem
+E   state
+E     value is not a valid enumeration member; permitted: 'UNKNOWN', 'READY', 'UNAVAILABLE', 'LOADING', 'UNLOADING' (type=type_error.enum; enum_values=[<State.UNKNOWN: 'UNKNOWN'>, <State.READY: 'READY'>, <State.UNAVAILABLE: 'UNAVAILABLE'>, <State.LOADING: 'LOADING'>, <State.UNLOADING: 'UNLOADING'>])
+
+pydantic/main.py:362: ValidationError
+=================================== FAILURES ===================================
+_________________________ test_model_repository_index __________________________
+
+model_repository_service_stub = <mlserver.grpc.model_repository_pb2_grpc.ModelRepositoryServiceStub object at 0x7f868ef6e828>
+grpc_repository_index_request = ready: true
+
+
+    async def test_model_repository_index(
+        model_repository_service_stub, grpc_repository_index_request
+    ):
+        index = await model_repository_service_stub.RepositoryIndex(
+>           grpc_repository_index_request
+        )
+
+tests/grpc/test_servicers.py:83: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <_AioCall of RPC that terminated with:
+	status = Unexpected <class 'TypeError'>: <State.READY: 'READY'> has type State...ed <class 'TypeError'>: <State.READY: 'READY'> has type State, but expected one of: bytes, unicode","grpc_status":2}"
+>
+
+    def __await__(self) -> ResponseType:
+        """Wait till the ongoing RPC request finishes."""
+        try:
+            response = yield from self._call_response
+        except asyncio.CancelledError:
+            # Even if we caught all other CancelledError, there is still
+            # this corner case. If the application cancels immediately after
+            # the Call object is created, we will observe this
+            # `CancelledError`.
+            if not self.cancelled():
+                self.cancel()
+            raise
+    
+        # NOTE(lidiz) If we raise RpcError in the task, and users doesn't
+        # 'await' on it. AsyncIO will log 'Task exception was never retrieved'.
+        # Instead, if we move the exception raising here, the spam stops.
+        # Unfortunately, there can only be one 'yield from' in '__await__'. So,
+        # we need to access the private instance variable.
+        if response is cygrpc.EOF:
+            if self._cython_call.is_locally_cancelled():
+                raise asyncio.CancelledError()
+            else:
+                raise _create_rpc_error(self._cython_call._initial_metadata,
+>                                       self._cython_call._status)
+E               grpc.aio._call.AioRpcError: <AioRpcError of RPC that terminated with:
+E               	status = StatusCode.UNKNOWN
+E               	details = "Unexpected <class 'TypeError'>: <State.READY: 'READY'> has type State, but expected one of: bytes, unicode"
+E               	debug_error_string = "{"created":"@1606153944.516672381","description":"Error received from peer ipv4:127.0.0.1:8081","file":"src/core/lib/surface/call.cc","file_line":1061,"grpc_message":"Unexpected <class 'TypeError'>: <State.READY: 'READY'> has type State, but expected one of: bytes, unicode","grpc_status":2}"
+E               >
+
+.tox/all/lib/python3.6/site-packages/grpc/aio/_call.py:286: AioRpcError
+------------------------------ Captured log call -------------------------------
+ERROR    grpc._cython.cygrpc:events.py:145 Unexpected [TypeError] raised by servicer method [/inference.model_repository.ModelRepositoryService/RepositoryIndex]
+Traceback (most recent call last):
+  File "src/python/grpcio/grpc/_cython/_cygrpc/aio/server.pyx.pxi", line 646, in grpc._cython.cygrpc._handle_exceptions
+  File "src/python/grpcio/grpc/_cython/_cygrpc/aio/server.pyx.pxi", line 745, in _handle_rpc
+  File "src/python/grpcio/grpc/_cython/_cygrpc/aio/server.pyx.pxi", line 511, in _handle_unary_unary_rpc
+  File "src/python/grpcio/grpc/_cython/_cygrpc/aio/server.pyx.pxi", line 368, in _finish_handler_with_unary_response
+  File "/workspace/source/mlserver/grpc/servicers.py", line 94, in RepositoryIndex
+    return RepositoryIndexResponseConverter.from_types(index)
+  File "/workspace/source/mlserver/grpc/converters.py", line 250, in from_types
+    for model in type_object
+  File "/workspace/source/mlserver/grpc/converters.py", line 250, in <listcomp>
+    for model in type_object
+  File "/workspace/source/mlserver/grpc/converters.py", line 270, in from_types
+    reason=type_object.reason,
+TypeError: <State.READY: 'READY'> has type State, but expected one of: bytes, unicode
+__________________________________ test_index __________________________________
+
+model_repository_handlers = <mlserver.handlers.model_repository.ModelRepositoryHandlers object at 0x7f868ef39d30>
+repository_index_request = RepositoryIndexRequest(ready=False)
+sum_model_settings = ModelSettings(name='sum-model', platform='mlserver', versions=['sum-model/v1.2.3'], inputs=[MetadataTensor(name='input... implementation=<class 'tests.fixtures.SumModel'>, parameters=ModelParameters(uri=None, version='v1.2.3', format=None))
+
+    async def test_index(
+        model_repository_handlers: ModelRepositoryHandlers,
+        repository_index_request: RepositoryIndexRequest,
+        sum_model_settings: ModelSettings,
+    ):
+        repo_index = list(await model_repository_handlers.index(repository_index_request))
+    
+>       assert len(repo_index) == 1
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+tests/handlers/test_model_repository.py:19: AssertionError
+_________________________ test_model_repository_index __________________________
+
+rest_client = <starlette.testclient.TestClient object at 0x7f868ce02898>
+repository_index_request = RepositoryIndexRequest(ready=False)
+
+    def test_model_repository_index(rest_client, repository_index_request):
+        endpoint = "/v2/repository/index"
+        response = rest_client.post(endpoint, json=repository_index_request.dict())
+    
+        assert response.status_code == 200
+    
+        models = response.json()
+>       assert len(models) == 1
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+tests/rest/test_endpoints.py:81: AssertionError
+=========================== short test summary info ============================
+FAILED tests/grpc/test_servicers.py::test_model_repository_index - grpc.aio._...
+FAILED tests/handlers/test_model_repository.py::test_index - assert 0 == 1
+FAILED tests/rest/test_endpoints.py::test_model_repository_index - assert 0 == 1
+ERROR tests/grpc/test_converters.py::test_repositoryindexresponse_to_types - ...
+==================== 3 failed, 96 passed, 1 error in 8.23s =====================
+ERROR: InvocationError for command /workspace/source/.tox/all/bin/pytest (exited with code 1)
+___________________________________ summary ____________________________________
+ERROR:   py3: commands failed
+ERROR:   sklearn: commands failed
+ERROR:   xgboost: commands failed
+ERROR:   all: commands failed
+make: *** [Makefile:24: test] Error 1
+[31m
+Pipeline failed on stage 'test' : container 'step-step2'. The execution of the pipeline has stopped.[0m
