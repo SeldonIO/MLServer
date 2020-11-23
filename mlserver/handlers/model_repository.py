@@ -1,5 +1,3 @@
-import asyncio
-
 from ..settings import ModelSettings
 from ..registry import MultiModelRegistry
 from ..repository import ModelRepository
