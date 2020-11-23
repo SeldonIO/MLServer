@@ -28,13 +28,15 @@ async def test_unload(
         await model_registry.get_model(sum_model_settings.name)
 
 
-async def test_load(
+async def test_unload_not_found(
     model_repository_handlers: ModelRepositoryHandlers,
-    model_registry: MultiModelRegistry,
-    sum_model_settings: ModelSettings,
 ):
-    await model_repository_handlers.unload(sum_model_settings.name)
-    await model_repository_handlers.load(sum_model_settings.name)
+    with pytest.raises(ModelNotFound):
+        await model_repository_handlers.unload("not-existing")
 
-    model = await model_registry.get_model(sum_model_settings.name)
-    assert model.ready
+
+async def test_load_not_found(
+    model_repository_handlers: ModelRepositoryHandlers,
+):
+    with pytest.raises(ModelNotFound):
+        await model_repository_handlers.load("not-existing")
