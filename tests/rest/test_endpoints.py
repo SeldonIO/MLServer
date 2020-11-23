@@ -101,3 +101,11 @@ def test_model_repository_load(rest_client, sum_model_settings):
 
     model_metadata = rest_client.get(f"/v2/models/{sum_model_settings.name}")
     assert model_metadata.status_code == 200
+
+
+def test_model_repository_load_error(rest_client, sum_model_settings):
+    endpoint = "/v2/repository/models/my-model/load"
+    response = rest_client.post(endpoint)
+
+    assert response.status_code == 400
+    assert response.json()["error"] == "Model my-model not found"
