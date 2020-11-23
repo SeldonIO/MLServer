@@ -93,12 +93,16 @@ class ModelRepositoryServicer(ModelRepositoryServiceServicer):
         index = await self._handlers.index(payload)
         return RepositoryIndexResponseConverter.from_types(index)
 
+    @_handle_mlserver_error
     async def RepositoryModelLoad(
         self, request: mr_pb.RepositoryModelLoadRequest, context
     ) -> mr_pb.RepositoryModelLoadResponse:
-        pass
+        await self._handlers.load(request.model_name)
+        return mr_pb.RepositoryModelLoadResponse()
 
+    @_handle_mlserver_error
     async def RepositoryModelUnload(
         self, request: mr_pb.RepositoryModelUnloadRequest, context
     ) -> mr_pb.RepositoryModelUnloadResponse:
-        pass
+        await self._handlers.unload(request.model_name)
+        return mr_pb.RepositoryModelUnloadResponse()
