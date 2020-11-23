@@ -23,7 +23,7 @@ class MLServer:
             settings=self._settings, model_registry=self._model_registry
         )
         self._model_repository_handlers = ModelRepositoryHandlers(
-            repository=self._model_repository, registry=self._model_registry
+            repository=self._model_repository, model_registry=self._model_registry
         )
 
     async def start(self, models: List[MLModel] = []):
