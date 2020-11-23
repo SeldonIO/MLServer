@@ -8,6 +8,7 @@ from google.protobuf import json_format
 from mlserver.handlers import DataPlane, ModelRepositoryHandlers
 from mlserver.settings import Settings
 from mlserver.grpc import dataplane_pb2 as pb
+from mlserver.grpc import model_repository_pb2 as mr_pb
 from mlserver.grpc.dataplane_pb2_grpc import GRPCInferenceServiceStub
 from mlserver.grpc import GRPCServer
 
@@ -34,6 +35,11 @@ def model_infer_request() -> pb.ModelInferRequest:
 def grpc_settings(settings: Settings) -> Settings:
     settings.grpc_workers = 1
     return settings
+
+
+@pytest.fixture
+def grpc_repository_index_request() -> mr_pb.RepositoryIndexRequest:
+    return mr_pb.RepositoryIndexRequest(ready=True)
 
 
 @pytest.fixture

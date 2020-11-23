@@ -135,3 +135,17 @@ def model_repository(model_folder: str) -> ModelRepository:
 @pytest.fixture
 def repository_index_request() -> types.RepositoryIndexRequest:
     return types.RepositoryIndexRequest(ready=False)
+
+
+@pytest.fixture
+def repository_index_response(sum_model_settings) -> types.RepositoryIndexResponse:
+    return types.RepositoryIndexResponse(
+        __root__=[
+            types.RepositoryIndexResponseItem(
+                name=sum_model_settings.name,
+                version=sum_model_settings.parameters.version,
+                state="",
+                reason="",
+            ),
+        ]
+    )

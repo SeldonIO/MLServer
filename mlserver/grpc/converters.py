@@ -1,6 +1,7 @@
 from typing import List
 
 from . import dataplane_pb2 as pb
+from . import model_repository_pb2 as mr_pb
 
 from .. import types
 
@@ -213,4 +214,58 @@ class InferOutputTensorConverter:
             contents=InferTensorContentsConverter.from_types(
                 type_object.data, datatype=type_object.datatype
             ),
+        )
+
+
+class RepositoryIndexRequestConverter:
+    @classmethod
+    def to_types(
+        cls, pb_object: mr_pb.RepositoryIndexRequest
+    ) -> mr_pb.RepositoryIndexRequest:
+        return types.RepositoryIndexRequest(
+            ready=pb_object.ready,
+        )
+
+    @classmethod
+    def from_types(
+        cls, type_object: types.RepositoryIndexRequest
+    ) -> types.RepositoryIndexRequest:
+        raise NotImplementedError("Implement me")
+
+
+class RepositoryIndexResponseConverter:
+    @classmethod
+    def to_types(
+        cls, pb_object: mr_pb.RepositoryIndexResponse
+    ) -> types.RepositoryIndexResponse:
+        raise NotImplementedError("Implement me")
+
+    @classmethod
+    def from_types(
+        cls, type_object: types.RepositoryIndexResponse
+    ) -> mr_pb.RepositoryIndexResponse:
+        return mr_pb.RepositoryIndexResponse(
+            models=[
+                RepositoryIndexResponseItemConverter.from_types(model)
+                for model in type_object
+            ]
+        )
+
+
+class RepositoryIndexResponseItemConverter:
+    @classmethod
+    def to_types(
+        cls, pb_object: mr_pb.RepositoryIndexResponse.ModelIndex
+    ) -> types.RepositoryIndexResponseItem:
+        raise NotImplementedError("Implement me")
+
+    @classmethod
+    def from_types(
+        cls, type_object: types.RepositoryIndexResponseItem
+    ) -> mr_pb.RepositoryIndexResponse.ModelIndex:
+        return mr_pb.RepositoryIndexResponse.ModelIndex(
+            name=type_object.name,
+            version=type_object.version,
+            state=type_object.state,
+            reason=type_object.reason,
         )
