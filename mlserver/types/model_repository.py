@@ -26,6 +26,9 @@ class RepositoryIndexResponse(BaseModel):
     def __getitem__(self, idx):
         return self.__root__[idx]
 
+    def __len__(self):
+        return len(self.__root__)
+
     @classmethod
     def __get_validators__(cls):
         yield cls.validate
