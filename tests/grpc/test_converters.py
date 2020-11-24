@@ -98,7 +98,7 @@ def test_repositoryindexrequest_to_types(grpc_repository_index_request):
     assert repository_index_request.ready == grpc_repository_index_request.ready
 
 
-def test_repositoryindexresponse_to_types(repository_index_response):
+def test_repositoryindexresponse_from_types(repository_index_response):
     grpc_repository_index_request = RepositoryIndexResponseConverter.from_types(
         repository_index_response
     )
@@ -110,5 +110,5 @@ def test_repositoryindexresponse_to_types(repository_index_response):
     ):
         assert expected.name == grpc_model.name
         assert expected.version == grpc_model.version
-        assert expected.state == grpc_model.state
+        assert expected.state.value == grpc_model.state
         assert expected.reason == grpc_model.reason

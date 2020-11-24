@@ -40,7 +40,7 @@ def grpc_settings(settings: Settings) -> Settings:
 
 @pytest.fixture
 def grpc_repository_index_request() -> mr_pb.RepositoryIndexRequest:
-    return mr_pb.RepositoryIndexRequest(ready=True)
+    return mr_pb.RepositoryIndexRequest(ready=None)
 
 
 @pytest.fixture

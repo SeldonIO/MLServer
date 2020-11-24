@@ -36,7 +36,7 @@ async def test_index_unavailable_model(
     assert repo_index[0].state == State.UNAVAILABLE
 
 
-@pytest.mark.parametrize("ready,expected", [(None, 1), (True, 1), (False, 0)])
+@pytest.mark.parametrize("ready,expected", [(None, 1), (True, 0), (False, 1)])
 async def test_index_filter_ready(
     model_repository_handlers: ModelRepositoryHandlers,
     repository_index_request: RepositoryIndexRequest,
@@ -44,6 +44,8 @@ async def test_index_filter_ready(
     ready: Optional[bool],
     expected: int,
 ):
+    await model_repository_handlers.unload(sum_model_settings.name)
+
     repository_index_request.ready = ready
     repo_index = list(await model_repository_handlers.index(repository_index_request))
 

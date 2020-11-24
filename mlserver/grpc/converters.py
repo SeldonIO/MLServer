@@ -266,6 +266,6 @@ class RepositoryIndexResponseItemConverter:
         return mr_pb.RepositoryIndexResponse.ModelIndex(
             name=type_object.name,
             version=type_object.version,
-            state=type_object.state,
+            state=type_object.state.value,
             reason=type_object.reason,
         )

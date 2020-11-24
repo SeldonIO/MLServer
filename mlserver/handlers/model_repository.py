@@ -16,17 +16,17 @@ class ModelRepositoryHandlers:
         self._model_registry = model_registry
 
     async def index(self, payload: RepositoryIndexRequest) -> RepositoryIndexResponse:
-        # TODO: Filter by payload.ready flag
         all_model_settings = await self._repository.list()
 
         repository_items = []
         for model_settings in all_model_settings:
             index_item = await self._to_item(model_settings)
-            if payload.ready is None:
-                repository_items.append(index_item)
-            elif payload.ready and index_item.state == State.READY:
-                repository_items.append(index_item)
-            elif not payload.ready and index_item.state != State.READY:
+            if payload.ready:
+                # TODO: If filtering by ready, we could ready directly from the
+                # active model registry
+                if index_item.state == State.READY:
+                    repository_items.append(index_item)
+            else:
                 repository_items.append(index_item)
 
         return RepositoryIndexResponse(__root__=repository_items)
