@@ -1,6 +1,5 @@
 {
   "name": "sum-model",
-  "version": "v1.2.3",
 
   "implementation": "models.SumModel",
 
@@ -19,5 +18,9 @@
       "name": "output-0",
       "shape": [1]
     }
-  ]
+  ],
+
+  "parameters": {
+    "version": "v1.2.3"
+  }
 }

@@ -1,0 +1,100 @@
+openapi: 3.0.0
+info:
+  title: Model Repository
+  version: '2.0'
+  description: 'https://github.com/triton-inference-server/server/blob/master/docs/protocol/extension_model_repository.md#httprest'
+servers: []
+paths:
+  /v2/repository/index:
+    post:
+      summary: ''
+      operationId: post-v2-repository-index
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/repository_index_response'
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/repository_index_request'
+  '/v2/repository/models/${MODEL_NAME}/load':
+    parameters:
+      - schema:
+          type: string
+        name: MODEL_NAME
+        in: path
+        required: true
+    post:
+      summary: ''
+      operationId: post-v2-repository-models-$-MODEL_NAME-load
+      responses:
+        '200':
+          description: OK
+  '/v2/repository/models/${MODEL_NAME}/unload':
+    parameters:
+      - schema:
+          type: string
+        name: MODEL_NAME
+        in: path
+        required: true
+    post:
+      summary: ''
+      operationId: post-v2-repository-models-$-MODEL_NAME-unload
+      responses:
+        '200':
+          description: OK
+components:
+  schemas:
+    repository_index_request:
+      title: repository_index_request
+      type: object
+      properties:
+        ready:
+          type: boolean
+    repository_index_response:
+      title: repository_index_response
+      type: array
+      items:
+        type: object
+        properties:
+          name:
+            type: string
+          version:
+            type: string
+          state:
+            type: string
+            enum:
+              - UNKNOWN
+              - READY
+              - UNAVAILABLE
+              - LOADING
+              - UNLOADING
+          reason:
+            type: string
+        required:
+          - name
+          - state
+          - reason
+    repository_index_error_response:
+      title: repository_index_error_response
+      type: object
+      properties:
+        error:
+          type: string
+    repository_load_error_response:
+      title: repository_load_error_response
+      type: object
+      properties:
+        error:
+          type: string
+    repository_unload_error_response:
+      title: repository_unload_error_response
+      type: object
+      properties:
+        error:
+          type: string

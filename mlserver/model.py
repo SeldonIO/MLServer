@@ -1,3 +1,5 @@
+from typing import Optional
+
 from .types import InferenceRequest, InferenceResponse, MetadataModelResponse
 from .settings import ModelSettings
 
@@ -17,8 +19,11 @@ class MLModel:
         return self._settings.name
 
     @property
-    def version(self) -> str:
-        return self._settings.version
+    def version(self) -> Optional[str]:
+        params = self._settings.parameters
+        if params is not None:
+            return params.version
+        return None
 
     async def metadata(self) -> MetadataModelResponse:
         return MetadataModelResponse(

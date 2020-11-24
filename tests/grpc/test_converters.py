@@ -5,6 +5,8 @@ from mlserver.grpc.converters import (
     ModelInferResponseConverter,
     ServerMetadataResponseConverter,
     ModelMetadataResponseConverter,
+    RepositoryIndexRequestConverter,
+    RepositoryIndexResponseConverter,
 )
 from mlserver.grpc import dataplane_pb2 as pb
 
@@ -86,3 +88,27 @@ def test_modelinferresponse_from_types(inference_response):
     assert json_format.MessageToDict(model_infer_response) == json_format.MessageToDict(
         expected
     )
+
+
+def test_repositoryindexrequest_to_types(grpc_repository_index_request):
+    repository_index_request = RepositoryIndexRequestConverter.to_types(
+        grpc_repository_index_request
+    )
+
+    assert repository_index_request.ready == grpc_repository_index_request.ready
+
+
+def test_repositoryindexresponse_from_types(repository_index_response):
+    grpc_repository_index_request = RepositoryIndexResponseConverter.from_types(
+        repository_index_response
+    )
+
+    assert len(grpc_repository_index_request.models) == len(repository_index_response)
+
+    for expected, grpc_model in zip(
+        repository_index_response, grpc_repository_index_request.models
+    ):
+        assert expected.name == grpc_model.name
+        assert expected.version == grpc_model.version
+        assert expected.state.value == grpc_model.state
+        assert expected.reason == grpc_model.reason

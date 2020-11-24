@@ -1,48 +1,62 @@
-from typing import List
-from collections import defaultdict
+import os
+import glob
 
-from .model import MLModel
+from typing import List
+
+from .settings import ModelParameters, ModelSettings
 from .errors import ModelNotFound
+
+DEFAULT_MODEL_SETTINGS_FILENAME = "model-settings.json"
 
 
 class ModelRepository:
     """
-    Model repository interface, inspired in NVIDIA Triton's `model-repository`
-    extension.
+    Model repository, responsible of the discovery of models which can be
+    loaded onto the model registry.
     """
 
-    def __init__(self):
-        self._models = defaultdict(dict)
-        self._default_models = {}
-        self._flat_models = []
+    def __init__(self, root: str = None):
+        self._root = root
 
-    async def index(self):
-        pass
+    async def list(self) -> List[ModelSettings]:
+        all_model_settings = []
 
-    async def load(self, model: MLModel):
-        await model.load()
+        # TODO: Use an async alternative for filesys ops
+        if self._root:
+            pattern = os.path.join(self._root, "**", DEFAULT_MODEL_SETTINGS_FILENAME)
+            matches = glob.glob(pattern, recursive=True)
 
-        # TODO: Raise warning if model already exists
-        self._models[model.name][model.version] = model
+            for model_settings_path in matches:
+                model_settings = self._load_model_settings(model_settings_path)
+                all_model_settings.append(model_settings)
 
-        # TODO: Improve logic to choose default version of the model
-        self._default_models[model.name] = model
-        self._flat_models.append(model)
+        # If there were no matches, try to load model from environment
+        if not all_model_settings:
+            # return default
+            model_settings = ModelSettings()
+            model_settings.parameters = ModelParameters()
+            all_model_settings.append(model_settings)
 
-    async def unload(self):
-        pass
+        return all_model_settings
 
-    async def get_model(self, name: str, version: str = None) -> MLModel:
-        if name not in self._models:
-            raise ModelNotFound(name, version)
+    def _load_model_settings(self, model_settings_path: str) -> ModelSettings:
+        model_settings = ModelSettings.parse_file(model_settings_path)
 
-        # Check that `version` is neither None nor an empty string
-        if version:
-            models = self._models[name]
-            if version not in models:
-                raise ModelNotFound(name, version)
+        if not model_settings.parameters:
+            model_settings.parameters = ModelParameters()
 
-        return self._default_models[name]
+        if not model_settings.parameters.uri:
+            # If not specified, default to its own folder
+            default_model_uri = os.path.dirname(model_settings_path)
+            model_settings.parameters.uri = default_model_uri
 
-    async def get_models(self) -> List[MLModel]:
-        return self._flat_models
+        return model_settings
+
+    async def find(self, name: str) -> ModelSettings:
+        all_settings = await self.list()
+        for model_settings in all_settings:
+            if model_settings.name == name:
+                # TODO: Implement version policy
+                return model_settings
+
+        raise ModelNotFound(name)

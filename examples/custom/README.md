@@ -197,10 +197,10 @@ The next step will be to create 2 configuration files:
 %%writefile model-settings.json
 {
     "name": "numpyro-divorce",
-    "version": "v0.1.0",
     "implementation": "models.NumpyroModel",
     "parameters": {
-        "uri": "./numpyro-divorce.json"
+        "uri": "./numpyro-divorce.json",
+        "version": "v0.1.0",
     }
 }
 ```

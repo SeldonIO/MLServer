@@ -1,0 +1,77 @@
+syntax = "proto3";
+
+package inference.model_repository;
+
+service ModelRepositoryService
+{
+  // Get the index of model repository contents.
+  rpc RepositoryIndex(RepositoryIndexRequest)
+          returns (RepositoryIndexResponse) {}
+
+  // Load or reload a model from a repository.
+  rpc RepositoryModelLoad(RepositoryModelLoadRequest)
+          returns (RepositoryModelLoadResponse) {}
+
+  // Unload a model.
+  rpc RepositoryModelUnload(RepositoryModelUnloadRequest)
+          returns (RepositoryModelUnloadResponse) {}
+}
+
+message RepositoryIndexRequest
+{
+  // The name of the repository. If empty the index is returned
+  // for all repositories.
+  string repository_name = 1;
+
+  // If true return only models currently ready for inferencing.
+  bool ready = 2;
+}
+
+message RepositoryIndexResponse
+{
+  // Index entry for a model.
+  message ModelIndex {
+    // The name of the model.
+    string name = 1;
+
+    // The version of the model.
+    string version = 2;
+
+    // The state of the model.
+    string state = 3;
+
+    // The reason, if any, that the model is in the given state.
+    string reason = 4;
+  }
+
+  // An index entry for each model.
+  repeated ModelIndex models = 1;
+}
+
+message RepositoryModelLoadRequest
+{
+  // The name of the repository to load from. If empty the model
+  // is loaded from any repository.
+  string repository_name = 1;
+
+  // The name of the model to load, or reload.
+  string model_name = 2;
+}
+
+message RepositoryModelLoadResponse
+{
+}
+
+message RepositoryModelUnloadRequest
+{
+  // The name of the repository from which the model was originally
+  // loaded. If empty the repository is not considered.
+  string repository_name = 1;
+
+  // The name of the model to unload.
+  string model_name = 2;
+}
+
+message RepositoryModelUnloadResponse
+{
+}

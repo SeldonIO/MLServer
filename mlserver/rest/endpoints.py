@@ -5,8 +5,10 @@ from ..types import (
     MetadataServerResponse,
     InferenceRequest,
     InferenceResponse,
+    RepositoryIndexRequest,
+    RepositoryIndexResponse,
 )
-from ..handlers import DataPlane
+from ..handlers import DataPlane, ModelRepositoryHandlers
 
 from .utils import to_status_code
 
@@ -48,3 +50,19 @@ class Endpoints:
         model_version: str = None,
     ) -> InferenceResponse:
         return await self._data_plane.infer(payload, model_name, model_version)
+
+
+class ModelRepositoryEndpoints:
+    def __init__(self, handlers: ModelRepositoryHandlers):
+        self._handlers = handlers
+
+    async def index(self, payload: RepositoryIndexRequest) -> RepositoryIndexResponse:
+        return await self._handlers.index(payload)
+
+    async def load(self, model_name: str) -> Response:
+        loaded = await self._handlers.load(name=model_name)
+        return Response(status_code=to_status_code(loaded))
+
+    async def unload(self, model_name: str) -> Response:
+        unloaded = await self._handlers.unload(name=model_name)
+        return Response(status_code=to_status_code(unloaded))

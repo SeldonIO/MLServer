@@ -1,17 +1,16 @@
 import os
 import sys
-import glob
 
 from typing import List, Tuple, Union
 
 from ..model import MLModel
-from ..settings import Settings, ModelParameters, ModelSettings
+from ..repository import ModelRepository
+from ..settings import Settings, ModelSettings
 
 DEFAULT_SETTINGS_FILENAME = "settings.json"
-DEFAULT_MODEL_SETTINGS_FILENAME = "model-settings.json"
 
 
-def load_settings(folder: str = None) -> Tuple[Settings, List[MLModel]]:
+async def load_settings(folder: str = None) -> Tuple[Settings, List[MLModel]]:
     """
     Load server and model settings.
     """
@@ -29,42 +28,14 @@ def load_settings(folder: str = None) -> Tuple[Settings, List[MLModel]]:
     else:
         settings = Settings()
 
-    models = _load_models(folder)
+    if folder is not None:
+        settings.model_repository_root = folder
+
+    repository = ModelRepository(settings.model_repository_root)
+    available_models = await repository.list()
+    models = [_init_model(model) for model in available_models]
 
     return settings, models
-
-
-def _load_models(folder: str = None) -> List[MLModel]:
-    model_objects = []
-
-    if folder:
-        pattern = os.path.join(folder, "**", DEFAULT_MODEL_SETTINGS_FILENAME)
-        matches = glob.glob(pattern, recursive=True)
-
-        for model_settings_path in matches:
-            model_settings = _load_model_settings(model_settings_path)
-            model_object = _init_model(model_settings)
-            model_objects.append(model_object)
-
-    # If there were no matches, try to load model from environment
-    if not model_objects:
-        model_settings = ModelSettings()
-        model_settings.parameters = ModelParameters()
-        model_object = _init_model(model_settings)
-        model_objects.append(model_object)
-
-    return model_objects
-
-
-def _load_model_settings(model_settings_path: str) -> ModelSettings:
-    model_settings = ModelSettings.parse_file(model_settings_path)
-
-    if not model_settings.parameters:
-        # If not specified, default to its own folder
-        default_model_uri = os.path.dirname(model_settings_path)
-        model_settings.parameters = ModelParameters(uri=default_model_uri)
-
-    return model_settings
 
 
 def _path_exists(folder: Union[str, None], file: str) -> bool:

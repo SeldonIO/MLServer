@@ -5,10 +5,12 @@ from grpc import aio
 
 from typing import AsyncGenerator
 from google.protobuf import json_format
-from mlserver.handlers import DataPlane
+from mlserver.handlers import DataPlane, ModelRepositoryHandlers
 from mlserver.settings import Settings
 from mlserver.grpc import dataplane_pb2 as pb
+from mlserver.grpc import model_repository_pb2 as mr_pb
 from mlserver.grpc.dataplane_pb2_grpc import GRPCInferenceServiceStub
+from mlserver.grpc.model_repository_pb2_grpc import ModelRepositoryServiceStub
 from mlserver.grpc import GRPCServer
 
 from ..conftest import TESTDATA_PATH
@@ -37,6 +39,11 @@ def grpc_settings(settings: Settings) -> Settings:
 
 
 @pytest.fixture
+def grpc_repository_index_request() -> mr_pb.RepositoryIndexRequest:
+    return mr_pb.RepositoryIndexRequest(ready=None)
+
+
+@pytest.fixture
 async def inference_service_stub(
     grpc_server, grpc_settings: Settings
 ) -> AsyncGenerator[GRPCInferenceServiceStub, None]:
@@ -47,8 +54,26 @@ async def inference_service_stub(
 
 
 @pytest.fixture
-async def grpc_server(grpc_settings: Settings, data_plane: DataPlane):
-    server = GRPCServer(grpc_settings, data_plane)
+async def model_repository_service_stub(
+    grpc_server, grpc_settings: Settings
+) -> AsyncGenerator[ModelRepositoryServiceStub, None]:
+    async with aio.insecure_channel(
+        f"{grpc_settings.host}:{grpc_settings.grpc_port}"
+    ) as channel:
+        yield ModelRepositoryServiceStub(channel)
+
+
+@pytest.fixture
+async def grpc_server(
+    grpc_settings: Settings,
+    data_plane: DataPlane,
+    model_repository_handlers: ModelRepositoryHandlers,
+):
+    server = GRPCServer(
+        grpc_settings,
+        data_plane=data_plane,
+        model_repository_handlers=model_repository_handlers,
+    )
     server._create_server()
     await server._server.start()
 
