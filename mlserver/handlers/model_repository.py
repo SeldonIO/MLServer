@@ -62,7 +62,7 @@ class ModelRepositoryHandlers:
 
         # TODO: Move to separate method
         model_class = model_settings.implementation
-        model = model_class(model_settings)
+        model = model_class(model_settings)  # type: ignore
 
         await self._model_registry.load(model)
 

@@ -11,4 +11,4 @@ async def test_load_models(sum_model_settings: ModelSettings, model_folder: str)
 
     assert len(models) == 1
     assert models[0].name == sum_model_settings.name
-    assert models[0].version == sum_model_settings.parameters.version
+    assert models[0].version == sum_model_settings.parameters.version  # type: ignore

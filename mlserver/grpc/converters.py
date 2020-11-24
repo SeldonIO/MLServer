@@ -221,7 +221,7 @@ class RepositoryIndexRequestConverter:
     @classmethod
     def to_types(
         cls, pb_object: mr_pb.RepositoryIndexRequest
-    ) -> mr_pb.RepositoryIndexRequest:
+    ) -> types.RepositoryIndexRequest:
         return types.RepositoryIndexRequest(
             ready=pb_object.ready,
         )
@@ -229,7 +229,7 @@ class RepositoryIndexRequestConverter:
     @classmethod
     def from_types(
         cls, type_object: types.RepositoryIndexRequest
-    ) -> types.RepositoryIndexRequest:
+    ) -> mr_pb.RepositoryIndexRequest:
         raise NotImplementedError("Implement me")
 
 

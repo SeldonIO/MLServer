@@ -1,6 +1,6 @@
 import asyncio
 
-from typing import List
+from typing import List, Dict
 from itertools import chain
 
 from .model import MLModel
@@ -14,7 +14,7 @@ class SingleModelRegistry:
     """
 
     def __init__(self, model: MLModel):
-        self._versions = {}
+        self._versions: Dict[str, MLModel] = {}
         self._name = model.name
 
         self._register(model)
@@ -36,7 +36,8 @@ class SingleModelRegistry:
         return self._default
 
     async def get_models(self) -> List[MLModel]:
-        models = self._versions.values()
+        # NOTE: `.values()` returns a "view" instead of a list
+        models = list(self._versions.values())
 
         # Add default if not versioned
         if not self._default.version:
@@ -84,4 +85,4 @@ class MultiModelRegistry:
             *[model.get_models() for model in self._models.values()]
         )
 
-        return chain.from_iterable(models_list)
+        return chain.from_iterable(models_list)  # type: ignore

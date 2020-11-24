@@ -23,6 +23,7 @@ class MLModel:
         params = self._settings.parameters
         if params is not None:
             return params.version
+        return None
 
     async def metadata(self) -> MetadataModelResponse:
         return MetadataModelResponse(

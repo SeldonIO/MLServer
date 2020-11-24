@@ -78,6 +78,7 @@ components:
             type: string
         required:
           - name
+          - state
           - reason
     repository_index_error_response:
       title: repository_index_error_response

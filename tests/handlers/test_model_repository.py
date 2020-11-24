@@ -18,7 +18,9 @@ async def test_index(
 
     assert len(repo_index) == 1
     assert repo_index[0].name == sum_model_settings.name
-    assert repo_index[0].version == sum_model_settings.parameters.version
+    assert (
+        repo_index[0].version == sum_model_settings.parameters.version  # type: ignore
+    )
     assert repo_index[0].state == State.READY
 
 
@@ -32,7 +34,9 @@ async def test_index_unavailable_model(
 
     assert len(repo_index) == 1
     assert repo_index[0].name == sum_model_settings.name
-    assert repo_index[0].version == sum_model_settings.parameters.version
+    assert (
+        repo_index[0].version == sum_model_settings.parameters.version  # type: ignore
+    )
     assert repo_index[0].state == State.UNAVAILABLE
 
 

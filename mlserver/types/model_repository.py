@@ -4,7 +4,7 @@
 from enum import Enum
 from typing import List, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
 class RepositoryIndexRequest(BaseModel):
@@ -22,7 +22,7 @@ class State(Enum):
 class RepositoryIndexResponseItem(BaseModel):
     name: str
     version: Optional[str] = None
-    state: Optional["State"] = None
+    state: "State"
     reason: str
 
 
