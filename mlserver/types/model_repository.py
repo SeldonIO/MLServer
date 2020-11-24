@@ -4,7 +4,7 @@
 from enum import Enum
 from typing import List, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class RepositoryIndexRequest(BaseModel):
@@ -27,7 +27,9 @@ class RepositoryIndexResponseItem(BaseModel):
 
 
 class RepositoryIndexResponse(BaseModel):
-    __root__: List["RepositoryIndexResponseItem"]
+    __root__: List["RepositoryIndexResponseItem"] = Field(
+        ..., title="repository_index_response"
+    )
 
     def __iter__(self):
         return iter(self.__root__)
