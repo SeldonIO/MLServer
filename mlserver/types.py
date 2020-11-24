@@ -3,7 +3,7 @@
 
 from typing import List, Optional, Union
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class MetadataServerResponse(BaseModel):
@@ -31,7 +31,9 @@ class Parameters(BaseModel):
 
 
 class TensorData(BaseModel):
-    __root__: List[Union["TensorData", float, str, bool]]
+    __root__: List[Union["TensorData", Union[float, str, bool]]] = Field(
+        ..., title="tensor_data"
+    )
 
     def __iter__(self):
         return iter(self.__root__)
