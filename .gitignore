@@ -26,6 +26,8 @@ eggs/
 *.egg-info/
 ./pytest_cache
 .tox
+build/
+dist/
 
 # Notebook Checkpoints
 .ipynb_checkpoints

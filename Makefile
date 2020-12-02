@@ -18,10 +18,18 @@ run:
 		./tests/testdata
 
 build:
-	docker build . -t ${IMAGE_NAME}:${VERSION}
+	# docker build . -t ${IMAGE_NAME}:${VERSION}
+	python setup.py sdist bdist_wheel
+	python ./runtimes/sklearn/setup.py sdist bdist_wheel
+	python ./runtimes/xgboost/setup.py sdist bdist_wheel
+	python ./runtimes/mllib/setup.py sdist bdist_wheel
+
+push-test:
+	twine upload --repository-url https://test.pypi.org/legacy/ dist/*
 
 push:
 	docker push ${IMAGE_NAME}:${VERSION}
+	twine upload dist/*
 
 test:
 	tox
