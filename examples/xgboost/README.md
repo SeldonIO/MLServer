@@ -95,7 +95,7 @@ For that, we will need to create 2 configuration files:
 %%writefile model-settings.json
 {
     "name": "mushroom-xgboost",
-    "implementation": "mlserver.models.XGBoostModel",
+    "implementation": "mlserver_xgboost.XGBoostModel",
     "parameters": {
         "uri": "./mushroom-xgboost.json",
         "version": "v0.1.0"

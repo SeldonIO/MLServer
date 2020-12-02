@@ -78,10 +78,10 @@ For that, we will need to create 2 configuration files:
 %%writefile model-settings.json
 {
     "name": "mnist-svm",
-    "implementation": "mlserver.models.SKLearnModel",
+    "implementation": "mlserver_sklearn.SKLearnModel",
     "parameters": {
-        "uri": "./mnist-svm.joblib"
-        "version": "v0.1.0",
+        "uri": "./mnist-svm.joblib",
+        "version": "v0.1.0"
     }
 }
 ```

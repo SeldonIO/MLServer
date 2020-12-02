@@ -147,7 +147,7 @@ That is,
 %%writefile models/mnist-svm/model-settings.json
 {
     "name": "mnist-svm",
-    "implementation": "mlserver.models.SKLearnModel",
+    "implementation": "mlserver_sklearn.SKLearnModel",
     "parameters": {
         "version": "v0.1.0"
     }
@@ -161,7 +161,7 @@ That is,
 %%writefile models/mushroom-xgboost/model-settings.json
 {
     "name": "mushroom-xgboost",
-    "implementation": "mlserver.models.XGBoostModel",
+    "implementation": "mlserver_xgboost.XGBoostModel",
     "parameters": {
         "version": "v0.1.0"
     }

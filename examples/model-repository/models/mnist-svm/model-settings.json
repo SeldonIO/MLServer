@@ -1,6 +1,6 @@
 {
     "name": "mnist-svm",
-    "implementation": "mlserver.models.SKLearnModel",
+    "implementation": "mlserver_sklearn.SKLearnModel",
     "parameters": {
         "version": "v0.1.0"
     }
