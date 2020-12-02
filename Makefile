@@ -5,6 +5,7 @@ install-dev:
 	pip install -r requirements-dev.txt
 	pip install --editable .
 	pip install --editable ./runtimes/sklearn
+	pip install --editable ./runtimes/xgboost
 	pip install --editable ./runtimes/mllib
 
 _generate: # "private" target to call `fmt` after `generate`
