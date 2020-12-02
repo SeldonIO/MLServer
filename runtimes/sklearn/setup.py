@@ -25,7 +25,7 @@ setup(
     url="https://github.com/seldonio/mlserver.git",
     author="Seldon Technologies Ltd.",
     author_email="hello@seldon.io",
-    description="SKLearn runtime for MLServer",
+    description="Scikit-Learn runtime for MLServer",
     packages=find_packages(),
     install_requires=["mlserver", "scikit-learn==0.23.1", "joblib==0.16.0"],
 )
