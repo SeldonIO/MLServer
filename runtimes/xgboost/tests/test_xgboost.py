@@ -7,7 +7,7 @@ from mlserver.errors import InferenceError
 from mlserver.types import RequestInput, InferenceRequest
 
 from mlserver_xgboost import XGBoostModel
-from mlserver.models.xgboost import WELLKNOWN_MODEL_FILENAMES
+from mlserver_xgboost.xgboost import WELLKNOWN_MODEL_FILENAMES
 
 
 def test_load(model: XGBoostModel):
