@@ -10,7 +10,7 @@ PKG_PATH = os.path.join(ROOT_PATH, PKG_NAME.replace("-", "_"))
 
 def _load_version() -> str:
     version = ""
-    version_path = os.path.join(PKG_NAME, "version.py")
+    version_path = os.path.join(PKG_PATH, "version.py")
     with open(version_path) as fp:
         version_module: Dict[str, str] = {}
         exec(fp.read(), version_module)

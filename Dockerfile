@@ -8,10 +8,20 @@ RUN apt-get update && \
 
 WORKDIR /workspace
 COPY setup.py .
-# TODO: This busts the cache, which we don't want, but I can't see any
+# TODO: This busts the Docker cache, which we don't want, but I can't see any
 # way to install only deps from setup.py
 COPY ./mlserver/ ./mlserver/
-RUN pip install .[all]
+RUN pip install .
+
+COPY ./runtimes/sklearn ./runtimes/sklearn
+RUN pip install ./runtimes/sklearn
+
+COPY ./runtimes/xgboost ./runtimes/xgboost
+RUN pip install ./runtimes/xgboost
+
+COPY ./runtimes/mllib ./runtimes/mllib
+RUN pip install ./runtimes/mllib
+
 
 CMD mlserver start $MODELS_DIR
 
