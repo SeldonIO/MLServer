@@ -14,7 +14,27 @@ spec.
 You can read more about the goals of this project on the [inital design
 document](https://docs.google.com/document/d/1C2uf4SaAtwLTlBCciOhvdiKQ2Eay4U72VxAD4bXe7iU/edit?usp=sharing).
 
-## Runtimes
+## Usage
+
+You can install the `mlserver` package running:
+
+```bash
+pip install mlserver
+```
+
+Note that to use any of the optional [inference runtimes](#Inference-Runtimes),
+you'll need to install the relevant package.
+For example, to serve a `scikit-learn` model, you would need to install the
+`mlserver-sklearn` package:
+
+```bash
+pip install mlserver-sklearn
+```
+
+For further information on how to use MLServer, you can check any of the
+[available examples](#Examples).
+
+## Inference Runtimes
 
 Inference runtimes allow you to define how your model should be used within
 MLServer.
