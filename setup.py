@@ -1,7 +1,6 @@
 import os
-import itertools
 
-from typing import Dict, List
+from typing import Dict
 from setuptools import setup, find_packages
 
 ROOT_PATH = os.path.dirname(__file__)

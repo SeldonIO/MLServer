@@ -22,7 +22,7 @@ def _load_version() -> str:
 setup(
     name=PKG_NAME,
     version=_load_version(),
-    url=f"https://github.com/seldonio/mlserver.git",
+    url="https://github.com/seldonio/mlserver.git",
     author="Seldon Technologies Ltd.",
     author_email="hello@seldon.io",
     description="Spark MLlib runtime for MLServer",
