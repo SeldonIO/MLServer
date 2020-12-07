@@ -44,4 +44,5 @@ setup(
     entry_points={"console_scripts": ["mlserver=mlserver.cli:main"]},
     long_description=_load_description(),
     long_description_content_type="text/markdown",
+    license="Apache 2.0",
 )

@@ -39,4 +39,5 @@ setup(
     ],
     long_description=_load_description(),
     long_description_content_type="text/markdown",
+    license="Apache 2.0",
 )

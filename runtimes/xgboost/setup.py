@@ -36,4 +36,5 @@ setup(
     install_requires=["mlserver", "xgboost==1.1.1"],
     long_description=_load_description(),
     long_description_content_type="text/markdown",
+    license="Apache 2.0",
 )

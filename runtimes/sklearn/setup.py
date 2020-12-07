@@ -36,4 +36,5 @@ setup(
     install_requires=["mlserver", "scikit-learn==0.23.1", "joblib==0.16.0"],
     long_description=_load_description(),
     long_description_content_type="text/markdown",
+    license="Apache 2.0",
 )
