@@ -19,10 +19,16 @@ def _load_version() -> str:
     return version
 
 
+def _load_description() -> str:
+    readme_path = os.path.join(ROOT_PATH, "README.md")
+    with open(readme_path) as fp:
+        return fp.read()
+
+
 setup(
     name=PKG_NAME,
     version=_load_version(),
-    url="https://github.com/seldonio/mlserver.git",
+    url="https://github.com/SeldonIO/MLServer.git",
     author="Seldon Technologies Ltd.",
     author_email="hello@seldon.io",
     description="Spark MLlib runtime for MLServer",
@@ -31,4 +37,6 @@ setup(
         "mlserver",
         "pyspark==3.0.1",
     ],
+    long_description=_load_description(),
+    long_description_content_type="text/markdown",
 )

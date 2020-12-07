@@ -1,6 +1,8 @@
 VERSION = $(shell sed 's/^__version__ = "\(.*\)"/\1/' ./mlserver/version.py)
 IMAGE_NAME =seldonio/mlserver
 
+.PHONY: install-dev _generate generate run build push-test push test lint fmt version
+
 install-dev:
 	pip install -r requirements-dev.txt
 	pip install --editable .

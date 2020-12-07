@@ -69,3 +69,17 @@ On the list below, you can find a few examples on how you can leverage
 - [Serving a custom model](./examples/custom/README.md)
 - [Multi-Model Serving with multiple frameworks](./examples/mms/README.md)
 - [Loading / unloading models from a model repository](./examples/model-repository/README.md)
+
+## Developer Guide
+
+### Versioning
+
+Both the main `mlserver` package and the [inference runtimes
+packages](./runtimes) try to follow the same versioning schema.
+To bump the version across all of them, you can use the
+[`./hack/update-version.sh`](./hack/update-version.sh) script.
+For example:
+
+```bash
+./hack/update-version.sh 0.2.0.dev1
+```
