@@ -26,6 +26,9 @@ build:
 	python ./runtimes/xgboost/setup.py sdist bdist_wheel
 	python ./runtimes/mllib/setup.py sdist bdist_wheel
 
+clean:
+	rm -rf ./dist
+
 push-test:
 	twine upload --repository-url https://test.pypi.org/legacy/ dist/*
 
