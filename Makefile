@@ -20,7 +20,7 @@ run:
 		./tests/testdata
 
 build:
-	# docker build . -t ${IMAGE_NAME}:${VERSION}
+	docker build . -t ${IMAGE_NAME}:${VERSION}
 	python setup.py sdist bdist_wheel
 	python ./runtimes/sklearn/setup.py sdist bdist_wheel
 	python ./runtimes/xgboost/setup.py sdist bdist_wheel
