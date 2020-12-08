@@ -1,8 +1,8 @@
 {
     "name": "mnist-svm",
-    "implementation": "mlserver.models.SKLearnModel",
+    "implementation": "mlserver_sklearn.SKLearnModel",
     "parameters": {
-        "uri": "./mnist-svm.joblib"
-        "version": "v0.1.0",
+        "uri": "./mnist-svm.joblib",
+        "version": "v0.1.0"
     }
 }

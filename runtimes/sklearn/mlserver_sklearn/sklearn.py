@@ -1,20 +1,12 @@
+import joblib
+
 from typing import List
 
-from .. import types
-from ..model import MLModel
-from ..errors import InferenceError
+from mlserver import types
+from mlserver.model import MLModel
+from mlserver.errors import InferenceError
+from mlserver.utils import get_model_uri, to_ndarray
 
-from .utils import get_model_uri, to_ndarray
-
-_SKLEARN_PRESENT = False
-
-try:
-    import joblib
-
-    _SKLEARN_PRESENT = True
-except ImportError:
-    # TODO: Log warning message
-    pass
 
 PREDICT_OUTPUT = "predict"
 PREDICT_PROBA_OUTPUT = "predict_proba"

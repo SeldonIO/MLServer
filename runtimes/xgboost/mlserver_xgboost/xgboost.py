@@ -1,18 +1,9 @@
-from .. import types
-from ..model import MLModel
-from ..errors import InferenceError
+import xgboost as xgb
 
-from .utils import get_model_uri, to_ndarray
-
-_XGBOOST_PRESENT = False
-
-try:
-    import xgboost as xgb
-
-    _XGBOOST_PRESENT = True
-except ImportError:
-    # TODO: Log warning message
-    pass
+from mlserver import types
+from mlserver.model import MLModel
+from mlserver.errors import InferenceError
+from mlserver.utils import get_model_uri, to_ndarray
 
 
 WELLKNOWN_MODEL_FILENAMES = ["model.bst", "model.json"]

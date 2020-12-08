@@ -4,8 +4,8 @@ from typing import Dict
 from setuptools import setup, find_packages
 
 ROOT_PATH = os.path.dirname(__file__)
-PKG_NAME = "mlserver"
-PKG_PATH = os.path.join(ROOT_PATH, PKG_NAME)
+PKG_NAME = "mlserver-xgboost"
+PKG_PATH = os.path.join(ROOT_PATH, PKG_NAME.replace("-", "_"))
 
 
 def _load_version() -> str:
@@ -31,17 +31,9 @@ setup(
     url="https://github.com/SeldonIO/MLServer.git",
     author="Seldon Technologies Ltd.",
     author_email="hello@seldon.io",
-    description="ML server",
+    description="XGBoost runtime for MLServer",
     packages=find_packages(),
-    install_requires=[
-        "grpcio==1.33.2",
-        "protobuf==3.14.0",
-        "fastapi==0.62.0",
-        "uvicorn==0.12.3",
-        "orjson==3.4.4",
-        "click==7.1.2",
-    ],
-    entry_points={"console_scripts": ["mlserver=mlserver.cli:main"]},
+    install_requires=["mlserver", "xgboost==1.1.1"],
     long_description=_load_description(),
     long_description_content_type="text/markdown",
     license="Apache 2.0",

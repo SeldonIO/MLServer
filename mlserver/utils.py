@@ -2,9 +2,9 @@ import os
 
 from typing import List
 
-from ..types import RequestInput
-from ..settings import ModelSettings
-from ..errors import InvalidModelURI
+from .types import RequestInput
+from .settings import ModelSettings
+from .errors import InvalidModelURI
 
 try:
     import numpy as np

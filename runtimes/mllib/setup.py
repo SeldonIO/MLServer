@@ -5,12 +5,12 @@ from setuptools import setup, find_packages
 
 ROOT_PATH = os.path.dirname(__file__)
 PKG_NAME = "mlserver-mllib"
-PKG_PATH = os.path.join(ROOT_PATH, PKG_NAME)
+PKG_PATH = os.path.join(ROOT_PATH, PKG_NAME.replace("-", "_"))
 
 
 def _load_version() -> str:
     version = ""
-    version_path = os.path.join(PKG_NAME, "version.py")
+    version_path = os.path.join(PKG_PATH, "version.py")
     with open(version_path) as fp:
         version_module: Dict[str, str] = {}
         exec(fp.read(), version_module)
@@ -19,17 +19,25 @@ def _load_version() -> str:
     return version
 
 
+def _load_description() -> str:
+    readme_path = os.path.join(ROOT_PATH, "README.md")
+    with open(readme_path) as fp:
+        return fp.read()
+
+
 setup(
     name=PKG_NAME,
     version=_load_version(),
-    url=f"https://github.com/seldonio/{PKG_NAME}.git",
+    url="https://github.com/SeldonIO/MLServer.git",
     author="Seldon Technologies Ltd.",
     author_email="hello@seldon.io",
-    description="ML server",
+    description="Spark MLlib runtime for MLServer",
     packages=find_packages(),
     install_requires=[
         "mlserver",
         "pyspark==3.0.1",
     ],
-    entry_points={"console_scripts": ["mlserver-mllib=mlserver.cli:main"]},
+    long_description=_load_description(),
+    long_description_content_type="text/markdown",
+    license="Apache 2.0",
 )
