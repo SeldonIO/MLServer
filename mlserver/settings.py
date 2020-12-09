@@ -16,6 +16,7 @@ class Settings(BaseSettings):
 
     # Model repository folder
     model_repository_root: str = "."
+    load_models_at_startup: bool = True
 
     # Server metadata
     server_name: str = "mlserver"
