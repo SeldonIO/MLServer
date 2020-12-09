@@ -31,9 +31,11 @@ async def load_settings(folder: str = None) -> Tuple[Settings, List[MLModel]]:
     if folder is not None:
         settings.model_repository_root = folder
 
-    repository = ModelRepository(settings.model_repository_root)
-    available_models = await repository.list()
-    models = [_init_model(model) for model in available_models]
+    models = []
+    if settings.load_models_at_startup:
+        repository = ModelRepository(settings.model_repository_root)
+        available_models = await repository.list()
+        models = [_init_model(model) for model in available_models]
 
     return settings, models
 
