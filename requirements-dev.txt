@@ -18,4 +18,4 @@ black==20.8b1
 twine==3.2.0
 
 # Fetch licenses
-pip-licenses==3.0.0
+pip-licenses==3.1.0
