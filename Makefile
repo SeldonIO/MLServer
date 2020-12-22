@@ -9,6 +9,7 @@ install-dev:
 	pip install --editable ./runtimes/sklearn
 	pip install --editable ./runtimes/xgboost
 	pip install --editable ./runtimes/mllib
+	pip install --editable ./runtimes/lightgbm
 
 _generate: # "private" target to call `fmt` after `generate`
 	./hack/generate-types.sh
@@ -25,6 +26,7 @@ build:
 	python ./runtimes/sklearn/setup.py sdist bdist_wheel
 	python ./runtimes/xgboost/setup.py sdist bdist_wheel
 	python ./runtimes/mllib/setup.py sdist bdist_wheel
+	python ./runtimes/lightgbm/setup.py sdist bdist_wheel
 
 clean:
 	rm -rf ./dist
@@ -59,4 +61,3 @@ fmt:
 
 version:
 	@echo ${VERSION}
-  

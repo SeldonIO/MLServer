@@ -24,7 +24,9 @@ RUN pip install ./runtimes/xgboost
 COPY ./runtimes/mllib ./runtimes/mllib
 RUN pip install ./runtimes/mllib
 
+COPY ./runtimes/lightgbm ./runtimes/lightgbm
+RUN pip install ./runtimes/lightgbm
+
 COPY ./licenses/license.txt .
 
 CMD mlserver start $MODELS_DIR
-

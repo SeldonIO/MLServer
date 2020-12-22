@@ -38,11 +38,13 @@
 "joblib","BSD License"
 "jsonschema","MIT License"
 "keyring","Python Software Foundation License
+"lightgbm", "MIT License" 
 "mccabe","MIT License"
 "mlserver","Apache 2.0"
 "mlserver-mllib","Apache 2.0"
 "mlserver-sklearn","Apache 2.0"
 "mlserver-xgboost","Apache 2.0"
+"mlserver-lightgbm","Apache 2.0"
 "mypy","MIT License"
 "mypy-extensions","MIT License"
 "mypy-protobuf","Apache License 2.0"
