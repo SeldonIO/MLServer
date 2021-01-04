@@ -1,6 +1,6 @@
 # Code generation
 grpcio-tools==1.34.0
-datamodel-code-generator==0.6.9
+datamodel-code-generator==0.6.16
 
 # Testing
 pytest==6.2.0
