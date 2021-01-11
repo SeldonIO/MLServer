@@ -21,27 +21,27 @@ run:
 		./tests/testdata
 
 build:
-	# docker build . -t ${IMAGE_NAME}:${VERSION}
+	docker build . -t ${IMAGE_NAME}:${VERSION}
 	python setup.py sdist bdist_wheel
 	cd ./runtimes/sklearn && \
-		python setup.py sdist bdist_wheel \
-		--dist-dir ../../ \
-		--bdist-dir ../../
+		python setup.py \
+		sdist -d ../../dist \
+		bdist_wheel -d ../../dist 
 	cd ./runtimes/xgboost && \
-		python setup.py sdist bdist_wheel \
-		--dist-dir ../../ \
-		--bdist-dir ../../
+		python setup.py \
+		sdist -d ../../dist \
+		bdist_wheel -d ../../dist 
 	cd ./runtimes/mllib && \
-		python setup.py sdist bdist_wheel \
-		--dist-dir ../../ \
-		--bdist-dir ../../
+		python setup.py \
+		sdist -d ../../dist \
+		bdist_wheel -d ../../dist 
 	cd ./runtimes/lightgbm && \
-		python setup.py sdist bdist_wheel \
-		--dist-dir ../../ \
-		--bdist-dir ../../
+		python setup.py \
+		sdist -d ../../dist \
+		bdist_wheel -d ../../dist 
 
 clean:
-	rm -rf ./dist
+	rm -rf ./dist ./build
 
 push-test:
 	twine upload --repository-url https://test.pypi.org/legacy/ dist/*
