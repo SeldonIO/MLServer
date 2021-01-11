@@ -21,12 +21,24 @@ run:
 		./tests/testdata
 
 build:
-	docker build . -t ${IMAGE_NAME}:${VERSION}
+	# docker build . -t ${IMAGE_NAME}:${VERSION}
 	python setup.py sdist bdist_wheel
-	python ./runtimes/sklearn/setup.py sdist bdist_wheel
-	python ./runtimes/xgboost/setup.py sdist bdist_wheel
-	python ./runtimes/mllib/setup.py sdist bdist_wheel
-	python ./runtimes/lightgbm/setup.py sdist bdist_wheel
+	cd ./runtimes/sklearn && \
+		python setup.py sdist bdist_wheel \
+		--dist-dir ../../ \
+		--bdist-dir ../../
+	cd ./runtimes/xgboost && \
+		python setup.py sdist bdist_wheel \
+		--dist-dir ../../ \
+		--bdist-dir ../../
+	cd ./runtimes/mllib && \
+		python setup.py sdist bdist_wheel \
+		--dist-dir ../../ \
+		--bdist-dir ../../
+	cd ./runtimes/lightgbm && \
+		python setup.py sdist bdist_wheel \
+		--dist-dir ../../ \
+		--bdist-dir ../../
 
 clean:
 	rm -rf ./dist
