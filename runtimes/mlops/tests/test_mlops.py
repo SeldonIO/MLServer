@@ -7,8 +7,6 @@ from mlserver.utils import to_ndarray
 
 from mlserver_mlops import MLOpsModel
 
-from .conftest import SumPipeline
-
 
 def test_load(model: MLOpsModel):
     assert model.ready
@@ -28,7 +26,7 @@ async def test_multiple_inputs_error(
 
 
 async def test_predict(
-    model: MLOpsModel, inference_request: InferenceRequest, pipeline: SumPipeline
+    model: MLOpsModel, inference_request: InferenceRequest, pipeline
 ):
     res = await model.predict(inference_request)
 
