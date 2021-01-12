@@ -36,8 +36,7 @@ setup(
     install_requires=[
         "mlserver",
         # TODO: Change once package is published
-        # This needs to be installed manually
-        #  "git+ssh://git@github.com/SeldonIO/mlops#egg=mlops",
+        "mlops @ git+ssh://git@github.com/SeldonIO/mlops#egg=mlops",
     ],
     long_description=_load_description(),
     long_description_content_type="text/markdown",
