@@ -1,17 +1,12 @@
 import os
 import pytest
-import pickle
+import cloudpickle
 import numpy as np
 
 from mlserver.settings import ModelSettings, ModelParameters
 from mlserver.types import InferenceRequest, RequestInput
 
 from mlserver_mlops import MLOpsModel
-
-
-class SumPipeline(object):
-    def pipeline(self, request: np.array) -> np.array:
-        return np.array([request.sum()])
 
 
 def pytest_collection_modifyitems(items):
@@ -23,15 +18,23 @@ def pytest_collection_modifyitems(items):
 
 
 @pytest.fixture
-def pipeline() -> SumPipeline:
-    return SumPipeline()
+def pipeline():
+    # NOTE: We define the class inside the scope of the fixture to make sure
+    # that the serialisation works correctly.
+    # This way, we simulate a remote host, without access to the actual class
+    # definition.
+    class _SumPipeline(object):
+        def pipeline(self, request: np.array) -> np.array:
+            return np.array([request.sum()])
+
+    return _SumPipeline()
 
 
 @pytest.fixture
-def pipeline_uri(pipeline: SumPipeline, tmp_path: str) -> str:
+def pipeline_uri(pipeline, tmp_path: str) -> str:
     file_path = os.path.join(tmp_path, "sum-pipeline.pickle")
     with open(file_path, "wb") as file:
-        pickle.dump(pipeline, file)
+        cloudpickle.dump(pipeline, file)
 
     return file_path
 
