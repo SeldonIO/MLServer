@@ -1,4 +1,4 @@
-import pickle
+import cloudpickle
 
 from mlserver import MLModel
 from mlserver.errors import InferenceError
@@ -11,7 +11,7 @@ class MLOpsModel(MLModel):
         pipeline_uri = await get_model_uri(self._settings)
 
         with open(pipeline_uri, "rb") as pipeline_raw:
-            self._pipeline = pickle.load(pipeline_raw)
+            self._pipeline = cloudpickle.load(pipeline_raw)
 
         self.ready = True
         return self.ready
