@@ -1,0 +1,7 @@
+{
+    "name": "mlops-pipeline",
+    "implementation": "mlserver_mlops.MLOpsModel",
+    "parameters": {
+        "uri": "./mlops-pipeline.pickle"
+    }
+}
