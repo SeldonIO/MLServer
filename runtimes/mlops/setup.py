@@ -36,8 +36,8 @@ setup(
     install_requires=[
         "mlserver",
         # TODO: Change once package is published
-        "mlops @ git+ssh://git@github.com/SeldonIO/mlops#egg=mlops",
-        "cloudpickle==1.6.0",
+        #  "mlops @ git+ssh://git@github.com/SeldonIO/mlops#egg=mlops",
+        "mlops @ git+ssh://git@github.com/adriangonz/mlops@refactor-model-server#egg=mlops",
     ],
     long_description=_load_description(),
     long_description_content_type="text/markdown",

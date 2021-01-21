@@ -1,6 +1,7 @@
 import inspect
 import pytest
 
+from mlops.serve.pipeline import Pipeline
 from mlserver.types import InferenceRequest, RequestInput
 from mlserver.errors import InferenceError
 from mlserver.utils import to_ndarray
@@ -10,8 +11,7 @@ from mlserver_mlops import MLOpsModel
 
 def test_load(model: MLOpsModel):
     assert model.ready
-    assert hasattr(model._pipeline, "pipeline")
-    assert inspect.ismethod(model._pipeline.pipeline)
+    assert isinstance(model._pipeline, Pipeline)
 
 
 async def test_multiple_inputs_error(
@@ -26,14 +26,14 @@ async def test_multiple_inputs_error(
 
 
 async def test_predict(
-    model: MLOpsModel, inference_request: InferenceRequest, pipeline
+    model: MLOpsModel, inference_request: InferenceRequest, inference_pipeline: Pipeline
 ):
     res = await model.predict(inference_request)
 
     assert len(res.outputs) == 1
 
     pipeline_input = to_ndarray(inference_request.inputs[0])
-    expected_output = pipeline.pipeline(pipeline_input)
+    expected_output = await inference_pipeline(pipeline_input)
 
     pipeline_output = res.outputs[0].data
 
