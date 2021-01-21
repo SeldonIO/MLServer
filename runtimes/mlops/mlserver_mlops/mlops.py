@@ -1,4 +1,4 @@
-import cloudpickle
+from mlops.serve.pipeline import Pipeline
 
 from mlserver import MLModel
 from mlserver.errors import InferenceError
@@ -10,8 +10,7 @@ class MLOpsModel(MLModel):
     async def load(self) -> bool:
         pipeline_uri = await get_model_uri(self._settings)
 
-        with open(pipeline_uri, "rb") as pipeline_raw:
-            self._pipeline = cloudpickle.load(pipeline_raw)
+        self._pipeline = Pipeline.load(pipeline_uri)
 
         self.ready = True
         return self.ready
@@ -25,7 +24,7 @@ class MLOpsModel(MLModel):
         model_input = payload.inputs[0]
         input_data = to_ndarray(model_input)
 
-        prediction = self._pipeline.pipeline(input_data)
+        prediction = await self._pipeline(input_data)
 
         # TODO: Set datatype (cast from numpy?)
         return InferenceResponse(
