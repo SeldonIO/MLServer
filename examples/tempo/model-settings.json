@@ -1,7 +1,7 @@
 {
-  "name": "mlops-pipeline",
-  "implementation": "mlserver_tempo.TempoModel",
-  "parameters": {
-    "uri": "./inference-pipeline.pickle"
-  }
+    "name": "tempo-pipeline",
+    "implementation": "mlserver_tempo.TempoModel",
+    "parameters": {
+        "uri": "./inference-pipeline.pickle"
+    }
 }
