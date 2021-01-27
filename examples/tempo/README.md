@@ -1,26 +1,26 @@
-# Running a MLOps pipeline in MLServer
+# Running a Tempo pipeline in MLServer
 
-This example walks you through how to create and serialise a [MLOps pipeline](https://github.com/SeldonIO/mlops), which can then be served through MLServer.
+This example walks you through how to create and serialise a [Tempo pipeline](https://github.com/SeldonIO/tempo), which can then be served through MLServer.
 This pipeline can contain custom Python arbitrary code.
 
 ## Creating the pipeline
 
-The first step will be to create our MLOps pipeline.
+The first step will be to create our Tempo pipeline.
 
 
 ```python
 import numpy as np
 import os
 
-from mlops.serve.metadata import (
+from tempo.serve.metadata import (
     ModelFramework,
     MetadataTensorParameters,
     MetadataTensor,
 )
-from mlops.serve.model import Model
-from mlops.serve.pipeline import Pipeline
-from mlops.serve.utils import pipeline
-from mlops.seldon.docker import SeldonDockerRuntime
+from tempo.serve.model import Model
+from tempo.serve.pipeline import Pipeline
+from tempo.serve.utils import pipeline
+from tempo.seldon.docker import SeldonDockerRuntime
 
 MODELS_PATH = os.path.join(os.getcwd(), 'models')
 
@@ -80,8 +80,8 @@ This configuration file will hold the configuration specific to our MLOps pipeli
 ```python
 %%writefile ./model-settings.json
 {
-    "name": "mlops-pipeline",
-    "implementation": "mlserver_mlops.MLOpsModel",
+    "name": "tempo-pipeline",
+    "implementation": "mlserver_tempo.TempoModel",
     "parameters": {
         "uri": "./inference-pipeline.pickle"
     }
