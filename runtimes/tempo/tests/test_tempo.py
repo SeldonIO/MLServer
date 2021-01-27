@@ -1,21 +1,20 @@
-import inspect
 import pytest
 
-from mlops.serve.pipeline import Pipeline
+from tempo.serve.pipeline import Pipeline
 from mlserver.types import InferenceRequest, RequestInput
 from mlserver.errors import InferenceError
 from mlserver.utils import to_ndarray
 
-from mlserver_mlops import MLOpsModel
+from mlserver_tempo import TempoModel
 
 
-def test_load(model: MLOpsModel):
+def test_load(model: TempoModel):
     assert model.ready
     assert isinstance(model._pipeline, Pipeline)
 
 
 async def test_multiple_inputs_error(
-    model: MLOpsModel, inference_request: InferenceRequest
+    model: TempoModel, inference_request: InferenceRequest
 ):
     inference_request.inputs.append(
         RequestInput(name="input-1", shape=[2], data=[0, 1], datatype="FP32")
@@ -26,7 +25,7 @@ async def test_multiple_inputs_error(
 
 
 async def test_predict(
-    model: MLOpsModel, inference_request: InferenceRequest, inference_pipeline: Pipeline
+    model: TempoModel, inference_request: InferenceRequest, inference_pipeline: Pipeline
 ):
     res = await model.predict(inference_request)
 

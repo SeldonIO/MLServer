@@ -1,4 +1,4 @@
-from mlops.serve.pipeline import Pipeline
+from tempo.serve.pipeline import Pipeline
 
 from mlserver import MLModel
 from mlserver.errors import InferenceError
@@ -6,7 +6,7 @@ from mlserver.utils import get_model_uri, to_ndarray
 from mlserver.types import InferenceRequest, InferenceResponse, ResponseOutput
 
 
-class MLOpsModel(MLModel):
+class TempoModel(MLModel):
     async def load(self) -> bool:
         pipeline_uri = await get_model_uri(self._settings)
 
@@ -16,15 +16,9 @@ class MLOpsModel(MLModel):
         return self.ready
 
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
-        # TODO: Call `.pipeline()`
-
         payload = self._check_request(payload)
 
-        # Convert to ndarray
-        model_input = payload.inputs[0]
-        input_data = to_ndarray(model_input)
-
-        prediction = await self._pipeline(input_data)
+        prediction = await self._pipeline.request(payload)
 
         # TODO: Set datatype (cast from numpy?)
         return InferenceResponse(
@@ -43,7 +37,7 @@ class MLOpsModel(MLModel):
     def _check_request(self, payload: InferenceRequest) -> InferenceRequest:
         if len(payload.inputs) != 1:
             raise InferenceError(
-                "MLOpsModel only supports a single input tensor "
+                "TempoModel only supports a single input tensor "
                 f"({len(payload.inputs)} were received)"
             )
 
