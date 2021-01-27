@@ -4,7 +4,7 @@ from typing import Dict
 from setuptools import setup, find_packages
 
 ROOT_PATH = os.path.dirname(__file__)
-PKG_NAME = "mlserver-mlops"
+PKG_NAME = "mlserver-tempo"
 PKG_PATH = os.path.join(ROOT_PATH, PKG_NAME.replace("-", "_"))
 
 
@@ -36,8 +36,7 @@ setup(
     install_requires=[
         "mlserver",
         # TODO: Change once package is published
-        #  "mlops @ git+ssh://git@github.com/SeldonIO/mlops#egg=mlops",
-        "mlops @ git+ssh://git@github.com/adriangonz/mlops@refactor-model-server#egg=mlops",
+        "tempo @ git+ssh://git@github.com/SeldonIO/tempo#egg=tempo",
     ],
     long_description=_load_description(),
     long_description_content_type="text/markdown",

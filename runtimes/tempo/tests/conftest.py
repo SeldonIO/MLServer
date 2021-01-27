@@ -2,12 +2,12 @@ import os
 import pytest
 import numpy as np
 
-from mlops.serve.pipeline import Pipeline
-from mlops.serve.utils import pipeline
+from tempo.serve.pipeline import Pipeline
+from tempo.serve.utils import pipeline
 from mlserver.settings import ModelSettings, ModelParameters
 from mlserver.types import InferenceRequest, RequestInput
 
-from mlserver_mlops import MLOpsModel
+from mlserver_tempo import TempoModel
 
 
 def pytest_collection_modifyitems(items):
@@ -57,8 +57,8 @@ def inference_request() -> InferenceRequest:
 
 
 @pytest.fixture
-async def model(model_settings: ModelSettings) -> MLOpsModel:
-    model = MLOpsModel(model_settings)
+async def model(model_settings: ModelSettings) -> TempoModel:
+    model = TempoModel(model_settings)
     await model.load()
 
     return model
