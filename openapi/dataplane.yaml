@@ -3,6 +3,8 @@ info:
   title: Data Plane
   version: '2.0'
   description: 'https://github.com/kubeflow/kfserving/blob/master/docs/predict-api/v2/required_api.md'
+  license:
+    name: Apache 2.0
 servers: []
 paths:
   /v2/health/live:
@@ -37,7 +39,9 @@ paths:
     get:
       summary: Model Ready
       tags: []
-      responses: {}
+      responses:
+        '200':
+          description: OK
       operationId: get-v2-models-$-modelName-versions-$-modelVersion-ready
       description: The “model ready” health API indicates if a specific model is ready for inferencing. The model name and (optionally) version must be available in the URL. If a version is not provided the server may choose a version based on its own policies.
   /v2/:
