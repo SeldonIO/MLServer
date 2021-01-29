@@ -1,5 +1,5 @@
 {
-    "name": "tempo-pipeline",
+    "name": "inference-pipeline",
     "implementation": "mlserver_tempo.TempoModel",
     "parameters": {
         "uri": "./inference-pipeline.pickle"
