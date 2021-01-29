@@ -2,8 +2,8 @@ from tempo.serve.pipeline import Pipeline
 
 from mlserver import MLModel
 from mlserver.errors import InferenceError
-from mlserver.utils import get_model_uri, to_ndarray
-from mlserver.types import InferenceRequest, InferenceResponse, ResponseOutput
+from mlserver.utils import get_model_uri
+from mlserver.types import InferenceRequest, InferenceResponse
 
 
 class TempoModel(MLModel):
