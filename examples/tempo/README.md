@@ -12,49 +12,41 @@ The first step will be to create our Tempo pipeline.
 import numpy as np
 import os
 
-from tempo.serve.metadata import (
-    ModelFramework,
-    MetadataTensorParameters,
-    MetadataTensor,
-)
+from tempo.serve.metadata import ModelFramework
 from tempo.serve.model import Model
 from tempo.serve.pipeline import Pipeline
 from tempo.serve.utils import pipeline
 from tempo.seldon.docker import SeldonDockerRuntime
+from tempo.kfserving.protocol import KFServingV2Protocol
+
 
 MODELS_PATH = os.path.join(os.getcwd(), 'models')
 
 docker_runtime = SeldonDockerRuntime()
-model_outputs = [
-    MetadataTensor(
-        name="output-0",
-        datatype="FP32",
-        shape=[2, 3],
-        parameters=MetadataTensorParameters(ext_datatype=np.ndarray),
-    )
-]
 
 sklearn_iris_path = os.path.join(MODELS_PATH, 'sklearn-iris')
 sklearn_model = Model(
     name="test-iris-sklearn",
     runtime=docker_runtime,
-    framework=ModelFramework.SKLearn,
+    platform=ModelFramework.SKLearn,
     uri="gs://seldon-models/sklearn/iris",
     local_folder=sklearn_iris_path,
-    outputs=model_outputs
 )
 
 xgboost_iris_path = os.path.join(MODELS_PATH, 'xgboost-iris')
 xgboost_model = Model(
     name="test-iris-xgboost",
     runtime=docker_runtime,
-    framework=ModelFramework.XGBoost,
+    platform=ModelFramework.XGBoost,
     uri="gs://seldon-models/xgboost/iris",
     local_folder=xgboost_iris_path,
-    outputs=model_outputs
 )
 
-@pipeline(name="inference-pipeline", models=[sklearn_model, xgboost_model])
+@pipeline(
+    name="inference-pipeline",
+    models=[sklearn_model, xgboost_model],
+    runtime=SeldonDockerRuntime(protocol=KFServingV2Protocol("inference-pipeline"))
+)
 def inference_pipeline(payload: np.ndarray) -> np.ndarray:
     res1 = sklearn_model(payload)
     if res1[0][0] > 0.7:
@@ -80,7 +72,7 @@ This configuration file will hold the configuration specific to our MLOps pipeli
 ```python
 %%writefile ./model-settings.json
 {
-    "name": "tempo-pipeline",
+    "name": "inference-pipeline",
     "implementation": "mlserver_tempo.TempoModel",
     "parameters": {
         "uri": "./inference-pipeline.pickle"
@@ -132,7 +124,7 @@ inference_request = {
     ]
 }
 
-endpoint = "http://localhost:8080/v2/models/mlops-pipeline/infer"
+endpoint = "http://localhost:8080/v2/models/inference-pipeline/infer"
 response = requests.post(endpoint, json=inference_request)
 
 response.json()
