@@ -4,6 +4,9 @@ import numpy as np
 
 from tempo.serve.pipeline import Pipeline
 from tempo.serve.utils import pipeline
+from tempo.seldon.docker import SeldonDockerRuntime
+from tempo.kfserving.protocol import KFServingV2Protocol
+
 from mlserver.settings import ModelSettings, ModelParameters
 from mlserver.types import InferenceRequest, RequestInput
 
@@ -24,9 +27,15 @@ def inference_pipeline() -> Pipeline:
     # that the serialisation works correctly.
     # This way, we simulate a remote host, without access to the actual class
     # definition.
-    @pipeline(name="inference-pipeline")
+    protocol = KFServingV2Protocol(model_name="test")
+    runtime = SeldonDockerRuntime(protocol)
+
+    @pipeline(
+        name="inference-pipeline",
+        runtime=runtime,
+    )
     def _pipeline(payload: np.ndarray) -> np.ndarray:
-        return payload.sum()
+        return payload.sum(keepdims=True)
 
     return _pipeline
 

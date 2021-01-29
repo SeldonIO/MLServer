@@ -32,7 +32,7 @@ async def test_predict(
     assert len(res.outputs) == 1
 
     pipeline_input = to_ndarray(inference_request.inputs[0])
-    expected_output = await inference_pipeline(pipeline_input)
+    expected_output = inference_pipeline(pipeline_input)
 
     pipeline_output = res.outputs[0].data
 

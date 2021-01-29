@@ -18,21 +18,10 @@ class TempoModel(MLModel):
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
         payload = self._check_request(payload)
 
-        prediction = await self._pipeline.request(payload)
+        payload_dict = payload.dict()
+        prediction = self._pipeline.request(payload_dict)
 
-        # TODO: Set datatype (cast from numpy?)
-        return InferenceResponse(
-            model_name=self.name,
-            model_version=self.version,
-            outputs=[
-                ResponseOutput(
-                    name="predict",
-                    shape=prediction.shape,
-                    datatype="FP32",
-                    data=prediction.tolist(),
-                )
-            ],
-        )
+        return InferenceResponse(**prediction)
 
     def _check_request(self, payload: InferenceRequest) -> InferenceRequest:
         if len(payload.inputs) != 1:
