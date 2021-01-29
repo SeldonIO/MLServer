@@ -59,6 +59,7 @@ The included runtimes are:
 | XGBoost      | `mlserver-xgboost` | `mlserver_xgboost.XGBoostModel` | [XGBoost example](./examples/xgboost/README.md)      | [`./runtimes/xgboost`](./runtimes/xgboost) |
 | Spark MLlib  | `mlserver-mllib`   | `mlserver_mllib.MLlibModel`     | Coming Soon                                          | [`./runtimes/mllib`](./runtimes/mllib)     |
 | LightGBM | `mlserver-lightgbm`   | `mlserver_lightgbm.LightGBMModel`     | Coming Soon                                          | [`./runtimes/lightgbm`](./runtimes/lightgbm)   |
+| Tempo | `mlserver-tempo`   | `mlserver_tempo.TempoModel`     | [Tempo example](./examples/tempo/README.md)                                          | [`./runtimes/tempo`](./runtimes/tempo)   |
 
 ## Examples
 
@@ -68,6 +69,7 @@ On the list below, you can find a few examples on how you can leverage
 - [Serving a `scikit-learn` model](./examples/sklearn/README.md)
 - [Serving a `xgboost` model](./examples/xgboost/README.md)
 - [Serving a `lightgbm` model](./examples/lightgbm/README.md)
+- [Serving a `tempo` pipeline](./examples/tempo/README.md)
 - [Serving a custom model](./examples/custom/README.md)
 - [Multi-Model Serving with multiple frameworks](./examples/mms/README.md)
 - [Loading / unloading models from a model repository](./examples/model-repository/README.md)

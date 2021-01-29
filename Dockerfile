@@ -24,6 +24,9 @@ RUN for _runtime in ./runtimes/*; \
     pip install $_runtime; \
     done
 
+COPY ./runtimes/tempo ./runtimes/tempo
+RUN pip install ./runtimes/tempo
+
 COPY ./licenses/license.txt .
 
 COPY ./hack/activate-env.sh ./hack/activate-env.sh
