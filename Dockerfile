@@ -1,6 +1,7 @@
 FROM python:3.7-slim
 
 ENV MODELS_DIR /mnt/models
+ENV ENV_TARBALL $MODELS_DIR/environment.tar.gz
 
 RUN apt-get update && \
     apt-get -y --no-install-recommends install \
@@ -23,4 +24,7 @@ RUN for _runtime in ./runtimes/*; \
 
 COPY ./licenses/license.txt .
 
-CMD mlserver start $MODELS_DIR
+COPY ./hack/activate-env.sh ./hack/activate-env.sh
+
+CMD ./hack/activate-env.sh \
+    && mlserver start $MODELS_DIR
