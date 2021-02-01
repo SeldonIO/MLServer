@@ -1,7 +1,9 @@
 from mlserver import MLModel, types
+from mlserver.utils import get_model_uri
 from mlserver.errors import InferenceError
-from .utils import get_mllib_load
 from pyspark import SparkContext, SparkConf
+
+from .utils import get_mllib_load
 
 
 class MLlibModel(MLModel):
@@ -11,7 +13,7 @@ class MLlibModel(MLModel):
         conf = SparkConf().set("spark.driver.host", "127.0.0.1")
         sc = SparkContext(appName="MLlibModel", conf=conf)
 
-        model_uri = self._settings.parameters.uri
+        model_uri = await get_model_uri(self._settings)
         model_load = await get_mllib_load(self._settings)
 
         self._model = model_load(sc, model_uri)

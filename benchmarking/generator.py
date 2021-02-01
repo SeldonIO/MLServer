@@ -6,7 +6,7 @@ import json
 import numpy as np
 
 from typing import List
-from google.protobuf.internal.encoder import _VarintBytes
+from google.protobuf.internal.encoder import _VarintBytes  # type: ignore
 from mlserver import types
 from mlserver.grpc import converters
 
