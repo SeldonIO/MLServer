@@ -5,13 +5,14 @@ import numpy as np
 from typing import Dict
 from jax import random
 from mlserver import MLModel, types
+from mlserver.utils import get_model_uri
 from numpyro.infer import Predictive
 from numpyro import distributions as dist
 
 
 class NumpyroModel(MLModel):
     async def load(self) -> bool:
-        model_uri = self._settings.parameters.uri
+        model_uri = await get_model_uri(self._settings)
         with open(model_uri) as model_file:
             raw_samples = json.load(model_file)
 

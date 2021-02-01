@@ -55,7 +55,13 @@ test:
 
 lint: generate
 	flake8 .
-	mypy .
+	mypy ./mlserver
+	mypy ./runtimes/sklearn
+	mypy ./runtimes/xgboost
+	mypy ./runtimes/mllib
+	mypy ./runtimes/lightgbm
+	mypy ./benchmarking
+	mypy ./examples
 	# Check if something has changed after generation
 	git \
 		--no-pager diff \

@@ -58,7 +58,7 @@ class LightGBMModel(MLModel):
             model_input = payload.inputs[0]
             array_data = to_ndarray(model_input)
 
-            model_input.parameters = {"data": array_data}
+            model_input.parameters = {"data": array_data}  # type: ignore
         except Exception as e:
             # There are a few things that can go wrong here, e.g. less than 2-D
             # in the array), or input data not compatible with a numpy array
