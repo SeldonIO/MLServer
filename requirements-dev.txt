@@ -5,7 +5,7 @@ datamodel-code-generator==0.6.17
 # Testing
 pytest==6.2.0
 pytest-asyncio==0.14.0
-tox==3.21.0
+tox==3.21.3
 
 # Linting and formatting
 flake8==3.8.3
