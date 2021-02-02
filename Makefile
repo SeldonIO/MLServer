@@ -42,6 +42,11 @@ build:
 
 clean:
 	rm -rf ./dist ./build
+	for _runtime in ./runtimes/*; \
+	do \
+		rm -rf $$_runtime/dist; \
+		rm -rf $$_runtime/build; \
+	done
 
 push-test:
 	twine upload --repository-url https://test.pypi.org/legacy/ dist/*
