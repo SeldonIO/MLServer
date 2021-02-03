@@ -1,7 +1,7 @@
 FROM python:3.7-slim
 
-ENV MLSERVER_MODELS_DIR /mnt/models
-ENV MLSERVER_ENV_TARBALL $MODELS_DIR/environment.tar.gz
+ENV MLSERVER_MODELS_DIR=/mnt/models
+ENV MLSERVER_ENV_TARBALL=$MODELS_DIR/environment.tar.gz
 
 SHELL ["/bin/bash", "-c"]
 
@@ -29,5 +29,5 @@ COPY ./licenses/license.txt .
 COPY ./hack/activate-env.sh ./hack/activate-env.sh
 
 # Need to source `activate-env.sh` so that env changes get persisted
-CMD . ./hack/activate-env.sh $ENV_TARBALL \
-    && mlserver start $MODELS_DIR
+CMD . ./hack/activate-env.sh $MLSERVER_ENV_TARBALL \
+    && mlserver start $MLSERVER_MODELS_DIR

@@ -35,12 +35,11 @@ _unpackEnv() {
 _main() {
   local _envTarball=$1
 
-  if [[ ! -f $_envTarball ]]; then
+  if [[ -f $_envTarball ]]; then
+    _unpackEnv $_envTarball
+  else
     echo "Environment tarball not found at '$_envTarball'"
-    exit 0
   fi
-
-  _unpackEnv $_envTarball
 }
 
 _main $1
