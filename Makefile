@@ -6,10 +6,10 @@ IMAGE_NAME =seldonio/mlserver
 install-dev:
 	pip install -r requirements-dev.txt
 	pip install --editable .
-	pip install --editable ./runtimes/sklearn
-	pip install --editable ./runtimes/xgboost
-	pip install --editable ./runtimes/mllib
-	pip install --editable ./runtimes/lightgbm
+	for _runtime in ./runtimes/*; \
+	do \
+		pip install --editable $$_runtime; \
+	done
 
 _generate: # "private" target to call `fmt` after `generate`
 	./hack/generate-types.sh
@@ -23,22 +23,13 @@ run:
 build:
 	docker build . -t ${IMAGE_NAME}:${VERSION}
 	python setup.py sdist bdist_wheel
-	cd ./runtimes/sklearn && \
-		python setup.py \
-		sdist -d ../../dist \
-		bdist_wheel -d ../../dist 
-	cd ./runtimes/xgboost && \
-		python setup.py \
-		sdist -d ../../dist \
-		bdist_wheel -d ../../dist 
-	cd ./runtimes/mllib && \
-		python setup.py \
-		sdist -d ../../dist \
-		bdist_wheel -d ../../dist 
-	cd ./runtimes/lightgbm && \
-		python setup.py \
-		sdist -d ../../dist \
-		bdist_wheel -d ../../dist 
+	for _runtime in ./runtimes/*; \
+	do \
+		cd $$_runtime && \
+			python setup.py \
+			sdist -d ../../dist \
+			bdist_wheel -d ../../dist; \
+	done
 
 clean:
 	rm -rf ./dist ./build
@@ -61,10 +52,10 @@ test:
 lint: generate
 	flake8 .
 	mypy ./mlserver
-	mypy ./runtimes/sklearn
-	mypy ./runtimes/xgboost
-	mypy ./runtimes/mllib
-	mypy ./runtimes/lightgbm
+	for _runtime in ./runtimes/*; \
+	do \
+		mypy $$_runtime; \
+	done
 	mypy ./benchmarking
 	mypy ./examples
 	# Check if something has changed after generation
