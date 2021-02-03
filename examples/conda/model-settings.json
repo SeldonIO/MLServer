@@ -1,0 +1,4 @@
+{
+    "name": "mnist-svm",
+    "implementation": "mlserver_sklearn.SKLearnModel"
+}

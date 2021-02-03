@@ -38,3 +38,7 @@ benchmarking/profiles/
 
 # Bundle folders
 _bundle
+
+# Conda-packed environment
+old-sklearn.tar.gz
+
