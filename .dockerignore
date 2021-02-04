@@ -1,12 +1,35 @@
-__pycache__
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
 *.pyc
 *.pyo
 *.pyd
+bin
+
+# Mac file system
+**/.DS_Store
+
+# Python dev
+__pycache__
 .Python
 env
 pip-log.txt
 pip-delete-this-directory.txt
+.mypy_cache
+eggs/
+.eggs/
+*.egg-info/
+./pytest_cache
 .tox
+build/
+dist/
+
+# Notebook Checkpoints
+.ipynb_checkpoints
+
 .coverage
 .coverage.*
 .cache
