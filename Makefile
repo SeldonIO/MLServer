@@ -21,20 +21,16 @@ run:
 		./tests/testdata
 
 build: clean
-	# TODO: Remove SSH once tempo is published
-	DOCKER_BUILDKIT=1 docker build . \
-		--ssh default=${SSH_AUTH_SOCK}	\
-		-t ${IMAGE_NAME}:${VERSION}
-	# TODO: Update once tempo is published
-	# python setup.py sdist bdist_wheel
-	# for _runtime in ./runtimes/*; \
-	# do \
-		# cd $$_runtime; \
-		# python setup.py \
-			# sdist -d ../../dist \
-			# bdist_wheel -d ../../dist; \
-		# cd ../../; \
-	# done
+	docker build . -t ${IMAGE_NAME}:${VERSION}
+	python setup.py sdist bdist_wheel
+	for _runtime in ./runtimes/*; \
+	do \
+		cd $$_runtime; \
+		python setup.py \
+			sdist -d ../../dist \
+			bdist_wheel -d ../../dist; \
+		cd ../../; \
+	done
 
 clean:
 	rm -rf ./dist ./build
@@ -45,14 +41,11 @@ clean:
 	done
 
 push-test:
-	echo "Don't release until tempo is published"
-	# TODO: Update once tempo is published
-	# twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+	twine upload --repository-url https://test.pypi.org/legacy/ dist/*
 
 push:
 	docker push ${IMAGE_NAME}:${VERSION}
-	# TODO: Update once tempo is published
-	# twine upload dist/*
+	twine upload dist/*
 
 test:
 	tox
