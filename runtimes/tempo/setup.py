@@ -35,8 +35,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         "mlserver",
-        # TODO: Change once package is published
-        "tempo @ git+ssh://git@github.com/SeldonIO/tempo#egg=tempo",
+        "mlops-tempo",
     ],
     long_description=_load_description(),
     long_description_content_type="text/markdown",
