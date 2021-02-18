@@ -38,7 +38,7 @@ setup(
         "protobuf==3.14.0",
         "fastapi==0.63.0",
         "uvicorn==0.13.3",
-        "orjson==3.4.6",
+        "orjson==3.4.8",
         "click==7.1.2",
     ],
     entry_points={"console_scripts": ["mlserver=mlserver.cli:main"]},
