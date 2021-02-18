@@ -33,14 +33,7 @@ setup(
     author_email="hello@seldon.io",
     description="MLOps runtime for MLServer",
     packages=find_packages(),
-    install_requires=[
-        "mlserver",
-        "mlops-tempo",
-        # TODO: Remove once these are present in `mlops-tempo`
-        "attrs",
-        "docker",
-        "tensorflow",
-    ],
+    install_requires=["mlserver", "mlops-tempo"],
     long_description=_load_description(),
     long_description_content_type="text/markdown",
     license="Apache 2.0",

@@ -19,6 +19,7 @@ class TempoModel(MLModel):
         payload = self._check_request(payload)
 
         payload_dict = payload.dict()
+
         prediction = self._pipeline.request(payload_dict)
 
         return InferenceResponse(**prediction)

@@ -27,12 +27,10 @@ def inference_pipeline() -> Pipeline:
     # that the serialisation works correctly.
     # This way, we simulate a remote host, without access to the actual class
     # definition.
-    protocol = KFServingV2Protocol(model_name="test")
-    runtime = SeldonDockerRuntime(protocol)
+    runtime = SeldonDockerRuntime(KFServingV2Protocol())
 
     @pipeline(
-        name="inference-pipeline",
-        runtime=runtime,
+        name="inference-pipeline", runtime=runtime,
     )
     def _pipeline(payload: np.ndarray) -> np.ndarray:
         return payload.sum(keepdims=True)
@@ -51,8 +49,7 @@ def pipeline_uri(inference_pipeline: Pipeline, tmp_path: str) -> str:
 @pytest.fixture
 def model_settings(pipeline_uri: str) -> ModelSettings:
     return ModelSettings(
-        name="sum-pipeline",
-        parameters=ModelParameters(uri=pipeline_uri),
+        name="sum-pipeline", parameters=ModelParameters(uri=pipeline_uri),
     )
 
 
