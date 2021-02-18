@@ -36,6 +36,10 @@ setup(
     install_requires=[
         "mlserver",
         "mlops-tempo",
+        # TODO: Remove once these are present in `mlops-tempo`
+        "attrs",
+        "docker",
+        "tensorflow",
     ],
     long_description=_load_description(),
     long_description_content_type="text/markdown",
