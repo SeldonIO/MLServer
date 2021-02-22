@@ -1,4 +1,4 @@
-FROM python:3.7-slim
+FROM python:3.9.2-slim
 
 ENV MLSERVER_MODELS_DIR=/mnt/models
 ENV MLSERVER_ENV_TARBALL=$MODELS_DIR/environment.tar.gz
