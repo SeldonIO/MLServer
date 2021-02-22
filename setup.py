@@ -35,7 +35,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         "grpcio==1.35.0",
-        "protobuf==3.14.0",
+        "protobuf==3.15.1",
         "fastapi==0.63.0",
         "uvicorn==0.13.3",
         "orjson==3.4.8",
