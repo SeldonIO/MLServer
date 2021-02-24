@@ -1,7 +1,7 @@
 FROM python:3.7-slim
 
-ENV MLSERVER_MODELS_DIR=/mnt/models
-ENV MLSERVER_ENV_TARBALL=$MODELS_DIR/environment.tar.gz
+ENV MLSERVER_MODELS_DIR=/mnt/models \
+    MLSERVER_ENV_TARBALL=/mnt/models/environment.tar.gz
 
 SHELL ["/bin/bash", "-c"]
 
