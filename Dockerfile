@@ -1,15 +1,21 @@
 FROM python:3.7-slim
 
-ENV MLSERVER_MODELS_DIR=/mnt/models \
-    MLSERVER_ENV_TARBALL=/mnt/models/environment.tar.gz
-
 SHELL ["/bin/bash", "-c"]
+
+ENV MLSERVER_MODELS_DIR=/mnt/models \
+    MLSERVER_ENV_TARBALL=/mnt/models/environment.tar.gz \
+    PATH=/home/mlserver/.local/bin:$PATH
 
 RUN apt-get update && \
     apt-get -y --no-install-recommends install \
       libgomp1
 
-WORKDIR /workspace
+RUN useradd --create-home mlserver
+
+USER mlserver
+
+WORKDIR /home/mlserver
+
 COPY setup.py .
 # TODO: This busts the Docker cache before installing the rest of packages,
 # which we don't want, but I can't see any way to install only deps from
