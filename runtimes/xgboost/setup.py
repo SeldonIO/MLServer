@@ -33,7 +33,7 @@ setup(
     author_email="hello@seldon.io",
     description="XGBoost runtime for MLServer",
     packages=find_packages(),
-    install_requires=["mlserver", "xgboost==1.1.1"],
+    install_requires=["mlserver", "xgboost"],
     long_description=_load_description(),
     long_description_content_type="text/markdown",
     license="Apache 2.0",
