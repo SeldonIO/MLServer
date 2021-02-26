@@ -30,6 +30,10 @@ _unpackEnv() {
 
   echo "--> Calling conda-unpack..."
   conda-unpack
+
+  echo "--> Disabling user-installed packages..."
+  # https://github.com/conda/conda/issues/448#issuecomment-195848539
+  export PYTHONNOUSERSITE=True
 }
 
 _main() {
