@@ -30,7 +30,8 @@ def inference_pipeline() -> Pipeline:
     runtime = SeldonDockerRuntime(KFServingV2Protocol())
 
     @pipeline(
-        name="inference-pipeline", runtime=runtime,
+        name="inference-pipeline",
+        runtime=runtime,
     )
     def _pipeline(payload: np.ndarray) -> np.ndarray:
         return payload.sum(keepdims=True)
@@ -39,17 +40,17 @@ def inference_pipeline() -> Pipeline:
 
 
 @pytest.fixture
-def pipeline_uri(inference_pipeline: Pipeline, tmp_path: str) -> str:
-    file_path = os.path.join(tmp_path, "sum-pipeline.pickle")
-    inference_pipeline.save(file_path)
+def pipeline_uri(inference_pipeline: Pipeline) -> str:
+    inference_pipeline.save(save_env=False)
 
-    return file_path
+    return inference_pipeline.details.local_folder
 
 
 @pytest.fixture
 def model_settings(pipeline_uri: str) -> ModelSettings:
     return ModelSettings(
-        name="sum-pipeline", parameters=ModelParameters(uri=pipeline_uri),
+        name="sum-pipeline",
+        parameters=ModelParameters(uri=pipeline_uri),
     )
 
 

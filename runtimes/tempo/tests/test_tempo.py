@@ -7,25 +7,9 @@ from mlserver.utils import to_ndarray
 from mlserver.settings import ModelSettings
 
 from mlserver_tempo import TempoModel
-from mlserver_tempo.tempo import WELLKNOWN_MODEL_FILENAMES
 
 
 def test_load(model: TempoModel):
-    assert model.ready
-    assert isinstance(model._pipeline, Pipeline)
-
-
-@pytest.mark.parametrize("fname", WELLKNOWN_MODEL_FILENAMES)
-async def test_load_folder(fname, pipeline_uri: str, model_settings: ModelSettings):
-    model_folder = os.path.dirname(pipeline_uri)
-    model_path = os.path.join(model_folder, fname)
-    os.rename(pipeline_uri, model_path)
-
-    model_settings.parameters.uri = model_path  # type: ignore
-
-    model = TempoModel(model_settings)
-    await model.load()
-
     assert model.ready
     assert isinstance(model._pipeline, Pipeline)
 
