@@ -35,8 +35,8 @@ setup(
     packages=find_packages(),
     install_requires=[
         "mlserver",
-        "lightgbm == 2.3.1",
-        "pandas == 0.25.3",
+        "lightgbm",
+        "pandas",
     ],
     long_description=_load_description(),
     long_description_content_type="text/markdown",

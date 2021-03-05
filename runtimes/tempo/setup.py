@@ -4,8 +4,8 @@ from typing import Dict
 from setuptools import setup, find_packages
 
 ROOT_PATH = os.path.dirname(__file__)
-PKG_NAME = "mlserver"
-PKG_PATH = os.path.join(ROOT_PATH, PKG_NAME)
+PKG_NAME = "mlserver-tempo"
+PKG_PATH = os.path.join(ROOT_PATH, PKG_NAME.replace("-", "_"))
 
 
 def _load_version() -> str:
@@ -31,17 +31,9 @@ setup(
     url="https://github.com/SeldonIO/MLServer.git",
     author="Seldon Technologies Ltd.",
     author_email="hello@seldon.io",
-    description="ML server",
+    description="MLOps runtime for MLServer",
     packages=find_packages(),
-    install_requires=[
-        "grpcio",
-        "protobuf",
-        "fastapi",
-        "uvicorn",
-        "orjson",
-        "click",
-    ],
-    entry_points={"console_scripts": ["mlserver=mlserver.cli:main"]},
+    install_requires=["mlserver", "mlops-tempo"],
     long_description=_load_description(),
     long_description_content_type="text/markdown",
     license="Apache 2.0",

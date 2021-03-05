@@ -35,7 +35,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         "mlserver",
-        "pyspark==3.0.1",
+        "pyspark",
     ],
     long_description=_load_description(),
     long_description_content_type="text/markdown",
