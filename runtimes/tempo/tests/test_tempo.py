@@ -1,10 +1,6 @@
-import pytest
-import os
-
 from tempo.serve.pipeline import Pipeline
 from mlserver.types import InferenceRequest
 from mlserver.utils import to_ndarray
-from mlserver.settings import ModelSettings
 
 from mlserver_tempo import TempoModel
 
