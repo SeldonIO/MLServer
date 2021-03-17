@@ -22,15 +22,15 @@ run:
 
 build: clean
 	docker build . -t ${IMAGE_NAME}:${VERSION}
-	# python setup.py sdist bdist_wheel
-	# for _runtime in ./runtimes/*; \
-	# do \
-		# cd $$_runtime; \
-		# python setup.py \
-			# sdist -d ../../dist \
-			# bdist_wheel -d ../../dist; \
-		# cd ../../; \
-	# done
+	python setup.py sdist bdist_wheel
+	for _runtime in ./runtimes/*; \
+	do \
+		cd $$_runtime; \
+		python setup.py \
+			sdist -d ../../dist \
+			bdist_wheel -d ../../dist; \
+		cd ../../; \
+	done
 
 clean:
 	rm -rf ./dist ./build
@@ -45,7 +45,7 @@ push-test:
 
 push:
 	docker push ${IMAGE_NAME}:${VERSION}
-	# twine upload dist/*
+	twine upload dist/*
 
 test:
 	tox
