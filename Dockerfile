@@ -10,6 +10,9 @@ RUN apt-get update && \
     apt-get -y --no-install-recommends install \
       libgomp1
 
+RUN mkdir /opt/mlserver
+WORKDIR /opt/mlserver
+
 COPY setup.py .
 # TODO: This busts the Docker cache before installing the rest of packages,
 # which we don't want, but I can't see any way to install only deps from
@@ -29,12 +32,13 @@ COPY ./licenses/license.txt .
 COPY ./hack/activate-env.sh ./hack/activate-env.sh
 
 # Create user and fix permissions
+# NOTE: We need to make /opt/mlserver world-writable so that the image is
+# compatible with random UIDs.
 RUN useradd -u 1000 -s /bin/bash mlserver && \
-    mkdir /opt/mlserver && \
-    chown -R 1000:0 /opt/mlserver
+    chown -R 1000:0 /opt/mlserver && \
+    chmod -R 776 /opt/mlserver
 
 USER 1000
-WORKDIR /opt/mlserver
 
 # Need to source `activate-env.sh` so that env changes get persisted
 CMD . ./hack/activate-env.sh $MLSERVER_ENV_TARBALL \
