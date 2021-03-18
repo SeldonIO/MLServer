@@ -1,4 +1,3 @@
-import os
 import pytest
 import numpy as np
 
@@ -34,7 +33,7 @@ def inference_pipeline() -> Pipeline:
         runtime=runtime,
     )
     def _pipeline(payload: np.ndarray) -> np.ndarray:
-        return payload.sum(keepdims=True)
+        return payload.sum(keepdims=True)  # type: ignore
 
     return _pipeline
 
