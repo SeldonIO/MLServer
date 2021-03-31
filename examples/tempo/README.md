@@ -73,7 +73,7 @@ This configuration file will hold the configuration specific to our MLOps pipeli
 %%writefile ./model-settings.json
 {
     "name": "inference-pipeline",
-    "implementation": "mlserver_tempo.TempoModel",
+    "implementation": "tempo.mlserver.InferenceRuntime",
     "parameters": {
         "uri": "./inference-pipeline.pickle"
     }
