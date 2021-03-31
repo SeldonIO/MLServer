@@ -53,13 +53,13 @@ class in your `model-settings.json` file.
 
 The included runtimes are:
 
-| Framework    | Package Name       | Implementation Class            | Example                                              | Source Code                                |
-| ------------ | ------------------ | ------------------------------- | ---------------------------------------------------- | ------------------------------------------ |
-| Scikit-Learn | `mlserver-sklearn` | `mlserver_sklearn.SKLearnModel` | [Scikit-Learn example](./examples/sklearn/README.md) | [`./runtimes/sklearn`](./runtimes/sklearn) |
-| XGBoost      | `mlserver-xgboost` | `mlserver_xgboost.XGBoostModel` | [XGBoost example](./examples/xgboost/README.md)      | [`./runtimes/xgboost`](./runtimes/xgboost) |
-| Spark MLlib  | `mlserver-mllib`   | `mlserver_mllib.MLlibModel`     | Coming Soon                                          | [`./runtimes/mllib`](./runtimes/mllib)     |
-| LightGBM | `mlserver-lightgbm`   | `mlserver_lightgbm.LightGBMModel`     | Coming Soon                                          | [`./runtimes/lightgbm`](./runtimes/lightgbm)   |
-| Tempo | `mlserver-tempo`   | `mlserver_tempo.TempoModel`     | [Tempo example](./examples/tempo/README.md)                                          | [`./runtimes/tempo`](./runtimes/tempo)   |
+| Framework    | Package Name        | Implementation Class              | Example                                              | Source Code                                                      |
+| ------------ | ------------------- | --------------------------------- | ---------------------------------------------------- | ---------------------------------------------------------------- |
+| Scikit-Learn | `mlserver-sklearn`  | `mlserver_sklearn.SKLearnModel`   | [Scikit-Learn example](./examples/sklearn/README.md) | [`./runtimes/sklearn`](./runtimes/sklearn)                       |
+| XGBoost      | `mlserver-xgboost`  | `mlserver_xgboost.XGBoostModel`   | [XGBoost example](./examples/xgboost/README.md)      | [`./runtimes/xgboost`](./runtimes/xgboost)                       |
+| Spark MLlib  | `mlserver-mllib`    | `mlserver_mllib.MLlibModel`       | Coming Soon                                          | [`./runtimes/mllib`](./runtimes/mllib)                           |
+| LightGBM     | `mlserver-lightgbm` | `mlserver_lightgbm.LightGBMModel` | Coming Soon                                          | [`./runtimes/lightgbm`](./runtimes/lightgbm)                     |
+| Tempo        | `tempo`             | `tempo.mlserver.InferenceRuntime` | [Tempo example](./examples/tempo/README.md)          | [`github.com/SeldonIO/tempo`](https://github.com/SeldonIO/tempo) |
 
 ## Examples
 

@@ -4,7 +4,7 @@ IMAGE_NAME =seldonio/mlserver
 .PHONY: install-dev _generate generate run build push-test push test lint fmt version clean licenses
 
 install-dev:
-	pip install -r requirements-dev.txt
+	pip install -r requirements/dev.txt
 	pip install --editable .
 	for _runtime in ./runtimes/*; \
 	do \

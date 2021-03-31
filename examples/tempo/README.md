@@ -12,12 +12,9 @@ The first step will be to create our Tempo pipeline.
 import numpy as np
 import os
 
-from tempo.serve.metadata import ModelFramework
-from tempo.serve.model import Model
-from tempo.serve.pipeline import Pipeline
-from tempo.serve.utils import pipeline
-from tempo.seldon.docker import SeldonDockerRuntime
-from tempo.kfserving.protocol import KFServingV2Protocol
+from tempo import ModelFramework, Model, Pipeline, pipeline
+from tempo.seldon import SeldonDockerRuntime
+from tempo.kfserving import KFServingV2Protocol
 
 
 MODELS_PATH = os.path.join(os.getcwd(), 'models')
@@ -42,10 +39,12 @@ xgboost_model = Model(
     local_folder=xgboost_iris_path,
 )
 
+inference_pipeline_path = os.path.join(MODELS_PATH, 'inference-pipeline')
 @pipeline(
     name="inference-pipeline",
     models=[sklearn_model, xgboost_model],
-    runtime=SeldonDockerRuntime(protocol=KFServingV2Protocol("inference-pipeline"))
+    runtime=SeldonDockerRuntime(protocol=KFServingV2Protocol()),
+    local_folder=inference_pipeline_path
 )
 def inference_pipeline(payload: np.ndarray) -> np.ndarray:
     res1 = sklearn_model(payload)
@@ -60,7 +59,7 @@ This pipeline can then be serialised using `cloudpickle`.
 
 
 ```python
-inference_pipeline.save("inference-pipeline.pickle")
+inference_pipeline.save(save_env=False)
 ```
 
 ## Serving the pipeline
@@ -73,9 +72,9 @@ This configuration file will hold the configuration specific to our MLOps pipeli
 %%writefile ./model-settings.json
 {
     "name": "inference-pipeline",
-    "implementation": "mlserver_tempo.TempoModel",
+    "implementation": "tempo.mlserver.InferenceRuntime",
     "parameters": {
-        "uri": "./inference-pipeline.pickle"
+        "uri": "./models/inference-pipeline"
     }
 }
 ```
