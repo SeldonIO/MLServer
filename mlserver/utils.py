@@ -28,6 +28,8 @@ NP_DTYPES = {
     "BYTES": "byte",
 }
 
+DATATYPES_NP = {value: key for key, value in NP_DTYPES.items()}
+
 
 async def get_model_uri(
     settings: ModelSettings, wellknown_filenames: List[str] = []
@@ -71,3 +73,10 @@ def to_dtype(datatype: str) -> "np.dtype":
     # TODO: Validate datatype earlier (in Pydantic)
     dtype = NP_DTYPES[datatype]
     return np.dtype(dtype)
+
+
+def to_datatype(dtype: np.dtype) -> str:
+    as_str = str(dtype)
+    datatype = DATATYPES_NP[as_str]
+
+    return datatype
