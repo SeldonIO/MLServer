@@ -1,8 +1,10 @@
 import mlflow
 
-from mlserver import types
+from mlserver.types import InferenceRequest, InferenceResponse
 from mlserver.model import MLModel
 from mlserver.utils import get_model_uri
+
+from .encoding import to_tensor_dict, to_outputs
 
 
 class MLflowRuntime(MLModel):
@@ -19,7 +21,14 @@ class MLflowRuntime(MLModel):
         self.ready = True
         return self.ready
 
-    async def predict(self, payload: types.InferenceRequest) -> types.InferenceResponse:
-        return types.InferenceResponse(
-            model_name=self.name, model_version=self.version, outputs=[]
+    async def predict(self, payload: InferenceRequest) -> InferenceResponse:
+        tensor_dict = to_tensor_dict(payload.inputs)
+
+        # TODO: Can `output` be a dictionary of tensors?
+        model_output = self._model.predict(tensor_dict)
+
+        return InferenceResponse(
+            model_name=self.name,
+            model_version=self.version,
+            outputs=to_outputs(model_output),
         )
