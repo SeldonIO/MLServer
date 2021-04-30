@@ -9,6 +9,10 @@ install-dev:
 	for _runtime in ./runtimes/*; \
 	do \
 		pip install --editable $$_runtime; \
+		if [[ -f $$_runtime/requirements-dev.txt ]]; \
+		then \
+			pip install -r $$_runtime/requirements-dev.txt; \
+		fi \
 	done
 
 _generate: # "private" target to call `fmt` after `generate`

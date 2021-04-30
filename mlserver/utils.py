@@ -1,4 +1,5 @@
 import os
+import numpy as np
 
 from typing import List
 
@@ -6,11 +7,6 @@ from .types import RequestInput
 from .settings import ModelSettings
 from .errors import InvalidModelURI
 
-try:
-    import numpy as np
-except ImportError:
-    # TODO: Log warning message
-    pass
 
 NP_DTYPES = {
     "BOOL": "bool",

@@ -40,6 +40,7 @@ setup(
         "uvicorn",
         "orjson",
         "click",
+        "numpy",
     ],
     entry_points={"console_scripts": ["mlserver=mlserver.cli:main"]},
     long_description=_load_description(),
