@@ -4,7 +4,7 @@ datamodel-code-generator==0.10.0
 
 # Testing
 pytest==6.2.2
-pytest-asyncio==0.14.0
+pytest-asyncio==0.15.1
 tox==3.22.0
 
 # Linting and formatting
