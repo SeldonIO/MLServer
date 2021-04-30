@@ -22,7 +22,7 @@ def to_tensor_dict(inputs: List[RequestInput]) -> TensorDict:
 def to_outputs(mlflow_payload: MLflowPayload) -> List[ResponseOutput]:
     if type(mlflow_payload) is np.ndarray:
         # Cast to dict of tensors
-        mlflow_payload = {DefaultOutputName: mlflow_payload}
+        mlflow_payload = {DefaultOutputName: mlflow_payload}  # type: ignore
 
     return [
         ResponseOutput(
@@ -31,5 +31,5 @@ def to_outputs(mlflow_payload: MLflowPayload) -> List[ResponseOutput]:
             datatype=to_datatype(value.dtype),
             data=value.tolist(),
         )
-        for key, value in mlflow_payload.items()
+        for key, value in mlflow_payload.items()  # type: ignore
     ]

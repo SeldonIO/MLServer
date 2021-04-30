@@ -34,7 +34,7 @@ def test_to_outputs(mlflow_payload: MLflowPayload):
     outputs = to_outputs(mlflow_payload)
 
     if type(mlflow_payload) == np.ndarray:
-        mlflow_payload = {DefaultOutputName: mlflow_payload}
+        mlflow_payload = {DefaultOutputName: mlflow_payload}  # type: ignore
 
     assert len(outputs) == len(mlflow_payload)
     for output in outputs:
