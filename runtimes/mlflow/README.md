@@ -1,14 +1,12 @@
-# Scikit-Learn runtime for MLServer
+# MLflow runtime for MLServer
 
-This package provides a MLServer runtime compatible with Scikit-Learn.
+This package provides a MLServer runtime compatible with [MLflow
+models](https://www.mlflow.org/docs/latest/models.html).
 
 ## Usage
 
 You can install the runtime, alongside `mlserver`, as:
 
 ```bash
-pip install mlserver mlserver-sklearn
+pip install mlserver mlserver-mlflow
 ```
-
-For further information on how to use MLServer with Scikit-Learn, you can check
-out this [worked out example](../../examples/sklearn/README.md).
