@@ -60,6 +60,7 @@ The included runtimes are:
 | Spark MLlib  | `mlserver-mllib`    | `mlserver_mllib.MLlibModel`       | Coming Soon                                          | [`./runtimes/mllib`](./runtimes/mllib)                           |
 | LightGBM     | `mlserver-lightgbm` | `mlserver_lightgbm.LightGBMModel` | Coming Soon                                          | [`./runtimes/lightgbm`](./runtimes/lightgbm)                     |
 | Tempo        | `tempo`             | `tempo.mlserver.InferenceRuntime` | [Tempo example](./examples/tempo/README.md)          | [`github.com/SeldonIO/tempo`](https://github.com/SeldonIO/tempo) |
+| MLflow       | `mlserver-mlflow`   | `mlserver_mlflow.MLflowRuntime`   | Coming Soon                                          | [`./runtimes/mlflow`](./runtimes/mlflow)                         |
 
 ## Examples
 

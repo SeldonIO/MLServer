@@ -1,4 +1,5 @@
 import os
+import numpy as np
 
 from typing import List
 
@@ -6,11 +7,6 @@ from .types import RequestInput
 from .settings import ModelSettings
 from .errors import InvalidModelURI
 
-try:
-    import numpy as np
-except ImportError:
-    # TODO: Log warning message
-    pass
 
 NP_DTYPES = {
     "BOOL": "bool",
@@ -27,6 +23,8 @@ NP_DTYPES = {
     "FP64": "float64",
     "BYTES": "byte",
 }
+
+DATATYPES_NP = {value: key for key, value in NP_DTYPES.items()}
 
 
 async def get_model_uri(
@@ -71,3 +69,10 @@ def to_dtype(datatype: str) -> "np.dtype":
     # TODO: Validate datatype earlier (in Pydantic)
     dtype = NP_DTYPES[datatype]
     return np.dtype(dtype)
+
+
+def to_datatype(dtype: np.dtype) -> str:
+    as_str = str(dtype)
+    datatype = DATATYPES_NP[as_str]
+
+    return datatype
