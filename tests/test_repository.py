@@ -70,7 +70,8 @@ async def test_name_fallback(model_folder: str, model_repository: ModelRepositor
     model_settings_path = os.path.join(model_folder, DEFAULT_MODEL_SETTINGS_FILENAME)
     with open(model_settings_path, "w") as model_settings_file:
         d = model_settings.dict()
-        del d["implementation"]
+        del d["name"]
+        d["implementation"] = get_import_path(d["implementation"])
         json.dump(d, model_settings_file)
 
     model_settings = model_repository._load_model_settings(model_settings_path)
