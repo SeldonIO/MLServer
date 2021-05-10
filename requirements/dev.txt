@@ -8,7 +8,7 @@ pytest-asyncio==0.15.1
 tox==3.22.0
 
 # Linting and formatting
-flake8==3.9.1
+flake8==3.9.2
 flake8-black==0.2.1
 mypy==0.800
 mypy-protobuf==1.23
