@@ -50,7 +50,7 @@ class ModelSettings(BaseSettings):
     class Config:
         env_prefix = ENV_PREFIX_MODEL_SETTINGS
 
-    name: str
+    name: str = ""
 
     # Model metadata
     platform: str = ""

@@ -1,4 +1,5 @@
 import os
+import json
 
 from mlserver.repository import ModelRepository, DEFAULT_MODEL_SETTINGS_FILENAME
 from mlserver.settings import ModelSettings, ENV_PREFIX_MODEL_SETTINGS
@@ -30,7 +31,6 @@ async def test_list_multi_model(multi_model_folder: str):
 
     assert len(settings_list) == 5
     for idx, model_settings in enumerate(settings_list):
-        # Models get read in reverse
         assert model_settings.parameters.version == f"v{idx}"  # type: ignore
 
 
@@ -61,6 +61,20 @@ async def test_list_fallback(
         all_settings[0].parameters.version  # type: ignore
         == sum_model_settings.parameters.version  # type: ignore
     )
+
+
+async def test_name_fallback(model_folder: str, model_repository: ModelRepository):
+    # Create empty model-settings.json file
+    model_settings = ModelSettings()
+    model_settings_path = os.path.join(model_folder, DEFAULT_MODEL_SETTINGS_FILENAME)
+    with open(model_settings_path, "w") as model_settings_file:
+        d = model_settings.dict()
+        del d["name"]
+        d["implementation"] = get_import_path(d["implementation"])
+        json.dump(d, model_settings_file)
+
+    model_settings = model_repository._load_model_settings(model_settings_path)
+    assert model_settings.name == os.path.basename(model_folder)
 
 
 async def test_find(
