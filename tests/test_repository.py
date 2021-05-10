@@ -31,7 +31,6 @@ async def test_list_multi_model(multi_model_folder: str):
 
     assert len(settings_list) == 5
     for idx, model_settings in enumerate(settings_list):
-        # Models get read in reverse
         assert model_settings.parameters.version == f"v{idx}"  # type: ignore
 
 
