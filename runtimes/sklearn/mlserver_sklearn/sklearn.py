@@ -12,7 +12,7 @@ PREDICT_OUTPUT = "predict"
 PREDICT_PROBA_OUTPUT = "predict_proba"
 VALID_OUTPUTS = [PREDICT_OUTPUT, PREDICT_PROBA_OUTPUT]
 
-WELLKNOWN_MODEL_FILENAMES = ["model.joblib"]
+WELLKNOWN_MODEL_FILENAMES = ["model.joblib", "model.pickle", "model.pkl"]
 
 
 class SKLearnModel(MLModel):
