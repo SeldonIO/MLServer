@@ -1,16 +1,17 @@
 import pytest
+import numpy as np
 
-from mlserver.codecs import StringCodec
+from mlserver.codecs import StringCodec, NumpyCodec
 from mlserver.types import RequestInput, ResponseOutput
 
 
 @pytest.mark.parametrize(
-    "encoded,payload",
+    "encoded, payload",
     [
         (b"hello world", "hello world"),
     ],
 )
-def test_string_codec_encode(payload, encoded):
+def test_string_codec(encoded, payload):
     codec = StringCodec()
 
     request_input = RequestInput(name="foo", shape=[], datatype="BYTES", data=encoded)
@@ -24,3 +25,61 @@ def test_string_codec_encode(payload, encoded):
     assert response_output.datatype == "BYTES"
     assert response_output.shape == [len(encoded)]
     assert response_output.data.__root__ == encoded
+
+
+@pytest.mark.parametrize(
+    "request_input, payload",
+    [
+        (
+            RequestInput(name="foo", shape=[3], data=[1, 2, 3], datatype="INT32"),
+            np.array([1, 2, 3]),
+        ),
+        (
+            RequestInput(name="foo", shape=[2, 2], data=[1, 2, 3, 4], datatype="INT32"),
+            np.array([[1, 2], [3, 4]]),
+        ),
+        (
+            RequestInput(name="foo", shape=[2], data=[1, 2], datatype="FP32"),
+            np.array([1.0, 2.0]),
+        ),
+    ],
+)
+def test_numpy_codec(request_input, payload):
+    codec = NumpyCodec()
+
+    decoded = codec.decode(request_input)
+
+    np.testing.assert_array_equal(decoded, payload)
+
+    response_output = ResponseOutput(name="foo", shape=[], datatype="INT32", data=[])
+    response_output = codec.encode(decoded, response_output)
+
+    assert response_output.datatype == request_input.datatype
+    assert response_output.shape == request_input.shape
+    assert response_output.data == request_input.data.__root__
+
+
+@pytest.mark.parametrize(
+    "dtype, datatype",
+    [
+        (np.bool_, "BOOL"),
+        (np.uint8, "UINT8"),
+        (np.uint16, "UINT16"),
+        (np.uint32, "UINT32"),
+        (np.uint64, "UINT64"),
+        (np.int8, "INT8"),
+        (np.int16, "INT16"),
+        (np.int32, "INT32"),
+        (np.int64, "INT64"),
+        (np.float16, "FP16"),
+        (np.float32, "FP32"),
+        (np.float64, "FP64"),
+        (np.byte, "INT8"),
+    ],
+)
+def test_numpy_codec_to_datatype(dtype, datatype):
+    codec = NumpyCodec()
+    dtype = np.dtype(dtype)
+
+    obtained_datatype = codec._to_datatype(dtype)
+    assert datatype == obtained_datatype

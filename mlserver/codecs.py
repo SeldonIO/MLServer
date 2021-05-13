@@ -1,6 +1,26 @@
+import numpy as np
+
 from typing import Any, Dict
 
 from .types import RequestInput, ResponseOutput, TensorData
+
+_NP_DTYPES = {
+    "BOOL": "bool",
+    "UINT8": "uint8",
+    "UINT16": "uint16",
+    "UINT32": "uint32",
+    "UINT64": "uint64",
+    "INT8": "int8",
+    "INT16": "int16",
+    "INT32": "int32",
+    "INT64": "int64",
+    "FP16": "float16",
+    "FP32": "float32",
+    "FP64": "float64",
+    "BYTES": "byte",
+}
+
+_DATATYPES_NP = {value: key for key, value in _NP_DTYPES.items()}
 
 
 class Codec:
@@ -65,4 +85,38 @@ class StringCodec(Codec):
         return ""
 
 
-_codec_registry = _CodecRegistry({"str": StringCodec()})
+class NumpyCodec(Codec):
+    """
+    Encodes a tensor as a numpy array.
+    """
+
+    def encode(
+        self, payload: np.ndarray, response_output: ResponseOutput
+    ) -> ResponseOutput:
+        response_output.datatype = self._to_datatype(payload.dtype)
+        response_output.shape = list(payload.shape)
+        response_output.data = payload.flatten().tolist()
+
+        return response_output
+
+    def decode(self, request_input: RequestInput) -> np.ndarray:
+        dtype = self._to_dtype(request_input.datatype)
+        data = getattr(request_input.data, "__root__", request_input.data)
+
+        model_data = np.array(data, dtype=dtype)
+
+        # TODO: Check if reshape not valid
+        return model_data.reshape(request_input.shape)
+
+    def _to_dtype(self, datatype: str) -> "np.dtype":
+        dtype = _NP_DTYPES[datatype]
+        return np.dtype(dtype)
+
+    def _to_datatype(self, dtype: np.dtype) -> str:
+        as_str = str(dtype)
+        datatype = _DATATYPES_NP[as_str]
+
+        return datatype
+
+
+_codec_registry = _CodecRegistry({"str": StringCodec(), "np": NumpyCodec()})
