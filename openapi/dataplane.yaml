@@ -278,14 +278,6 @@ components:
         - data
     tensor_data:
       title: tensor_data
-      type: array
-      items:
-        anyOf:
-          - $ref: '#/components/schemas/tensor_data'
-          - type:
-              - number
-              - string
-              - boolean
     request_output:
       title: request_output
       type: object
