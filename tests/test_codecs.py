@@ -12,15 +12,13 @@ from mlserver.types import RequestInput, ResponseOutput
     ],
 )
 def test_string_codec(encoded, payload):
-    codec = StringCodec()
-
     request_input = RequestInput(name="foo", shape=[], datatype="BYTES", data=encoded)
+    codec = StringCodec()
     decoded = codec.decode(request_input)
 
     assert decoded == payload
 
-    response_output = ResponseOutput(name="foo", shape=[], datatype="INT32", data=[])
-    response_output = codec.encode(decoded, response_output)
+    response_output = codec.encode(name="foo", payload=decoded)
 
     assert response_output.datatype == "BYTES"
     assert response_output.shape == [len(encoded)]
@@ -46,17 +44,15 @@ def test_string_codec(encoded, payload):
 )
 def test_numpy_codec(request_input, payload):
     codec = NumpyCodec()
-
     decoded = codec.decode(request_input)
 
     np.testing.assert_array_equal(decoded, payload)
 
-    response_output = ResponseOutput(name="foo", shape=[], datatype="INT32", data=[])
-    response_output = codec.encode(decoded, response_output)
+    response_output = codec.encode(name="foo", payload=decoded)
 
     assert response_output.datatype == request_input.datatype
     assert response_output.shape == request_input.shape
-    assert response_output.data == request_input.data.__root__
+    assert response_output.data == request_input.data
 
 
 @pytest.mark.parametrize(

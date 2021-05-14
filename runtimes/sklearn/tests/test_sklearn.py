@@ -74,4 +74,4 @@ async def test_predict(model: SKLearnModel, inference_request, req_outputs):
     assert len(response.outputs) == len(req_outputs)
     for req_output, output in zip(req_outputs, response.outputs):
         assert output.name == req_output
-        assert len(output.data) == len(input_data)  # type: ignore
+        assert output.shape[0] == len(input_data)  # type: ignore

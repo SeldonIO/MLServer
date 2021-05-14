@@ -29,7 +29,7 @@ class Codec:
     from the V2 Inference Protocol level.
     """
 
-    def encode(self, payload: Any, response_output: ResponseOutput) -> ResponseOutput:
+    def encode(self, name: str, payload: Any) -> ResponseOutput:
         raise NotImplementedError()
 
     def decode(self, request_input: RequestInput) -> Any:
@@ -62,14 +62,12 @@ class StringCodec(Codec):
 
     _str_codec = "utf-8"
 
-    def encode(self, payload: str, response_output: ResponseOutput) -> ResponseOutput:
+    def encode(self, name: str, payload: str) -> ResponseOutput:
         encoded = payload.encode(self._str_codec)
 
-        response_output.data = TensorData.parse_obj(encoded)
-        response_output.datatype = "BYTES"
-        response_output.shape = [len(encoded)]
-
-        return response_output
+        return ResponseOutput(
+            name=name, datatype="BYTES", shape=[len(encoded)], data=encoded
+        )
 
     def decode(self, request_input: RequestInput) -> str:
         encoded = request_input.data.__root__
@@ -90,14 +88,13 @@ class NumpyCodec(Codec):
     Encodes a tensor as a numpy array.
     """
 
-    def encode(
-        self, payload: np.ndarray, response_output: ResponseOutput
-    ) -> ResponseOutput:
-        response_output.datatype = self._to_datatype(payload.dtype)
-        response_output.shape = list(payload.shape)
-        response_output.data = payload.flatten().tolist()
-
-        return response_output
+    def encode(self, name: str, payload: np.ndarray) -> ResponseOutput:
+        return ResponseOutput(
+            name=name,
+            datatype=self._to_datatype(payload.dtype),
+            shape=list(payload.shape),
+            data=payload.flatten().tolist(),
+        )
 
     def decode(self, request_input: RequestInput) -> np.ndarray:
         dtype = self._to_dtype(request_input.datatype)
