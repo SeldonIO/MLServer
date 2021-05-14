@@ -3,7 +3,8 @@ import lightgbm as lgb
 from mlserver import types
 from mlserver.model import MLModel
 from mlserver.errors import InferenceError
-from mlserver.utils import get_model_uri, to_ndarray
+from mlserver.utils import get_model_uri
+from mlserver.codecs import NumpyCodec
 
 
 WELLKNOWN_MODEL_FILENAMES = ["model.bst"]
@@ -21,6 +22,8 @@ class LightGBMModel(MLModel):
 
         self._model = lgb.Booster(model_file=model_uri)
 
+        self._codec = NumpyCodec()
+
         self.ready = True
         return self.ready
 
@@ -36,14 +39,7 @@ class LightGBMModel(MLModel):
         return types.InferenceResponse(
             model_name=self.name,
             model_version=self.version,
-            outputs=[
-                types.ResponseOutput(
-                    name="predict",
-                    shape=prediction.shape,
-                    datatype="FP32",
-                    data=prediction.tolist(),
-                )
-            ],
+            outputs=[self._codec.encode(name="predict", payload=prediction)],
         )
 
     def _check_request(self, payload: types.InferenceRequest) -> types.InferenceRequest:
@@ -56,7 +52,7 @@ class LightGBMModel(MLModel):
         # Convert to `numpy.ndarray` and store in parameters
         try:
             model_input = payload.inputs[0]
-            array_data = to_ndarray(model_input)
+            array_data = self._codec.decode(model_input)
 
             model_input.parameters = {"data": array_data}  # type: ignore
         except Exception as e:

@@ -5,7 +5,7 @@ from typing import List
 from mlserver import types
 from mlserver.model import MLModel
 from mlserver.errors import InferenceError
-from mlserver.utils import get_model_uri, to_ndarray
+from mlserver.utils import get_model_uri
 from mlserver.codecs import NumpyCodec
 
 

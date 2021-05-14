@@ -3,7 +3,9 @@ import xgboost as xgb
 from mlserver import types
 from mlserver.model import MLModel
 from mlserver.errors import InferenceError
-from mlserver.utils import get_model_uri, to_ndarray
+from mlserver.utils import get_model_uri
+
+from .codecs import DMatrixCodec
 
 
 WELLKNOWN_MODEL_FILENAMES = ["model.bst", "model.json"]
@@ -20,6 +22,7 @@ class XGBoostModel(MLModel):
             self._settings, wellknown_filenames=WELLKNOWN_MODEL_FILENAMES
         )
         self._model = xgb.Booster(model_file=model_uri)
+        self._codec = DMatrixCodec()
 
         self.ready = True
         return self.ready
@@ -36,14 +39,7 @@ class XGBoostModel(MLModel):
         return types.InferenceResponse(
             model_name=self.name,
             model_version=self.version,
-            outputs=[
-                types.ResponseOutput(
-                    name="predict",
-                    shape=prediction.shape,
-                    datatype="FP32",
-                    data=prediction.tolist(),
-                )
-            ],
+            outputs=[self._codec.encode("predict", prediction)],
         )
 
     def _check_request(self, payload: types.InferenceRequest) -> types.InferenceRequest:
@@ -57,8 +53,7 @@ class XGBoostModel(MLModel):
         # TODO: Move this out to "types conversion" pipeline, once it's there.
         try:
             model_input = payload.inputs[0]
-            array_data = to_ndarray(model_input)
-            dmatrix_data = xgb.DMatrix(array_data)
+            dmatrix_data = self._codec.decode(model_input)
 
             # TODO: Use Parameters object
             model_input.parameters = {"dmatrix_data": dmatrix_data}  # type: ignore
