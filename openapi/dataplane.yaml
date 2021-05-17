@@ -268,7 +268,7 @@ components:
         datatype:
           type: string
         parameters:
-          $ref: '#/components/schemas/parameters'
+          type: object
         data:
           $ref: '#/components/schemas/tensor_data'
       required:

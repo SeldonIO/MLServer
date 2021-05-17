@@ -2,7 +2,7 @@ import numpy as np
 
 from typing import Any, Dict
 
-from .types import RequestInput, ResponseOutput, TensorData
+from .types import RequestInput, ResponseOutput
 
 _NP_DTYPES = {
     "BOOL": "bool",
@@ -46,13 +46,13 @@ class _CodecRegistry:
     def __init__(self, codecs: Dict[str, Codec] = {}):
         self._codecs = codecs
 
-    def register(self, name: str, codec: Codec):
+    def register(self, content_type: str, codec: Codec):
         # TODO: Raise error if codec exists?
-        self._codecs[name] = codec
+        self._codecs[content_type] = codec
 
-    def find_codec(self, name: str) -> Codec:
+    def find_codec(self, content_type: str) -> Codec:
         # TODO: Raise error if codec doesn't exist
-        return self._codecs[name]
+        return self._codecs[content_type]
 
 
 class StringCodec(Codec):
@@ -60,6 +60,7 @@ class StringCodec(Codec):
     Encodes a Python string as a BYTES input.
     """
 
+    ContentType = "str"
     _str_codec = "utf-8"
 
     def encode(self, name: str, payload: str) -> ResponseOutput:
@@ -87,6 +88,8 @@ class NumpyCodec(Codec):
     """
     Encodes a tensor as a numpy array.
     """
+
+    ContentType = "np"
 
     def encode(self, name: str, payload: np.ndarray) -> ResponseOutput:
         return ResponseOutput(
@@ -116,4 +119,6 @@ class NumpyCodec(Codec):
         return datatype
 
 
-_codec_registry = _CodecRegistry({"str": StringCodec(), "np": NumpyCodec()})
+_codec_registry = _CodecRegistry(
+    {StringCodec.ContentType: StringCodec(), NumpyCodec.ContentType: NumpyCodec()}
+)
