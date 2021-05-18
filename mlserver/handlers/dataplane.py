@@ -54,7 +54,7 @@ class DataPlane:
 
         model = await self._model_registry.get_model(name, version)
 
-        payload = content_type_middleware(payload)
+        payload = content_type_middleware(payload, model)
 
         # TODO: Make await optional for sync methods
         prediction = await model.predict(payload)

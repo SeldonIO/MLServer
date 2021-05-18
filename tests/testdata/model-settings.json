@@ -9,7 +9,10 @@
     {
       "datatype": "FP32",
       "name": "input-0",
-      "shape": [128]
+      "shape": [128],
+      "tags": {
+        "content_type": "np"
+      }
     }
   ],
   "outputs": [
