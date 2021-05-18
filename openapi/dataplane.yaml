@@ -252,9 +252,13 @@ components:
       required:
         - inputs
     parameters:
+      type: object
       title: parameters
       x-examples: {}
-      type: object
+      additionalProperties: true
+      properties:
+        content_type:
+          type: string
     request_input:
       title: request_input
       type: object
@@ -268,7 +272,7 @@ components:
         datatype:
           type: string
         parameters:
-          type: object
+          $ref: '#/components/schemas/parameters'
         data:
           $ref: '#/components/schemas/tensor_data'
       required:

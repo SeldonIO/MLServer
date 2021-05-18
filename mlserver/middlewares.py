@@ -10,17 +10,13 @@ def content_type_middleware(request: InferenceRequest) -> InferenceRequest:
         if not inp.parameters:
             continue
 
-        params = inp.parameters
-        if not isinstance(params, dict):
+        if not inp.parameters.content_type:
             continue
 
-        if ContentTypeKey not in params:
-            continue
-
-        content_type = params[ContentTypeKey]
+        content_type = inp.parameters.content_type
         codec = codecs.find_codec(content_type)
         decoded_payload = codec.decode(inp)
 
-        params[DecodedContentKey] = decoded_payload
+        inp.parameters.decoded_content = decoded_payload  # type: ignore
 
     return request

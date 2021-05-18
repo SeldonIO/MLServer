@@ -3,7 +3,7 @@
 
 from typing import Any, List, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Extra, Field
 
 
 class MetadataServerResponse(BaseModel):
@@ -27,7 +27,10 @@ class MetadataModelErrorResponse(BaseModel):
 
 
 class Parameters(BaseModel):
-    pass
+    class Config:
+        extra = Extra.allow
+
+    content_type: Optional[str] = None
 
 
 class TensorData(BaseModel):
