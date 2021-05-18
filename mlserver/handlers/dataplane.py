@@ -2,6 +2,7 @@ import uuid
 
 from ..settings import Settings
 from ..registry import MultiModelRegistry
+from ..middlewares import content_type_middleware
 from ..types import (
     MetadataModelResponse,
     MetadataServerResponse,
@@ -53,7 +54,7 @@ class DataPlane:
 
         model = await self._model_registry.get_model(name, version)
 
-        # TODO: Call codec pipeline
+        payload = content_type_middleware(payload)
 
         # TODO: Make await optional for sync methods
         prediction = await model.predict(payload)
