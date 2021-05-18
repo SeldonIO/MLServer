@@ -16,10 +16,18 @@ class MetadataServerErrorResponse(BaseModel):
     error: str
 
 
+class Tags(BaseModel):
+    class Config:
+        extra = Extra.allow
+
+    content_type: Optional[str] = None
+
+
 class MetadataTensor(BaseModel):
     name: str
     datatype: str
     shape: List[int]
+    tags: Optional["Tags"] = None
 
 
 class MetadataModelErrorResponse(BaseModel):
