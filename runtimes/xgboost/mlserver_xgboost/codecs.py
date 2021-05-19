@@ -6,7 +6,7 @@ from mlserver.errors import InferenceError
 
 
 class DMatrixCodec(NumpyCodec):
-    def decode(self, request_input: RequestInput) -> DMatrix:
+    def decode(self, request_input: RequestInput) -> DMatrix:  # type: ignore
         try:
             ndarray = super().decode(request_input)
             return DMatrix(ndarray)

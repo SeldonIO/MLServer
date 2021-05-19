@@ -34,7 +34,6 @@ class LightGBMModel(MLModel):
         decoded = self.decode(model_input, default_codec=self._codec)
         prediction = self._model.predict(decoded)
 
-        # TODO: Set datatype (cast from numpy?)
         return types.InferenceResponse(
             model_name=self.name,
             model_version=self.version,
