@@ -2,7 +2,7 @@ import pytest
 import numpy as np
 
 from mlserver.codecs import StringCodec, NumpyCodec
-from mlserver.types import RequestInput, ResponseOutput
+from mlserver.types import RequestInput
 
 
 @pytest.mark.parametrize(
