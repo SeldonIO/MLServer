@@ -31,6 +31,13 @@ def _get_value(pb_object, default: Any = None) -> Any:
     return field_value
 
 
+def _merge_map(pb_map: Mapping, value_dict: Mapping) -> Mapping:
+    for key, value in value_dict.items():
+        pb_map[key].MergeFrom(value)
+
+    return pb_map
+
+
 class ServerMetadataResponseConverter:
     @classmethod
     def to_types(
@@ -99,8 +106,9 @@ class TensorMetadataConverter:
         if type_object.tags is not None:
             # NOTE: We use the ParametersConverter here because it has a
             # similar signature to Tags
-            tensor_metadata.tags.update(
-                ParametersConverter.from_types(type_object.tags)  # type: ignore
+            _merge_map(
+                tensor_metadata.tags,
+                ParametersConverter.from_types(type_object.tags),  # type: ignore
             )
 
         return tensor_metadata
@@ -139,8 +147,9 @@ class ModelInferRequestConverter:
         )
 
         if type_object.parameters is not None:
-            model_infer_request.parameters.update(
-                ParametersConverter.from_types(type_object.parameters)
+            _merge_map(
+                model_infer_request.parameters,
+                ParametersConverter.from_types(type_object.parameters),
             )
 
         if type_object.outputs is not None:
@@ -181,8 +190,9 @@ class InferInputTensorConverter:
         )
 
         if type_object.parameters is not None:
-            infer_input_tensor.parameters.update(
-                ParametersConverter.from_types(type_object.parameters)
+            _merge_map(
+                infer_input_tensor.parameters,
+                ParametersConverter.from_types(type_object.parameters),
             )
 
         return infer_input_tensor
@@ -207,8 +217,9 @@ class InferRequestedOutputTensorConverter:
         )
 
         if type_object.parameters is not None:
-            model_infer_request.parameters.update(
-                ParametersConverter.from_types(type_object.parameters)
+            _merge_map(
+                model_infer_request.parameters,
+                ParametersConverter.from_types(type_object.parameters),
             )
 
         return model_infer_request
@@ -234,6 +245,7 @@ class ParametersConverter:
     ) -> Mapping[str, pb.InferParameter]:
         pb_object = {}
         as_dict = type_object.dict()
+
         for key, value in as_dict.items():
             infer_parameter_key = cls._get_inferparameter_key(value)
             if infer_parameter_key is None:
@@ -294,8 +306,9 @@ class ModelInferResponseConverter:
         )
 
         if type_object.parameters:
-            model_infer_response.parameters.update(
-                ParametersConverter.from_types(type_object.parameters)
+            _merge_map(
+                model_infer_response.parameters,
+                ParametersConverter.from_types(type_object.parameters),
             )
 
         return model_infer_response
@@ -322,8 +335,9 @@ class InferOutputTensorConverter:
         )
 
         if type_object.parameters:
-            infer_output_tensor.parameters.update(
-                ParametersConverter.from_types(type_object.parameters)
+            _merge_map(
+                infer_output_tensor.parameters,
+                ParametersConverter.from_types(type_object.parameters),
             )
 
         return infer_output_tensor
