@@ -97,6 +97,8 @@ class TensorMetadataConverter:
         )
 
         if type_object.tags is not None:
+            # NOTE: We use the ParametersConverter here because it has a
+            # similar signature to Tags
             tensor_metadata.tags.update(
                 ParametersConverter.from_types(type_object.tags)  # type: ignore
             )
