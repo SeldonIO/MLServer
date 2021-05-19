@@ -90,11 +90,18 @@ class TensorMetadataConverter:
     def from_types(
         cls, type_object: types.MetadataTensor
     ) -> pb.ModelMetadataResponse.TensorMetadata:
-        return pb.ModelMetadataResponse.TensorMetadata(
+        tensor_metadata = pb.ModelMetadataResponse.TensorMetadata(
             name=type_object.name,
             datatype=type_object.datatype,
             shape=type_object.shape,
         )
+
+        if type_object.tags is not None:
+            tensor_metadata.tags.update(
+                ParametersConverter.from_types(type_object.tags)  # type: ignore
+            )
+
+        return tensor_metadata
 
 
 class ModelInferRequestConverter:
