@@ -1,4 +1,4 @@
-from typing import Any, Union, Dict, Optional, List
+from typing import Any, Union, Mapping, Optional
 
 from . import dataplane_pb2 as pb
 from . import model_repository_pb2 as mr_pb
@@ -102,19 +102,17 @@ class ModelInferRequestConverter:
     def to_types(cls, pb_object: pb.ModelInferRequest) -> types.InferenceRequest:
         inference_request = types.InferenceRequest.construct(
             id=pb_object.id,
+            parameters=ParametersConverter.to_types(pb_object.parameters),
             inputs=[
                 InferInputTensorConverter.to_types(inp) for inp in pb_object.inputs
             ],
-            outputs=[
-                InferRequestedOutputTensorConverter.to_types(out)
-                for out in pb_object.outputs
-            ],
         )
 
-        if pb_object.parameters is not None:
-            inference_request.parameters = (
-                ParametersConverter.to_types(pb_object.parameters),
-            )
+        if pb_object.outputs:
+            inference_request.outputs = [
+                InferRequestedOutputTensorConverter.to_types(out)
+                for out in pb_object.outputs
+            ]
 
         return inference_request
 
@@ -129,15 +127,19 @@ class ModelInferRequestConverter:
             inputs=[
                 InferInputTensorConverter.from_types(inp) for inp in type_object.inputs
             ],
-            outputs=[
-                InferRequestedOutputTensorConverter.from_types(out)
-                for out in type_object.outputs
-            ],
         )
 
         if type_object.parameters is not None:
-            model_infer_request.parameters = ParametersConverter.from_types(
-                type_object.parameters
+            model_infer_request.parameters.update(
+                ParametersConverter.from_types(type_object.parameters)
+            )
+
+        if type_object.outputs is not None:
+            model_infer_request.outputs.extend(
+                [
+                    InferRequestedOutputTensorConverter.from_types(out)
+                    for out in type_object.outputs
+                ]
             )
 
         return model_infer_request
@@ -160,20 +162,57 @@ class InferInputTensorConverter:
     def from_types(
         cls, type_object: types.RequestInput
     ) -> pb.ModelInferRequest.InferInputTensor:
-        return pb.ModelInferRequest.InferInputTensor(
+        infer_input_tensor = pb.ModelInferRequest.InferInputTensor(
             name=type_object.name,
             shape=type_object.shape,
             datatype=type_object.datatype,
-            parameters=ParametersConverter.from_types(type_object.parameters),
             contents=InferTensorContentsConverter.from_types(
                 type_object.data, datatype=type_object.datatype
             ),
         )
 
+        if type_object.parameters is not None:
+            infer_input_tensor.parameters.update(
+                ParametersConverter.from_types(type_object.parameters)
+            )
+
+        return infer_input_tensor
+
+
+class InferRequestedOutputTensorConverter:
+    @classmethod
+    def to_types(
+        cls, pb_object: pb.ModelInferRequest.InferRequestedOutputTensor
+    ) -> types.RequestOutput:
+        return types.RequestOutput.construct(
+            name=pb_object.name,
+            parameters=ParametersConverter.to_types(pb_object.parameters),
+        )
+
+    @classmethod
+    def from_types(
+        cls, type_object: types.RequestOutput
+    ) -> pb.ModelInferRequest.InferRequestedOutputTensor:
+        model_infer_request = pb.ModelInferRequest.InferRequestedOutputTensor(
+            name=type_object.name,
+        )
+
+        if type_object.parameters is not None:
+            model_infer_request.parameters.update(
+                ParametersConverter.from_types(type_object.parameters)
+            )
+
+        return model_infer_request
+
 
 class ParametersConverter:
     @classmethod
-    def to_types(cls, pb_object: Dict[str, pb.InferParameter]) -> types.Parameters:
+    def to_types(
+        cls, pb_object: Mapping[str, pb.InferParameter]
+    ) -> Optional[types.Parameters]:
+        if not pb_object:
+            return None
+
         param_dict = {
             key: _get_value(infer_parameter)
             for key, infer_parameter in pb_object.items()
@@ -181,7 +220,9 @@ class ParametersConverter:
         return types.Parameters(**param_dict)
 
     @classmethod
-    def from_types(cls, type_object: types.Parameters) -> Dict[str, pb.InferParameter]:
+    def from_types(
+        cls, type_object: types.Parameters
+    ) -> Mapping[str, pb.InferParameter]:
         pb_object = {}
         as_dict = type_object.dict()
         for key, value in as_dict.items():
@@ -233,16 +274,22 @@ class ModelInferResponseConverter:
 
     @classmethod
     def from_types(cls, type_object: types.InferenceResponse) -> pb.ModelInferResponse:
-        return pb.ModelInferResponse(
+        model_infer_response = pb.ModelInferResponse(
             model_name=type_object.model_name,
             model_version=type_object.model_version,
             id=type_object.id,
-            parameters=ParametersConverter.from_types(type_object.parameters),
             outputs=[
                 InferOutputTensorConverter.from_types(output)
                 for output in type_object.outputs
             ],
         )
+
+        if type_object.parameters:
+            model_infer_response.parameters.update(
+                ParametersConverter.from_types(type_object.parameters)
+            )
+
+        return model_infer_response
 
 
 class InferOutputTensorConverter:
@@ -256,15 +303,21 @@ class InferOutputTensorConverter:
     def from_types(
         cls, type_object: types.ResponseOutput
     ) -> pb.ModelInferResponse.InferOutputTensor:
-        return pb.ModelInferResponse.InferOutputTensor(
+        infer_output_tensor = pb.ModelInferResponse.InferOutputTensor(
             name=type_object.name,
             shape=type_object.shape,
             datatype=type_object.datatype,
-            parameters=ParametersConverter.from_types(type_object.parameters),
             contents=InferTensorContentsConverter.from_types(
                 type_object.data, datatype=type_object.datatype
             ),
         )
+
+        if type_object.parameters:
+            infer_output_tensor.parameters.update(
+                ParametersConverter.from_types(type_object.parameters)
+            )
+
+        return infer_output_tensor
 
 
 class RepositoryIndexRequestConverter:
