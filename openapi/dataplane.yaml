@@ -184,6 +184,12 @@ components:
           type: array
           items:
             type: integer
+        tags:
+          type: object
+          additionalProperties: true
+          properties:
+            content_type:
+              type: string
       required:
         - name
         - datatype
@@ -252,9 +258,13 @@ components:
       required:
         - inputs
     parameters:
+      type: object
       title: parameters
       x-examples: {}
-      type: object
+      additionalProperties: true
+      properties:
+        content_type:
+          type: string
     request_input:
       title: request_input
       type: object
@@ -278,14 +288,6 @@ components:
         - data
     tensor_data:
       title: tensor_data
-      type: array
-      items:
-        anyOf:
-          - $ref: '#/components/schemas/tensor_data'
-          - type:
-              - number
-              - string
-              - boolean
     request_output:
       title: request_output
       type: object

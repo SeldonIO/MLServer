@@ -91,7 +91,7 @@ async def test_infer(data_plane, sum_model, inference_request):
     )
 
     assert len(prediction.outputs) == 1
-    assert prediction.outputs[0].data == [21]
+    assert prediction.outputs[0].data.__root__ == [21]
 
 
 async def test_infer_generates_uuid(data_plane, sum_model, inference_request):

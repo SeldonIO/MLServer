@@ -5,7 +5,8 @@ from typing import List
 from mlserver import types
 from mlserver.model import MLModel
 from mlserver.errors import InferenceError
-from mlserver.utils import get_model_uri, to_ndarray
+from mlserver.utils import get_model_uri
+from mlserver.codecs import NumpyCodec
 
 
 PREDICT_OUTPUT = "predict"
@@ -65,7 +66,9 @@ class SKLearnModel(MLModel):
         self, payload: types.InferenceRequest
     ) -> List[types.ResponseOutput]:
         model_input = payload.inputs[0]
-        input_data = to_ndarray(model_input)
+
+        default_codec = NumpyCodec()
+        input_data = self.decode(model_input, default_codec=default_codec)
 
         outputs = []
         for request_output in payload.outputs:  # type: ignore
@@ -73,13 +76,7 @@ class SKLearnModel(MLModel):
             y = predict_fn(input_data)
 
             # TODO: Set datatype (cast from numpy?)
-            outputs.append(
-                types.ResponseOutput(
-                    name=request_output.name,
-                    shape=y.shape,
-                    datatype="FP32",
-                    data=y.tolist(),
-                )
-            )
+            response_output = default_codec.encode(name=request_output.name, payload=y)
+            outputs.append(response_output)
 
         return outputs

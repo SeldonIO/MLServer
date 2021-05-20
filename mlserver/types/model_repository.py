@@ -40,16 +40,6 @@ class RepositoryIndexResponse(BaseModel):
     def __len__(self):
         return len(self.__root__)
 
-    @classmethod
-    def __get_validators__(cls):
-        yield cls.validate
-
-    @classmethod
-    def validate(cls, v):
-        if isinstance(v, dict):
-            return v.get("__root__", [])
-        return v
-
 
 class RepositoryIndexErrorResponse(BaseModel):
     error: Optional[str] = None

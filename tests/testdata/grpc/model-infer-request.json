@@ -6,7 +6,10 @@
       "name": "input-0",
       "datatype": "INT32",
       "shape": [3],
-      "contents": { "int_contents": [1, 2, 3] }
+      "contents": { "int_contents": [1, 2, 3] },
+      "parameters": {
+        "content_type": { "string_param": "np" }
+      }
     },
     {
       "name": "input-1",

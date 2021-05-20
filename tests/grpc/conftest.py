@@ -3,7 +3,7 @@ import pytest
 
 from grpc import aio
 
-from typing import AsyncGenerator
+from typing import AsyncGenerator, Dict
 from google.protobuf import json_format
 from mlserver.handlers import DataPlane, ModelRepositoryHandlers
 from mlserver.settings import Settings
@@ -41,6 +41,15 @@ def grpc_settings(settings: Settings) -> Settings:
 @pytest.fixture
 def grpc_repository_index_request() -> mr_pb.RepositoryIndexRequest:
     return mr_pb.RepositoryIndexRequest(ready=None)
+
+
+@pytest.fixture
+def grpc_parameters() -> Dict[str, pb.InferParameter]:
+    return {
+        "content_type": pb.InferParameter(string_param="np"),
+        "foo": pb.InferParameter(bool_param=True),
+        "bar": pb.InferParameter(int64_param=46),
+    }
 
 
 @pytest.fixture

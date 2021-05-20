@@ -7,6 +7,7 @@ from mlserver.grpc.converters import (
     ModelMetadataResponseConverter,
     RepositoryIndexRequestConverter,
     RepositoryIndexResponseConverter,
+    ParametersConverter,
 )
 from mlserver.grpc import dataplane_pb2 as pb
 
@@ -48,6 +49,7 @@ def test_modelinferrequest_to_types(model_infer_request):
                 datatype="INT32",
                 shape=[3],
                 data=types.TensorData.parse_obj([1, 2, 3]),
+                parameters=types.Parameters(content_type="np"),
             ),
             types.RequestInput(
                 name="input-1",
@@ -112,3 +114,18 @@ def test_repositoryindexresponse_from_types(repository_index_response):
         assert expected.version == grpc_model.version
         assert expected.state.value == grpc_model.state
         assert expected.reason == grpc_model.reason
+
+
+def test_parameters_to_types(grpc_parameters):
+    parameters = ParametersConverter.to_types(grpc_parameters)
+
+    assert parameters.content_type == grpc_parameters["content_type"].string_param
+    assert parameters.foo == grpc_parameters["foo"].bool_param
+    assert parameters.bar == grpc_parameters["bar"].int64_param
+
+
+def test_parameters_from_types(grpc_parameters):
+    parameters = ParametersConverter.to_types(grpc_parameters)
+    conv_parameters = ParametersConverter.from_types(parameters)
+
+    assert conv_parameters == grpc_parameters
