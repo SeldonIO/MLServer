@@ -183,7 +183,6 @@ To illustrate how this would work, we will extend our custom runtime to add a cu
 %%writefile runtime.py
 import io
 import json
-import numpy as np
 
 from PIL import Image
 
