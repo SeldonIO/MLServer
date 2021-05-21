@@ -1,0 +1,23 @@
+
+{
+    "name": "content-type-example",
+    "implementation": "runtime.EchoRuntime",
+    "inputs": [
+        {
+            "name": "metadata-np",
+            "datatype": "INT32",
+            "shape": [2, 2],
+            "tags": {
+                "content_type": "np"
+            }
+        },
+        {
+            "name": "metadata-str",
+            "datatype": "BYTES",
+            "shape": [11],
+            "tags": {
+                "content_type": "str"
+            }
+        }
+    ]
+}
