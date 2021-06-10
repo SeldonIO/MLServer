@@ -8,7 +8,7 @@ from .types import (
     MetadataTensor,
 )
 from .settings import ModelSettings
-from .codecs import InputCodec, _codec_registry as codecs
+from .codecs import InputCodec, find_input_codec
 
 
 def _metadata_index(model_settings: ModelSettings) -> Dict[str, MetadataTensor]:
@@ -41,7 +41,7 @@ def _get_codec(
     if not content_type:
         return default_codec
 
-    return codecs.find_input_codec(content_type)
+    return find_input_codec(content_type)
 
 
 class MLModel:

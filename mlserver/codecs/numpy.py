@@ -31,6 +31,8 @@ class NumpyRequestCodec(RequestCodec):
     Encodes a multiple-input request as a NumPy tensor.
     """
 
+    ContentType = ContentType
+
     pass
 
 
@@ -39,6 +41,8 @@ class NumpyCodec(InputCodec):
     """
     Encodes a tensor as a numpy array.
     """
+
+    ContentType = ContentType
 
     def encode(self, name: str, payload: np.ndarray) -> ResponseOutput:
         return ResponseOutput(

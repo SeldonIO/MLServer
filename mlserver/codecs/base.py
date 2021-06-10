@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, Type
 
 from ..types import InferenceRequest, InferenceResponse, RequestInput, ResponseOutput
 
@@ -74,16 +74,16 @@ find_input_codec = _codec_registry.find_input_codec
 
 
 def register_request_codec(content_type: str):
-    def inner(codec: RequestCodec):
-        _codec_registry.register_request_codec(content_type, codec)
-        return codec
+    def inner(CodecKlass: Type[RequestCodec]):
+        _codec_registry.register_request_codec(content_type, CodecKlass())
+        return CodecKlass
 
     return inner
 
 
 def register_input_codec(content_type: str):
-    def inner(codec: InputCodec):
-        _codec_registry.register_input_codec(content_type, codec)
-        return codec
+    def inner(CodecKlass: Type[InputCodec]):
+        _codec_registry.register_input_codec(content_type, CodecKlass())
+        return CodecKlass
 
     return inner

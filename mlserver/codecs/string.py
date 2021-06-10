@@ -11,6 +11,7 @@ class StringCodec(InputCodec):
     Encodes a Python string as a BYTES input.
     """
 
+    ContentType = "str"
     _str_codec = "utf-8"
 
     def encode(self, name: str, payload: str) -> ResponseOutput:
