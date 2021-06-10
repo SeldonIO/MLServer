@@ -2,7 +2,7 @@ import numpy as np
 
 from typing import Any, Dict
 
-from .types import RequestInput, ResponseOutput
+from .types import InferenceRequest, InferenceResponse, RequestInput, ResponseOutput
 
 _NP_DTYPES = {
     "BOOL": "bool",
@@ -23,16 +23,35 @@ _NP_DTYPES = {
 _DATATYPES_NP = {value: key for key, value in _NP_DTYPES.items()}
 
 
-class Codec:
+class InputCodec:
     """
-    The Codec interface lets you define type conversions of your raw data to /
-    from the V2 Inference Protocol level.
+    The InputCodec interface lets you define type conversions of your raw input
+    data to / from the V2 Inference Protocol level.
+    Note that this codec applies at the individual input level.
+    For request-wide transformations (e.g. dataframes), use the RequestCodec
+    interface instead.
     """
 
     def encode(self, name: str, payload: Any) -> ResponseOutput:
         raise NotImplementedError()
 
     def decode(self, request_input: RequestInput) -> Any:
+        raise NotImplementedError()
+
+
+class RequestCodec:
+    """
+    The RequestCodec interface lets you define request-level conversions.
+    This can be useful where the encoding of your payload encompases multiple
+    input heads (e.g. dataframes).
+    For individual input-level encoding / decoding, use the InputCodec
+    interface instead.
+    """
+
+    def encode(self, name: str, payload: Any) -> InferenceResponse:
+        raise NotImplementedError()
+
+    def decode(self, request: InferenceRequest) -> Any:
         raise NotImplementedError()
 
 
@@ -43,19 +62,32 @@ class _CodecRegistry:
     should be used preferably.
     """
 
-    def __init__(self, codecs: Dict[str, Codec] = {}):
-        self._codecs = codecs
+    def __init__(
+        self,
+        input_codecs: Dict[str, InputCodec] = {},
+        request_codecs: Dict[str, RequestCodec] = {},
+    ):
+        self._input_codecs = input_codecs
+        self._request_codecs = request_codecs
 
-    def register(self, content_type: str, codec: Codec):
+    def register_input_codec(self, content_type: str, codec: InputCodec):
         # TODO: Raise error if codec exists?
-        self._codecs[content_type] = codec
+        self._input_codecs[content_type] = codec
 
-    def find_codec(self, content_type: str) -> Codec:
+    def find_input_codec(self, content_type: str) -> InputCodec:
         # TODO: Raise error if codec doesn't exist
-        return self._codecs[content_type]
+        return self._input_codecs[content_type]
+
+    def register_request_codec(self, content_type: str, codec: RequestCodec):
+        # TODO: Raise error if codec exists?
+        self._request_codecs[content_type] = codec
+
+    def find_request_codec(self, content_type: str) -> RequestCodec:
+        # TODO: Raise error if codec doesn't exist
+        return self._request_codecs[content_type]
 
 
-class StringCodec(Codec):
+class StringCodec(InputCodec):
     """
     Encodes a Python string as a BYTES input.
     """
@@ -84,7 +116,7 @@ class StringCodec(Codec):
         return ""
 
 
-class NumpyCodec(Codec):
+class NumpyCodec(InputCodec):
     """
     Encodes a tensor as a numpy array.
     """
@@ -120,5 +152,8 @@ class NumpyCodec(Codec):
 
 
 _codec_registry = _CodecRegistry(
-    {StringCodec.ContentType: StringCodec(), NumpyCodec.ContentType: NumpyCodec()}
+    input_codecs={
+        StringCodec.ContentType: StringCodec(),
+        NumpyCodec.ContentType: NumpyCodec(),
+    }
 )
