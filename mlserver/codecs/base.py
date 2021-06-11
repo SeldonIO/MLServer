@@ -1,4 +1,4 @@
-from typing import Any, Dict, Type
+from typing import Any, Dict, Optional, Type
 
 from ..types import InferenceRequest, InferenceResponse, RequestInput, ResponseOutput
 
@@ -11,6 +11,8 @@ class InputCodec:
     For request-wide transformations (e.g. dataframes), use the RequestCodec
     interface instead.
     """
+
+    ContentType: Optional[str] = None
 
     def encode(self, name: str, payload: Any) -> ResponseOutput:
         raise NotImplementedError()
@@ -27,6 +29,8 @@ class RequestCodec:
     For individual input-level encoding / decoding, use the InputCodec
     interface instead.
     """
+
+    ContentType: Optional[str] = None
 
     def encode(self, name: str, payload: Any) -> InferenceResponse:
         raise NotImplementedError()
@@ -73,17 +77,13 @@ find_request_codec = _codec_registry.find_request_codec
 find_input_codec = _codec_registry.find_input_codec
 
 
-def register_request_codec(content_type: str):
-    def inner(CodecKlass: Type[RequestCodec]):
-        _codec_registry.register_request_codec(content_type, CodecKlass())
-        return CodecKlass
-
-    return inner
+def register_request_codec(CodecKlass: Type[RequestCodec]):
+    if CodecKlass.ContentType is not None:
+        _codec_registry.register_request_codec(CodecKlass.ContentType, CodecKlass())
+    return CodecKlass
 
 
-def register_input_codec(content_type: str):
-    def inner(CodecKlass: Type[InputCodec]):
-        _codec_registry.register_input_codec(content_type, CodecKlass())
-        return CodecKlass
-
-    return inner
+def register_input_codec(CodecKlass: Type[InputCodec]):
+    if CodecKlass.ContentType is not None:
+        _codec_registry.register_input_codec(CodecKlass.ContentType, CodecKlass())
+    return CodecKlass

@@ -1,4 +1,4 @@
-from .numpy import NumpyCodec, NumpyRequestCodec
+from .numpy import NumpyCodec
 from .string import StringCodec
 from .base import (
     InputCodec,
@@ -10,7 +10,6 @@ from .base import (
 )
 
 __all__ = [
-    "NumpyRequestCodec",
     "NumpyCodec",
     "StringCodec",
     "InputCodec",

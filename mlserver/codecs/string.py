@@ -2,10 +2,8 @@ from ..types import RequestInput, ResponseOutput
 
 from .base import InputCodec, register_input_codec
 
-ContentType = "str"
 
-
-@register_input_codec(ContentType)
+@register_input_codec
 class StringCodec(InputCodec):
     """
     Encodes a Python string as a BYTES input.

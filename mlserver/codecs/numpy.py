@@ -1,8 +1,8 @@
 import numpy as np
 
-from ..types import InferenceRequest, InferenceResponse, RequestInput, ResponseOutput
+from ..types import RequestInput, ResponseOutput
 
-from .base import RequestCodec, InputCodec, register_input_codec, register_request_codec
+from .base import RequestCodec, InputCodec, register_input_codec
 
 _DatatypeToNumpy = {
     "BOOL": "bool",
@@ -22,27 +22,14 @@ _DatatypeToNumpy = {
 
 _NumpyToDatatype = {value: key for key, value in _DatatypeToNumpy.items()}
 
-ContentType = "np"
 
-
-@register_request_codec(ContentType)
-class NumpyRequestCodec(RequestCodec):
-    """
-    Encodes a multiple-input request as a NumPy tensor.
-    """
-
-    ContentType = ContentType
-
-    pass
-
-
-@register_input_codec(ContentType)
+@register_input_codec
 class NumpyCodec(InputCodec):
     """
     Encodes a tensor as a numpy array.
     """
 
-    ContentType = ContentType
+    ContentType = "np"
 
     def encode(self, name: str, payload: np.ndarray) -> ResponseOutput:
         return ResponseOutput(
