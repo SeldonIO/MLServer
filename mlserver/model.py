@@ -1,47 +1,13 @@
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 from .types import (
     InferenceRequest,
     InferenceResponse,
     RequestInput,
     MetadataModelResponse,
-    MetadataTensor,
 )
 from .settings import ModelSettings
-from .codecs import InputCodec, find_input_codec
-
-
-def _metadata_index(model_settings: ModelSettings) -> Dict[str, MetadataTensor]:
-    index: Dict[str, MetadataTensor] = {}
-
-    if not model_settings.inputs:
-        return index
-
-    for inp in model_settings.inputs:
-        index[inp.name] = inp
-
-    return index
-
-
-def _get_content_type(
-    request_input: RequestInput, input_metadata: Optional[MetadataTensor]
-) -> Optional[str]:
-    if request_input.parameters and request_input.parameters.content_type:
-        return request_input.parameters.content_type
-
-    if input_metadata and input_metadata.tags and input_metadata.tags.content_type:
-        return input_metadata.tags.content_type
-
-    return None
-
-
-def _get_codec(
-    content_type: Optional[str], default_codec: InputCodec = None
-) -> Optional[InputCodec]:
-    if not content_type:
-        return default_codec
-
-    return find_input_codec(content_type)
+from .codecs import DecodedParameterName
 
 
 class MLModel:
@@ -52,7 +18,6 @@ class MLModel:
 
     def __init__(self, settings: ModelSettings):
         self._settings = settings
-        self._metadata_inputs = _metadata_index(self._settings)
         self.ready = False
 
     @property
@@ -66,16 +31,12 @@ class MLModel:
             return params.version
         return None
 
-    def decode(
-        self, request_input: RequestInput, default_codec: InputCodec = None
-    ) -> Any:
-        input_metadata = self._metadata_inputs.get(request_input.name)
-        content_type = _get_content_type(request_input, input_metadata)
-        codec = _get_codec(content_type, default_codec)
-        if codec is None:
-            return request_input.data
+    def decode(self, request_input: RequestInput) -> Any:
+        # TODO: Remove once there aren't any references to self.decode()
+        if hasattr(request_input, DecodedParameterName):
+            return getattr(request_input, DecodedParameterName)
 
-        return codec.decode(request_input)
+        return request_input.data
 
     async def metadata(self) -> MetadataModelResponse:
         return MetadataModelResponse(
