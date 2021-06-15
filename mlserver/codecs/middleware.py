@@ -1,8 +1,8 @@
 from typing import Any, Optional, Dict
 
-from .codecs import find_input_codec
-from .settings import ModelSettings
-from .types import InferenceRequest, RequestInput, MetadataTensor, Parameters
+from .base import find_input_codec
+from ..settings import ModelSettings
+from ..types import InferenceRequest, RequestInput, MetadataTensor, Parameters
 
 DecodedParameterName = "decoded_payload"
 
@@ -36,7 +36,6 @@ def _decode_request_input(
     request_input: RequestInput, metadata_inputs: Dict[str, MetadataTensor]
 ) -> Optional[Any]:
     input_metadata = metadata_inputs.get(request_input.name)
-
     content_type = _get_content_type(request_input, input_metadata)
     if content_type is None:
         return None

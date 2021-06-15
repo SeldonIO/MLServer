@@ -2,7 +2,7 @@ import numpy as np
 
 from ..types import RequestInput, ResponseOutput
 
-from .base import RequestCodec, InputCodec, register_input_codec
+from .base import InputCodec, register_input_codec
 
 _DatatypeToNumpy = {
     "BOOL": "bool",

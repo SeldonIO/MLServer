@@ -7,7 +7,7 @@ from .types import (
     MetadataModelResponse,
 )
 from .settings import ModelSettings
-from .codecs import DecodedParameterName
+from .codecs import DecodedParameterName, InputCodec
 
 
 class MLModel:
@@ -31,10 +31,17 @@ class MLModel:
             return params.version
         return None
 
-    def decode(self, request_input: RequestInput) -> Any:
+    def decode(
+        self, request_input: RequestInput, default_codec: InputCodec = None
+    ) -> Any:
         # TODO: Remove once there aren't any references to self.decode()
-        if hasattr(request_input, DecodedParameterName):
-            return getattr(request_input, DecodedParameterName)
+        if request_input.parameters and hasattr(
+            request_input.parameters, DecodedParameterName
+        ):
+            return getattr(request_input.parameters, DecodedParameterName)
+
+        if default_codec:
+            return default_codec.decode(request_input)
 
         return request_input.data
 
