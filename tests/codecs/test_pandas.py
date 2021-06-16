@@ -2,8 +2,35 @@ import pytest
 import pandas as pd
 import numpy as np
 
-from mlserver.codecs.pandas import PandasCodec
-from mlserver.types import InferenceRequest, RequestInput, Parameters
+from mlserver.codecs.pandas import PandasCodec, _to_response_output
+from mlserver.types import InferenceRequest, RequestInput, Parameters, ResponseOutput
+
+
+@pytest.mark.parametrize(
+    "series, expected",
+    [
+        (
+            pd.Series(data=["hey", "abc"], name="foo"),
+            ResponseOutput(
+                name="foo", shape=[2], data=["hey", "abc"], datatype="BYTES"
+            ),
+        ),
+        (
+            pd.Series(data=[1, 2, 3], name="bar"),
+            ResponseOutput(name="bar", shape=[3], data=[1, 2, 3], datatype="INT64"),
+        ),
+        (
+            pd.Series(data=[[1, 2, 3], [4, 5, 6]], name="bar"),
+            ResponseOutput(
+                name="bar", shape=[2], data=[[1, 2, 3], [4, 5, 6]], datatype="BYTES"
+            ),
+        ),
+    ],
+)
+def test_to_response_output(series, expected):
+    response_output = _to_response_output(series)
+
+    assert response_output == expected
 
 
 @pytest.mark.parametrize(
@@ -52,7 +79,7 @@ from mlserver.types import InferenceRequest, RequestInput, Parameters
             ),
             pd.DataFrame(
                 {
-                    "a": [np.array([1]), np.array([2]), np.array([3])],
+                    "a": [[1], [2], [3]],
                     "b": [a for a in b"ABC"],
                 }
             ),

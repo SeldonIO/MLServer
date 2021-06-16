@@ -32,7 +32,9 @@ class RequestCodec:
 
     ContentType: Optional[str] = None
 
-    def encode(self, name: str, payload: Any) -> InferenceResponse:
+    def encode(
+        self, model_name: str, payload: Any, model_version: str = None
+    ) -> InferenceResponse:
         raise NotImplementedError()
 
     def decode(self, request: InferenceRequest) -> Any:

@@ -6,7 +6,8 @@ from typing import Any
 
 from .base import RequestCodec, register_request_codec
 from .middleware import DecodedParameterName
-from ..types import InferenceRequest, InferenceResponse, RequestInput
+from .numpy import _to_datatype
+from ..types import InferenceRequest, InferenceResponse, RequestInput, ResponseOutput
 
 
 def _get_decoded_or_raw(request_input: RequestInput) -> Any:
@@ -26,12 +27,27 @@ def _to_series(request_input: RequestInput) -> pd.Series:
     return pd.Series(payload)
 
 
+def _to_response_output(series: pd.Series) -> ResponseOutput:
+    return ResponseOutput(
+        name=series.name,
+        shape=list(series.shape),
+        data=series.tolist(),
+        datatype=_to_datatype(series.dtype),
+    )
+
+
 @register_request_codec
 class PandasCodec(RequestCodec):
     ContentType = "pd"
 
-    def encode(self, name: str, payload: pd.DataFrame) -> InferenceResponse:
-        raise NotImplementedError()
+    def encode(
+        self, model_name: str, payload: pd.DataFrame, model_version: str = None
+    ) -> InferenceResponse:
+        outputs = [_to_response_output(payload[col]) for col in payload]
+
+        return InferenceResponse(
+            model_name=model_name, model_version=model_version, outputs=outputs
+        )
 
     def decode(self, request: InferenceRequest) -> pd.DataFrame:
         data = {
