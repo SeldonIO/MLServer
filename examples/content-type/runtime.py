@@ -6,8 +6,9 @@ from mlserver.codecs import DecodedParameterName
 
 _to_exclude = {
     "parameters": {DecodedParameterName},
-    'inputs': {"__all__": {"parameters": {DecodedParameterName}}}
+    "inputs": {"__all__": {"parameters": {DecodedParameterName}}},
 }
+
 
 class EchoRuntime(MLModel):
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
@@ -19,7 +20,7 @@ class EchoRuntime(MLModel):
         if payload.parameters:
             decoded_request = getattr(payload.parameters, DecodedParameterName)
         print(decoded_request)
-            
+
         outputs = []
         for request_input in payload.inputs:
             outputs.append(
@@ -27,9 +28,8 @@ class EchoRuntime(MLModel):
                     name=request_input.name,
                     datatype=request_input.datatype,
                     shape=request_input.shape,
-                    data=request_input.data
+                    data=request_input.data,
                 )
             )
-        
+
         return InferenceResponse(model_name=self.name, outputs=outputs)
-        
