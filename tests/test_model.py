@@ -19,7 +19,7 @@ from mlserver.model import MLModel
                 datatype="INT32",
                 parameters=Parameters(
                     content_type=NumpyCodec.ContentType,
-                    decoded_payload=np.array([[1, 2], [3, 4]]),
+                    _decoded_payload=np.array([[1, 2], [3, 4]]),
                 ),
             ),
             np.array([[1, 2], [3, 4]]),
@@ -32,7 +32,7 @@ from mlserver.model import MLModel
                 datatype="BYTES",
                 parameters=Parameters(
                     content_type=StringCodec.ContentType,
-                    decoded_payload="my unicode string",
+                    _decoded_payload="my unicode string",
                 ),
             ),
             "my unicode string",
@@ -43,7 +43,7 @@ from mlserver.model import MLModel
                 shape=[2],
                 data=[1, 2],
                 datatype="FP32",
-                parameters=Parameters(decoded_payload=None),
+                parameters=Parameters(_decoded_payload=None),
             ),
             None,
         ),

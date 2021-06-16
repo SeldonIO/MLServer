@@ -34,6 +34,7 @@ class MLModel:
     def decode(
         self, request_input: RequestInput, default_codec: InputCodec = None
     ) -> Any:
+        # NOTE: This method is now deprecated!
         # TODO: Remove once there aren't any references to self.decode()
         if request_input.parameters and hasattr(
             request_input.parameters, DecodedParameterName

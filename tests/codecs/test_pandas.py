@@ -89,14 +89,14 @@ def test_encode(dataframe, expected):
                         data=[1, 2, 3],
                         datatype="FP32",
                         shape=[1, 3],
-                        parameters=Parameters(decoded_payload=np.array([[1, 2, 3]])),
+                        parameters=Parameters(_decoded_payload=np.array([[1, 2, 3]])),
                     ),
                     RequestInput(
                         name="b",
                         data=b"hello world",
                         datatype="BYTES",
                         shape=[1, 11],
-                        parameters=Parameters(decoded_payload=["hello world"]),
+                        parameters=Parameters(_decoded_payload=["hello world"]),
                     ),
                 ]
             ),
@@ -111,7 +111,7 @@ def test_encode(dataframe, expected):
                         datatype="FP32",
                         shape=[3, 1],
                         parameters=Parameters(
-                            decoded_payload=np.array([[1], [2], [3]])
+                            _decoded_payload=np.array([[1], [2], [3]])
                         ),
                     ),
                     RequestInput(

@@ -4,7 +4,7 @@ from .base import find_input_codec, find_request_codec
 from ..settings import ModelSettings
 from ..types import InferenceRequest, RequestInput, MetadataTensor, Parameters
 
-DecodedParameterName = "decoded_payload"
+DecodedParameterName = "_decoded_payload"
 
 
 def _get_content_type(parametrised_obj, tagged_obj=None) -> Optional[str]:
