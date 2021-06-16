@@ -20,6 +20,12 @@ import json
 
 from mlserver import MLModel
 from mlserver.types import InferenceRequest, InferenceResponse, ResponseOutput
+from mlserver.codecs import DecodedParameterName
+
+_to_exclude = {
+    "parameters": {DecodedParameterName},
+    'inputs': {"__all__": {"parameters": {DecodedParameterName}}}
+}
 
 class EchoRuntime(MLModel):
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
@@ -27,7 +33,7 @@ class EchoRuntime(MLModel):
         for request_input in payload.inputs:
             decoded_input = self.decode(request_input)
             print(f"------ Encoded Input ({request_input.name}) ------")
-            print(json.dumps(request_input.dict(), indent=2))
+            print(json.dumps(request_input.dict(exclude=_to_exclude), indent=2))
             print(f"------ Decoded input ({request_input.name}) ------")
             print(decoded_input)
             
@@ -193,7 +199,13 @@ from mlserver.types import (
     RequestInput, 
     ResponseOutput
 )
-from mlserver.codecs import NumpyCodec, register_input_codec
+from mlserver.codecs import NumpyCodec, register_input_codec, DecodedParameterName
+
+
+_to_exclude = {
+    "parameters": {DecodedParameterName},
+    'inputs': {"__all__": {"parameters": {DecodedParameterName}}}
+}
 
 @register_input_codec
 class PillowCodec(NumpyCodec):
@@ -233,7 +245,7 @@ class EchoRuntime(MLModel):
         for request_input in payload.inputs:
             decoded_input = self.decode(request_input)
             print(f"------ Encoded Input ({request_input.name}) ------")
-            print(json.dumps(request_input.dict(), indent=2))
+            print(json.dumps(request_input.dict(exclude=_to_exclude), indent=2))
             print(f"------ Decoded input ({request_input.name}) ------")
             print(decoded_input)
             
@@ -323,10 +335,15 @@ from mlserver import MLModel
 from mlserver.types import InferenceRequest, InferenceResponse, ResponseOutput
 from mlserver.codecs import DecodedParameterName
 
+_to_exclude = {
+    "parameters": {DecodedParameterName},
+    'inputs': {"__all__": {"parameters": {DecodedParameterName}}}
+}
+
 class EchoRuntime(MLModel):
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
         print("------ Encoded Input (request) ------")
-        print(json.dumps(payload.dict(), indent=2))
+        print(json.dumps(payload.dict(exclude=_to_exclude), indent=2))
         print("------ Decoded input (request) ------")
         decoded_request = None
         if payload.parameters:

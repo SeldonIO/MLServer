@@ -10,7 +10,13 @@ from mlserver.types import (
     RequestInput, 
     ResponseOutput
 )
-from mlserver.codecs import NumpyCodec, register_input_codec
+from mlserver.codecs import NumpyCodec, register_input_codec, DecodedParameterName
+
+
+_to_exclude = {
+    "parameters": {DecodedParameterName},
+    'inputs': {"__all__": {"parameters": {DecodedParameterName}}}
+}
 
 @register_input_codec
 class PillowCodec(NumpyCodec):
@@ -50,7 +56,7 @@ class EchoRuntime(MLModel):
         for request_input in payload.inputs:
             decoded_input = self.decode(request_input)
             print(f"------ Encoded Input ({request_input.name}) ------")
-            print(json.dumps(request_input.dict(), indent=2))
+            print(json.dumps(request_input.dict(exclude=_to_exclude), indent=2))
             print(f"------ Decoded input ({request_input.name}) ------")
             print(decoded_input)
             
