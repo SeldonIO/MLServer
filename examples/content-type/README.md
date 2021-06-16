@@ -67,7 +67,7 @@ This file should be present (or accessible from) in the folder where we run `mls
 }
 ```
 
-## Request Input Parameters
+## Request Inputs
 
 Our initial step will be to decide the content type based on the incoming `inputs[].parameters` field.
 For this, we will start our MLServer in the background (e.g. running `mlserver start .`)
@@ -105,7 +105,7 @@ response = requests.post(
 )
 ```
 
-## Model Metadata
+### Model Metadata
 
 Our next step will be to define the expected content type through the model metadata.
 This can be done by extending the `model-settings.json` file, and adding a section on inputs.
@@ -169,7 +169,7 @@ response = requests.post(
 
 As you should be able to see in the server logs, MLServer will cross-reference the input names against the model metadata to find the right content type.
 
-## Custom Codecs
+### Custom Codecs
 
 There may be cases where a custom inference runtime may need to encode / decode to custom datatypes.
 As an example, we can think of computer vision models which may only operate with `pillow` image objects.
@@ -193,8 +193,9 @@ from mlserver.types import (
     RequestInput, 
     ResponseOutput
 )
-from mlserver.codecs import NumpyCodec, _codec_registry as codecs
+from mlserver.codecs import NumpyCodec, register_input_codec
 
+@register_input_codec
 class PillowCodec(NumpyCodec):
     ContentType = "img"
     DefaultMode = "L"
@@ -225,9 +226,6 @@ class PillowCodec(NumpyCodec):
             size=request_input.shape,
             data=encoded
         )
-    
-# Register our new codec so that it's used for payloads with `img` content type
-codecs.register(content_type=PillowCodec.ContentType, codec=PillowCodec())
 
 class EchoRuntime(MLModel):
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
@@ -307,6 +305,86 @@ response = requests.post(
 
 As you should be able to see in the MLServer logs, the server is now able to decode the payload into a Pillow image.
 This example also illustrates how `Codec` objects can be compatible with multiple `datatype` values (e.g. tensor and `BYTES` in this case).
+
+## Request Codecs
+
+So far, we've seen how you can specify codecs so that they get applied at the input level.
+However, it is also possible to use request-wide codecs that aggregate multiple inputs to decode the payload.
+This is usually relevant for cases where the models expect a multi-column input type, like a Pandas DataFrame.
+
+To illustrate this, we will first tweak our `EchoRuntime` so that it prints the decoded contents at the request level.
+
+
+```python
+%%writefile runtime.py
+import json
+
+from mlserver import MLModel
+from mlserver.types import InferenceRequest, InferenceResponse, ResponseOutput
+from mlserver.codecs import DecodedParameterName
+
+class EchoRuntime(MLModel):
+    async def predict(self, payload: InferenceRequest) -> InferenceResponse:
+        print("------ Encoded Input (request) ------")
+        print(json.dumps(payload.dict(), indent=2))
+        print("------ Decoded input (request) ------")
+        decoded_request = None
+        if payload.parameters:
+            decoded_request = getattr(payload.parameters, DecodedParameterName)
+        print(decoded_request)
+            
+        outputs = []
+        for request_input in payload.inputs:
+            outputs.append(
+                ResponseOutput(
+                    name=request_input.name,
+                    datatype=request_input.datatype,
+                    shape=request_input.shape,
+                    data=request_input.data
+                )
+            )
+        
+        return InferenceResponse(model_name=self.name, outputs=outputs)
+        
+```
+
+We should now be able to restart our instance of MLServer (i.e. with the `mlserver start .` command), to send a few test requests.
+
+
+```python
+import requests
+
+payload = {
+    "inputs": [
+        {
+            "name": "parameters-np",
+            "datatype": "INT32",
+            "shape": [2, 2],
+            "data": [1, 2, 3, 4],
+            "parameters": {
+                "content_type": "np"
+            }
+        },
+        {
+            "name": "parameters-str",
+            "datatype": "BYTES",
+            "shape": [2, 11],
+            "data": ["hello world 😁", "bye bye 😁"],
+            "parameters": {
+                "content_type": "str"
+            }
+        }
+    ],
+    "parameters": {
+        "content_type": "pd"
+    }
+}
+
+response = requests.post(
+    "http://localhost:8080/v2/models/content-type-example/infer",
+    json=payload
+)
+```
 
 
 ```python
