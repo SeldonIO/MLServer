@@ -33,7 +33,8 @@ class EchoRuntime(MLModel):
         for request_input in payload.inputs:
             decoded_input = self.decode(request_input)
             print(f"------ Encoded Input ({request_input.name}) ------")
-            print(json.dumps(request_input.dict(exclude=_to_exclude), indent=2))
+            as_dict = request_input.dict(exclude=_to_exclude)  # type: ignore
+            print(json.dumps(as_dict, indent=2))
             print(f"------ Decoded input ({request_input.name}) ------")
             print(decoded_input)
             
@@ -245,7 +246,8 @@ class EchoRuntime(MLModel):
         for request_input in payload.inputs:
             decoded_input = self.decode(request_input)
             print(f"------ Encoded Input ({request_input.name}) ------")
-            print(json.dumps(request_input.dict(exclude=_to_exclude), indent=2))
+            as_dict = request_input.dict(exclude=_to_exclude)  # type: ignore
+            print(json.dumps(as_dict, indent=2))
             print(f"------ Decoded input ({request_input.name}) ------")
             print(decoded_input)
             
@@ -343,7 +345,8 @@ _to_exclude = {
 class EchoRuntime(MLModel):
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
         print("------ Encoded Input (request) ------")
-        print(json.dumps(payload.dict(exclude=_to_exclude), indent=2))
+        as_dict = payload.dict(exclude=_to_exclude)  # type: ignore
+        print(json.dumps(as_dict, indent=2))
         print("------ Decoded input (request) ------")
         decoded_request = None
         if payload.parameters:
