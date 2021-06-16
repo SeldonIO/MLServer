@@ -1,12 +1,64 @@
 import pytest
 import numpy as np
+import pandas as pd
 
 from typing import Any
 
 from mlserver.types import RequestInput, Parameters, InferenceRequest
-from mlserver.codecs import NumpyCodec, StringCodec
+from mlserver.codecs import NumpyCodec, StringCodec, PandasCodec
 from mlserver.codecs.middleware import DecodedParameterName, codec_middleware
 from mlserver.settings import ModelSettings
+
+
+@pytest.mark.parametrize(
+    "inference_request, expected",
+    [
+        (
+            InferenceRequest(
+                parameters=Parameters(content_type=PandasCodec.ContentType),
+                inputs=[
+                    RequestInput(
+                        name="foo",
+                        shape=[2, 2],
+                        data=[1, 2, 3, 4],
+                        datatype="INT32",
+                        parameters=Parameters(content_type=NumpyCodec.ContentType),
+                    ),
+                ],
+            ),
+            pd.DataFrame({"foo": [[1, 2], [3, 4]]}),
+        ),
+        (
+            InferenceRequest(
+                parameters=Parameters(content_type=PandasCodec.ContentType),
+                inputs=[
+                    RequestInput(
+                        name="foo",
+                        shape=[2, 2],
+                        data=[1, 2, 3, 4],
+                        datatype="INT32",
+                        parameters=Parameters(content_type=NumpyCodec.ContentType),
+                    ),
+                    RequestInput(
+                        name="bar",
+                        shape=[2, 3],
+                        data=b"heyabc",
+                        datatype="BYTES",
+                        parameters=Parameters(content_type=StringCodec.ContentType),
+                    ),
+                ],
+            ),
+            pd.DataFrame({"foo": [[1, 2], [3, 4]], "bar": ["hey", "abc"]}),
+        ),
+    ],
+)
+def test_decode_request(
+    sum_model_settings: ModelSettings, inference_request: InferenceRequest, expected
+):
+    decoded_request = codec_middleware(inference_request, sum_model_settings)
+    decoded = getattr(decoded_request.parameters, DecodedParameterName)
+
+    pd.testing.assert_frame_equal(decoded, expected)
 
 
 @pytest.mark.parametrize(

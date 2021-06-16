@@ -1,4 +1,5 @@
 from .numpy import NumpyCodec
+from .pandas import PandasCodec
 from .string import StringCodec
 from .base import (
     InputCodec,
@@ -13,6 +14,7 @@ from .middleware import DecodedParameterName
 __all__ = [
     "NumpyCodec",
     "StringCodec",
+    "PandasCodec",
     "InputCodec",
     "RequestCodec",
     "DecodedParameterName",
