@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
 
-from mlserver.codecs import NumpyCodec
+from mlserver.codecs.numpy import NumpyCodec, _to_datatype
 from mlserver.types import RequestInput
 
 
@@ -54,8 +54,7 @@ def test_numpy_codec(request_input, payload):
     ],
 )
 def test_numpy_codec_to_datatype(dtype, datatype):
-    codec = NumpyCodec()
     dtype = np.dtype(dtype)
 
-    obtained_datatype = codec._to_datatype(dtype)
+    obtained_datatype = _to_datatype(dtype)
     assert datatype == obtained_datatype

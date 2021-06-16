@@ -27,7 +27,9 @@ from mlserver.types import (
         ),
         (
             pd.Series(data=[1, 2.5, 3], name="bar"),
-            ResponseOutput(name="bar", shape=[3], data=[1, 2.5, 3], datatype="FLOAT32"),
+            ResponseOutput(
+                name="bar", shape=[3], data=[1.0, 2.5, 3.0], datatype="FP64"
+            ),
         ),
         (
             pd.Series(data=[[1, 2, 3], [4, 5, 6]], name="bar"),

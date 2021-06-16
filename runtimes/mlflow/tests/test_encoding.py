@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
 
-from mlserver.codecs import NumpyCodec
+from mlserver.codecs.numpy import _to_datatype
 
 from mlserver_mlflow.encoding import (
     MLflowPayload,
@@ -25,9 +25,8 @@ def test_to_outputs(mlflow_payload: MLflowPayload):
         mlflow_payload = {DefaultOutputName: mlflow_payload}  # type: ignore
 
     assert len(outputs) == len(mlflow_payload)
-    codec = NumpyCodec()
     for output in outputs:
         value = mlflow_payload[output.name]
         assert output.data.__root__ == value.tolist()
-        assert output.datatype == codec._to_datatype(value.dtype)
+        assert output.datatype == _to_datatype(value.dtype)
         assert output.shape == list(value.shape)
