@@ -1,5 +1,6 @@
 # TODO: Should we make Pandas optional?
 import pandas as pd
+import numpy as np
 
 from typing import Any
 
@@ -16,6 +17,15 @@ def _get_decoded_or_raw(request_input: RequestInput) -> Any:
     return request_input.data
 
 
+def _to_series(request_input: RequestInput) -> pd.Series:
+    payload = _get_decoded_or_raw(request_input)
+    if isinstance(payload, np.ndarray):
+        # Necessary so that it's compatible with pd.Series
+        payload = list(payload)
+
+    return pd.Series(payload)
+
+
 @register_request_codec
 class PandasCodec(RequestCodec):
     ContentType = "pd"
@@ -25,8 +35,8 @@ class PandasCodec(RequestCodec):
 
     def decode(self, request: InferenceRequest) -> pd.DataFrame:
         data = {
-            request_input.name: _get_decoded_or_raw(request_input)
+            request_input.name: _to_series(request_input)
             for request_input in request.inputs
         }
-        breakpoint()
+
         return pd.DataFrame(data)
