@@ -6,6 +6,7 @@ import numpy as np
 from sklearn.dummy import DummyClassifier
 from mlserver.settings import ModelSettings, ModelParameters
 from mlserver.types import InferenceRequest
+from mlserver.codecs.middleware import codec_middleware
 
 from mlserver_mlflow import MLflowRuntime
 
@@ -53,6 +54,7 @@ async def runtime(model_settings: ModelSettings) -> MLflowRuntime:
 
 
 @pytest.fixture
-def inference_request() -> InferenceRequest:
+def inference_request(model_settings: ModelSettings) -> InferenceRequest:
     payload_path = os.path.join(TESTDATA_PATH, "inference-request.json")
-    return InferenceRequest.parse_file(payload_path)
+    inference_request = InferenceRequest.parse_file(payload_path)
+    return codec_middleware(inference_request, model_settings)
