@@ -1,6 +1,5 @@
 from typing import Any
 
-from ..types import RequestInput
 from .middleware import DecodedParameterName
 
 
