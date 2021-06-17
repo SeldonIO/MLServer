@@ -169,8 +169,15 @@ Since this command will start the server and block the terminal, waiting for req
 
 We now have our model being served by `mlserver`.
 To make sure that everything is working as expected, let's send a request from our test set.
-
 For that, we can use the Python types that `mlserver` provides out of box, or we can build our request manually.
+
+Note that, the request specifies the value `pd` as its *content type*, whereas every input specifies the *content type* `np`.
+These parameters will instruct MLServer to:
+
+- Convert every input value to a NumPy array, using the data type and shape information provided.
+- Group all the different inputs into a Pandas DataFrame, using their names as the column names.
+
+To learn more about how MLServer uses content type parameters, you can check this [worked out example](../content-type/README.md).
 
 
 ```python
