@@ -2,24 +2,14 @@
 import pandas as pd
 import numpy as np
 
-from typing import Any
-
 from .base import RequestCodec, register_request_codec
-from .middleware import DecodedParameterName
 from .numpy import _to_datatype
+from .utils import get_decoded_or_raw
 from ..types import InferenceRequest, InferenceResponse, RequestInput, ResponseOutput
 
 
-def _get_decoded_or_raw(request_input: RequestInput) -> Any:
-    if request_input.parameters:
-        if hasattr(request_input.parameters, DecodedParameterName):
-            return getattr(request_input.parameters, DecodedParameterName)
-
-    return request_input.data
-
-
 def _to_series(request_input: RequestInput) -> pd.Series:
-    payload = _get_decoded_or_raw(request_input)
+    payload = get_decoded_or_raw(request_input)
     if isinstance(payload, np.ndarray):
         # Necessary so that it's compatible with pd.Series
         payload = list(payload)
