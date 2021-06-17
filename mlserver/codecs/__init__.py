@@ -6,10 +6,9 @@ from .base import (
     RequestCodec,
     register_input_codec,
     register_request_codec,
-    find_input_codec,
-    find_request_codec,
 )
 from .middleware import DecodedParameterName
+from .utils import get_decoded_or_raw
 
 __all__ = [
     "NumpyCodec",
@@ -20,6 +19,5 @@ __all__ = [
     "DecodedParameterName",
     "register_input_codec",
     "register_request_codec",
-    "find_input_codec",
-    "find_request_codec",
+    "get_decoded_or_raw",
 ]

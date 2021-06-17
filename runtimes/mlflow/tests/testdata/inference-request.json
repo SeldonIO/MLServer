@@ -4,8 +4,14 @@
       "name": "input-0",
       "shape": [3],
       "datatype": "INT32",
-      "data": [1, 2, 3]
+      "data": [1, 2, 3],
+      "parameters": {
+        "content_type": "np"
+      }
     }
   ],
+  "parameters": {
+    "content_type": "dict"
+  },
   "outputs": [{ "name": "predict" }, { "name": "predict_proba" }]
 }
