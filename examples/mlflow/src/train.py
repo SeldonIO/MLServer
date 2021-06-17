@@ -1,11 +1,12 @@
 # Original source code and more details can be found in:
 # https://www.mlflow.org/docs/latest/tutorials-and-examples/tutorial.html
 
-# The data set used in this example is from http://archive.ics.uci.edu/ml/datasets/Wine+Quality
+# The data set used in this example is from
+# http://archive.ics.uci.edu/ml/datasets/Wine+Quality
 # P. Cortez, A. Cerdeira, F. Almeida, T. Matos and J. Reis.
-# Modeling wine preferences by data mining from physicochemical properties. In Decision Support Systems, Elsevier, 47(4):547-553, 2009.
+# Modeling wine preferences by data mining from physicochemical properties.
+# In Decision Support Systems, Elsevier, 47(4):547-553, 2009.
 
-import os
 import warnings
 import sys
 
@@ -36,12 +37,16 @@ if __name__ == "__main__":
     np.random.seed(40)
 
     # Read the wine-quality csv file from the URL
-    csv_url = "http://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv"
+    csv_url = (
+        "http://archive.ics.uci.edu/ml"
+        "/machine-learning-databases/wine-quality/winequality-red.csv"
+    )
     try:
         data = pd.read_csv(csv_url, sep=";")
     except Exception as e:
         logger.exception(
-            "Unable to download training & test CSV, check your internet connection. Error: %s",
+            "Unable to download training & test CSV, "
+            "check your internet connection. Error: %s",
             e,
         )
 
@@ -82,7 +87,8 @@ if __name__ == "__main__":
         if tracking_url_type_store != "file":
 
             # Register the model
-            # There are other ways to use the Model Registry, which depends on the use case,
+            # There are other ways to use the Model Registry,
+            # which depends on the use case,
             # please refer to the doc for more information:
             # https://mlflow.org/docs/latest/model-registry.html#api-workflow
             mlflow.sklearn.log_model(
