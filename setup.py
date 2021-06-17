@@ -41,6 +41,7 @@ setup(
         "orjson",
         "click",
         "numpy",
+        "pandas",
     ],
     entry_points={"console_scripts": ["mlserver=mlserver.cli:main"]},
     long_description=_load_description(),
