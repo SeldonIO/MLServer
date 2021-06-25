@@ -1,13 +1,13 @@
 import asyncio
 
-from typing import Coroutine, List, Dict
+from typing import Callable, Coroutine, List, Dict
 from itertools import chain
 
 from .model import MLModel
 from .errors import ModelNotFound
 from .types import RepositoryIndexResponse
 
-ModelRegistryHook = Coroutine[None, MLModel, None]
+ModelRegistryHook = Callable[[MLModel], Coroutine[None, None, None]]
 
 
 class SingleModelRegistry:
