@@ -6,7 +6,7 @@ from pydantic import BaseModel
 from ..model import MLModel
 
 _CustomHandlerAttr = "__custom_handler__"
-_Handler = Callable[..., Any]
+_HandlerMethod = Callable[..., Any]
 
 
 class CustomHandler(BaseModel):
@@ -22,7 +22,7 @@ def custom_handler(rest_path: str):
     return _wraps
 
 
-def get_custom_handlers(model: MLModel) -> List[Tuple[CustomHandler, _Handler]]:
+def get_custom_handlers(model: MLModel) -> List[Tuple[CustomHandler, _HandlerMethod]]:
     handlers = []
     members = inspect.getmembers(model)
 
