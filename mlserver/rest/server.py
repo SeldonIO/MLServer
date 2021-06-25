@@ -33,7 +33,9 @@ class RESTServer:
         handlers = get_custom_handlers(model)
         for custom_handler, handler_method in handlers:
             self._app.add_api_route(
-                custom_handler.rest_path, handler_method, methods=["POST"]
+                custom_handler.rest_path,
+                handler_method,
+                methods=[custom_handler.rest_method],
             )
 
     async def delete_custom_handlers(self, model: MLModel):

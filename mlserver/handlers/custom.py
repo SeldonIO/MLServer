@@ -11,6 +11,7 @@ _HandlerMethod = Callable[..., Any]
 
 class CustomHandler(BaseModel):
     rest_path: str
+    rest_method: str = "POST"
 
 
 def custom_handler(rest_path: str):
