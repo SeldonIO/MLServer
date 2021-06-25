@@ -1,11 +1,13 @@
 import asyncio
 
-from typing import List, Dict
+from typing import Callable, List, Dict
 from itertools import chain
 
 from .model import MLModel
 from .errors import ModelNotFound
 from .types import RepositoryIndexResponse
+
+ModelRegistryHook = Callable[[MLModel]]
 
 
 class SingleModelRegistry:
@@ -58,8 +60,12 @@ class MultiModelRegistry:
     Multiple model registry, where each model can have multiple versions.
     """
 
-    def __init__(self):
-        self._models = {}
+    def __init__(
+        self, on_load: ModelRegistryHook = None, on_unload: ModelRegistryHook = None
+    ):
+        self._models: Dict[str, SingleModelRegistry] = {}
+        self._on_load = on_load
+        self._on_unload = on_unload
 
     async def load(self, model: MLModel):
         if model.name not in self._models:
@@ -67,11 +73,18 @@ class MultiModelRegistry:
 
         await self._models[model.name].load(model)
 
+        if self._on_load:
+            self._on_load(model)
+
     async def unload(self, name: str):
         if name not in self._models:
             raise ModelNotFound(name)
 
+        model = self._models[name].get_model()
         del self._models[name]
+
+        if self._on_unload:
+            self._on_unload(model)
 
     async def get_model(self, name: str, version: str = None) -> MLModel:
         if name not in self._models:
