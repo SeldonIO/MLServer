@@ -1,13 +1,13 @@
 import asyncio
 
-from typing import Callable, List, Dict
+from typing import Coroutine, List, Dict
 from itertools import chain
 
 from .model import MLModel
 from .errors import ModelNotFound
 from .types import RepositoryIndexResponse
 
-ModelRegistryHook = Callable[[MLModel]]
+ModelRegistryHook = Coroutine[None, MLModel, None]
 
 
 class SingleModelRegistry:
@@ -61,11 +61,13 @@ class MultiModelRegistry:
     """
 
     def __init__(
-        self, on_load: ModelRegistryHook = None, on_unload: ModelRegistryHook = None
+        self,
+        on_model_load: ModelRegistryHook = None,
+        on_model_unload: ModelRegistryHook = None,
     ):
         self._models: Dict[str, SingleModelRegistry] = {}
-        self._on_load = on_load
-        self._on_unload = on_unload
+        self._on_model_load = on_model_load
+        self._on_model_unload = on_model_unload
 
     async def load(self, model: MLModel):
         if model.name not in self._models:
@@ -73,18 +75,18 @@ class MultiModelRegistry:
 
         await self._models[model.name].load(model)
 
-        if self._on_load:
-            self._on_load(model)
+        if self._on_model_load:
+            await self._on_model_load(model)
 
     async def unload(self, name: str):
         if name not in self._models:
             raise ModelNotFound(name)
 
-        model = self._models[name].get_model()
+        model = await self._models[name].get_model()
         del self._models[name]
 
-        if self._on_unload:
-            self._on_unload(model)
+        if self._on_model_unload:
+            await self._on_model_unload(model)
 
     async def get_model(self, name: str, version: str = None) -> MLModel:
         if name not in self._models:
