@@ -1,31 +1,36 @@
-from typing import Any, Callable, Dict, List, Type
+import inspect
+
+from typing import Tuple, Any, Callable, List
 from pydantic import BaseModel
 
 from ..model import MLModel
 
+_CustomHandlerAttr = "__custom_handler__"
 _Handler = Callable[..., Any]
-_HandlerDict = Dict[Type[MLModel], List["CustomHandler"]]
 
 
 class CustomHandler(BaseModel):
     rest_path: str
-    runtime: Type[MLModel]
-    handler: _Handler
 
 
-class CustomHandlerRegistry:
-    def __init__(self):
-        self._handlers: _HandlerDict = {}
+def custom_handler(rest_path: str):
+    def _wraps(f):
+        handler = CustomHandler(rest_path=rest_path)
+        setattr(f, _CustomHandlerAttr, handler)
+        return f
 
-    def register_handler(self, custom_handler: CustomHandler):
-        if custom_handler.runtime not in self._handlers:
-            self._handlers[custom_handler.runtime] = []
+    return _wraps
 
-        # TODO: Do we need to check for duplicates?
-        self._handlers[custom_handler.runtime].append(custom_handler)
 
-    def find_handlers(self, runtime: Type[MLModel]) -> List[CustomHandler]:
-        if runtime not in self._handlers:
-            return []
+def get_custom_handlers(model: MLModel) -> List[Tuple[CustomHandler, _Handler]]:
+    handlers = []
+    members = inspect.getmembers(model)
 
-        return self._handlers[runtime]
+    for _, member in members:
+        if not hasattr(member, _CustomHandlerAttr):
+            continue
+
+        custom_handler = getattr(member, _CustomHandlerAttr)
+        handlers.append((custom_handler, member))
+
+    return handlers
