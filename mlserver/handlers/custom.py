@@ -24,9 +24,7 @@ class CustomHandlerRegistry:
         # TODO: Do we need to check for duplicates?
         self._handlers[custom_handler.runtime].append(custom_handler)
 
-    def find_handlers(self, model: MLModel) -> List[CustomHandler]:
-        runtime = model.__class__
-
+    def find_handlers(self, runtime: Type[MLModel]) -> List[CustomHandler]:
         if runtime not in self._handlers:
             return []
 
