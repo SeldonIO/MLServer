@@ -10,7 +10,7 @@ tox==3.23.1
 # Linting and formatting
 flake8==3.9.1
 flake8-black==0.2.1
-mypy==0.800
+mypy==0.910
 mypy-protobuf==1.23
 black==21.6b0
 
