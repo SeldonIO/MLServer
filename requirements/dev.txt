@@ -12,6 +12,8 @@ flake8==3.9.1
 flake8-black==0.2.1
 mypy==0.910
 mypy-protobuf==1.23
+types-protobuf==0.1.13
+types-orjson==0.1.1
 black==21.6b0
 
 # Pushing to PyPi
