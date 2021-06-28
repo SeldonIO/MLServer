@@ -1,7 +1,12 @@
 from mlserver import types, MLModel
+from mlserver.handlers.custom import custom_handler
 
 
 class SumModel(MLModel):
+    @custom_handler(rest_path="/my-custom-endpoint")
+    def my_payload(self, payload: list) -> int:
+        return sum(payload)
+
     async def predict(self, payload: types.InferenceRequest) -> types.InferenceResponse:
         total = 0
         for inp in payload.inputs:
