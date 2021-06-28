@@ -140,11 +140,13 @@ class ModelInferRequestConverter:
         model_infer_request = pb.ModelInferRequest(
             model_name=model_name,
             model_version=model_version,
-            id=type_object.id,
             inputs=[
                 InferInputTensorConverter.from_types(inp) for inp in type_object.inputs
             ],
         )
+
+        if type_object.id is not None:
+            model_infer_request.id = type_object.id
 
         if type_object.parameters is not None:
             _merge_map(
@@ -297,13 +299,17 @@ class ModelInferResponseConverter:
     def from_types(cls, type_object: types.InferenceResponse) -> pb.ModelInferResponse:
         model_infer_response = pb.ModelInferResponse(
             model_name=type_object.model_name,
-            model_version=type_object.model_version,
-            id=type_object.id,
             outputs=[
                 InferOutputTensorConverter.from_types(output)
                 for output in type_object.outputs
             ],
         )
+
+        if type_object.model_version is not None:
+            model_infer_response.model_version = type_object.model_version
+
+        if type_object.id is not None:
+            model_infer_response.id = type_object.id
 
         if type_object.parameters:
             _merge_map(
@@ -389,9 +395,13 @@ class RepositoryIndexResponseItemConverter:
     def from_types(
         cls, type_object: types.RepositoryIndexResponseItem
     ) -> mr_pb.RepositoryIndexResponse.ModelIndex:
-        return mr_pb.RepositoryIndexResponse.ModelIndex(
+        model_index = mr_pb.RepositoryIndexResponse.ModelIndex(
             name=type_object.name,
-            version=type_object.version,
             state=type_object.state.value,
             reason=type_object.reason,
         )
+
+        if type_object.version is not None:
+            model_index.version = type_object.version
+
+        return model_index
