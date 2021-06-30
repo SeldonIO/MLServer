@@ -53,27 +53,27 @@ class in your `model-settings.json` file.
 
 The included runtimes are:
 
-| Framework    | Package Name        | Implementation Class              | Example                                              | Source Code                                                      |
-| ------------ | ------------------- | --------------------------------- | ---------------------------------------------------- | ---------------------------------------------------------------- |
-| Scikit-Learn | `mlserver-sklearn`  | `mlserver_sklearn.SKLearnModel`   | [Scikit-Learn example](./examples/sklearn/README.md) | [`./runtimes/sklearn`](./runtimes/sklearn)                       |
-| XGBoost      | `mlserver-xgboost`  | `mlserver_xgboost.XGBoostModel`   | [XGBoost example](./examples/xgboost/README.md)      | [`./runtimes/xgboost`](./runtimes/xgboost)                       |
-| Spark MLlib  | `mlserver-mllib`    | `mlserver_mllib.MLlibModel`       | Coming Soon                                          | [`./runtimes/mllib`](./runtimes/mllib)                           |
-| LightGBM     | `mlserver-lightgbm` | `mlserver_lightgbm.LightGBMModel` | [LightGBM example](./examples/lightgbm/README.md)                                          | [`./runtimes/lightgbm`](./runtimes/lightgbm)                     |
-| Tempo        | `tempo`             | `tempo.mlserver.InferenceRuntime` | [Tempo example](./examples/tempo/README.md)          | [`github.com/SeldonIO/tempo`](https://github.com/SeldonIO/tempo) |
-| MLflow       | `mlserver-mlflow`   | `mlserver_mlflow.MLflowRuntime`   | [MLflow example](./examples/mlflow/README.md)        | [`./runtimes/mlflow`](./runtimes/mlflow)                         |
+| Framework    | Package Name        | Implementation Class              | Example                                                   | Source Code                                                      |
+| ------------ | ------------------- | --------------------------------- | --------------------------------------------------------- | ---------------------------------------------------------------- |
+| Scikit-Learn | `mlserver-sklearn`  | `mlserver_sklearn.SKLearnModel`   | [Scikit-Learn example](./docs/examples/sklearn/README.md) | [`./runtimes/sklearn`](./runtimes/sklearn)                       |
+| XGBoost      | `mlserver-xgboost`  | `mlserver_xgboost.XGBoostModel`   | [XGBoost example](./docs/examples/xgboost/README.md)      | [`./runtimes/xgboost`](./runtimes/xgboost)                       |
+| Spark MLlib  | `mlserver-mllib`    | `mlserver_mllib.MLlibModel`       | Coming Soon                                               | [`./runtimes/mllib`](./runtimes/mllib)                           |
+| LightGBM     | `mlserver-lightgbm` | `mlserver_lightgbm.LightGBMModel` | [LightGBM example](./docs/examples/lightgbm/README.md)    | [`./runtimes/lightgbm`](./runtimes/lightgbm)                     |
+| Tempo        | `tempo`             | `tempo.mlserver.InferenceRuntime` | [Tempo example](./docs/examples/tempo/README.md)          | [`github.com/SeldonIO/tempo`](https://github.com/SeldonIO/tempo) |
+| MLflow       | `mlserver-mlflow`   | `mlserver_mlflow.MLflowRuntime`   | [MLflow example](./docs/examples/mlflow/README.md)        | [`./runtimes/mlflow`](./runtimes/mlflow)                         |
 
 ## Examples
 
 On the list below, you can find a few examples on how you can leverage
 `mlserver` to start serving your machine learning models.
 
-- [Serving a `scikit-learn` model](./examples/sklearn/README.md)
-- [Serving a `xgboost` model](./examples/xgboost/README.md)
-- [Serving a `lightgbm` model](./examples/lightgbm/README.md)
-- [Serving a `tempo` pipeline](./examples/tempo/README.md)
-- [Serving a custom model](./examples/custom/README.md)
-- [Multi-Model Serving with multiple frameworks](./examples/mms/README.md)
-- [Loading / unloading models from a model repository](./examples/model-repository/README.md)
+- [Serving a `scikit-learn` model](./docs/examples/sklearn/README.md)
+- [Serving a `xgboost` model](./docs/examples/xgboost/README.md)
+- [Serving a `lightgbm` model](./docs/examples/lightgbm/README.md)
+- [Serving a `tempo` pipeline](./docs/examples/tempo/README.md)
+- [Serving a custom model](./docs/examples/custom/README.md)
+- [Multi-Model Serving with multiple frameworks](./docs/examples/mms/README.md)
+- [Loading / unloading models from a model repository](./docs/examples/model-repository/README.md)
 
 ## Developer Guide
 

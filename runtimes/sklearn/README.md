@@ -11,4 +11,4 @@ pip install mlserver mlserver-sklearn
 ```
 
 For further information on how to use MLServer with Scikit-Learn, you can check
-out this [worked out example](../../examples/sklearn/README.md).
+out this [worked out example](../../docs/examples/sklearn/README.md).
