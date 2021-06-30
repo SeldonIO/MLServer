@@ -15,15 +15,15 @@ benchmark-rest:
 		-c 100 \
 		-m POST \
 		-T 'application/json' \
-		-D ./data/rest-requests.json \
-		http://localhost:8080/v2/models/sum-model/versions/v1.2.3/infer
+		-D ./data/iris/rest-requests.json \
+		http://localhost:8080/v2/models/iris/infer
 
 benchmark-grpc:
 	ghz \
 		--insecure \
 		--proto ../proto/dataplane.proto \
 		--call inference.GRPCInferenceService/ModelInfer \
-		--binary-file ./data/grpc-requests.pb \
+		--binary-file ./data/iris/grpc-requests.pb \
 		--total 100000 \
 		--connections 50 \
 		--concurrency 100 \
