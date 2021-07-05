@@ -1,21 +1,20 @@
 # Custom environments in MLServer
 
 It's not unusual that model runtimes require extra dependencies that are not direct dependencies of MLServer.
-This is the case when we want to use [custom runtimes](../custom/README.md),
-but also when our model artifacts are the output of older versions of a toolkit
-(e.g. models trained with an older version of SKLearn).
+This is the case when we want to use [custom runtimes](../custom/README), but also when our model artifacts are the output of older versions of a toolkit (e.g. models trained with an older version of SKLearn).
 
 In these cases, since these dependencies (or dependency versions) are not known in advance by MLServer, they **won't be included in the default `seldonio/mlserver` Docker image**.
 To cover these cases, the **`seldonio/mlserver` Docker image allows you to load custom environments** before starting the server itself.
 
-This example will walk you through how to create and save an custom environment, so that it can be loaded in MLServer without any extra change to the `seldonio/mlserver` Docker image.
+This example will walk you through how to create and save an custom environment, so that it can be loaded in MLServer without any extra change to the `seldonio/mlserver` Docker image. 
 
 ## Define our environment
 
-For this example, we will create a custom environment to serve a model trained with an older version of Scikit-Learn.
-The first step will be define this environment, using a [`environment.yml`](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#create-env-file-manually).
+For this example, we will create a custom environment to serve a model trained with an older version of Scikit-Learn. 
+The first step will be define this environment, using a [`environment.yml`](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#create-env-file-manually). 
 
 Note that these environments can also be created on the fly as we go, and then serialised later.
+
 
 ```python
 %%writefile environment.yml
@@ -39,6 +38,7 @@ The first step will be to create and activate an environment which reflects what
 
 > **NOTE:** If you are running this from a Jupyter Notebook, you will need to restart your Jupyter instance so that it runs from this environment.
 
+
 ```python
 !conda env create --force -f environment.yml
 !conda activate old-sklearn
@@ -47,7 +47,8 @@ The first step will be to create and activate an environment which reflects what
 We can now train and save a Scikit-Learn model using the older version of our environment.
 This model will be serialised as `model.joblib`.
 
-You can find more details of this process in the [Scikit-Learn example](../sklearn).
+You can find more details of this process in the [Scikit-Learn example](../sklearn/README).
+
 
 ```python
 # Original source code and more details can be found in:
@@ -76,6 +77,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 classifier.fit(X_train, y_train)
 ```
 
+
 ```python
 import joblib
 
@@ -90,15 +92,17 @@ To do that, we will use a tool called [`conda-pack`](https://conda.github.io/con
 
 This tool, will save a portable version of our environment as a `.tar.gz` file, also known as _tarball_.
 
+
 ```python
 !conda pack --force -n old-sklearn -o old-sklearn.tar.gz
 ```
 
-## Serving
+## Serving 
 
 Now that we have defined our environment (and we've got a sample artifact trained in that environment), we can move to serving our model.
 
 To do that, we will first need to select the right runtime through a `model-settings.json` config file.
+
 
 ```python
 %%writefile model-settings.json
@@ -115,7 +119,7 @@ Our Docker command will need to take into account the following points:
 
 - Mount the example's folder as a volume so that it can be accessed from within the container.
 - Let MLServer know that our custom environment's tarball can be found as `old-sklearn.tar.gz`.
-- Expose port `8080` so that we can send requests from the outside.
+- Expose port `8080` so that we can send requests from the outside. 
 
 From the command line, this can be done using Docker's CLI as:
 
@@ -137,6 +141,7 @@ To make sure that everything is working as expected, let's send a request from o
 
 For that, we can use the Python types that `mlserver` provides out of box, or we can build our request manually.
 
+
 ```python
 import requests
 
@@ -157,6 +162,7 @@ response = requests.post(endpoint, json=inference_request)
 
 response.json()
 ```
+
 
 ```python
 

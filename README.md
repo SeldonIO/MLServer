@@ -1,8 +1,6 @@
 # MLServer
 
-An open source inference server to serve your machine learning models.
-
-> :warning: **This is a Work in Progress**.
+An open source inference server for your machine learning models.
 
 ## Overview
 
@@ -53,14 +51,14 @@ class in your `model-settings.json` file.
 
 The included runtimes are:
 
-| Framework    | Package Name        | Implementation Class              | Example                                                   | Source Code                                                      |
+| Framework    | Package Name        | Implementation Class              | Example                                                   | Documentation                                                    |
 | ------------ | ------------------- | --------------------------------- | --------------------------------------------------------- | ---------------------------------------------------------------- |
-| Scikit-Learn | `mlserver-sklearn`  | `mlserver_sklearn.SKLearnModel`   | [Scikit-Learn example](./docs/examples/sklearn/README.md) | [`./runtimes/sklearn`](./runtimes/sklearn)                       |
-| XGBoost      | `mlserver-xgboost`  | `mlserver_xgboost.XGBoostModel`   | [XGBoost example](./docs/examples/xgboost/README.md)      | [`./runtimes/xgboost`](./runtimes/xgboost)                       |
-| Spark MLlib  | `mlserver-mllib`    | `mlserver_mllib.MLlibModel`       | Coming Soon                                               | [`./runtimes/mllib`](./runtimes/mllib)                           |
-| LightGBM     | `mlserver-lightgbm` | `mlserver_lightgbm.LightGBMModel` | [LightGBM example](./docs/examples/lightgbm/README.md)    | [`./runtimes/lightgbm`](./runtimes/lightgbm)                     |
+| Scikit-Learn | `mlserver-sklearn`  | `mlserver_sklearn.SKLearnModel`   | [Scikit-Learn example](./docs/examples/sklearn/README.md) | [MLServer SKLearn](./runtimes/sklearn)                           |
+| XGBoost      | `mlserver-xgboost`  | `mlserver_xgboost.XGBoostModel`   | [XGBoost example](./docs/examples/xgboost/README.md)      | [MLServer XGBoost](./runtimes/xgboost)                           |
+| Spark MLlib  | `mlserver-mllib`    | `mlserver_mllib.MLlibModel`       | Coming Soon                                               | [MLServer MLlib](./runtimes/mllib)                               |
+| LightGBM     | `mlserver-lightgbm` | `mlserver_lightgbm.LightGBMModel` | [LightGBM example](./docs/examples/lightgbm/README.md)    | [MLServer LightGBM](./runtimes/lightgbm)                         |
 | Tempo        | `tempo`             | `tempo.mlserver.InferenceRuntime` | [Tempo example](./docs/examples/tempo/README.md)          | [`github.com/SeldonIO/tempo`](https://github.com/SeldonIO/tempo) |
-| MLflow       | `mlserver-mlflow`   | `mlserver_mlflow.MLflowRuntime`   | [MLflow example](./docs/examples/mlflow/README.md)        | [`./runtimes/mlflow`](./runtimes/mlflow)                         |
+| MLflow       | `mlserver-mlflow`   | `mlserver_mlflow.MLflowRuntime`   | [MLflow example](./docs/examples/mlflow/README.md)        | [MLServer MLflow](./runtimes/mlflow)                             |
 
 ## Examples
 
