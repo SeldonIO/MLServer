@@ -110,18 +110,18 @@ html_theme = "sphinx_material"
 if html_theme == "sphinx_material":
     html_theme_options = {
         "google_analytics_account": "",
-        "base_url": "https://mlserver.seldon.io",
+        "base_url": "https://mlserver.readthedocs.io",
         "color_primary": "teal",
         "color_accent": "light-blue",
-        "repo_url": "https://github.com/SeldonIO/mlserver/",
-        "repo_name": "Tempo",
+        "repo_url": "https://github.com/SeldonIO/MLServer/",
+        "repo_name": "MLServer",
         "globaltoc_depth": 2,
         "globaltoc_collapse": False,
         "globaltoc_includehidden": False,
         "repo_type": "github",
         "nav_links": [
             {
-                "href": "https://docs.seldon.io/projects/seldon-core/en/latest/",
+                "href": "https://docs.seldon.io",
                 "internal": False,
                 "title": "🚀 Our Other Projects & Products:",
             },
@@ -141,9 +141,9 @@ if html_theme == "sphinx_material":
                 "title": "Alibi Detect",
             },
             {
-                "href": "https://github.com/SeldonIO/mlserver",
+                "href": "https://tempo.readthedocs.io/en/latest/",
                 "internal": False,
-                "title": "MLServer",
+                "title": "Tempo SDK",
             },
             {
                 "href": "https://deploy.seldon.io/",
