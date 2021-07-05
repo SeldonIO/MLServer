@@ -36,34 +36,33 @@ For further information on how to use MLServer, you can check any of the
 
 Inference runtimes allow you to define how your model should be used within
 MLServer.
+You can think of them as the "backend glue" between MLServer and your machine
+learning framework of choice.
+You can read more about [inference runtimes in their documentation
+page](./docs/runtimes/index.md).
+
 Out of the box, MLServer comes with a set of pre-packaged runtimes which let
-you interact with a subset of common ML frameworks.
+you interact with a subset of common frameworks.
 This allows you to start serving models saved in these frameworks straight
 away.
 
-To avoid bringing in dependencies for frameworks that you don't need to use,
-these runtimes are implemented as independent optional packages.
-This mechanism also allows you to rollout your [own custom runtimes]( very easily.
+Out of the box, MLServer provides support for:
 
-To pick which runtime you want to use for your model, you just need to make
-sure that the right package is installed, and then point to the correct runtime
-class in your `model-settings.json` file.
-
-The included runtimes are:
-
-| Framework    | Package Name        | Implementation Class              | Example                                                   | Documentation                                                    |
-| ------------ | ------------------- | --------------------------------- | --------------------------------------------------------- | ---------------------------------------------------------------- |
-| Scikit-Learn | `mlserver-sklearn`  | `mlserver_sklearn.SKLearnModel`   | [Scikit-Learn example](./docs/examples/sklearn/README.md) | [MLServer SKLearn](./runtimes/sklearn)                           |
-| XGBoost      | `mlserver-xgboost`  | `mlserver_xgboost.XGBoostModel`   | [XGBoost example](./docs/examples/xgboost/README.md)      | [MLServer XGBoost](./runtimes/xgboost)                           |
-| Spark MLlib  | `mlserver-mllib`    | `mlserver_mllib.MLlibModel`       | Coming Soon                                               | [MLServer MLlib](./runtimes/mllib)                               |
-| LightGBM     | `mlserver-lightgbm` | `mlserver_lightgbm.LightGBMModel` | [LightGBM example](./docs/examples/lightgbm/README.md)    | [MLServer LightGBM](./runtimes/lightgbm)                         |
-| Tempo        | `tempo`             | `tempo.mlserver.InferenceRuntime` | [Tempo example](./docs/examples/tempo/README.md)          | [`github.com/SeldonIO/tempo`](https://github.com/SeldonIO/tempo) |
-| MLflow       | `mlserver-mlflow`   | `mlserver_mlflow.MLflowRuntime`   | [MLflow example](./docs/examples/mlflow/README.md)        | [MLServer MLflow](./runtimes/mlflow)                             |
+| Framework    | Supported | Documentation                                                    |
+| ------------ | --------- | ---------------------------------------------------------------- |
+| Scikit-Learn | :+1:      | [MLServer SKLearn](./runtimes/sklearn)                           |
+| XGBoost      | :+1:      | [MLServer XGBoost](./runtimes/xgboost)                           |
+| Spark MLlib  | :+1:      | [MLServer MLlib](./runtimes/mllib)                               |
+| LightGBM     | :+1:      | [MLServer LightGBM](./runtimes/lightgbm)                         |
+| Tempo        | :+1:      | [`github.com/SeldonIO/tempo`](https://github.com/SeldonIO/tempo) |
+| MLflow       | :+1:      | [MLServer MLflow](./runtimes/mlflow)                             |
 
 ## Examples
 
-On the list below, you can find a few examples on how you can leverage
-`mlserver` to start serving your machine learning models.
+To see MLServer in action, check out [our full list of
+examples](./docs/examples/index.md).
+You can find below a few selected examples showcasing how you can leverage
+MLServer to start serving your machine learning models.
 
 - [Serving a `scikit-learn` model](./docs/examples/sklearn/README.md)
 - [Serving a `xgboost` model](./docs/examples/xgboost/README.md)
