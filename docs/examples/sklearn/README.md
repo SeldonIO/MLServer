@@ -1,4 +1,4 @@
-# Serving a `scikit-learn` model
+# Serving Scikit-Learn models
 
 Out of the box, `mlserver` supports the deployment and serving of `scikit-learn` models.
 By default, it will assume that these models have been [serialised using `joblib`](https://scikit-learn.org/stable/modules/model_persistence.html).

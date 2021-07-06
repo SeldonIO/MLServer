@@ -1,4 +1,4 @@
-# Custom environments in MLServer
+# Custom Conda environments in MLServer
 
 It's not unusual that model runtimes require extra dependencies that are not direct dependencies of MLServer.
 This is the case when we want to use [custom runtimes](../custom/README), but also when our model artifacts are the output of older versions of a toolkit (e.g. models trained with an older version of SKLearn).

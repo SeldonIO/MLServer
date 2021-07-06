@@ -1,4 +1,4 @@
-# Content type decoding
+# Content Type Decoding
 
 MLServer extends the V2 inference protocol by adding support for a `content_type` annotation.
 This annotation can be provided either through the model metadata `tags`, or through the input `parameters`.
