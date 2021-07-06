@@ -30,13 +30,13 @@ pip install mlserver-sklearn
 ```
 
 For further information on how to use MLServer, you can check any of the
-[available examples](#Examples).
+[available examples](#examples).
 
 ## Inference Runtimes
 
 Inference runtimes allow you to define how your model should be used within
 MLServer.
-You can think of them as the "backend glue" between MLServer and your machine
+You can think of them as the **backend glue** between MLServer and your machine
 learning framework of choice.
 You can read more about [inference runtimes in their documentation
 page](./docs/runtimes/index.md).
@@ -77,7 +77,7 @@ MLServer to start serving your machine learning models.
 ### Versioning
 
 Both the main `mlserver` package and the [inference runtimes
-packages](./runtimes) try to follow the same versioning schema.
+packages](./docs/runtimes/index.md) try to follow the same versioning schema.
 To bump the version across all of them, you can use the
 [`./hack/update-version.sh`](./hack/update-version.sh) script.
 For example:

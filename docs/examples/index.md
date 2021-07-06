@@ -13,24 +13,24 @@ Note that, for **advanced use cases**, you can also write your own custom
 inference runtime (see the [example below on custom
 models](./custom/README.md)).
 
-- [Serving a `scikit-learn` model](./sklearn/README.md)
-- [Serving a `xgboost` model](./xgboost/README.md)
-- [Serving a `lightgbm` model](./lightgbm/README.md)
-- [Serving a `tempo` pipeline](./tempo/README.md)
-- [Serving a `mlflow` model](./mlflow/README.md)
-- [Serving a custom model](./custom/README.md)
+- [Serving Scikit-Learn models](./sklearn/README.md)
+- [Serving XGBoost models](./xgboost/README.md)
+- [Serving LightGBM models](./lightgbm/README.md)
+- [Serving Tempo pipelines](./tempo/README.md)
+- [Serving MLflow models](./mlflow/README.md)
+- [Serving custom models](./custom/README.md)
 
 ```{toctree}
 :caption: Inference Runtimes
 :titlesonly:
 :hidden:
 
-Serving a `scikit-learn` model <./sklearn/README.md>
-Serving a `xgboost` model <./xgboost/README.md>
-Serving a `lightgbm` model <./lightgbm/README.md>
-Serving a `tempo` pipeline <./tempo/README.md>
-Serving a `mlflow` model <./mlflow/README.md>
-Serving a custom model <./custom/README.md>
+./sklearn/README.md
+./xgboost/README.md
+./lightgbm/README.md
+./tempo/README.md
+./mlflow/README.md
+./custom/README.md
 ```
 
 ## MLServer Features
@@ -48,8 +48,8 @@ serving), check out the examples below.
 :titlesonly:
 :hidden:
 
-Multi-Model Serving with multiple frameworks <./mms/README.md>
-Loading / unloading models from a model repository <./model-repository/README.md>
-Content-Type Decoding <./content-type/README.md>
-Custom Conda environment <./conda/README.md>
+./mms/README.md
+./model-repository/README.md
+./content-type/README.md
+./conda/README.md
 ```

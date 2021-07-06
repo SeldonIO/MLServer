@@ -30,3 +30,15 @@ class in your `model-settings.json` file.
 | LightGBM     | `mlserver-lightgbm` | `mlserver_lightgbm.LightGBMModel` | [LightGBM example](../examples/lightgbm/README.md)    | [MLServer LightGBM](./lightgbm)                                  |
 | Tempo        | `tempo`             | `tempo.mlserver.InferenceRuntime` | [Tempo example](../examples/tempo/README.md)          | [`github.com/SeldonIO/tempo`](https://github.com/SeldonIO/tempo) |
 | MLflow       | `mlserver-mlflow`   | `mlserver_mlflow.MLflowRuntime`   | [MLflow example](../examples/mlflow/README.md)        | [MLServer MLflow](./mlflow)                                      |
+
+```{toctree}
+:hidden:
+:titlesonly:
+
+SKLearn <./sklearn>
+XGBoost <./xgboost>
+MLflow <./mlflow>
+Tempo <https://tempo.readthedocs.com>
+Spark MLlib <./mllib>
+LightGBM <./lightgbm>
+```

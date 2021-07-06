@@ -117,7 +117,7 @@ if html_theme == "sphinx_material":
         "repo_name": "MLServer",
         "globaltoc_depth": 2,
         "globaltoc_collapse": False,
-        "globaltoc_includehidden": False,
+        "globaltoc_includehidden": True,
         "repo_type": "github",
         "nav_links": [
             {
