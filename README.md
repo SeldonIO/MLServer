@@ -58,7 +58,7 @@ The included runtimes are:
 | Scikit-Learn | `mlserver-sklearn`  | `mlserver_sklearn.SKLearnModel`   | [Scikit-Learn example](./examples/sklearn/README.md) | [`./runtimes/sklearn`](./runtimes/sklearn)                       |
 | XGBoost      | `mlserver-xgboost`  | `mlserver_xgboost.XGBoostModel`   | [XGBoost example](./examples/xgboost/README.md)      | [`./runtimes/xgboost`](./runtimes/xgboost)                       |
 | Spark MLlib  | `mlserver-mllib`    | `mlserver_mllib.MLlibModel`       | Coming Soon                                          | [`./runtimes/mllib`](./runtimes/mllib)                           |
-| LightGBM     | `mlserver-lightgbm` | `mlserver_lightgbm.LightGBMModel` | Coming Soon                                          | [`./runtimes/lightgbm`](./runtimes/lightgbm)                     |
+| LightGBM     | `mlserver-lightgbm` | `mlserver_lightgbm.LightGBMModel` | [LightGBM example](./examples/lightgbm/README.md)                                          | [`./runtimes/lightgbm`](./runtimes/lightgbm)                     |
 | Tempo        | `tempo`             | `tempo.mlserver.InferenceRuntime` | [Tempo example](./examples/tempo/README.md)          | [`github.com/SeldonIO/tempo`](https://github.com/SeldonIO/tempo) |
 | MLflow       | `mlserver-mlflow`   | `mlserver_mlflow.MLflowRuntime`   | [MLflow example](./examples/mlflow/README.md)        | [`./runtimes/mlflow`](./runtimes/mlflow)                         |
 
