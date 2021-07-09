@@ -1,4 +1,5 @@
-# Serving a `LightGBM` model
+# Serving LightGBM models
+
 Out of the box, `mlserver` supports the deployment and serving of `lightgbm` models.
 By default, it will assume that these models have been [serialised using the `bst.save_model()` method](https://lightgbm.readthedocs.io/en/latest/pythonapi/lightgbm.Booster.html).
 

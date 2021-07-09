@@ -62,7 +62,7 @@ lint: generate
 		mypy $$_runtime; \
 	done
 	mypy ./benchmarking
-	mypy ./examples
+	mypy ./docs/examples
 	# Check if something has changed after generation
 	git \
 		--no-pager diff \

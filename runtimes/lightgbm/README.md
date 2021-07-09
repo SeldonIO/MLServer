@@ -11,4 +11,4 @@ pip install mlserver mlserver-lightgbm
 ```
 
 For further information on how to use MLServer with LightGBM, you can check out
-this [worked out example](../../examples/lightgbm/README.md).
+this [worked out example](../../docs/examples/lightgbm/README.md).

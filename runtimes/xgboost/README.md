@@ -11,4 +11,4 @@ pip install mlserver mlserver-xgboost
 ```
 
 For further information on how to use MLServer with XGBoost, you can check out
-this [worked out example](../../examples/xgboost/README.md).
+this [worked out example](../../docs/examples/xgboost/README.md).

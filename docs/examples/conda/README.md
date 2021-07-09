@@ -1,7 +1,7 @@
-# Custom environments in MLServer
+# Custom Conda environments in MLServer
 
 It's not unusual that model runtimes require extra dependencies that are not direct dependencies of MLServer.
-This is the case when we want to use [custom runtimes](../custom), but also when our model artifacts are the output of older versions of a toolkit (e.g. models trained with an older version of SKLearn).
+This is the case when we want to use [custom runtimes](../custom/README), but also when our model artifacts are the output of older versions of a toolkit (e.g. models trained with an older version of SKLearn).
 
 In these cases, since these dependencies (or dependency versions) are not known in advance by MLServer, they **won't be included in the default `seldonio/mlserver` Docker image**.
 To cover these cases, the **`seldonio/mlserver` Docker image allows you to load custom environments** before starting the server itself.
@@ -47,7 +47,7 @@ The first step will be to create and activate an environment which reflects what
 We can now train and save a Scikit-Learn model using the older version of our environment.
 This model will be serialised as `model.joblib`.
 
-You can find more details of this process in the [Scikit-Learn example](../sklearn).
+You can find more details of this process in the [Scikit-Learn example](../sklearn/README).
 
 
 ```python

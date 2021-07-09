@@ -18,6 +18,12 @@ _updateVersion() {
   sed -i "s/^__version__ = \"\(.*\)\"$/__version__ = \"$_newVersion\"/" "$_versionPy"
 }
 
+_updateDocs() {
+  local _newVersion=$1
+
+  sed -i "s/^release = \"\(.*\)\"$/release = \"$_newVersion\"/" $ROOT_FOLDER/docs/conf.py
+}
+
 _main() {
   local _newVersion=$1
 
@@ -31,6 +37,8 @@ _main() {
     -path "$ROOT_FOLDER/runtimes/**/*" \
     \) \
     -exec bash -c "_updateVersion $_newVersion {}" \;
+
+  _updateDocs $_newVersion
 }
 
 _main $1

@@ -42,3 +42,6 @@ _bundle
 # Conda-packed environment
 old-sklearn.tar.gz
 mlruns
+
+# Sphinx documentation
+docs/_build/

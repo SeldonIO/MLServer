@@ -1,4 +1,4 @@
-# Serving a `xgboost` model
+# Serving XGBoost models
 
 Out of the box, `mlserver` supports the deployment and serving of `xgboost` models.
 By default, it will assume that these models have been [serialised using the `bst.save_model()` method](https://xgboost.readthedocs.io/en/latest/tutorials/saving_model.html).
