@@ -39,7 +39,9 @@ extensions = [
     # Converts markdown to rst
     "myst_parser",
     #  "sphinx.ext.napoleon",
-    #  "sphinxcontrib.apidoc",  # automatically generate API docs, see https://github.com/rtfd/readthedocs.org/issues/1139
+    # automatically generate API docs
+    # see https://github.com/rtfd/readthedocs.org/issues/1139
+    #  "sphinxcontrib.apidoc",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -151,7 +153,9 @@ if html_theme == "sphinx_material":
                 "title": "Seldon Deploy (Enterprise)",
             },
             {
-                "href": "https://github.com/SeldonIO/seldon-deploy-sdk#seldon-deploy-sdk",
+                "href": (
+                    "https://github.com/SeldonIO/seldon-deploy-sdk#seldon-deploy-sdk"
+                ),
                 "internal": False,
                 "title": "Seldon Deploy SDK (Enterprise)",
             },
