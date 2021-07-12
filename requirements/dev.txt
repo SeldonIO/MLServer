@@ -13,7 +13,7 @@ flake8==3.9.1
 flake8-black==0.2.1
 mypy==0.910
 mypy-protobuf==2.5
-types-protobuf==0.1.13
+types-protobuf==3.17.0
 types-orjson==0.1.1
 black==21.6b0
 
