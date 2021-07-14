@@ -45,28 +45,28 @@ class MLflowRuntime(MLModel):
             https://github.com/mlflow/mlflow/blob/master/mlflow/pyfunc/scoring_server/__init__.py
         """
         content_type = request.headers.get("content-type", None)
-        data = await request.body()
-        data = data.decode("utf-8")
+        raw_data = await request.body()
+        as_str = raw_data.decode("utf-8")
 
         if content_type == CONTENT_TYPE_CSV:
-            csv_input = StringIO(data)
+            csv_input = StringIO(as_str)
             data = parse_csv_input(csv_input=csv_input)
         elif content_type == CONTENT_TYPE_JSON:
-            data = infer_and_parse_json_input(data, self._input_schema)
+            data = infer_and_parse_json_input(as_str, self._input_schema)
         elif content_type == CONTENT_TYPE_JSON_SPLIT_ORIENTED:
             data = parse_json_input(
-                json_input=StringIO(data),
+                json_input=StringIO(as_str),
                 orient="split",
                 schema=self._input_schema,
             )
         elif content_type == CONTENT_TYPE_JSON_RECORDS_ORIENTED:
             data = parse_json_input(
-                json_input=StringIO(data),
+                json_input=StringIO(as_str),
                 orient="records",
                 schema=self._input_schema,
             )
         elif content_type == CONTENT_TYPE_JSON_SPLIT_NUMPY:
-            data = parse_split_oriented_json_input_to_numpy(data)
+            data = parse_split_oriented_json_input_to_numpy(as_str)
         else:
             content_type_error_message = (
                 "This predictor only supports the following content types, "

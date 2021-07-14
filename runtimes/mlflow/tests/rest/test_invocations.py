@@ -2,8 +2,6 @@ import pytest
 
 from typing import Union
 
-from mlserver.types import InferenceRequest
-
 
 @pytest.mark.parametrize("content_type", ["", None, "application/pdf"])
 def test_invocations_invalid_content_type(rest_client, content_type: str):
