@@ -1,9 +1,25 @@
 import mlflow
 
+from fastapi import Request
+from mlflow.pyfunc.scoring_server import (
+    CONTENT_TYPES,
+    CONTENT_TYPE_CSV,
+    CONTENT_TYPE_JSON,
+    CONTENT_TYPE_JSON_SPLIT_ORIENTED,
+    CONTENT_TYPE_JSON_RECORDS_ORIENTED,
+    CONTENT_TYPE_JSON_SPLIT_NUMPY,
+    parse_csv_input,
+    infer_and_parse_json_input,
+    parse_json_input,
+    parse_split_oriented_json_input_to_numpy,
+)
+
 from mlserver.types import InferenceRequest, InferenceResponse
 from mlserver.model import MLModel
 from mlserver.utils import get_model_uri
 from mlserver.codecs import get_decoded_or_raw
+from mlserver.handlers import custom_handler
+from mlserver.errors import InferenceError
 
 from .encoding import to_outputs
 
@@ -13,6 +29,51 @@ class MLflowRuntime(MLModel):
     Implementation of the MLModel interface to load and serve `scikit-learn`
     models persisted with `joblib`.
     """
+
+    @custom_handler(rest_path="/invocations")
+    async def invocations(self, request: Request) -> dict:
+        """
+        This custom handler is meant to mimic the behaviour of the existing
+        scoring server in MLflow.
+        For details about its implementation, please consult the original
+        implementation in the MLflow repository:
+
+            https://github.com/mlflow/mlflow/blob/master/mlflow/pyfunc/scoring_server/__init__.py
+        """
+        # TODO: What happens if content-type is not present?
+        content_type = request.headers.get("content-type", None)
+        data = await request.body()
+        data = data.decode("utf-8")
+
+        if content_type == CONTENT_TYPE_CSV:
+            csv_input = StringIO(data)
+            data = parse_csv_input(csv_input=csv_input)
+        elif content_type == CONTENT_TYPE_JSON:
+            data = infer_and_parse_json_input(data, input_schema)
+        elif content_type == CONTENT_TYPE_JSON_SPLIT_ORIENTED:
+            data = parse_json_input(
+                json_input=StringIO(data),
+                orient="split",
+                schema=input_schema,
+            )
+        elif content_type == CONTENT_TYPE_JSON_RECORDS_ORIENTED:
+            data = parse_json_input(
+                json_input=StringIO(data),
+                orient="records",
+                schema=input_schema,
+            )
+        elif content_type == CONTENT_TYPE_JSON_SPLIT_NUMPY:
+            data = parse_split_oriented_json_input_to_numpy(data)
+        else:
+            content_type_error_message = (
+                "This predictor only supports the following content types, "
+                f"{CONTENT_TYPES}. Got '{content_type}'."
+            )
+            raise InferenceError(content_type_error_message)
+
+        breakpoint()
+
+        return {}
 
     async def load(self) -> bool:
         # TODO: Log info message
