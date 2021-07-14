@@ -42,7 +42,6 @@ class MLflowRuntime(MLModel):
 
             https://github.com/mlflow/mlflow/blob/master/mlflow/pyfunc/scoring_server/__init__.py
         """
-        # TODO: What happens if content-type is not present?
         content_type = request.headers.get("content-type", None)
         data = await request.body()
         data = data.decode("utf-8")
