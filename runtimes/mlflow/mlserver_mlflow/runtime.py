@@ -34,8 +34,9 @@ class MLflowRuntime(MLModel):
     models persisted with `joblib`.
     """
 
+    # TODO: Decouple from REST
     @custom_handler(rest_path="/invocations")
-    async def invocations(self, request: Request) -> dict:
+    async def invocations(self, request: Request) -> Response:
         """
         This custom handler is meant to mimic the behaviour of the existing
         scoring server in MLflow.
