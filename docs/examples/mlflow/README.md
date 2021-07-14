@@ -303,7 +303,8 @@ As we can see in the output above, the predicted quality score for our input win
 MLflow currently ships with an [scoring server with its own protocol](https://www.mlflow.org/docs/latest/models.html#deploy-mlflow-models).
 In order to provide a drop-in replacement, the MLflow runtime in MLServer also exposes a custom endpoint which matches the signature of the MLflow's `/invocations` endpoint.
 
-As an example, we can try to send a request using MLflow's protocol to our running MLServer instance.
+As an example, we can try to send the same request that sent previously, but using MLflow's protocol.
+Note that, in both cases, the request will be handled by the same MLServer instance.
 
 
 ```python
