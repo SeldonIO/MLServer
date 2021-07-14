@@ -2,6 +2,8 @@ import mlflow
 
 from io import StringIO
 from fastapi import Request, Response
+
+from mlflow.exceptions import MlflowException
 from mlflow.pyfunc.scoring_server import (
     CONTENT_TYPES,
     CONTENT_TYPE_CSV,
