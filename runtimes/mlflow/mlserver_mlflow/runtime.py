@@ -1,6 +1,7 @@
 import mlflow
 
-from fastapi import Request
+from io import StringIO
+from fastapi import Request, Response
 from mlflow.pyfunc.scoring_server import (
     CONTENT_TYPES,
     CONTENT_TYPE_CSV,
@@ -12,6 +13,7 @@ from mlflow.pyfunc.scoring_server import (
     infer_and_parse_json_input,
     parse_json_input,
     parse_split_oriented_json_input_to_numpy,
+    predictions_to_json,
 )
 
 from mlserver.types import InferenceRequest, InferenceResponse
@@ -49,18 +51,18 @@ class MLflowRuntime(MLModel):
             csv_input = StringIO(data)
             data = parse_csv_input(csv_input=csv_input)
         elif content_type == CONTENT_TYPE_JSON:
-            data = infer_and_parse_json_input(data, input_schema)
+            data = infer_and_parse_json_input(data, self._input_schema)
         elif content_type == CONTENT_TYPE_JSON_SPLIT_ORIENTED:
             data = parse_json_input(
                 json_input=StringIO(data),
                 orient="split",
-                schema=input_schema,
+                schema=self._input_schema,
             )
         elif content_type == CONTENT_TYPE_JSON_RECORDS_ORIENTED:
             data = parse_json_input(
                 json_input=StringIO(data),
                 orient="records",
-                schema=input_schema,
+                schema=self._input_schema,
             )
         elif content_type == CONTENT_TYPE_JSON_SPLIT_NUMPY:
             data = parse_split_oriented_json_input_to_numpy(data)
@@ -71,14 +73,27 @@ class MLflowRuntime(MLModel):
             )
             raise InferenceError(content_type_error_message)
 
-        breakpoint()
+        try:
+            raw_predictions = self._model.predict(data)
+        except MlflowException as e:
+            raise InferenceError(e.message)
+        except Exception:
+            error_message = (
+                "Encountered an unexpected error while evaluating the model. Verify"
+                " that the serialized input Dataframe is compatible with the model for"
+                " inference."
+            )
+            raise InferenceError(error_message)
 
-        return {}
+        result = StringIO()
+        predictions_to_json(raw_predictions, result)
+        return Response(content=result.getvalue(), media_type="application/json")
 
     async def load(self) -> bool:
         # TODO: Log info message
         model_uri = await get_model_uri(self._settings)
         self._model = mlflow.pyfunc.load_model(model_uri)
+        self._input_schema = self._model.metadata.get_input_schema()
 
         self.ready = True
         return self.ready
