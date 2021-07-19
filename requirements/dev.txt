@@ -6,7 +6,7 @@ datamodel-code-generator==0.11.8
 pytest==6.2.2
 pytest-asyncio==0.15.1
 pytest-mock==3.6.1
-tox==3.23.1
+tox==3.24.0
 
 # Linting and formatting
 flake8==3.9.1
@@ -21,4 +21,4 @@ black==21.6b0
 twine==3.4.1
 
 # Fetch licenses
-pip-licenses==3.4.0
+pip-licenses==3.5.1
