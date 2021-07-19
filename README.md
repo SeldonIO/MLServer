@@ -2,6 +2,8 @@
 
 An open source inference server for your machine learning models.
 
+![](https://raw.githubusercontent.com/SeldonIO/MLServer/master/docs/assets/mlserver-logo.png)
+
 ## Overview
 
 MLServer aims to provide an easy way to start serving your machine learning
