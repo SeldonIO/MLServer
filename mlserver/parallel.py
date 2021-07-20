@@ -64,13 +64,11 @@ class ParallelRuntime(MLModel):
         self._executor = ProcessPoolExecutor(
             initializer=_mp_load, initargs=(self._model._settings,)
         )
-        #  self._executor = ProcessPoolExecutor()
 
         self.ready = self._model.ready
         return self.ready
 
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
+        # What if we serialise payload?
         loop = asyncio.get_running_loop()
-        response = await loop.run_in_executor(self._executor, _mp_predict, payload)
-
-        return response
+        return await loop.run_in_executor(self._executor, _mp_predict, payload)

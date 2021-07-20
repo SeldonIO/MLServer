@@ -10,12 +10,6 @@ def parallel_runtime(sum_model: MLModel) -> ParallelRuntime:
     return ParallelRuntime(sum_model)
 
 
-def test_sync_load(parallel_runtime):
-    parallel_runtime._sync_load()
-
-    assert parallel_runtime._model.ready
-
-
 async def test_load(parallel_runtime):
     await parallel_runtime.load()
 
