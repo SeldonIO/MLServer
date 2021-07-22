@@ -50,15 +50,23 @@ class ParallelRuntime(MLModel):
     """
 
     def __init__(self, model: MLModel):
-        super().__init__(model._settings)
-
         # TODO: Add custom handlers dynamically
         self._model = model
         self._executor = None
 
+        super().__init__(model._settings)
+
     def __del__(self):
         if self._executor is not None:
             self._executor.shutdown(wait=True)
+
+    @property
+    def ready(self) -> bool:
+        return self._model.ready
+
+    @ready.setter
+    def ready(self, ready: bool):
+        self._model.ready = ready
 
     async def load(self) -> bool:
         await self._model.load()
@@ -68,7 +76,6 @@ class ParallelRuntime(MLModel):
             initializer=_mp_load, initargs=(self._model._settings,)
         )
 
-        self.ready = self._model.ready
         return self.ready
 
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
