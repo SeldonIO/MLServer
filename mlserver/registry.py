@@ -71,13 +71,12 @@ class MultiModelRegistry:
         self._on_model_unload = on_model_unload
 
     async def load(self, model: MLModel):
-        # TODO: Convert to "proxy" model
-        model = ParallelRuntime(model)
+        parallel_model = ParallelRuntime(model)
 
         if model.name not in self._models:
-            self._models[model.name] = SingleModelRegistry(model)
+            self._models[model.name] = SingleModelRegistry(parallel_model)
 
-        await self._models[model.name].load(model)
+        await self._models[model.name].load(parallel_model)
 
         if self._on_model_load:
             # TODO: Expose custom handlers on ParallelRuntime
@@ -91,8 +90,7 @@ class MultiModelRegistry:
         del self._models[name]
 
         if self._on_model_unload:
-            # TODO: Expose custom handlers on ParallelRuntime
-            await self._on_model_unload(model)
+            await self._on_model_unload(model._model)
 
     async def get_model(self, name: str, version: str = None) -> MLModel:
         if name not in self._models:

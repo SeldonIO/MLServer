@@ -56,11 +56,14 @@ class ParallelRuntime(MLModel):
         self._model = model
         self._executor = None
 
+    def __del__(self):
+        if self._executor is not None:
+            self._executor.shutdown(wait=True)
+
     async def load(self) -> bool:
         await self._model.load()
 
         # TODO: Read the number of workers from the model settings
-        # TODO: Clean executor when model is unloaded
         self._executor = ProcessPoolExecutor(
             initializer=_mp_load, initargs=(self._model._settings,)
         )
