@@ -1,11 +1,14 @@
 import asyncio
 
+from functools import wraps
 from concurrent.futures import ProcessPoolExecutor
 from typing import Any, Coroutine, Callable
 
 from .settings import ModelSettings
 from .model import MLModel
 from .types import InferenceRequest, InferenceResponse
+
+_InferencePoolAttr = "__inference_pool__"
 
 
 def _mp_load(model_settings: ModelSettings) -> bool:
@@ -74,8 +77,9 @@ def parallel(f: Callable[[InferenceRequest], Coroutine[Any, Any, InferenceRespon
     NOTE: At the moment, this method only works with `predict()`.
     """
     # TODO: Extend to multiple methods
+    @wraps(f)
     async def _wraps(self: MLModel, payload: InferenceRequest) -> InferenceResponse:
-        pool = getattr(self, "__inference_pool__")
+        pool = getattr(self, _InferencePoolAttr)
         if pool is None:
             # TODO: Raise error
             return await f(payload)
@@ -85,17 +89,20 @@ def parallel(f: Callable[[InferenceRequest], Coroutine[Any, Any, InferenceRespon
     return _wraps
 
 
-def on_model_loaded(model: MLModel):
+def load_inference_pool(model: MLModel):
     pool = InferencePool(model)
-    setattr(model, "__inference_pool__", pool)
+    setattr(model, _InferencePoolAttr, pool)
 
     # Override predict pool
     model.predict = parallel(pool.predict)
 
+    return model
 
-def on_model_unloaded(model: MLModel):
-    pool = getattr(model, "__inference_pool__")
+
+def unload_inference_pool(model: MLModel):
+    pool = getattr(model, _InferencePoolAttr)
     if not pool:
         return
 
     pool.__del__()
+    delattr(model, _InferencePoolAttr)

@@ -1,6 +1,11 @@
 import pytest
 
-from mlserver.parallel import InferencePool
+from mlserver.parallel import (
+    InferencePool,
+    _InferencePoolAttr,
+    load_inference_pool,
+    unload_inference_pool,
+)
 from mlserver.model import MLModel
 from mlserver.types import InferenceRequest, InferenceResponse
 
@@ -40,3 +45,16 @@ async def test_del(inference_pool: InferencePool):
     inference_pool.__del__()
 
     assert executor._processes is None
+
+
+async def test_load_inference_pool(sum_model: MLModel):
+    load_inference_pool(sum_model)
+
+    assert hasattr(sum_model, _InferencePoolAttr)
+
+
+async def test_unload_inference_pool(sum_model: MLModel):
+    load_inference_pool(sum_model)
+    unload_inference_pool(sum_model)
+
+    assert not hasattr(sum_model, _InferencePoolAttr)
