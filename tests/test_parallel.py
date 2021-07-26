@@ -20,8 +20,13 @@ async def inference_pool(sum_model: MLModel) -> InferencePool:
     pool.__del__()
 
 
-async def test_pool_load(inference_pool: InferencePool):
+async def test_pool_load(
+    inference_pool: InferencePool, inference_request: InferenceRequest
+):
     executor = inference_pool._executor
+
+    # Trigger a process scale up
+    await inference_pool.predict(inference_request)
 
     executor._adjust_process_count()
 
@@ -50,9 +55,11 @@ async def test_parallel_predict(
     assert len(response.outputs) == 1
 
 
-async def test_del(inference_pool: InferencePool):
+async def test_del(inference_pool: InferencePool, inference_request: InferenceRequest):
     executor = inference_pool._executor
-    executor._adjust_process_count()
+
+    # Trigger a process scale up
+    await inference_pool.predict(inference_request)
 
     inference_pool.__del__()
 
