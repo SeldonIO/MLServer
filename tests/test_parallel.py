@@ -71,6 +71,13 @@ async def test_load_inference_pool(sum_model: MLModel):
     assert hasattr(sum_model, _InferencePoolAttr)
 
 
+async def test_dont_load_if_disabled(sum_model: MLModel):
+    sum_model.settings.parallel_workers = 0
+
+    await load_inference_pool(sum_model)
+    assert not hasattr(sum_model, _InferencePoolAttr)
+
+
 async def test_unload_inference_pool(sum_model: MLModel):
     await load_inference_pool(sum_model)
     await unload_inference_pool(sum_model)

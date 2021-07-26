@@ -105,6 +105,10 @@ def parallel(f: Callable[[InferenceRequest], Coroutine[Any, Any, InferenceRespon
 
 
 async def load_inference_pool(model: MLModel):
+    if model.settings.parallel_workers == 0:
+        # When parallel workers is set to 0, disable parallel inference
+        return model
+
     pool = InferencePool(model)
     setattr(model, _InferencePoolAttr, pool)
 
