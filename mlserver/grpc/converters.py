@@ -1,4 +1,4 @@
-from typing import Any, Union, Mapping, Optional
+from typing import Any, Union, Mapping, Optional, List
 
 from . import dataplane_pb2 as pb
 from . import model_repository_pb2 as mr_pb
@@ -275,7 +275,8 @@ class InferTensorContentsConverter:
     @classmethod
     def to_types(cls, pb_object: pb.InferTensorContents) -> types.TensorData:
         data = _get_value(pb_object, default=[])
-        return types.TensorData.construct(__root__=data)
+        as_list = list(data)
+        return types.TensorData.construct(__root__=as_list)
 
     @classmethod
     def from_types(
