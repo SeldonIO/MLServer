@@ -31,6 +31,10 @@ class MLModel:
             return params.version
         return None
 
+    @property
+    def settings(self) -> ModelSettings:
+        return self._settings
+
     def decode(
         self, request_input: RequestInput, default_codec: InputCodec = None
     ) -> Any:

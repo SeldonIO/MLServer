@@ -58,6 +58,9 @@ class ModelSettings(BaseSettings):
     inputs: Optional[List[MetadataTensor]] = []
     outputs: Optional[List[MetadataTensor]] = []
 
+    # Parallel settings
+    parallel_workers: Optional[int] = 2
+
     # Custom model class implementation
     implementation: PyObject = "mlserver.model.MLModel"  # type: ignore
 

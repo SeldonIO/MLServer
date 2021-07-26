@@ -5,9 +5,9 @@ from mlserver.parallel import (
     _InferencePoolAttr,
     load_inference_pool,
     unload_inference_pool,
-    parallel,
 )
 from mlserver.model import MLModel
+from mlserver.settings import ModelSettings
 from mlserver.types import InferenceRequest, InferenceResponse
 
 
@@ -21,17 +21,16 @@ async def inference_pool(sum_model: MLModel) -> InferencePool:
 
 
 async def test_pool_load(
-    inference_pool: InferencePool, inference_request: InferenceRequest
+    inference_pool: InferencePool,
+    inference_request: InferenceRequest,
+    sum_model_settings: ModelSettings,
 ):
     executor = inference_pool._executor
 
     # Trigger a process scale up
     await inference_pool.predict(inference_request)
 
-    executor._adjust_process_count()
-
-    # TODO: Change once number of workers are configurable
-    assert len(executor._processes) == 8
+    assert len(executor._processes) == sum_model_settings.parallel_workers
 
 
 async def test_pool_predict(

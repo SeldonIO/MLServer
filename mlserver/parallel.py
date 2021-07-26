@@ -16,8 +16,6 @@ def _mp_load(model_settings: ModelSettings) -> bool:
     This method is meant to run internally in the multiprocessing workers.
     The loading needs to run synchronously, since the initializer argument
     doesn't support coroutines.
-
-    # TODO: Open issue about async initializers
     """
     # NOTE: The global `_mp_model` variable is shared with the `_mp_predict`
     # method.
@@ -55,9 +53,11 @@ class InferencePool:
     """
 
     def __init__(self, model: MLModel):
-        # TODO: Read the number of workers from the model settings
+        parallel_workers = model.settings.parallel_workers
         self._executor = ProcessPoolExecutor(
-            initializer=_mp_load, initargs=(model._settings,)
+            max_workers=parallel_workers,
+            initializer=_mp_load,
+            initargs=(model.settings,),
         )
 
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
