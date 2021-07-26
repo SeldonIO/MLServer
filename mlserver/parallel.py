@@ -78,28 +78,32 @@ def parallel(f: Callable[[InferenceRequest], Coroutine[Any, Any, InferenceRespon
     """
     # TODO: Extend to multiple methods
     @wraps(f)
-    async def _wraps(self: MLModel, payload: InferenceRequest) -> InferenceResponse:
+    async def _inner(payload: InferenceRequest) -> InferenceResponse:
+        # Method should be bound
+        # TODO: Raise if method not bound or if pool is missing
+        self = f.__self__
         pool = getattr(self, _InferencePoolAttr)
+
         if pool is None:
             # TODO: Raise error
             return await f(payload)
 
         return await pool.predict(payload)
 
-    return _wraps
+    return _inner
 
 
-def load_inference_pool(model: MLModel):
+async def load_inference_pool(model: MLModel):
     pool = InferencePool(model)
     setattr(model, _InferencePoolAttr, pool)
 
     # Override predict pool
-    model.predict = parallel(pool.predict)
+    model.predict = parallel(model.predict)
 
     return model
 
 
-def unload_inference_pool(model: MLModel):
+async def unload_inference_pool(model: MLModel):
     pool = getattr(model, _InferencePoolAttr)
     if not pool:
         return

@@ -8,6 +8,7 @@ from .settings import Settings
 from .registry import MultiModelRegistry
 from .repository import ModelRepository
 from .handlers import DataPlane, ModelRepositoryHandlers
+from .parallel import load_inference_pool, unload_inference_pool
 from .rest import RESTServer
 from .grpc import GRPCServer
 
@@ -18,8 +19,8 @@ class MLServer:
     def __init__(self, settings: Settings):
         self._settings = settings
         self._model_registry = MultiModelRegistry(
-            on_model_load=self.add_custom_handlers,
-            on_model_unload=self.remove_custom_handlers,
+            on_model_load=[self.add_custom_handlers, load_inference_pool],
+            on_model_unload=[self.remove_custom_handlers, unload_inference_pool],
         )
         self._model_repository = ModelRepository(self._settings.model_repository_root)
         self._data_plane = DataPlane(

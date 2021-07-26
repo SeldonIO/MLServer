@@ -56,6 +56,7 @@ def test_infer(rest_client, inference_request, model_name, model_version):
         endpoint = f"/v2/models/{model_name}/versions/{model_version}/infer"
     response = rest_client.post(endpoint, json=inference_request.dict())
 
+    breakpoint()
     assert response.status_code == 200
 
     prediction = types.InferenceResponse.parse_obj(response.json())
