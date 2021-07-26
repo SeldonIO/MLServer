@@ -1,5 +1,5 @@
 class MLServerError(Exception):
-    def __init__(self, msg):
+    def __init__(self, msg: str):
         super().__init__(msg)
 
 
@@ -22,5 +22,5 @@ class ModelNotFound(MLServerError):
 
 
 class InferenceError(MLServerError):
-    def __init__(self, msg):
+    def __init__(self, msg: str):
         super().__init__(msg)

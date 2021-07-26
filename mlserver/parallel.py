@@ -4,11 +4,21 @@ from functools import wraps
 from concurrent.futures import ProcessPoolExecutor
 from typing import Any, Coroutine, Callable
 
+from .errors import MLServerError
 from .settings import ModelSettings
 from .model import MLModel
 from .types import InferenceRequest, InferenceResponse
 
 _InferencePoolAttr = "__inference_pool__"
+
+
+class InvalidParallelMethod(MLServerError):
+    def __init__(self, method_name: str, reason: str = None):
+        msg = f"Method {method_name} can't be parallelised"
+        if reason:
+            msg += f": {reason}"
+
+        super().__init__(msg)
 
 
 def _mp_load(model_settings: ModelSettings) -> bool:
@@ -79,15 +89,16 @@ def parallel(f: Callable[[InferenceRequest], Coroutine[Any, Any, InferenceRespon
     # TODO: Extend to multiple methods
     @wraps(f)
     async def _inner(payload: InferenceRequest) -> InferenceResponse:
-        # Method should be bound
-        # TODO: Raise if method not bound or if pool is missing
-        self = f.__self__
-        pool = getattr(self, _InferencePoolAttr)
+        if not hasattr(f, "__self__"):
+            raise InvalidParallelMethod(f.__name__, reason="method is not bound")
 
-        if pool is None:
-            # TODO: Raise error
-            return await f(payload)
+        model = getattr(f, "__self__")
+        if not hasattr(model, _InferencePoolAttr):
+            raise InvalidParallelMethod(
+                f.__name__, reason="inference pool has not been loaded"
+            )
 
+        pool = getattr(model, _InferencePoolAttr)
         return await pool.predict(payload)
 
     return _inner
