@@ -1,6 +1,7 @@
 import asyncio
 
 from concurrent.futures import ProcessPoolExecutor
+from typing import Any, Coroutine, Callable
 
 from .settings import ModelSettings
 from .model import MLModel
@@ -39,46 +40,62 @@ def _mp_predict(payload: InferenceRequest) -> InferenceResponse:
     return asyncio.run(_mp_model.predict(payload))
 
 
-class ParallelRuntime(MLModel):
+class InferencePool:
     """
-    Model proxy responsible of wrapping an existing model runtime and
-    "bypassing" some of the calls, so that they get run in a pool of
-    multiprocessing workers.
+    The InferencePool class represents a pool of workers where we can run
+    inference on.
 
-    The interface exposed to the outside world should be equivalent to a
-    regular model, so that the multiprocessing is transparent.
+    Under the hood, it's responsible for managing a pool of multiprocessing
+    workers, where the model is loaded.
+    This approach lets MLServer work around the GIL to make sure that inference
+    can occur in parallel across multiple models or instances of a model.
     """
 
     def __init__(self, model: MLModel):
-        # TODO: Add custom handlers dynamically
-        self._model = model
-        self._executor = None
-
-        super().__init__(model._settings)
-
-    def __del__(self):
-        if self._executor is not None:
-            self._executor.shutdown(wait=True)
-
-    @property
-    def ready(self) -> bool:
-        return self._model.ready
-
-    @ready.setter
-    def ready(self, ready: bool):
-        self._model.ready = ready
-
-    async def load(self) -> bool:
-        await self._model.load()
-
         # TODO: Read the number of workers from the model settings
         self._executor = ProcessPoolExecutor(
-            initializer=_mp_load, initargs=(self._model._settings,)
+            initializer=_mp_load, initargs=(model._settings,)
         )
-
-        return self.ready
 
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
         # What if we serialise payload?
         loop = asyncio.get_running_loop()
         return await loop.run_in_executor(self._executor, _mp_predict, payload)
+
+    def __del__(self):
+        self._executor.shutdown(wait=True)
+
+
+def parallel(f: Callable[[InferenceRequest], Coroutine[Any, Any, InferenceResponse]]):
+    """
+    Decorator to attach to model's methods so that they run in parallel.
+    By default, this will get attached to every model's "inference" method.
+
+    NOTE: At the moment, this method only works with `predict()`.
+    """
+    # TODO: Extend to multiple methods
+    async def _wraps(self: MLModel, payload: InferenceRequest) -> InferenceResponse:
+        pool = getattr(self, "__inference_pool__")
+        if pool is None:
+            # TODO: Raise error
+            return await f(payload)
+
+        return await pool.predict(payload)
+
+    return _wraps
+
+
+def on_model_loaded(model: MLModel):
+    pool = InferencePool(model)
+    setattr(model, "__inference_pool__", pool)
+
+    # Override predict pool
+    model.predict = parallel(pool.predict)
+
+
+def on_model_unloaded(model: MLModel):
+    pool = getattr(model, "__inference_pool__")
+    if not pool:
+        return
+
+    pool.__del__()

@@ -3,7 +3,6 @@ import asyncio
 from typing import Callable, Coroutine, List, Dict
 from itertools import chain
 
-from .parallel import ParallelRuntime
 from .model import MLModel
 from .errors import ModelNotFound
 from .types import RepositoryIndexResponse
@@ -71,12 +70,10 @@ class MultiModelRegistry:
         self._on_model_unload = on_model_unload
 
     async def load(self, model: MLModel):
-        parallel_model = ParallelRuntime(model)
-
         if model.name not in self._models:
-            self._models[model.name] = SingleModelRegistry(parallel_model)
+            self._models[model.name] = SingleModelRegistry(model)
 
-        await self._models[model.name].load(parallel_model)
+        await self._models[model.name].load(model)
 
         if self._on_model_load:
             # TODO: Expose custom handlers on ParallelRuntime
@@ -90,7 +87,7 @@ class MultiModelRegistry:
         del self._models[name]
 
         if self._on_model_unload:
-            await self._on_model_unload(model._model)
+            await self._on_model_unload(model)
 
     async def get_model(self, name: str, version: str = None) -> MLModel:
         if name not in self._models:
