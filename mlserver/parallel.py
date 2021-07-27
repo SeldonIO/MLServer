@@ -11,6 +11,9 @@ from .types import InferenceRequest, InferenceResponse
 
 _InferencePoolAttr = "__inference_pool__"
 
+# NOTE: Workaround for mypy
+_mp_model: MLModel
+
 
 class InvalidParallelMethod(MLServerError):
     def __init__(self, method_name: str, reason: str = None):
@@ -21,7 +24,7 @@ class InvalidParallelMethod(MLServerError):
         super().__init__(msg)
 
 
-def _mp_load(model_settings: ModelSettings) -> bool:
+def _mp_load(model_settings: ModelSettings):
     """
     This method is meant to run internally in the multiprocessing workers.
     The loading needs to run synchronously, since the initializer argument
@@ -48,6 +51,8 @@ def _mp_predict(payload: InferenceRequest) -> InferenceResponse:
     # method.
     # This global variable is only to be used within the inference worker
     # context.
+    global _mp_model
+
     return asyncio.run(_mp_model.predict(payload))
 
 
@@ -112,8 +117,8 @@ async def load_inference_pool(model: MLModel):
     pool = InferencePool(model)
     setattr(model, _InferencePoolAttr, pool)
 
-    # Override predict pool
-    model.predict = parallel(model.predict)
+    # Decorate predict method
+    setattr(model, "predict", parallel(model.predict))
 
     return model
 
