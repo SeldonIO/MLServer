@@ -42,6 +42,7 @@ extensions = [
     # automatically generate API docs
     # see https://github.com/rtfd/readthedocs.org/issues/1139
     #  "sphinxcontrib.apidoc",
+    "sphinx_search.extension",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
