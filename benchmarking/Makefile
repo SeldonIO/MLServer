@@ -25,6 +25,6 @@ benchmark-grpc:
 		--call inference.GRPCInferenceService/ModelInfer \
 		--binary-file ./data/iris/grpc-requests.pb \
 		--total 100000 \
-		--connections 50 \
+		--connections 100 \
 		--concurrency 100 \
 		localhost:8081
