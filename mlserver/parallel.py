@@ -2,7 +2,7 @@ import asyncio
 
 from functools import wraps
 from concurrent.futures import ProcessPoolExecutor
-from typing import Any, Coroutine, Callable
+from typing import Any, Coroutine, Callable, Optional
 
 from .errors import MLServerError
 from .settings import ModelSettings
@@ -16,7 +16,7 @@ _mp_model: MLModel
 
 
 class InvalidParallelMethod(MLServerError):
-    def __init__(self, method_name: str, reason: str = None):
+    def __init__(self, method_name: str, reason: Optional[str] = None):
         msg = f"Method {method_name} can't be parallelised"
         if reason:
             msg += f": {reason}"
