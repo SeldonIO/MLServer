@@ -122,9 +122,11 @@ def test_decode_request_inputs(
     request = InferenceRequest(inputs=[request_input])
     request = codec_middleware(request, sum_model_settings)
 
-    decoded = getattr(request.inputs[0].parameters, DecodedParameterName)
-
-    if isinstance(expected, np.ndarray):
-        np.testing.assert_array_equal(decoded, expected)  # type: ignore
+    if expected is None:
+        assert not request.inputs[0].parameters
     else:
-        assert decoded == expected  # type: ignore
+        decoded = getattr(request.inputs[0].parameters, DecodedParameterName)
+        if isinstance(expected, np.ndarray):
+            np.testing.assert_array_equal(decoded, expected)  # type: ignore
+        else:
+            assert decoded == expected  # type: ignore

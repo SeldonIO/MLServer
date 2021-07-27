@@ -101,7 +101,7 @@ class MLflowRuntime(MLModel):
         return self.ready
 
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
-        decoded_payload = get_decoded_or_raw(payload)
+        decoded_payload = self.decode_request(payload)
 
         # TODO: Can `output` be a dictionary of tensors?
         model_output = self._model.predict(decoded_payload)
