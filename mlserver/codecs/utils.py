@@ -4,7 +4,7 @@ from ..types import InferenceRequest, RequestInput, MetadataTensor, Parameters
 from .base import find_input_codec, find_request_codec
 
 Parametrised = Union[InferenceRequest, RequestInput]
-Tagged = Union[InferenceRequest]
+Tagged = Union[MetadataTensor]
 DecodedParameterName = "_decoded_payload"
 
 
@@ -77,7 +77,7 @@ def get_decoded(parametrised_obj: Parametrised) -> Any:
 
 def get_decoded_or_raw(parametrised_obj: Parametrised) -> Any:
     if not has_decoded(parametrised_obj):
-        if hasattr(parametrised_obj, "data"):
+        if isinstance(parametrised_obj, RequestInput):
             # If this is a RequestInput, return its data
             return parametrised_obj.data
 

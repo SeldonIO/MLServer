@@ -1,6 +1,6 @@
 from typing import Callable, List
 
-from .codecs.middleware import codec_middleware
+#  from .codecs.middleware import codec_middleware
 from .settings import ModelSettings
 from .types import InferenceRequest
 
