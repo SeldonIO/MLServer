@@ -43,6 +43,7 @@ extensions = [
     # see https://github.com/rtfd/readthedocs.org/issues/1139
     #  "sphinxcontrib.apidoc",
     "sphinx_search.extension",
+    "sphinxcontrib.bibtex",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -98,6 +99,9 @@ napoleon_use_admonition_for_references = False
 napoleon_use_ivar = False
 napoleon_use_param = True
 napoleon_use_rtype = False
+
+bibtex_bibfiles = ["references.bib"]
+bibtex_reference_style = "author_year"
 
 
 # -- Options for HTML output -------------------------------------------------

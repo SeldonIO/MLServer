@@ -5,13 +5,13 @@ pool of workers running in separate processes.
 This allows MLServer to scale out beyond the limitations of the Python
 interpreter.
 To learn more about why this can be beneficial, you can check the [concurrency
-section](#Concurrency-in-Python) below.
+section](#concurrency-in-python) below.
 
 ![](../assets/parallel-inference.svg)
 
 By default, MLServer will spin up a pool of 4 workers for each loaded model.
 To read more about advanced settings, please see the [usage section
-below](#Usage).
+below](#usage).
 
 ## Concurrency in Python
 
@@ -36,6 +36,29 @@ of workers, where each worker is a separate process (and thus has its own
 separate GIL).
 This means that we can get full access to the underlying hardware.
 
+### Overhead
+
+Managing the Inter-Process Communication (IPC) between the main MLServer
+process and the inference pool workers brings in some overhead.
+Under the hood, MLServer uses the `multiprocessing` library to implement the
+distributed processing management, which has been shown to offer the smallest
+possible overhead when implementating these type of distributed strategies
+{cite}`zhiFiberPlatformEfficient2020`.
+
+The extra overhead introduced by other libraries is usually brought in as a
+trade off in exchange of other advanced features for complex distributed
+processing scenarios.
+However, MLServer's use case is simple enough to not require any of these.
+
+Despite the above, even though this overhead is minimised, this **it can still
+be particularly noticeable for lightweight inference methods**, where the extra
+IPC overhead can take a large percentage of the overall time.
+In these cases (which can only be assessed on a model-by-model basis), the user
+has the option to [disable the parallel inference feature](#usage).
+
+For regular models where inference can take a bit more time, this overhead is
+usually offset by the benefit of having multiple cores to compute inference on.
+
 ## Usage
 
 By default, MLServer will always create an inference pool with 4 workers for
@@ -53,3 +76,9 @@ The expected values are:
 - `N`, where `N > 0`, will create a pool of `N` workers.
 - `0`, will disable the parallel inference feature.
   In other words, inference will happen within the main MLServer process.
+
+## References
+
+```{bibliography}
+:filter: docname in docnames
+```
