@@ -21,7 +21,6 @@ from mlflow.pyfunc.scoring_server import (
 from mlserver.types import InferenceRequest, InferenceResponse
 from mlserver.model import MLModel
 from mlserver.utils import get_model_uri
-from mlserver.codecs import get_decoded_or_raw
 from mlserver.handlers import custom_handler
 from mlserver.errors import InferenceError
 
