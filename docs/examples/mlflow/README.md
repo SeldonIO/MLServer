@@ -298,7 +298,39 @@ response.json()
 
 As we can see in the output above, the predicted quality score for our input wine was `5.57`.
 
+### MLflow Scoring Protocol
+
+MLflow currently ships with an [scoring server with its own protocol](https://www.mlflow.org/docs/latest/models.html#deploy-mlflow-models).
+In order to provide a drop-in replacement, the MLflow runtime in MLServer also exposes a custom endpoint which matches the signature of the MLflow's `/invocations` endpoint.
+
+As an example, we can try to send the same request that sent previously, but using MLflow's protocol.
+Note that, in both cases, the request will be handled by the same MLServer instance.
+
 
 ```python
+import requests
 
+inference_request = {
+    "columns": [
+        "alcohol",
+        "chlorides",
+        "citric acid",
+        "density",
+        "fixed acidity",
+        "free sulfur dioxide",
+        "pH",
+        "residual sugar",
+        "sulphates",
+        "total sulfur dioxide",
+        "volatile acidity",
+    ],
+    "data": [[7.4,0.7,0,1.9,0.076,11,34,0.9978,3.51,0.56,9.4]],
+}
+
+endpoint = "http://localhost:8080/invocations"
+response = requests.post(endpoint, json=inference_request)
+
+response.json()
 ```
+
+As we can see above, the predicted quality for our input is `5.57`, matching the prediction we obtained above.
