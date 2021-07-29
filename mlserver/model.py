@@ -1,13 +1,20 @@
-from typing import Any, Optional
+from typing import Any, Dict, Optional
 
 from .types import (
     InferenceRequest,
     InferenceResponse,
     RequestInput,
     MetadataModelResponse,
+    MetadataTensor,
 )
 from .settings import ModelSettings
-from .codecs import DecodedParameterName, InputCodec
+from .codecs import (
+    decode_request_input,
+    decode_inference_request,
+    InputCodec,
+    has_decoded,
+    get_decoded,
+)
 
 
 class MLModel:
@@ -18,6 +25,12 @@ class MLModel:
 
     def __init__(self, settings: ModelSettings):
         self._settings = settings
+        self._inputs_index: Dict[str, MetadataTensor] = {}
+
+        if self._settings.inputs:
+            for request_input in self._settings.inputs:
+                self._inputs_index[request_input.name] = request_input
+
         self.ready = False
 
     @property
@@ -31,20 +44,25 @@ class MLModel:
             return params.version
         return None
 
+    @property
+    def settings(self) -> ModelSettings:
+        return self._settings
+
     def decode(
-        self, request_input: RequestInput, default_codec: InputCodec = None
+        self, request_input: RequestInput, default_codec: Optional[InputCodec] = None
     ) -> Any:
-        # NOTE: This method is now deprecated!
-        # TODO: Remove once there aren't any references to self.decode()
-        if request_input.parameters and hasattr(
-            request_input.parameters, DecodedParameterName
-        ):
-            return getattr(request_input.parameters, DecodedParameterName)
+        decode_request_input(request_input, self._inputs_index)
+
+        if has_decoded(request_input):
+            return get_decoded(request_input)
 
         if default_codec:
             return default_codec.decode(request_input)
 
         return request_input.data
+
+    def decode_request(self, inference_request: InferenceRequest) -> Any:
+        return decode_inference_request(inference_request, self._inputs_index)
 
     async def metadata(self) -> MetadataModelResponse:
         return MetadataModelResponse(

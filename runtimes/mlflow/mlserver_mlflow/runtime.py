@@ -21,7 +21,6 @@ from mlflow.pyfunc.scoring_server import (
 from mlserver.types import InferenceRequest, InferenceResponse
 from mlserver.model import MLModel
 from mlserver.utils import get_model_uri
-from mlserver.codecs import get_decoded_or_raw
 from mlserver.handlers import custom_handler
 from mlserver.errors import InferenceError
 
@@ -101,7 +100,7 @@ class MLflowRuntime(MLModel):
         return self.ready
 
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
-        decoded_payload = get_decoded_or_raw(payload)
+        decoded_payload = self.decode_request(payload)
 
         # TODO: Can `output` be a dictionary of tensors?
         model_output = self._model.predict(decoded_payload)

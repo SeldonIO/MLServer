@@ -5,6 +5,8 @@ from grpc import aio
 
 from typing import AsyncGenerator, Dict
 from google.protobuf import json_format
+
+from mlserver.parallel import load_inference_pool, unload_inference_pool
 from mlserver.handlers import DataPlane, ModelRepositoryHandlers
 from mlserver.settings import Settings
 from mlserver.grpc import dataplane_pb2 as pb
@@ -14,6 +16,7 @@ from mlserver.grpc.model_repository_pb2_grpc import ModelRepositoryServiceStub
 from mlserver.grpc import GRPCServer
 
 from ..conftest import TESTDATA_PATH
+from ..fixtures import SumModel
 
 TESTDATA_GRPC_PATH = os.path.join(TESTDATA_PATH, "grpc")
 
@@ -77,15 +80,20 @@ async def grpc_server(
     grpc_settings: Settings,
     data_plane: DataPlane,
     model_repository_handlers: ModelRepositoryHandlers,
+    sum_model: SumModel,
 ):
     server = GRPCServer(
         grpc_settings,
         data_plane=data_plane,
         model_repository_handlers=model_repository_handlers,
     )
+
     server._create_server()
+
+    await load_inference_pool(sum_model)
     await server._server.start()
 
     yield server
 
+    await unload_inference_pool(sum_model)
     await server._server.stop(grace=None)

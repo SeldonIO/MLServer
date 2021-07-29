@@ -1,11 +1,14 @@
 from typing import Callable, List
 
-from .codecs.middleware import codec_middleware
+#  from .codecs.middleware import codec_middleware
 from .settings import ModelSettings
 from .types import InferenceRequest
 
 MiddlewareFunc = Callable[[InferenceRequest, ModelSettings], InferenceRequest]
-InferenceMiddlewares: List[MiddlewareFunc] = [codec_middleware]
+#  InferenceMiddlewares: List[MiddlewareFunc] = [codec_middleware]
+# NOTE: Remove codecs temporarily from middleware to reduce serialisation
+# overhead when sending payload to inference workers.
+InferenceMiddlewares: List[MiddlewareFunc] = []
 
 
 def inference_middlewares(

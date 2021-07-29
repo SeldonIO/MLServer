@@ -35,7 +35,7 @@ from mlserver.model import MLModel
                     _decoded_payload="my unicode string",
                 ),
             ),
-            "my unicode string",
+            ["my unicode string"],
         ),
         (
             RequestInput(

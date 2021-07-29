@@ -62,8 +62,8 @@ class MultiModelRegistry:
 
     def __init__(
         self,
-        on_model_load: ModelRegistryHook = None,
-        on_model_unload: ModelRegistryHook = None,
+        on_model_load: List[ModelRegistryHook] = [],
+        on_model_unload: List[ModelRegistryHook] = [],
     ):
         self._models: Dict[str, SingleModelRegistry] = {}
         self._on_model_load = on_model_load
@@ -76,7 +76,8 @@ class MultiModelRegistry:
         await self._models[model.name].load(model)
 
         if self._on_model_load:
-            await self._on_model_load(model)
+            # TODO: Expose custom handlers on ParallelRuntime
+            await asyncio.gather(*[callback(model) for callback in self._on_model_load])
 
     async def unload(self, name: str):
         if name not in self._models:
@@ -86,7 +87,9 @@ class MultiModelRegistry:
         del self._models[name]
 
         if self._on_model_unload:
-            await self._on_model_unload(model)
+            await asyncio.gather(
+                *[callback(model) for callback in self._on_model_unload]
+            )
 
     async def get_model(self, name: str, version: str = None) -> MLModel:
         if name not in self._models:

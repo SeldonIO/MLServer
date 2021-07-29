@@ -1,9 +1,11 @@
 import pytest
+import asyncio
 
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from mlserver.handlers import DataPlane, ModelRepositoryHandlers
+from mlserver.parallel import load_inference_pool, unload_inference_pool
 from mlserver.rest import RESTServer
 from mlserver import Settings
 
@@ -23,9 +25,15 @@ async def rest_server(
         model_repository_handlers=model_repository_handlers,
     )
 
-    await server.add_custom_handlers(sum_model)
+    await asyncio.gather(
+        server.add_custom_handlers(sum_model), load_inference_pool(sum_model)
+    )
 
-    return server
+    yield server
+
+    await asyncio.gather(
+        server.delete_custom_handlers(sum_model), unload_inference_pool(sum_model)
+    )
 
 
 @pytest.fixture
