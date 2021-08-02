@@ -14,6 +14,7 @@ from .batching import load_batching
 from .rest import RESTServer
 from .grpc import GRPCServer
 from .metrics import MetricsServer
+from .kafka import KafkaServer
 
 HANDLED_SIGNALS = [signal.SIGINT, signal.SIGTERM, signal.SIGQUIT]
 
@@ -67,6 +68,10 @@ class MLServer:
         self._grpc_server = GRPCServer(
             self._settings, self._data_plane, self._model_repository_handlers
         )
+        if self._settings.kafka_enable:
+            self._kafka_server = KafkaServer(
+                self._settings, self._data_plane, self._model_repository_handlers
+            )
 
         self._metrics_server = None
         if self._settings.metrics_endpoint:
@@ -92,6 +97,8 @@ class MLServer:
 
     async def add_custom_handlers(self, model: MLModel):
         await self._rest_server.add_custom_handlers(model)
+        if self._settings.kafka_enable:
+            await self._kafka_server.add_custom_handlers(model)
 
         # TODO: Add support for custom gRPC endpoints
         # self._grpc_server.add_custom_handlers(handlers)
@@ -105,6 +112,8 @@ class MLServer:
 
     async def remove_custom_handlers(self, model: MLModel):
         await self._rest_server.delete_custom_handlers(model)
+        if self._settings.kafka_enable:
+            await self._kafka_server.delete_custom_handlers(model)
 
         # TODO: Add support for custom gRPC endpoints
         # self._grpc_server.delete_custom_handlers(handlers)
