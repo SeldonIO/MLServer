@@ -13,6 +13,7 @@ from .errors import _EXCEPTION_HANDLERS
 
 from ..settings import Settings
 from ..handlers import DataPlane, ModelRepositoryHandlers
+from ..middleware import add_fastapi_middlewares
 
 
 class APIRoute(FastAPIRoute):

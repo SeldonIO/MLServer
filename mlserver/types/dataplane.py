@@ -60,6 +60,7 @@ class InferenceResponse(BaseModel):
     id: Optional[str] = None
     parameters: Optional["Parameters"] = None
     outputs: List["ResponseOutput"]
+    headers: Dict[str, str]
 
 
 class InferenceErrorResponse(BaseModel):
@@ -95,3 +96,4 @@ class InferenceRequest(BaseModel):
     parameters: Optional["Parameters"] = None
     inputs: List["RequestInput"]
     outputs: Optional[List["RequestOutput"]] = None
+    headers: Dict[str, str]
