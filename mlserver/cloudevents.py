@@ -1,5 +1,6 @@
 import os
-from typing import Dict
+from typing import Dict, Awaitable, Any, Callable
+from fastapi import Request, Response
 
 from .types import InferenceResponse
 from .settings import ModelSettings
@@ -34,7 +35,6 @@ except Exception:
     env_namespace = "NOTIMPLEMENTED"
 
 
-# TODO: Add types
 def get_cloudevent_headers(request_id: str, ce_type: str) -> Dict:
     """Retrieve the cloud events as dictionary
 
@@ -65,9 +65,8 @@ def get_cloudevent_headers(request_id: str, ce_type: str) -> Dict:
     return ce
 
 
-def cloudevents_middleware(
-    response: InferenceResponse, model_settings: ModelSettings
-) -> InferenceResponse:
-
+async def cloudevents_middleware(request: Request, call_next):
+    response: Response = await call_next(request)  # type: ignore
+    headers = get_cloudevent_headers("", "")
+    response.headers.update(**headers)
     return response
-
