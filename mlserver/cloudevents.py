@@ -1,9 +1,6 @@
 import os
-from typing import Dict, Awaitable, Any, Callable
+from typing import Dict
 from fastapi import Request, Response
-
-from .types import InferenceResponse
-from .settings import ModelSettings
 
 CLOUDEVENTS_HEADER_ID = "Ce-Id"
 CLOUDEVENTS_HEADER_SPECVERSION = "Ce-Specversion"
