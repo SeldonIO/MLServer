@@ -47,11 +47,11 @@ def get_cloudevent_headers(request_id: str, ce_type: str) -> Dict:
     Dictionary containing the headers names as keys and respective values accordingly
     """
 
+    source = f"io.seldon.serving.deployment.{env_sdep_name}.{env_namespace}"
     ce = {
         CLOUDEVENTS_HEADER_ID: request_id,
         CLOUDEVENTS_HEADER_SPECVERSION: CLOUDEVENTS_HEADER_SPECVERSION_DEFAULT,
-        # TODO: Confirm whether we want URL or source - Currently don't have access to URL
-        CLOUDEVENTS_HEADER_SOURCE: f"io.seldon.serving.deployment.{env_sdep_name}.{env_namespace}",
+        CLOUDEVENTS_HEADER_SOURCE: source,
         CLOUDEVENTS_HEADER_TYPE: ce_type,
         CLOUDEVENTS_HEADER_REQUEST_ID: request_id,
         CLOUDEVENTS_HEADER_MODEL_ID: env_model_name,
