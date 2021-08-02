@@ -1,5 +1,5 @@
 from typing import Callable, List, Any
-from fastapi import Request, FastAPI
+from fastapi import FastAPI
 from starlette.middleware.base import BaseHTTPMiddleware
 
 #  from .codecs.middleware import codec_middleware
@@ -23,7 +23,7 @@ def inference_middlewares(
     return request
 
 
-FastAPIMiddlewareFunc = Callable[[Request, Any], None]
+FastAPIMiddlewareFunc = Any
 FastAPIMiddlewares: List[FastAPIMiddlewareFunc] = [cloudevents_middleware]
 
 

@@ -1,5 +1,5 @@
 import os
-from typing import Dict, Callable, Coroutine, Any
+from typing import Dict, Any
 from fastapi import Request, Response
 
 CLOUDEVENTS_HEADER_ID = "Ce-Id"
@@ -62,9 +62,7 @@ def get_cloudevent_headers(request_id: str, ce_type: str) -> Dict:
     return ce
 
 
-async def cloudevents_middleware(
-    request: Request, call_next: Callable[[Request, Any], Coroutine[Any, Any, Any]]
-):
+async def cloudevents_middleware(request: Request, call_next: Any):
     response: Response = await call_next(request)  # type: ignore
     # TODO: Adding request specific params below
     headers = get_cloudevent_headers("", "io.seldon.serving.logging")
