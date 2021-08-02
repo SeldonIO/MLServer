@@ -67,6 +67,7 @@ def get_cloudevent_headers(request_id: str, ce_type: str) -> Dict:
 
 async def cloudevents_middleware(request: Request, call_next):
     response: Response = await call_next(request)  # type: ignore
-    headers = get_cloudevent_headers("", "")
+    # TODO: Adding request specific params below
+    headers = get_cloudevent_headers("", "io.seldon.serving.logging")
     response.headers.update(**headers)
     return response
