@@ -5,6 +5,7 @@ import orjson
 from enum import Enum
 from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
 
+from ..cloudevents import get_cloudevent_headers
 from ..handlers import DataPlane, ModelRepositoryHandlers
 from ..settings import Settings
 from ..types import InferenceRequest
@@ -76,7 +77,7 @@ class KafkaServer:
                 raise MLServerError(f"Invalid request method: {request_method}")
 
             # TODO: Add cloudevent headers
-            response_headers = request_headers
+            response_headers = get_cloudevent_headers(response_key, "io.seldon.serving.inference.response")
             await self._producer.send_and_wait(
                 self._settings.kafka_topic_output,
                 key=response_key,
