@@ -60,5 +60,3 @@ def get_cloudevent_headers(request_id: str, ce_type: str) -> Dict:
         CLOUDEVENTS_HEADER_ENDPOINT: env_predictor_name,
     }
     return ce
-
-
