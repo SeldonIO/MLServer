@@ -49,7 +49,7 @@ class KafkaServer:
         await self._producer.start()
         # TODO: Catch or ensure parent function catches and stops server
         async for request in self._consumer:
-            # Logging raw request without converting to string for efficiency if no DEBUG
+            # Logging without converting to string for efficiency if no DEBUG
             logging.debug(request)
             request_key = request.key
             request_json = orjson.loads(request.value)
