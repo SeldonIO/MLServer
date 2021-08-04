@@ -1,6 +1,6 @@
 # Code generation
 grpcio-tools==1.38.0
-datamodel-code-generator==0.11.8
+datamodel-code-generator==0.11.9
 
 # Testing
 pytest==6.2.2
@@ -15,7 +15,7 @@ mypy==0.910
 mypy-protobuf==2.5
 types-protobuf==3.17.3
 types-orjson==0.1.1
-black==21.6b0
+black==21.7b0
 
 # Pushing to PyPi
 twine==3.4.1
