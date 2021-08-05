@@ -1,9 +1,47 @@
-# Serving Scikit-Learn models
+# Serving Scikit-Learn models using Kafka Protocol
 
 Out of the box, `mlserver` supports the deployment and serving of `scikit-learn` models.
 By default, it will assume that these models have been [serialised using `joblib`](https://scikit-learn.org/stable/modules/model_persistence.html).
 
 In this example, we will cover how we can train and serialise a simple model, to then serve it using `mlserver`.
+
+## Run Kafka
+
+We are going to start by running a simple local docker deployment of kafka that we can test against. This will be a minimal cluster that will consist of a single zookeeper node and a single broker.
+
+You need to have Java installed in order for it to work correctly.
+
+
+```python
+!wget https://apache.mirrors.nublue.co.uk/kafka/2.8.0/kafka_2.12-2.8.0.tgz
+!tar -zxvf kafka_2.12-2.8.0.tgz
+!./kafka_2.12-2.8.0/bin/kafka-storage.sh format -t OXn8RTSlQdmxwjhKnSB_6A -c ./kafka_2.12-2.8.0/config/kraft/server.properties
+```
+
+### Run the no-zookeeper kafka broker
+
+Now you can just run it with the following command outside the terminal:
+```
+!./kafka_2.12-2.8.0/bin/kafka-server-start.sh ./kafka_2.12-2.8.0/config/kraft/server.properties
+```
+
+### Create Topics
+
+Now we can create the input and output topics required
+
+
+```python
+!./kafka_2.12-2.8.0/bin/kafka-topics.sh --create --topic mlserver-input --partitions 1 --replication-factor 1 --bootstrap-server localhost:9092
+!./kafka_2.12-2.8.0/bin/kafka-topics.sh --create --topic mlserver-output --partitions 1 --replication-factor 1 --bootstrap-server localhost:9092
+```
+
+    Error while executing topic command : Topic with this name already exists.
+    [2021-08-05 04:32:32,710] ERROR org.apache.kafka.common.errors.TopicExistsException: Topic with this name already exists.
+     (kafka.admin.TopicCommand$)
+    Error while executing topic command : Topic with this name already exists.
+    [2021-08-05 04:32:34,590] ERROR org.apache.kafka.common.errors.TopicExistsException: Topic with this name already exists.
+     (kafka.admin.TopicCommand$)
+
 
 ## Training
 
@@ -38,6 +76,13 @@ X_train, X_test, y_train, y_test = train_test_split(
 classifier.fit(X_train, y_train)
 ```
 
+
+
+
+    SVC(gamma=0.001)
+
+
+
 ### Saving our trained model
 
 To save our trained model, we will serialise it using `joblib`.
@@ -53,6 +98,13 @@ model_file_name = "mnist-svm.joblib"
 joblib.dump(classifier, model_file_name)
 ```
 
+
+
+
+    ['mnist-svm.joblib']
+
+
+
 ## Serving
 
 Now that we have trained and saved our model, the next step will be to serve it using `mlserver`. 
@@ -67,9 +119,13 @@ For that, we will need to create 2 configuration files:
 ```python
 %%writefile settings.json
 {
-    "debug": "true"
+    "debug": "true",
+    "kafka_enable": "true"
 }
 ```
+
+    Overwriting settings.json
+
 
 ### `model-settings.json`
 
@@ -86,6 +142,9 @@ For that, we will need to create 2 configuration files:
 }
 ```
 
+    Overwriting model-settings.json
+
+
 ### Start serving our model
 
 Now that we have our config in-place, we can start the server by running `mlserver start .`. This needs to either be ran from the same directory where our config files are or pointing to the folder where they are.
@@ -95,6 +154,13 @@ mlserver start .
 ```
 
 Since this command will start the server and block the terminal, waiting for requests, this will need to be ran in the background on a separate terminal.
+
+
+```python
+%%script bash --bg --out script_out
+
+mlserver start .
+```
 
 ### Send test inference request
 
@@ -125,14 +191,65 @@ response = requests.post(endpoint, json=inference_request)
 response.json()
 ```
 
-As we can see above, the model predicted the input as the number `8`, which matches what's on the test set.
+
+
+
+    {'model_name': 'mnist-svm',
+     'model_version': 'v0.1.0',
+     'id': '16ab2bea-c733-4bce-a5b3-ec0c8c76e882',
+     'parameters': None,
+     'outputs': [{'name': 'predict',
+       'shape': [1],
+       'datatype': 'INT64',
+       'parameters': None,
+       'data': [8]}]}
+
+
 
 
 ```python
-y_test[0]
+import json
+from kafka import KafkaProducer
+
+producer = KafkaProducer(bootstrap_servers="localhost:9092")
+
+headers = {
+    "mlserver-model": b"mnist-svm",
+    "mlserver-version": b"v0.1.0",
+}
+
+producer.send(
+    "mlserver-input",
+    json.dumps(inference_request).encode("utf-8"),
+    headers=list(headers.items()))
 ```
+
+
+
+
+    <kafka.producer.future.FutureRecordMetadata at 0x7f8da94d1250>
+
+
 
 
 ```python
+from kafka import KafkaConsumer
 
+consumer = KafkaConsumer(
+    "mlserver-output",
+    bootstrap_servers="localhost:9092",
+    auto_offset_reset="earliest")
+
+for msg in consumer:
+    print(f"key: {msg.key}")
+    print(f"value: {msg.value}\n")
+    break
 ```
+
+    WARNING:kafka.coordinator.consumer:group_id is None: disabling auto-commit.
+
+
+    key: None
+    value: b'{"model_name":"mnist-svm","model_version":"v0.1.0","id":"f2a22555-43bc-40c2-9695-41602285a068","parameters":null,"outputs":[{"name":"predict","shape":[1],"datatype":"INT64","parameters":null,"data":[8]}]}'
+    
+
