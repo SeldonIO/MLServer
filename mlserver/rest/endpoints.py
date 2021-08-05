@@ -51,6 +51,7 @@ class Endpoints:
         raw_response: Response,
         payload: InferenceRequest,
         model_name: str,
+        response: Response,
         model_version: str = None,
     ) -> InferenceResponse:
         request_headers = raw_request.headers
