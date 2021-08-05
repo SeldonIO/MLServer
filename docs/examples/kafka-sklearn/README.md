@@ -155,13 +155,6 @@ mlserver start .
 
 Since this command will start the server and block the terminal, waiting for requests, this will need to be ran in the background on a separate terminal.
 
-
-```python
-%%script bash --bg --out script_out
-
-mlserver start .
-```
-
 ### Send test inference request
 
 We now have our model being served by `mlserver`.
@@ -196,7 +189,7 @@ response.json()
 
     {'model_name': 'mnist-svm',
      'model_version': 'v0.1.0',
-     'id': '16ab2bea-c733-4bce-a5b3-ec0c8c76e882',
+     'id': '53e3c2d5-456c-41a6-9e7f-6ba0ef717c3c',
      'parameters': None,
      'outputs': [{'name': 'predict',
        'shape': [1],
