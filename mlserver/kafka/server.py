@@ -1,6 +1,5 @@
 from mlserver.errors import MLServerError
 from typing import Dict
-import logging
 import orjson
 from enum import Enum
 from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
