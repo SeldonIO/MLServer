@@ -87,7 +87,13 @@ class KafkaServer:
                 response_headers = get_cloudevent_headers(
                     response_key, "io.seldon.serving.inference.response"
                 )
-                response_headers_kafka = [(k, v.encode("utf-8"),) for k, v in response_headers.items()]
+                response_headers_kafka = [
+                    (
+                        k,
+                        v.encode("utf-8"),
+                    )
+                    for k, v in response_headers.items()
+                ]
 
                 await self._producer.send_and_wait(
                     self._settings.kafka_topic_output,
