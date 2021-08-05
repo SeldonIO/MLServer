@@ -65,7 +65,9 @@ class Endpoints:
         if response_headers:
             raw_response.headers.update(response_headers)
 
-        headers = get_cloudevent_headers(response.id, "io.seldon.inference.response")  # type: ignore
+        headers = get_cloudevent_headers(
+            inference_response.id, "io.seldon.inference.response"  # type: ignore
+        )
         raw_response.headers.update(headers)
         return inference_response
 
