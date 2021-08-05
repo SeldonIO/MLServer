@@ -1,5 +1,6 @@
 import asyncio
 import signal
+import logging
 
 from typing import List
 
@@ -15,6 +16,7 @@ from .rest import RESTServer
 from .grpc import GRPCServer
 from .metrics import MetricsServer
 from .kafka import KafkaServer
+from .utils import logger
 
 HANDLED_SIGNALS = [signal.SIGINT, signal.SIGTERM, signal.SIGQUIT]
 
@@ -59,6 +61,10 @@ class MLServer:
         self._model_repository_handlers = ModelRepositoryHandlers(
             repository=self._model_repository, model_registry=self._model_registry
         )
+        if self._settings.debug:
+            logger.setLevel(logging.DEBUG)
+        else:
+            logger.setLevel(logging.INFO)
 
         self._logger = configure_logger(settings)
 
@@ -83,6 +89,9 @@ class MLServer:
         servers = [self._rest_server.start(), self._grpc_server.start()]
         if self._metrics_server:
             servers.append(self._metrics_server.start())
+
+        if self._kafka_server:
+            servers.append(self._kafka_server.start())
 
         servers_task = asyncio.gather(*servers)
 
@@ -129,6 +138,9 @@ class MLServer:
     async def stop(self, sig: int = None):
         if self._inference_pool:
             await self._inference_pool.close()
+
+        if self._kafka_server:
+            await self._kafka_server.stop(sig)
 
         await self._grpc_server.stop(sig)
         await self._rest_server.stop(sig)
