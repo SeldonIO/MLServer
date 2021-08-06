@@ -5,10 +5,10 @@ set -o errexit
 set -o pipefail
 
 _printUsage() {
-  echo "Usage: ./run-in-env.sh <envTarball>"
+  echo "Usage: ./run-in-env.sh <envTarball> <version>"
 }
 
-if [ "$#" -ne 1 ]; then
+if [ "$#" -ne 2 ]; then
   echo 'Invalid number of arguments'
   _printUsage
   exit 1
@@ -34,10 +34,15 @@ _unpackEnv() {
   echo "--> Disabling user-installed packages..."
   # https://github.com/conda/conda/issues/448#issuecomment-195848539
   export PYTHONNOUSERSITE=True
+
+  echo "--> Installing mlserver..."
+  pip install mlserver==$_version
+  pip install mlserver-mlflow==$_version
 }
 
 _main() {
   local _envTarball=$1
+  local _version=$2
 
   if [[ -f $_envTarball ]]; then
     _unpackEnv $_envTarball

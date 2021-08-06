@@ -4,7 +4,8 @@ SHELL ["/bin/bash", "-c"]
 
 ENV MLSERVER_MODELS_DIR=/mnt/models \
     MLSERVER_ENV_TARBALL=/mnt/models/environment.tar.gz \
-    PATH=/home/default/.local/bin:$PATH
+    PATH=/home/default/.local/bin:$PATH \
+    MLSERVER_VERSION=0.4.0
 
 RUN apt-get update && \
     apt-get -y --no-install-recommends install \
@@ -44,5 +45,5 @@ RUN useradd -u 1000 -s /bin/bash mlserver && \
 USER 1000
 
 # Need to source `activate-env.sh` so that env changes get persisted
-CMD . ./hack/activate-env.sh $MLSERVER_ENV_TARBALL \
-    && mlserver start $MLSERVER_MODELS_DIR
+CMD . ./hack/activate-env.sh $MLSERVER_ENV_TARBALL $MLSERVER_VERSION \
+    && python -m mlserver.cli.main start $MLSERVER_MODELS_DIR
