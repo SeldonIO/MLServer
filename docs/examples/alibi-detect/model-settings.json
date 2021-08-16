@@ -1,0 +1,8 @@
+{
+  "name": "income-classifier-cd",
+  "implementation": "mlserver_alibi_detect.AlibiDetector",
+  "parameters": {
+    "uri": "./alibi-detector-artifacts/ref_data.pkl",
+    "version": "v0.1.0"
+  }
+}
