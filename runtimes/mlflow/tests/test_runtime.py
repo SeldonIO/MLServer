@@ -21,7 +21,7 @@ async def test_predict(runtime: MLflowRuntime, inference_request: InferenceReque
     assert outputs[0].name == DefaultOutputName
 
 
-async def test_predict_pytorch(runtime_pytorch: MLflowRuntime, inference_request: InferenceRequest):
+async def test_predict_pytorch(runtime_pytorch: MLflowRuntime):
     import numpy as np
     inference_request = InferenceRequest(
         parameters=Parameters(content_type=PandasCodec.ContentType),
@@ -35,5 +35,6 @@ async def test_predict_pytorch(runtime_pytorch: MLflowRuntime, inference_request
             )],
     )
     response = await runtime_pytorch.predict(inference_request)
+
 
 
