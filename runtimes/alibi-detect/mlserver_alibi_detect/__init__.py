@@ -1,4 +1,3 @@
-from .cd.chisquare import ChiSquareDriftDetectRuntime
-from .cd.tabular import TabularDriftDetectRuntime
+from .cd.runtime import AlibiDriftDetectRuntime
 
-__all__ = ["ChiSquareDriftDetectRuntime", "TabularDriftDetectRuntime"]
+__all__ = ["AlibiDriftDetectRuntime"]

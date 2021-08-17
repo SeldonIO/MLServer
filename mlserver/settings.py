@@ -44,8 +44,7 @@ class ModelParameters(BaseSettings):
     uri: Optional[str] = None
     version: Optional[str] = None
     format: Optional[str] = None
-    initParameters: Optional[dict] = None
-    predictParameters: Optional[dict] = None
+    extra: Optional[dict] = {}
 
 
 class ModelSettings(BaseSettings):

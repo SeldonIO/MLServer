@@ -21,7 +21,7 @@ class AlibiDetectRuntime(MLModel):
 
     def __init__(self, settings: ModelSettings):
 
-        self.protocol = Protocol(settings.parameters.initParameters["protocol"])
+        self.protocol = Protocol(settings.parameters.extra["protocol"])
         super().__init__(settings)
 
     @custom_handler(rest_path="/")
@@ -52,7 +52,8 @@ class AlibiDetectRuntime(MLModel):
         default_codec = NumpyCodec()
         input_data = self.decode(model_input, default_codec=default_codec)
 
-        y = await self.predict_fn(input_data, payload.parameters.predictParameters)
+        y = await self.predict_fn(input_data, payload.parameters.predict_parameters)
+
         # TODO: Convert alibi-detect output to v2 protocol
         output_data = np.array(y["data"]["is_drift"])
 
