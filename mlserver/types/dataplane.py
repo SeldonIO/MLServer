@@ -39,6 +39,7 @@ class Parameters(BaseModel):
         extra = Extra.allow
 
     content_type: Optional[str] = None
+    predictParameters: Optional[dict] = None
 
 
 class TensorData(BaseModel):

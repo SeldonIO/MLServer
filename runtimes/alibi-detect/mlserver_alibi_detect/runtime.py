@@ -12,24 +12,9 @@ from .protocols.util import (
 )
 import numpy as np
 import json
-from typing import Optional
 
 
-def getPredictParams(
-    parameters: dict, payloadParameters: Optional[types.Parameters] = None
-) -> dict:
-    if payloadParameters is not None:
-        return {
-            **parameters,
-            **{
-                f: payloadParameters.__getattribute__(f)
-                for f in list(parameters.keys())
-            },
-        }
-    return parameters
-
-
-class AlibiDetector(MLModel):
+class AlibiDetectRuntime(MLModel):
     """
     Implementation of the MLModel interface to load and serve `alibi-detect` models.
     """
@@ -40,7 +25,7 @@ class AlibiDetector(MLModel):
         super().__init__(settings)
 
     @custom_handler(rest_path="/")
-    async def invocations(self, request: Request) -> Response:
+    async def detect(self, request: Request) -> Response:
         """
         This custom handler is meant to mimic the behaviour prediction in alibi-detect
         """
@@ -56,10 +41,9 @@ class AlibiDetector(MLModel):
         request_handler.validate()
         input_data = request_handler.extract_request()
 
-        y = self._model.predict(
-            input_data, **getPredictParams(self._settings.parameters.predictParameters)
-        )
+        y = await self.predict_fn(input_data, {})
         output_data = json.dumps(y, cls=NumpyEncoder)
+
         return Response(content=output_data, media_type="application/json")
 
     async def predict(self, payload: types.InferenceRequest) -> types.InferenceResponse:
@@ -68,12 +52,7 @@ class AlibiDetector(MLModel):
         default_codec = NumpyCodec()
         input_data = self.decode(model_input, default_codec=default_codec)
 
-        y = self._model.predict(
-            input_data,
-            **getPredictParams(
-                self._settings.parameters.predictParameters, payload.parameters
-            ),
-        )
+        y = await self.predict_fn(input_data, payload.parameters.predictParameters)
         # TODO: Convert alibi-detect output to v2 protocol
         output_data = np.array(y["data"]["is_drift"])
 
@@ -83,6 +62,9 @@ class AlibiDetector(MLModel):
             parameters=y["meta"],
             outputs=[default_codec.encode(name="detect", payload=output_data)],
         )
+
+    async def predict_fn(self, input_data: np.array, parameters: dict) -> dict:
+        raise NotImplementedError("predict_fn() method not implemented")
 
     def _check_request(self, payload: types.InferenceRequest) -> types.InferenceRequest:
         if len(payload.inputs) != 1:

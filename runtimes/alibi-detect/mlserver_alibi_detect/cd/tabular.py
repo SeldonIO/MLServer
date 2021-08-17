@@ -1,12 +1,13 @@
 import pickle
-from mlserver_alibi_detect import AlibiDetector
+from mlserver_alibi_detect.runtime import AlibiDetectRuntime
 from mlserver.utils import get_model_uri
 from alibi_detect.cd import TabularDrift
+import numpy as np
 
 DefaultPValue = 0.05
 
 
-class TabularDriftDetector(AlibiDetector):
+class TabularDriftDetectRuntime(AlibiDetectRuntime):
     """
     Implementation of the MLModel interface to load and serve Tabular drift models.
     """
@@ -29,3 +30,7 @@ class TabularDriftDetector(AlibiDetector):
 
         self.ready = True
         return self.ready
+
+    async def predict_fn(self, input_data: np.array, predictParameters: dict) -> dict:
+        parameters = self._settings.parameters.predictParameters
+        return self._model.predict(input_data, **{**parameters, **predictParameters,},)

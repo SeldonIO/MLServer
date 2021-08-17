@@ -1,5 +1,4 @@
-from .alibi_detect import AlibiDetector
-from .cd.chisquare import ChiSquareDriftDetector
-from .cd.tabular import TabularDriftDetector
+from .cd.chisquare import ChiSquareDriftDetectRuntime
+from .cd.tabular import TabularDriftDetectRuntime
 
-__all__ = ["AlibiDetector", "ChiSquareDriftDetector", "TabularDriftDetector"]
+__all__ = ["ChiSquareDriftDetectRuntime", "TabularDriftDetectRuntime"]
