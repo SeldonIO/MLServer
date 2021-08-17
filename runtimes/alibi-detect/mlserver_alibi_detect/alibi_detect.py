@@ -1,6 +1,3 @@
-import numpy as np
-import json
-from typing import Optional
 from mlserver import types
 from mlserver.settings import ModelSettings
 from mlserver.model import MLModel
@@ -8,11 +5,14 @@ from mlserver.errors import InferenceError
 from mlserver.codecs import NumpyCodec
 from fastapi import Request, Response
 from mlserver.handlers import custom_handler
-from mlserver_alibi_detect.protocols.util import (
+from .protocols.util import (
     NumpyEncoder,
     get_request_handler,
     Protocol,
 )
+import numpy as np
+import json
+from typing import Optional
 
 
 def getPredictParams(

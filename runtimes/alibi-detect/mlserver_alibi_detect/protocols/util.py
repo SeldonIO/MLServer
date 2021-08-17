@@ -10,7 +10,6 @@ from .v2 import KFservingV2RequestHandler
 class Protocol(Enum):
     tensorflow_http = "tensorflow.http"
     seldon_http = "seldon.http"
-    seldonfeedback_http = "seldonfeedback.http"
     kfserving_http = "kfserving.http"
 
     def __str__(self):
@@ -43,7 +42,7 @@ def get_request_handler(protocol, request: dict) -> RequestHandler:
 
 
 class NumpyEncoder(json.JSONEncoder):
-    def default(self, obj):  # pylint: disable=arguments-differ,method-hidden
+    def default(self, obj):
         """
         Encode Numpy Arrays as JSON
         Parameters

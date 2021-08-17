@@ -1,11 +1,11 @@
 {
   "name": "income-classifier-cd",
-  "implementation": "mlserver_alibi_detect.ChiSquareDriftDetector",
+  "implementation": "mlserver_alibi_detect.TabularDriftDetector",
   "parameters": {
-    "uri": "./alibi-detector-artifacts/ref_cat_data.pkl",
+    "uri": "./alibi-detector-artifacts/ref_data.pkl",
     "version": "v0.1.0",
     "initParameters": {
-      "protocol": "tensorflow.http",
+      "protocol": "kfserving.http",
       "p_val": 0.05
     },
     "predictParameters": {
