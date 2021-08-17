@@ -20,8 +20,11 @@ class AlibiDetectRuntime(MLModel):
     """
 
     def __init__(self, settings: ModelSettings):
+        protocol = "seldon.http"
+        if "protocol" in settings.parameters.extra:
+            protocol = settings.parameters.extra["protocol"]
 
-        self.protocol = Protocol(settings.parameters.extra["protocol"])
+        self.protocol = Protocol(protocol)
         super().__init__(settings)
 
     @custom_handler(rest_path="/")

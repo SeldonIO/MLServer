@@ -24,19 +24,27 @@ class AlibiDriftDetectRuntime(AlibiDetectRuntime):
         else:
             detector_data = pickle.load(open(model_uri, "rb"))
             try:
-                detector_type = self._settings.parameters.extra["detector_type"]
+                detector_type = ""
+                if "detector_type" in self._settings.parameters.extra:
+                    detector_type = self._settings.parameters.extra["detector_type"]
+
                 detect_module = import_module(AlibiDetectDriftModule)
                 drift_detector = getattr(detect_module, detector_type)
             except Exception as e:
                 raise InvalidAlibiDetector(detector_type, self._settings.name, e)
 
-            params = self._settings.parameters.extra["init_parameters"]
+            parameters = {}
+            if "init_parameters" in self._settings.parameters.extra:
+                parameters = self._settings.parameters.extra["init_parameters"]
 
-            self._model = drift_detector(**detector_data, **params)
+            self._model = drift_detector(**detector_data, **parameters)
 
         self.ready = True
         return self.ready
 
     async def predict_fn(self, input_data: np.array, predictParameters: dict) -> dict:
-        parameters = self._settings.parameters.extra["predict_parameters"]
+        parameters = {}
+        if "predict_parameters" in self._settings.parameters.extra:
+            parameters = self._settings.parameters.extra["predict_parameters"]
+
         return self._model.predict(input_data, **{**parameters, **predictParameters})

@@ -6,7 +6,6 @@
     "version": "v0.1.0",
     "extra":{
       "detector_type":"ChiSquareDrift",
-      "protocol": "seldon.http",
       "init_detector": false,
       "predict_parameters": {
         "drift_type": "feature"
