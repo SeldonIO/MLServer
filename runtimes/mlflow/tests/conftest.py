@@ -38,7 +38,7 @@ def model_uri(tmp_path) -> str:
 
 @pytest.fixture
 def pytorch_model_uri() -> str:
-    return os.path.join(TESTDATA_PATH,"pytorch_model")
+    return os.path.join(TESTDATA_PATH, "pytorch_model")
 
 
 @pytest.fixture

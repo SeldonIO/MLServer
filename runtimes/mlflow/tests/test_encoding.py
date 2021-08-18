@@ -1,14 +1,13 @@
+import numpy as np
 import pandas as pd
 import pytest
-import numpy as np
-
-from mlserver.codecs.numpy import _to_datatype
-
 from mlserver_mlflow.encoding import (
     MLflowPayload,
-    DefaultOutputName,
-    to_outputs, _convert_to_tensor_data_if_raw,
+    to_outputs,
+    _convert_to_tensor_data_if_raw,
 )
+
+from mlserver.codecs.numpy import _to_datatype
 
 
 @pytest.mark.parametrize(
@@ -18,7 +17,7 @@ from mlserver_mlflow.encoding import (
         {"foo": np.array([1, 2, 3])},
         {"foo": np.array([1, 2, 3]), "bar": np.array([4, 5, 6], dtype=np.float32)},
         pd.DataFrame([[1, 2, 3]]),
-        pd.Series([1, 2, 3])
+        pd.Series([1, 2, 3]),
     ],
 )
 def test_to_outputs(mlflow_payload: MLflowPayload):

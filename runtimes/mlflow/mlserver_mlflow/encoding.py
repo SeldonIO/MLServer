@@ -1,10 +1,9 @@
-import numpy as np
-
 from typing import Dict, List, Union
 
+import numpy as np
 import pandas as pd
 
-from mlserver.codecs import NumpyCodec, PandasCodec
+from mlserver.codecs import NumpyCodec
 from mlserver.types import ResponseOutput
 
 DefaultOutputName = "predict"
@@ -27,9 +26,11 @@ def to_outputs(mlflow_payload: MLflowPayload) -> List[ResponseOutput]:
 def _convert_to_tensor_data_if_raw(mlflow_payload: MLflowPayload) -> MLflowPayload:
     # if the payload is ndarray, dataframe or series, convert it to `TensorDict`
     # we also convert `pd.DataFrame` and `pd.Series` to `np.ndarray`
-    if isinstance(mlflow_payload, np.ndarray) \
-            or isinstance(mlflow_payload, pd.DataFrame) \
-            or isinstance(mlflow_payload, pd.Series):
+    if (
+        isinstance(mlflow_payload, np.ndarray)
+        or isinstance(mlflow_payload, pd.DataFrame)
+        or isinstance(mlflow_payload, pd.Series)
+    ):
 
         # convert pandas Series or DataFrame to numpy ndarray
         if isinstance(mlflow_payload, pd.DataFrame):
