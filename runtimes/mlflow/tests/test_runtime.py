@@ -24,7 +24,9 @@ async def test_predict(runtime: MLflowRuntime, inference_request: InferenceReque
 
 
 async def test_predict_pytorch(runtime_pytorch: MLflowRuntime):
-    # this is what pytorch mnist example expects
+    # The model used here is the MNIST pytorch example in mlflow:
+    # https://github.com/mlflow/mlflow/tree/master/examples/pytorch/MNIST
+    # input is a 28*28 image
     data = np.random.randn(1, 28*28).astype(np.float32)
     inference_request = InferenceRequest(
         parameters=Parameters(content_type=PandasCodec.ContentType),
@@ -37,6 +39,10 @@ async def test_predict_pytorch(runtime_pytorch: MLflowRuntime):
             ) for idx, i in enumerate(data.flat)],
     )
     response = await runtime_pytorch.predict(inference_request)
+
+    outputs = response.outputs
+    assert len(outputs) == 1
+    assert outputs[0].name == DefaultOutputName
 
 
 
