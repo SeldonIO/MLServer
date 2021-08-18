@@ -1,3 +1,5 @@
+import numpy as np
+
 from mlflow.pyfunc import PyFuncModel
 
 from mlserver.codecs import PandasCodec, NumpyCodec
@@ -22,17 +24,17 @@ async def test_predict(runtime: MLflowRuntime, inference_request: InferenceReque
 
 
 async def test_predict_pytorch(runtime_pytorch: MLflowRuntime):
-    import numpy as np
+    # this is what pytorch mnist example expects
+    data = np.random.randn(1, 28*28).astype(np.float32)
     inference_request = InferenceRequest(
         parameters=Parameters(content_type=PandasCodec.ContentType),
         inputs=[
             RequestInput(
-                name=f"predict",
-                shape=[1, 28*28],
-                data=np.random.randn(1, 28*28).astype(np.float32).tolist(),
+                name=f"predict{idx}",
+                shape=[1, 1],
+                data=[i],
                 datatype="FP32",
-                parameters=Parameters(content_type=NumpyCodec.ContentType),
-            )],
+            ) for idx, i in enumerate(data.flat)],
     )
     response = await runtime_pytorch.predict(inference_request)
 
