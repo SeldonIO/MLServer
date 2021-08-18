@@ -1,5 +1,5 @@
 import pytest
-import numpy as np
+
 from typing import Union
 
 
@@ -13,7 +13,10 @@ def test_invocations_invalid_content_type(rest_client, content_type: str):
 @pytest.mark.parametrize(
     "content_type, payload",
     [
-        ("application/json", {"columns": [i for i in range(28*28)], "data": np.random.randn(1, 28*28).tolist()}),
+        ("application/json", {"columns": ["a"], "data": [1, 2, 3]}),
+        ("application/json; format=pandas-records", [{"a": 1}, {"a": 2}, {"a": 3}]),
+        ("application/json", {"instances": [1, 2, 3]}),
+        ("application/json", {"inputs": [1, 2, 3]}),
     ],
 )
 def test_invocations(rest_client, content_type: str, payload: Union[list, dict]):
@@ -25,3 +28,4 @@ def test_invocations(rest_client, content_type: str, payload: Union[list, dict])
 
     y_pred = response.json()
     assert isinstance(y_pred, list)
+    assert len(y_pred) == 3

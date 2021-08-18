@@ -18,11 +18,6 @@ def model_repository(model_uri: str) -> ModelRepository:
 
 
 @pytest.fixture
-def pytorch_model_repository(pytorch_model_uri: str) -> ModelRepository:
-    return ModelRepository(pytorch_model_uri)
-
-
-@pytest.fixture
 async def model_registry(runtime: MLflowRuntime) -> MultiModelRegistry:
     model_registry = MultiModelRegistry()
     await model_registry.load(runtime)
@@ -41,10 +36,10 @@ def data_plane(settings: Settings, model_registry: MultiModelRegistry) -> DataPl
 
 @pytest.fixture
 def model_repository_handlers(
-    pytorch_model_repository: ModelRepository, model_registry: MultiModelRegistry
+    model_repository: ModelRepository, model_registry: MultiModelRegistry
 ) -> ModelRepositoryHandlers:
     return ModelRepositoryHandlers(
-        repository=pytorch_model_repository, model_registry=model_registry
+        repository=model_repository, model_registry=model_registry
     )
 
 
@@ -53,7 +48,7 @@ async def rest_server(
     settings: Settings,
     data_plane: DataPlane,
     model_repository_handlers: ModelRepositoryHandlers,
-    runtime_pytorch: MLflowRuntime,
+    runtime: MLflowRuntime,
 ) -> RESTServer:
     server = RESTServer(
         settings,
@@ -61,7 +56,7 @@ async def rest_server(
         model_repository_handlers=model_repository_handlers,
     )
 
-    await server.add_custom_handlers(runtime_pytorch)
+    await server.add_custom_handlers(runtime)
 
     return server
 
