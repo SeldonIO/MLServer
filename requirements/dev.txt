@@ -9,6 +9,8 @@ pytest-mock==3.6.1
 tox==3.24.1
 # for mlflow tests
 torch==1.9.0
+pytorch-lightning==1.4.2
+torchvision==0.10.0
 
 # Linting and formatting
 flake8==3.9.1
