@@ -5,9 +5,9 @@ flavors:
     env: conda.yaml
     loader_module: mlflow.pytorch
     pickle_module_name: mlflow.pytorch.pickle_module
-    python_version: 3.8.2
+    python_version: 3.7.11
   pytorch:
     model_data: data
     pytorch_version: 1.9.0+cu102
-run_id: 49bf390faa73401d922d4c248e5318d9
-utc_time_created: '2021-08-13 09:52:29.830367'
+run_id: 0f398f3575154fc4a81c9fb5dfb411c1
+utc_time_created: '2021-08-19 14:25:47.900944'
