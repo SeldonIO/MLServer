@@ -34,10 +34,8 @@ def _convert_to_tensor_data_if_raw(mlflow_payload: MLflowPayload) -> MLflowPaylo
 
         # convert pandas Series or DataFrame to numpy ndarray
         if isinstance(mlflow_payload, pd.DataFrame):
-            assert isinstance(mlflow_payload, pd.DataFrame)
             mlflow_payload_array = mlflow_payload.to_numpy()
         elif isinstance(mlflow_payload, pd.Series):
-            assert isinstance(mlflow_payload, pd.Series)
             mlflow_payload_array = mlflow_payload.to_numpy()
         else:
             mlflow_payload_array = mlflow_payload
