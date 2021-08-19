@@ -12,6 +12,30 @@ from .protocols.util import (
 )
 import numpy as np
 import json
+from typing import Optional, Any
+
+# from pydantic import BaseSettings
+
+# ENV_PREFIX_ALIBI_DETECT_SETTINGS = "MLSERVER_MODEL_ALIBI_DETECT_"
+
+
+class AlibiDetectSettings(dict):
+    """
+    Parameters that apply only to alibi detect models
+    """
+
+    def __init__(self, dictionary):
+        for k, v in dictionary.items():
+            setattr(self, k, v)
+
+    # class Config:
+    #     env_prefix = ENV_PREFIX_ALIBI_DETECT_SETTINGS
+
+    init_detector: bool = False
+    detector_type: str = ""
+    protocol: Optional[str] = "seldon.http"
+    init_parameters: Optional[dict] = {}
+    predict_parameters: Optional[dict] = {}
 
 
 class AlibiDetectRuntime(MLModel):
@@ -20,11 +44,8 @@ class AlibiDetectRuntime(MLModel):
     """
 
     def __init__(self, settings: ModelSettings):
-        protocol = "seldon.http"
-        if "protocol" in settings.parameters.extra:
-            protocol = settings.parameters.extra["protocol"]
 
-        self.protocol = Protocol(protocol)
+        self.alibi_detect_settings = AlibiDetectSettings(settings.parameters.extra)
         super().__init__(settings)
 
     @custom_handler(rest_path="/")
@@ -40,7 +61,9 @@ class AlibiDetectRuntime(MLModel):
         except json.decoder.JSONDecodeError as e:
             raise InferenceError("Unrecognized request format: %s" % e)
 
-        request_handler = get_request_handler(self.protocol, body)
+        request_handler = get_request_handler(
+            Protocol(self.alibi_detect_settings.protocol), body
+        )
         request_handler.validate()
         input_data = request_handler.extract_request()
 
@@ -50,8 +73,8 @@ class AlibiDetectRuntime(MLModel):
         return Response(content=output_data, media_type="application/json")
 
     async def predict(self, payload: types.InferenceRequest) -> types.InferenceResponse:
-        model_input = self._check_request(payload)
-
+        payload = self._check_request(payload)
+        model_input = payload.inputs[0]
         default_codec = NumpyCodec()
         input_data = self.decode(model_input, default_codec=default_codec)
 
@@ -67,7 +90,7 @@ class AlibiDetectRuntime(MLModel):
             outputs=[default_codec.encode(name="detect", payload=output_data)],
         )
 
-    async def predict_fn(self, input_data: np.array, parameters: dict) -> dict:
+    async def predict_fn(self, input_data: Any, parameters: dict) -> dict:
         raise NotImplementedError("predict_fn() method not implemented")
 
     def _check_request(self, payload: types.InferenceRequest) -> types.InferenceRequest:
@@ -76,4 +99,4 @@ class AlibiDetectRuntime(MLModel):
                 "AlibiDetector only supports a single input tensor "
                 f"({len(payload.inputs)} were received)"
             )
-        return payload.inputs[0]
+        return payload
