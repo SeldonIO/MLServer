@@ -4,6 +4,7 @@ import pytest
 import numpy as np
 
 from sklearn.dummy import DummyClassifier
+from mlflow.models.signature import ModelSignature, infer_signature
 from mlserver.settings import ModelSettings, ModelParameters
 from mlserver.types import InferenceRequest
 
@@ -22,16 +23,29 @@ def pytest_collection_modifyitems(items):
 
 
 @pytest.fixture
-def model_uri(tmp_path) -> str:
+def dataset() -> tuple:
     n = 4
     X = np.random.rand(n)
     y = np.random.rand(n)
+
+    return X, y
+
+
+@pytest.fixture
+def model_signature(dataset: tuple) -> ModelSignature:
+    X, y = dataset
+    return infer_signature(X, y)
+
+
+@pytest.fixture
+def model_uri(tmp_path, dataset: tuple, model_signature: ModelSignature) -> str:
+    X, y = dataset
 
     clf = DummyClassifier(strategy="prior")
     clf.fit(X, y)
 
     model_path = os.path.join(tmp_path, "dummy-model")
-    mlflow.sklearn.save_model(clf, path=model_path)
+    mlflow.sklearn.save_model(clf, path=model_path, signature=model_signature)
 
     return model_path
 

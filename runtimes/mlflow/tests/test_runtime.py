@@ -42,3 +42,10 @@ async def test_predict_pytorch(runtime_pytorch: MLflowRuntime):
     outputs = response.outputs
     assert len(outputs) == 1
     assert outputs[0].name == DefaultOutputName
+
+
+async def test_metadata(runtime: MLflowRuntime):
+    metadata = await runtime.metadata()
+
+    breakpoint()
+    assert metadata is not None
