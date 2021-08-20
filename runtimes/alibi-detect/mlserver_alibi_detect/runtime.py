@@ -6,35 +6,37 @@ from mlserver.codecs import NumpyCodec
 from fastapi import Request, Response
 from mlserver.handlers import custom_handler
 from .protocols.util import (
-    NumpyEncoder,
     get_request_handler,
     Protocol,
 )
 import numpy as np
-import json
+import orjson
 from typing import Optional, Any
+from pydantic import BaseSettings, PyObject
 
-# from pydantic import BaseSettings
-
-# ENV_PREFIX_ALIBI_DETECT_SETTINGS = "MLSERVER_MODEL_ALIBI_DETECT_"
+ENV_PREFIX_ALIBI_DETECT_SETTINGS = "MLSERVER_MODEL_ALIBI_DETECT_"
 
 
-class AlibiDetectSettings(dict):
+class AlibiDetectSettings(BaseSettings):
     """
     Parameters that apply only to alibi detect models
     """
 
-    def __init__(self, dictionary):
-        for k, v in dictionary.items():
-            setattr(self, k, v)
-
-    # class Config:
-    #     env_prefix = ENV_PREFIX_ALIBI_DETECT_SETTINGS
+    class Config:
+        env_prefix = ENV_PREFIX_ALIBI_DETECT_SETTINGS
 
     init_detector: bool = False
-    detector_type: str = ""
+    detector_type: PyObject = ""
     protocol: Optional[str] = "seldon.http"
     init_parameters: Optional[dict] = {}
+    predict_parameters: Optional[dict] = {}
+
+
+class AlibiDetectParameters(BaseSettings):
+    """
+    Parameters that apply only to alibi detect models
+    """
+
     predict_parameters: Optional[dict] = {}
 
 
@@ -45,7 +47,7 @@ class AlibiDetectRuntime(MLModel):
 
     def __init__(self, settings: ModelSettings):
 
-        self.alibi_detect_settings = AlibiDetectSettings(settings.parameters.extra)
+        self.alibi_detect_settings = AlibiDetectSettings(**settings.parameters.extra)
         super().__init__(settings)
 
     @custom_handler(rest_path="/")
@@ -57,8 +59,8 @@ class AlibiDetectRuntime(MLModel):
         as_str = raw_data.decode("utf-8")
 
         try:
-            body = json.loads(as_str)
-        except json.decoder.JSONDecodeError as e:
+            body = orjson.loads(as_str)
+        except orjson.JSONDecodeError as e:
             raise InferenceError("Unrecognized request format: %s" % e)
 
         request_handler = get_request_handler(
@@ -67,8 +69,8 @@ class AlibiDetectRuntime(MLModel):
         request_handler.validate()
         input_data = request_handler.extract_request()
 
-        y = await self.predict_fn(input_data, {})
-        output_data = json.dumps(y, cls=NumpyEncoder)
+        y = await self.predict_fn(input_data)
+        output_data = orjson.dumps(y, option=orjson.OPT_SERIALIZE_NUMPY)
 
         return Response(content=output_data, media_type="application/json")
 
@@ -77,8 +79,7 @@ class AlibiDetectRuntime(MLModel):
         model_input = payload.inputs[0]
         default_codec = NumpyCodec()
         input_data = self.decode(model_input, default_codec=default_codec)
-
-        y = await self.predict_fn(input_data, payload.parameters.predict_parameters)
+        y = await self.predict_fn(input_data)
 
         # TODO: Convert alibi-detect output to v2 protocol
         output_data = np.array(y["data"]["is_drift"])
@@ -90,8 +91,11 @@ class AlibiDetectRuntime(MLModel):
             outputs=[default_codec.encode(name="detect", payload=output_data)],
         )
 
-    async def predict_fn(self, input_data: Any, parameters: dict) -> dict:
-        raise NotImplementedError("predict_fn() method not implemented")
+    async def predict_fn(
+        self, input_data: Any, predictParameters: Optional[dict] = {}
+    ) -> dict:
+        parameters = self.alibi_detect_settings.predict_parameters
+        return self._model.predict(input_data, **parameters, **predictParameters)
 
     def _check_request(self, payload: types.InferenceRequest) -> types.InferenceRequest:
         if len(payload.inputs) != 1:

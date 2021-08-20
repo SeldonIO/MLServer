@@ -5,9 +5,9 @@
     "uri": "./alibi-detector-artifacts/detector_data_cat",
     "version": "v0.1.0",
     "extra":{
-      "detector_type":"ChiSquareDrift",
-      "protocol": "seldon.http",
+      "detector_type":"alibi_detect.cd.ChiSquareDrift",
       "init_detector": false,
+      "protocol": "seldon.http",
       "predict_parameters": {
         "drift_type": "feature"
       }
