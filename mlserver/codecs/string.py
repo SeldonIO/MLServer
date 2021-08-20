@@ -1,4 +1,4 @@
-from typing import Generator, Union, List
+from typing import Generator, Union, List, Tuple
 
 from ..types import RequestInput, ResponseOutput
 
@@ -6,6 +6,8 @@ from .utils import FirstInputRequestCodec
 from .base import InputCodec, register_input_codec, register_request_codec
 
 _DefaultStrCodec = "utf-8"
+
+PackedPayload = Union[bytes, str, List[str]]
 
 
 def _decode_str(encoded: Union[str, bytes], str_codec=_DefaultStrCodec) -> str:
@@ -40,6 +42,38 @@ def _split_elements(
         yield encoded
 
 
+def unpack(
+    packed: PackedPayload, shape: List[int], str_codec: str = _DefaultStrCodec
+) -> Generator[str, None, None]:
+    for elem in _split_elements(packed, shape):
+        yield _decode_str(elem, str_codec)
+
+
+def pack(
+    unpacked: List[str], str_codec: str = _DefaultStrCodec
+) -> Tuple[PackedPayload, List[int]]:
+    packed = b""
+    common_length = -1
+    for elem in unpacked:
+        as_bytes = elem.encode(str_codec)
+
+        # TODO: Should we use the length of the UTF8 string or the bytes
+        # array?
+        elem_length = len(as_bytes)
+        if common_length == -1:
+            common_length = elem_length
+
+        if common_length != elem_length:
+            # TODO: Raise an error here
+            # TODO: Should we try to add padding?
+            pass
+
+        packed += as_bytes
+
+    shape = [len(unpacked), common_length]
+    return packed, shape
+
+
 @register_input_codec
 class StringCodec(InputCodec):
     """
@@ -50,28 +84,11 @@ class StringCodec(InputCodec):
 
     @classmethod
     def encode(cls, name: str, payload: List[str]) -> ResponseOutput:
-        packed = b""
-        common_length = None
-        for elem in payload:
-            as_bytes = elem.encode(_DefaultStrCodec)
-
-            # TODO: Should we use the length of the UTF8 string or the bytes
-            # array?
-            elem_length = len(as_bytes)
-            if common_length is None:
-                common_length = elem_length
-
-            if common_length != elem_length:
-                # TODO: Raise an error here
-                # TODO: Should we try to add padding?
-                pass
-
-            packed += as_bytes
-
+        packed, shape = pack(payload)
         return ResponseOutput(
             name=name,
             datatype="BYTES",
-            shape=[len(payload), common_length],
+            shape=shape,
             data=packed,
         )
 
@@ -87,3 +104,10 @@ class StringCodec(InputCodec):
 class StringRequestCodec(FirstInputRequestCodec):
     InputCodec = StringCodec
     ContentType = StringCodec.ContentType
+
+    @classmethod
+    def decode(cls, request_input: RequestInput) -> List[str]:
+        packed = request_input.data.__root__
+        shape = request_input.shape
+
+        return list(unpack(packed, shape))
