@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 
 from .base import RequestCodec, register_request_codec
-from .numpy import _to_datatype
+from .numpy import to_datatype
 from .utils import get_decoded_or_raw
 from ..types import InferenceRequest, InferenceResponse, RequestInput, ResponseOutput
 
@@ -22,7 +22,7 @@ def _to_response_output(series: pd.Series) -> ResponseOutput:
         name=series.name,
         shape=list(series.shape),
         data=series.tolist(),
-        datatype=_to_datatype(series.dtype),
+        datatype=to_datatype(series.dtype),
     )
 
 

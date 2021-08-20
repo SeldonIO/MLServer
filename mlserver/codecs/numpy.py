@@ -42,7 +42,7 @@ def _to_dtype(request_input: RequestInput) -> "np.dtype":
     return np.dtype(dtype)
 
 
-def _to_datatype(dtype: np.dtype) -> str:
+def to_datatype(dtype: np.dtype) -> str:
     as_str = str(dtype)
 
     if as_str not in _NumpyToDatatype:
