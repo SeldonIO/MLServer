@@ -17,29 +17,33 @@ def _ensure_bytes(elem: PackElement) -> bytes:
     return elem
 
 
-def _ensure_base64(elem: PackElement) -> bytes:
+def _decode_base64(elem: PackElement) -> bytes:
     as_bytes = _ensure_bytes(elem)
 
     # Check that the input is valid base64.
     # Otherwise, convert into base64.
     try:
-        base64.b64decode(as_bytes, validate=True)
-        return as_bytes
+        return base64.b64decode(as_bytes, validate=True)
     except binascii.Error:
-        return base64.b64encode(as_bytes)
+        return as_bytes
+
+
+def _encode_base64(elem: PackElement) -> bytes:
+    as_bytes = _ensure_bytes(elem)
+    return base64.b64encode(as_bytes)
 
 
 @register_input_codec
 class Base64Codec(InputCodec):
     """
-    Ensures that the input that the model receives is a base64 bytes array.
+    Codec that convers to / from a base64 input.
     """
 
     ContentType = "base64"
 
     def encode(self, name: str, payload: List[bytes]) -> ResponseOutput:
         # Assume that payload is already in b64, so we only need to pack it
-        packed, shape = pack(payload)
+        packed, shape = pack(map(_encode_base64, payload))
         return ResponseOutput(
             name=name,
             datatype="BYTES",
@@ -51,4 +55,4 @@ class Base64Codec(InputCodec):
         packed = request_input.data.__root__
         shape = request_input.shape
 
-        return list(map(_ensure_base64, unpack(packed, shape)))
+        return list(map(_decode_base64, unpack(packed, shape)))

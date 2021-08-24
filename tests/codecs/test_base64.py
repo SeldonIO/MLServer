@@ -8,7 +8,7 @@ from mlserver.types import RequestInput, ResponseOutput
     "decoded, expected",
     [
         (
-            [b"UHl0aG9uIGlzIGZ1bg=="],
+            [b"Python is fun"],
             ResponseOutput(
                 name="foo",
                 shape=[1, 20],
@@ -17,7 +17,16 @@ from mlserver.types import RequestInput, ResponseOutput
             ),
         ),
         (
-            [b"UHl0aG9uIGlzIGZ1bg==", b"UHl0aG9uIGlzIGZ1bg=="],
+            ["Python is fun"],
+            ResponseOutput(
+                name="foo",
+                shape=[1, 20],
+                datatype="BYTES",
+                data=b"UHl0aG9uIGlzIGZ1bg==",
+            ),
+        ),
+        (
+            [b"Python is fun", b"Python is fun"],
             ResponseOutput(
                 name="foo",
                 shape=[2, 20],
@@ -44,7 +53,7 @@ def test_encode(decoded, expected):
                 datatype="BYTES",
                 data=b"UHl0aG9uIGlzIGZ1bg==",
             ),
-            [b"UHl0aG9uIGlzIGZ1bg=="],
+            [b"Python is fun"],
         ),
         (
             RequestInput(
@@ -53,7 +62,7 @@ def test_encode(decoded, expected):
                 datatype="BYTES",
                 data="UHl0aG9uIGlzIGZ1bg==",
             ),
-            [b"UHl0aG9uIGlzIGZ1bg=="],
+            [b"Python is fun"],
         ),
         (
             RequestInput(
@@ -62,7 +71,16 @@ def test_encode(decoded, expected):
                 datatype="BYTES",
                 data=b"Python is fun",
             ),
-            [b"UHl0aG9uIGlzIGZ1bg=="],
+            [b"Python is fun"],
+        ),
+        (
+            RequestInput(
+                name="foo",
+                shape=[1, 13],
+                datatype="BYTES",
+                data="Python is fun",
+            ),
+            [b"Python is fun"],
         ),
         (
             RequestInput(
@@ -71,7 +89,7 @@ def test_encode(decoded, expected):
                 datatype="BYTES",
                 data=b"UHl0aG9uIGlzIGZ1bg==UHl0aG9uIGlzIGZ1bg==",
             ),
-            [b"UHl0aG9uIGlzIGZ1bg==", b"UHl0aG9uIGlzIGZ1bg=="],
+            [b"Python is fun", b"Python is fun"],
         ),
         (
             RequestInput(
@@ -80,7 +98,7 @@ def test_encode(decoded, expected):
                 datatype="BYTES",
                 data="UHl0aG9uIGlzIGZ1bg==UHl0aG9uIGlzIGZ1bg==",
             ),
-            [b"UHl0aG9uIGlzIGZ1bg==", b"UHl0aG9uIGlzIGZ1bg=="],
+            [b"Python is fun", b"Python is fun"],
         ),
     ],
 )
