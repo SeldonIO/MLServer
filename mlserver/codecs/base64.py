@@ -17,6 +17,11 @@ def _ensure_bytes(elem: PackElement) -> bytes:
     return elem
 
 
+def _encode_base64(elem: PackElement) -> bytes:
+    as_bytes = _ensure_bytes(elem)
+    return base64.b64encode(as_bytes)
+
+
 def _decode_base64(elem: PackElement) -> bytes:
     as_bytes = _ensure_bytes(elem)
 
@@ -26,11 +31,6 @@ def _decode_base64(elem: PackElement) -> bytes:
         return base64.b64decode(as_bytes, validate=True)
     except binascii.Error:
         return as_bytes
-
-
-def _encode_base64(elem: PackElement) -> bytes:
-    as_bytes = _ensure_bytes(elem)
-    return base64.b64encode(as_bytes)
 
 
 @register_input_codec
