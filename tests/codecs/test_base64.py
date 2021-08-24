@@ -58,6 +58,15 @@ def test_encode(decoded, expected):
         (
             RequestInput(
                 name="foo",
+                shape=[1, 13],
+                datatype="BYTES",
+                data=b"Python is fun",
+            ),
+            [b"UHl0aG9uIGlzIGZ1bg=="],
+        ),
+        (
+            RequestInput(
+                name="foo",
                 shape=[2, 20],
                 datatype="BYTES",
                 data=b"UHl0aG9uIGlzIGZ1bg==UHl0aG9uIGlzIGZ1bg==",
