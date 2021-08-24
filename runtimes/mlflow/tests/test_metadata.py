@@ -3,15 +3,15 @@ import numpy as np
 
 from typing import Tuple, List
 
-from mlflow.types.schema import ColSpec, TensorSpec, DataType
+from mlflow.types.schema import ColSpec, TensorSpec, DataType, Schema
 from mlserver.codecs import NumpyCodec, StringCodec, Base64Codec
-from mlserver.types import Tags
+from mlserver.types import Tags, MetadataTensor
 
 from mlserver_mlflow.metadata import (
     InputSpec,
     _get_content_type,
     _get_shape,
-    to_metadata_tensor,
+    to_metadata_tensors,
 )
 
 
@@ -55,11 +55,58 @@ def test_get_shape(input_spec: InputSpec, expected: List[int]):
     assert shape == expected
 
 
-def test_to_metadata_tensor():
-    input_spec = TensorSpec(name="foo", shape=(2, 2), type=np.dtype("int32"))
-    metadata_tensor = to_metadata_tensor(input_spec)
+@pytest.mark.parametrize(
+    "schema, expected",
+    [
+        (
+            Schema(
+                inputs=[TensorSpec(name="foo", shape=(2, 2), type=np.dtype("int32"))]
+            ),
+            [
+                MetadataTensor(
+                    name="foo",
+                    datatype="INT32",
+                    shape=[2, 2],
+                    tags=Tags(content_type=NumpyCodec.ContentType),
+                )
+            ],
+        ),
+        (
+            Schema(inputs=[TensorSpec(shape=(2, 2), type=np.dtype("int32"))]),
+            [
+                MetadataTensor(
+                    name="input-0",
+                    datatype="INT32",
+                    shape=[2, 2],
+                    tags=Tags(content_type=NumpyCodec.ContentType),
+                )
+            ],
+        ),
+        (
+            Schema(
+                inputs=[
+                    ColSpec(type=DataType.string),
+                    ColSpec(type=DataType.integer),
+                ]
+            ),
+            [
+                MetadataTensor(
+                    name="input-0",
+                    datatype="BYTES",
+                    shape=[-1],
+                    tags=Tags(content_type=StringCodec.ContentType),
+                ),
+                MetadataTensor(
+                    name="input-1",
+                    datatype="INT32",
+                    shape=[-1],
+                    tags=Tags(content_type=NumpyCodec.ContentType),
+                ),
+            ],
+        ),
+    ],
+)
+def test_to_metadata_tensors(schema: Schema, expected: List[MetadataTensor]):
+    metadata_tensors = to_metadata_tensors(schema)
 
-    assert metadata_tensor.name == input_spec.name
-    assert metadata_tensor.datatype == "INT32"
-    assert metadata_tensor.shape == list(input_spec.shape)
-    assert metadata_tensor.tags == Tags(content_type=NumpyCodec.ContentType)
+    assert metadata_tensors == expected

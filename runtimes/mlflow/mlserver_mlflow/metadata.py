@@ -36,18 +36,22 @@ def _get_shape(input_spec: InputSpec) -> List[int]:
     return [-1]
 
 
-def to_metadata_tensor(input_spec: InputSpec) -> MetadataTensor:
-    # TODO: Can input_spec.name be None?
-    datatype, content_type = _get_content_type(input_spec)
-    shape = _get_shape(input_spec)
+def to_metadata_tensors(schema: Schema, prefix="input-") -> List[MetadataTensor]:
+    metadata_tensors = []
 
-    return MetadataTensor(
-        name=input_spec.name,
-        datatype=datatype,
-        shape=shape,
-        tags=Tags(content_type=content_type),
-    )
+    for idx, input_spec in enumerate(schema.inputs):
+        datatype, content_type = _get_content_type(input_spec)
+        shape = _get_shape(input_spec)
 
+        name = input_spec.name if input_spec.name else f"{prefix}{idx}"
 
-def to_metadata(schema: Schema) -> List[MetadataTensor]:
-    return [to_metadata_tensor(schema_input) for schema_input in schema.inputs]
+        metadata_tensors.append(
+            MetadataTensor(
+                name=name,
+                datatype=datatype,
+                shape=shape,
+                tags=Tags(content_type=content_type),
+            )
+        )
+
+    return metadata_tensors
