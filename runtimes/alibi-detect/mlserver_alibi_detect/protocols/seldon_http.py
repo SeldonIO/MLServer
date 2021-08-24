@@ -50,7 +50,7 @@ class SeldonRequestHandler(RequestHandler):
         if "data" not in self.request:
             raise InferenceError("Expected key `data` in request body")
 
-        ty = _get_request_ty(self.request)
+        _get_request_ty(self.request)
 
     def extract_request(self) -> np.array:
         return _extract_list(self.request)
