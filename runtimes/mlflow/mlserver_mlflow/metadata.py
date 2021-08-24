@@ -10,8 +10,8 @@ from mlserver.codecs.numpy import to_datatype
 
 InputSpec = Union[ColSpec, TensorSpec]
 
-InputDefaultPrefix = "input-"
-OutputDefaultPrefix = "output-"
+DefaultInputPrefix = "input-"
+DefaultOutputPrefix = "output-"
 
 _MLflowToContentType = {
     DataType.boolean: ("BOOL", NumpyCodec.ContentType),
@@ -43,7 +43,7 @@ def _get_shape(input_spec: InputSpec) -> List[int]:
 
 
 def to_metadata_tensors(
-    schema: Schema, prefix=InputDefaultPrefix
+    schema: Schema, prefix=DefaultInputPrefix
 ) -> List[MetadataTensor]:
     metadata_tensors = []
 
@@ -69,8 +69,8 @@ def to_metadata(
     signature: ModelSignature, model_settings: ModelSettings
 ) -> MetadataModelResponse:
     # TODO: Merge lists with existing metadata (if any) [how?]
-    inputs = to_metadata_tensors(signature.inputs, prefix=InputDefaultPrefix)
-    outputs = to_metadata_tensors(signature.outputs, prefix=OutputDefaultPrefix)
+    inputs = to_metadata_tensors(signature.inputs, prefix=DefaultInputPrefix)
+    outputs = to_metadata_tensors(signature.outputs, prefix=DefaultOutputPrefix)
 
     return MetadataModelResponse(
         name=model_settings.name,

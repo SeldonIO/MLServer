@@ -11,8 +11,8 @@ from mlserver.settings import ModelSettings
 
 from mlserver_mlflow.metadata import (
     InputSpec,
-    InputDefaultPrefix,
-    OutputDefaultPrefix,
+    DefaultInputPrefix,
+    DefaultOutputPrefix,
     _get_content_type,
     _get_shape,
     to_metadata_tensors,
@@ -130,7 +130,7 @@ def test_metadata(model_signature: ModelSignature, model_settings: ModelSettings
         sig = model_signature.inputs.inputs[idx]
 
         if sig.name is None:
-            assert met.name == f"{InputDefaultPrefix}{idx}"
+            assert met.name == f"{DefaultInputPrefix}{idx}"
         else:
             assert met.name == sig.name
 
@@ -140,6 +140,6 @@ def test_metadata(model_signature: ModelSignature, model_settings: ModelSettings
         sig = model_signature.outputs.inputs[idx]
 
         if sig.name is None:
-            assert met.name == f"{OutputDefaultPrefix}{idx}"
+            assert met.name == f"{DefaultOutputPrefix}{idx}"
         else:
             assert met.name == sig.name
