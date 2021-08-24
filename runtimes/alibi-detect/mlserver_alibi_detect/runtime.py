@@ -91,11 +91,9 @@ class AlibiDetectRuntime(MLModel):
             outputs=[default_codec.encode(name="detect", payload=output_data)],
         )
 
-    async def predict_fn(
-        self, input_data: Any, predictParameters: Optional[dict] = {}
-    ) -> dict:
+    async def predict_fn(self, input_data: Any) -> dict:
         parameters = self.alibi_detect_settings.predict_parameters
-        return self._model.predict(input_data, **parameters, **predictParameters)
+        return self._model.predict(input_data, **parameters)
 
     def _check_request(self, payload: types.InferenceRequest) -> types.InferenceRequest:
         if len(payload.inputs) != 1:

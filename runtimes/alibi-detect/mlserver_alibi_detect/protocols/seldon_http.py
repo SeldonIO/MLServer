@@ -27,7 +27,7 @@ def _extract_list(body: dict) -> np.array:
         arr = arr.reshape(shape)
         return arr
     else:
-        raise Exception("Unknown Seldon payload %s" % body)
+        raise InferenceError("Unknown Seldon payload %s" % body)
 
 
 def _get_request_ty(request: dict) -> SeldonPayload:
@@ -39,7 +39,7 @@ def _get_request_ty(request: dict) -> SeldonPayload:
     elif "tftensor" in data_def:
         return SeldonPayload.TFTENSOR
     else:
-        raise Exception("Unknown Seldon payload %s" % data_def)
+        raise InferenceError("Unknown Seldon payload %s" % data_def)
 
 
 class SeldonRequestHandler(RequestHandler):
@@ -51,14 +51,6 @@ class SeldonRequestHandler(RequestHandler):
             raise InferenceError("Expected key `data` in request body")
 
         ty = _get_request_ty(self.request)
-        if not (
-            ty == SeldonPayload.TENSOR
-            or ty == SeldonPayload.NDARRAY
-            or ty == SeldonPayload.TFTENSOR
-        ):
-            raise InferenceError(
-                "`data` key should contain either `tensor`,`ndarray`, or `tftensor`"
-            )
 
     def extract_request(self) -> np.array:
         return _extract_list(self.request)

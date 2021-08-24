@@ -21,9 +21,7 @@ class AlibiDriftDetectRuntime(AlibiDetectRuntime):
                 detector_data = pickle.load(open(model_uri, "rb"))
                 drift_detector = self.alibi_detect_settings.detector_type
             except Exception as e:
-                raise InvalidAlibiDetector(
-                    str(drift_detector), self._settings.name
-                ) from e
+                raise InvalidAlibiDetector(self._settings.name) from e
 
             parameters = self.alibi_detect_settings.init_parameters
 
