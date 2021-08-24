@@ -4,7 +4,7 @@ from ..types import RequestInput, ResponseOutput
 
 from .utils import FirstInputRequestCodec
 from .base import InputCodec, register_input_codec, register_request_codec
-from .pack import pack, unpack
+from .pack import pack, unpack, PackElement
 
 _DefaultStrCodec = "utf-8"
 
@@ -13,7 +13,7 @@ def _encode_str(elem: str) -> bytes:
     return elem.encode(_DefaultStrCodec)
 
 
-def _decode_str(encoded: Union[str, bytes], str_codec=_DefaultStrCodec) -> str:
+def _decode_str(encoded: PackElement, str_codec=_DefaultStrCodec) -> str:
     if isinstance(encoded, bytes):
         return encoded.decode(str_codec)
 
@@ -35,7 +35,7 @@ class StringCodec(InputCodec):
 
     @classmethod
     def encode(cls, name: str, payload: List[str]) -> ResponseOutput:
-        packed, shape = pack(payload, encoder=_encode_str)
+        packed, shape = pack(map(_encode_str, payload))
         return ResponseOutput(
             name=name,
             datatype="BYTES",
@@ -61,5 +61,5 @@ class StringRequestCodec(FirstInputRequestCodec):
         packed = request_input.data.__root__
         shape = request_input.shape
 
-        unpacked = unpack(packed, shape, decoder=_decode_str)
+        unpacked = map(_decode_str, unpack(packed, shape))
         return list(unpacked)
