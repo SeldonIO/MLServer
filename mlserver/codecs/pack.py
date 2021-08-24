@@ -11,7 +11,7 @@ def unpack(
     if isinstance(packed, list):
         # If it's a list, assume list of strings
         yield from packed
-    elif isinstance(packed, bytes):
+    else:
         if len(shape) == 0:
             # If there is no shape, assume that it's a single element
             yield packed
@@ -21,8 +21,6 @@ def unpack(
             common_length = shape[-1]
             for i in range(0, len(packed), common_length):
                 yield packed[i : i + common_length]
-    elif isinstance(packed, str):
-        yield packed
 
 
 def pack(unpacked: List[bytes]) -> Tuple[PackedPayload, List[int]]:
