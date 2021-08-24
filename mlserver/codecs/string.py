@@ -1,13 +1,16 @@
-from typing import Generator, Union, List, Tuple
+from typing import Callable, Union, List
 
 from ..types import RequestInput, ResponseOutput
 
 from .utils import FirstInputRequestCodec
 from .base import InputCodec, register_input_codec, register_request_codec
+from .pack import pack, unpack
 
 _DefaultStrCodec = "utf-8"
 
-PackedPayload = Union[bytes, str, List[str]]
+
+def _encode_str(elem: str) -> bytes:
+    return elem.encode(_DefaultStrCodec)
 
 
 def _decode_str(encoded: Union[str, bytes], str_codec=_DefaultStrCodec) -> str:
@@ -22,58 +25,6 @@ def _decode_str(encoded: Union[str, bytes], str_codec=_DefaultStrCodec) -> str:
     return ""
 
 
-def _split_elements(
-    encoded: Union[bytes, str, List[str]], shape: List[int]
-) -> Generator[Union[str, bytes], None, None]:
-    if isinstance(encoded, list):
-        # If it's a list, assume list of strings
-        yield from encoded
-    elif isinstance(encoded, bytes):
-        if len(shape) == 0:
-            # If there is no shape, assume that it's a single element
-            yield encoded
-        else:
-            # Otherwise, assume content is a concatenated list of same-length
-            # strings and get the common length from the shape
-            common_length = shape[-1]
-            for i in range(0, len(encoded), common_length):
-                yield encoded[i : i + common_length]
-    elif isinstance(encoded, str):
-        yield encoded
-
-
-def unpack(
-    packed: PackedPayload, shape: List[int], str_codec: str = _DefaultStrCodec
-) -> Generator[str, None, None]:
-    for elem in _split_elements(packed, shape):
-        yield _decode_str(elem, str_codec)
-
-
-def pack(
-    unpacked: List[str], str_codec: str = _DefaultStrCodec
-) -> Tuple[PackedPayload, List[int]]:
-    packed = b""
-    common_length = -1
-    for elem in unpacked:
-        as_bytes = elem.encode(str_codec)
-
-        # TODO: Should we use the length of the UTF8 string or the bytes
-        # array?
-        elem_length = len(as_bytes)
-        if common_length == -1:
-            common_length = elem_length
-
-        if common_length != elem_length:
-            # TODO: Raise an error here
-            # TODO: Should we try to add padding?
-            pass
-
-        packed += as_bytes
-
-    shape = [len(unpacked), common_length]
-    return packed, shape
-
-
 @register_input_codec
 class StringCodec(InputCodec):
     """
@@ -84,7 +35,7 @@ class StringCodec(InputCodec):
 
     @classmethod
     def encode(cls, name: str, payload: List[str]) -> ResponseOutput:
-        packed, shape = pack(payload)
+        packed, shape = pack(payload, encoder=_encode_str)
         return ResponseOutput(
             name=name,
             datatype="BYTES",
@@ -110,4 +61,5 @@ class StringRequestCodec(FirstInputRequestCodec):
         packed = request_input.data.__root__
         shape = request_input.shape
 
-        return list(unpack(packed, shape))
+        unpacked = unpack(packed, shape, decoder=_decode_str)
+        return list(unpacked)

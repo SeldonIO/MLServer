@@ -1,6 +1,7 @@
 from .numpy import NumpyCodec
 from .pandas import PandasCodec
 from .string import StringCodec
+from .base64 import Base64Codec
 from .base import (
     InputCodec,
     RequestCodec,
@@ -19,6 +20,7 @@ from .utils import (
 __all__ = [
     "NumpyCodec",
     "StringCodec",
+    "Base64Codec",
     "PandasCodec",
     "InputCodec",
     "RequestCodec",
