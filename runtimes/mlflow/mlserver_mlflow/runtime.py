@@ -18,13 +18,14 @@ from mlflow.pyfunc.scoring_server import (
     predictions_to_json,
 )
 
-from mlserver.types import InferenceRequest, InferenceResponse
+from mlserver.types import InferenceRequest, InferenceResponse, MetadataModelResponse
 from mlserver.model import MLModel
 from mlserver.utils import get_model_uri
 from mlserver.handlers import custom_handler
 from mlserver.errors import InferenceError
 
 from .encoding import to_outputs
+from .metadata import to_metadata
 
 
 class MLflowRuntime(MLModel):
@@ -89,6 +90,12 @@ class MLflowRuntime(MLModel):
         result = StringIO()
         predictions_to_json(raw_predictions, result)
         return Response(content=result.getvalue(), media_type="application/json")
+
+    async def metadata(self) -> MetadataModelResponse:
+        signature = self._model.metadata.signature
+
+        # NOTE: Signature can be None
+        return to_metadata(signature, self._settings)
 
     async def load(self) -> bool:
         # TODO: Log info message

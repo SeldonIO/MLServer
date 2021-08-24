@@ -3,15 +3,20 @@ import numpy as np
 
 from typing import Tuple, List
 
+from mlflow.models.signature import ModelSignature
 from mlflow.types.schema import ColSpec, TensorSpec, DataType, Schema
 from mlserver.codecs import NumpyCodec, StringCodec, Base64Codec
 from mlserver.types import Tags, MetadataTensor
+from mlserver.settings import ModelSettings
 
 from mlserver_mlflow.metadata import (
     InputSpec,
+    InputDefaultPrefix,
+    OutputDefaultPrefix,
     _get_content_type,
     _get_shape,
     to_metadata_tensors,
+    to_metadata,
 )
 
 
@@ -110,3 +115,31 @@ def test_to_metadata_tensors(schema: Schema, expected: List[MetadataTensor]):
     metadata_tensors = to_metadata_tensors(schema)
 
     assert metadata_tensors == expected
+
+
+def test_metadata(model_signature: ModelSignature, model_settings: ModelSettings):
+    metadata = to_metadata(model_signature, model_settings)
+
+    assert metadata.name == model_settings.name
+    assert metadata.versions == model_settings.versions
+    assert metadata.platform == model_settings.platform
+
+    assert metadata.inputs is not None
+    assert len(model_signature.inputs.inputs) == len(metadata.inputs)
+    for idx, met in enumerate(metadata.inputs):
+        sig = model_signature.inputs.inputs[idx]
+
+        if sig.name is None:
+            assert met.name == f"{InputDefaultPrefix}{idx}"
+        else:
+            assert met.name == sig.name
+
+    assert metadata.outputs is not None
+    assert len(model_signature.outputs.inputs) == len(metadata.outputs)
+    for idx, met in enumerate(metadata.outputs):
+        sig = model_signature.outputs.inputs[idx]
+
+        if sig.name is None:
+            assert met.name == f"{OutputDefaultPrefix}{idx}"
+        else:
+            assert met.name == sig.name
