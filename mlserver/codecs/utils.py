@@ -1,4 +1,4 @@
-from typing import Any, Union, Dict, Optional
+from typing import Any, Union, Dict, Optional, Type
 
 from ..types import (
     InferenceRequest,
@@ -106,7 +106,7 @@ class FirstInputRequestCodec(RequestCodec):
     element.
     """
 
-    InputCodec: Optional[InputCodec] = None
+    InputCodec: Optional[Type[InputCodec]] = None
 
     @classmethod
     def encode(

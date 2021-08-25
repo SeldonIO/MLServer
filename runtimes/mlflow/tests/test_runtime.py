@@ -30,7 +30,7 @@ async def test_predict_pytorch(runtime_pytorch: MLflowRuntime):
         parameters=Parameters(content_type=NumpyCodec.ContentType),
         inputs=[
             RequestInput(
-                name=f"predict",
+                name="predict",
                 shape=data.shape,
                 data=data.tolist(),
                 datatype="FP32",

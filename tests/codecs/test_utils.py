@@ -5,7 +5,6 @@ from mlserver.types import InferenceRequest, RequestInput, Parameters
 from mlserver.codecs.base import CodecError
 from mlserver.codecs.utils import (
     FirstInputRequestCodec,
-    get_decoded_or_raw,
     DecodedParameterName,
 )
 from mlserver.codecs.numpy import NumpyRequestCodec
