@@ -3,7 +3,7 @@ import numpy as np
 from ..types import RequestInput, ResponseOutput
 
 from .base import InputCodec, register_input_codec, register_request_codec
-from .utils import DefaultRequestCodec
+from .utils import FirstInputRequestCodec
 
 _DatatypeToNumpy = {
     "BOOL": "bool",
@@ -68,6 +68,6 @@ class NumpyCodec(InputCodec):
 
 
 @register_request_codec
-class NumpyRequestCodec(DefaultRequestCodec):
+class NumpyRequestCodec(FirstInputRequestCodec):
     InputCodec = NumpyCodec
     ContentType = NumpyCodec.ContentType

@@ -2,7 +2,7 @@ from typing import Generator, Union, List
 
 from ..types import RequestInput, ResponseOutput
 
-from .utils import DefaultRequestCodec
+from .utils import FirstInputRequestCodec
 from .base import InputCodec, register_input_codec, register_request_codec
 
 _DefaultStrCodec = "utf-8"
@@ -84,6 +84,6 @@ class StringCodec(InputCodec):
 
 
 @register_request_codec
-class StringRequestCodec(DefaultRequestCodec):
+class StringRequestCodec(FirstInputRequestCodec):
     InputCodec = StringCodec
     ContentType = StringCodec.ContentType

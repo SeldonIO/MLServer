@@ -99,10 +99,11 @@ def get_decoded_or_raw(parametrised_obj: Parametrised) -> Any:
     return get_decoded(parametrised_obj)
 
 
-class DefaultRequestCodec(RequestCodec):
+class FirstInputRequestCodec(RequestCodec):
     """
-    The DefaultRequestCodec can be used as a "meta-implementation" for other
-    codecs. Its goal to decode the whole request simply as the first element.
+    The FirstInputRequestCodec can be used as a "meta-implementation" for other
+    codecs. Its goal to decode the whole request simply as the first decoded
+    element.
     """
 
     InputCodec: Optional[InputCodec] = None
