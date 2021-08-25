@@ -10,8 +10,6 @@ from mlserver_mlflow.encoding import (
     _convert_to_tensor_data_if_raw,
 )
 
-from mlserver.codecs.numpy import _to_datatype
-
 
 @pytest.mark.parametrize(
     "mlflow_payload",
