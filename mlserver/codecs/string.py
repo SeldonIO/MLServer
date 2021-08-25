@@ -1,7 +1,9 @@
 from typing import Generator, Union, List
 
 from ..types import RequestInput, ResponseOutput
-from .base import InputCodec, register_input_codec
+
+from .utils import DefaultRequestCodec
+from .base import InputCodec, register_input_codec, register_request_codec
 
 _DefaultStrCodec = "utf-8"
 
@@ -79,3 +81,9 @@ class StringCodec(InputCodec):
         shape = request_input.shape
 
         return [_decode_str(elem) for elem in _split_elements(encoded, shape)]
+
+
+@register_request_codec
+class StringRequestCodec(DefaultRequestCodec):
+    InputCodec = StringCodec
+    ContentType = StringCodec.ContentType

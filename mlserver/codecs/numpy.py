@@ -2,7 +2,8 @@ import numpy as np
 
 from ..types import RequestInput, ResponseOutput
 
-from .base import InputCodec, register_input_codec
+from .base import InputCodec, register_input_codec, register_request_codec
+from .utils import DefaultRequestCodec
 
 _DatatypeToNumpy = {
     "BOOL": "bool",
@@ -64,3 +65,9 @@ class NumpyCodec(InputCodec):
 
         # TODO: Check if reshape not valid
         return model_data.reshape(request_input.shape)
+
+
+@register_request_codec
+class NumpyRequestCodec(DefaultRequestCodec):
+    InputCodec = NumpyCodec
+    ContentType = NumpyCodec.ContentType
