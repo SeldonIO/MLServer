@@ -1,4 +1,4 @@
-from typing import Generator, Union, List, Tuple
+from typing import Generator, Union, Iterable, List, Tuple
 
 
 PackElement = Union[bytes, str]
@@ -23,7 +23,7 @@ def unpack(
                 yield packed[i : i + common_length]
 
 
-def pack(unpacked: List[bytes]) -> Tuple[PackedPayload, List[int]]:
+def pack(unpacked: Iterable[bytes]) -> Tuple[PackedPayload, List[int]]:
     packed = b""
     common_length = -1
     N = 0

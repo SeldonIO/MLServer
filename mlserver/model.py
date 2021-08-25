@@ -20,7 +20,7 @@ from .codecs import (
 def _generate_metadata_index(
     metadata_tensors: Optional[List[MetadataTensor]],
 ) -> Dict[str, MetadataTensor]:
-    metadata_index = {}
+    metadata_index: Dict[str, MetadataTensor] = {}
 
     if not metadata_tensors:
         return metadata_index

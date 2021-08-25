@@ -1,4 +1,4 @@
-from typing import Callable, Union, List
+from typing import List
 
 from ..types import RequestInput, ResponseOutput
 
