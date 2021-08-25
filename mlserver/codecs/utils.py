@@ -1,7 +1,19 @@
 from typing import Any, Union, Dict, Optional
 
-from ..types import InferenceRequest, RequestInput, MetadataTensor, Parameters
-from .base import find_input_codec, find_request_codec
+from ..types import (
+    InferenceRequest,
+    InferenceResponse,
+    RequestInput,
+    MetadataTensor,
+    Parameters,
+)
+from .base import (
+    find_input_codec,
+    find_request_codec,
+    InputCodec,
+    RequestCodec,
+    CodecError,
+)
 
 Parametrised = Union[InferenceRequest, RequestInput]
 Tagged = Union[MetadataTensor]
@@ -85,3 +97,31 @@ def get_decoded_or_raw(parametrised_obj: Parametrised) -> Any:
         return parametrised_obj
 
     return get_decoded(parametrised_obj)
+
+
+class DefaultRequestCodec(RequestCodec):
+    """
+    The DefaultRequestCodec can be used as a "meta-implementation" for other
+    codecs. Its goal to decode the whole request simply as the first element.
+    """
+
+    InputCodec: Optional[InputCodec] = None
+
+    @classmethod
+    def encode(
+        cls, model_name: str, payload: Any, model_version: str = None
+    ) -> InferenceResponse:
+        output = InputCodec.encode("output-1", payload)
+        return InferenceResponse(
+            model_name=model_name, model_version=model_version, outputs=[output]
+        )
+
+    @classmethod
+    def decode(cls, request: InferenceRequest) -> Any:
+        if len(request.inputs) != 1:
+            raise CodecError(
+                f"The '{cls.ContentType}' codec only supports a single input tensor "
+                f"({len(request.inputs)} were received)"
+            )
+
+        return get_decoded_or_raw(request.inputs[0])
