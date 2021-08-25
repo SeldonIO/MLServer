@@ -18,7 +18,7 @@ from mlflow.pyfunc.scoring_server import (
     predictions_to_json,
 )
 
-from mlserver.types import InferenceRequest, InferenceResponse, MetadataModelResponse
+from mlserver.types import InferenceRequest, InferenceResponse
 from mlserver.model import MLModel
 from mlserver.utils import get_model_uri
 from mlserver.handlers import custom_handler
