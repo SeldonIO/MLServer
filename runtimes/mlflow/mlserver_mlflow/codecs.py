@@ -8,7 +8,8 @@ from .encoding import TensorDict
 class TensorDictCodec(RequestCodec):
     ContentType = "dict"
 
-    def decode(self, request: InferenceRequest) -> TensorDict:
+    @classmethod
+    def decode(cls, request: InferenceRequest) -> TensorDict:
         return {
             request_input.name: get_decoded_or_raw(request_input)
             for request_input in request.inputs

@@ -30,8 +30,9 @@ def _to_response_output(series: pd.Series) -> ResponseOutput:
 class PandasCodec(RequestCodec):
     ContentType = "pd"
 
+    @classmethod
     def encode(
-        self, model_name: str, payload: pd.DataFrame, model_version: str = None
+        cls, model_name: str, payload: pd.DataFrame, model_version: str = None
     ) -> InferenceResponse:
         outputs = [_to_response_output(payload[col]) for col in payload]
 
@@ -39,7 +40,8 @@ class PandasCodec(RequestCodec):
             model_name=model_name, model_version=model_version, outputs=outputs
         )
 
-    def decode(self, request: InferenceRequest) -> pd.DataFrame:
+    @classmethod
+    def decode(cls, request: InferenceRequest) -> pd.DataFrame:
         data = {
             request_input.name: _to_series(request_input)
             for request_input in request.inputs

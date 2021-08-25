@@ -46,7 +46,8 @@ class StringCodec(InputCodec):
 
     ContentType = "str"
 
-    def encode(self, name: str, payload: List[str]) -> ResponseOutput:
+    @classmethod
+    def encode(cls, name: str, payload: List[str]) -> ResponseOutput:
         packed = b""
         common_length = None
         for elem in payload:
@@ -72,7 +73,8 @@ class StringCodec(InputCodec):
             data=packed,
         )
 
-    def decode(self, request_input: RequestInput) -> List[str]:
+    @classmethod
+    def decode(cls, request_input: RequestInput) -> List[str]:
         encoded = request_input.data.__root__
         shape = request_input.shape
 

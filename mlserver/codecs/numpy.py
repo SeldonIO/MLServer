@@ -46,7 +46,8 @@ class NumpyCodec(InputCodec):
 
     ContentType = "np"
 
-    def encode(self, name: str, payload: np.ndarray) -> ResponseOutput:
+    @classmethod
+    def encode(cls, name: str, payload: np.ndarray) -> ResponseOutput:
         return ResponseOutput(
             name=name,
             datatype=_to_datatype(payload.dtype),
@@ -54,7 +55,8 @@ class NumpyCodec(InputCodec):
             data=payload.flatten().tolist(),
         )
 
-    def decode(self, request_input: RequestInput) -> np.ndarray:
+    @classmethod
+    def decode(cls, request_input: RequestInput) -> np.ndarray:
         dtype = _to_dtype(request_input.datatype)
         data = getattr(request_input.data, "__root__", request_input.data)
 
