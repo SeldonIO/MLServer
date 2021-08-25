@@ -15,12 +15,20 @@ class AlibiDriftDetectRuntime(AlibiDetectRuntime):
         model_uri = await get_model_uri(self._settings)
 
         if not self.alibi_detect_settings.init_detector:
-            self._model = load_detector(model_uri)
+            try:
+                self._model = load_detector(model_uri)
+            except (
+                ValueError,
+                FileNotFoundError,
+                EOFError,
+                pickle.UnpicklingError,
+            ) as e:
+                raise InvalidAlibiDetector(self._settings.name) from e
         else:
             try:
                 detector_data = pickle.load(open(model_uri, "rb"))
                 drift_detector = self.alibi_detect_settings.detector_type
-            except Exception as e:
+            except (FileNotFoundError, EOFError, pickle.UnpicklingError) as e:
                 raise InvalidAlibiDetector(self._settings.name) from e
 
             parameters = self.alibi_detect_settings.init_parameters
