@@ -3,7 +3,7 @@ from mlflow.pyfunc import PyFuncModel
 from mlserver_mlflow import MLflowRuntime
 from mlserver_mlflow.encoding import DefaultOutputName
 
-from mlserver.codecs import PandasCodec
+from mlserver.codecs import NumpyCodec
 from mlserver.types import InferenceRequest, Parameters, RequestInput
 
 
@@ -27,15 +27,14 @@ async def test_predict_pytorch(runtime_pytorch: MLflowRuntime):
     # input is a 28*28 image
     data = np.random.randn(1, 28 * 28).astype(np.float32)
     inference_request = InferenceRequest(
-        parameters=Parameters(content_type=PandasCodec.ContentType),
+        parameters=Parameters(content_type=NumpyCodec.ContentType),
         inputs=[
             RequestInput(
-                name=f"predict{idx}",
-                shape=[1, 1],
-                data=[i],
+                name=f"predict",
+                shape=data.shape,
+                data=data.tolist(),
                 datatype="FP32",
             )
-            for idx, i in enumerate(data.flat)
         ],
     )
     response = await runtime_pytorch.predict(inference_request)

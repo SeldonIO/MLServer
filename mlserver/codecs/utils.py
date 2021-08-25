@@ -125,4 +125,9 @@ class FirstInputRequestCodec(RequestCodec):
                 f"({len(request.inputs)} were received)"
             )
 
-        return get_decoded_or_raw(request.inputs[0])
+        first_input = request.inputs[0]
+        if not has_decoded(first_input):
+            decoded_payload = cls.InputCodec.decode(first_input)  # type: ignore
+            _save_decoded(first_input, decoded_payload)
+
+        return get_decoded_or_raw(first_input)
