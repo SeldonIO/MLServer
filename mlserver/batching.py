@@ -70,6 +70,8 @@ class AdaptiveBatcher:
             for request_input in inference_request.inputs:
                 inputs_index[request_input.name].append(request_input)
 
+        # TODO: What should happen if input cardinality is different? (e.g.
+        # inputs with 2 inputs and others with 1)
         inputs = [
             self._merge_request_inputs(request_inputs)
             for request_inputs in inputs_index.values()

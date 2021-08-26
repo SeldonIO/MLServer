@@ -3,7 +3,7 @@ import pytest
 from typing import List
 
 from mlserver.model import MLModel
-from mlserver.types import RequestInput
+from mlserver.types import InferenceRequest, RequestInput
 from mlserver.batching import AdaptiveBatcher
 
 
@@ -87,4 +87,87 @@ def test_merge_request_inputs(
     expected: RequestInput,
 ):
     merged = adaptive_batcher._merge_request_inputs(request_inputs)
+    assert merged == expected
+
+
+@pytest.mark.parametrize(
+    "inference_requests, expected",
+    [
+        (
+            [
+                InferenceRequest(
+                    inputs=[
+                        RequestInput(
+                            name="foo", datatype="INT32", data=[1, 2, 3], shape=[1, 3]
+                        )
+                    ]
+                ),
+                InferenceRequest(
+                    inputs=[
+                        RequestInput(
+                            name="foo", datatype="INT32", data=[4, 5, 6], shape=[1, 3]
+                        )
+                    ]
+                ),
+            ],
+            InferenceRequest(
+                inputs=[
+                    RequestInput(
+                        name="foo",
+                        datatype="INT32",
+                        data=[1, 2, 3, 4, 5, 6],
+                        shape=[2, 3],
+                    )
+                ]
+            ),
+        ),
+        (
+            [
+                InferenceRequest(
+                    inputs=[
+                        RequestInput(
+                            name="foo", datatype="INT32", data=[1, 2, 3], shape=[1, 3]
+                        ),
+                        RequestInput(
+                            name="bar", datatype="BYTES", data=b"abc", shape=[1, 3]
+                        ),
+                    ]
+                ),
+                InferenceRequest(
+                    inputs=[
+                        RequestInput(
+                            name="foo", datatype="INT32", data=[4, 5, 6], shape=[1, 3]
+                        ),
+                        RequestInput(
+                            name="bar", datatype="BYTES", data=b"def", shape=[1, 3]
+                        ),
+                    ]
+                ),
+            ],
+            InferenceRequest(
+                inputs=[
+                    RequestInput(
+                        name="foo",
+                        datatype="INT32",
+                        data=[1, 2, 3, 4, 5, 6],
+                        shape=[2, 3],
+                    ),
+                    RequestInput(
+                        name="bar",
+                        datatype="BYTES",
+                        data=b"abcdef",
+                        shape=[2, 3],
+                    ),
+                ]
+            ),
+        ),
+    ],
+)
+def test_merge_inference_request(
+    adaptive_batcher: AdaptiveBatcher,
+    inference_requests: List[InferenceRequest],
+    expected: InferenceRequest,
+):
+    merged = adaptive_batcher._merge_requests(inference_requests)
+
     assert merged == expected
