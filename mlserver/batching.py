@@ -1,19 +1,42 @@
 import time
 
 from asyncio import Queue, Condition, wait_for
-from typing import Dict
+from collections import defaultdict
+from typing import Any, Dict, List
 
 from mlserver.model import MLModel
-from mlserver.types import InferenceRequest, InferenceResponse
+from mlserver.types import InferenceRequest, InferenceResponse, RequestInput
 
 
-class AdaptiveBatching:
+def _get_data(request_input: RequestInput):
+    return getattr(request_input.data, "__root__", request_input.data)
+
+
+def _merge_data(request_inputs: List[RequestInput]) -> Any:
+    all_data = [_get_data(request_input) for request_input in request_inputs]
+
+    sampled_datum = all_data[0]
+
+    if isinstance(sampled_datum, str):
+        return "".join(all_data)
+
+    if isinstance(sampled_datum, bytes):
+        return b"".join(all_data)
+
+    if isinstance(sampled_datum, list):
+        return sum(all_data, [])
+
+    # TODO: Should we raise an error if we couldn't merge the data?
+    return all_data
+
+
+class AdaptiveBatcher:
     def __init__(self, model: MLModel):
         # TODO: Read max_batch_size from model settings
         self._max_batch_size = 4
         self._max_batch_time = 1
 
-        self._requests = Queue(maxsize=max_batch_size)
+        self._requests = Queue(maxsize=self._max_batch_size)
         self._responses: Dict[str, InferenceResponse] = {}
         self._is_batching = Condition()
 
@@ -37,6 +60,38 @@ class AdaptiveBatching:
             to_batch = self._collect_requests()
         finally:
             self._is_batching.release()
+
+    def _merge_requests(
+        self, inference_requests: List[InferenceRequest]
+    ) -> InferenceRequest:
+        inputs_index: Dict[str, List[RequestInput]] = defaultdict(list)
+
+        for inference_request in inference_requests:
+            for request_input in inference_request.inputs:
+                inputs_index[request_input.name].append(request_input)
+
+        inputs = [
+            self._merge_request_inputs(request_inputs)
+            for request_inputs in inputs_index.values()
+        ]
+
+        # TODO: Add outputs
+        # TODO: Should we add a 'fake' request ID?
+        return InferenceRequest(inputs=inputs)
+
+    def _merge_request_inputs(self, request_inputs: List[RequestInput]) -> RequestInput:
+        # TODO: What should we do if list is empty?
+        sampled = request_inputs[0]
+
+        # TODO: Allow for other batch dimensions
+        shape = sampled.shape
+        shape[0] = len(request_inputs)
+
+        data = _merge_data(request_inputs)
+
+        return RequestInput(
+            name=sampled.name, datatype=sampled.datatype, shape=shape, data=data
+        )
 
     async def _collect_requests(self):
         to_batch = []
