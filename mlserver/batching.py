@@ -32,6 +32,8 @@ def _merge_data(request_inputs: List[RequestInput]) -> Any:
 
 class AdaptiveBatcher:
     def __init__(self, model: MLModel):
+        self._model = model
+
         # TODO: Read max_batch_size from model settings
         self._max_batch_size = 4
         self._max_batch_time = 1
@@ -58,6 +60,9 @@ class AdaptiveBatcher:
         try:
             await self._is_batching.acquire()
             to_batch = self._collect_requests()
+            batched_request = self._merge_requests(to_batch)
+
+            batched_response = await self._model.predict(batched_request)
         finally:
             self._is_batching.release()
 
