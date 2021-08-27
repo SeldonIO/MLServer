@@ -9,7 +9,7 @@ ENV MLSERVER_MODELS_DIR=/mnt/models \
 RUN apt-get update && \
     apt-get -y --no-install-recommends install \
     libgomp1 && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y libgl1-mesa-dev && \
+    apt-get install -y libgl1-mesa-dev && \
     apt-get install -y libglib2.0-0 && \
     pip install --upgrade pip wheel setuptools
 
