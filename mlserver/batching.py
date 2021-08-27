@@ -30,48 +30,18 @@ def _merge_data(request_inputs: List[RequestInput]) -> Any:
     return all_data
 
 
-class AdaptiveBatcher:
-    def __init__(self, model: MLModel):
-        self._model = model
+class BatchedRequests:
+    def __init__(self, inference_requests: List[InferenceRequest] = []):
+        self._inference_requests = inference_requests
 
-        # TODO: Read max_batch_size from model settings
-        self._max_batch_size = 4
-        self._max_batch_time = 1
+    @property
+    def merged_request(self) -> InferenceRequest:
+        return self._merge_requests()
 
-        self._requests = Queue(maxsize=self._max_batch_size)
-        self._responses: Dict[str, InferenceResponse] = {}
-        self._is_batching = Condition()
-
-    async def predict(self, inference_request: InferenceRequest) -> InferenceResponse:
-        await self._requests.put(inference_request)
-
-        if not self._is_batching.locked():
-            # If there is no admin co-routine running, start one and wait for it to
-            # finish.
-            await self._batch_requests()
-        else:
-            # Alternatively, wait for the running admin co-routine to finish.
-            await self._is_batching.wait()
-
-        # TODO: What should we do if payload has no UID?
-        return self._responses.pop(inference_request.id)
-
-    async def _batch_requests(self):
-        try:
-            await self._is_batching.acquire()
-            to_batch = self._collect_requests()
-            batched_request = self._merge_requests(to_batch)
-
-            batched_response = await self._model.predict(batched_request)
-        finally:
-            self._is_batching.release()
-
-    def _merge_requests(
-        self, inference_requests: List[InferenceRequest]
-    ) -> InferenceRequest:
+    def _merge_requests(self) -> InferenceRequest:
         inputs_index: Dict[str, List[RequestInput]] = defaultdict(list)
 
-        for inference_request in inference_requests:
+        for inference_request in self._inference_requests:
             for request_input in inference_request.inputs:
                 inputs_index[request_input.name].append(request_input)
 
@@ -99,6 +69,50 @@ class AdaptiveBatcher:
         return RequestInput(
             name=sampled.name, datatype=sampled.datatype, shape=shape, data=data
         )
+
+    def split_responses(
+        self, batched_response: InferenceResponse
+    ) -> List[InferenceResponse]:
+        pass
+
+
+class AdaptiveBatcher:
+    def __init__(self, model: MLModel):
+        self._model = model
+
+        # TODO: Read max_batch_size from model settings
+        self._max_batch_size = 4
+        self._max_batch_time = 1
+
+        self._requests = Queue(maxsize=self._max_batch_size)
+        self._responses: Dict[str, InferenceResponse] = {}
+        self._is_batching = Condition()
+
+    async def predict(self, inference_request: InferenceRequest) -> InferenceResponse:
+        await self._requests.put(inference_request)
+
+        # TODO: If there's any issue while batching, fallback to regular predict
+        if not self._is_batching.locked():
+            # If there is no admin co-routine running, start one and wait for it to
+            # finish.
+            await self._batch_requests()
+        else:
+            # Alternatively, wait for the running admin co-routine to finish.
+            await self._is_batching.wait()
+
+        # TODO: What should we do if payload has no UID?
+        return self._responses.pop(inference_request.id)
+
+    async def _batch_requests(self):
+        try:
+            await self._is_batching.acquire()
+            to_batch = self._collect_requests()
+            batched = BatchedRequests(to_batch)
+
+            batched_response = await self._model.predict(batched.merged_request)
+            responses = batched.split_responses(batched_response)
+        finally:
+            self._is_batching.release()
 
     async def _collect_requests(self):
         to_batch = []

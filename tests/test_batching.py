@@ -4,7 +4,7 @@ from typing import List
 
 from mlserver.model import MLModel
 from mlserver.types import InferenceRequest, RequestInput
-from mlserver.batching import AdaptiveBatcher
+from mlserver.batching import AdaptiveBatcher, BatchedRequests
 
 
 @pytest.fixture
@@ -82,11 +82,11 @@ def adaptive_batcher(sum_model: MLModel):
     ],
 )
 def test_merge_request_inputs(
-    adaptive_batcher: AdaptiveBatcher,
     request_inputs: List[RequestInput],
     expected: RequestInput,
 ):
-    merged = adaptive_batcher._merge_request_inputs(request_inputs)
+    batched = BatchedRequests()
+    merged = batched._merge_request_inputs(request_inputs)
     assert merged == expected
 
 
@@ -163,11 +163,12 @@ def test_merge_request_inputs(
         ),
     ],
 )
-def test_merge_inference_request(
-    adaptive_batcher: AdaptiveBatcher,
+def test_merged_request(
     inference_requests: List[InferenceRequest],
     expected: InferenceRequest,
 ):
-    merged = adaptive_batcher._merge_requests(inference_requests)
 
-    assert merged == expected
+    batched = BatchedRequests(inference_requests)
+    merged_request = batched.merged_request
+
+    assert merged_request == expected
