@@ -1,6 +1,12 @@
 from typing import Any, Dict, Optional, Type
 
+from ..errors import MLServerError
 from ..types import InferenceRequest, InferenceResponse, RequestInput, ResponseOutput
+
+
+class CodecError(MLServerError):
+    def __init__(self, msg: str):
+        super().__init__(f"There was an error encoding / decoding the payload: {msg}")
 
 
 class InputCodec:
@@ -14,10 +20,12 @@ class InputCodec:
 
     ContentType: Optional[str] = None
 
-    def encode(self, name: str, payload: Any) -> ResponseOutput:
+    @classmethod
+    def encode(cls, name: str, payload: Any) -> ResponseOutput:
         raise NotImplementedError()
 
-    def decode(self, request_input: RequestInput) -> Any:
+    @classmethod
+    def decode(cls, request_input: RequestInput) -> Any:
         raise NotImplementedError()
 
 
@@ -32,12 +40,14 @@ class RequestCodec:
 
     ContentType: Optional[str] = None
 
+    @classmethod
     def encode(
-        self, model_name: str, payload: Any, model_version: str = None
+        cls, model_name: str, payload: Any, model_version: str = None
     ) -> InferenceResponse:
         raise NotImplementedError()
 
-    def decode(self, request: InferenceRequest) -> Any:
+    @classmethod
+    def decode(cls, request: InferenceRequest) -> Any:
         raise NotImplementedError()
 
 
@@ -50,25 +60,25 @@ class _CodecRegistry:
 
     def __init__(
         self,
-        input_codecs: Dict[str, InputCodec] = {},
-        request_codecs: Dict[str, RequestCodec] = {},
+        input_codecs: Dict[str, Type[InputCodec]] = {},
+        request_codecs: Dict[str, Type[RequestCodec]] = {},
     ):
         self._input_codecs = input_codecs
         self._request_codecs = request_codecs
 
-    def register_input_codec(self, content_type: str, codec: InputCodec):
+    def register_input_codec(self, content_type: str, codec: Type[InputCodec]):
         # TODO: Raise error if codec exists?
         self._input_codecs[content_type] = codec
 
-    def find_input_codec(self, content_type: str) -> InputCodec:
+    def find_input_codec(self, content_type: str) -> Type[InputCodec]:
         # TODO: Raise error if codec doesn't exist
         return self._input_codecs[content_type]
 
-    def register_request_codec(self, content_type: str, codec: RequestCodec):
+    def register_request_codec(self, content_type: str, codec: Type[RequestCodec]):
         # TODO: Raise error if codec exists?
         self._request_codecs[content_type] = codec
 
-    def find_request_codec(self, content_type: str) -> RequestCodec:
+    def find_request_codec(self, content_type: str) -> Type[RequestCodec]:
         # TODO: Raise error if codec doesn't exist
         return self._request_codecs[content_type]
 
@@ -81,11 +91,11 @@ find_input_codec = _codec_registry.find_input_codec
 
 def register_request_codec(CodecKlass: Type[RequestCodec]):
     if CodecKlass.ContentType is not None:
-        _codec_registry.register_request_codec(CodecKlass.ContentType, CodecKlass())
+        _codec_registry.register_request_codec(CodecKlass.ContentType, CodecKlass)
     return CodecKlass
 
 
 def register_input_codec(CodecKlass: Type[InputCodec]):
     if CodecKlass.ContentType is not None:
-        _codec_registry.register_input_codec(CodecKlass.ContentType, CodecKlass())
+        _codec_registry.register_input_codec(CodecKlass.ContentType, CodecKlass)
     return CodecKlass
