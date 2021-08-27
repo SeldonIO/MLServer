@@ -20,6 +20,10 @@ from mlserver.types import RequestInput
             RequestInput(name="foo", shape=[2], data=[1, 2], datatype="FP32"),
             np.array([1.0, 2.0]),
         ),
+        (
+            RequestInput(name="foo", shape=[2, 1], data=b"\x01\x02", datatype="BYTES"),
+            np.array([[b"\x01"], [b"\x02"]], dtype=bytes),
+        ),
     ],
 )
 def test_numpy_codec(request_input, payload):
@@ -51,9 +55,10 @@ def test_numpy_codec(request_input, payload):
         (np.float32, "FP32"),
         (np.float64, "FP64"),
         (np.byte, "INT8"),
+        (bytes, "BYTES"),
     ],
 )
-def test_numpy_codec_to_datatype(dtype, datatype):
+def test_to_datatype(dtype, datatype):
     dtype = np.dtype(dtype)
 
     obtained_datatype = _to_datatype(dtype)
