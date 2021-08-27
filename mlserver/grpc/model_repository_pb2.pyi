@@ -15,7 +15,10 @@ class RepositoryIndexRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     REPOSITORY_NAME_FIELD_NUMBER: builtins.int
     READY_FIELD_NUMBER: builtins.int
+    # The name of the repository. If empty the index is returned
+    # for all repositories.
     repository_name: typing.Text = ...
+    # If true return only models currently ready for inferencing.
     ready: builtins.bool = ...
     def __init__(
         self,
@@ -34,15 +37,20 @@ global___RepositoryIndexRequest = RepositoryIndexRequest
 
 class RepositoryIndexResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    # Index entry for a model.
     class ModelIndex(google.protobuf.message.Message):
         DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
         NAME_FIELD_NUMBER: builtins.int
         VERSION_FIELD_NUMBER: builtins.int
         STATE_FIELD_NUMBER: builtins.int
         REASON_FIELD_NUMBER: builtins.int
+        # The name of the model.
         name: typing.Text = ...
+        # The version of the model.
         version: typing.Text = ...
+        # The state of the model.
         state: typing.Text = ...
+        # The reason, if any, that the model is in the given state.
         reason: typing.Text = ...
         def __init__(
             self,
@@ -66,6 +74,7 @@ class RepositoryIndexResponse(google.protobuf.message.Message):
             ],
         ) -> None: ...
     MODELS_FIELD_NUMBER: builtins.int
+    # An index entry for each model.
     @property
     def models(
         self,
@@ -89,7 +98,10 @@ class RepositoryModelLoadRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     REPOSITORY_NAME_FIELD_NUMBER: builtins.int
     MODEL_NAME_FIELD_NUMBER: builtins.int
+    # The name of the repository to load from. If empty the model
+    # is loaded from any repository.
     repository_name: typing.Text = ...
+    # The name of the model to load, or reload.
     model_name: typing.Text = ...
     def __init__(
         self,
@@ -118,7 +130,10 @@ class RepositoryModelUnloadRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     REPOSITORY_NAME_FIELD_NUMBER: builtins.int
     MODEL_NAME_FIELD_NUMBER: builtins.int
+    # The name of the repository from which the model was originally
+    # loaded. If empty the repository is not considered.
     repository_name: typing.Text = ...
+    # The name of the model to unload.
     model_name: typing.Text = ...
     def __init__(
         self,

@@ -2,7 +2,8 @@ import numpy as np
 
 from ..types import RequestInput, ResponseOutput
 
-from .base import InputCodec, register_input_codec
+from .base import InputCodec, register_input_codec, register_request_codec
+from .utils import FirstInputRequestCodec
 
 _DatatypeToNumpy = {
     "BOOL": "bool",
@@ -46,7 +47,8 @@ class NumpyCodec(InputCodec):
 
     ContentType = "np"
 
-    def encode(self, name: str, payload: np.ndarray) -> ResponseOutput:
+    @classmethod
+    def encode(cls, name: str, payload: np.ndarray) -> ResponseOutput:
         return ResponseOutput(
             name=name,
             datatype=_to_datatype(payload.dtype),
@@ -54,7 +56,8 @@ class NumpyCodec(InputCodec):
             data=payload.flatten().tolist(),
         )
 
-    def decode(self, request_input: RequestInput) -> np.ndarray:
+    @classmethod
+    def decode(cls, request_input: RequestInput) -> np.ndarray:
         dtype = _to_dtype(request_input.datatype)
         data = getattr(request_input.data, "__root__", request_input.data)
 
@@ -62,3 +65,9 @@ class NumpyCodec(InputCodec):
 
         # TODO: Check if reshape not valid
         return model_data.reshape(request_input.shape)
+
+
+@register_request_codec
+class NumpyRequestCodec(FirstInputRequestCodec):
+    InputCodec = NumpyCodec
+    ContentType = NumpyCodec.ContentType
