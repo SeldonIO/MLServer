@@ -4,12 +4,7 @@ from typing import List
 
 from mlserver.model import MLModel
 from mlserver.types import InferenceRequest, RequestInput, ResponseOutput
-from mlserver.batching import AdaptiveBatcher, BatchedRequests
-
-
-@pytest.fixture
-def adaptive_batcher(sum_model: MLModel):
-    return AdaptiveBatcher(sum_model)
+from mlserver.batching.requests import BatchedRequests
 
 
 @pytest.mark.parametrize(
