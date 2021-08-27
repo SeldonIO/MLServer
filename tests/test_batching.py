@@ -3,7 +3,7 @@ import pytest
 from typing import List
 
 from mlserver.model import MLModel
-from mlserver.types import InferenceRequest, RequestInput
+from mlserver.types import InferenceRequest, RequestInput, ResponseOutput
 from mlserver.batching import AdaptiveBatcher, BatchedRequests
 
 
@@ -172,3 +172,36 @@ def test_merged_request(
     merged_request = batched.merged_request
 
     assert merged_request == expected
+
+
+@pytest.mark.parametrize(
+    "response_output, expected",
+    [
+        (
+            ResponseOutput(
+                name="foo",
+                datatype="INT32",
+                shape=[3, 3],
+                data=[1, 2, 3, 4, 5, 6, 7, 8, 9],
+            ),
+            [
+                ResponseOutput(
+                    name="foo", datatype="INT32", shape=[1, 3], data=[1, 2, 3]
+                ),
+                ResponseOutput(
+                    name="foo", datatype="INT32", shape=[1, 3], data=[4, 5, 6]
+                ),
+                ResponseOutput(
+                    name="foo", datatype="INT32", shape=[1, 3], data=[7, 8, 9]
+                ),
+            ],
+        )
+    ],
+)
+def test_split_response_output(
+    response_output: ResponseOutput, expected: List[ResponseOutput]
+):
+    batched = BatchedRequests()
+    split = batched._split_response_output(response_output)
+
+    assert split == expected

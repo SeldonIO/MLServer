@@ -1,15 +1,27 @@
 import time
 
+from operator import mul
 from asyncio import Queue, Condition, wait_for
 from collections import defaultdict
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Union
+from functools import reduce
 
 from mlserver.model import MLModel
-from mlserver.types import InferenceRequest, InferenceResponse, RequestInput
+from mlserver.types import (
+    InferenceRequest,
+    InferenceResponse,
+    RequestInput,
+    ResponseOutput,
+)
 
 
-def _get_data(request_input: RequestInput):
-    return getattr(request_input.data, "__root__", request_input.data)
+def _get_data(payload: Union[RequestInput, ResponseOutput]):
+    return getattr(payload.data, "__root__", payload.data)
+
+
+def _infer_elem_size(shape: List[int]) -> int:
+    # TODO: Allow to use a different batch dimension
+    return reduce(mul, shape[1:], 1)
 
 
 def _merge_data(request_inputs: List[RequestInput]) -> Any:
@@ -28,6 +40,15 @@ def _merge_data(request_inputs: List[RequestInput]) -> Any:
 
     # TODO: Should we raise an error if we couldn't merge the data?
     return all_data
+
+
+def _split_data(response_output: ResponseOutput) -> Any:
+    element_size = _infer_elem_size(response_output.shape)
+    merged_data = _get_data(response_output)
+
+    # TODO: Don't rely on array to have been flattened
+    for i in range(0, len(merged_data), element_size):
+        yield merged_data[i : i + element_size]
 
 
 class BatchedRequests:
@@ -70,10 +91,29 @@ class BatchedRequests:
             name=sampled.name, datatype=sampled.datatype, shape=shape, data=data
         )
 
-    def split_responses(
+    def split_response(
         self, batched_response: InferenceResponse
     ) -> List[InferenceResponse]:
-        pass
+        return []
+
+    def _split_response_output(
+        self, response_output: ResponseOutput
+    ) -> List[ResponseOutput]:
+        shape = response_output.shape
+
+        # TODO: Support other batch dimensions
+        # TODO: Support cases with multiple batch elements per input
+        shape[0] = 1
+
+        return [
+            ResponseOutput(
+                name=response_output.name,
+                shape=shape,
+                data=data,
+                datatype=response_output.datatype,
+            )
+            for data in _split_data(response_output)
+        ]
 
 
 class AdaptiveBatcher:
