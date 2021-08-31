@@ -56,11 +56,3 @@ class StringCodec(InputCodec):
 class StringRequestCodec(FirstInputRequestCodec):
     InputCodec = StringCodec
     ContentType = StringCodec.ContentType
-
-    @classmethod
-    def decode(cls, request_input: RequestInput) -> List[str]:
-        packed = request_input.data.__root__
-        shape = request_input.shape
-
-        unpacked = map(_decode_str, unpack(packed, shape))
-        return list(unpacked)
