@@ -1,6 +1,6 @@
 from operator import mul
 from collections import defaultdict
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, Iterable, List, Union
 from functools import reduce
 
 from ..types import (
@@ -89,7 +89,7 @@ class BatchedRequests:
 
     def split_response(
         self, batched_response: InferenceResponse
-    ) -> List[InferenceResponse]:
+    ) -> Iterable[InferenceResponse]:
         responses: Dict[str, InferenceResponse] = {}
         for response_output in batched_response.outputs:
             split_outputs = self._split_response_output(response_output)
@@ -98,7 +98,7 @@ class BatchedRequests:
                     responses[pred_id] = InferenceResponse(id=pred_id, outputs=[])
                 responses[pred_id].outputs.append(output)
 
-        return responses.values()  # type: ignore
+        return responses.values()
 
     def _split_response_output(
         self, response_output: ResponseOutput
