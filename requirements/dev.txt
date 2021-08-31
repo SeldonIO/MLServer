@@ -16,6 +16,7 @@ mypy-protobuf==2.9
 types-protobuf==3.17.4
 types-orjson==3.6.0
 black==21.8b0
+typing-extenions==3.10.0.2
 
 # Pushing to PyPi
 twine==3.4.2
