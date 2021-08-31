@@ -82,7 +82,7 @@ class AlibiDetectRuntime(MLModel):
         y = await self.predict_fn(input_data)
 
         # TODO: Convert alibi-detect output to v2 protocol
-        output_data = np.array(y["data"]["is_drift"])
+        output_data = np.array(y["data"])
 
         return types.InferenceResponse(
             model_name=self.name,
