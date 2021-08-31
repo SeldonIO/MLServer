@@ -51,14 +51,14 @@ class BatchedRequests:
     def __init__(self, inference_requests: List[InferenceRequest] = []):
         self._inference_requests = inference_requests
         self.merged_request = self._merge_requests()
+        self._prediction_ids: List[str] = []
 
     def _merge_requests(self) -> InferenceRequest:
         inputs_index: Dict[str, List[RequestInput]] = defaultdict(list)
 
-        self._request_ids: List[str] = []
         for inference_request in self._inference_requests:
             # TODO: What should happen if UID is empty?
-            self._request_ids.append(inference_request.id)
+            self._prediction_ids.append(inference_request.id)
             for request_input in inference_request.inputs:
                 inputs_index[request_input.name].append(request_input)
 
@@ -90,7 +90,15 @@ class BatchedRequests:
     def split_response(
         self, batched_response: InferenceResponse
     ) -> List[InferenceResponse]:
-        return []
+        responses: Dict[str, InferenceResponse] = {}
+        for response_output in batched_response.outputs:
+            split_outputs = self._split_response_output(response_output)
+            for pred_id, output in zip(self._prediction_ids, split_outputs):
+                if pred_id not in responses:
+                    responses[pred_id] = InferenceResponse(id=pred_id, outputs=[])
+                responses[pred_id].outputs.append(output)
+
+        return responses.values()  # type: ignore
 
     def _split_response_output(
         self, response_output: ResponseOutput
