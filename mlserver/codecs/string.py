@@ -45,10 +45,11 @@ class StringCodec(InputCodec):
 
     @classmethod
     def decode(cls, request_input: RequestInput) -> List[str]:
-        encoded = request_input.data.__root__
+        packed = request_input.data.__root__
         shape = request_input.shape
 
-        return [_decode_str(elem) for elem in _split_elements(encoded, shape)]
+        unpacked = map(_decode_str, unpack(packed, shape))
+        return list(unpacked)
 
 
 @register_request_codec

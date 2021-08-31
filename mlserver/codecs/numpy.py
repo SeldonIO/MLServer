@@ -83,7 +83,7 @@ class NumpyCodec(InputCodec):
 
     @classmethod
     def encode(cls, name: str, payload: np.ndarray) -> ResponseOutput:
-        datatype = _to_datatype(payload.dtype)
+        datatype = to_datatype(payload.dtype)
 
         return ResponseOutput(
             name=name,
