@@ -47,6 +47,8 @@ class AdaptiveBatcher:
 
             batched_response = await self._model.predict(batched.merged_request)
             responses = batched.split_responses(batched_response)
+            for response in responses:
+                self._responses[response.id] = response
         finally:
             self._is_batching.release()
 
