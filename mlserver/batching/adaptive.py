@@ -1,7 +1,8 @@
 import time
+import asyncio
 
 from asyncio import Queue, Condition, wait_for
-from typing import Dict
+from typing import Dict, List, List, List, List
 
 from ..model import MLModel
 from ..types import (
@@ -42,18 +43,18 @@ class AdaptiveBatcher:
     async def _batch_requests(self):
         try:
             await self._is_batching.acquire()
-            to_batch = self._collect_requests()
+            to_batch = await self._collect_requests()
             batched = BatchedRequests(to_batch)
 
             batched_response = await self._model.predict(batched.merged_request)
-            responses = batched.split_responses(batched_response)
+            responses = batched.split_response(batched_response)
             for response in responses:
                 self._responses[response.id] = response
         finally:
             self._is_batching.release()
 
-    async def _collect_requests(self):
-        to_batch = []
+    async def _collect_requests(self) -> List[InferenceRequest]:
+        to_batch: List[InferenceRequest] = []
         start = time.time()
         timeout = self._max_batch_time
 
@@ -66,7 +67,7 @@ class AdaptiveBatcher:
                 # Update remaining timeout
                 current = time.time()
                 timeout = timeout - (current - start)
-        except TimeoutError:
+        except asyncio.TimeoutError:
             # NOTE: Hit timeout, continue
             pass
 

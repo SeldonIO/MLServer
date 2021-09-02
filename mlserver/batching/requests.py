@@ -77,8 +77,7 @@ class BatchedRequests:
         sampled = request_inputs[0]
 
         # TODO: Allow for other batch dimensions
-        shape = sampled.shape
-        shape[0] = len(request_inputs)
+        shape = [len(request_inputs), *sampled.shape[1:]]
 
         data = _merge_data(request_inputs)
 
@@ -105,11 +104,9 @@ class BatchedRequests:
     def _split_response_output(
         self, response_output: ResponseOutput
     ) -> List[ResponseOutput]:
-        shape = response_output.shape
-
         # TODO: Support other batch dimensions
         # TODO: Support cases with multiple batch elements per input
-        shape[0] = 1
+        shape = [1, *response_output.shape[1:]]
 
         return [
             ResponseOutput(
