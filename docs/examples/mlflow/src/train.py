@@ -18,6 +18,7 @@ from sklearn.linear_model import ElasticNet
 from urllib.parse import urlparse
 import mlflow
 import mlflow.sklearn
+from mlflow.models.signature import infer_signature
 
 import logging
 
@@ -82,6 +83,7 @@ if __name__ == "__main__":
         mlflow.log_metric("mae", mae)
 
         tracking_url_type_store = urlparse(mlflow.get_tracking_uri()).scheme
+        model_signature = infer_signature(train_x, train_y)
 
         # Model registry does not work with file store
         if tracking_url_type_store != "file":
@@ -92,7 +94,10 @@ if __name__ == "__main__":
             # please refer to the doc for more information:
             # https://mlflow.org/docs/latest/model-registry.html#api-workflow
             mlflow.sklearn.log_model(
-                lr, "model", registered_model_name="ElasticnetWineModel"
+                lr,
+                "model",
+                registered_model_name="ElasticnetWineModel",
+                signature=model_signature,
             )
         else:
-            mlflow.sklearn.log_model(lr, "model")
+            mlflow.sklearn.log_model(lr, "model", signature=model_signature)
