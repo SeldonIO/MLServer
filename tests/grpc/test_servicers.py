@@ -61,7 +61,7 @@ async def test_model_infer(
 
     prediction = await inference_service_stub.ModelInfer(model_infer_request)
 
-    expected = pb.InferTensorContents(fp32_contents=[21.0])
+    expected = pb.InferTensorContents(int64_contents=[6])
 
     assert len(prediction.outputs) == 1
     assert prediction.outputs[0].contents == expected

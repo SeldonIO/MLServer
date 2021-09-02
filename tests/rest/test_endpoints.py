@@ -60,7 +60,7 @@ def test_infer(rest_client, inference_request, model_name, model_version):
 
     prediction = types.InferenceResponse.parse_obj(response.json())
     assert len(prediction.outputs) == 1
-    assert prediction.outputs[0].data.__root__ == [21]
+    assert prediction.outputs[0].data.__root__ == [6]
 
 
 def test_infer_error(rest_client, inference_request):
