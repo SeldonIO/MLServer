@@ -21,10 +21,10 @@ def send_request(
 ) -> TestRequestSender:
     async def _send_request():
         # Change the UUID so that it's a new one
-        new_req = InferenceRequest(
-            id=str(uuid.uuid4()), inputs=inference_request.inputs
-        )
-        await adaptive_batcher._requests.put(new_req)
+        pred_id = str(uuid.uuid4())
+        new_req = InferenceRequest(id=pred_id, inputs=inference_request.inputs)
+        await adaptive_batcher._queue_request(new_req)
+
         return new_req
 
     return _send_request

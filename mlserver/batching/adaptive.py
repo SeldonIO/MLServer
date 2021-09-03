@@ -1,8 +1,8 @@
 import time
 import asyncio
 
-from asyncio import Queue, Condition, wait_for
-from typing import Dict, List, List, List, List
+from asyncio import Future, Queue, wait_for
+from typing import AsyncIterator, Awaitable, Dict, List
 
 from ..model import MLModel
 from ..types import (
@@ -22,53 +22,74 @@ class AdaptiveBatcher:
         self._max_batch_time = 1
 
         self._requests = Queue(maxsize=self._max_batch_size)
-        self._responses: Dict[str, InferenceResponse] = {}
-        self._is_batching = Condition()
+        self._async_responses: Dict[str, Future[InferenceResponse]] = {}
+        self._batching_task = None
+        # Initialise event to 'set', since it won't be batching initially
+        #  self._collecting.set()
 
-    async def predict(self, inference_request: InferenceRequest) -> InferenceResponse:
-        await self._requests.put(inference_request)
+    async def predict(self, req: InferenceRequest) -> InferenceResponse:
+        await self._queue_request(req)
+        self._start_batcher_if_needed()
+        return await self._wait_response(req)
 
-        # TODO: If there's any issue while batching, fallback to regular predict
-        if not self._is_batching.locked():
-            # If there is no admin co-routine running, start one and wait for it to
-            # finish.
-            await self._batch_requests()
-        else:
-            # Alternatively, wait for the running admin co-routine to finish.
-            await self._is_batching.wait()
+    async def _queue_request(
+        self,
+        req: InferenceRequest,
+    ) -> Awaitable[InferenceResponse]:
+        await self._requests.put(req)
 
-        # TODO: What should we do if payload has no UID?
-        return self._responses.pop(inference_request.id)
+        loop = asyncio.get_running_loop()
+        async_response = loop.create_future()
 
-    async def _batch_requests(self):
-        try:
-            await self._is_batching.acquire()
-            to_batch = await self._collect_requests()
-            batched = BatchedRequests(to_batch)
+        # TODO: What happens if ID is None?
+        self._async_responses[req.id] = async_response  # type: ignore
 
+        return async_response
+
+    async def _wait_response(self, req: InferenceRequest) -> InferenceResponse:
+        # TODO: What happens if ID is None?
+        pred_id = req.id
+        async_response = self._async_responses[pred_id]
+
+        response = await async_response
+
+        del self._async_responses[pred_id]
+        return response
+
+    def _start_batcher_if_needed(self):
+        if self._batching_task is not None:
+            if not self._batching_task.done():
+                # If task hasn't finished yet, let it keep running
+                return
+
+        # TODO: If _batching_task crashes, cancel all async responses
+        self._batching_task = asyncio.create_task(self._batcher())
+
+    async def _batcher(self):
+        async for batched in self._batch_requests():
             batched_response = await self._model.predict(batched.merged_request)
             responses = batched.split_response(batched_response)
             for response in responses:
-                self._responses[response.id] = response
-        finally:
-            self._is_batching.release()
+                # TODO: Set error if something failed
+                self._async_responses[response.id].set_result(response)
 
-    async def _collect_requests(self) -> List[InferenceRequest]:
-        to_batch: List[InferenceRequest] = []
-        start = time.time()
-        timeout = self._max_batch_time
+    async def _batch_requests(self) -> AsyncIterator[BatchedRequests]:
+        while not self._requests.empty():
+            to_batch: List[InferenceRequest] = []
+            start = time.time()
+            timeout = self._max_batch_time
 
-        try:
-            while len(to_batch) < self._max_batch_size:
-                read_op = self._requests.get()
-                inference_request = await wait_for(read_op, timeout=timeout)
-                to_batch.append(inference_request)
+            try:
+                while len(to_batch) < self._max_batch_size:
+                    read_op = self._requests.get()
+                    inference_request = await wait_for(read_op, timeout=timeout)
+                    to_batch.append(inference_request)
 
-                # Update remaining timeout
-                current = time.time()
-                timeout = timeout - (current - start)
-        except asyncio.TimeoutError:
-            # NOTE: Hit timeout, continue
-            pass
+                    # Update remaining timeout
+                    current = time.time()
+                    timeout = timeout - (current - start)
+            except asyncio.TimeoutError:
+                # NOTE: Hit timeout, continue
+                pass
 
-        return to_batch
+            yield BatchedRequests(to_batch)
