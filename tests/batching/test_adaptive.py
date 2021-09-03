@@ -47,7 +47,7 @@ async def test_batcher(
         *[send_request() for _ in range(max_batch_size)]
     )
 
-    await adaptive_batcher._batch_predict()
+    await adaptive_batcher._batcher()
 
     assert len(sent_requests) == len(adaptive_batcher._async_responses)
 
