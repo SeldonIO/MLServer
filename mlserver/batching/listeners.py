@@ -39,13 +39,13 @@ def adaptive_batching(
                 f.__name__, reason="adaptive batching has not been loaded"
             )
 
-        pool = getattr(model, _AdaptiveBatchingAttr)
-        return await pool.predict(payload)
+        batcher = getattr(model, _AdaptiveBatchingAttr)
+        return await batcher.predict(payload)
 
     return _inner
 
 
-def load_batching(model: MLModel) -> MLModel:
+async def load_batching(model: MLModel) -> MLModel:
     # TODO: Check whether adaptive batching is disabled
     batcher = AdaptiveBatcher(model)
     setattr(model, _AdaptiveBatchingAttr, batcher)

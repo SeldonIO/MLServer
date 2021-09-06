@@ -21,6 +21,8 @@ class AdaptiveBatcher:
         self._max_batch_size = 4
         self._max_batch_time = 1
 
+        # Save predict function before it gets decorated
+        self._predict_fn = model.predict
         self._requests = Queue(maxsize=self._max_batch_size)
         self._async_responses: Dict[str, Future[InferenceResponse]] = {}
         self._batching_task = None
@@ -65,7 +67,7 @@ class AdaptiveBatcher:
 
     async def _batcher(self):
         async for batched in self._batch_requests():
-            batched_response = await self._model.predict(batched.merged_request)
+            batched_response = await self._predict_fn(batched.merged_request)
             responses = batched.split_response(batched_response)
             for response in responses:
                 # TODO: Set error if something failed
