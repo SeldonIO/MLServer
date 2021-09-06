@@ -1,9 +1,10 @@
 from functools import wraps
-from typing import Any, Callable, Coroutine, Optional
+from typing import Awaitable, Callable, Optional
 
 from ..errors import MLServerError
 from ..model import MLModel
 from ..types import InferenceRequest, InferenceResponse
+from ..utils import get_wrapped_method
 from .adaptive import AdaptiveBatcher
 
 _AdaptiveBatchingAttr = "__adaptive_batching__"
@@ -18,9 +19,7 @@ class InvalidBatchingMethod(MLServerError):
         super().__init__(msg)
 
 
-def adaptive_batching(
-    f: Callable[[InferenceRequest], Coroutine[Any, Any, InferenceResponse]]
-):
+def adaptive_batching(f: Callable[[InferenceRequest], Awaitable[InferenceResponse]]):
     """
     Decorator to attach to model's methods so that they run in parallel.
     By default, this will get attached to every model's "inference" method.
@@ -30,13 +29,16 @@ def adaptive_batching(
     # TODO: Extend to multiple methods
     @wraps(f)
     async def _inner(payload: InferenceRequest) -> InferenceResponse:
-        if not hasattr(f, "__self__"):
-            raise InvalidBatchingMethod(f.__name__, reason="method is not bound")
+        wrapped_f = get_wrapped_method(f)
+        if not hasattr(wrapped_f, "__self__"):
+            raise InvalidBatchingMethod(
+                wrapped_f.__name__, reason="method is not bound"
+            )
 
-        model = getattr(f, "__self__")
+        model = getattr(wrapped_f, "__self__")
         if not hasattr(model, _AdaptiveBatchingAttr):
             raise InvalidBatchingMethod(
-                f.__name__, reason="adaptive batching has not been loaded"
+                wrapped_f.__name__, reason="adaptive batching has not been loaded"
             )
 
         batcher = getattr(model, _AdaptiveBatchingAttr)

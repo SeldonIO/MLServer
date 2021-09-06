@@ -9,6 +9,7 @@ from .errors import MLServerError
 from .settings import ModelSettings
 from .model import MLModel
 from .types import InferenceRequest, InferenceResponse
+from .utils import get_wrapped_method
 
 _InferencePoolAttr = "__inference_pool__"
 
@@ -100,13 +101,16 @@ def parallel(f: Callable[[InferenceRequest], Coroutine[Any, Any, InferenceRespon
     # TODO: Extend to multiple methods
     @wraps(f)
     async def _inner(payload: InferenceRequest) -> InferenceResponse:
-        if not hasattr(f, "__self__"):
-            raise InvalidParallelMethod(f.__name__, reason="method is not bound")
+        wrapped_f = get_wrapped_method(f)
+        if not hasattr(wrapped_f, "__self__"):
+            raise InvalidParallelMethod(
+                wrapped_f.__name__, reason="method is not bound"
+            )
 
-        model = getattr(f, "__self__")
+        model = getattr(wrapped_f, "__self__")
         if not hasattr(model, _InferencePoolAttr):
             raise InvalidParallelMethod(
-                f.__name__, reason="inference pool has not been loaded"
+                wrapped_f.__name__, reason="inference pool has not been loaded"
             )
 
         pool = getattr(model, _InferencePoolAttr)

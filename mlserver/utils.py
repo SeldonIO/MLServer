@@ -1,6 +1,6 @@
 import os
 
-from typing import List
+from typing import Callable, List
 
 from .settings import ModelSettings
 from .errors import InvalidModelURI
@@ -32,3 +32,10 @@ async def get_model_uri(
 
     # Otherwise, the uri is neither a file nor a folder
     raise InvalidModelURI(settings.name, model_uri)
+
+
+def get_wrapped_method(f: Callable) -> Callable:
+    while hasattr(f, "__wrapped__"):
+        f = f.__wrapped__
+
+    return f

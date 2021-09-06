@@ -7,6 +7,7 @@ from typing import AsyncGenerator, Dict
 from google.protobuf import json_format
 
 from mlserver.parallel import load_inference_pool, unload_inference_pool
+from mlserver.batching import load_batching
 from mlserver.handlers import DataPlane, ModelRepositoryHandlers
 from mlserver.settings import Settings
 from mlserver.grpc import dataplane_pb2 as pb
@@ -91,6 +92,7 @@ async def grpc_server(
     server._create_server()
 
     await load_inference_pool(sum_model)
+    await load_batching(sum_model)
     await server._server.start()
 
     yield server
