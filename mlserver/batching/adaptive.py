@@ -24,8 +24,6 @@ class AdaptiveBatcher:
         self._requests = Queue(maxsize=self._max_batch_size)
         self._async_responses: Dict[str, Future[InferenceResponse]] = {}
         self._batching_task = None
-        # Initialise event to 'set', since it won't be batching initially
-        #  self._collecting.set()
 
     async def predict(self, req: InferenceRequest) -> InferenceResponse:
         await self._queue_request(req)
