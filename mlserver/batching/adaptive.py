@@ -17,9 +17,8 @@ class AdaptiveBatcher:
     def __init__(self, model: MLModel):
         self._model = model
 
-        # TODO: Read max_batch_size from model settings
-        self._max_batch_size = 4
-        self._max_batch_time = 1
+        self._max_batch_size = model.settings.max_batch_size
+        self._max_batch_time = model.settings.max_batch_time
 
         # Save predict function before it gets decorated
         self._predict_fn = model.predict
