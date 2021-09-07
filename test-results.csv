@@ -1,0 +1,8 @@
+max_batch_size, max_batch_time, parallel_workers, throughput
+0, 0, 0, 867
+20, 0.3, 0, 842
+20, 0.3, 2, 804
+30, 0.3, 2, 796
+40, 0.3, 2, 726
+40, 0.4, 4, 
+

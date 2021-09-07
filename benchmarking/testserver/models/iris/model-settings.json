@@ -3,6 +3,10 @@
 
   "implementation": "mlserver_sklearn.SKLearnModel",
 
+  "max_batch_size": 40,
+  "max_batch_time": 0.4,
+  "parallel_workers": 4,
+
   "platform": "mlserver",
   "inputs": [
     {
