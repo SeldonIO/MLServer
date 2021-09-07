@@ -1,4 +1,5 @@
 import asyncio
+import multiprocessing as mp
 
 from functools import wraps
 from concurrent.futures import ProcessPoolExecutor
@@ -52,7 +53,6 @@ def _mp_predict(payload: InferenceRequest) -> InferenceResponse:
     # This global variable is only to be used within the inference worker
     # context.
     global _mp_model
-
     return asyncio.run(_mp_model.predict(payload))
 
 
@@ -69,8 +69,14 @@ class InferencePool:
 
     def __init__(self, model: MLModel):
         parallel_workers = model.settings.parallel_workers
+
+        # Use 'spawn' instead of 'fork' to ensure that models are loaded in a
+        # clean environment (e.g. to avoid issues like
+        # https://github.com/tensorflow/tensorflow/issues/8220)
+        ctx = mp.get_context("spawn")
         self._executor = ProcessPoolExecutor(
             max_workers=parallel_workers,
+            mp_context=ctx,
             initializer=_mp_load,
             initargs=(model.settings,),
         )
