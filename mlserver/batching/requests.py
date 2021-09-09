@@ -51,7 +51,9 @@ class BatchedRequests:
     def __init__(self, inference_requests: List[InferenceRequest] = []):
         self._inference_requests = inference_requests
         self.merged_request = self._merge_requests()
-        self._prediction_ids: List[str] = [req.id for req in self._inference_requests]
+        self._prediction_ids: List[str] = [  # type: ignore
+            req.id for req in self._inference_requests  # type: ignore
+        ]
 
     def _merge_requests(self) -> InferenceRequest:
         inputs_index: Dict[str, List[RequestInput]] = defaultdict(list)

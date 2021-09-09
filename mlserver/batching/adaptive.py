@@ -22,7 +22,7 @@ class AdaptiveBatcher:
 
         # Save predict function before it gets decorated
         self._predict_fn = model.predict
-        self._requests = Queue(maxsize=self._max_batch_size)
+        self._requests: Queue[InferenceRequest] = Queue(maxsize=self._max_batch_size)
         self._async_responses: Dict[str, Future[InferenceResponse]] = {}
         self._batching_task = None
 
@@ -48,11 +48,11 @@ class AdaptiveBatcher:
     async def _wait_response(self, req: InferenceRequest) -> InferenceResponse:
         # TODO: What happens if ID is None?
         pred_id = req.id
-        async_response = self._async_responses[pred_id]
+        async_response = self._async_responses[pred_id]  # type: ignore
 
         response = await async_response
 
-        del self._async_responses[pred_id]
+        del self._async_responses[pred_id]  # type: ignore
         return response
 
     def _start_batcher_if_needed(self):
@@ -70,7 +70,7 @@ class AdaptiveBatcher:
             responses = batched.split_response(batched_response)
             for response in responses:
                 # TODO: Set error if something failed
-                self._async_responses[response.id].set_result(response)
+                self._async_responses[response.id].set_result(response)  # type: ignore
 
     async def _batch_requests(self) -> AsyncIterator[BatchedRequests]:
         while not self._requests.empty():

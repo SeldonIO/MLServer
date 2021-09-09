@@ -1,5 +1,3 @@
-import numpy as np
-
 from mlserver import MLModel
 from mlserver.types import InferenceRequest, InferenceResponse
 from mlserver.codecs import NumpyCodec

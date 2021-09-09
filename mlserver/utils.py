@@ -36,6 +36,6 @@ async def get_model_uri(
 
 def get_wrapped_method(f: Callable) -> Callable:
     while hasattr(f, "__wrapped__"):
-        f = f.__wrapped__
+        f = f.__wrapped__  # type: ignore
 
     return f

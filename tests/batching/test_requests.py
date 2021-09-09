@@ -2,7 +2,6 @@ import pytest
 
 from typing import List
 
-from mlserver.model import MLModel
 from mlserver.types import (
     InferenceRequest,
     RequestInput,
