@@ -3,7 +3,6 @@ import numpy as np
 
 from typing import Tuple, List
 
-from mlflow.models.signature import ModelSignature
 from mlflow.types.schema import ColSpec, TensorSpec, DataType, Schema
 from mlflow.pyfunc import _enforce_schema
 from mlserver.codecs import (
@@ -21,16 +20,12 @@ from mlserver.types import (
     InferenceRequest,
     Parameters,
 )
-from mlserver.settings import ModelSettings
 
 from mlserver_mlflow.metadata import (
     InputSpec,
-    DefaultInputPrefix,
-    DefaultOutputPrefix,
     _get_content_type,
     _get_shape,
     to_metadata_tensors,
-    to_metadata,
 )
 
 
@@ -187,31 +182,3 @@ def test_content_types(tensor_spec: TensorSpec, request_input: RequestInput):
 
     # _enforce_schema will raise if something fails
     _enforce_schema(data, input_schema)
-
-
-def test_metadata(model_signature: ModelSignature, model_settings: ModelSettings):
-    metadata = to_metadata(model_signature, model_settings)
-
-    assert metadata.name == model_settings.name
-    assert metadata.versions == model_settings.versions
-    assert metadata.platform == model_settings.platform
-
-    assert metadata.inputs is not None
-    assert len(model_signature.inputs.inputs) == len(metadata.inputs)
-    for idx, met in enumerate(metadata.inputs):
-        sig = model_signature.inputs.inputs[idx]
-
-        if sig.name is None:
-            assert met.name == f"{DefaultInputPrefix}{idx}"
-        else:
-            assert met.name == sig.name
-
-    assert metadata.outputs is not None
-    assert len(model_signature.outputs.inputs) == len(metadata.outputs)
-    for idx, met in enumerate(metadata.outputs):
-        sig = model_signature.outputs.inputs[idx]
-
-        if sig.name is None:
-            assert met.name == f"{DefaultOutputPrefix}{idx}"
-        else:
-            assert met.name == sig.name
