@@ -99,6 +99,28 @@ def test_get_shape(input_spec: InputSpec, expected: List[int]):
         (
             Schema(
                 inputs=[
+                    TensorSpec(name="foo", shape=(-1, 2), type=np.dtype("int32")),
+                    TensorSpec(name="bar", shape=(-1, 10), type=np.dtype("float32")),
+                ]
+            ),
+            [
+                MetadataTensor(
+                    name="foo",
+                    datatype="INT32",
+                    shape=[-1, 2],
+                    tags=Tags(content_type=NumpyCodec.ContentType),
+                ),
+                MetadataTensor(
+                    name="bar",
+                    datatype="FP32",
+                    shape=[-1, 10],
+                    tags=Tags(content_type=NumpyCodec.ContentType),
+                ),
+            ],
+        ),
+        (
+            Schema(
+                inputs=[
                     ColSpec(type=DataType.string),
                     ColSpec(type=DataType.integer),
                 ]
