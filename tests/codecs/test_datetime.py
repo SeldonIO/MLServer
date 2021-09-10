@@ -9,6 +9,10 @@ TestDatetimeIso = "2021-08-24T15:01:19"
 TestDatetimeIsoB = b"2021-08-24T15:01:19"
 TestDatetime = datetime.fromisoformat(TestDatetimeIso)
 
+TestTzDatetimeIso = "2021-08-24T15:01:19-04:00"
+TestTzDatetimeIsoB = b"2021-08-24T15:01:19-04:00"
+TestTzDatetime = datetime.fromisoformat(TestTzDatetimeIso)
+
 
 @pytest.mark.parametrize(
     "decoded, expected",
@@ -32,14 +36,21 @@ TestDatetime = datetime.fromisoformat(TestDatetimeIso)
             ),
         ),
         (
-            [
-                TestDatetimeIso,
-            ],
+            [TestDatetimeIso],
             ResponseOutput(
                 name="foo",
                 shape=[1, 19],
                 datatype="BYTES",
                 data=TestDatetimeIsoB,
+            ),
+        ),
+        (
+            [TestTzDatetime],
+            ResponseOutput(
+                name="foo",
+                shape=[1, 25],
+                datatype="BYTES",
+                data=TestTzDatetimeIsoB,
             ),
         ),
     ],
@@ -89,6 +100,15 @@ def test_encode(decoded, expected):
                 data=TestDatetimeIso + TestDatetimeIso,
             ),
             [TestDatetime, TestDatetime],
+        ),
+        (
+            RequestInput(
+                name="foo",
+                shape=[1, 25],
+                datatype="BYTES",
+                data=TestTzDatetimeIso,
+            ),
+            [TestTzDatetime],
         ),
     ],
 )
