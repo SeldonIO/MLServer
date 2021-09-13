@@ -115,8 +115,3 @@ As we can see above, the model predicted the probability for each class, and the
 ```python
 y_test[0]
 ```
-
-
-```python
-
-```
