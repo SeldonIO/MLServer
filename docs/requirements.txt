@@ -2,4 +2,4 @@ Sphinx==4.1.2
 sphinx_material==0.0.34
 readthedocs-sphinx-search==0.1.0
 myst-parser==0.15.2
-sphinxcontrib-bibtex==2.3.0
+sphinxcontrib-bibtex==2.4.1
