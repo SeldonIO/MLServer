@@ -14,9 +14,9 @@ class CustomHandler(BaseModel):
     rest_method: str = "POST"
 
 
-def custom_handler(rest_path: str):
+def custom_handler(rest_path: str, rest_method: str = "POST"):
     def _wraps(f):
-        handler = CustomHandler(rest_path=rest_path)
+        handler = CustomHandler(rest_path=rest_path, rest_method=rest_method)
         setattr(f, _CustomHandlerAttr, handler)
         return f
 
