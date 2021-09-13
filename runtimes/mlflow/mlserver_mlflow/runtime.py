@@ -34,6 +34,19 @@ class MLflowRuntime(MLModel):
     """
 
     # TODO: Decouple from REST
+    @custom_handler(rest_path="/ping", rest_method="GET")
+    async def ping(self, request: Request) -> str:
+        """
+        This custom handler is meant to mimic the behaviour of the existing
+        health endpoint in MLflow's local dev server.
+        For details about its implementation, please consult the original
+        implementation in the MLflow repository:
+
+            https://github.com/mlflow/mlflow/blob/master/mlflow/pyfunc/scoring_server/__init__.py
+        """
+        return "\n"
+
+    # TODO: Decouple from REST
     @custom_handler(rest_path="/invocations")
     async def invocations(self, request: Request) -> Response:
         """
