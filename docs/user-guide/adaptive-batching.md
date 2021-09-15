@@ -10,7 +10,7 @@ We refer to this as "adaptive batching", although it can also be known as
 
 There are usually two main reasons to adopt adaptive batching:
 
-- _Maximise resource usage_.
+- **Maximise resource usage**.
   Usually, inference operations are “vectorised” (i.e. are designed to operate
   across batches).
   For example, a GPU is designed to operate on multiple data points at the same
@@ -18,7 +18,7 @@ There are usually two main reasons to adopt adaptive batching:
   Therefore, to make sure that it’s used at maximum capacity, we need to run
   inference across batches.
 
-- _Minimise any inference overhead_.
+- **Minimise any inference overhead**.
   Usually, all models will have to _“pay”_ a constant overhead when running any
   type of inference.
   This can be something like IO to communicate with the GPU or some kind of
@@ -42,8 +42,8 @@ enable by default adaptive batching on newly loaded models**.
 MLServer lets you configure adaptive batching independently for each model
 through two main parameters:
 
-- _Maximum batch size_, that is how many requests you want to group together.
-- _Maximum batch time_, that is how much time we should wait for new
+- **Maximum batch size**, that is how many requests you want to group together.
+- **Maximum batch time**, that is how much time we should wait for new
   requests until we reach our maximum batch size.
 
 ### `maximum_batch_size`

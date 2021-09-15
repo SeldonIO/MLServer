@@ -27,7 +27,9 @@ def _get_batch_size(request_input: RequestInput) -> int:
     return request_input.shape[batch_dim]
 
 
-def _get_batch_axis(request_input: Union[RequestInput, ResponseOutput]) -> int:  # type: ignore
+def _get_batch_axis(
+    request_input: Union[RequestInput, ResponseOutput]  # type: ignore
+) -> int:
     # TODO: Support other batch dimensions
     return 0
 
@@ -117,7 +119,7 @@ class BatchedRequests:
 
     def _split_response_output(
         self, response_output: ResponseOutput
-    ) -> List[ResponseOutput]:
+    ) -> Iterable[ResponseOutput]:
         batch_axis = _get_batch_axis(response_output)
         common_shape = response_output.shape.copy()
 
@@ -131,7 +133,7 @@ class BatchedRequests:
                 datatype=response_output.datatype,
             )
 
-    def _split_data(self, response_output: ResponseOutput) -> List[Tuple[int, Any]]:
+    def _split_data(self, response_output: ResponseOutput) -> Iterable[Tuple[int, Any]]:
         element_size = _infer_elem_size(response_output)
         merged_data = _get_data(response_output)
         idx = 0
