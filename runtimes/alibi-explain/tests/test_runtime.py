@@ -25,14 +25,14 @@ async def test_anchors(runtime: AlibiExplainRuntime):
     )
     response = await runtime.predict(inference_request)
 
-    request_mock = MagicMock(Request)
-
-    async def dummy_request_body():
-        msg = b'{"x": 2}'
-        return msg
-
-    request_mock.body = dummy_request_body
-
-    explain_response = await runtime.explain(request_mock)
-    print(explain_response)
+    # request_mock = MagicMock(Request)
+    #
+    # async def dummy_request_body():
+    #     msg = b'{"x": 2}'
+    #     return msg
+    #
+    # request_mock.body = dummy_request_body
+    #
+    # explain_response = await runtime.explain(request_mock)
+    # print(explain_response)
 
