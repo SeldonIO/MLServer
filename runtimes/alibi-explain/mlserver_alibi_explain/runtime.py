@@ -1,6 +1,5 @@
 from typing import Any, Optional
 
-import numpy as np
 import orjson
 from fastapi import Request, Response
 from pydantic import BaseSettings
@@ -11,7 +10,6 @@ from mlserver.handlers import custom_handler
 from mlserver.model import MLModel
 from mlserver.settings import ModelSettings
 from mlserver.types import InferenceRequest, InferenceResponse
-from mlserver.utils import get_model_uri
 
 ENV_PREFIX_ALIBI_EXPLAIN_SETTINGS = "MLSERVER_MODEL_ALIBI_EXPLAIN_"
 
@@ -39,9 +37,9 @@ class AlibiExplainRuntime(MLModel):
         super().__init__(settings)
 
     @custom_handler(rest_path="/")
-    async def explain(self, request: Request) -> Response:
+    async def explain(self, request: Request) -> Response:  # TODO: add Explain request
         """
-        This custom handler is meant to mimic the behaviour prediction in alibi-detect
+        This custom handler serves specific alibi explain model
         """
         raw_data = await request.body()
         as_str = raw_data.decode("utf-8")
@@ -68,12 +66,11 @@ class AlibiExplainRuntime(MLModel):
         y = await self.predict_fn(input_data)
 
         # TODO: Convert alibi-explain output to v2 protocol
-        output_data = np.array(y["data"])
+        output_data = y
 
         return InferenceResponse(
             model_name=self.name,
             model_version=self.version,
-            parameters=y["meta"],
             outputs=[default_codec.encode(name="explain", payload=output_data)],
         )
 

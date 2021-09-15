@@ -1,4 +1,9 @@
+import base64
+from unittest.mock import MagicMock
+
 import numpy as np
+
+from fastapi import Request
 
 from mlserver.codecs import NumpyCodec
 from mlserver.types import InferenceRequest, Parameters, RequestInput
@@ -19,4 +24,15 @@ async def test_anchors(runtime: AlibiExplainRuntime):
         ],
     )
     response = await runtime.predict(inference_request)
+
+    request_mock = MagicMock(Request)
+
+    async def dummy_request_body():
+        msg = b'{"x": 2}'
+        return msg
+
+    request_mock.body = dummy_request_body
+
+    explain_response = await runtime.explain(request_mock)
+    print(explain_response)
 
