@@ -36,6 +36,28 @@ from mlserver.batching.requests import BatchedRequests
         (
             [
                 RequestInput(
+                    name="foo",
+                    datatype="INT32",
+                    shape=[2, 3],
+                    data=[1, 2, 3, 10, 11, 12],
+                ),
+                RequestInput(
+                    name="foo", datatype="INT32", shape=[1, 3], data=[4, 5, 6]
+                ),
+                RequestInput(
+                    name="foo", datatype="INT32", shape=[1, 3], data=[7, 8, 9]
+                ),
+            ],
+            RequestInput(
+                name="foo",
+                datatype="INT32",
+                shape=[4, 3],
+                data=[1, 2, 3, 10, 11, 12, 4, 5, 6, 7, 8, 9],
+            ),
+        ),
+        (
+            [
+                RequestInput(
                     name="foo", datatype="INT32", shape=[1, 3], data=[[1, 2, 3]]
                 ),
                 RequestInput(
@@ -174,9 +196,10 @@ def test_merged_request(
 
 
 @pytest.mark.parametrize(
-    "response_output, expected",
+    "minibatch_sizes, response_output, expected",
     [
         (
+            [1, 1, 1],
             ResponseOutput(
                 name="foo",
                 datatype="INT32",
@@ -196,6 +219,7 @@ def test_merged_request(
             ],
         ),
         (
+            [1, 1, 1],
             ResponseOutput(
                 name="foo",
                 datatype="BYTES",
@@ -208,21 +232,41 @@ def test_merged_request(
                 ResponseOutput(name="foo", datatype="BYTES", shape=[1, 3], data=b"ghi"),
             ],
         ),
+        (
+            [1, 2, 1],
+            ResponseOutput(
+                name="foo",
+                datatype="BYTES",
+                shape=[4, 3],
+                data=b"abcdefjklghi",
+            ),
+            [
+                ResponseOutput(name="foo", datatype="BYTES", shape=[1, 3], data=b"abc"),
+                ResponseOutput(
+                    name="foo", datatype="BYTES", shape=[2, 3], data=b"defjkl"
+                ),
+                ResponseOutput(name="foo", datatype="BYTES", shape=[1, 3], data=b"ghi"),
+            ],
+        ),
     ],
 )
 def test_split_response_output(
-    response_output: ResponseOutput, expected: List[ResponseOutput]
+    minibatch_sizes: List[int],
+    response_output: ResponseOutput,
+    expected: List[ResponseOutput],
 ):
     batched = BatchedRequests()
+    batched._minibatch_sizes = minibatch_sizes
     split = batched._split_response_output(response_output)
 
-    assert split == expected
+    assert list(split) == expected
 
 
 @pytest.mark.parametrize(
-    "inference_response, prediction_ids, expected",
+    "minibatch_sizes, inference_response, prediction_ids, expected",
     [
         (
+            [1, 1],
             InferenceResponse(
                 model_name="sum-model",
                 outputs=[
@@ -283,12 +327,14 @@ def test_split_response_output(
     ],
 )
 def test_split_response(
+    minibatch_sizes: List[int],
     inference_response: InferenceResponse,
     prediction_ids: List[str],
     expected: List[InferenceResponse],
 ):
     batched = BatchedRequests()
     batched._prediction_ids = prediction_ids
+    batched._minibatch_sizes = minibatch_sizes
 
     responses = batched.split_response(inference_response)
     assert list(responses) == expected
