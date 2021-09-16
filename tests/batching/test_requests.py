@@ -7,6 +7,7 @@ from mlserver.types import (
     RequestInput,
     ResponseOutput,
     InferenceResponse,
+    Parameters,
 )
 from mlserver.batching.requests import BatchedRequests
 
@@ -17,13 +18,24 @@ from mlserver.batching.requests import BatchedRequests
         (
             [
                 RequestInput(
-                    name="foo", datatype="INT32", shape=[1, 3], data=[1, 2, 3]
+                    name="foo",
+                    datatype="INT32",
+                    shape=[1, 3],
+                    data=[1, 2, 3],
+                    parameters=Parameters(content_type="np"),
                 ),
                 RequestInput(
-                    name="foo", datatype="INT32", shape=[1, 3], data=[4, 5, 6]
+                    name="foo",
+                    datatype="INT32",
+                    shape=[1, 3],
+                    data=[4, 5, 6],
                 ),
                 RequestInput(
-                    name="foo", datatype="INT32", shape=[1, 3], data=[7, 8, 9]
+                    name="foo",
+                    datatype="INT32",
+                    shape=[1, 3],
+                    data=[7, 8, 9],
+                    parameters=Parameters(foo="bar"),
                 ),
             ],
             RequestInput(
@@ -31,6 +43,7 @@ from mlserver.batching.requests import BatchedRequests
                 datatype="INT32",
                 shape=[3, 3],
                 data=[1, 2, 3, 4, 5, 6, 7, 8, 9],
+                parameters=Parameters(content_type="np", foo="bar"),
             ),
         ),
         (
@@ -117,21 +130,24 @@ def test_merge_request_inputs(
         (
             [
                 InferenceRequest(
+                    parameters=Parameters(content_type="np"),
                     inputs=[
                         RequestInput(
                             name="foo", datatype="INT32", data=[1, 2, 3], shape=[1, 3]
                         )
-                    ]
+                    ],
                 ),
                 InferenceRequest(
+                    parameters=Parameters(foo="bar"),
                     inputs=[
                         RequestInput(
                             name="foo", datatype="INT32", data=[4, 5, 6], shape=[1, 3]
                         )
-                    ]
+                    ],
                 ),
             ],
             InferenceRequest(
+                parameters=Parameters(content_type="np", foo="bar"),
                 inputs=[
                     RequestInput(
                         name="foo",
@@ -139,7 +155,7 @@ def test_merge_request_inputs(
                         data=[1, 2, 3, 4, 5, 6],
                         shape=[2, 3],
                     )
-                ]
+                ],
             ),
         ),
         (
@@ -205,16 +221,29 @@ def test_merged_request(
                 datatype="INT32",
                 shape=[3, 3],
                 data=[1, 2, 3, 4, 5, 6, 7, 8, 9],
+                parameters=Parameters(content_type="np"),
             ),
             [
                 ResponseOutput(
-                    name="foo", datatype="INT32", shape=[1, 3], data=[1, 2, 3]
+                    name="foo",
+                    datatype="INT32",
+                    shape=[1, 3],
+                    data=[1, 2, 3],
+                    parameters=Parameters(content_type="np"),
                 ),
                 ResponseOutput(
-                    name="foo", datatype="INT32", shape=[1, 3], data=[4, 5, 6]
+                    name="foo",
+                    datatype="INT32",
+                    shape=[1, 3],
+                    data=[4, 5, 6],
+                    parameters=Parameters(content_type="np"),
                 ),
                 ResponseOutput(
-                    name="foo", datatype="INT32", shape=[1, 3], data=[7, 8, 9]
+                    name="foo",
+                    datatype="INT32",
+                    shape=[1, 3],
+                    data=[7, 8, 9],
+                    parameters=Parameters(content_type="np"),
                 ),
             ],
         ),
@@ -269,6 +298,7 @@ def test_split_response_output(
             [1, 1],
             InferenceResponse(
                 model_name="sum-model",
+                parameters=Parameters(foo="bar"),
                 outputs=[
                     ResponseOutput(
                         name="foo",
@@ -289,6 +319,7 @@ def test_split_response_output(
                 InferenceResponse(
                     id="query-1",
                     model_name="sum-model",
+                    parameters=Parameters(foo="bar"),
                     outputs=[
                         ResponseOutput(
                             name="foo",
@@ -307,6 +338,7 @@ def test_split_response_output(
                 InferenceResponse(
                     id="query-2",
                     model_name="sum-model",
+                    parameters=Parameters(foo="bar"),
                     outputs=[
                         ResponseOutput(
                             name="foo",

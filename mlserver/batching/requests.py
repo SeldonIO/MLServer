@@ -1,11 +1,12 @@
 from operator import mul
 from collections import defaultdict
-from typing import Any, Dict, Iterable, List, Tuple, Union
+from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
 from functools import reduce
 
 from ..types import (
     InferenceRequest,
     InferenceResponse,
+    Parameters,
     RequestInput,
     ResponseOutput,
 )
@@ -45,9 +46,12 @@ class BatchedRequests:
 
     def _merge_requests(self) -> InferenceRequest:
         inputs_index: Dict[str, List[RequestInput]] = defaultdict(list)
+        all_params = {}
 
         for inference_request in self._inference_requests:
-            # TODO: What should happen if UID is empty?
+            if inference_request.parameters:
+                request_params = inference_request.parameters.dict(exclude_unset=True)
+                all_params.update(request_params)
             self._minibatch_sizes = []
             for request_input in inference_request.inputs:
                 inputs_index[request_input.name].append(request_input)
@@ -59,10 +63,11 @@ class BatchedRequests:
 
         # TODO: Add outputs
         # TODO: Should we add a 'fake' request ID?
-        return InferenceRequest(inputs=inputs)
+        params = Parameters(**all_params) if all_params else None
+        return InferenceRequest(inputs=inputs, parameters=params)
 
     def _merge_request_inputs(self, request_inputs: List[RequestInput]) -> RequestInput:
-        batch_size, data = self._merge_data(request_inputs)
+        batch_size, data, parameters = self._merge_data(request_inputs)
 
         # TODO: What should we do if list is empty?
         sampled = request_inputs[0]
@@ -73,33 +78,44 @@ class BatchedRequests:
         shape.insert(batch_axis, batch_size)
 
         return RequestInput(
-            name=sampled.name, datatype=sampled.datatype, shape=shape, data=data
+            name=sampled.name,
+            datatype=sampled.datatype,
+            shape=shape,
+            data=data,
+            parameters=parameters,
         )
 
-    def _merge_data(self, request_inputs: List[RequestInput]) -> Tuple[int, Any]:
+    def _merge_data(
+        self, request_inputs: List[RequestInput]
+    ) -> Tuple[int, Any, Optional[Parameters]]:
         # We assume all inputs will have the same minibatch size
         self._minibatch_sizes = []
         batch_size = 0
         all_data = []
+        all_params = {}
         for request_input in request_inputs:
+            if request_input.parameters:
+                input_params = request_input.parameters.dict(exclude_unset=True)
+                all_params.update(input_params)
             all_data.append(_get_data(request_input))
             minibatch_size = _get_batch_size(request_input)
             self._minibatch_sizes.append(minibatch_size)
             batch_size += minibatch_size
 
+        params = Parameters(**all_params) if all_params else None
         sampled_datum = all_data[0]
 
         if isinstance(sampled_datum, str):
-            return batch_size, "".join(all_data)
+            return batch_size, "".join(all_data), params
 
         if isinstance(sampled_datum, bytes):
-            return batch_size, b"".join(all_data)
+            return batch_size, b"".join(all_data), params
 
         if isinstance(sampled_datum, list):
-            return batch_size, sum(all_data, [])
+            return batch_size, sum(all_data, []), params
 
         # TODO: Should we raise an error if we couldn't merge the data?
-        return batch_size, all_data
+        return batch_size, all_data, params
 
     def split_response(
         self, batched_response: InferenceResponse
@@ -110,7 +126,10 @@ class BatchedRequests:
             for pred_id, output in zip(self._prediction_ids, split_outputs):
                 if pred_id not in responses:
                     responses[pred_id] = InferenceResponse(
-                        id=pred_id, model_name=batched_response.model_name, outputs=[]
+                        id=pred_id,
+                        model_name=batched_response.model_name,
+                        outputs=[],
+                        parameters=batched_response.parameters,
                     )
 
                 responses[pred_id].outputs.append(output)
@@ -131,6 +150,7 @@ class BatchedRequests:
                 shape=shape,
                 data=data,
                 datatype=response_output.datatype,
+                parameters=response_output.parameters,
             )
 
     def _split_data(self, response_output: ResponseOutput) -> Iterable[Tuple[int, Any]]:
