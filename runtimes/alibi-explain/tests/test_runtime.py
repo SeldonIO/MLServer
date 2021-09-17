@@ -7,10 +7,10 @@ from fastapi import Request
 
 from mlserver.codecs import NumpyCodec
 from mlserver.types import InferenceRequest, Parameters, RequestInput
-from mlserver_alibi_explain import AlibiExplainRuntime
+from mlserver_alibi_explain import AnchorImageWrapper
 
 
-async def test_anchors(runtime: AlibiExplainRuntime):
+async def test_anchors(runtime: AnchorImageWrapper):
     data = np.random.randn(1, 299, 299, 3) * 255
     inference_request = InferenceRequest(
         parameters=Parameters(content_type=NumpyCodec.ContentType),

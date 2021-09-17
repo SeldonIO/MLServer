@@ -1,3 +1,4 @@
-from .runtime import AlibiExplainRuntime
+from .explainers.anchor_image import AnchorImageWrapper
 
-__all__ = ["AlibiExplainRuntime"]
+__all__ = ["AnchorImageWrapper"]
+

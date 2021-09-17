@@ -1,20 +1,22 @@
 from typing import Any, Dict, Optional, List
 
-from .types import (
-    InferenceRequest,
-    InferenceResponse,
-    RequestInput,
-    Parameters,
-    MetadataModelResponse,
-    MetadataTensor,
-)
-from .settings import ModelSettings
 from .codecs import (
     decode_request_input,
     decode_inference_request,
     InputCodec,
     has_decoded,
     get_decoded,
+)
+from .settings import ModelSettings
+from .types import (
+    InferenceRequest,
+    InferenceResponse,
+    RequestInput,
+    MetadataModelResponse,
+    MetadataTensor,
+)
+from .types import (
+    Parameters,
 )
 
 

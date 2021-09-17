@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any
 
 import orjson
 from fastapi import Request, Response
@@ -11,29 +11,15 @@ from mlserver.model import MLModel
 from mlserver.settings import ModelSettings
 from mlserver.types import InferenceRequest, InferenceResponse
 
-ENV_PREFIX_ALIBI_EXPLAIN_SETTINGS = "MLSERVER_MODEL_ALIBI_EXPLAIN_"
 
-
-class AlibiExplainSettings(BaseSettings):
+class AlibiExplainRuntimeBase(MLModel):
     """
-    Parameters that apply only to alibi explain models
+    Base class for Alibi-Explain models
     """
 
-    class Config:
-        env_prefix = ENV_PREFIX_ALIBI_EXPLAIN_SETTINGS
+    def __init__(self, settings: ModelSettings, explainer_settings: BaseSettings):
 
-    # TODO: add more structure?
-    predict_parameters: Optional[dict] = {}
-
-
-class AlibiExplainRuntime(MLModel):
-    """
-    Implementation of the MLModel interface to load and serve `alibi-detect` models.
-    """
-
-    def __init__(self, settings: ModelSettings):
-
-        self.alibi_explain_settings = AlibiExplainSettings(**settings.parameters.extra)
+        self.alibi_explain_settings = explainer_settings
         super().__init__(settings)
 
     @custom_handler(rest_path="/")
@@ -74,6 +60,3 @@ class AlibiExplainRuntime(MLModel):
             outputs=[default_codec.encode(name="explain", payload=output_data)],
         )
 
-    async def predict_fn(self, input_data: Any) -> dict:
-        parameters = self.alibi_explain_settings.predict_parameters
-        return self._model.predict(input_data, **parameters)
