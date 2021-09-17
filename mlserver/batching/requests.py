@@ -51,6 +51,10 @@ class BatchedRequests:
         self._prediction_ids: List[str] = [  # type: ignore
             req.id for req in self._inference_requests  # type: ignore
         ]
+
+        # Minibatch here refers to the individual batch size of the input head
+        # of each input request (i.e. the number of datapoints on each input
+        # request)
         self._minibatch_sizes: List[int] = []
         self.merged_request = self._merge_requests()
 
@@ -75,6 +79,9 @@ class BatchedRequests:
         return InferenceRequest(inputs=inputs, parameters=params)
 
     def _merge_request_inputs(self, request_inputs: List[RequestInput]) -> RequestInput:
+        # Note that minibatch sizes could be different on each input head,
+        # however, to simplify the implementation, here we assume that it will
+        # be the same across all of them
         self._minibatch_sizes = []
         batch_size = 0
         all_data = []
