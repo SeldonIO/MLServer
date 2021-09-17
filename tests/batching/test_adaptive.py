@@ -16,9 +16,10 @@ async def test_batch_requests(
     send_request: TestRequestSender,
 ):
     max_batch_size = adaptive_batcher._max_batch_size
-    sent_requests = await asyncio.gather(
-        *[send_request() for _ in range(max_batch_size)]
+    sent_requests = dict(
+        await asyncio.gather(*[send_request() for _ in range(max_batch_size)])
     )
+
     batched_requests = [
         batched_req async for batched_req in adaptive_batcher._batch_requests()
     ]
@@ -36,13 +37,13 @@ async def test_batch_requests_timeout(
     and the request gets processed.
     """
     for _ in range(2):
-        sent_request = await send_request()
+        sent_request = dict([await send_request()])
         batched_requests = [
             batched_req async for batched_req in adaptive_batcher._batch_requests()
         ]
 
         assert len(batched_requests) == 1
-        assert batched_requests[0]._inference_requests == [sent_request]
+        assert batched_requests[0]._inference_requests == sent_request
 
 
 async def test_batcher(
@@ -51,16 +52,16 @@ async def test_batcher(
     sum_model: MLModel,
 ):
     max_batch_size = adaptive_batcher._max_batch_size
-    sent_requests = await asyncio.gather(
-        *[send_request() for _ in range(max_batch_size)]
+    sent_requests = dict(
+        await asyncio.gather(*[send_request() for _ in range(max_batch_size)])
     )
 
     await adaptive_batcher._batcher()
 
-    assert len(sent_requests) == len(adaptive_batcher._async_responses)
+    assert sent_requests.keys() == adaptive_batcher._async_responses.keys()
 
-    for sent_request in sent_requests:
-        async_response = adaptive_batcher._async_responses[sent_request.id]
+    for internal_id, sent_request in sent_requests.items():
+        async_response = adaptive_batcher._async_responses[internal_id]
         assert async_response.done()
 
         response = await async_response

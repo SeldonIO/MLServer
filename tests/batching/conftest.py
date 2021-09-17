@@ -1,13 +1,13 @@
 import pytest
 
-from typing import Callable, Awaitable
+from typing import Callable, Tuple, Awaitable
 
 from mlserver.utils import generate_uuid
 from mlserver.types import InferenceRequest
 from mlserver.model import MLModel
 from mlserver.batching.adaptive import AdaptiveBatcher
 
-TestRequestSender = Callable[[], Awaitable[InferenceRequest]]
+TestRequestSender = Callable[[], Awaitable[Tuple[str, InferenceRequest]]]
 
 
 @pytest.fixture
@@ -23,8 +23,8 @@ def send_request(
         # Change the UUID so that it's a new one
         pred_id = generate_uuid()
         new_req = InferenceRequest(id=pred_id, inputs=inference_request.inputs)
-        await adaptive_batcher._queue_request(new_req)
+        internal_id, _ = await adaptive_batcher._queue_request(new_req)
 
-        return new_req
+        return internal_id, new_req
 
     return _send_request

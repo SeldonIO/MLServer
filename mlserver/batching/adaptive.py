@@ -2,13 +2,14 @@ import time
 import asyncio
 
 from asyncio import Future, Queue, wait_for
-from typing import AsyncIterator, Awaitable, Dict, List
+from typing import AsyncIterator, Awaitable, Dict, List, Tuple
 
 from ..model import MLModel
 from ..types import (
     InferenceRequest,
     InferenceResponse,
 )
+from ..utils import generate_uuid
 
 from .requests import BatchedRequests
 
@@ -22,37 +23,37 @@ class AdaptiveBatcher:
 
         # Save predict function before it gets decorated
         self._predict_fn = model.predict
-        self._requests: Queue[InferenceRequest] = Queue(maxsize=self._max_batch_size)
+        self._requests: Queue[Tuple[str, InferenceRequest]] = Queue(
+            maxsize=self._max_batch_size
+        )
         self._async_responses: Dict[str, Future[InferenceResponse]] = {}
         self._batching_task = None
 
     async def predict(self, req: InferenceRequest) -> InferenceResponse:
-        await self._queue_request(req)
+        internal_id, _ = await self._queue_request(req)
         self._start_batcher_if_needed()
-        return await self._wait_response(req)
+        return await self._wait_response(internal_id)
 
     async def _queue_request(
         self,
         req: InferenceRequest,
-    ) -> Awaitable[InferenceResponse]:
-        await self._requests.put(req)
-
+    ) -> Tuple[str, Awaitable[InferenceResponse]]:
         loop = asyncio.get_running_loop()
         async_response = loop.create_future()
 
-        # TODO: What happens if ID is None?
-        self._async_responses[req.id] = async_response  # type: ignore
+        internal_id = generate_uuid()
+        self._async_responses[internal_id] = async_response
 
-        return async_response
+        await self._requests.put((internal_id, req))
 
-    async def _wait_response(self, req: InferenceRequest) -> InferenceResponse:
-        # TODO: What happens if ID is None?
-        pred_id = req.id
-        async_response = self._async_responses[pred_id]  # type: ignore
+        return internal_id, async_response
+
+    async def _wait_response(self, internal_id: str) -> InferenceResponse:
+        async_response = self._async_responses[internal_id]  # type: ignore
 
         response = await async_response
 
-        del self._async_responses[pred_id]  # type: ignore
+        del self._async_responses[internal_id]  # type: ignore
         return response
 
     def _start_batcher_if_needed(self):
@@ -68,21 +69,23 @@ class AdaptiveBatcher:
         async for batched in self._batch_requests():
             batched_response = await self._predict_fn(batched.merged_request)
             responses = batched.split_response(batched_response)
-            for response in responses:
+            for internal_id, response in responses.items():
                 # TODO: Set error if something failed
-                self._async_responses[response.id].set_result(response)  # type: ignore
+                self._async_responses[internal_id].set_result(response)  # type: ignore
 
     async def _batch_requests(self) -> AsyncIterator[BatchedRequests]:
         while not self._requests.empty():
-            to_batch: List[InferenceRequest] = []
+            to_batch: Dict[str, InferenceRequest] = {}
             start = time.time()
             timeout = self._max_batch_time
 
             try:
                 while len(to_batch) < self._max_batch_size:
                     read_op = self._requests.get()
-                    inference_request = await wait_for(read_op, timeout=timeout)
-                    to_batch.append(inference_request)
+                    internal_id, inference_request = await wait_for(
+                        read_op, timeout=timeout
+                    )
+                    to_batch[internal_id] = inference_request
 
                     # Update remaining timeout
                     current = time.time()
