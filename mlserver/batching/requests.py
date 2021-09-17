@@ -1,8 +1,9 @@
 from operator import mul
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
 from functools import reduce
 
+from ..utils import generate_uuid
 from ..types import (
     InferenceRequest,
     InferenceResponse,
@@ -48,25 +49,30 @@ def _merge_data(
 class BatchedRequests:
     def __init__(self, inference_requests: List[InferenceRequest] = []):
         self._inference_requests = inference_requests
-        self._prediction_ids: List[str] = [  # type: ignore
-            req.id for req in self._inference_requests  # type: ignore
-        ]
+
+        # External IDs represent the incoming prediction IDs that need to match
+        # 1:1 between request and response.
+        # Since we can't ensure the uniqueness (or even presence) of the
+        # external IDs, we'll also maintain our own list of internal IDs.
+        self._ids_mapping: Dict[str, Optional[str]] = OrderedDict()
 
         # Minibatch here refers to the individual batch size of the input head
         # of each input request (i.e. the number of datapoints on each input
         # request)
-        self._minibatch_sizes: List[int] = []
+        self._minibatch_sizes: Dict[str, int] = OrderedDict()
+
         self.merged_request = self._merge_requests()
 
     def _merge_requests(self) -> InferenceRequest:
-        inputs_index: Dict[str, List[RequestInput]] = defaultdict(list)
+        inputs_index: Dict[str, Dict[str, RequestInput]] = defaultdict(OrderedDict)
         all_params = {}
 
         for inference_request in self._inference_requests:
+            internal_id = generate_uuid()
+            self._ids_mapping[internal_id] = inference_request.id
             all_params = _merge_parameters(all_params, inference_request)
-            self._minibatch_sizes = []
             for request_input in inference_request.inputs:
-                inputs_index[request_input.name].append(request_input)
+                inputs_index[request_input.name][internal_id] = request_input
 
         inputs = [
             self._merge_request_inputs(request_inputs)
@@ -78,26 +84,27 @@ class BatchedRequests:
         params = Parameters(**all_params) if all_params else None
         return InferenceRequest(inputs=inputs, parameters=params)
 
-    def _merge_request_inputs(self, request_inputs: List[RequestInput]) -> RequestInput:
+    def _merge_request_inputs(
+        self, request_inputs: Dict[str, RequestInput]
+    ) -> RequestInput:
         # Note that minibatch sizes could be different on each input head,
         # however, to simplify the implementation, here we assume that it will
         # be the same across all of them
-        self._minibatch_sizes = []
         batch_size = 0
         all_data = []
         all_params = {}
-        for request_input in request_inputs:
+        for internal_id, request_input in request_inputs.items():
             all_params = _merge_parameters(all_params, request_input)
             all_data.append(_get_data(request_input))
             minibatch_shape = Shape(request_input.shape)
-            self._minibatch_sizes.append(minibatch_shape.batch_size)
+            self._minibatch_sizes[internal_id] = minibatch_shape.batch_size
             batch_size += minibatch_shape.batch_size
 
         data = _merge_data(all_data)
         parameters = Parameters(**all_params) if all_params else None
 
         # TODO: What should we do if list is empty?
-        sampled = request_inputs[0]
+        sampled = next(iter(request_inputs.values()))
         shape = Shape(sampled.shape)
         shape.batch_size = batch_size
 
@@ -113,30 +120,33 @@ class BatchedRequests:
         self, batched_response: InferenceResponse
     ) -> Iterable[InferenceResponse]:
         responses: Dict[str, InferenceResponse] = {}
+
         for response_output in batched_response.outputs:
-            split_outputs = self._split_response_output(response_output)
-            for pred_id, output in zip(self._prediction_ids, split_outputs):
-                if pred_id not in responses:
-                    responses[pred_id] = InferenceResponse(
-                        id=pred_id,
+            response_outputs = self._split_response_output(response_output)
+
+            for internal_id, response_output in response_outputs.items():
+                if internal_id not in responses:
+                    responses[internal_id] = InferenceResponse(
+                        id=self._ids_mapping[internal_id],
                         model_name=batched_response.model_name,
                         outputs=[],
                         parameters=batched_response.parameters,
                     )
 
-                responses[pred_id].outputs.append(output)
+                responses[internal_id].outputs.append(response_output)
 
         return responses.values()
 
     def _split_response_output(
         self, response_output: ResponseOutput
-    ) -> Iterable[ResponseOutput]:
-        common_shape = Shape(response_output.shape)
+    ) -> Dict[str, ResponseOutput]:
 
-        for minibatch_size, data in self._split_data(response_output):
-            shape = common_shape.copy()
-            shape.batch_size = minibatch_size
-            yield ResponseOutput(
+        all_data = self._split_data(response_output)
+        response_outputs = {}
+        for internal_id, data in all_data.items():
+            shape = Shape(response_output.shape)
+            shape.batch_size = self._minibatch_sizes[internal_id]
+            response_outputs[internal_id] = ResponseOutput(
                 name=response_output.name,
                 shape=shape.to_list(),
                 data=data,
@@ -144,14 +154,19 @@ class BatchedRequests:
                 parameters=response_output.parameters,
             )
 
-    def _split_data(self, response_output: ResponseOutput) -> Iterable[Tuple[int, Any]]:
-        common_shape = Shape(response_output.shape)
-        element_size = common_shape.elem_size
+        return response_outputs
+
+    def _split_data(self, response_output: ResponseOutput) -> Dict[str, ResponseOutput]:
+        merged_shape = Shape(response_output.shape)
+        element_size = merged_shape.elem_size
         merged_data = _get_data(response_output)
         idx = 0
 
+        all_data = {}
         # TODO: Don't rely on array to have been flattened
-        for minibatch_size in self._minibatch_sizes:
+        for internal_id, minibatch_size in self._minibatch_sizes.items():
             data = merged_data[idx : idx + minibatch_size * element_size]
             idx += minibatch_size * element_size
-            yield minibatch_size, data
+            all_data[internal_id] = data
+
+        return all_data

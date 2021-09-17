@@ -1,6 +1,6 @@
 import pytest
 
-from typing import List
+from typing import Dict, List
 
 from mlserver.types import (
     InferenceRequest,
@@ -13,31 +13,31 @@ from mlserver.batching.requests import BatchedRequests
 
 
 @pytest.mark.parametrize(
-    "request_inputs,expected",
+    "request_inputs, expected_request_input, expected_minibatch_sizes",
     [
         (
-            [
-                RequestInput(
+            {
+                "req-1": RequestInput(
                     name="foo",
                     datatype="INT32",
                     shape=[1, 3],
                     data=[1, 2, 3],
                     parameters=Parameters(content_type="np"),
                 ),
-                RequestInput(
+                "req-2": RequestInput(
                     name="foo",
                     datatype="INT32",
                     shape=[1, 3],
                     data=[4, 5, 6],
                 ),
-                RequestInput(
+                "req-3": RequestInput(
                     name="foo",
                     datatype="INT32",
                     shape=[1, 3],
                     data=[7, 8, 9],
                     parameters=Parameters(foo="bar"),
                 ),
-            ],
+            },
             RequestInput(
                 name="foo",
                 datatype="INT32",
@@ -45,83 +45,103 @@ from mlserver.batching.requests import BatchedRequests
                 data=[1, 2, 3, 4, 5, 6, 7, 8, 9],
                 parameters=Parameters(content_type="np", foo="bar"),
             ),
+            {"req-1": 1, "req-2": 1, "req-3": 1},
         ),
         (
-            [
-                RequestInput(
+            {
+                "req-1": RequestInput(
                     name="foo",
                     datatype="INT32",
                     shape=[2, 3],
                     data=[1, 2, 3, 10, 11, 12],
                 ),
-                RequestInput(
+                "req-2": RequestInput(
                     name="foo", datatype="INT32", shape=[1, 3], data=[4, 5, 6]
                 ),
-                RequestInput(
+                "req-3": RequestInput(
                     name="foo", datatype="INT32", shape=[1, 3], data=[7, 8, 9]
                 ),
-            ],
+            },
             RequestInput(
                 name="foo",
                 datatype="INT32",
                 shape=[4, 3],
                 data=[1, 2, 3, 10, 11, 12, 4, 5, 6, 7, 8, 9],
             ),
+            {"req-1": 2, "req-2": 1, "req-3": 1},
         ),
         (
-            [
-                RequestInput(
+            {
+                "req-1": RequestInput(
                     name="foo", datatype="INT32", shape=[1, 3], data=[[1, 2, 3]]
                 ),
-                RequestInput(
+                "req-2": RequestInput(
                     name="foo", datatype="INT32", shape=[1, 3], data=[[4, 5, 6]]
                 ),
-                RequestInput(
+                "req-3": RequestInput(
                     name="foo", datatype="INT32", shape=[1, 3], data=[[7, 8, 9]]
                 ),
-            ],
+            },
             RequestInput(
                 name="foo",
                 datatype="INT32",
                 shape=[3, 3],
                 data=[[1, 2, 3], [4, 5, 6], [7, 8, 9]],
             ),
+            {"req-1": 1, "req-2": 1, "req-3": 1},
         ),
         (
-            [
-                RequestInput(name="foo", datatype="BYTES", shape=[1, 3], data=b"abc"),
-                RequestInput(name="foo", datatype="BYTES", shape=[1, 3], data=b"def"),
-                RequestInput(name="foo", datatype="BYTES", shape=[1, 3], data=b"ghi"),
-            ],
+            {
+                "req-1": RequestInput(
+                    name="foo", datatype="BYTES", shape=[1, 3], data=b"abc"
+                ),
+                "req-2": RequestInput(
+                    name="foo", datatype="BYTES", shape=[1, 3], data=b"def"
+                ),
+                "req-3": RequestInput(
+                    name="foo", datatype="BYTES", shape=[1, 3], data=b"ghi"
+                ),
+            },
             RequestInput(
                 name="foo",
                 datatype="BYTES",
                 shape=[3, 3],
                 data=b"abcdefghi",
             ),
+            {"req-1": 1, "req-2": 1, "req-3": 1},
         ),
         (
-            [
-                RequestInput(name="foo", datatype="BYTES", shape=[1, 3], data="abc"),
-                RequestInput(name="foo", datatype="BYTES", shape=[1, 3], data="def"),
-                RequestInput(name="foo", datatype="BYTES", shape=[1, 3], data="ghi"),
-            ],
+            {
+                "req-1": RequestInput(
+                    name="foo", datatype="BYTES", shape=[1, 3], data="abc"
+                ),
+                "req-2": RequestInput(
+                    name="foo", datatype="BYTES", shape=[1, 3], data="def"
+                ),
+                "req-3": RequestInput(
+                    name="foo", datatype="BYTES", shape=[1, 3], data="ghi"
+                ),
+            },
             RequestInput(
                 name="foo",
                 datatype="BYTES",
                 shape=[3, 3],
                 data="abcdefghi",
             ),
+            {"req-1": 1, "req-2": 1, "req-3": 1},
         ),
     ],
 )
 def test_merge_request_inputs(
-    request_inputs: List[RequestInput],
-    expected: RequestInput,
+    request_inputs: Dict[str, RequestInput],
+    expected_request_input: RequestInput,
+    expected_minibatch_sizes: Dict[str, int],
 ):
     batched = BatchedRequests()
     merged = batched._merge_request_inputs(request_inputs)
-    assert merged == expected
+
+    assert merged == expected_request_input
+    assert batched._minibatch_sizes == expected_minibatch_sizes
 
 
 @pytest.mark.parametrize(
@@ -215,7 +235,7 @@ def test_merged_request(
     "minibatch_sizes, response_output, expected",
     [
         (
-            [1, 1, 1],
+            {"req-1": 1, "req-2": 1, "req-3": 1},
             ResponseOutput(
                 name="foo",
                 datatype="INT32",
@@ -248,7 +268,7 @@ def test_merged_request(
             ],
         ),
         (
-            [1, 1, 1],
+            {"req-1": 1, "req-2": 1, "req-3": 1},
             ResponseOutput(
                 name="foo",
                 datatype="BYTES",
@@ -262,7 +282,7 @@ def test_merged_request(
             ],
         ),
         (
-            [1, 2, 1],
+            {"req-1": 1, "req-2": 2, "req-3": 1},
             ResponseOutput(
                 name="foo",
                 datatype="BYTES",
@@ -280,7 +300,7 @@ def test_merged_request(
     ],
 )
 def test_split_response_output(
-    minibatch_sizes: List[int],
+    minibatch_sizes: Dict[str, int],
     response_output: ResponseOutput,
     expected: List[ResponseOutput],
 ):
@@ -288,14 +308,31 @@ def test_split_response_output(
     batched._minibatch_sizes = minibatch_sizes
     split = batched._split_response_output(response_output)
 
-    assert list(split) == expected
+    assert list(split.values()) == expected
 
 
 @pytest.mark.parametrize(
-    "minibatch_sizes, inference_response, prediction_ids, expected",
+    "inference_requests, inference_response, expected",
     [
         (
-            [1, 1],
+            [
+                InferenceRequest(
+                    id="query-1",
+                    inputs=[
+                        RequestInput(
+                            name="bli", datatype="FP32", shape=[1, 1], data=[0]
+                        )
+                    ],
+                ),
+                InferenceRequest(
+                    id="query-2",
+                    inputs=[
+                        RequestInput(
+                            name="bli", datatype="FP32", shape=[1, 1], data=[0]
+                        )
+                    ],
+                ),
+            ],
             InferenceResponse(
                 model_name="sum-model",
                 parameters=Parameters(foo="bar"),
@@ -314,7 +351,6 @@ def test_split_response_output(
                     ),
                 ],
             ),
-            ["query-1", "query-2"],
             [
                 InferenceResponse(
                     id="query-1",
@@ -359,14 +395,11 @@ def test_split_response_output(
     ],
 )
 def test_split_response(
-    minibatch_sizes: List[int],
+    inference_requests: List[InferenceRequest],
     inference_response: InferenceResponse,
-    prediction_ids: List[str],
     expected: List[InferenceResponse],
 ):
-    batched = BatchedRequests()
-    batched._prediction_ids = prediction_ids
-    batched._minibatch_sizes = minibatch_sizes
+    batched = BatchedRequests(inference_requests)
 
     responses = batched.split_response(inference_response)
     assert list(responses) == expected

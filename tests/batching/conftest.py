@@ -1,8 +1,8 @@
 import pytest
-import uuid
 
 from typing import Callable, Awaitable
 
+from mlserver.utils import generate_uuid
 from mlserver.types import InferenceRequest
 from mlserver.model import MLModel
 from mlserver.batching.adaptive import AdaptiveBatcher
@@ -21,7 +21,7 @@ def send_request(
 ) -> TestRequestSender:
     async def _send_request():
         # Change the UUID so that it's a new one
-        pred_id = str(uuid.uuid4())
+        pred_id = generate_uuid()
         new_req = InferenceRequest(id=pred_id, inputs=inference_request.inputs)
         await adaptive_batcher._queue_request(new_req)
 

@@ -1,4 +1,5 @@
 import os
+import uuid
 
 from typing import Callable, List
 
@@ -39,3 +40,7 @@ def get_wrapped_method(f: Callable) -> Callable:
         f = f.__wrapped__  # type: ignore
 
     return f
+
+
+def generate_uuid() -> str:
+    return str(uuid.uuid4())
