@@ -45,7 +45,7 @@ def _merge_data(
 
 class BatchedRequests:
     def __init__(self, inference_requests: Dict[str, InferenceRequest] = {}):
-        self._inference_requests = inference_requests
+        self.inference_requests = inference_requests
 
         # External IDs represent the incoming prediction IDs that need to match
         # 1:1 between request and response.
@@ -64,7 +64,7 @@ class BatchedRequests:
         inputs_index: Dict[str, Dict[str, RequestInput]] = defaultdict(OrderedDict)
         all_params = {}
 
-        for internal_id, inference_request in self._inference_requests.items():
+        for internal_id, inference_request in self.inference_requests.items():
             self._ids_mapping[internal_id] = inference_request.id
             all_params = _merge_parameters(all_params, inference_request)
             for request_input in inference_request.inputs:

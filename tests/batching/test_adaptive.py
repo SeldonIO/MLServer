@@ -25,7 +25,7 @@ async def test_batch_requests(
     ]
 
     assert len(batched_requests) == 1
-    assert batched_requests[0]._inference_requests == sent_requests
+    assert batched_requests[0].inference_requests == sent_requests
 
 
 async def test_batch_requests_timeout(
@@ -43,7 +43,7 @@ async def test_batch_requests_timeout(
         ]
 
         assert len(batched_requests) == 1
-        assert batched_requests[0]._inference_requests == sent_request
+        assert batched_requests[0].inference_requests == sent_request
 
 
 async def test_batcher(
@@ -69,6 +69,32 @@ async def test_batcher(
 
         expected = await sum_model.predict(sent_request)
         assert expected == response
+
+
+async def test_batcher_propagates_errors(
+    adaptive_batcher: AdaptiveBatcher,
+    send_request: TestRequestSender,
+    mocker,
+):
+    message = "This is an error"
+
+    async def _async_exception():
+        raise Exception(message)
+
+    max_batch_size = adaptive_batcher._max_batch_size
+    sent_requests = dict(
+        await asyncio.gather(*[send_request() for _ in range(max_batch_size)])
+    )
+
+    adaptive_batcher._predict_fn = mocker.stub("predict")
+    adaptive_batcher._predict_fn.return_value = _async_exception()
+    await adaptive_batcher._batcher()
+
+    for internal_id, _ in sent_requests.items():
+        with pytest.raises(Exception) as err:
+            await adaptive_batcher._async_responses[internal_id]
+
+        assert str(err.value) == message
 
 
 @pytest.mark.parametrize(

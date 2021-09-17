@@ -49,11 +49,11 @@ class AdaptiveBatcher:
         return internal_id, async_response
 
     async def _wait_response(self, internal_id: str) -> InferenceResponse:
-        async_response = self._async_responses[internal_id]  # type: ignore
+        async_response = self._async_responses[internal_id]
 
         response = await async_response
 
-        del self._async_responses[internal_id]  # type: ignore
+        del self._async_responses[internal_id]
         return response
 
     def _start_batcher_if_needed(self):
@@ -67,11 +67,14 @@ class AdaptiveBatcher:
 
     async def _batcher(self):
         async for batched in self._batch_requests():
-            batched_response = await self._predict_fn(batched.merged_request)
-            responses = batched.split_response(batched_response)
-            for internal_id, response in responses.items():
-                # TODO: Set error if something failed
-                self._async_responses[internal_id].set_result(response)  # type: ignore
+            try:
+                batched_response = await self._predict_fn(batched.merged_request)
+                responses = batched.split_response(batched_response)
+                for internal_id, response in responses.items():
+                    self._async_responses[internal_id].set_result(response)
+            except Exception as err:
+                for internal_id in batched.inference_requests.keys():
+                    self._async_responses[internal_id].set_exception(err)
 
     async def _batch_requests(self) -> AsyncIterator[BatchedRequests]:
         while not self._requests.empty():
