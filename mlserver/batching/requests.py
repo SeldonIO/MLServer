@@ -35,6 +35,16 @@ def _get_batch_axis(
     return 0
 
 
+def _merge_parameters(
+    all_params: dict, parametrised_obj: Union[InferenceRequest, RequestInput]
+) -> dict:
+    if not parametrised_obj.parameters:
+        return all_params
+
+    obj_params = parametrised_obj.parameters.dict(exclude_unset=True)
+    return {**all_params, **obj_params}
+
+
 class BatchedRequests:
     def __init__(self, inference_requests: List[InferenceRequest] = []):
         self._inference_requests = inference_requests
@@ -49,9 +59,7 @@ class BatchedRequests:
         all_params = {}
 
         for inference_request in self._inference_requests:
-            if inference_request.parameters:
-                request_params = inference_request.parameters.dict(exclude_unset=True)
-                all_params.update(request_params)
+            all_params = _merge_parameters(all_params, inference_request)
             self._minibatch_sizes = []
             for request_input in inference_request.inputs:
                 inputs_index[request_input.name].append(request_input)
@@ -94,9 +102,7 @@ class BatchedRequests:
         all_data = []
         all_params = {}
         for request_input in request_inputs:
-            if request_input.parameters:
-                input_params = request_input.parameters.dict(exclude_unset=True)
-                all_params.update(input_params)
+            all_params = _merge_parameters(all_params, request_input)
             all_data.append(_get_data(request_input))
             minibatch_size = _get_batch_size(request_input)
             self._minibatch_sizes.append(minibatch_size)
