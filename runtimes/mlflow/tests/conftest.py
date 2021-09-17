@@ -1,4 +1,5 @@
 import os
+import sys
 import mlflow
 import pytest
 import numpy as np
@@ -38,7 +39,11 @@ def model_uri(tmp_path) -> str:
 
 @pytest.fixture
 def pytorch_model_uri() -> str:
-    return os.path.join(TESTDATA_PATH, "pytorch_model")
+    pytorch_model_path = os.path.join(TESTDATA_PATH, "pytorch_model")
+    if sys.version_info >= (3, 8):
+        return os.path.join(pytorch_model_path, "3.8")
+
+    return os.path.join(pytorch_model_path, "3.7")
 
 
 @pytest.fixture

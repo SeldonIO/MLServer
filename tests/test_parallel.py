@@ -30,7 +30,7 @@ async def test_pool_load(
     # Trigger a process scale up
     await inference_pool.predict(inference_request)
 
-    assert len(executor._processes) == sum_model_settings.parallel_workers
+    assert 1 <= len(executor._processes) <= sum_model_settings.parallel_workers
 
 
 async def test_pool_predict(
