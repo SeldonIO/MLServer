@@ -10,29 +10,11 @@ from ..types import (
     RequestInput,
     ResponseOutput,
 )
+from .shape import Shape
 
 
 def _get_data(payload: Union[RequestInput, ResponseOutput]):
     return getattr(payload.data, "__root__", payload.data)
-
-
-def _infer_elem_size(response_output: ResponseOutput) -> int:
-    batch_axis = _get_batch_axis(response_output)
-    shape_without_batch = response_output.shape.copy()
-    shape_without_batch.pop(batch_axis)
-    return reduce(mul, shape_without_batch, 1)
-
-
-def _get_batch_size(request_input: RequestInput) -> int:
-    batch_dim = _get_batch_axis(request_input)
-    return request_input.shape[batch_dim]
-
-
-def _get_batch_axis(
-    request_input: Union[RequestInput, ResponseOutput]  # type: ignore
-) -> int:
-    # TODO: Support other batch dimensions
-    return 0
 
 
 def _merge_parameters(
@@ -43,6 +25,24 @@ def _merge_parameters(
 
     obj_params = parametrised_obj.parameters.dict(exclude_unset=True)
     return {**all_params, **obj_params}
+
+
+def _merge_data(
+    all_data: Union[list, List[str], List[bytes]]
+) -> Union[list, str, bytes]:
+    sampled_datum = all_data[0]
+
+    if isinstance(sampled_datum, str):
+        return "".join(all_data)
+
+    if isinstance(sampled_datum, bytes):
+        return b"".join(all_data)
+
+    if isinstance(sampled_datum, list):
+        return sum(all_data, [])
+
+    # TODO: Should we raise an error if we couldn't merge the data?
+    return all_data
 
 
 class BatchedRequests:
@@ -75,28 +75,6 @@ class BatchedRequests:
         return InferenceRequest(inputs=inputs, parameters=params)
 
     def _merge_request_inputs(self, request_inputs: List[RequestInput]) -> RequestInput:
-        batch_size, data, parameters = self._merge_data(request_inputs)
-
-        # TODO: What should we do if list is empty?
-        sampled = request_inputs[0]
-
-        batch_axis = _get_batch_axis(sampled)
-        shape = sampled.shape.copy()
-        shape.pop(batch_axis)
-        shape.insert(batch_axis, batch_size)
-
-        return RequestInput(
-            name=sampled.name,
-            datatype=sampled.datatype,
-            shape=shape,
-            data=data,
-            parameters=parameters,
-        )
-
-    def _merge_data(
-        self, request_inputs: List[RequestInput]
-    ) -> Tuple[int, Any, Optional[Parameters]]:
-        # We assume all inputs will have the same minibatch size
         self._minibatch_sizes = []
         batch_size = 0
         all_data = []
@@ -104,24 +82,25 @@ class BatchedRequests:
         for request_input in request_inputs:
             all_params = _merge_parameters(all_params, request_input)
             all_data.append(_get_data(request_input))
-            minibatch_size = _get_batch_size(request_input)
-            self._minibatch_sizes.append(minibatch_size)
-            batch_size += minibatch_size
+            minibatch_shape = Shape(request_input.shape)
+            self._minibatch_sizes.append(minibatch_shape.batch_size)
+            batch_size += minibatch_shape.batch_size
 
-        params = Parameters(**all_params) if all_params else None
-        sampled_datum = all_data[0]
+        data = _merge_data(all_data)
+        parameters = Parameters(**all_params) if all_params else None
 
-        if isinstance(sampled_datum, str):
-            return batch_size, "".join(all_data), params
+        # TODO: What should we do if list is empty?
+        sampled = request_inputs[0]
+        shape = Shape(sampled.shape)
+        shape.batch_size = batch_size
 
-        if isinstance(sampled_datum, bytes):
-            return batch_size, b"".join(all_data), params
-
-        if isinstance(sampled_datum, list):
-            return batch_size, sum(all_data, []), params
-
-        # TODO: Should we raise an error if we couldn't merge the data?
-        return batch_size, all_data, params
+        return RequestInput(
+            name=sampled.name,
+            datatype=sampled.datatype,
+            shape=shape.to_list(),
+            data=data,
+            parameters=parameters,
+        )
 
     def split_response(
         self, batched_response: InferenceResponse
@@ -145,22 +124,22 @@ class BatchedRequests:
     def _split_response_output(
         self, response_output: ResponseOutput
     ) -> Iterable[ResponseOutput]:
-        batch_axis = _get_batch_axis(response_output)
-        common_shape = response_output.shape.copy()
+        common_shape = Shape(response_output.shape)
 
         for minibatch_size, data in self._split_data(response_output):
             shape = common_shape.copy()
-            shape[batch_axis] = minibatch_size
+            shape.batch_size = minibatch_size
             yield ResponseOutput(
                 name=response_output.name,
-                shape=shape,
+                shape=shape.to_list(),
                 data=data,
                 datatype=response_output.datatype,
                 parameters=response_output.parameters,
             )
 
     def _split_data(self, response_output: ResponseOutput) -> Iterable[Tuple[int, Any]]:
-        element_size = _infer_elem_size(response_output)
+        common_shape = Shape(response_output.shape)
+        element_size = common_shape.elem_size
         merged_data = _get_data(response_output)
         idx = 0
 
