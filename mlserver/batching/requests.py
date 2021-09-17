@@ -1,9 +1,6 @@
-from operator import mul
 from collections import defaultdict, OrderedDict
-from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
-from functools import reduce
+from typing import Dict, Iterable, List, Optional, Union
 
-from ..utils import generate_uuid
 from ..types import (
     InferenceRequest,
     InferenceResponse,
@@ -47,7 +44,7 @@ def _merge_data(
 
 
 class BatchedRequests:
-    def __init__(self, inference_requests: List[InferenceRequest] = []):
+    def __init__(self, inference_requests: Dict[str, InferenceRequest] = {}):
         self._inference_requests = inference_requests
 
         # External IDs represent the incoming prediction IDs that need to match
@@ -67,8 +64,7 @@ class BatchedRequests:
         inputs_index: Dict[str, Dict[str, RequestInput]] = defaultdict(OrderedDict)
         all_params = {}
 
-        for inference_request in self._inference_requests:
-            internal_id = generate_uuid()
+        for internal_id, inference_request in self._inference_requests.items():
             self._ids_mapping[internal_id] = inference_request.id
             all_params = _merge_parameters(all_params, inference_request)
             for request_input in inference_request.inputs:
@@ -118,7 +114,7 @@ class BatchedRequests:
 
     def split_response(
         self, batched_response: InferenceResponse
-    ) -> Iterable[InferenceResponse]:
+    ) -> Dict[str, InferenceResponse]:
         responses: Dict[str, InferenceResponse] = {}
 
         for response_output in batched_response.outputs:
@@ -135,7 +131,7 @@ class BatchedRequests:
 
                 responses[internal_id].outputs.append(response_output)
 
-        return responses.values()
+        return responses
 
     def _split_response_output(
         self, response_output: ResponseOutput

@@ -148,8 +148,8 @@ def test_merge_request_inputs(
     "inference_requests, expected",
     [
         (
-            [
-                InferenceRequest(
+            {
+                "req-1": InferenceRequest(
                     parameters=Parameters(content_type="np"),
                     inputs=[
                         RequestInput(
@@ -157,7 +157,7 @@ def test_merge_request_inputs(
                         )
                     ],
                 ),
-                InferenceRequest(
+                "req-2": InferenceRequest(
                     parameters=Parameters(foo="bar"),
                     inputs=[
                         RequestInput(
@@ -165,7 +165,7 @@ def test_merge_request_inputs(
                         )
                     ],
                 ),
-            ],
+            },
             InferenceRequest(
                 parameters=Parameters(content_type="np", foo="bar"),
                 inputs=[
@@ -179,8 +179,8 @@ def test_merge_request_inputs(
             ),
         ),
         (
-            [
-                InferenceRequest(
+            {
+                "req-1": InferenceRequest(
                     inputs=[
                         RequestInput(
                             name="foo", datatype="INT32", data=[1, 2, 3], shape=[1, 3]
@@ -190,7 +190,7 @@ def test_merge_request_inputs(
                         ),
                     ]
                 ),
-                InferenceRequest(
+                "req-2": InferenceRequest(
                     inputs=[
                         RequestInput(
                             name="foo", datatype="INT32", data=[4, 5, 6], shape=[1, 3]
@@ -200,7 +200,7 @@ def test_merge_request_inputs(
                         ),
                     ]
                 ),
-            ],
+            },
             InferenceRequest(
                 inputs=[
                     RequestInput(
@@ -221,7 +221,7 @@ def test_merge_request_inputs(
     ],
 )
 def test_merged_request(
-    inference_requests: List[InferenceRequest],
+    inference_requests: Dict[str, InferenceRequest],
     expected: InferenceRequest,
 ):
 
@@ -315,8 +315,8 @@ def test_split_response_output(
     "inference_requests, inference_response, expected",
     [
         (
-            [
-                InferenceRequest(
+            {
+                "query-1": InferenceRequest(
                     id="query-1",
                     inputs=[
                         RequestInput(
@@ -324,7 +324,7 @@ def test_split_response_output(
                         )
                     ],
                 ),
-                InferenceRequest(
+                "query-2": InferenceRequest(
                     id="query-2",
                     inputs=[
                         RequestInput(
@@ -332,7 +332,7 @@ def test_split_response_output(
                         )
                     ],
                 ),
-            ],
+            },
             InferenceResponse(
                 model_name="sum-model",
                 parameters=Parameters(foo="bar"),
@@ -395,11 +395,13 @@ def test_split_response_output(
     ],
 )
 def test_split_response(
-    inference_requests: List[InferenceRequest],
+    inference_requests: Dict[str, InferenceRequest],
     inference_response: InferenceResponse,
     expected: List[InferenceResponse],
 ):
     batched = BatchedRequests(inference_requests)
 
     responses = batched.split_response(inference_response)
-    assert list(responses) == expected
+
+    assert inference_requests.keys() == responses.keys()
+    assert list(responses.values()) == expected
