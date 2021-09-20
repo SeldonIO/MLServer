@@ -1,7 +1,7 @@
 import time
 import asyncio
 
-from asyncio import Future, Queue, wait_for
+from asyncio import Future, Queue, wait_for, Task
 from typing import AsyncIterator, Awaitable, Dict, List, Tuple
 
 from ..model import MLModel
@@ -42,19 +42,21 @@ class AdaptiveBatcher:
         async_response = loop.create_future()
 
         internal_id = generate_uuid()
-        self._async_responses[internal_id] = async_response
 
         await self._requests.put((internal_id, req))
+
+        self._async_responses[internal_id] = async_response
 
         return internal_id, async_response
 
     async def _wait_response(self, internal_id: str) -> InferenceResponse:
         async_response = self._async_responses[internal_id]
 
-        response = await async_response
-
-        del self._async_responses[internal_id]
-        return response
+        try:
+            response = await async_response
+            return response
+        finally:
+            del self._async_responses[internal_id]
 
     def _start_batcher_if_needed(self):
         if self._batching_task is not None:
@@ -62,8 +64,23 @@ class AdaptiveBatcher:
                 # If task hasn't finished yet, let it keep running
                 return
 
-        # TODO: If _batching_task crashes, cancel all async responses
         self._batching_task = asyncio.create_task(self._batcher())
+        self._batching_task.add_done_callback(self._batching_task_callback)
+
+    def _batching_task_callback(self, batching_task: Task):
+        err = batching_task.exception()
+        if err:
+            # Clear queue
+            self._clear_queue(err)
+
+    def _clear_queue(self, err: BaseException):
+        # Cancel all pending async responses
+        for async_response in self._async_responses.values():
+            async_response.set_exception(err)
+
+        # Empty queue
+        for _ in range(self._requests.qsize()):
+            self._requests.get_nowait()
 
     async def _batcher(self):
         async for batched in self._batch_requests():

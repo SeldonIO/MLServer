@@ -7,6 +7,7 @@ from mlserver.batching.adaptive import AdaptiveBatcher
 from mlserver.batching.shape import Shape
 from mlserver.types import InferenceRequest, RequestInput
 from mlserver.model import MLModel
+from mlserver.utils import generate_uuid
 
 from .conftest import TestRequestSender
 
@@ -86,7 +87,7 @@ async def test_batcher_propagates_errors(
         await asyncio.gather(*[send_request() for _ in range(max_batch_size)])
     )
 
-    adaptive_batcher._predict_fn = mocker.stub("predict")
+    adaptive_batcher._predict_fn = mocker.stub("_predict_fn")
     adaptive_batcher._predict_fn.return_value = _async_exception()
     await adaptive_batcher._batcher()
 
@@ -95,6 +96,45 @@ async def test_batcher_propagates_errors(
             await adaptive_batcher._async_responses[internal_id]
 
         assert str(err.value) == message
+
+
+async def test_batcher_cancels_responses(
+    adaptive_batcher: AdaptiveBatcher,
+    mocker,
+):
+    message = "This is an error"
+
+    async def _async_exception():
+        raise Exception(message)
+
+    num_requests = adaptive_batcher._max_batch_size * 2 + 2
+
+    adaptive_batcher._batcher = mocker.stub("_batcher")
+    adaptive_batcher._batcher.side_effect = iter(_async_exception, None)
+
+    requests = [
+        InferenceRequest(
+            id=generate_uuid(),
+            inputs=[
+                RequestInput(
+                    name="input-0",
+                    shape=[1, 3],
+                    datatype="INT32",
+                    data=[idx, idx + 1, idx + 2],
+                )
+            ],
+        )
+        for idx in range(num_requests)
+    ]
+
+    responses = await asyncio.gather(
+        *[adaptive_batcher.predict(request) for request in requests],
+        return_exceptions=True,
+    )
+
+    for response in responses:
+        assert isinstance(response, Exception)
+        assert str(response) == message
 
 
 @pytest.mark.parametrize(
