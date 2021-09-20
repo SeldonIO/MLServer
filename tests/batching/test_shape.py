@@ -1,6 +1,5 @@
 import pytest
 
-from typing import List
 
 from mlserver.types import InferenceRequest
 from mlserver.batching.shape import Shape

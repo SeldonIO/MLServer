@@ -2,7 +2,7 @@ import time
 import asyncio
 
 from asyncio import Future, Queue, wait_for, Task
-from typing import AsyncIterator, Awaitable, Dict, List, Tuple
+from typing import AsyncIterator, Awaitable, Dict, Tuple
 
 from ..model import MLModel
 from ..types import (

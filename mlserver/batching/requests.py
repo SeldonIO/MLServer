@@ -1,5 +1,5 @@
 from collections import defaultdict, OrderedDict
-from typing import Dict, Iterable, List, Optional, Union
+from typing import Dict, List, Optional, Union
 
 from ..types import (
     InferenceRequest,

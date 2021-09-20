@@ -158,7 +158,7 @@ async def test_batcher_cancels_responses(
         ],
         [
             InferenceRequest(
-                id=f"large-request",
+                id="large-request",
                 inputs=[
                     # 10 is the max batch size, so we send a minibatch with
                     # 20 entries
@@ -171,7 +171,7 @@ async def test_batcher_cancels_responses(
                 ],
             ),
             InferenceRequest(
-                id=f"regular-request",
+                id="regular-request",
                 inputs=[
                     RequestInput(
                         name="input-0",
