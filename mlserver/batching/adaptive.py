@@ -2,6 +2,7 @@ import time
 import asyncio
 
 from asyncio import Future, Queue, wait_for, Task
+from functools import partial
 from typing import AsyncIterator, Awaitable, Dict, Tuple
 
 from ..model import MLModel
@@ -38,13 +39,11 @@ class AdaptiveBatcher:
         self,
         req: InferenceRequest,
     ) -> Tuple[str, Awaitable[InferenceResponse]]:
-        loop = asyncio.get_running_loop()
-        async_response = loop.create_future()
-
         internal_id = generate_uuid()
-
         await self._requests.put((internal_id, req))
 
+        loop = asyncio.get_running_loop()
+        async_response = loop.create_future()
         self._async_responses[internal_id] = async_response
 
         return internal_id, async_response
@@ -84,14 +83,21 @@ class AdaptiveBatcher:
 
     async def _batcher(self):
         async for batched in self._batch_requests():
-            try:
-                batched_response = await self._predict_fn(batched.merged_request)
-                responses = batched.split_response(batched_response)
-                for internal_id, response in responses.items():
-                    self._async_responses[internal_id].set_result(response)
-            except Exception as err:
-                for internal_id in batched.inference_requests.keys():
-                    self._async_responses[internal_id].set_exception(err)
+            # We run prediction as a Task to ensure it gets scheduled
+            # immediately.
+            # That way, we can process multiple batches concurrently.
+            predict_task = asyncio.create_task(self._predict_fn(batched.merged_request))
+            predict_task.add_done_callback(partial(self._predict_callback, batched))
+
+    def _predict_callback(self, batched: BatchedRequests, predict_task: Task):
+        try:
+            batched_response = predict_task.result()
+            responses = batched.split_response(batched_response)
+            for internal_id, response in responses.items():
+                self._async_responses[internal_id].set_result(response)
+        except Exception as err:
+            for internal_id in batched.inference_requests.keys():
+                self._async_responses[internal_id].set_exception(err)
 
     async def _batch_requests(self) -> AsyncIterator[BatchedRequests]:
         while not self._requests.empty():

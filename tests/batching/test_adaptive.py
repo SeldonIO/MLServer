@@ -63,7 +63,6 @@ async def test_batcher(
 
     for internal_id, sent_request in sent_requests.items():
         async_response = adaptive_batcher._async_responses[internal_id]
-        assert async_response.done()
 
         response = await async_response
         assert sent_request.id == response.id
