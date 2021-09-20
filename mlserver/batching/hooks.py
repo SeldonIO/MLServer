@@ -21,12 +21,10 @@ class InvalidBatchingMethod(MLServerError):
 
 def adaptive_batching(f: Callable[[InferenceRequest], Awaitable[InferenceResponse]]):
     """
-    Decorator to attach to model's methods so that they run in parallel.
-    By default, this will get attached to every model's "inference" method.
-
-    NOTE: At the moment, this method only works with `predict()`.
+    Decorator for the `predict()` method which will ensure it uses the
+    underlying adaptive batcher instance.
     """
-    # TODO: Extend to multiple methods
+
     @wraps(f)
     async def _inner(payload: InferenceRequest) -> InferenceResponse:
         wrapped_f = get_wrapped_method(f)
