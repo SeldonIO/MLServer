@@ -31,10 +31,10 @@ def _merge_data(
     sampled_datum = all_data[0]
 
     if isinstance(sampled_datum, str):
-        return "".join(all_data)
+        return "".join(all_data)  # type: ignore
 
     if isinstance(sampled_datum, bytes):
-        return b"".join(all_data)
+        return b"".join(all_data)  # type: ignore
 
     if isinstance(sampled_datum, list):
         return sum(all_data, [])
@@ -62,7 +62,7 @@ class BatchedRequests:
 
     def _merge_requests(self) -> InferenceRequest:
         inputs_index: Dict[str, Dict[str, RequestInput]] = defaultdict(OrderedDict)
-        all_params = {}
+        all_params: dict = {}
 
         for internal_id, inference_request in self.inference_requests.items():
             self._ids_mapping[internal_id] = inference_request.id
@@ -88,7 +88,7 @@ class BatchedRequests:
         # be the same across all of them
         batch_size = 0
         all_data = []
-        all_params = {}
+        all_params: dict = {}
         for internal_id, request_input in request_inputs.items():
             all_params = _merge_parameters(all_params, request_input)
             all_data.append(_get_data(request_input))
