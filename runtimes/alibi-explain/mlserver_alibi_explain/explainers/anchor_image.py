@@ -48,7 +48,9 @@ class AnchorImageWrapper(AlibiExplainRuntimeBase):
         self.ready = True
         return self.ready
 
-    async def predict_fn(self, input_data: Any) -> dict:
+    def predict_fn(self, input_data: Any) -> dict:
+        # TODO: this should come from another hosted model, but ideally from same mlserver instance?
+        # TODO: do we need this to be async?
         model = InceptionV3(weights='imagenet')
         return model.predict(input_data)
 

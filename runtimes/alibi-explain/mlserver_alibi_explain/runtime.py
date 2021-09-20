@@ -1,3 +1,4 @@
+import asyncio
 from typing import Any
 
 import orjson
@@ -49,7 +50,7 @@ class AlibiExplainRuntimeBase(MLModel):
         model_input = payload.inputs[0]
         default_codec = NumpyCodec()
         input_data = self.decode(model_input, default_codec=default_codec)
-        y = await self.predict_fn(input_data)
+        y = await self.async_predict_fn(input_data)
 
         # TODO: Convert alibi-explain output to v2 protocol
         output_data = y
@@ -59,4 +60,11 @@ class AlibiExplainRuntimeBase(MLModel):
             model_version=self.version,
             outputs=[default_codec.encode(name="explain", payload=output_data)],
         )
+
+    def predict_fn(self, input_data: Any) -> dict:
+        raise NotImplemented()
+
+    async def async_predict_fn(self, input_data: Any) -> dict:
+        loop = asyncio.get_event_loop()
+        return await loop.run_in_executor(None, self.predict_fn, input_data)
 
