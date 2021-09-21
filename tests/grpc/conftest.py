@@ -37,12 +37,6 @@ def model_infer_request() -> pb.ModelInferRequest:
 
 
 @pytest.fixture
-def grpc_settings(settings: Settings) -> Settings:
-    settings.grpc_workers = 1
-    return settings
-
-
-@pytest.fixture
 def grpc_repository_index_request() -> mr_pb.RepositoryIndexRequest:
     return mr_pb.RepositoryIndexRequest(ready=None)
 
@@ -58,33 +52,29 @@ def grpc_parameters() -> Dict[str, pb.InferParameter]:
 
 @pytest.fixture
 async def inference_service_stub(
-    grpc_server, grpc_settings: Settings
+    grpc_server, settings: Settings
 ) -> AsyncGenerator[GRPCInferenceServiceStub, None]:
-    async with aio.insecure_channel(
-        f"{grpc_settings.host}:{grpc_settings.grpc_port}"
-    ) as channel:
+    async with aio.insecure_channel(f"{settings.host}:{settings.grpc_port}") as channel:
         yield GRPCInferenceServiceStub(channel)
 
 
 @pytest.fixture
 async def model_repository_service_stub(
-    grpc_server, grpc_settings: Settings
+    grpc_server, settings: Settings
 ) -> AsyncGenerator[ModelRepositoryServiceStub, None]:
-    async with aio.insecure_channel(
-        f"{grpc_settings.host}:{grpc_settings.grpc_port}"
-    ) as channel:
+    async with aio.insecure_channel(f"{settings.host}:{settings.grpc_port}") as channel:
         yield ModelRepositoryServiceStub(channel)
 
 
 @pytest.fixture
 async def grpc_server(
-    grpc_settings: Settings,
+    settings: Settings,
     data_plane: DataPlane,
     model_repository_handlers: ModelRepositoryHandlers,
     sum_model: SumModel,
 ):
     server = GRPCServer(
-        grpc_settings,
+        settings,
         data_plane=data_plane,
         model_repository_handlers=model_repository_handlers,
     )
