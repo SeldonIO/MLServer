@@ -18,6 +18,7 @@ TestTzDatetime = datetime.fromisoformat(TestTzDatetimeIso)
     "decoded, expected",
     [
         (
+            # Single Python datetime object
             [TestDatetime],
             ResponseOutput(
                 name="foo",
@@ -27,6 +28,7 @@ TestTzDatetime = datetime.fromisoformat(TestTzDatetimeIso)
             ),
         ),
         (
+            # Multiple Python datetime objects
             [TestDatetime, TestDatetime],
             ResponseOutput(
                 name="foo",
@@ -36,6 +38,7 @@ TestTzDatetime = datetime.fromisoformat(TestTzDatetimeIso)
             ),
         ),
         (
+            # Single ISO-encoded string
             [TestDatetimeIso],
             ResponseOutput(
                 name="foo",
@@ -45,6 +48,7 @@ TestTzDatetime = datetime.fromisoformat(TestTzDatetimeIso)
             ),
         ),
         (
+            # Single Python datetime object with timezone
             [TestTzDatetime],
             ResponseOutput(
                 name="foo",
@@ -66,6 +70,7 @@ def test_encode(decoded, expected):
     "encoded, expected",
     [
         (
+            # Single binary ISO-encoded datetime
             RequestInput(
                 name="foo",
                 shape=[1, 19],
@@ -75,6 +80,7 @@ def test_encode(decoded, expected):
             [TestDatetime],
         ),
         (
+            # Single (non-binary) ISO-encoded datetime
             RequestInput(
                 name="foo",
                 shape=[1, 19],
@@ -84,6 +90,7 @@ def test_encode(decoded, expected):
             [TestDatetime],
         ),
         (
+            # Multiple binary ISO-encoded datetime
             RequestInput(
                 name="foo",
                 shape=[1, 19],
@@ -93,6 +100,7 @@ def test_encode(decoded, expected):
             [TestDatetime, TestDatetime],
         ),
         (
+            # Multiple (non-binary) ISO-encoded datetime
             RequestInput(
                 name="foo",
                 shape=[1, 19],
@@ -102,6 +110,7 @@ def test_encode(decoded, expected):
             [TestDatetime, TestDatetime],
         ),
         (
+            # Single (non-binary) ISO-encoded datetime with timezone
             RequestInput(
                 name="foo",
                 shape=[1, 25],

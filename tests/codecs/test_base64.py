@@ -8,6 +8,7 @@ from mlserver.types import RequestInput, ResponseOutput
     "decoded, expected",
     [
         (
+            # List with a single binary string
             [b"Python is fun"],
             ResponseOutput(
                 name="foo",
@@ -17,6 +18,7 @@ from mlserver.types import RequestInput, ResponseOutput
             ),
         ),
         (
+            # List with a single (non-binary) string
             ["Python is fun"],
             ResponseOutput(
                 name="foo",
@@ -26,6 +28,7 @@ from mlserver.types import RequestInput, ResponseOutput
             ),
         ),
         (
+            # List with two binary strings
             [b"Python is fun", b"Python is fun"],
             ResponseOutput(
                 name="foo",
@@ -47,15 +50,7 @@ def test_encode(decoded, expected):
     "encoded, expected",
     [
         (
-            RequestInput(
-                name="foo",
-                shape=[1, 20],
-                datatype="BYTES",
-                data=b"UHl0aG9uIGlzIGZ1bg==",
-            ),
-            [b"Python is fun"],
-        ),
-        (
+            # Single base64-encoded binary string
             RequestInput(
                 name="foo",
                 shape=[1, 20],
@@ -65,6 +60,7 @@ def test_encode(decoded, expected):
             [b"Python is fun"],
         ),
         (
+            # Single (non-base64-encoded) binary string
             RequestInput(
                 name="foo",
                 shape=[1, 13],
@@ -74,6 +70,7 @@ def test_encode(decoded, expected):
             [b"Python is fun"],
         ),
         (
+            # Single (non-base64-encoded) (non-binary) string
             RequestInput(
                 name="foo",
                 shape=[1, 13],
@@ -83,20 +80,12 @@ def test_encode(decoded, expected):
             [b"Python is fun"],
         ),
         (
+            # Multiple base64-encoded binary strings
             RequestInput(
                 name="foo",
                 shape=[2, 20],
                 datatype="BYTES",
                 data=b"UHl0aG9uIGlzIGZ1bg==UHl0aG9uIGlzIGZ1bg==",
-            ),
-            [b"Python is fun", b"Python is fun"],
-        ),
-        (
-            RequestInput(
-                name="foo",
-                shape=[2, 20],
-                datatype="BYTES",
-                data="UHl0aG9uIGlzIGZ1bg==UHl0aG9uIGlzIGZ1bg==",
             ),
             [b"Python is fun", b"Python is fun"],
         ),

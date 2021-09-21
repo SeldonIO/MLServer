@@ -103,7 +103,7 @@ class MLflowRuntime(MLModel):
         self.ready = True
         return self.ready
 
-    def _sync_metadata(self):
+    def _sync_metadata(self) -> None:
         # Update metadata from model signature (if present)
         if self._signature is None:
             return
