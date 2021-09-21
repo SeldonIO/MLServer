@@ -84,8 +84,8 @@ class ModelSettings(BaseSettings):
     outputs: List[MetadataTensor] = []
 
     # Parallel settings
-    """When `parallel inference <../user-guide/parallel-inference>` is enabled,
-    number of workers to run inference across."""
+    """When parallel inference is enabled, number of workers to run inference
+    across."""
     parallel_workers: int = 4
 
     # Adaptive Batching settings (disabled by default)
