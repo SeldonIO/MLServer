@@ -17,8 +17,6 @@ formats:
 python:
   version: 3.7
   install:
+    - method: pip
+      path: python
     - requirements: docs/requirements.txt
-    - path: .
-      extra_requirements:
-        # Install local MLServer
-        - mlserver @ file://.
