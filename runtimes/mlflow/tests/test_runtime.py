@@ -1,10 +1,12 @@
 import numpy as np
-from mlflow.pyfunc import PyFuncModel
-from mlserver_mlflow import MLflowRuntime
-from mlserver_mlflow.encoding import DefaultOutputName
 
 from mlserver.codecs import NumpyCodec
 from mlserver.types import InferenceRequest, Parameters, RequestInput
+from mlflow.pyfunc import PyFuncModel
+from mlflow.models.signature import ModelSignature
+
+from mlserver_mlflow import MLflowRuntime
+from mlserver_mlflow.encoding import DefaultOutputName
 
 
 def test_load(runtime: MLflowRuntime):
@@ -42,3 +44,17 @@ async def test_predict_pytorch(runtime_pytorch: MLflowRuntime):
     outputs = response.outputs
     assert len(outputs) == 1
     assert outputs[0].name == DefaultOutputName
+
+
+async def test_metadata(runtime: MLflowRuntime, model_signature: ModelSignature):
+    metadata = await runtime.metadata()
+
+    assert metadata.name == runtime.name
+    assert metadata.versions == runtime._settings.versions
+    assert metadata.platform == runtime._settings.platform
+
+    assert metadata.inputs is not None
+    assert len(model_signature.inputs.inputs) == len(metadata.inputs)
+
+    assert metadata.outputs is not None
+    assert len(model_signature.outputs.inputs) == len(metadata.outputs)

@@ -42,7 +42,7 @@ def _save_decoded(parametrised_obj: Parametrised, decoded_payload: Any):
 
 def decode_request_input(
     request_input: RequestInput,
-    metadata_inputs: Dict[str, MetadataTensor],
+    metadata_inputs: Dict[str, MetadataTensor] = {},
 ) -> Optional[Any]:
     input_metadata = metadata_inputs.get(request_input.name)
     content_type = _get_content_type(request_input, input_metadata)
@@ -59,7 +59,7 @@ def decode_request_input(
 
 
 def decode_inference_request(
-    inference_request: InferenceRequest, metadata_inputs: Dict[str, MetadataTensor]
+    inference_request: InferenceRequest, metadata_inputs: Dict[str, MetadataTensor] = {}
 ) -> Optional[Any]:
     for request_input in inference_request.inputs:
         decode_request_input(request_input, metadata_inputs)

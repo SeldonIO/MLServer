@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, List
 
 from .types import (
     InferenceRequest,
@@ -17,6 +17,20 @@ from .codecs import (
 )
 
 
+def _generate_metadata_index(
+    metadata_tensors: Optional[List[MetadataTensor]],
+) -> Dict[str, MetadataTensor]:
+    metadata_index: Dict[str, MetadataTensor] = {}
+
+    if not metadata_tensors:
+        return metadata_index
+
+    for metadata_tensor in metadata_tensors:
+        metadata_index[metadata_tensor.name] = metadata_tensor
+
+    return metadata_index
+
+
 class MLModel:
     """
     Abstract class which serves as the main interface to interact with ML
@@ -27,9 +41,8 @@ class MLModel:
         self._settings = settings
         self._inputs_index: Dict[str, MetadataTensor] = {}
 
-        if self._settings.inputs:
-            for request_input in self._settings.inputs:
-                self._inputs_index[request_input.name] = request_input
+        self._inputs_index = _generate_metadata_index(self._settings.inputs)
+        self._outputs_index = _generate_metadata_index(self._settings.outputs)
 
         self.ready = False
 
@@ -47,6 +60,24 @@ class MLModel:
     @property
     def settings(self) -> ModelSettings:
         return self._settings
+
+    @property
+    def inputs(self) -> Optional[List[MetadataTensor]]:
+        return self._settings.inputs
+
+    @inputs.setter
+    def inputs(self, value: List[MetadataTensor]):
+        self._settings.inputs = value
+        self._inputs_index = _generate_metadata_index(self._settings.inputs)
+
+    @property
+    def outputs(self) -> Optional[List[MetadataTensor]]:
+        return self._settings.inputs
+
+    @outputs.setter
+    def outputs(self, value: List[MetadataTensor]):
+        self._settings.outputs = value
+        self._outputs_index = _generate_metadata_index(self._settings.outputs)
 
     def decode(
         self, request_input: RequestInput, default_codec: Optional[InputCodec] = None

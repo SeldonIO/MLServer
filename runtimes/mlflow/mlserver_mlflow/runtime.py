@@ -25,6 +25,7 @@ from mlserver.handlers import custom_handler
 from mlserver.errors import InferenceError
 
 from .encoding import to_outputs
+from .metadata import to_metadata_tensors, DefaultInputPrefix, DefaultOutputPrefix
 
 
 class MLflowRuntime(MLModel):
@@ -107,10 +108,25 @@ class MLflowRuntime(MLModel):
         # TODO: Log info message
         model_uri = await get_model_uri(self._settings)
         self._model = mlflow.pyfunc.load_model(model_uri)
+
         self._input_schema = self._model.metadata.get_input_schema()
+        self._signature = self._model.metadata.signature
+        self._sync_metadata()
 
         self.ready = True
         return self.ready
+
+    def _sync_metadata(self) -> None:
+        # Update metadata from model signature (if present)
+        if self._signature is None:
+            return
+
+        self.inputs = to_metadata_tensors(
+            self._signature.inputs, prefix=DefaultInputPrefix
+        )
+        self.outputs = to_metadata_tensors(
+            self._signature.outputs, prefix=DefaultOutputPrefix
+        )
 
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
         decoded_payload = self.decode_request(payload)

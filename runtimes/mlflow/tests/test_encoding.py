@@ -1,13 +1,14 @@
 import numpy as np
 import pandas as pd
 import pytest
+
+from mlserver.codecs.numpy import to_datatype
+
 from mlserver_mlflow.encoding import (
     MLflowPayload,
     to_outputs,
     _convert_to_tensor_data_if_raw,
 )
-
-from mlserver.codecs.numpy import _to_datatype
 
 
 @pytest.mark.parametrize(
@@ -35,5 +36,5 @@ def test_to_outputs(mlflow_payload: MLflowPayload):
             assert output.data.__root__ == value.flatten().tolist()
         else:
             assert output.data.__root__ == value.tolist()
-        assert output.datatype == _to_datatype(value.dtype)
+        assert output.datatype == to_datatype(value.dtype)
         assert output.shape == list(value.shape)

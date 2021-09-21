@@ -28,11 +28,12 @@ For that, we will use the [linear regression examle from the MLflow docs](https:
 # Original source code and more details can be found in:
 # https://www.mlflow.org/docs/latest/tutorials-and-examples/tutorial.html
 
-# The data set used in this example is from http://archive.ics.uci.edu/ml/datasets/Wine+Quality
+# The data set used in this example is from
+# http://archive.ics.uci.edu/ml/datasets/Wine+Quality
 # P. Cortez, A. Cerdeira, F. Almeida, T. Matos and J. Reis.
-# Modeling wine preferences by data mining from physicochemical properties. In Decision Support Systems, Elsevier, 47(4):547-553, 2009.
+# Modeling wine preferences by data mining from physicochemical properties.
+# In Decision Support Systems, Elsevier, 47(4):547-553, 2009.
 
-import os
 import warnings
 import sys
 
@@ -44,6 +45,7 @@ from sklearn.linear_model import ElasticNet
 from urllib.parse import urlparse
 import mlflow
 import mlflow.sklearn
+from mlflow.models.signature import infer_signature
 
 import logging
 
@@ -63,12 +65,16 @@ if __name__ == "__main__":
     np.random.seed(40)
 
     # Read the wine-quality csv file from the URL
-    csv_url = "http://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv"
+    csv_url = (
+        "http://archive.ics.uci.edu/ml"
+        "/machine-learning-databases/wine-quality/winequality-red.csv"
+    )
     try:
         data = pd.read_csv(csv_url, sep=";")
     except Exception as e:
         logger.exception(
-            "Unable to download training & test CSV, check your internet connection. Error: %s",
+            "Unable to download training & test CSV, "
+            "check your internet connection. Error: %s",
             e,
         )
 
@@ -104,19 +110,24 @@ if __name__ == "__main__":
         mlflow.log_metric("mae", mae)
 
         tracking_url_type_store = urlparse(mlflow.get_tracking_uri()).scheme
+        model_signature = infer_signature(train_x, train_y)
 
         # Model registry does not work with file store
         if tracking_url_type_store != "file":
 
             # Register the model
-            # There are other ways to use the Model Registry, which depends on the use case,
+            # There are other ways to use the Model Registry,
+            # which depends on the use case,
             # please refer to the doc for more information:
             # https://mlflow.org/docs/latest/model-registry.html#api-workflow
             mlflow.sklearn.log_model(
-                lr, "model", registered_model_name="ElasticnetWineModel"
+                lr,
+                "model",
+                registered_model_name="ElasticnetWineModel",
+                signature=model_signature,
             )
         else:
-            mlflow.sklearn.log_model(lr, "model")
+            mlflow.sklearn.log_model(lr, "model", signature=model_signature)
 
 ```
 
@@ -334,3 +345,44 @@ response.json()
 ```
 
 As we can see above, the predicted quality for our input is `5.57`, matching the prediction we obtained above.
+
+### MLflow Model Signature
+
+MLflow lets users define a [_model signature_](https://www.mlflow.org/docs/latest/models.html#model-signature-and-input-example), where they can specify what types of inputs does the model accept, and what types of outputs it returns. 
+Similarly, the [V2 inference protocol](https://github.com/kubeflow/kfserving/tree/master/docs/predict-api/v2) employed by MLServer defines a [_metadata endpoint_](https://github.com/kubeflow/kfserving/blob/master/docs/predict-api/v2/required_api.md#model-metadata) which can be used to query what inputs and outputs does the model accept.
+However, even though they serve similar functions, the data schemas used by each one of them are not compatible between them.
+
+To solve this, if your model defines a MLflow model signature, MLServer will convert _on-the-fly_ this signature to a metadata schema compatible with the V2 Inference Protocol.
+This will also include specifying any extra [content type](../content-type/README.md) that is required to correctly decode / encode your data.
+
+As an example, we can first have a look at the model signature saved for our MLflow model.
+This can be seen directly on the `MLModel` file saved by our model.
+
+
+
+
+
+```python
+!cat {model_path}/MLmodel
+```
+
+We can then query the metadata endpoint, to see the model metadata inferred by MLServer from our test model's signature.
+For this, we will use the `/v2/models/wine-classifier/` endpoint.
+
+
+```python
+import requests
+
+
+endpoint = "http://localhost:8080/v2/models/wine-classifier/"
+response = requests.get(endpoint)
+
+response.json()
+```
+
+As we should be able to see, the model metadata now matches the information contained in our model signature, including any extra content types necessary to decode our data correctly.
+
+
+```python
+
+```

@@ -42,7 +42,7 @@ def _to_dtype(request_input: RequestInput) -> "np.dtype":
     return np.dtype(dtype)
 
 
-def _to_datatype(dtype: np.dtype) -> str:
+def to_datatype(dtype: np.dtype) -> str:
     as_str = str(dtype)
 
     if as_str not in _NumpyToDatatype:
@@ -83,7 +83,7 @@ class NumpyCodec(InputCodec):
 
     @classmethod
     def encode(cls, name: str, payload: np.ndarray) -> ResponseOutput:
-        datatype = _to_datatype(payload.dtype)
+        datatype = to_datatype(payload.dtype)
 
         return ResponseOutput(
             name=name,

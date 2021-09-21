@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional, Type
+from typing import Any, ClassVar, Dict, Optional, Type
 
 from ..errors import MLServerError
 from ..types import InferenceRequest, InferenceResponse, RequestInput, ResponseOutput
@@ -18,7 +18,7 @@ class InputCodec:
     interface instead.
     """
 
-    ContentType: Optional[str] = None
+    ContentType: ClassVar[str] = ""
 
     @classmethod
     def encode(cls, name: str, payload: Any) -> ResponseOutput:

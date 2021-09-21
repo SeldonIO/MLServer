@@ -1,7 +1,7 @@
 import pytest
 
 from mlserver.codecs import StringCodec
-from mlserver.types import RequestInput
+from mlserver.types import RequestInput, ResponseOutput
 
 
 @pytest.mark.parametrize(
@@ -56,13 +56,13 @@ def test_decode(request_input, expected):
     [
         (
             ["hello world"],
-            RequestInput(
+            ResponseOutput(
                 name="foo", shape=[1, 11], datatype="BYTES", data=b"hello world"
             ),
         ),
         (
             ["hey", "abc"],
-            RequestInput(name="foo", shape=[2, 3], datatype="BYTES", data=b"heyabc"),
+            ResponseOutput(name="foo", shape=[2, 3], datatype="BYTES", data=b"heyabc"),
         ),
     ],
 )
