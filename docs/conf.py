@@ -33,17 +33,10 @@ release = "0.4.2.dev0"
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    #  "sphinx.ext.autodoc",
-    # Creates .nojekyll config
-    #  "sphinx.ext.githubpages",
-    # Converts markdown to rst
     "myst_parser",
-    #  "sphinx.ext.napoleon",
-    # automatically generate API docs
-    # see https://github.com/rtfd/readthedocs.org/issues/1139
-    #  "sphinxcontrib.apidoc",
     "sphinx_search.extension",
     "sphinxcontrib.bibtex",
+    "sphinxcontrib.autodoc_pydantic",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -54,52 +47,10 @@ templates_path = ["_templates"]
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
-# apidoc settings
-apidoc_module_dir = "../mlserver"
-apidoc_output_dir = "api"
-apidoc_excluded_paths = ["**/*test*"]
-apidoc_module_first = True
-apidoc_separate_modules = True
-apidoc_extra_args = ["-d 6"]
+# Pydantic settings
+autodoc_pydantic_settings_show_json = False
 
-# mock imports
-autodoc_mock_imports = [
-    "pandas",
-    "sklearn",
-    "skimage",
-    "requests",
-    "cv2",
-    "bs4",
-    "keras",
-    "seaborn",
-    "PIL",
-    "tensorflow",
-    "spacy",
-    "numpy",
-    "tensorflow_probability",
-    "scipy",
-    "matplotlib",
-    "creme",
-    "cloudpickle",
-    "fbprophet",
-    "dask",
-    "transformers",
-]
-
-
-# Napoleon settings
-napoleon_google_docstring = True
-napoleon_numpy_docstring = True
-napoleon_include_init_with_doc = True
-napoleon_include_private_with_doc = False
-napoleon_include_special_with_doc = True
-napoleon_use_admonition_for_examples = False
-napoleon_use_admonition_for_notes = False
-napoleon_use_admonition_for_references = False
-napoleon_use_ivar = False
-napoleon_use_param = True
-napoleon_use_rtype = False
-
+# Bibtex settings
 bibtex_bibfiles = ["references.bib"]
 bibtex_reference_style = "author_year"
 

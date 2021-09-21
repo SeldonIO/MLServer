@@ -3,6 +3,7 @@
 :titlesonly:
 User Guide <./user-guide/index>
 Inference Runtimes <./runtimes/index>
+Reference <./reference/index>
 Examples <./examples/index>
 ```
 
