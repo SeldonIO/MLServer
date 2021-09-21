@@ -28,6 +28,7 @@ class Settings(BaseSettings):
     http_port: int = 8080
     grpc_port: int = 8081
     grpc_workers: int = 10
+    grpc_max_message_length: Optional[int] = None
 
 
 class ModelParameters(BaseSettings):

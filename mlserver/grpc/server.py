@@ -1,5 +1,6 @@
 from grpc import aio
 from concurrent.futures import ThreadPoolExecutor
+from typing import Any, List, Tuple
 
 from ..handlers import DataPlane, ModelRepositoryHandlers
 from ..settings import Settings
@@ -25,8 +26,10 @@ class GRPCServer:
         self._model_repository_servicer = ModelRepositoryServicer(
             self._model_repository_handlers
         )
+
         self._server = aio.server(
-            ThreadPoolExecutor(max_workers=self._settings.grpc_workers)
+            ThreadPoolExecutor(max_workers=self._settings.grpc_workers),
+            options=self._get_options(),
         )
 
         add_GRPCInferenceServiceServicer_to_server(
@@ -41,6 +44,19 @@ class GRPCServer:
         )
 
         return self._server
+
+    def _get_options(self) -> List[Tuple[str, Any]]:
+        options = []
+
+        max_message_length = self._settings.grpc_max_message_length
+        if max_message_length is not None:
+            options += [
+                ("grpc.max_message_length", max_message_length),
+                ("grpc.max_send_message_length", max_message_length),
+                ("grpc.max_receive_message_length", max_message_length),
+            ]
+
+        return options
 
     async def start(self):
         self._create_server()
