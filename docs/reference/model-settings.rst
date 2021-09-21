@@ -23,6 +23,6 @@ Settings
 .. autopydantic_settings:: mlserver.settings.ModelSettings
 
 Extra Model Parameters
-**********************
+######################
 
 .. autopydantic_settings:: mlserver.settings.ModelParameters
