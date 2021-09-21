@@ -9,6 +9,9 @@ from .servicers import InferenceServicer, ModelRepositoryServicer
 from .dataplane_pb2_grpc import add_GRPCInferenceServiceServicer_to_server
 from .model_repository_pb2_grpc import add_ModelRepositoryServiceServicer_to_server
 
+# Workers used for non-AsyncIO workloads (which aren't any in our case)
+DefaultGrpcWorkers = 5
+
 
 class GRPCServer:
     def __init__(
@@ -28,7 +31,7 @@ class GRPCServer:
         )
 
         self._server = aio.server(
-            ThreadPoolExecutor(max_workers=self._settings.grpc_workers),
+            ThreadPoolExecutor(max_workers=DefaultGrpcWorkers),
             options=self._get_options(),
         )
 
