@@ -7,4 +7,5 @@ how to use them.
 :titlesonly:
 
 ./parallel-inference.md
+./adaptive-batching.md
 ```

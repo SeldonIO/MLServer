@@ -1,5 +1,3 @@
-import uuid
-
 from ..settings import Settings
 from ..registry import MultiModelRegistry
 from ..types import (
@@ -9,6 +7,7 @@ from ..types import (
     InferenceResponse,
 )
 from ..middleware import inference_middlewares
+from ..utils import generate_uuid
 
 
 class DataPlane:
@@ -50,7 +49,7 @@ class DataPlane:
         self, payload: InferenceRequest, name: str, version: str = None
     ) -> InferenceResponse:
         if payload.id is None:
-            payload.id = str(uuid.uuid4())
+            payload.id = generate_uuid()
 
         model = await self._model_registry.get_model(name, version)
 

@@ -6,6 +6,7 @@ from fastapi.testclient import TestClient
 
 from mlserver.handlers import DataPlane, ModelRepositoryHandlers
 from mlserver.parallel import load_inference_pool, unload_inference_pool
+from mlserver.batching import load_batching
 from mlserver.rest import RESTServer
 from mlserver import Settings
 
@@ -26,7 +27,9 @@ async def rest_server(
     )
 
     await asyncio.gather(
-        server.add_custom_handlers(sum_model), load_inference_pool(sum_model)
+        server.add_custom_handlers(sum_model),
+        load_inference_pool(sum_model),
+        load_batching(sum_model),
     )
 
     yield server

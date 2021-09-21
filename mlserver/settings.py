@@ -55,12 +55,16 @@ class ModelSettings(BaseSettings):
 
     # Model metadata
     platform: str = ""
-    versions: Optional[List[str]] = []
-    inputs: Optional[List[MetadataTensor]] = []
-    outputs: Optional[List[MetadataTensor]] = []
+    versions: List[str] = []
+    inputs: List[MetadataTensor] = []
+    outputs: List[MetadataTensor] = []
 
     # Parallel settings
-    parallel_workers: Optional[int] = 4
+    parallel_workers: int = 4
+
+    # Adaptive Batching settings (disabled by default)
+    max_batch_size: int = 0
+    max_batch_time: float = 0.0
 
     # Custom model class implementation
     implementation: PyObject = "mlserver.model.MLModel"  # type: ignore

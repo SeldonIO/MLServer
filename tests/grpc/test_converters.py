@@ -47,22 +47,10 @@ def test_modelinferrequest_to_types(model_infer_request):
             types.RequestInput(
                 name="input-0",
                 datatype="INT32",
-                shape=[3],
+                shape=[1, 3],
                 data=types.TensorData.parse_obj([1, 2, 3]),
                 parameters=types.Parameters(content_type="np"),
-            ),
-            types.RequestInput(
-                name="input-1",
-                datatype="INT32",
-                shape=[1],
-                data=types.TensorData.parse_obj([4]),
-            ),
-            types.RequestInput(
-                name="input-2",
-                datatype="INT32",
-                shape=[2],
-                data=types.TensorData.parse_obj([5, 6]),
-            ),
+            )
         ],
     )
 

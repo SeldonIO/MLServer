@@ -47,5 +47,8 @@ def test_first_input_decode(inference_request: InferenceRequest, expected: np.nd
 
 
 def test_first_input_error(inference_request: InferenceRequest):
+    inference_request.inputs.append(
+        RequestInput(name="bar", shape=[1, 2], data=[1, 2], datatype="INT32")
+    )
     with pytest.raises(CodecError):
         FirstInputRequestCodec.decode(inference_request)
