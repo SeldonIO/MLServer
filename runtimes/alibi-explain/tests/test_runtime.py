@@ -8,10 +8,11 @@ from fastapi import Request
 from mlserver.codecs import NumpyCodec
 from mlserver.types import InferenceRequest, Parameters, RequestInput
 from mlserver_alibi_explain import AnchorImageWrapper
+from mlserver_alibi_explain.common import convert_from_bytes
 
 
 async def test_anchors(runtime: AnchorImageWrapper):
-    data = np.random.randn(1, 299, 299, 3) * 255
+    data = np.random.randn(299, 299, 3) * 255
     inference_request = InferenceRequest(
         parameters=Parameters(content_type=NumpyCodec.ContentType),
         inputs=[
@@ -23,7 +24,9 @@ async def test_anchors(runtime: AnchorImageWrapper):
             )
         ],
     )
+    # TODO: this is really explain
     response = await runtime.predict(inference_request)
+    print(convert_from_bytes(response.outputs[0], ty=str))
 
     # request_mock = MagicMock(Request)
     #

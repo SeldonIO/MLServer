@@ -21,10 +21,18 @@ def pytest_collection_modifyitems(items):
 async def runtime() -> AnchorImageWrapper:
     rt = AnchorImageWrapper(
         ModelSettings(
-            parameters=ModelParameters(extra=AlibiExplainSettings(
-                init_explainer=True,
-                explainer_type="anchor_image"
-            ))
+            parameters=ModelParameters(
+                extra=AlibiExplainSettings(
+                    init_explainer=True,
+                    init_parameters={
+                        "segmentation_fn": "slic",
+                        "segmentation_kwargs": {"n_segments": 15, "compactness": 20, "sigma": .5},
+                        "image_shape": (299, 299, 3),
+                        "images_background": None
+                    },
+                    explainer_type="anchor_image"
+                )
+            )
         )
     )
     await rt.load()

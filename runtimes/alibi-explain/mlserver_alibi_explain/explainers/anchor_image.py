@@ -1,5 +1,6 @@
 from typing import Optional, Any
 
+from alibi.api.interfaces import Explanation
 from alibi.explainers import AnchorImage
 from pydantic import BaseSettings
 from tensorflow.python.keras.applications.inception_v3 import InceptionV3
@@ -31,27 +32,23 @@ class AnchorImageWrapper(AlibiExplainRuntimeBase):
         super().__init__(settings, explainer_settings)
 
     async def load(self) -> bool:
-        # TODO: wire up the settings
-        segmentation_fn = "slic"
-        kwargs = {"n_segments": 15, "compactness": 20, "sigma": .5}
-
-        # TODO: image_shape, what can we do with this? can it be loaded from model metadata?
-        image_shape = (299, 299, 3)  # this is just for testing, remove
-
         self._model = AnchorImage(
-            self.predict_fn,
-            image_shape,
-            segmentation_fn=segmentation_fn,
-            segmentation_kwargs=kwargs,
+            predictor=self._infer_impl,
+            image_shape=self.alibi_explain_settings.init_parameters["image_shape"],
+            segmentation_fn=self.alibi_explain_settings.init_parameters["segmentation_fn"],
+            segmentation_kwargs=self.alibi_explain_settings.init_parameters["segmentation_kwargs"],
             images_background=None)
 
         self.ready = True
         return self.ready
 
-    def predict_fn(self, input_data: Any) -> dict:
+    def _infer_impl(self, input_data: Any) -> dict:
         # TODO: this should come from another hosted model, but ideally from same mlserver instance?
         # TODO: do we need this to be async?
         model = InceptionV3(weights='imagenet')
         return model.predict(input_data)
+
+    def _explain_impl(self, input_data: Any) -> Explanation:
+        return self._model.explain(input_data, threshold=.95, p_sample=.5, tau=0.25)
 
 
