@@ -41,11 +41,11 @@ def convert_from_bytes(output: ResponseOutput, ty: Optional[Type]) -> Any:
 
 
 def remote_predict(payload: InferenceRequest, predictor_url: str) -> InferenceResponse:
-    response_raw = requests.post(predictor_url, json=payload.json())
+    response_raw = requests.post(predictor_url, json=payload.dict())
     if response_raw.status_code != 200:
         # TODO: proper error handling
         raise ValueError(f"{response_raw.status_code} / {response_raw.reason}")
-    return InferenceResponse.parse_raw(response_raw.json())
+    return InferenceResponse.parse_raw(response_raw.text)
 
 # _TAG_TO_IMPL = {
 #     _ANCHOR_IMAGE_TAG: type(AnchorImageWrapper)
