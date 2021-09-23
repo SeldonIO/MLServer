@@ -1,28 +1,11 @@
-from typing import Optional, Any
+from typing import Any
 
 from alibi.api.interfaces import Explanation
 from alibi.explainers import AnchorImage
-from pydantic import BaseSettings
-from tensorflow.python.keras.applications.inception_v3 import InceptionV3
 
 from mlserver import ModelSettings
-from mlserver_alibi_explain.common import ENV_PREFIX_ALIBI_EXPLAIN_SETTINGS, ExplainerEnum
+from mlserver_alibi_explain.common import AlibiExplainSettings
 from mlserver_alibi_explain.runtime import AlibiExplainRuntimeBase
-
-
-class AlibiExplainSettings(BaseSettings):
-    """
-    Parameters that apply only to alibi explain models
-    """
-
-    class Config:
-        env_prefix = ENV_PREFIX_ALIBI_EXPLAIN_SETTINGS
-
-    infer_uri: Optional[str]
-    init_explainer: bool
-    explainer_type: ExplainerEnum
-    call_parameters: Optional[dict]
-    init_parameters: Optional[dict]
 
 
 class AnchorImageWrapper(AlibiExplainRuntimeBase):

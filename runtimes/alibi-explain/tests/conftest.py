@@ -2,7 +2,8 @@ import os
 
 import pytest
 
-from mlserver_alibi_explain.explainers.anchor_image import AnchorImageWrapper, AlibiExplainSettings
+from mlserver_alibi_explain.explainers.anchor_image import AnchorImageWrapper
+from mlserver_alibi_explain.common import AlibiExplainSettings
 from mlserver.settings import ModelSettings, ModelParameters
 
 TESTS_PATH = os.path.dirname(__file__)
@@ -30,7 +31,8 @@ async def runtime() -> AnchorImageWrapper:
                         "image_shape": (28, 28, 1),
                         "images_background": None
                     },
-                    explainer_type="anchor_image"
+                    explainer_type="anchor_image",
+                    infer_uri="http://localhost:36307/v2/models/test-pytorch-mnist/infer"
                 )
             )
         )

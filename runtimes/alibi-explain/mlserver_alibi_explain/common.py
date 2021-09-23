@@ -8,6 +8,7 @@ from typing import Any, Dict, Optional, Type, Callable, Coroutine, Awaitable
 
 import numpy as np
 import requests
+from pydantic import BaseSettings
 
 from mlserver.types import ResponseOutput, InferenceResponse, InferenceRequest
 
@@ -65,3 +66,18 @@ def execute_async(
 #
 # def get_mlmodel_class(tag: ExplainerEnum) -> type(MLModel):
 #     return _TAG_TO_IMPL[tag.value]
+
+
+class AlibiExplainSettings(BaseSettings):
+    """
+    Parameters that apply only to alibi explain models
+    """
+
+    class Config:
+        env_prefix = ENV_PREFIX_ALIBI_EXPLAIN_SETTINGS
+
+    infer_uri: Optional[str]
+    init_explainer: bool
+    explainer_type: ExplainerEnum
+    call_parameters: Optional[dict]
+    init_parameters: Optional[dict]
