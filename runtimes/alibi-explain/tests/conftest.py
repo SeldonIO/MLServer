@@ -27,7 +27,7 @@ async def runtime() -> AnchorImageWrapper:
                     init_parameters={
                         "segmentation_fn": "slic",
                         "segmentation_kwargs": {"n_segments": 15, "compactness": 20, "sigma": .5},
-                        "image_shape": (299, 299, 3),
+                        "image_shape": (28, 28, 1),
                         "images_background": None
                     },
                     explainer_type="anchor_image"

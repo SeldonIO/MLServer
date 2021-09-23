@@ -1,8 +1,10 @@
+import asyncio
+from asyncio import AbstractEventLoop
 from enum import Enum
 
 #from mlserver_alibi_explain.explainers.anchor_image import AnchorImageWrapper
 #from mlserver import MLModel
-from typing import Any, Dict, Optional, Type
+from typing import Any, Dict, Optional, Type, Callable, Coroutine, Awaitable
 
 import numpy as np
 import requests
@@ -18,6 +20,7 @@ class ExplainerEnum(str, Enum):
     anchor_image = _ANCHOR_IMAGE_TAG
 
 
+# TODO: is this inference response?
 def create_v2_from_any(data: Any, name: str) -> Dict:
     if isinstance(data, str):
         b = list(bytes(data, "utf-8"))
@@ -40,12 +43,20 @@ def convert_from_bytes(output: ResponseOutput, ty: Optional[Type]) -> Any:
         return literal_eval(py_str)
 
 
-def remote_predict(payload: InferenceRequest, predictor_url: str) -> InferenceResponse:
-    response_raw = requests.post(predictor_url, json=payload.dict())
+def remote_predict(v2_payload: InferenceRequest, predictor_url: str) -> InferenceResponse:
+    response_raw = requests.post(predictor_url, json=v2_payload.dict())
     if response_raw.status_code != 200:
         # TODO: proper error handling
         raise ValueError(f"{response_raw.status_code} / {response_raw.reason}")
     return InferenceResponse.parse_raw(response_raw.text)
+
+
+def execute_async(
+        fn: Callable, data: Any, loop: Optional[AbstractEventLoop] = None
+) -> Awaitable:
+    if loop is None:
+        loop = asyncio.get_event_loop()
+    return loop.run_in_executor(None, fn, data)
 
 # _TAG_TO_IMPL = {
 #     _ANCHOR_IMAGE_TAG: type(AnchorImageWrapper)

@@ -1,7 +1,8 @@
 import abc
 import asyncio
 import json
-from typing import Any
+from typing import Any, Union, List
+import numpy as np
 
 import orjson
 from alibi.api.interfaces import Explanation
@@ -13,8 +14,8 @@ from mlserver.errors import InferenceError
 from mlserver.handlers import custom_handler
 from mlserver.model import MLModel
 from mlserver.settings import ModelSettings
-from mlserver.types import InferenceRequest, InferenceResponse
-from mlserver_alibi_explain.common import create_v2_from_any
+from mlserver.types import InferenceRequest, InferenceResponse, Parameters, RequestInput
+from mlserver_alibi_explain.common import create_v2_from_any, execute_async, remote_predict
 
 
 class AlibiExplainRuntimeBase(abc.ABC, MLModel):
@@ -28,6 +29,7 @@ class AlibiExplainRuntimeBase(abc.ABC, MLModel):
         super().__init__(settings)
 
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
+        """This is actually a call to explain as we are treating an explainer model as MLModel"""
 
         # TODO: convert and validate
         model_input = payload.inputs[0]
@@ -44,21 +46,44 @@ class AlibiExplainRuntimeBase(abc.ABC, MLModel):
             outputs=[output_data],
         )
 
-    @abc.abstractmethod
-    def _infer_impl(self, input_data: Any) -> dict:
-        """Implementers? or wrappers?"""
+    def _infer_impl(self, input_data: Union[np.ndarray, List]) -> np.ndarray:
+        # for now we only support v2 protocol
+        # maybe also get the metadata and confirm / reshape types?
+        np_codec = NumpyCodec()
+
+        # TODO: get it from codec? which explainer sends a list?
+        if isinstance(input_data, list):
+            input_data = np.array(input_data)
+
+        # TODO: fixme as the reshape is required for mnist models
+        num_samples = input_data.shape[0]
+        input_data = input_data.reshape((num_samples, 1, -1))
+
+        v2_request = InferenceRequest(
+            parameters=Parameters(content_type=NumpyCodec.ContentType),
+            inputs=[
+                RequestInput(
+                    name="predict",
+                    shape=input_data.shape,
+                    data=input_data.tolist(),  # we convert list above to np!
+                    datatype="FP32",  # TODO: fixme as it will not work for anything!
+                )
+            ],
+        )
+
+        v2_response = remote_predict(
+            v2_payload=v2_request,
+            # TODO: get it from settings
+            predictor_url="http://localhost:36307/v2/models/test-pytorch-mnist/infer")
+
+        return np_codec.decode(v2_response.outputs[0])  # type: ignore # TODO: fix mypy and first output
 
     @abc.abstractmethod
     def _explain_impl(self, input_data: Any) -> Explanation:
         """Actual explain fn"""
 
-    async def _async_infer_impl(self, input_data: Any) -> dict:
-        loop = asyncio.get_event_loop()
-        return await loop.run_in_executor(None, self._infer_impl, input_data)
-
     async def _async_explain_impl(self, input_data: Any) -> dict:
-        loop = asyncio.get_event_loop()
-        explanation = await loop.run_in_executor(None, self._explain_impl, input_data)
+        explanation = await execute_async(self._explain_impl, input_data)
         return create_v2_from_any(explanation.to_json(), name="explain")
 
 

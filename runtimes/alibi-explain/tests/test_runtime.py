@@ -12,7 +12,7 @@ from mlserver_alibi_explain.common import convert_from_bytes, remote_predict
 
 
 async def test_anchors(runtime: AnchorImageWrapper):
-    data = np.random.randn(299, 299, 3) * 255
+    data = np.random.randn(28, 28, 1) * 255
     inference_request = InferenceRequest(
         parameters=Parameters(content_type=NumpyCodec.ContentType),
         inputs=[
