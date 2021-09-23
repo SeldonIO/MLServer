@@ -23,6 +23,7 @@ async def runtime() -> AnchorImageWrapper:
     rt = AnchorImageWrapper(
         ModelSettings(
             parameters=ModelParameters(
+                uri="./data/mnist_anchor_image",
                 extra=AlibiExplainSettings(
                     init_explainer=True,
                     init_parameters={
@@ -31,6 +32,7 @@ async def runtime() -> AnchorImageWrapper:
                         "image_shape": (28, 28, 1),
                         "images_background": None
                     },
+                    # TODO: do we really need this if we have a wrapper per explainer?
                     explainer_type="anchor_image",
                     infer_uri="http://localhost:36307/v2/models/test-pytorch-mnist/infer"
                 )

@@ -2,6 +2,7 @@ from typing import Any
 
 from alibi.api.interfaces import Explanation
 from alibi.explainers import AnchorImage
+from alibi.saving import save_explainer, load_explainer
 from pydantic import BaseSettings
 
 from mlserver import ModelSettings
@@ -16,12 +17,16 @@ class AnchorImageWrapper(AlibiExplainRuntimeBase):
         super().__init__(settings, explainer_settings)
 
     async def load(self) -> bool:
-        self._model = AnchorImage(
-            predictor=self._infer_impl,
-            image_shape=self.alibi_explain_settings.init_parameters["image_shape"],
-            segmentation_fn=self.alibi_explain_settings.init_parameters["segmentation_fn"],
-            segmentation_kwargs=self.alibi_explain_settings.init_parameters["segmentation_kwargs"],
-            images_background=None)
+        if self.settings.parameters.uri is None:
+            self._model = AnchorImage(
+                predictor=self._infer_impl,
+                image_shape=self.alibi_explain_settings.init_parameters["image_shape"],
+                segmentation_fn=self.alibi_explain_settings.init_parameters["segmentation_fn"],
+                segmentation_kwargs=self.alibi_explain_settings.init_parameters["segmentation_kwargs"],
+                images_background=None)
+        else:
+            # load the model from disk
+            self._model = load_explainer(self.settings.parameters.uri, predictor=self._infer_impl)
 
         self.ready = True
         return self.ready
