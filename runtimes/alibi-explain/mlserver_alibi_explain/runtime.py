@@ -76,7 +76,6 @@ class AlibiExplainRuntimeBase(abc.ABC, MLModel):
 
         v2_response = remote_predict(
             v2_payload=v2_request,
-            # TODO: get it from settings
             predictor_url=self.alibi_explain_settings.infer_uri)
 
         return np_codec.decode(v2_response.outputs[0])  # type: ignore # TODO: fix mypy and first output
