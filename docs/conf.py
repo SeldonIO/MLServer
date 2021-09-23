@@ -24,7 +24,7 @@ html_title = "MLServer"
 author = "Seldon Technologies"
 
 # The full version, including alpha/beta/rc tags
-release = "0.5.0"
+release = "0.6.0.dev0"
 
 
 # -- General configuration ---------------------------------------------------
