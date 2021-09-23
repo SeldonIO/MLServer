@@ -14,7 +14,15 @@ from mlserver_alibi_explain.common import convert_from_bytes, remote_predict
 async def test_anchors(runtime: AnchorImageWrapper):
     data = np.random.randn(28, 28, 1) * 255
     inference_request = InferenceRequest(
-        parameters=Parameters(content_type=NumpyCodec.ContentType),
+        parameters=Parameters(
+            content_type=NumpyCodec.ContentType,
+            # TODO: we probably want to have a pydantic model for these settings per explainer?
+            explain_parameters={
+                "threshold": 0.95,
+                "p_sample": 0.5,
+                "tau": 0.25,
+            }
+        ),
         inputs=[
             RequestInput(
                 name="predict",

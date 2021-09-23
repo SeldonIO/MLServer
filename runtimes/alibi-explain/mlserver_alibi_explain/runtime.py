@@ -35,7 +35,7 @@ class AlibiExplainRuntimeBase(abc.ABC, MLModel):
         model_input = payload.inputs[0]
         default_codec = NumpyCodec()
         input_data = self.decode(model_input, default_codec=default_codec)
-        explanation_dict = await self._async_explain_impl(input_data)
+        explanation_dict = await self._async_explain_impl(input_data, payload.parameters)
 
         # TODO: Convert alibi-explain output to v2 protocol, for now we use to_json
         output_data = explanation_dict
@@ -47,8 +47,10 @@ class AlibiExplainRuntimeBase(abc.ABC, MLModel):
         )
 
     def _infer_impl(self, input_data: Union[np.ndarray, List]) -> np.ndarray:
+        # TODO: >
+        # subclasses would probably have to implement this
         # for now we only support v2 protocol
-        # maybe also get the metadata and confirm / reshape types?
+        # maybe also get the model metadata and confirm / reshape types?
         # should mlflow codec do that?
         np_codec = NumpyCodec()
 
@@ -80,12 +82,17 @@ class AlibiExplainRuntimeBase(abc.ABC, MLModel):
         return np_codec.decode(v2_response.outputs[0])  # type: ignore # TODO: fix mypy and first output
 
     @abc.abstractmethod
-    def _explain_impl(self, input_data: Any) -> Explanation:
+    def _explain_impl(self, input_data: Any, settings: BaseSettings) -> Explanation:
         """Actual explain to be implemented by subclasses?"""
 
-    async def _async_explain_impl(self, input_data: Any) -> dict:
+    async def _async_explain_impl(self, input_data: Any, settings: BaseSettings) -> dict:
         """run async"""
-        explanation = await execute_async(self._explain_impl, input_data)
+        explanation = await execute_async(
+            loop=None,
+            fn=self._explain_impl,
+            input_data=input_data,
+            settings=settings
+        )
         return create_v2_from_any(explanation.to_json(), name="explain")
 
 

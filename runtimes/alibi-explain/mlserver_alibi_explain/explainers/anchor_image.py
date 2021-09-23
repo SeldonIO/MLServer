@@ -2,6 +2,7 @@ from typing import Any
 
 from alibi.api.interfaces import Explanation
 from alibi.explainers import AnchorImage
+from pydantic import BaseSettings
 
 from mlserver import ModelSettings
 from mlserver_alibi_explain.common import AlibiExplainSettings
@@ -25,7 +26,13 @@ class AnchorImageWrapper(AlibiExplainRuntimeBase):
         self.ready = True
         return self.ready
 
-    def _explain_impl(self, input_data: Any) -> Explanation:
-        return self._model.explain(input_data, threshold=.95, p_sample=.5, tau=0.25)
+    def _explain_impl(self, input_data: Any, settings: BaseSettings) -> Explanation:
+        explain_parameters = settings.explain_parameters
+        return self._model.explain(
+            input_data,
+            threshold=explain_parameters["threshold"],
+            p_sample=explain_parameters["p_sample"],
+            tau=explain_parameters["tau"]
+        )
 
 

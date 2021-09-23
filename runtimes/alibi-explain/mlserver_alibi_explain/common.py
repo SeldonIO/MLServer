@@ -53,11 +53,11 @@ def remote_predict(v2_payload: InferenceRequest, predictor_url: str) -> Inferenc
 
 
 def execute_async(
-        fn: Callable, data: Any, loop: Optional[AbstractEventLoop] = None
+        loop: Optional[AbstractEventLoop], fn: Callable, input_data: Any, settings: BaseSettings
 ) -> Awaitable:
     if loop is None:
         loop = asyncio.get_event_loop()
-    return loop.run_in_executor(None, fn, data)
+    return loop.run_in_executor(None, fn, input_data, settings)
 
 # _TAG_TO_IMPL = {
 #     _ANCHOR_IMAGE_TAG: type(AnchorImageWrapper)
