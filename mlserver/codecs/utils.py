@@ -4,6 +4,7 @@ from ..types import (
     InferenceRequest,
     InferenceResponse,
     RequestInput,
+    MetadataModelResponse,
     MetadataTensor,
     Parameters,
 )
@@ -16,19 +17,19 @@ from .base import (
 )
 
 Parametrised = Union[InferenceRequest, RequestInput]
-Tagged = Union[MetadataTensor]
+Tagged = Union[MetadataTensor, MetadataModelResponse]
 DecodedParameterName = "_decoded_payload"
 
 
 def _get_content_type(
-    parametrised_obj: Parametrised, tagged_obj: Optional[Tagged] = None
+    request: Parametrised, metadata: Optional[Tagged] = None
 ) -> Optional[str]:
-    if parametrised_obj.parameters and parametrised_obj.parameters.content_type:
-        return parametrised_obj.parameters.content_type
+    if request.parameters and request.parameters.content_type:
+        return request.parameters.content_type
 
-    if tagged_obj is not None:
-        if tagged_obj.tags and tagged_obj.tags.content_type:
-            return tagged_obj.tags.content_type
+    if metadata is not None:
+        if metadata.parameters and metadata.parameters.content_type:
+            return metadata.parameters.content_type
 
     return None
 

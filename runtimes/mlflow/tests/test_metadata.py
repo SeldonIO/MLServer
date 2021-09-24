@@ -14,7 +14,6 @@ from mlserver.codecs import (
     decode_inference_request,
 )
 from mlserver.types import (
-    Tags,
     MetadataTensor,
     RequestInput,
     InferenceRequest,
@@ -81,7 +80,7 @@ def test_get_shape(input_spec: InputSpec, expected: List[int]):
                     name="foo",
                     datatype="INT32",
                     shape=[2, 2],
-                    tags=Tags(content_type=NumpyCodec.ContentType),
+                    parameters=Parameters(content_type=NumpyCodec.ContentType),
                 )
             ],
         ),
@@ -92,7 +91,7 @@ def test_get_shape(input_spec: InputSpec, expected: List[int]):
                     name="input-0",
                     datatype="INT32",
                     shape=[2, 2],
-                    tags=Tags(content_type=NumpyCodec.ContentType),
+                    parameters=Parameters(content_type=NumpyCodec.ContentType),
                 )
             ],
         ),
@@ -108,13 +107,13 @@ def test_get_shape(input_spec: InputSpec, expected: List[int]):
                     name="foo",
                     datatype="INT32",
                     shape=[-1, 2],
-                    tags=Tags(content_type=NumpyCodec.ContentType),
+                    parameters=Parameters(content_type=NumpyCodec.ContentType),
                 ),
                 MetadataTensor(
                     name="bar",
                     datatype="FP32",
                     shape=[-1, 10],
-                    tags=Tags(content_type=NumpyCodec.ContentType),
+                    parameters=Parameters(content_type=NumpyCodec.ContentType),
                 ),
             ],
         ),
@@ -130,13 +129,13 @@ def test_get_shape(input_spec: InputSpec, expected: List[int]):
                     name="input-0",
                     datatype="BYTES",
                     shape=[-1],
-                    tags=Tags(content_type=StringCodec.ContentType),
+                    parameters=Parameters(content_type=StringCodec.ContentType),
                 ),
                 MetadataTensor(
                     name="input-1",
                     datatype="INT32",
                     shape=[-1],
-                    tags=Tags(content_type=NumpyCodec.ContentType),
+                    parameters=Parameters(content_type=NumpyCodec.ContentType),
                 ),
             ],
         ),

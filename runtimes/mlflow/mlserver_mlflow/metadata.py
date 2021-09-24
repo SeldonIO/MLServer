@@ -2,7 +2,7 @@ from typing import Union, Tuple, List
 
 from mlflow.types.schema import Schema, ColSpec, TensorSpec, DataType
 
-from mlserver.types import MetadataTensor, Tags
+from mlserver.types import MetadataTensor, Parameters
 from mlserver.codecs import NumpyCodec, StringCodec, Base64Codec, DatetimeCodec
 from mlserver.codecs.numpy import to_datatype
 
@@ -56,7 +56,7 @@ def to_metadata_tensors(
                 name=name,
                 datatype=datatype,
                 shape=shape,
-                tags=Tags(content_type=content_type),
+                parameters=Parameters(content_type=content_type),
             )
         )
 
