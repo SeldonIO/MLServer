@@ -94,7 +94,9 @@ class MLModel:
         return request_input.data
 
     def decode_request(self, inference_request: InferenceRequest) -> Any:
-        return decode_inference_request(inference_request, self._inputs_index)
+        return decode_inference_request(
+            inference_request, self._settings, self._inputs_index
+        )
 
     async def metadata(self) -> MetadataModelResponse:
         model_metadata = MetadataModelResponse(

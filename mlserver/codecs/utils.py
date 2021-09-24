@@ -4,10 +4,10 @@ from ..types import (
     InferenceRequest,
     InferenceResponse,
     RequestInput,
-    MetadataModelResponse,
     MetadataTensor,
     Parameters,
 )
+from ..settings import ModelSettings
 from .base import (
     find_input_codec,
     find_request_codec,
@@ -17,7 +17,7 @@ from .base import (
 )
 
 Parametrised = Union[InferenceRequest, RequestInput]
-Tagged = Union[MetadataTensor, MetadataModelResponse]
+Tagged = Union[MetadataTensor, ModelSettings]
 DecodedParameterName = "_decoded_payload"
 
 
@@ -60,12 +60,14 @@ def decode_request_input(
 
 
 def decode_inference_request(
-    inference_request: InferenceRequest, metadata_inputs: Dict[str, MetadataTensor] = {}
+    inference_request: InferenceRequest,
+    model_settings: ModelSettings = None,
+    metadata_inputs: Dict[str, MetadataTensor] = {},
 ) -> Optional[Any]:
     for request_input in inference_request.inputs:
         decode_request_input(request_input, metadata_inputs)
 
-    request_content_type = _get_content_type(inference_request)
+    request_content_type = _get_content_type(inference_request, model_settings)
     if request_content_type is not None:
         codec = find_request_codec(request_content_type)
         if codec is not None:
