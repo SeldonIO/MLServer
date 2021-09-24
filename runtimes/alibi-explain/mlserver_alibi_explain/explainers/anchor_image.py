@@ -18,12 +18,10 @@ class AnchorImageWrapper(AlibiExplainRuntimeBase):
 
     async def load(self) -> bool:
         if self.settings.parameters.uri is None:
+            init_parameters = self.alibi_explain_settings.init_parameters
             self._model = AnchorImage(
                 predictor=self._infer_impl,
-                image_shape=self.alibi_explain_settings.init_parameters["image_shape"],
-                segmentation_fn=self.alibi_explain_settings.init_parameters["segmentation_fn"],
-                segmentation_kwargs=self.alibi_explain_settings.init_parameters["segmentation_kwargs"],
-                images_background=None)
+                **init_parameters)
         else:
             # load the model from disk
             self._model = load_explainer(self.settings.parameters.uri, predictor=self._infer_impl)
@@ -35,9 +33,7 @@ class AnchorImageWrapper(AlibiExplainRuntimeBase):
         explain_parameters = settings.explain_parameters
         return self._model.explain(
             input_data,
-            threshold=explain_parameters["threshold"],
-            p_sample=explain_parameters["p_sample"],
-            tau=explain_parameters["tau"]
+            **explain_parameters
         )
 
 

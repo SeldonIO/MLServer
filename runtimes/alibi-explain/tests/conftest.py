@@ -23,7 +23,7 @@ async def runtime() -> AnchorImageWrapper:
     rt = AnchorImageWrapper(
         ModelSettings(
             parameters=ModelParameters(
-                uri="./data/mnist_anchor_image",
+                # uri="./data/mnist_anchor_image",
                 extra=AlibiExplainSettings(
                     init_explainer=True,
                     init_parameters={
