@@ -169,6 +169,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/metadata_tensor'
+        parameters:
+          $ref: '#/components/schemas/parameters'
       required:
         - name
         - platform
@@ -184,12 +186,8 @@ components:
           type: array
           items:
             type: integer
-        tags:
-          type: object
-          additionalProperties: true
-          properties:
-            content_type:
-              type: string
+        parameters:
+          $ref: '#/components/schemas/parameters'
       required:
         - name
         - datatype
