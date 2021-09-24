@@ -72,6 +72,8 @@ def to_metadata_tensors(
 
 
 def to_model_content_type(schema: Schema) -> Optional[str]:
+    # This logic is based on MLflow's `mlflow.pyfunc._enforce_schema` method:
+    # https://github.com/mlflow/mlflow/blob/ded7e447c20d259030260f1579693f9c5337a3ae/mlflow/pyfunc/__init__.py#L499
     if schema.is_tensor_spec():
         if schema.has_input_names():
             return TensorDictCodec.ContentType
