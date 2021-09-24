@@ -74,6 +74,7 @@ class AlibiExplainRuntimeBase(abc.ABC, MLModel):
             ],
         )
 
+        # TODO add some exception handling here
         v2_response = remote_predict(
             v2_payload=v2_request,
             predictor_url=self.alibi_explain_settings.infer_uri)

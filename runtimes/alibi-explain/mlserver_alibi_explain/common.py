@@ -79,6 +79,4 @@ class AlibiExplainSettings(BaseSettings):
     infer_uri: Optional[str]
     init_explainer: bool
     explainer_type: ExplainerEnum
-    # TODO: wire up these settings; these are static and could be overridden by parameters passed at explain time
-    call_parameters: Optional[dict]
     init_parameters: Optional[dict]
