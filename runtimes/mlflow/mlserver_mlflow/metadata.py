@@ -1,10 +1,18 @@
-from typing import Union, Tuple, List
+from typing import Union, Tuple, List, Optional
 
 from mlflow.types.schema import Schema, ColSpec, TensorSpec, DataType
 
 from mlserver.types import MetadataTensor, Parameters
-from mlserver.codecs import NumpyCodec, StringCodec, Base64Codec, DatetimeCodec
+from mlserver.codecs import (
+    PandasCodec,
+    NumpyCodec,
+    StringCodec,
+    Base64Codec,
+    DatetimeCodec,
+)
 from mlserver.codecs.numpy import to_datatype
+
+from .codecs import TensorDictCodec
 
 InputSpec = Union[ColSpec, TensorSpec]
 
@@ -61,3 +69,13 @@ def to_metadata_tensors(
         )
 
     return metadata_tensors
+
+
+def to_model_content_type(schema: Schema) -> Optional[str]:
+    if schema.is_tensor_spec():
+        if schema.has_input_names():
+            return TensorDictCodec.ContentType
+
+        return NumpyCodec.ContentType
+
+    return PandasCodec.ContentType

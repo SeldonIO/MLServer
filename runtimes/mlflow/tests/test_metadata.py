@@ -20,11 +20,13 @@ from mlserver.types import (
     Parameters,
 )
 
+from mlserver_mlflow.codecs import TensorDictCodec
 from mlserver_mlflow.metadata import (
     InputSpec,
     _get_content_type,
     _get_shape,
     to_metadata_tensors,
+    to_model_content_type,
 )
 
 
@@ -203,3 +205,47 @@ def test_content_types(tensor_spec: TensorSpec, request_input: RequestInput):
 
     # _enforce_schema will raise if something fails
     _enforce_schema(data, input_schema)
+
+
+@pytest.mark.parametrize(
+    "schema, expected",
+    [
+        (
+            Schema(
+                inputs=[
+                    ColSpec(name="foo", type=DataType.boolean),
+                    ColSpec(name="bar", type=DataType.boolean),
+                ]
+            ),
+            PandasCodec.ContentType,
+        ),
+        (
+            Schema(
+                inputs=[
+                    TensorSpec(name="foo", shape=(2, 2), type=np.dtype("int32")),
+                    TensorSpec(name="bar", shape=(3, 2), type=np.dtype("int32")),
+                ]
+            ),
+            TensorDictCodec.ContentType,
+        ),
+        (
+            Schema(
+                inputs=[
+                    TensorSpec(name="foo", shape=(2, 2), type=np.dtype("int32")),
+                ]
+            ),
+            TensorDictCodec.ContentType,
+        ),
+        (
+            Schema(
+                inputs=[
+                    TensorSpec(shape=(2, 2), type=np.dtype("int32")),
+                ]
+            ),
+            NumpyCodec.ContentType,
+        ),
+    ],
+)
+def test_to_model_content_type(schema: Schema, expected: str):
+    content_type = to_model_content_type(schema)
+    assert content_type == expected

@@ -7,6 +7,7 @@ from mlflow.models.signature import ModelSignature
 
 from mlserver_mlflow import MLflowRuntime
 from mlserver_mlflow.encoding import DefaultOutputName
+from mlserver_mlflow.codecs import TensorDictCodec
 
 
 def test_load(runtime: MLflowRuntime):
@@ -58,3 +59,6 @@ async def test_metadata(runtime: MLflowRuntime, model_signature: ModelSignature)
 
     assert metadata.outputs is not None
     assert len(model_signature.outputs.inputs) == len(metadata.outputs)
+
+    assert metadata.parameters is not None
+    assert metadata.parameters.content_type == TensorDictCodec.ContentType
