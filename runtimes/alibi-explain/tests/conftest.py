@@ -5,6 +5,7 @@ import pytest
 from mlserver_alibi_explain.explainers.anchor_image import AnchorImageWrapper
 from mlserver_alibi_explain.common import AlibiExplainSettings
 from mlserver.settings import ModelSettings, ModelParameters
+from mlserver_alibi_explain.explainers.integrated_gradients import IntegratedGradientsWrapper
 
 TESTS_PATH = os.path.dirname(__file__)
 
@@ -19,7 +20,7 @@ def pytest_collection_modifyitems(items):
 
 
 @pytest.fixture
-async def runtime() -> AnchorImageWrapper:
+async def anchor_image_runtime() -> AnchorImageWrapper:
     rt = AnchorImageWrapper(
         ModelSettings(
             parameters=ModelParameters(
@@ -34,7 +35,32 @@ async def runtime() -> AnchorImageWrapper:
                     },
                     # TODO: do we really need this if we have a wrapper per explainer?
                     explainer_type="anchor_image",
-                    infer_uri="http://localhost:36307/v2/models/test-pytorch-mnist/infer"
+                    # TODO: find a way to get the url in test
+                    infer_uri="http://localhost:42315/v2/models/test-pytorch-mnist/infer"
+                )
+            )
+        )
+    )
+    await rt.load()
+
+    return rt
+
+
+@pytest.fixture
+async def integrated_gradients_runtime() -> IntegratedGradientsWrapper:
+    rt = IntegratedGradientsWrapper(
+        ModelSettings(
+            parameters=ModelParameters(
+                # uri="./data/mnist_anchor_image",
+                extra=AlibiExplainSettings(
+                    init_explainer=True,
+                    init_parameters={
+                        "n_steps": 50,
+                        "method": "gausslegendre"
+                    },
+                    # TODO: do we really need this if we have a wrapper per explainer?
+                    explainer_type="anchor_image",
+                    # TODO: find a way to get the url in test
                 )
             )
         )

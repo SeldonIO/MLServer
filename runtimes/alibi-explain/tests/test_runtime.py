@@ -9,9 +9,35 @@ from mlserver.codecs import NumpyCodec
 from mlserver.types import InferenceRequest, Parameters, RequestInput
 from mlserver_alibi_explain import AnchorImageWrapper
 from mlserver_alibi_explain.common import convert_from_bytes, remote_predict
+from mlserver_alibi_explain.explainers.integrated_gradients import IntegratedGradientsWrapper
 
 
-async def test_anchors(runtime: AnchorImageWrapper):
+async def test_integrated_gradients(integrated_gradients_runtime: IntegratedGradientsWrapper):
+    # TODO: there is an inherit batch
+    data = np.random.randn(10, 28, 28, 1) * 255
+    inference_request = InferenceRequest(
+        parameters=Parameters(
+            content_type=NumpyCodec.ContentType,
+            # TODO: we probably want to have a pydantic model for these settings per explainer?
+            explain_parameters={
+                "baselines": None,
+            }
+        ),
+        inputs=[
+            RequestInput(
+                name="predict",
+                shape=data.shape,
+                data=data.tolist(),
+                datatype="FP32",
+            )
+        ],
+    )
+    # TODO: this is really explain
+    response = await integrated_gradients_runtime.predict(inference_request)
+    print(convert_from_bytes(response.outputs[0], ty=str))
+
+
+async def test_anchors(anchor_image_runtime: AnchorImageWrapper):
     data = np.random.randn(28, 28, 1) * 255
     inference_request = InferenceRequest(
         parameters=Parameters(
@@ -33,7 +59,7 @@ async def test_anchors(runtime: AnchorImageWrapper):
         ],
     )
     # TODO: this is really explain
-    response = await runtime.predict(inference_request)
+    response = await anchor_image_runtime.predict(inference_request)
     print(convert_from_bytes(response.outputs[0], ty=str))
 
     # request_mock = MagicMock(Request)
