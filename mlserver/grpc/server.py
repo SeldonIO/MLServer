@@ -71,7 +71,8 @@ class GRPCServer:
         await self._server.start()
 
         logger.info(
-            f"gRPC server running on http://{self._settings.host}:{self._settings.grpc_port}"
+            "gRPC server running on "
+            f"http://{self._settings.host}:{self._settings.grpc_port}"
         )
         await self._server.wait_for_termination()
 

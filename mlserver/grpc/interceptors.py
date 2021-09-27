@@ -1,5 +1,3 @@
-import logging
-
 from typing import Callable, Awaitable
 
 from grpc.aio import ServerInterceptor

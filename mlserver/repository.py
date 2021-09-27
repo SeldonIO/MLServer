@@ -49,7 +49,8 @@ class ModelRepository:
             if model_settings.name != default_model_name:
                 # Raise warning if name is different than folder's name
                 logger.warning(
-                    f"Model name '{model_settings.name}' is different than model's folder name '{default_model_name}'."
+                    f"Model name '{model_settings.name}' is different than "
+                    f"model's folder name '{default_model_name}'."
                 )
         else:
             model_settings.name = default_model_name
