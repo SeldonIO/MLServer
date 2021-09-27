@@ -5,6 +5,7 @@ from typing import List
 
 from .settings import ModelParameters, ModelSettings
 from .errors import ModelNotFound
+from .logging import logger
 
 DEFAULT_MODEL_SETTINGS_FILENAME = "model-settings.json"
 
@@ -42,10 +43,15 @@ class ModelRepository:
     def _load_model_settings(self, model_settings_path: str) -> ModelSettings:
         model_settings = ModelSettings.parse_file(model_settings_path)
 
-        # TODO: Raise warning if name is different than folder's name
-        if not model_settings.name:
-            # If name not present, default to folder name
-            default_model_name = os.path.basename(os.path.dirname(model_settings_path))
+        # If name not present, default to folder name
+        default_model_name = os.path.basename(os.path.dirname(model_settings_path))
+        if model_settings.name:
+            if model_settings.name != default_model_name:
+                # Raise warning if name is different than folder's name
+                logger.warning(
+                    f"Model name '{model_settings.name}' is different than model's folder name '{default_model_name}'."
+                )
+        else:
             model_settings.name = default_model_name
 
         if not model_settings.parameters:

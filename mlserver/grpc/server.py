@@ -9,6 +9,7 @@ from .servicers import InferenceServicer, ModelRepositoryServicer
 from .dataplane_pb2_grpc import add_GRPCInferenceServiceServicer_to_server
 from .model_repository_pb2_grpc import add_ModelRepositoryServiceServicer_to_server
 from .interceptors import LoggingInterceptor
+from .logging import logger
 
 # Workers used for non-AsyncIO workloads (which aren't any in our case)
 DefaultGrpcWorkers = 5
@@ -68,6 +69,10 @@ class GRPCServer:
         self._create_server()
 
         await self._server.start()
+
+        logger.info(
+            f"gRPC server running on http://{self._settings.host}:{self._settings.grpc_port}"
+        )
         await self._server.wait_for_termination()
 
     async def stop(self):

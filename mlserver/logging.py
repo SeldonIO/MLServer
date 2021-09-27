@@ -6,7 +6,7 @@ from logging import Formatter, StreamHandler
 from .settings import Settings
 
 LoggerName = "mlserver"
-LoggerFormat = "%(asctime)s %(levelprefix)s %(message)s"
+LoggerFormat = "%(asctime)s [%(name)s] %(levelname)s - %(message)s"
 
 logger = logging.getLogger(LoggerName)
 
@@ -19,7 +19,7 @@ def configure_logger(settings: Settings):
     logger = get_logger()
 
     stream_handler = StreamHandler(sys.stdout)
-    formatter = Formatter("%(asctime)s [%(name)s] %(levelname)s %(message)s")
+    formatter = Formatter(LoggerFormat)
     stream_handler.setFormatter(formatter)
 
     logger.addHandler(stream_handler)
