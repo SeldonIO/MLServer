@@ -18,7 +18,6 @@ async def test_integrated_gradients(integrated_gradients_runtime: IntegratedGrad
     inference_request = InferenceRequest(
         parameters=Parameters(
             content_type=NumpyCodec.ContentType,
-            # TODO: we probably want to have a pydantic model for these settings per explainer?
             explain_parameters={
                 "baselines": None,
             }
@@ -42,7 +41,6 @@ async def test_anchors(anchor_image_runtime: AnchorImageWrapper):
     inference_request = InferenceRequest(
         parameters=Parameters(
             content_type=NumpyCodec.ContentType,
-            # TODO: we probably want to have a pydantic model for these settings per explainer?
             explain_parameters={
                 "threshold": 0.95,
                 "p_sample": 0.5,
@@ -61,17 +59,6 @@ async def test_anchors(anchor_image_runtime: AnchorImageWrapper):
     # TODO: this is really explain
     response = await anchor_image_runtime.predict(inference_request)
     print(convert_from_bytes(response.outputs[0], ty=str))
-
-    # request_mock = MagicMock(Request)
-    #
-    # async def dummy_request_body():
-    #     msg = b'{"x": 2}'
-    #     return msg
-    #
-    # request_mock.body = dummy_request_body
-    #
-    # explain_response = await runtime.explain(request_mock)
-    # print(explain_response)
 
 
 def test_remote_predict__smoke():

@@ -61,6 +61,7 @@ async def integrated_gradients_runtime() -> IntegratedGradientsWrapper:
                     # TODO: do we really need this if we have a wrapper per explainer?
                     explainer_type="anchor_image",
                     # TODO: find a way to get the url in test
+                    infer_uri="./data/tf_mnist_ig/model.h5"
                 )
             )
         )
