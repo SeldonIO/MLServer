@@ -1,4 +1,3 @@
-from importlib import import_module
 from typing import Any, Optional
 
 from alibi.api.interfaces import Explanation
@@ -8,8 +7,9 @@ from mlserver.codecs import NumpyCodec, InputCodec
 from mlserver.model import MLModel
 from mlserver.settings import ModelSettings
 from mlserver.types import InferenceRequest, InferenceResponse, RequestInput, MetadataModelResponse
-from mlserver_alibi_explain.common import create_v2_from_any, execute_async, AlibiExplainSettings, get_mlmodel_class_as_str, \
-    get_alibi_class_as_str
+from mlserver_alibi_explain.common import create_v2_from_any, execute_async, AlibiExplainSettings, \
+    get_mlmodel_class_as_str, \
+    get_alibi_class_as_str, import_and_get_class
 
 
 class AlibiExplainRuntimeBase(MLModel):
@@ -61,16 +61,11 @@ class AlibiExplainRuntime(MLModel):
     def __init__(self, settings: ModelSettings):
         explainer_type = settings.parameters.extra['explainer_type']
 
-        rt_class = self._import_and_get_class(get_mlmodel_class_as_str(explainer_type))
+        rt_class = import_and_get_class(get_mlmodel_class_as_str(explainer_type))
 
-        alibi_class = self._import_and_get_class(get_alibi_class_as_str(explainer_type))
+        alibi_class = import_and_get_class(get_alibi_class_as_str(explainer_type))
 
         self._rt = rt_class(settings, alibi_class)
-
-    def _import_and_get_class(self, class_path: str) -> type:
-        last_dot = class_path.rfind(".")
-        klass = getattr(import_module(class_path[:last_dot]), class_path[last_dot + 1:])
-        return klass
 
     @property
     def name(self) -> str:

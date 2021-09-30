@@ -1,6 +1,7 @@
 import asyncio
 from asyncio import AbstractEventLoop
 from enum import Enum
+from importlib import import_module
 from typing import Any, Dict, Optional, Type, Callable, Awaitable
 
 import requests
@@ -85,3 +86,9 @@ class AlibiExplainSettings(BaseSettings):
     init_explainer: bool
     explainer_type: ExplainerEnum
     init_parameters: Optional[dict]
+
+
+def import_and_get_class(class_path: str) -> type:
+    last_dot = class_path.rfind(".")
+    klass = getattr(import_module(class_path[:last_dot]), class_path[last_dot + 1:])
+    return klass

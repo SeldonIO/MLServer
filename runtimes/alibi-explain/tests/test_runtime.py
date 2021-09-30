@@ -1,20 +1,14 @@
-import base64
-from unittest.mock import MagicMock
-
 import numpy as np
-
-from fastapi import Request
 
 from mlserver.codecs import NumpyCodec
 from mlserver.types import InferenceRequest, Parameters, RequestInput
-from mlserver_alibi_explain import AnchorImageWrapper
 from mlserver_alibi_explain.common import convert_from_bytes, remote_predict
 from mlserver_alibi_explain.explainers.integrated_gradients import IntegratedGradientsWrapper
 from mlserver_alibi_explain.runtime import AlibiExplainRuntime
 
 
 async def test_integrated_gradients(integrated_gradients_runtime: IntegratedGradientsWrapper):
-    # TODO: there is an inherit batch
+    # TODO: there is an inherit batch as first dimension
     data = np.random.randn(10, 28, 28, 1) * 255
     inference_request = InferenceRequest(
         parameters=Parameters(
@@ -32,7 +26,6 @@ async def test_integrated_gradients(integrated_gradients_runtime: IntegratedGrad
             )
         ],
     )
-    # TODO: this is really explain
     response = await integrated_gradients_runtime.predict(inference_request)
     print(convert_from_bytes(response.outputs[0], ty=str))
 
@@ -57,7 +50,6 @@ async def test_anchors(anchor_image_runtime: AlibiExplainRuntime):
             )
         ],
     )
-    # TODO: this is really explain
     response = await anchor_image_runtime.predict(inference_request)
     print(convert_from_bytes(response.outputs[0], ty=str))
 
