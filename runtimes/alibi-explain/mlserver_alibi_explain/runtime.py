@@ -1,24 +1,18 @@
-import abc
-import asyncio
-import json
-from typing import Any, Union, List
-import numpy as np
+from importlib import import_module
+from typing import Any, Optional
 
-import orjson
 from alibi.api.interfaces import Explanation
-from fastapi import Request, Response
 from pydantic import BaseSettings
 
-from mlserver.codecs import NumpyCodec
-from mlserver.errors import InferenceError
-from mlserver.handlers import custom_handler
+from mlserver.codecs import NumpyCodec, InputCodec
 from mlserver.model import MLModel
 from mlserver.settings import ModelSettings
-from mlserver.types import InferenceRequest, InferenceResponse, Parameters, RequestInput
-from mlserver_alibi_explain.common import create_v2_from_any, execute_async, remote_predict, AlibiExplainSettings
+from mlserver.types import InferenceRequest, InferenceResponse, RequestInput, MetadataModelResponse
+from mlserver_alibi_explain.common import create_v2_from_any, execute_async, AlibiExplainSettings, get_mlmodel_class_as_str, \
+    get_alibi_class_as_str
 
 
-class AlibiExplainRuntimeBase(abc.ABC, MLModel):
+class AlibiExplainRuntimeBase(MLModel):
     """
     Base class for Alibi-Explain models
     """
@@ -46,45 +40,6 @@ class AlibiExplainRuntimeBase(abc.ABC, MLModel):
             outputs=[output_data],
         )
 
-    def _infer_impl(self, input_data: Union[np.ndarray, List]) -> np.ndarray:
-        # TODO: >
-        # subclasses would probably have to implement this
-        # for now we only support v2 protocol
-        # maybe also get the model metadata and confirm / reshape types?
-        # should mlflow codec do that?
-        np_codec = NumpyCodec()
-
-        # TODO: get it from codec? which explainer sends a list?
-        if isinstance(input_data, list):
-            input_data = np.array(input_data)
-
-        # TODO: fixme as the reshape is required for mnist models
-        num_samples = input_data.shape[0]
-        input_data = input_data.reshape((num_samples, 1, -1))
-
-        v2_request = InferenceRequest(
-            parameters=Parameters(content_type=NumpyCodec.ContentType),
-            inputs=[
-                RequestInput(
-                    name="predict",
-                    shape=input_data.shape,
-                    data=input_data.tolist(),  # we convert list above to np!
-                    datatype="FP32",  # TODO: fixme as it will not work for anything!
-                )
-            ],
-        )
-
-        # TODO add some exception handling here
-        v2_response = remote_predict(
-            v2_payload=v2_request,
-            predictor_url=self.alibi_explain_settings.infer_uri)
-
-        return np_codec.decode(v2_response.outputs[0])  # type: ignore # TODO: fix mypy and first output
-
-    @abc.abstractmethod
-    def _explain_impl(self, input_data: Any, settings: BaseSettings) -> Explanation:
-        """Actual explain to be implemented by subclasses?"""
-
     async def _async_explain_impl(self, input_data: Any, settings: BaseSettings) -> dict:
         """run async"""
         explanation = await execute_async(
@@ -94,5 +49,58 @@ class AlibiExplainRuntimeBase(abc.ABC, MLModel):
             settings=settings
         )
         return create_v2_from_any(explanation.to_json(), name="explain")
+
+    def _explain_impl(self, input_data: Any, settings: BaseSettings) -> Explanation:
+        """Actual explain to be implemented by subclasses"""
+        raise NotImplementedError("_explain_impl() method not implemented")
+
+
+class AlibiExplainRuntime(MLModel):
+    """Wrapper / Factory Class for specific alibi explain runtimes"""
+
+    def __init__(self, settings: ModelSettings):
+        explainer_type = settings.parameters.extra['explainer_type']
+
+        rt_class = self._import_and_get_class(get_mlmodel_class_as_str(explainer_type))
+
+        alibi_class = self._import_and_get_class(get_alibi_class_as_str(explainer_type))
+
+        self._rt = rt_class(settings, alibi_class)
+
+    def _import_and_get_class(self, class_path: str) -> type:
+        last_dot = class_path.rfind(".")
+        klass = getattr(import_module(class_path[:last_dot]), class_path[last_dot + 1:])
+        return klass
+
+    @property
+    def name(self) -> str:
+        return self._rt._settings.name
+
+    @property
+    def version(self) -> Optional[str]:
+        return self._rt._settings.parameters
+
+    @property
+    def settings(self) -> ModelSettings:
+        return self._rt._settings
+
+    def decode(
+            self, request_input: RequestInput, default_codec: Optional[InputCodec] = None
+    ) -> Any:
+        return self._rt.decode(request_input, default_codec)
+
+    def decode_request(self, inference_request: InferenceRequest) -> Any:
+        return self._rt.decode_request(inference_request)
+
+    async def metadata(self) -> MetadataModelResponse:
+        return self._rt.metadata
+
+    async def load(self) -> bool:
+        return await self._rt.load()
+
+    async def predict(self, payload: InferenceRequest) -> InferenceResponse:
+        return await self._rt.predict(payload)
+
+
 
 

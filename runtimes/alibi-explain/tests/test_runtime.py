@@ -10,6 +10,7 @@ from mlserver.types import InferenceRequest, Parameters, RequestInput
 from mlserver_alibi_explain import AnchorImageWrapper
 from mlserver_alibi_explain.common import convert_from_bytes, remote_predict
 from mlserver_alibi_explain.explainers.integrated_gradients import IntegratedGradientsWrapper
+from mlserver_alibi_explain.runtime import AlibiExplainRuntime
 
 
 async def test_integrated_gradients(integrated_gradients_runtime: IntegratedGradientsWrapper):
@@ -36,7 +37,7 @@ async def test_integrated_gradients(integrated_gradients_runtime: IntegratedGrad
     print(convert_from_bytes(response.outputs[0], ty=str))
 
 
-async def test_anchors(anchor_image_runtime: AnchorImageWrapper):
+async def test_anchors(anchor_image_runtime: AlibiExplainRuntime):
     data = np.random.randn(28, 28, 1) * 255
     inference_request = InferenceRequest(
         parameters=Parameters(

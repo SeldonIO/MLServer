@@ -2,10 +2,10 @@ import os
 
 import pytest
 
-from mlserver_alibi_explain.explainers.anchor_image import AnchorImageWrapper
 from mlserver_alibi_explain.common import AlibiExplainSettings
 from mlserver.settings import ModelSettings, ModelParameters
 from mlserver_alibi_explain.explainers.integrated_gradients import IntegratedGradientsWrapper
+from mlserver_alibi_explain.runtime import AlibiExplainRuntime
 
 TESTS_PATH = os.path.dirname(__file__)
 
@@ -20,8 +20,8 @@ def pytest_collection_modifyitems(items):
 
 
 @pytest.fixture
-async def anchor_image_runtime() -> AnchorImageWrapper:
-    rt = AnchorImageWrapper(
+async def anchor_image_runtime() -> AlibiExplainRuntime:
+    rt = AlibiExplainRuntime(
         ModelSettings(
             parameters=ModelParameters(
                 # uri="./data/mnist_anchor_image",
@@ -33,7 +33,6 @@ async def anchor_image_runtime() -> AnchorImageWrapper:
                         "image_shape": (28, 28, 1),
                         "images_background": None
                     },
-                    # TODO: do we really need this if we have a wrapper per explainer?
                     explainer_type="anchor_image",
                     # TODO: find a way to get the url in test
                     infer_uri="http://localhost:42315/v2/models/test-pytorch-mnist/infer"
@@ -58,7 +57,6 @@ async def integrated_gradients_runtime() -> IntegratedGradientsWrapper:
                         "n_steps": 50,
                         "method": "gausslegendre"
                     },
-                    # TODO: do we really need this if we have a wrapper per explainer?
                     explainer_type="anchor_image",
                     # TODO: find a way to get the url in test
                     infer_uri="./data/tf_mnist_ig/model.h5"
