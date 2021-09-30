@@ -3,11 +3,10 @@ import numpy as np
 from mlserver.codecs import NumpyCodec
 from mlserver.types import InferenceRequest, Parameters, RequestInput
 from mlserver_alibi_explain.common import convert_from_bytes, remote_predict
-from mlserver_alibi_explain.explainers.integrated_gradients import IntegratedGradientsWrapper
 from mlserver_alibi_explain.runtime import AlibiExplainRuntime
 
 
-async def test_integrated_gradients(integrated_gradients_runtime: IntegratedGradientsWrapper):
+async def test_integrated_gradients(integrated_gradients_runtime: AlibiExplainRuntime):
     # TODO: there is an inherit batch as first dimension
     data = np.random.randn(10, 28, 28, 1) * 255
     inference_request = InferenceRequest(

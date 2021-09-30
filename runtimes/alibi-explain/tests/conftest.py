@@ -2,9 +2,8 @@ import os
 
 import pytest
 
-from mlserver_alibi_explain.common import AlibiExplainSettings
 from mlserver.settings import ModelSettings, ModelParameters
-from mlserver_alibi_explain.explainers.integrated_gradients import IntegratedGradientsWrapper
+from mlserver_alibi_explain.common import AlibiExplainSettings
 from mlserver_alibi_explain.runtime import AlibiExplainRuntime
 
 TESTS_PATH = os.path.dirname(__file__)
@@ -46,8 +45,8 @@ async def anchor_image_runtime() -> AlibiExplainRuntime:
 
 
 @pytest.fixture
-async def integrated_gradients_runtime() -> IntegratedGradientsWrapper:
-    rt = IntegratedGradientsWrapper(
+async def integrated_gradients_runtime() -> AlibiExplainRuntime:
+    rt = AlibiExplainRuntime(
         ModelSettings(
             parameters=ModelParameters(
                 # uri="./data/mnist_anchor_image",
@@ -57,7 +56,7 @@ async def integrated_gradients_runtime() -> IntegratedGradientsWrapper:
                         "n_steps": 50,
                         "method": "gausslegendre"
                     },
-                    explainer_type="anchor_image",
+                    explainer_type="integrated_gradients",
                     # TODO: find a way to get the url in test
                     infer_uri="./data/tf_mnist_ig/model.h5"
                 )
