@@ -22,10 +22,10 @@ def pytest_collection_modifyitems(items):
 async def anchor_image_runtime() -> AlibiExplainRuntime:
     rt = AlibiExplainRuntime(
         ModelSettings(
+            parallel_workers=1,
             parameters=ModelParameters(
                 # uri="./data/mnist_anchor_image",
                 extra=AlibiExplainSettings(
-                    init_explainer=True,
                     init_parameters={
                         "segmentation_fn": "slic",
                         "segmentation_kwargs": {"n_segments": 15, "compactness": 20, "sigma": .5},
@@ -48,16 +48,15 @@ async def anchor_image_runtime() -> AlibiExplainRuntime:
 async def integrated_gradients_runtime() -> AlibiExplainRuntime:
     rt = AlibiExplainRuntime(
         ModelSettings(
+            parallel_workers=1,
             parameters=ModelParameters(
                 # uri="./data/mnist_anchor_image",
                 extra=AlibiExplainSettings(
-                    init_explainer=True,
                     init_parameters={
                         "n_steps": 50,
                         "method": "gausslegendre"
                     },
                     explainer_type="integrated_gradients",
-                    # TODO: find a way to get the url in test
                     infer_uri="./data/tf_mnist_ig/model.h5"
                 )
             )

@@ -1,4 +1,8 @@
+import asyncio
+from multiprocessing import Process
+
 import numpy as np
+import requests
 
 from mlserver.codecs import NumpyCodec
 from mlserver.types import InferenceRequest, Parameters, RequestInput
@@ -49,8 +53,11 @@ async def test_anchors(anchor_image_runtime: AlibiExplainRuntime):
             )
         ],
     )
-    response = await anchor_image_runtime.predict(inference_request)
-    print(convert_from_bytes(response.outputs[0], ty=str))
+    # response = await anchor_image_runtime.predict(inference_request)
+    # print(convert_from_bytes(response.outputs[0], ty=str))
+    res = await asyncio.gather(
+        *(anchor_image_runtime.predict(inference_request) for i in range(10))
+    )
 
 
 def test_remote_predict__smoke():
@@ -68,5 +75,41 @@ def test_remote_predict__smoke():
     )
     response = remote_predict(
         inference_request,
-        predictor_url="http://localhost:36307/v2/models/test-pytorch-mnist/infer")
+        predictor_url="http://localhost:42315/v2/models/test-pytorch-mnist/infer")
     print(response)
+
+
+def test_remote_explain__smoke():
+    data = np.random.randn(28, 28, 1) * 255
+    inference_request = InferenceRequest(
+        parameters=Parameters(
+            content_type=NumpyCodec.ContentType,
+            explain_parameters={
+                "threshold": 0.95,
+                "p_sample": 0.5,
+                "tau": 0.25,
+            }
+        ),
+        inputs=[
+            RequestInput(
+                name="predict",
+                shape=data.shape,
+                data=data.tolist(),
+                datatype="FP32",
+            )
+        ],
+    )
+    inference_request_dict = inference_request.dict()
+
+    def _req():
+        predictor_url = "http://localhost:8080/v2/models/anchor-image-explain-model/infer"
+        response_raw = requests.post(predictor_url, json=inference_request_dict)
+
+    ps = []
+    for i in range(5):
+        p = Process(target=_req)
+        p.start()
+        ps.append(p)
+
+    for p in ps:
+        p.join()

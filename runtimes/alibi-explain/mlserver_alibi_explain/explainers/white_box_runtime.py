@@ -25,7 +25,7 @@ class AlibiExplainWhiteBoxRuntime(AlibiExplainRuntimeBase):
     async def load(self) -> bool:
         self._inference_model = await self._get_inference_model()
 
-        if self.settings.parameters.uri is None:
+        if self.settings.parameters.uri is None or self.settings.parameters.uri == ".":
             init_parameters = self.alibi_explain_settings.init_parameters
             # white box explainers requires access to the inference model
             init_parameters["model"] = self._inference_model

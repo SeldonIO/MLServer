@@ -48,6 +48,7 @@ class AlibiExplainRuntimeBase(MLModel):
             input_data=input_data,
             settings=settings
         )
+        # explanation = self._explain_impl(input_data, settings)
         return create_v2_from_any(explanation.to_json(), name="explain")
 
     def _explain_impl(self, input_data: Any, settings: BaseSettings) -> Explanation:
@@ -56,10 +57,15 @@ class AlibiExplainRuntimeBase(MLModel):
 
 
 class AlibiExplainRuntime(MLModel):
-    """Wrapper / Factory Class for specific alibi explain runtimes"""
+    """Wrapper / Factory class for specific alibi explain runtimes"""
+
+    # TODO: test this wrapper
 
     def __init__(self, settings: ModelSettings):
-        explainer_type = settings.parameters.extra['explainer_type']
+        # TODO: we probably want to validate the enum more sanily here
+        # we do not want to construct a specific alibi settings here because it might be dependent on type
+        # although at the moment we only have one `AlibiExplainSettings`
+        explainer_type = settings.parameters.extra["explainer_type"]
 
         rt_class = import_and_get_class(get_mlmodel_class_as_str(explainer_type))
 
@@ -69,15 +75,15 @@ class AlibiExplainRuntime(MLModel):
 
     @property
     def name(self) -> str:
-        return self._rt._settings.name
+        return self._rt.name
 
     @property
     def version(self) -> Optional[str]:
-        return self._rt._settings.parameters
+        return self._rt.version
 
     @property
     def settings(self) -> ModelSettings:
-        return self._rt._settings
+        return self._rt.settings
 
     def decode(
             self, request_input: RequestInput, default_codec: Optional[InputCodec] = None

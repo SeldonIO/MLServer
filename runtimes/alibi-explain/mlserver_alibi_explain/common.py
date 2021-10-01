@@ -2,14 +2,15 @@ import asyncio
 from asyncio import AbstractEventLoop
 from enum import Enum
 from importlib import import_module
-from typing import Any, Dict, Optional, Type, Callable, Awaitable
+from time import sleep
+from typing import Any, Dict, Optional, Type, Callable, Awaitable, Union
 
 import requests
 from pydantic import BaseSettings
 
 from mlserver.types import ResponseOutput, InferenceResponse, InferenceRequest
 
-_ANCHOR_IMAGE_TAG = 'anchor_image'
+_ANCHOR_IMAGE_TAG = "anchor_image"
 _ANCHOR_TEXT_TAG = "anchor_text"
 _INTEGRATED_GRADIENTS_TAG = "integrated_gradients"
 
@@ -31,6 +32,7 @@ ENV_PREFIX_ALIBI_EXPLAIN_SETTINGS = "MLSERVER_MODEL_ALIBI_EXPLAIN_"
 
 class ExplainerEnum(str, Enum):
     anchor_image = _ANCHOR_IMAGE_TAG
+    anchor_text = _ANCHOR_TEXT_TAG
     integrated_gradients = _INTEGRATED_GRADIENTS_TAG
 
 
@@ -58,6 +60,7 @@ def convert_from_bytes(output: ResponseOutput, ty: Optional[Type]) -> Any:
 
 
 def remote_predict(v2_payload: InferenceRequest, predictor_url: str) -> InferenceResponse:
+    sleep(5)
     response_raw = requests.post(predictor_url, json=v2_payload.dict())
     if response_raw.status_code != 200:
         # TODO: add proper error handling
@@ -73,12 +76,16 @@ def execute_async(
     return loop.run_in_executor(None, fn, input_data, settings)
 
 
-def get_mlmodel_class_as_str(tag: ExplainerEnum) -> str:
-    return _TAG_TO_RT_IMPL[tag.value][0]
+def get_mlmodel_class_as_str(tag: Union[ExplainerEnum, str]) -> str:
+    if isinstance(tag, ExplainerEnum):
+        tag = tag.value
+    return _TAG_TO_RT_IMPL[tag][0]
 
 
-def get_alibi_class_as_str(tag: ExplainerEnum) -> str:
-    return _TAG_TO_RT_IMPL[tag.value][1]
+def get_alibi_class_as_str(tag: Union[ExplainerEnum, str]) -> str:
+    if isinstance(tag, ExplainerEnum):
+        tag = tag.value
+    return _TAG_TO_RT_IMPL[tag][1]
 
 
 class AlibiExplainSettings(BaseSettings):
@@ -90,7 +97,7 @@ class AlibiExplainSettings(BaseSettings):
         env_prefix = ENV_PREFIX_ALIBI_EXPLAIN_SETTINGS
 
     infer_uri: Optional[str]
-    explainer_type: ExplainerEnum
+    explainer_type: str
     init_parameters: Optional[dict]
 
 

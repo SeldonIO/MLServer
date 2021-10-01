@@ -25,7 +25,8 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
         super().__init__(settings, explainer_settings)
 
     async def load(self) -> bool:
-        if self.settings.parameters.uri is None:
+        # TODO: use init explainer field instead
+        if self.settings.parameters.uri is None or self.settings.parameters.uri == ".":
             init_parameters = self.alibi_explain_settings.init_parameters
             init_parameters["predictor"] = self._infer_impl
             self._model = self._explainer_class(**init_parameters)  # type: ignore
