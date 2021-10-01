@@ -22,7 +22,7 @@ _buildWheel() {
   cd $_srcPath
   python setup.py \
     sdist -d $_outputPath \
-    bdist_wheel -d $_outputPath >/dev/null
+    bdist_wheel -d $_outputPath
   cd $_currentDir
 }
 
