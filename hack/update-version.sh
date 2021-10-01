@@ -28,14 +28,6 @@ _updateDocs() {
     "$ROOT_FOLDER/docs/conf.py"
 }
 
-_updateDockerfile() {
-  local _newVersion=$1
-
-  sed \
-    -i "s/^ARG VERSION \"\(.*\)\"$/ARG VERSION \"$_newVersion\"/" \
-    "$ROOT_FOLDER/Dockerfile"
-}
-
 _main() {
   local _newVersion=$1
 
@@ -51,7 +43,6 @@ _main() {
     -exec bash -c "_updateVersion $_newVersion {}" \;
 
   _updateDocs $_newVersion
-  _updateDockerfile $_newVersion
 }
 
 _main $1

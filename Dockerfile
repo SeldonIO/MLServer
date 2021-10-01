@@ -16,6 +16,8 @@ RUN ./hack/build-wheels.sh /opt/mlserver/dist
 FROM python:3.8-slim
 SHELL ["/bin/bash", "-c"]
 
+ARG RUNTIMES="all"
+
 ENV MLSERVER_MODELS_DIR=/mnt/models \
     MLSERVER_ENV_TARBALL=/mnt/models/environment.tar.gz \
     PATH=/opt/mlserver/.local/bin:$PATH
@@ -38,7 +40,15 @@ USER 1000
 
 COPY --from=wheel-builder /opt/mlserver/dist ./dist 
 RUN pip install --upgrade pip wheel setuptools && \
-    pip install ./dist/*.whl
+    if [[ $RUNTIMES == "all" ]]; then \
+        pip install ./dist/*.whl; \
+    else \
+        pip install "./dist/mlserver-*.whl"; \
+        for _runtime in $RUNTIMES; do \
+            _wheelName=$(echo $_runtime | tr '-' '_'); \
+            pip install "./dist/$_wheelName-*.whl"; \
+        done \
+    fi
 
 COPY requirements/docker.txt requirements/docker.txt
 RUN pip install -r requirements/docker.txt
