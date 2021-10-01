@@ -27,7 +27,7 @@ run:
 		./tests/testdata
 
 build: clean 
-	docker build . -t ${IMAGE_NAME}:${VERSION}
+	./hack/build-images.sh ${VERSION}
 	./hack/build-wheels.sh ./dist
 
 clean:
