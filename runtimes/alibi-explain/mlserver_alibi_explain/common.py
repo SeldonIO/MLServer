@@ -10,13 +10,16 @@ from pydantic import BaseSettings
 from mlserver.types import ResponseOutput, InferenceResponse, InferenceRequest
 
 _ANCHOR_IMAGE_TAG = 'anchor_image'
+_ANCHOR_TEXT_TAG = "anchor_text"
 _INTEGRATED_GRADIENTS_TAG = "integrated_gradients"
 
 _TAG_TO_RT_IMPL = {
-    # TODO: add a test to make sure these represent real classes
     _ANCHOR_IMAGE_TAG:
         ("mlserver_alibi_explain.explainers.black_box_runtime.AlibiExplainBlackBoxRuntime",
          "alibi.explainers.AnchorImage"),
+    _ANCHOR_TEXT_TAG:
+        ("mlserver_alibi_explain.explainers.black_box_runtime.AlibiExplainBlackBoxRuntime",
+         "alibi.explainers.AnchorText"),
     _INTEGRATED_GRADIENTS_TAG: (
         "mlserver_alibi_explain.explainers.integrated_gradients.IntegratedGradientsWrapper",
         "alibi.explainers.IntegratedGradients")
@@ -86,9 +89,7 @@ class AlibiExplainSettings(BaseSettings):
     class Config:
         env_prefix = ENV_PREFIX_ALIBI_EXPLAIN_SETTINGS
 
-    # TODO add black box settings?
     infer_uri: Optional[str]
-    init_explainer: bool
     explainer_type: ExplainerEnum
     init_parameters: Optional[dict]
 

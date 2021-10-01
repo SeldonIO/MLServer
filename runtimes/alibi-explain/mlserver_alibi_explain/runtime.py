@@ -52,7 +52,7 @@ class AlibiExplainRuntimeBase(MLModel):
 
     def _explain_impl(self, input_data: Any, settings: BaseSettings) -> Explanation:
         """Actual explain to be implemented by subclasses"""
-        raise NotImplementedError()
+        raise NotImplementedError
 
 
 class AlibiExplainRuntime(MLModel):
