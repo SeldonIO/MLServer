@@ -15,13 +15,25 @@ _updateVersion() {
   local _newVersion=$1
   local _versionPy=$2
 
-  sed -i "s/^__version__ = \"\(.*\)\"$/__version__ = \"$_newVersion\"/" "$_versionPy"
+  sed \
+    -i "s/^__version__ = \"\(.*\)\"$/__version__ = \"$_newVersion\"/" \
+    "$_versionPy"
 }
 
 _updateDocs() {
   local _newVersion=$1
 
-  sed -i "s/^release = \"\(.*\)\"$/release = \"$_newVersion\"/" $ROOT_FOLDER/docs/conf.py
+  sed \
+    -i "s/^release = \"\(.*\)\"$/release = \"$_newVersion\"/" \
+    "$ROOT_FOLDER/docs/conf.py"
+}
+
+_updateDockerfile() {
+  local _newVersion=$1
+
+  sed \
+    -i "s/^ARG VERSION \"\(.*\)\"$/ARG VERSION \"$_newVersion\"/" \
+    "$ROOT_FOLDER/Dockerfile"
 }
 
 _main() {
@@ -39,6 +51,7 @@ _main() {
     -exec bash -c "_updateVersion $_newVersion {}" \;
 
   _updateDocs $_newVersion
+  _updateDockerfile $_newVersion
 }
 
 _main $1
