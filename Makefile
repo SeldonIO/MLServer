@@ -43,6 +43,12 @@ push-test:
 
 push:
 	docker push ${IMAGE_NAME}:${VERSION}
+	docker push ${IMAGE_NAME}:${VERSION}-slim
+	for _runtime in ./runtimes/*; \
+	do \
+	  _runtimeName=$$(basename $$_runtime); \
+		docker push ${IMAGE_NAME}:${VERSION}-$$_runtimeName; \
+	done
 	twine upload dist/*
 
 test:
