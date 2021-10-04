@@ -6,5 +6,5 @@ dependencies:
   - joblib == 0.13.0
   - requests
   - pip:
-        - mlserver == 0.3.0.dev1
-        - mlserver-sklearn ==0.3.0.dev1
+        - mlserver == 0.6.0.dev0
+        - mlserver-sklearn ==0.6.0.dev0
