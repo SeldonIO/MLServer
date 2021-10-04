@@ -24,14 +24,8 @@ async def anchor_image_runtime() -> AlibiExplainRuntime:
         ModelSettings(
             parallel_workers=1,
             parameters=ModelParameters(
-                # uri="./data/mnist_anchor_image",
+                uri="./data/mnist_anchor_image",
                 extra=AlibiExplainSettings(
-                    init_parameters={
-                        "segmentation_fn": "slic",
-                        "segmentation_kwargs": {"n_segments": 15, "compactness": 20, "sigma": .5},
-                        "image_shape": (28, 28, 1),
-                        "images_background": None
-                    },
                     explainer_type="anchor_image",
                     # TODO: find a way to get the url in test
                     infer_uri="http://localhost:42315/v2/models/test-pytorch-mnist/infer"

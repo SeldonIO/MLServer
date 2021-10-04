@@ -53,14 +53,11 @@ async def test_anchors(anchor_image_runtime: AlibiExplainRuntime):
             )
         ],
     )
-    # response = await anchor_image_runtime.predict(inference_request)
-    # print(convert_from_bytes(response.outputs[0], ty=str))
-    res = await asyncio.gather(
-        *(anchor_image_runtime.predict(inference_request) for i in range(10))
-    )
+    response = await anchor_image_runtime.predict(inference_request)
+    _ = convert_from_bytes(response.outputs[0], ty=str)
 
 
-def test_remote_predict__smoke():
+def test_remote_predict__smoke(runtime_pytorch):
     data = np.random.randn(1, 28 * 28) * 255
     inference_request = InferenceRequest(
         parameters=Parameters(content_type=NumpyCodec.ContentType),

@@ -1,4 +1,6 @@
 import asyncio
+import contextvars
+import functools
 from asyncio import AbstractEventLoop
 from enum import Enum
 from importlib import import_module
@@ -60,7 +62,6 @@ def convert_from_bytes(output: ResponseOutput, ty: Optional[Type]) -> Any:
 
 
 def remote_predict(v2_payload: InferenceRequest, predictor_url: str) -> InferenceResponse:
-    sleep(5)
     response_raw = requests.post(predictor_url, json=v2_payload.dict())
     if response_raw.status_code != 200:
         # TODO: add proper error handling
@@ -68,12 +69,15 @@ def remote_predict(v2_payload: InferenceRequest, predictor_url: str) -> Inferenc
     return InferenceResponse.parse_raw(response_raw.text)
 
 
+# TODO: this is very similar to `asyncio.to_thread` (python 3.9+), so lets use it at some point.
 def execute_async(
-        loop: Optional[AbstractEventLoop], fn: Callable, input_data: Any, settings: BaseSettings
+        loop: Optional[AbstractEventLoop], fn: Callable, *args, **kwargs
 ) -> Awaitable:
     if loop is None:
-        loop = asyncio.get_event_loop()
-    return loop.run_in_executor(None, fn, input_data, settings)
+        loop = asyncio.get_running_loop()
+    ctx = contextvars.copy_context()
+    func_call = functools.partial(ctx.run, fn, *args, **kwargs)
+    return loop.run_in_executor(None, func_call)
 
 
 def get_mlmodel_class_as_str(tag: Union[ExplainerEnum, str]) -> str:

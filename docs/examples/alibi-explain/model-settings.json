@@ -1,0 +1,14 @@
+{
+  "name": "anchor-image-explain-model",
+  "implementation": "mlserver_alibi_explain.AlibiExplainRuntime",
+  "parallel_workers": 0,
+  "parameters": {
+    "uri": "./data/mnist_anchor_image",
+    "version": "v0.1.0",
+    "extra": {
+      "explainer_type": "anchor_image",
+      "infer_uri": "http://localhost:42315/v2/models/test-pytorch-mnist/infer"
+    }
+  }
+}
+

@@ -1,3 +1,4 @@
+import random
 from typing import Any, Optional
 
 from alibi.api.interfaces import Explanation
@@ -48,7 +49,6 @@ class AlibiExplainRuntimeBase(MLModel):
             input_data=input_data,
             settings=settings
         )
-        # explanation = self._explain_impl(input_data, settings)
         return create_v2_from_any(explanation.to_json(), name="explain")
 
     def _explain_impl(self, input_data: Any, settings: BaseSettings) -> Explanation:
