@@ -1,5 +1,5 @@
 # Code generation
-grpcio-tools==1.40.0
+grpcio-tools==1.41.0
 datamodel-code-generator==0.11.13
 
 # Testing
