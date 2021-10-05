@@ -1,8 +1,6 @@
-import asyncio
-from multiprocessing import Process
+from unittest.mock import patch
 
 import numpy as np
-import requests
 
 from mlserver.codecs import NumpyCodec
 from mlserver.types import InferenceRequest, Parameters, RequestInput
@@ -10,7 +8,7 @@ from mlserver_alibi_explain.common import convert_from_bytes, remote_predict
 from mlserver_alibi_explain.runtime import AlibiExplainRuntime
 
 
-async def test_integrated_gradients(integrated_gradients_runtime: AlibiExplainRuntime):
+async def test_integrated_gradients__smoke(integrated_gradients_runtime: AlibiExplainRuntime):
     # TODO: there is an inherit batch as first dimension
     data = np.random.randn(10, 28, 28, 1) * 255
     inference_request = InferenceRequest(
@@ -30,10 +28,10 @@ async def test_integrated_gradients(integrated_gradients_runtime: AlibiExplainRu
         ],
     )
     response = await integrated_gradients_runtime.predict(inference_request)
-    print(convert_from_bytes(response.outputs[0], ty=str))
+    _ = convert_from_bytes(response.outputs[0], ty=str)
 
 
-async def test_anchors(anchor_image_runtime: AlibiExplainRuntime):
+async def test_anchors__smoke(anchor_image_runtime: AlibiExplainRuntime):
     data = np.random.randn(28, 28, 1) * 255
     inference_request = InferenceRequest(
         parameters=Parameters(
@@ -57,56 +55,26 @@ async def test_anchors(anchor_image_runtime: AlibiExplainRuntime):
     _ = convert_from_bytes(response.outputs[0], ty=str)
 
 
-def test_remote_predict__smoke(runtime_pytorch):
-    data = np.random.randn(1, 28 * 28) * 255
-    inference_request = InferenceRequest(
-        parameters=Parameters(content_type=NumpyCodec.ContentType),
-        inputs=[
-            RequestInput(
-                name="predict",
-                shape=data.shape,
-                data=data.tolist(),
-                datatype="FP32",
-            )
-        ],
-    )
-    response = remote_predict(
-        inference_request,
-        predictor_url="http://localhost:42315/v2/models/test-pytorch-mnist/infer")
-    print(response)
+def test_remote_predict__smoke(runtime_pytorch, rest_client):
+    with patch("mlserver_alibi_explain.common.requests") as mock_requests:
+        mock_requests.post = rest_client.post
 
+        data = np.random.randn(1, 28 * 28) * 255
+        inference_request = InferenceRequest(
+            parameters=Parameters(content_type=NumpyCodec.ContentType),
+            inputs=[
+                RequestInput(
+                    name="predict",
+                    shape=data.shape,
+                    data=data.tolist(),
+                    datatype="FP32",
+                )
+            ],
+        )
 
-def test_remote_explain__smoke():
-    data = np.random.randn(28, 28, 1) * 255
-    inference_request = InferenceRequest(
-        parameters=Parameters(
-            content_type=NumpyCodec.ContentType,
-            explain_parameters={
-                "threshold": 0.95,
-                "p_sample": 0.5,
-                "tau": 0.25,
-            }
-        ),
-        inputs=[
-            RequestInput(
-                name="predict",
-                shape=data.shape,
-                data=data.tolist(),
-                datatype="FP32",
-            )
-        ],
-    )
-    inference_request_dict = inference_request.dict()
+        endpoint = f"v2/models/{runtime_pytorch.settings.name}/infer"
 
-    def _req():
-        predictor_url = "http://localhost:8080/v2/models/anchor-image-explain-model/infer"
-        response_raw = requests.post(predictor_url, json=inference_request_dict)
+        _ = remote_predict(
+            inference_request,
+            predictor_url=endpoint)
 
-    ps = []
-    for i in range(5):
-        p = Process(target=_req)
-        p.start()
-        ps.append(p)
-
-    for p in ps:
-        p.join()
