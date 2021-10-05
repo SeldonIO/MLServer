@@ -14,6 +14,7 @@ from .converters import (
     RepositoryIndexRequestConverter,
     RepositoryIndexResponseConverter,
 )
+from .logging import logger
 
 from ..handlers import DataPlane, ModelRepositoryHandlers
 from ..errors import MLServerError
@@ -24,7 +25,7 @@ def _handle_mlserver_error(f: Callable):
         try:
             return await f(self, request, context)
         except MLServerError as err:
-            # TODO: Log error and stacktrace
+            logger.error(err)
             await context.abort(code=grpc.StatusCode.INVALID_ARGUMENT, details=str(err))
 
     return _inner

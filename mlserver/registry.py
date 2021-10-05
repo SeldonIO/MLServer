@@ -6,6 +6,7 @@ from itertools import chain
 from .model import MLModel
 from .errors import ModelNotFound
 from .types import RepositoryIndexResponse
+from .logging import logger
 
 ModelRegistryHook = Callable[[MLModel], Coroutine[None, None, None]]
 
@@ -79,6 +80,8 @@ class MultiModelRegistry:
             # TODO: Expose custom handlers on ParallelRuntime
             await asyncio.gather(*[callback(model) for callback in self._on_model_load])
 
+        logger.info(f"Loaded model '{model.name}' succesfully.")
+
     async def unload(self, name: str):
         if name not in self._models:
             raise ModelNotFound(name)
@@ -90,6 +93,8 @@ class MultiModelRegistry:
             await asyncio.gather(
                 *[callback(model) for callback in self._on_model_unload]
             )
+
+        logger.info(f"Unloaded model '{model.name}' succesfully.")
 
     async def get_model(self, name: str, version: str = None) -> MLModel:
         if name not in self._models:
