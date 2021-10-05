@@ -211,6 +211,7 @@ def test_content_types(tensor_spec: TensorSpec, request_input: RequestInput):
     "schema, expected",
     [
         (
+            # Expect DataFrame for named column inputs
             Schema(
                 inputs=[
                     ColSpec(name="foo", type=DataType.boolean),
@@ -220,6 +221,7 @@ def test_content_types(tensor_spec: TensorSpec, request_input: RequestInput):
             PandasCodec.ContentType,
         ),
         (
+            # Expect tensor dictionary for named tensor inputs
             Schema(
                 inputs=[
                     TensorSpec(name="foo", shape=(2, 2), type=np.dtype("int32")),
@@ -229,6 +231,7 @@ def test_content_types(tensor_spec: TensorSpec, request_input: RequestInput):
             TensorDictCodec.ContentType,
         ),
         (
+            # Expect tensor dictionary for named tensor inputs
             Schema(
                 inputs=[
                     TensorSpec(name="foo", shape=(2, 2), type=np.dtype("int32")),
@@ -237,6 +240,7 @@ def test_content_types(tensor_spec: TensorSpec, request_input: RequestInput):
             TensorDictCodec.ContentType,
         ),
         (
+            # Expect plain tensor for unnamed single tensor input
             Schema(
                 inputs=[
                     TensorSpec(shape=(2, 2), type=np.dtype("int32")),
