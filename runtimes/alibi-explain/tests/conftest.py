@@ -145,14 +145,11 @@ async def anchor_image_runtime(runtime_pytorch: MLModel) -> AlibiExplainRuntime:
                 loop = asyncio.get_event_loop()
                 res = loop.run_until_complete(runtime_pytorch.predict(kwargs["v2_payload"]))
                 return res
-            except Exception as ex:
+            except Exception:
                 loop = asyncio.new_event_loop()
                 asyncio.set_event_loop(loop)
                 res = loop.run_until_complete(runtime_pytorch.predict(kwargs["v2_payload"]))
                 return res
-
-
-
 
         remote_predict.side_effect = mock_predict
 
