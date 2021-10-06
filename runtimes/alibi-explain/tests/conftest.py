@@ -21,6 +21,7 @@ from mlserver_alibi_explain.runtime import AlibiExplainRuntime
 from mlserver_mlflow import MLflowRuntime
 
 # allow nesting loop
+# in our case this allows multiple runtimes to execute in the same thread for testing reasons
 nest_asyncio.apply()
 
 TESTS_PATH = os.path.dirname(__file__)
@@ -141,6 +142,9 @@ def rest_client(rest_app: FastAPI) -> TestClient:
 async def anchor_image_runtime(runtime_pytorch: MLModel) -> AlibiExplainRuntime:
     with patch("mlserver_alibi_explain.common.remote_predict") as remote_predict:
         def mock_predict(*args, **kwargs):
+            # note: sometimes the event loop is not running and in this case we create a new one otherwise
+            # we use the existing one.
+            # this mock implementation is required as we dont want to spin up a server, we just use MLModel.predict
             try:
                 loop = asyncio.get_event_loop()
                 res = loop.run_until_complete(runtime_pytorch.predict(kwargs["v2_payload"]))
