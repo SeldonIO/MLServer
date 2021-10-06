@@ -1,7 +1,7 @@
 # Content Type Decoding
 
 MLServer extends the V2 inference protocol by adding support for a `content_type` annotation.
-This annotation can be provided either through the model metadata `tags`, or through the input `parameters`.
+This annotation can be provided either through the model metadata `parameters`, or through the input `parameters`.
 By leveraging the `content_type` annotation, we can provide the necessary information to MLServer so that it can _decode_ the input payload from the "wire" V2 protocol to something meaningful to the model / user (e.g. a NumPy array).
 
 This example will walk you through some examples which illustrate how this works, and how it can be extended.
@@ -55,7 +55,7 @@ As you can see above, this runtime will decode the incoming payloads by calling 
 This method will check what's the right content type for each input in the following order:
 
 1. Is there any content type defined in the `inputs[].parameters.content_type` field within the **request payload**?
-2. Is there any content type defined in the `inputs[].tags.content_type` field within the **model metadata**?
+2. Is there any content type defined in the `inputs[].parameters.content_type` field within the **model metadata**?
 3. Is there any default content type that should be assumed?
 
 
@@ -129,7 +129,7 @@ This can be done by extending the `model-settings.json` file, and adding a secti
             "name": "metadata-np",
             "datatype": "INT32",
             "shape": [2, 2],
-            "tags": {
+            "parameters": {
                 "content_type": "np"
             }
         },
@@ -137,7 +137,7 @@ This can be done by extending the `model-settings.json` file, and adding a secti
             "name": "metadata-str",
             "datatype": "BYTES",
             "shape": [11],
-            "tags": {
+            "parameters": {
                 "content_type": "str"
             }
         }

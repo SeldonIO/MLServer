@@ -4,6 +4,7 @@ from .types import (
     InferenceRequest,
     InferenceResponse,
     RequestInput,
+    Parameters,
     MetadataModelResponse,
     MetadataTensor,
 )
@@ -93,16 +94,25 @@ class MLModel:
         return request_input.data
 
     def decode_request(self, inference_request: InferenceRequest) -> Any:
-        return decode_inference_request(inference_request, self._inputs_index)
+        return decode_inference_request(
+            inference_request, self._settings, self._inputs_index
+        )
 
     async def metadata(self) -> MetadataModelResponse:
-        return MetadataModelResponse(
+        model_metadata = MetadataModelResponse(
             name=self.name,
             platform=self._settings.platform,
             versions=self._settings.versions,
             inputs=self._settings.inputs,
             outputs=self._settings.outputs,
         )
+
+        if self._settings.parameters:
+            model_metadata.parameters = Parameters(
+                content_type=self._settings.parameters.content_type
+            )
+
+        return model_metadata
 
     async def load(self) -> bool:
         self.ready = True

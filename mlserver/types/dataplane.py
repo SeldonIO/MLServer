@@ -16,20 +16,6 @@ class MetadataServerErrorResponse(BaseModel):
     error: str
 
 
-class Tags(BaseModel):
-    class Config:
-        extra = Extra.allow
-
-    content_type: Optional[str] = None
-
-
-class MetadataTensor(BaseModel):
-    name: str
-    datatype: str
-    shape: List[int]
-    tags: Optional["Tags"] = None
-
-
 class MetadataModelErrorResponse(BaseModel):
     error: str
 
@@ -79,12 +65,11 @@ class InferenceErrorResponse(BaseModel):
     error: Optional[str] = None
 
 
-class MetadataModelResponse(BaseModel):
+class MetadataTensor(BaseModel):
     name: str
-    versions: Optional[List[str]] = None
-    platform: str
-    inputs: Optional[List["MetadataTensor"]] = None
-    outputs: Optional[List["MetadataTensor"]] = None
+    datatype: str
+    shape: List[int]
+    parameters: Optional["Parameters"] = None
 
 
 class RequestInput(BaseModel):
@@ -93,6 +78,15 @@ class RequestInput(BaseModel):
     datatype: str
     parameters: Optional["Parameters"] = None
     data: "TensorData"
+
+
+class MetadataModelResponse(BaseModel):
+    name: str
+    versions: Optional[List[str]] = None
+    platform: str
+    inputs: Optional[List["MetadataTensor"]] = None
+    outputs: Optional[List["MetadataTensor"]] = None
+    parameters: Optional["Parameters"] = None
 
 
 class InferenceRequest(BaseModel):

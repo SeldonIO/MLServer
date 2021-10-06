@@ -83,6 +83,12 @@ class ModelMetadataResponseConverter:
                 [TensorMetadataConverter.from_types(out) for out in type_object.outputs]
             )
 
+        if type_object.parameters is not None:
+            _merge_map(
+                metadata.parameters,
+                ParametersConverter.from_types(type_object.parameters),  # type: ignore
+            )
+
         return metadata
 
 
@@ -103,12 +109,10 @@ class TensorMetadataConverter:
             shape=type_object.shape,
         )
 
-        if type_object.tags is not None:
-            # NOTE: We use the ParametersConverter here because it has a
-            # similar signature to Tags
+        if type_object.parameters is not None:
             _merge_map(
-                tensor_metadata.tags,
-                ParametersConverter.from_types(type_object.tags),  # type: ignore
+                tensor_metadata.parameters,
+                ParametersConverter.from_types(type_object.parameters),  # type: ignore
             )
 
         return tensor_metadata

@@ -60,6 +60,8 @@ class ModelParameters(BaseSettings):
     version: Optional[str] = None
     """Format of the model (only available on certain runtimes)."""
     format: Optional[str] = None
+    """Default content type to use for requests and responses."""
+    content_type: Optional[str] = None
     """Arbitrary settings, dependent on the inference runtime
     implementation."""
     extra: Optional[dict] = {}

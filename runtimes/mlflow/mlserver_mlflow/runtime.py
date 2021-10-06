@@ -23,9 +23,16 @@ from mlserver.model import MLModel
 from mlserver.utils import get_model_uri
 from mlserver.handlers import custom_handler
 from mlserver.errors import InferenceError
+from mlserver.settings import ModelParameters
+from mlserver.logging import logger
 
 from .encoding import to_outputs
-from .metadata import to_metadata_tensors, DefaultInputPrefix, DefaultOutputPrefix
+from .metadata import (
+    to_metadata_tensors,
+    to_model_content_type,
+    DefaultInputPrefix,
+    DefaultOutputPrefix,
+)
 
 
 class MLflowRuntime(MLModel):
@@ -121,11 +128,30 @@ class MLflowRuntime(MLModel):
         if self._signature is None:
             return
 
+        if self.inputs:
+            logger.warning("Overwriting existing inputs metadata with model signature")
+
         self.inputs = to_metadata_tensors(
-            self._signature.inputs, prefix=DefaultInputPrefix
+            schema=self._signature.inputs, prefix=DefaultInputPrefix
         )
+
+        if self.outputs:
+            logger.warning("Overwriting existing outputs metadata with model signature")
+
         self.outputs = to_metadata_tensors(
-            self._signature.outputs, prefix=DefaultOutputPrefix
+            schema=self._signature.outputs, prefix=DefaultOutputPrefix
+        )
+
+        if not self._settings.parameters:
+            self._settings.parameters = ModelParameters()
+
+        if self._settings.parameters.content_type:
+            logger.warning(
+                "Overwriting existing request-level content type with model signature"
+            )
+
+        self._settings.parameters.content_type = to_model_content_type(
+            schema=self._signature.inputs
         )
 
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
