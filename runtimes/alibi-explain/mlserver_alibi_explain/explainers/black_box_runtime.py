@@ -44,32 +44,17 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
             **explain_parameters
         )
 
-    def _infer_impl(self, input_data: Union[np.ndarray, List]) -> np.ndarray:
-        # TODO: >
-        # subclasses would probably have to implement this
-        # for now we only support v2 protocol
-        # maybe also get the model metadata and confirm / reshape types?
-        # should mlflow codec do that?
-        np_codec = NumpyCodec()
+    def _infer_impl(self, input_data: np.ndarray) -> np.ndarray:
+        # The contract is that alibi-explain would input/output ndarray
+        # TODO: for now we only support v2 protocol
 
-        # TODO: get it from codec? which explainer sends a list?
-        if isinstance(input_data, list):
-            input_data = np.array(input_data)
+        np_codec = NumpyCodec
 
-        # TODO: fixme as the reshape is required for mnist models
-        num_samples = input_data.shape[0]
-        input_data = input_data.reshape((num_samples, 1, -1))
+        # TODO: make sure that Ticket: https://github.com/SeldonIO/alibi/issues/487 is covered here
 
         v2_request = InferenceRequest(
             parameters=Parameters(content_type=NumpyCodec.ContentType),
-            inputs=[
-                RequestInput(
-                    name="predict",
-                    shape=input_data.shape,
-                    data=input_data.tolist(),  # we convert list above to np!
-                    datatype="FP32",  # TODO: fixme as it will not work for anything!
-                )
-            ],
+            inputs=[np_codec.encode_request_input(name="predict", payload=input_data, enable_quantize=True)],
         )
 
         # TODO add some exception handling here
@@ -77,4 +62,5 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
             v2_payload=v2_request,
             predictor_url=self.alibi_explain_settings.infer_uri)
 
-        return np_codec.decode(v2_response.outputs[0])  # type: ignore # TODO: fix mypy and first output
+        # TODO: do we care about more than one output?
+        return np_codec.decode_response_output(v2_response.outputs[0])

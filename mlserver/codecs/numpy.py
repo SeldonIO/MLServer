@@ -93,11 +93,36 @@ class NumpyCodec(InputCodec):
         )
 
     @classmethod
-    def decode(cls, v2_data: Union[RequestInput, ResponseOutput]) -> np.ndarray:
+    def decode(cls, v2_data: RequestInput) -> np.ndarray:
         model_data = _to_ndarray(v2_data)
 
         # TODO: Check if reshape not valid
         return model_data.reshape(v2_data.shape)
+
+    @classmethod
+    def decode_response_output(cls, v2_data: ResponseOutput) -> np.ndarray:
+        # TODO: merge this logic with `decode`
+        model_data = _to_ndarray(v2_data)
+
+        # TODO: Check if reshape not valid
+        return model_data.reshape(v2_data.shape)
+
+    @classmethod
+    def encode_request_input(cls, name: str, payload: np.ndarray, enable_quantize: bool = False) -> RequestInput:
+        # TODO: merge this logic with `encode`
+        datatype = to_datatype(payload.dtype)
+
+        if enable_quantize:
+            # we quantize to FP32
+            if datatype == "FP64":
+                datatype = "FP32"
+
+        return RequestInput(
+            name=name,
+            datatype=datatype,
+            shape=list(payload.shape),
+            data=_encode_data(payload, datatype),
+        )
 
 
 @register_request_codec

@@ -59,7 +59,7 @@ def test_remote_predict__smoke(runtime_pytorch, rest_client):
     with patch("mlserver_alibi_explain.common.requests") as mock_requests:
         mock_requests.post = rest_client.post
 
-        data = np.random.randn(1, 28 * 28) * 255
+        data = np.random.randn(10, 28, 28, 1) * 255
         inference_request = InferenceRequest(
             parameters=Parameters(content_type=NumpyCodec.ContentType),
             inputs=[
