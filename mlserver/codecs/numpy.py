@@ -116,6 +116,10 @@ class NumpyCodec(InputCodec):
             # we quantize to FP32
             if datatype == "FP64":
                 datatype = "FP32"
+            elif datatype == "INT64":
+                datatype = "INT32"
+            elif datatype == "UINT64":
+                datatype = "UINT32"
 
         return RequestInput(
             name=name,

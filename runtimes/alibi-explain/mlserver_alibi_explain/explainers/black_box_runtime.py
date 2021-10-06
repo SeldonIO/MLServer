@@ -54,6 +54,8 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
 
         v2_request = InferenceRequest(
             parameters=Parameters(content_type=NumpyCodec.ContentType),
+            # TODO: we probably need to tell alibi about the expected types to use or even whether it is a
+            # proba or targets
             inputs=[np_codec.encode_request_input(name="predict", payload=input_data, enable_quantize=True)],
         )
 
