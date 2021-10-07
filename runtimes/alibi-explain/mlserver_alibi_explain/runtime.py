@@ -1,8 +1,6 @@
-import random
 from typing import Any, Optional
 
 from alibi.api.interfaces import Explanation
-from pydantic import BaseSettings
 
 from mlserver.codecs import NumpyCodec, InputCodec
 from mlserver.model import MLModel
@@ -10,7 +8,7 @@ from mlserver.settings import ModelSettings
 from mlserver.types import InferenceRequest, InferenceResponse, RequestInput, MetadataModelResponse, Parameters
 from mlserver_alibi_explain.common import create_v2_from_any, execute_async, AlibiExplainSettings, \
     get_mlmodel_class_as_str, \
-    get_alibi_class_as_str, import_and_get_class, EXPLAIN_PARAMETERS_TAG
+    get_alibi_class_as_str, import_and_get_class, EXPLAIN_PARAMETERS_TAG, EXPLAINER_TYPE_TAG
 
 
 class AlibiExplainRuntimeBase(MLModel):
@@ -26,14 +24,11 @@ class AlibiExplainRuntimeBase(MLModel):
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
         """This is actually a call to explain as we are treating an explainer model as MLModel"""
 
-        # TODO: convert and validate
+        # TODO: convert and validate?
         model_input = payload.inputs[0]
         default_codec = NumpyCodec()
         input_data = self.decode(model_input, default_codec=default_codec)
-        explanation_dict = await self._async_explain_impl(input_data, payload.parameters)
-
-        # TODO: Convert alibi-explain output to v2 protocol, for now we use to_json
-        output_data = explanation_dict
+        output_data = await self._async_explain_impl(input_data, payload.parameters)
 
         return InferenceResponse(
             model_name=self.name,
@@ -53,6 +48,7 @@ class AlibiExplainRuntimeBase(MLModel):
             input_data=input_data,
             explain_parameters=explain_parameters
         )
+        # TODO: Convert alibi-explain output to v2 protocol, for now we use to_json
         return create_v2_from_any(explanation.to_json(), name="explain")
 
     def _explain_impl(self, input_data: Any, settings: Parameters) -> Explanation:
@@ -69,7 +65,7 @@ class AlibiExplainRuntime(MLModel):
         # TODO: we probably want to validate the enum more sanely here
         # we do not want to construct a specific alibi settings here because it might be dependent on type
         # although at the moment we only have one `AlibiExplainSettings`
-        explainer_type = settings.parameters.extra["explainer_type"]
+        explainer_type = settings.parameters.extra[EXPLAINER_TYPE_TAG]
 
         rt_class = import_and_get_class(get_mlmodel_class_as_str(explainer_type))
 
