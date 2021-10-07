@@ -8,7 +8,6 @@ COPY README.md .
 COPY ./mlserver/ ./mlserver/
 COPY ./runtimes/ ./runtimes/
 
-# TODO: Cache this step with BuildKit?
 # This will build the wheels and place will place them in the
 # /opt/mlserver/dist folder
 RUN ./hack/build-wheels.sh /opt/mlserver/dist
