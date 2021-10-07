@@ -18,16 +18,21 @@ _buildWheel() {
   local _currentDir=$PWD
 
   # Python really expects the `setup.py` to be on the current folder, so we'll
-  # `cd` into it and the go back again.
-  cd $_srcPath
+  # move into the source folder and then go back again.
+  pushd $_srcPath
   python setup.py \
     sdist -d $_outputPath \
     bdist_wheel -d $_outputPath
-  cd $_currentDir
+  popd
 }
 
 _main() {
-  local _outputPath="$PWD/$1"
+  # Convert any path to absolute path (cross-platform way) taking into account
+  # that the `./dist` folder may not exist yet
+  local _outputPath=$(
+    cd $(dirname $1)
+    echo "$PWD/dist"
+  )
 
   # Build MLServer
   echo "---> Building MLServer wheel"
