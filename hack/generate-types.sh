@@ -1,4 +1,4 @@
-ROOT_FOLDER="$(git rev-parse --show-toplevel)"
+ROOT_FOLDER="$(dirname "${0}")/.."
 
 _generatePB() {
   local apiName=$1

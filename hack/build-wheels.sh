@@ -4,7 +4,7 @@ set -o nounset
 set -o errexit
 set -o pipefail
 
-ROOT_FOLDER="$(git rev-parse --show-toplevel)"
+ROOT_FOLDER="$(dirname "${0}")/.."
 
 if [ "$#" -ne 1 ]; then
   echo 'Invalid number of arguments'
