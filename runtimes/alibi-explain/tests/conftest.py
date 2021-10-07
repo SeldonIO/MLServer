@@ -154,9 +154,10 @@ def rest_client(rest_app: FastAPI) -> TestClient:
     return TestClient(rest_app)
 
 
-@pytest.fixture
-async def anchor_image_runtime(custom_runtime_tf: MLModel) -> AlibiExplainRuntime:
-    with patch("mlserver_alibi_explain.common.remote_predict") as remote_predict:
+async def anchor_image_runtime(
+        custom_runtime_tf: MLModel,
+        remote_predict_mock_path: str) -> AlibiExplainRuntime:
+    with patch(remote_predict_mock_path) as remote_predict:
         def mock_predict(*args, **kwargs):
             # note: sometimes the event loop is not running and in this case we create a new one otherwise
             # we use the existing one.
@@ -177,7 +178,7 @@ async def anchor_image_runtime(custom_runtime_tf: MLModel) -> AlibiExplainRuntim
             ModelSettings(
                 parallel_workers=0,
                 parameters=ModelParameters(
-                    uri="./data/mnist_anchor_image",
+                    uri="tests/data/mnist_anchor_image",
                     extra=AlibiExplainSettings(
                         explainer_type="anchor_image",
                         infer_uri=f"dummy_call"

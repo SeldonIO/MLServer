@@ -1,4 +1,4 @@
-from typing import List, Type, Union, Any
+from typing import Type, Any
 
 import numpy as np
 from alibi.api.interfaces import Explanation, Explainer
@@ -7,7 +7,7 @@ from pydantic import BaseSettings
 
 from mlserver import ModelSettings
 from mlserver.codecs import NumpyCodec
-from mlserver.types import InferenceRequest, Parameters, RequestInput
+from mlserver.types import InferenceRequest, Parameters
 from mlserver_alibi_explain.common import AlibiExplainSettings, remote_predict
 from mlserver_alibi_explain.runtime import AlibiExplainRuntimeBase
 
