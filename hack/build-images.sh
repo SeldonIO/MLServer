@@ -4,7 +4,7 @@ set -o nounset
 set -o errexit
 set -o pipefail
 
-ROOT_FOLDER="$(dirname "${0}")/.."
+ROOT_FOLDER="$(git rev-parse --show-toplevel)"
 IMAGE_NAME="seldonio/mlserver"
 
 if [ "$#" -ne 1 ]; then
