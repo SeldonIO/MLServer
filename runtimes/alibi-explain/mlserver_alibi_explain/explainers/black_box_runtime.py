@@ -1,4 +1,4 @@
-from typing import Type, Any
+from typing import Type, Any, Dict
 
 import numpy as np
 from alibi.api.interfaces import Explanation, Explainer
@@ -8,7 +8,7 @@ from pydantic import BaseSettings
 from mlserver import ModelSettings
 from mlserver.codecs import NumpyCodec
 from mlserver.types import InferenceRequest, Parameters
-from mlserver_alibi_explain.common import AlibiExplainSettings, remote_predict
+from mlserver_alibi_explain.common import AlibiExplainSettings, remote_predict, EXPLAIN_PARAMETERS_TAG
 from mlserver_alibi_explain.runtime import AlibiExplainRuntimeBase
 
 
@@ -37,11 +37,10 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
         self.ready = True
         return self.ready
 
-    def _explain_impl(self, input_data: Any, settings: BaseSettings) -> Explanation:
-        explain_parameters = settings.explain_parameters
+    def _explain_impl(self, input_data: Any, explain_parameters: Dict) -> Explanation:
         return self._model.explain(
             input_data,
-            **explain_parameters
+            **explain_parameters  # type: ignore
         )
 
     def _infer_impl(self, input_data: np.ndarray) -> np.ndarray:

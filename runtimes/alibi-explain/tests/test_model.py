@@ -8,7 +8,7 @@ from mlserver.codecs import NumpyCodec
 from mlserver.types import InferenceRequest, InferenceResponse
 
 
-def _mnist_model_uri() -> Path:
+def get_tf_mnist_model_uri() -> Path:
     return Path(os.path.dirname(__file__)) / "data" / "tf_mnist" / "model.h5"
 
 
@@ -24,4 +24,4 @@ class TFMNISTModel(MLModel):
         )
 
     async def load(self) -> bool:
-        self._model = tf.keras.models.load_model(_mnist_model_uri())
+        self._model = tf.keras.models.load_model(get_tf_mnist_model_uri())

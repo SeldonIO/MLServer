@@ -30,7 +30,7 @@ _TAG_TO_RT_IMPL = {
 
 
 ENV_PREFIX_ALIBI_EXPLAIN_SETTINGS = "MLSERVER_MODEL_ALIBI_EXPLAIN_"
-
+EXPLAIN_PARAMETERS_TAG = "explain_parameters"
 
 class ExplainerEnum(str, Enum):
     anchor_image = _ANCHOR_IMAGE_TAG

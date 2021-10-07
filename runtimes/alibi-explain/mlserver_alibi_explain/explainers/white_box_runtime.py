@@ -38,7 +38,7 @@ class AlibiExplainWhiteBoxRuntime(AlibiExplainRuntimeBase):
         self.ready = True
         return self.ready
 
-    def _explain_impl(self, input_data: Any, settings: BaseSettings) -> Explanation:
+    def _explain_impl(self, input_data: Any, explain_parameters: Dict) -> Explanation:
         raise NotImplementedError
 
     async def _get_inference_model(self) -> Any:

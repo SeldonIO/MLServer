@@ -1,17 +1,17 @@
-from typing import Any
+from typing import Any, Dict
 
 import tensorflow as tf
 from alibi.api.interfaces import Explanation
 from pydantic import BaseSettings
 
+from mlserver.types import Parameters
 from mlserver_alibi_explain.explainers.white_box_runtime import AlibiExplainWhiteBoxRuntime
 
 
 class IntegratedGradientsWrapper(AlibiExplainWhiteBoxRuntime):
-    def _explain_impl(self, input_data: Any, settings: BaseSettings) -> Explanation:
+    def _explain_impl(self, input_data: Any, explain_parameters: Dict) -> Explanation:
         # TODO: how are we going to deal with that?
         predictions = self._inference_model(input_data).numpy().argmax(axis=1)
-        explain_parameters = settings.explain_parameters
         return self._model.explain(
             input_data,
             target=predictions,
