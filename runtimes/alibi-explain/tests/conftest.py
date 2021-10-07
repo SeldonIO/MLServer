@@ -178,7 +178,7 @@ async def anchor_image_runtime(
             ModelSettings(
                 parallel_workers=0,
                 parameters=ModelParameters(
-                    uri="tests/data/mnist_anchor_image",
+                    uri=f"{TESTS_PATH}/data/mnist_anchor_image",
                     extra=AlibiExplainSettings(
                         explainer_type="anchor_image",
                         infer_uri=f"dummy_call"
@@ -203,7 +203,7 @@ async def integrated_gradients_runtime() -> AlibiExplainRuntime:
                         "method": "gausslegendre"
                     },
                     explainer_type="integrated_gradients",
-                    infer_uri="./data/tf_mnist_ig/model.h5"
+                    infer_uri=f"{TESTS_PATH}/data/tf_mnist/model.h5"
                 )
             )
         )

@@ -1,4 +1,4 @@
-from typing import Any, Type
+from typing import Any, Type, Dict
 
 from alibi.api.interfaces import Explanation, Explainer
 from alibi.saving import load_explainer
@@ -25,7 +25,7 @@ class AlibiExplainWhiteBoxRuntime(AlibiExplainRuntimeBase):
     async def load(self) -> bool:
         self._inference_model = await self._get_inference_model()
 
-        if self.settings.parameters.uri is None or self.settings.parameters.uri == ".":
+        if self.alibi_explain_settings.init_parameters is not None:
             init_parameters = self.alibi_explain_settings.init_parameters
             # white box explainers requires access to the inference model
             init_parameters["model"] = self._inference_model

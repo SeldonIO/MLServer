@@ -2,9 +2,7 @@ from typing import Any, Dict
 
 import tensorflow as tf
 from alibi.api.interfaces import Explanation
-from pydantic import BaseSettings
 
-from mlserver.types import Parameters
 from mlserver_alibi_explain.explainers.white_box_runtime import AlibiExplainWhiteBoxRuntime
 
 
