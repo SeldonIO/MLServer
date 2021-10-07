@@ -108,18 +108,9 @@ class NumpyCodec(InputCodec):
         return model_data.reshape(v2_data.shape)
 
     @classmethod
-    def encode_request_input(cls, name: str, payload: np.ndarray, enable_quantize: bool = False) -> RequestInput:
+    def encode_request_input(cls, name: str, payload: np.ndarray) -> RequestInput:
         # TODO: merge this logic with `encode`
         datatype = to_datatype(payload.dtype)
-
-        if enable_quantize:
-            # we quantize to FP32
-            if datatype == "FP64":
-                datatype = "FP32"
-            elif datatype == "INT64":
-                datatype = "INT32"
-            elif datatype == "UINT64":
-                datatype = "UINT32"
 
         return RequestInput(
             name=name,

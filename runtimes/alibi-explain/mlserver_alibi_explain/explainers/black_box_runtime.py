@@ -46,17 +46,14 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
 
     def _infer_impl(self, input_data: np.ndarray) -> np.ndarray:
         # The contract is that alibi-explain would input/output ndarray
-        # TODO: for now we only support v2 protocol
-
+        # TODO: for now we only support v2 protocol, do we need more support?
         np_codec = NumpyCodec
-
-        # TODO: make sure that Ticket: https://github.com/SeldonIO/alibi/issues/487 is covered here
 
         v2_request = InferenceRequest(
             parameters=Parameters(content_type=NumpyCodec.ContentType),
             # TODO: we probably need to tell alibi about the expected types to use or even whether it is a
-            # proba or targets
-            inputs=[np_codec.encode_request_input(name="predict", payload=input_data, enable_quantize=True)],
+            # proba or targets etc
+            inputs=[np_codec.encode_request_input(name="predict", payload=input_data)],
         )
 
         # TODO add some exception handling here
