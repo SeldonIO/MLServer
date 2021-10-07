@@ -2,7 +2,7 @@ SHELL := /bin/bash
 VERSION := $(shell sed 's/^__version__ = "\(.*\)"/\1/' ./mlserver/version.py)
 IMAGE_NAME := seldonio/mlserver
 
-.PHONY: install-dev _generate generate run build build-pypy build-docker\
+.PHONY: install-dev _generate generate run build \
 	push-test push test lint fmt version clean licenses
 
 install-dev:
