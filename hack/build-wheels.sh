@@ -27,12 +27,11 @@ _buildWheel() {
 }
 
 _main() {
-  # Convert any path to absolute path (cross-platform way) taking into account
-  # that the `./dist` folder may not exist yet
-  local _outputPath=$(
-    cd $(dirname $1)
-    echo "$PWD/dist"
-  )
+  # Convert any path into an absolute path
+  local _outputPath=$1
+  if ! [[ "$_outputPath" = /* ]]; then
+    _outputPath="$PWD/$_outputPath"
+  fi
 
   # Build MLServer
   echo "---> Building MLServer wheel"
