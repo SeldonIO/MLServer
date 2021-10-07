@@ -10,6 +10,10 @@ from mlserver_alibi_explain.common import convert_from_bytes, remote_predict
 from mlserver_alibi_explain.runtime import AlibiExplainRuntime
 from .conftest import anchor_image_runtime
 
+"""
+Smoke tests for runtimes
+"""
+
 
 @pytest.fixture
 async def anchor_image_runtime_with_remote_predict_patch(custom_runtime_tf: MLModel):
