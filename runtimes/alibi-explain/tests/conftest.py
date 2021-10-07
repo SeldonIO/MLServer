@@ -20,6 +20,8 @@ from mlserver_alibi_explain.common import AlibiExplainSettings
 from mlserver_alibi_explain.runtime import AlibiExplainRuntime
 from mlserver_mlflow import MLflowRuntime
 
+from .test_model import TFMNISTModel
+
 # allow nesting loop
 # in our case this allows multiple runtimes to execute in the same thread for testing reasons
 nest_asyncio.apply()
@@ -59,6 +61,19 @@ def model_settings_pytorch_fixed(pytorch_model_uri) -> ModelSettings:
 @pytest.fixture
 async def runtime_pytorch(model_settings_pytorch_fixed: ModelSettings) -> MLflowRuntime:
     model = MLflowRuntime(model_settings_pytorch_fixed)
+    await model.load()
+
+    return model
+
+
+@pytest.fixture
+async def custom_runtime_tf() -> MLModel:
+    model = TFMNISTModel(
+        ModelSettings(
+            name="custom_tf_mnist_model",
+            implementation="tests.test_model.TFMNISTModel",
+        )
+    )
     await model.load()
 
     return model
@@ -140,7 +155,7 @@ def rest_client(rest_app: FastAPI) -> TestClient:
 
 
 @pytest.fixture
-async def anchor_image_runtime(runtime_pytorch: MLflowRuntime) -> AlibiExplainRuntime:
+async def anchor_image_runtime(custom_runtime_tf: MLModel) -> AlibiExplainRuntime:
     with patch("mlserver_alibi_explain.common.remote_predict") as remote_predict:
         def mock_predict(*args, **kwargs):
             # note: sometimes the event loop is not running and in this case we create a new one otherwise
@@ -148,12 +163,12 @@ async def anchor_image_runtime(runtime_pytorch: MLflowRuntime) -> AlibiExplainRu
             # this mock implementation is required as we dont want to spin up a server, we just use MLModel.predict
             try:
                 loop = asyncio.get_event_loop()
-                res = loop.run_until_complete(runtime_pytorch.predict(kwargs["v2_payload"]))
+                res = loop.run_until_complete(custom_runtime_tf.predict(kwargs["v2_payload"]))
                 return res
             except Exception:
                 loop = asyncio.new_event_loop()
                 asyncio.set_event_loop(loop)
-                res = loop.run_until_complete(runtime_pytorch.predict(kwargs["v2_payload"]))
+                res = loop.run_until_complete(custom_runtime_tf.predict(kwargs["v2_payload"]))
                 return res
 
         remote_predict.side_effect = mock_predict
