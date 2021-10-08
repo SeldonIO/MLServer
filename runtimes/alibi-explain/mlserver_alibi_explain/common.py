@@ -13,6 +13,11 @@ from tenacity import retry, stop_after_attempt
 
 from mlserver.types import ResponseOutput, InferenceResponse, InferenceRequest
 
+
+EXPLAINER_TYPE_TAG = "explainer_type"
+
+_MAX_RETRY_ATTEMPT = 3
+
 _ANCHOR_IMAGE_TAG = "anchor_image"
 _ANCHOR_TEXT_TAG = "anchor_text"
 _INTEGRATED_GRADIENTS_TAG = "integrated_gradients"
@@ -32,6 +37,7 @@ _TAG_TO_RT_IMPL = {
 
 ENV_PREFIX_ALIBI_EXPLAIN_SETTINGS = "MLSERVER_MODEL_ALIBI_EXPLAIN_"
 EXPLAIN_PARAMETERS_TAG = "explain_parameters"
+
 
 class ExplainerEnum(str, Enum):
     anchor_image = _ANCHOR_IMAGE_TAG
@@ -62,7 +68,7 @@ def convert_from_bytes(output: ResponseOutput, ty: Optional[Type]) -> Any:
         return literal_eval(py_str)
 
 
-@retry(stop=stop_after_attempt(3))
+@retry(stop=stop_after_attempt(_MAX_RETRY_ATTEMPT))
 def remote_predict(v2_payload: InferenceRequest, predictor_url: str) -> InferenceResponse:
     response_raw = requests.post(predictor_url, json=v2_payload.dict())
     if response_raw.status_code != 200:
@@ -111,6 +117,3 @@ def import_and_get_class(class_path: str) -> type:
     last_dot = class_path.rfind(".")
     klass = getattr(import_module(class_path[:last_dot]), class_path[last_dot + 1:])
     return klass
-
-
-EXPLAINER_TYPE_TAG = "explainer_type"
