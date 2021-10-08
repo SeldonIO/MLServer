@@ -1,11 +1,12 @@
-from typing import Any, Optional
+from typing import Any, Optional, List
 
 from alibi.api.interfaces import Explanation
 
 from mlserver.codecs import NumpyCodec, InputCodec
 from mlserver.model import MLModel
 from mlserver.settings import ModelSettings
-from mlserver.types import InferenceRequest, InferenceResponse, RequestInput, MetadataModelResponse, Parameters
+from mlserver.types import InferenceRequest, InferenceResponse, RequestInput, MetadataModelResponse, Parameters, \
+    MetadataTensor
 from mlserver_alibi_explain.common import create_v2_from_any, execute_async, AlibiExplainSettings, \
     get_mlmodel_class_as_str, \
     get_alibi_class_as_str, import_and_get_class, EXPLAIN_PARAMETERS_TAG, EXPLAINER_TYPE_TAG
@@ -59,8 +60,6 @@ class AlibiExplainRuntimeBase(MLModel):
 class AlibiExplainRuntime(MLModel):
     """Wrapper / Factory class for specific alibi explain runtimes"""
 
-    # TODO: test this wrapper
-
     def __init__(self, settings: ModelSettings):
         # TODO: we probably want to validate the enum more sanely here
         # we do not want to construct a specific alibi settings here because it might be dependent on type
@@ -85,6 +84,30 @@ class AlibiExplainRuntime(MLModel):
     def settings(self) -> ModelSettings:
         return self._rt.settings
 
+    @property
+    def inputs(self) -> Optional[List[MetadataTensor]]:
+        return self._rt.inputs
+
+    @inputs.setter
+    def inputs(self, value: List[MetadataTensor]):
+        self._rt.inputs = value
+
+    @property
+    def outputs(self) -> Optional[List[MetadataTensor]]:
+        return self._rt.outputs
+
+    @outputs.setter
+    def outputs(self, value: List[MetadataTensor]):
+        self._rt.outputs = value
+
+    @property
+    def ready(self) -> bool:
+        return self._rt.ready
+
+    @ready.setter
+    def ready(self, value: bool):
+        self._rt.ready = value
+
     def decode(
             self, request_input: RequestInput, default_codec: Optional[InputCodec] = None
     ) -> Any:
@@ -94,7 +117,7 @@ class AlibiExplainRuntime(MLModel):
         return self._rt.decode_request(inference_request)
 
     async def metadata(self) -> MetadataModelResponse:
-        return self._rt.metadata
+        return await self._rt.metadata()
 
     async def load(self) -> bool:
         return await self._rt.load()

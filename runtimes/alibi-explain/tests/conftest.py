@@ -40,7 +40,7 @@ def pytest_collection_modifyitems(items):
         item.add_marker("asyncio")
 
 
-# TODO: there is a lot of common code here with tesing rest calls, refactor perhaps to make it neater
+# TODO: there is a lot of common code here with testing rest calls, refactor perhaps to make it neater
 @pytest.fixture
 def pytorch_model_uri() -> str:
     pytorch_model_path = os.path.join(TESTDATA_PATH, "pytorch_model")
@@ -154,9 +154,10 @@ def rest_client(rest_app: FastAPI) -> TestClient:
     return TestClient(rest_app)
 
 
-async def anchor_image_runtime(
+@pytest.fixture
+async def anchor_image_runtime_with_remote_predict_patch(
         custom_runtime_tf: MLModel,
-        remote_predict_mock_path: str) -> AlibiExplainRuntime:
+        remote_predict_mock_path: str = "mlserver_alibi_explain.common.remote_predict") -> AlibiExplainRuntime:
     with patch(remote_predict_mock_path) as remote_predict:
         def mock_predict(*args, **kwargs):
             # note: sometimes the event loop is not running and in this case we create a new one otherwise

@@ -11,7 +11,6 @@ from mlserver.codecs import NumpyCodec
 from mlserver.types import InferenceRequest, Parameters, RequestInput
 from mlserver_alibi_explain import AlibiExplainRuntime
 from mlserver_alibi_explain.common import convert_from_bytes
-from .conftest import anchor_image_runtime
 from .test_model import get_tf_mnist_model_uri
 
 
@@ -32,13 +31,6 @@ def payload() -> InferenceRequest:
         ],
     )
     return inference_request
-
-
-@pytest.fixture
-async def anchor_image_runtime_with_remote_predict_patch(custom_runtime_tf: MLModel):
-    return await anchor_image_runtime(
-        custom_runtime_tf,
-        "mlserver_alibi_explain.common.remote_predict")
 
 
 async def test_predict_impl(
@@ -74,7 +66,7 @@ async def test_predict_impl(
 @pytest.fixture()
 def alibi_anchor_image_model():
     inference_model = tf.keras.models.load_model(get_tf_mnist_model_uri())
-    model = load_explainer("tests/data/mnist_anchor_image", inference_model.__call__)
+    model = load_explainer("data/mnist_anchor_image", inference_model.__call__)
     return model
 
 
