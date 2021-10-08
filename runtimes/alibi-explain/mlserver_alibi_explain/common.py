@@ -72,7 +72,6 @@ def convert_from_bytes(output: ResponseOutput, ty: Optional[Type]) -> Any:
 def remote_predict(v2_payload: InferenceRequest, predictor_url: str) -> InferenceResponse:
     response_raw = requests.post(predictor_url, json=v2_payload.dict())
     if response_raw.status_code != 200:
-        # TODO: add proper error handling
         raise ValueError(f"{response_raw.status_code} / {response_raw.reason}")
     return InferenceResponse.parse_raw(response_raw.text)
 
