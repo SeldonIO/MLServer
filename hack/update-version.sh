@@ -15,13 +15,17 @@ _updateVersion() {
   local _newVersion=$1
   local _versionPy=$2
 
-  sed -i "s/^__version__ = \"\(.*\)\"$/__version__ = \"$_newVersion\"/" "$_versionPy"
+  sed \
+    -i "s/^__version__ = \"\(.*\)\"$/__version__ = \"$_newVersion\"/" \
+    "$_versionPy"
 }
 
 _updateDocs() {
   local _newVersion=$1
 
-  sed -i "s/^release = \"\(.*\)\"$/release = \"$_newVersion\"/" $ROOT_FOLDER/docs/conf.py
+  sed \
+    -i "s/^release = \"\(.*\)\"$/release = \"$_newVersion\"/" \
+    "$ROOT_FOLDER/docs/conf.py"
 }
 
 _main() {
