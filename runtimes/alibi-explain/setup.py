@@ -35,8 +35,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         "mlserver",
-        "alibi",
-        "tenacity==8.0.1"
+        "alibi"
     ],
     long_description=_load_description(),
     long_description_content_type="text/markdown",

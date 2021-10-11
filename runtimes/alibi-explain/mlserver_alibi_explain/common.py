@@ -4,15 +4,12 @@ import functools
 from asyncio import AbstractEventLoop
 from enum import Enum
 from importlib import import_module
-from time import sleep
-from typing import Any, Dict, Optional, Type, Callable, Awaitable, Union
+from typing import Any, Optional, Type, Callable, Awaitable, Union
 
 import requests
 from pydantic import BaseSettings
-from tenacity import retry, stop_after_attempt
 
 from mlserver.types import ResponseOutput, InferenceResponse, InferenceRequest
-
 
 EXPLAINER_TYPE_TAG = "explainer_type"
 
@@ -59,7 +56,7 @@ def convert_from_bytes(output: ResponseOutput, ty: Optional[Type]) -> Any:
         return literal_eval(py_str)
 
 
-@retry(stop=stop_after_attempt(_MAX_RETRY_ATTEMPT))
+# TODO: add retry
 def remote_predict(v2_payload: InferenceRequest, predictor_url: str) -> InferenceResponse:
     response_raw = requests.post(predictor_url, json=v2_payload.dict())
     if response_raw.status_code != 200:
