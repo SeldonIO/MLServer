@@ -73,7 +73,7 @@ async def custom_runtime_tf() -> MLModel:
     model = TFMNISTModel(
         ModelSettings(
             name="custom_tf_mnist_model",
-            implementation="tests.test_model.TFMNISTModel",
+            implementation="tests.tf_model.TFMNISTModel",
         )
     )
     await model.load()
