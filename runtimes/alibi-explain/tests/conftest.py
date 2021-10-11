@@ -3,6 +3,7 @@ import json
 import os
 import sys
 from pathlib import Path
+from typing import AsyncIterable
 from unittest.mock import patch
 
 import nest_asyncio
@@ -19,7 +20,6 @@ from mlserver.settings import ModelSettings, ModelParameters, Settings
 from mlserver_alibi_explain.common import AlibiExplainSettings
 from mlserver_alibi_explain.runtime import AlibiExplainRuntime
 from mlserver_mlflow import MLflowRuntime
-
 from .test_model import TFMNISTModel
 
 # allow nesting loop
@@ -129,7 +129,7 @@ async def rest_server(
     data_plane: DataPlane,
     model_repository_handlers: ModelRepositoryHandlers,
     runtime_pytorch: MLflowRuntime,
-) -> RESTServer:
+) -> AsyncIterable[RESTServer]:
     server = RESTServer(
         settings=settings,
         data_plane=data_plane,

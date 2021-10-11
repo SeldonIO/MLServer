@@ -1,4 +1,4 @@
-from typing import Type, Any, Dict
+from typing import Type, Any, Dict, Optional
 
 import numpy as np
 from alibi.api.interfaces import Explanation, Explainer
@@ -6,6 +6,7 @@ from alibi.saving import load_explainer
 
 from mlserver import ModelSettings
 from mlserver.codecs import NumpyCodec
+from mlserver.settings import ModelParameters
 from mlserver.types import InferenceRequest, Parameters
 from mlserver_alibi_explain.common import AlibiExplainSettings, remote_predict
 from mlserver_alibi_explain.runtime import AlibiExplainRuntimeBase
@@ -18,8 +19,11 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
     """
 
     def __init__(self, settings: ModelSettings, explainer_class: Type[Explainer]):
-        explainer_settings = AlibiExplainSettings(**settings.parameters.extra)
         self._explainer_class = explainer_class
+
+        extra = settings.parameters.extra  # type: ignore
+        explainer_settings = AlibiExplainSettings(**extra)  # type: ignore
+
         # TODO: validate the settings are ok with this specific explainer
         super().__init__(settings, explainer_settings)
 
@@ -31,15 +35,17 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
             self._model = self._explainer_class(**init_parameters)  # type: ignore
         else:
             # load the model from disk
-            self._model = load_explainer(
-                self.settings.parameters.uri, predictor=self._infer_impl
-            )
+            model_parameters: Optional[ModelParameters] = self.settings.parameters
+            assert model_parameters is not None
+            uri = model_parameters.uri  # type ignore
+            assert uri is not None, "uri has to be set"
+            self._model = load_explainer(uri, predictor=self._infer_impl)
 
         self.ready = True
         return self.ready
 
     def _explain_impl(self, input_data: Any, explain_parameters: Dict) -> Explanation:
-        return self._model.explain(input_data, **explain_parameters)  # type: ignore
+        return self._model.explain(input_data, **explain_parameters)
 
     def _infer_impl(self, input_data: np.ndarray) -> np.ndarray:
         # The contract is that alibi-explain would input/output ndarray
@@ -54,9 +60,9 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
         )
 
         # TODO add some exception handling here
-        v2_response = remote_predict(
-            v2_payload=v2_request, predictor_url=self.alibi_explain_settings.infer_uri
-        )
+        infer_uri = self.alibi_explain_settings.infer_uri
+        assert infer_uri is not None, "infer_uri has to be set"
+        v2_response = remote_predict(v2_payload=v2_request, predictor_url=infer_uri)
 
         # TODO: do we care about more than one output?
         return np_codec.decode_response_output(v2_response.outputs[0])

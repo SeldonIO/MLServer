@@ -1,4 +1,4 @@
-from typing import Any, Optional, List
+from typing import Any, Optional, List, Dict
 
 from alibi.api.interfaces import Explanation
 
@@ -73,7 +73,7 @@ class AlibiExplainRuntimeBase(MLModel):
         # TODO: Convert alibi-explain output to v2 protocol, for now we use to_json
         return StringCodec.encode(payload=[explanation.to_json()], name="explain")
 
-    def _explain_impl(self, input_data: Any, settings: Parameters) -> Explanation:
+    def _explain_impl(self, input_data: Any, explain_parameters: Dict) -> Explanation:
         """Actual explain to be implemented by subclasses"""
         raise NotImplementedError
 

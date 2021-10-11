@@ -11,6 +11,7 @@ from mlserver_alibi_explain.explainers.white_box_runtime import (
 class IntegratedGradientsWrapper(AlibiExplainWhiteBoxRuntime):
     def _explain_impl(self, input_data: Any, explain_parameters: Dict) -> Explanation:
         # TODO: how are we going to deal with that?
+        assert self._inference_model is not None, "Inference model is not set"
         predictions = self._inference_model(input_data).numpy().argmax(axis=1)
         return self._model.explain(input_data, target=predictions, **explain_parameters)
 
