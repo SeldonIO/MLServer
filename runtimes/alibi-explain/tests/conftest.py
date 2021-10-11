@@ -117,7 +117,6 @@ def rest_app(rest_server: RESTServer) -> FastAPI:
 
 @pytest.fixture
 def rest_client(rest_app: FastAPI) -> TestClient:
-
     return TestClient(rest_app)
 
 
