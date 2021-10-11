@@ -45,21 +45,12 @@ class ExplainerEnum(str, Enum):
     integrated_gradients = _INTEGRATED_GRADIENTS_TAG
 
 
-# TODO: is this inference response?
-def create_v2_from_any(data: Any, name: str) -> Dict:
-    if isinstance(data, str):
-        b = list(bytes(data, "utf-8"))
-    else:
-        b = list(bytes(repr(data), "utf-8"))
-    return {
-        "name": name,
-        "datatype": "BYTES",
-        "data": b,
-        "shape": [len(b)],
-    }
-
-
 def convert_from_bytes(output: ResponseOutput, ty: Optional[Type]) -> Any:
+    """
+    This utility function decodes the response from bytes string to python object dict.
+    It is related to decoding StringCodec
+    TODO: add this utility in the codec.
+    """
     if ty == str:
         return bytearray(output.data).decode("UTF-8")
     else:

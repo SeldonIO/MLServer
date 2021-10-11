@@ -2,12 +2,12 @@ from typing import Any, Optional, List
 
 from alibi.api.interfaces import Explanation
 
-from mlserver.codecs import NumpyCodec, InputCodec
+from mlserver.codecs import NumpyCodec, InputCodec, StringCodec
 from mlserver.model import MLModel
 from mlserver.settings import ModelSettings
 from mlserver.types import InferenceRequest, InferenceResponse, RequestInput, MetadataModelResponse, Parameters, \
-    MetadataTensor
-from mlserver_alibi_explain.common import create_v2_from_any, execute_async, AlibiExplainSettings, \
+    MetadataTensor, ResponseOutput
+from mlserver_alibi_explain.common import execute_async, AlibiExplainSettings, \
     get_mlmodel_class_as_str, \
     get_alibi_class_as_str, import_and_get_class, EXPLAIN_PARAMETERS_TAG, EXPLAINER_TYPE_TAG
 
@@ -37,7 +37,7 @@ class AlibiExplainRuntimeBase(MLModel):
             outputs=[output_data],
         )
 
-    async def _async_explain_impl(self, input_data: Any, settings: Parameters) -> dict:
+    async def _async_explain_impl(self, input_data: Any, settings: Parameters) -> ResponseOutput:
         """run async"""
         explain_parameters = dict()
         if EXPLAIN_PARAMETERS_TAG in settings:
@@ -50,7 +50,7 @@ class AlibiExplainRuntimeBase(MLModel):
             explain_parameters=explain_parameters
         )
         # TODO: Convert alibi-explain output to v2 protocol, for now we use to_json
-        return create_v2_from_any(explanation.to_json(), name="explain")
+        return StringCodec.encode(payload=[explanation.to_json()], name="explain")
 
     def _explain_impl(self, input_data: Any, settings: Parameters) -> Explanation:
         """Actual explain to be implemented by subclasses"""
