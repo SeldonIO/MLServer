@@ -37,7 +37,7 @@ setup(
         "click",
         "fastapi",
         "grpcio",
-        "importlib-metadata; python_version < 3.8",
+        "importlib-metadata;python_version<'3.8'",
         "numpy",
         "orjson",
         "pandas",
