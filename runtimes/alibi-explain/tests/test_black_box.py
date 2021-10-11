@@ -39,7 +39,8 @@ async def test_predict_impl(
 ):
     # note: custom_runtime_tf is the underlying inference runtime
     # we want to test that the underlying impl predict is functionally correct
-    # anchor_image_runtime fixture if already mocking `remote_predict` -> custom_runtime_tf.predict
+    # anchor_image_runtime fixture is already mocking
+    # `remote_predict` -> custom_runtime_tf.predict
 
     # [batch, image_x, image_y, channel]
     data = np.random.randn(10, 28, 28, 1) * 255
@@ -77,8 +78,8 @@ async def test_end_2_end(
     alibi_anchor_image_model,
     payload: InferenceRequest,
 ):
-    # in this test we are getting explanation and making sure that it the same one as returned by alibi
-    # directly
+    # in this test we are getting explanation and making sure that it the same one
+    # as returned by alibi directly
     runtime_result = await anchor_image_runtime_with_remote_predict_patch.predict(
         payload
     )

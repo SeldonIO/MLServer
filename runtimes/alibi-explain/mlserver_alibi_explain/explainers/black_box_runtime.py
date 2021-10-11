@@ -13,8 +13,8 @@ from mlserver_alibi_explain.runtime import AlibiExplainRuntimeBase
 
 class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
     """
-    Runtime for black box explainer runtime, i.e. explainer that would just need access to infer feature from the
-    underlying model (no gradients etc.)
+    Runtime for black box explainer runtime, i.e. explainer that would just need access
+    to infer feature from the underlying model (no gradients etc.)
     """
 
     def __init__(self, settings: ModelSettings, explainer_class: Type[Explainer]):
@@ -48,8 +48,8 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
 
         v2_request = InferenceRequest(
             parameters=Parameters(content_type=NumpyCodec.ContentType),
-            # TODO: we probably need to tell alibi about the expected types to use or even whether it is a
-            # proba or targets etc
+            # TODO: we probably need to tell alibi about the expected types to use
+            # or even whether it is a proba or targets etc
             inputs=[np_codec.encode_request_input(name="predict", payload=input_data)],
         )
 

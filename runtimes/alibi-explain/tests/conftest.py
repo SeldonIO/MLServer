@@ -23,7 +23,8 @@ from mlserver_mlflow import MLflowRuntime
 from .test_model import TFMNISTModel
 
 # allow nesting loop
-# in our case this allows multiple runtimes to execute in the same thread for testing reasons
+# in our case this allows multiple runtimes to execute
+# in the same thread for testing reasons
 nest_asyncio.apply()
 
 TESTS_PATH = os.path.dirname(__file__)
@@ -40,7 +41,8 @@ def pytest_collection_modifyitems(items):
         item.add_marker("asyncio")
 
 
-# TODO: there is a lot of common code here with testing rest calls, refactor perhaps to make it neater
+# TODO: there is a lot of common code here with testing rest calls,
+#  refactor perhaps to make it neater
 @pytest.fixture
 def pytorch_model_uri() -> str:
     pytorch_model_path = os.path.join(TESTDATA_PATH, "pytorch_model")
@@ -159,9 +161,11 @@ async def anchor_image_runtime_with_remote_predict_patch(
     with patch(remote_predict_mock_path) as remote_predict:
 
         def mock_predict(*args, **kwargs):
-            # note: sometimes the event loop is not running and in this case we create a new one otherwise
+            # note: sometimes the event loop is not running and in this case
+            # we create a new one otherwise
             # we use the existing one.
-            # this mock implementation is required as we dont want to spin up a server, we just use MLModel.predict
+            # this mock implementation is required as we dont want to spin up a server,
+            # we just use MLModel.predict
             try:
                 loop = asyncio.get_event_loop()
                 res = loop.run_until_complete(
@@ -184,7 +188,7 @@ async def anchor_image_runtime_with_remote_predict_patch(
                 parameters=ModelParameters(
                     uri=f"{TESTS_PATH}/data/mnist_anchor_image",
                     extra=AlibiExplainSettings(
-                        explainer_type="anchor_image", infer_uri=f"dummy_call"
+                        explainer_type="anchor_image", infer_uri="dummy_call"
                     ),
                 ),
             )

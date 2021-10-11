@@ -21,15 +21,18 @@ _INTEGRATED_GRADIENTS_TAG = "integrated_gradients"
 
 _TAG_TO_RT_IMPL = {
     _ANCHOR_IMAGE_TAG: (
-        "mlserver_alibi_explain.explainers.black_box_runtime.AlibiExplainBlackBoxRuntime",
+        "mlserver_alibi_explain.explainers.black_box_runtime."
+        "AlibiExplainBlackBoxRuntime",
         "alibi.explainers.AnchorImage",
     ),
     _ANCHOR_TEXT_TAG: (
-        "mlserver_alibi_explain.explainers.black_box_runtime.AlibiExplainBlackBoxRuntime",
+        "mlserver_alibi_explain.explainers.black_box_runtime."
+        "AlibiExplainBlackBoxRuntime",
         "alibi.explainers.AnchorText",
     ),
     _INTEGRATED_GRADIENTS_TAG: (
-        "mlserver_alibi_explain.explainers.integrated_gradients.IntegratedGradientsWrapper",
+        "mlserver_alibi_explain.explainers.integrated_gradients."
+        "IntegratedGradientsWrapper",
         "alibi.explainers.IntegratedGradients",
     ),
 }
@@ -70,7 +73,8 @@ def remote_predict(
     return InferenceResponse.parse_raw(response_raw.text)
 
 
-# TODO: this is very similar to `asyncio.to_thread` (python 3.9+), so lets use it at some point.
+# TODO: this is very similar to `asyncio.to_thread` (python 3.9+),
+# so lets use it at some point.
 def execute_async(
     loop: Optional[AbstractEventLoop], fn: Callable, *args, **kwargs
 ) -> Awaitable:

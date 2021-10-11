@@ -2,7 +2,6 @@ from typing import Any, Type, Dict
 
 from alibi.api.interfaces import Explanation, Explainer
 from alibi.saving import load_explainer
-from pydantic import BaseSettings
 
 from mlserver import ModelSettings
 from mlserver_alibi_explain.common import AlibiExplainSettings
@@ -11,7 +10,8 @@ from mlserver_alibi_explain.runtime import AlibiExplainRuntimeBase
 
 class AlibiExplainWhiteBoxRuntime(AlibiExplainRuntimeBase):
     """
-    White box alibi explain requires access to the full inference model to compute gradients etc. usually in the same
+    White box alibi explain requires access to the full inference model
+    to compute gradients etc. usually in the same
     domain as the explainer itself. e.g. `IntegratedGradients`
     """
 

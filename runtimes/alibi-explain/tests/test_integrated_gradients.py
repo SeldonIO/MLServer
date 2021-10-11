@@ -44,7 +44,8 @@ async def test_end_2_end(
     alibi_integrated_gradients_model,
     payload: InferenceRequest,
 ):
-    # in this test we are getting explanation and making sure that it the same one as returned by alibi
+    # in this test we are getting explanation and making sure that it the same
+    # one as returned by alibi
     # directly
     runtime_result = await integrated_gradients_runtime.predict(payload)
     decoded_runtime_results = json.loads(

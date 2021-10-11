@@ -90,7 +90,7 @@ def test_remote_predict__smoke(runtime_pytorch, rest_client):
 
 async def test_alibi_runtime_wrapper(custom_runtime_tf: MLModel):
     """
-    Checks that the wrappers returns back the expected valued from the underlying runtime
+    Checks that the wrappers returns back the expected valued from the underlying rt
     """
 
     class _MockInit(AlibiExplainRuntime):

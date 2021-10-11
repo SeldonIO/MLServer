@@ -38,7 +38,10 @@ class AlibiExplainRuntimeBase(MLModel):
         super().__init__(settings)
 
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
-        """This is actually a call to explain as we are treating an explainer model as MLModel"""
+        """
+        This is actually a call to explain as we are treating
+        an explainer model as MLModel
+        """
 
         # TODO: convert and validate?
         model_input = payload.inputs[0]
@@ -79,7 +82,8 @@ class AlibiExplainRuntime(MLModel):
 
     def __init__(self, settings: ModelSettings):
         # TODO: we probably want to validate the enum more sanely here
-        # we do not want to construct a specific alibi settings here because it might be dependent on type
+        # we do not want to construct a specific alibi settings here because
+        # it might be dependent on type
         # although at the moment we only have one `AlibiExplainSettings`
         explainer_type = settings.parameters.extra[EXPLAINER_TYPE_TAG]
 
