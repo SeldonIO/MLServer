@@ -20,7 +20,7 @@ from mlserver.settings import ModelSettings, ModelParameters, Settings
 from mlserver_alibi_explain.common import AlibiExplainSettings
 from mlserver_alibi_explain.runtime import AlibiExplainRuntime
 from mlserver_mlflow import MLflowRuntime
-from .test_model import TFMNISTModel
+from .tf_model import TFMNISTModel
 
 # allow nesting loop
 # in our case this allows multiple runtimes to execute

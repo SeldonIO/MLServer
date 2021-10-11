@@ -11,7 +11,7 @@ from mlserver.codecs import NumpyCodec
 from mlserver.types import InferenceRequest, Parameters, RequestInput
 from mlserver_alibi_explain import AlibiExplainRuntime
 from mlserver_alibi_explain.common import convert_from_bytes
-from .test_model import get_tf_mnist_model_uri
+from .tf_model import get_tf_mnist_model_uri
 
 
 @pytest.fixture
