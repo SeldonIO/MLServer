@@ -13,7 +13,9 @@ Smoke tests for runtimes
 """
 
 
-async def test_integrated_gradients__smoke(integrated_gradients_runtime: AlibiExplainRuntime):
+async def test_integrated_gradients__smoke(
+    integrated_gradients_runtime: AlibiExplainRuntime,
+):
     # TODO: there is an inherit batch as first dimension
     data = np.random.randn(10, 28, 28, 1) * 255
     inference_request = InferenceRequest(
@@ -21,7 +23,7 @@ async def test_integrated_gradients__smoke(integrated_gradients_runtime: AlibiEx
             content_type=NumpyCodec.ContentType,
             explain_parameters={
                 "baselines": None,
-            }
+            },
         ),
         inputs=[
             RequestInput(
@@ -36,7 +38,9 @@ async def test_integrated_gradients__smoke(integrated_gradients_runtime: AlibiEx
     _ = convert_from_bytes(response.outputs[0], ty=str)
 
 
-async def test_anchors__smoke(anchor_image_runtime_with_remote_predict_patch: AlibiExplainRuntime):
+async def test_anchors__smoke(
+    anchor_image_runtime_with_remote_predict_patch: AlibiExplainRuntime,
+):
     data = np.random.randn(28, 28, 1) * 255
     inference_request = InferenceRequest(
         parameters=Parameters(
@@ -45,7 +49,7 @@ async def test_anchors__smoke(anchor_image_runtime_with_remote_predict_patch: Al
                 "threshold": 0.95,
                 "p_sample": 0.5,
                 "tau": 0.25,
-            }
+            },
         ),
         inputs=[
             RequestInput(
@@ -56,7 +60,9 @@ async def test_anchors__smoke(anchor_image_runtime_with_remote_predict_patch: Al
             )
         ],
     )
-    response = await anchor_image_runtime_with_remote_predict_patch.predict(inference_request)
+    response = await anchor_image_runtime_with_remote_predict_patch.predict(
+        inference_request
+    )
     _ = convert_from_bytes(response.outputs[0], ty=str)
 
 
@@ -79,15 +85,14 @@ def test_remote_predict__smoke(runtime_pytorch, rest_client):
 
         endpoint = f"v2/models/{runtime_pytorch.settings.name}/infer"
 
-        _ = remote_predict(
-            inference_request,
-            predictor_url=endpoint)
+        _ = remote_predict(inference_request, predictor_url=endpoint)
 
 
 async def test_alibi_runtime_wrapper(custom_runtime_tf: MLModel):
     """
     Checks that the wrappers returns back the expected valued from the underlying runtime
     """
+
     class _MockInit(AlibiExplainRuntime):
         def __init__(self, settings: ModelSettings):
             self._rt = custom_runtime_tf
@@ -116,14 +121,18 @@ async def test_alibi_runtime_wrapper(custom_runtime_tf: MLModel):
     assert wrapper.ready == custom_runtime_tf.ready
 
     assert await wrapper.metadata() == await custom_runtime_tf.metadata()
-    assert await wrapper.predict(inference_request) == await custom_runtime_tf.predict(inference_request)
+    assert await wrapper.predict(inference_request) == await custom_runtime_tf.predict(
+        inference_request
+    )
 
     # check setters
-    dummy_shape_metadata = [MetadataTensor(
-        name="dummy",
-        datatype="FP32",
-        shape=[1, 2],
-    )]
+    dummy_shape_metadata = [
+        MetadataTensor(
+            name="dummy",
+            datatype="FP32",
+            shape=[1, 2],
+        )
+    ]
     wrapper.inputs = dummy_shape_metadata
     custom_runtime_tf.inputs = dummy_shape_metadata
     assert wrapper.inputs == custom_runtime_tf.inputs
@@ -133,7 +142,8 @@ async def test_alibi_runtime_wrapper(custom_runtime_tf: MLModel):
     assert wrapper.outputs == custom_runtime_tf.outputs
 
     wrapper_public_funcs = list(filter(lambda x: not x.startswith("_"), dir(wrapper)))
-    expected_public_funcs = list(filter(lambda x: not x.startswith("_"), dir(custom_runtime_tf)))
+    expected_public_funcs = list(
+        filter(lambda x: not x.startswith("_"), dir(custom_runtime_tf))
+    )
 
     assert wrapper_public_funcs == expected_public_funcs
-

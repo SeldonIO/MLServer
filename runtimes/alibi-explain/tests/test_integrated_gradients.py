@@ -40,14 +40,16 @@ def alibi_integrated_gradients_model() -> Tuple:
 
 
 async def test_end_2_end(
-        integrated_gradients_runtime,
-        alibi_integrated_gradients_model,
-        payload: InferenceRequest
+    integrated_gradients_runtime,
+    alibi_integrated_gradients_model,
+    payload: InferenceRequest,
 ):
     # in this test we are getting explanation and making sure that it the same one as returned by alibi
     # directly
     runtime_result = await integrated_gradients_runtime.predict(payload)
-    decoded_runtime_results = json.loads(convert_from_bytes(runtime_result.outputs[0], ty=str))
+    decoded_runtime_results = json.loads(
+        convert_from_bytes(runtime_result.outputs[0], ty=str)
+    )
 
     # get the data as numpy from the inference request payload
     infer_model, ig_model = alibi_integrated_gradients_model
@@ -55,4 +57,7 @@ async def test_end_2_end(
     predictions = infer_model(input_data_np).numpy().argmax(axis=1)
     alibi_result = ig_model.explain(input_data_np, target=predictions)
 
-    assert_array_equal(np.array(decoded_runtime_results["data"]["attributions"]), alibi_result.data["attributions"])
+    assert_array_equal(
+        np.array(decoded_runtime_results["data"]["attributions"]),
+        alibi_result.data["attributions"],
+    )

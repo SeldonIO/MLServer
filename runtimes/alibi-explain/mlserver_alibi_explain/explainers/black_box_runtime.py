@@ -31,16 +31,15 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
             self._model = self._explainer_class(**init_parameters)  # type: ignore
         else:
             # load the model from disk
-            self._model = load_explainer(self.settings.parameters.uri, predictor=self._infer_impl)
+            self._model = load_explainer(
+                self.settings.parameters.uri, predictor=self._infer_impl
+            )
 
         self.ready = True
         return self.ready
 
     def _explain_impl(self, input_data: Any, explain_parameters: Dict) -> Explanation:
-        return self._model.explain(
-            input_data,
-            **explain_parameters  # type: ignore
-        )
+        return self._model.explain(input_data, **explain_parameters)  # type: ignore
 
     def _infer_impl(self, input_data: np.ndarray) -> np.ndarray:
         # The contract is that alibi-explain would input/output ndarray
@@ -56,8 +55,8 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
 
         # TODO add some exception handling here
         v2_response = remote_predict(
-            v2_payload=v2_request,
-            predictor_url=self.alibi_explain_settings.infer_uri)
+            v2_payload=v2_request, predictor_url=self.alibi_explain_settings.infer_uri
+        )
 
         # TODO: do we care about more than one output?
         return np_codec.decode_response_output(v2_response.outputs[0])

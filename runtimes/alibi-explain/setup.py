@@ -33,10 +33,7 @@ setup(
     author_email="hello@seldon.io",
     description="Alibi-Explain runtime for MLServer",
     packages=find_packages(),
-    install_requires=[
-        "mlserver",
-        "alibi"
-    ],
+    install_requires=["mlserver", "alibi"],
     long_description=_load_description(),
     long_description_content_type="text/markdown",
     license="Apache 2.0",

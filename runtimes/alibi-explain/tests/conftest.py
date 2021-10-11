@@ -81,10 +81,7 @@ async def custom_runtime_tf() -> MLModel:
 
 @pytest.fixture
 def settings() -> Settings:
-    return Settings(
-        debug=True,
-        host="127.0.0.1"
-    )
+    return Settings(debug=True, host="127.0.0.1")
 
 
 @pytest.fixture
@@ -108,7 +105,7 @@ def model_repository(tmp_path, runtime_pytorch) -> ModelRepository:
         "parallel_workers": 0,
         "parameters": {
             "uri": runtime_pytorch.settings.parameters.uri,
-        }
+        },
     }
 
     model_settings_path.write_text(json.dumps(model_settings_dict, indent=4))
@@ -156,21 +153,27 @@ def rest_client(rest_app: FastAPI) -> TestClient:
 
 @pytest.fixture
 async def anchor_image_runtime_with_remote_predict_patch(
-        custom_runtime_tf: MLModel,
-        remote_predict_mock_path: str = "mlserver_alibi_explain.common.remote_predict") -> AlibiExplainRuntime:
+    custom_runtime_tf: MLModel,
+    remote_predict_mock_path: str = "mlserver_alibi_explain.common.remote_predict",
+) -> AlibiExplainRuntime:
     with patch(remote_predict_mock_path) as remote_predict:
+
         def mock_predict(*args, **kwargs):
             # note: sometimes the event loop is not running and in this case we create a new one otherwise
             # we use the existing one.
             # this mock implementation is required as we dont want to spin up a server, we just use MLModel.predict
             try:
                 loop = asyncio.get_event_loop()
-                res = loop.run_until_complete(custom_runtime_tf.predict(kwargs["v2_payload"]))
+                res = loop.run_until_complete(
+                    custom_runtime_tf.predict(kwargs["v2_payload"])
+                )
                 return res
             except Exception:
                 loop = asyncio.new_event_loop()
                 asyncio.set_event_loop(loop)
-                res = loop.run_until_complete(custom_runtime_tf.predict(kwargs["v2_payload"]))
+                res = loop.run_until_complete(
+                    custom_runtime_tf.predict(kwargs["v2_payload"])
+                )
                 return res
 
         remote_predict.side_effect = mock_predict
@@ -181,10 +184,9 @@ async def anchor_image_runtime_with_remote_predict_patch(
                 parameters=ModelParameters(
                     uri=f"{TESTS_PATH}/data/mnist_anchor_image",
                     extra=AlibiExplainSettings(
-                        explainer_type="anchor_image",
-                        infer_uri=f"dummy_call"
-                    )
-                )
+                        explainer_type="anchor_image", infer_uri=f"dummy_call"
+                    ),
+                ),
             )
         )
         await rt.load()
@@ -199,17 +201,13 @@ async def integrated_gradients_runtime() -> AlibiExplainRuntime:
             parallel_workers=1,
             parameters=ModelParameters(
                 extra=AlibiExplainSettings(
-                    init_parameters={
-                        "n_steps": 50,
-                        "method": "gausslegendre"
-                    },
+                    init_parameters={"n_steps": 50, "method": "gausslegendre"},
                     explainer_type="integrated_gradients",
-                    infer_uri=f"{TESTS_PATH}/data/tf_mnist/model.h5"
+                    infer_uri=f"{TESTS_PATH}/data/tf_mnist/model.h5",
                 )
-            )
+            ),
         )
     )
     await rt.load()
 
     return rt
-

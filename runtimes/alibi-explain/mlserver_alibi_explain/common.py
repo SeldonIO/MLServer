@@ -20,15 +20,18 @@ _ANCHOR_TEXT_TAG = "anchor_text"
 _INTEGRATED_GRADIENTS_TAG = "integrated_gradients"
 
 _TAG_TO_RT_IMPL = {
-    _ANCHOR_IMAGE_TAG:
-        ("mlserver_alibi_explain.explainers.black_box_runtime.AlibiExplainBlackBoxRuntime",
-         "alibi.explainers.AnchorImage"),
-    _ANCHOR_TEXT_TAG:
-        ("mlserver_alibi_explain.explainers.black_box_runtime.AlibiExplainBlackBoxRuntime",
-         "alibi.explainers.AnchorText"),
+    _ANCHOR_IMAGE_TAG: (
+        "mlserver_alibi_explain.explainers.black_box_runtime.AlibiExplainBlackBoxRuntime",
+        "alibi.explainers.AnchorImage",
+    ),
+    _ANCHOR_TEXT_TAG: (
+        "mlserver_alibi_explain.explainers.black_box_runtime.AlibiExplainBlackBoxRuntime",
+        "alibi.explainers.AnchorText",
+    ),
     _INTEGRATED_GRADIENTS_TAG: (
         "mlserver_alibi_explain.explainers.integrated_gradients.IntegratedGradientsWrapper",
-        "alibi.explainers.IntegratedGradients")
+        "alibi.explainers.IntegratedGradients",
+    ),
 }
 
 
@@ -53,11 +56,14 @@ def convert_from_bytes(output: ResponseOutput, ty: Optional[Type]) -> Any:
     else:
         py_str = bytearray(output.data).decode("UTF-8")
         from ast import literal_eval
+
         return literal_eval(py_str)
 
 
 # TODO: add retry
-def remote_predict(v2_payload: InferenceRequest, predictor_url: str) -> InferenceResponse:
+def remote_predict(
+    v2_payload: InferenceRequest, predictor_url: str
+) -> InferenceResponse:
     response_raw = requests.post(predictor_url, json=v2_payload.dict())
     if response_raw.status_code != 200:
         raise ValueError(f"{response_raw.status_code} / {response_raw.reason}")
@@ -66,7 +72,7 @@ def remote_predict(v2_payload: InferenceRequest, predictor_url: str) -> Inferenc
 
 # TODO: this is very similar to `asyncio.to_thread` (python 3.9+), so lets use it at some point.
 def execute_async(
-        loop: Optional[AbstractEventLoop], fn: Callable, *args, **kwargs
+    loop: Optional[AbstractEventLoop], fn: Callable, *args, **kwargs
 ) -> Awaitable:
     if loop is None:
         loop = asyncio.get_running_loop()
@@ -102,5 +108,5 @@ class AlibiExplainSettings(BaseSettings):
 
 def import_and_get_class(class_path: str) -> type:
     last_dot = class_path.rfind(".")
-    klass = getattr(import_module(class_path[:last_dot]), class_path[last_dot + 1:])
+    klass = getattr(import_module(class_path[:last_dot]), class_path[last_dot + 1 :])
     return klass

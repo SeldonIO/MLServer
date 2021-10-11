@@ -34,8 +34,8 @@ def payload() -> InferenceRequest:
 
 
 async def test_predict_impl(
-        anchor_image_runtime_with_remote_predict_patch: AlibiExplainRuntime,
-        custom_runtime_tf: MLModel
+    anchor_image_runtime_with_remote_predict_patch: AlibiExplainRuntime,
+    custom_runtime_tf: MLModel,
 ):
     # note: custom_runtime_tf is the underlying inference runtime
     # we want to test that the underlying impl predict is functionally correct
@@ -58,7 +58,9 @@ async def test_predict_impl(
         ],
     )
     expected_result = await custom_runtime_tf.predict(inference_request)
-    expected_result_numpy = NumpyCodec.decode_response_output(expected_result.outputs[0])
+    expected_result_numpy = NumpyCodec.decode_response_output(
+        expected_result.outputs[0]
+    )
 
     assert_array_equal(actual_result, expected_result_numpy)
 
@@ -71,15 +73,22 @@ def alibi_anchor_image_model():
 
 
 async def test_end_2_end(
-        anchor_image_runtime_with_remote_predict_patch: AlibiExplainRuntime,
-        alibi_anchor_image_model,
-        payload: InferenceRequest
+    anchor_image_runtime_with_remote_predict_patch: AlibiExplainRuntime,
+    alibi_anchor_image_model,
+    payload: InferenceRequest,
 ):
     # in this test we are getting explanation and making sure that it the same one as returned by alibi
     # directly
-    runtime_result = await anchor_image_runtime_with_remote_predict_patch.predict(payload)
-    decoded_runtime_results = json.loads(convert_from_bytes(runtime_result.outputs[0], ty=str))
-    alibi_result = alibi_anchor_image_model.explain(NumpyCodec.decode(payload.inputs[0]))
+    runtime_result = await anchor_image_runtime_with_remote_predict_patch.predict(
+        payload
+    )
+    decoded_runtime_results = json.loads(
+        convert_from_bytes(runtime_result.outputs[0], ty=str)
+    )
+    alibi_result = alibi_anchor_image_model.explain(
+        NumpyCodec.decode(payload.inputs[0])
+    )
 
-    assert_array_equal(np.array(decoded_runtime_results["data"]["anchor"]), alibi_result.data["anchor"])
-
+    assert_array_equal(
+        np.array(decoded_runtime_results["data"]["anchor"]), alibi_result.data["anchor"]
+    )

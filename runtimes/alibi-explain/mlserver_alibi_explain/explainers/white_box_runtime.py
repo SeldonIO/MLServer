@@ -14,6 +14,7 @@ class AlibiExplainWhiteBoxRuntime(AlibiExplainRuntimeBase):
     White box alibi explain requires access to the full inference model to compute gradients etc. usually in the same
     domain as the explainer itself. e.g. `IntegratedGradients`
     """
+
     def __init__(self, settings: ModelSettings, explainer_class: Type[Explainer]):
         self._inference_model = None
         self._explainer_class = explainer_class
@@ -33,7 +34,9 @@ class AlibiExplainWhiteBoxRuntime(AlibiExplainRuntimeBase):
         else:
             # load the model from disk
             # full model is passed as `predictor`
-            self._model = load_explainer(self.settings.parameters.uri, predictor=self._inference_model)
+            self._model = load_explainer(
+                self.settings.parameters.uri, predictor=self._inference_model
+            )
 
         self.ready = True
         return self.ready
@@ -43,4 +46,3 @@ class AlibiExplainWhiteBoxRuntime(AlibiExplainRuntimeBase):
 
     async def _get_inference_model(self) -> Any:
         raise NotImplementedError
-
