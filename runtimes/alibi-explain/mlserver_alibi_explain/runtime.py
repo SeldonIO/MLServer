@@ -56,12 +56,13 @@ class AlibiExplainRuntimeBase(MLModel):
         )
 
     async def _async_explain_impl(
-        self, input_data: Any, settings: Parameters
+        self, input_data: Any, settings: Optional[Parameters]
     ) -> ResponseOutput:
         """run async"""
         explain_parameters = dict()
-        if EXPLAIN_PARAMETERS_TAG in settings:
-            explain_parameters = settings[EXPLAIN_PARAMETERS_TAG]
+        if settings is not None:
+            if EXPLAIN_PARAMETERS_TAG in settings:  # type: ignore
+                explain_parameters = settings[EXPLAIN_PARAMETERS_TAG]  # type: ignore
 
         explanation = await execute_async(
             loop=None,
@@ -85,7 +86,10 @@ class AlibiExplainRuntime(MLModel):
         # we do not want to construct a specific alibi settings here because
         # it might be dependent on type
         # although at the moment we only have one `AlibiExplainSettings`
-        explainer_type = settings.parameters.extra[EXPLAINER_TYPE_TAG]
+        assert settings.parameters is not None
+        assert EXPLAINER_TYPE_TAG in settings.parameters.extra  # type: ignore
+
+        explainer_type = settings.parameters.extra[EXPLAINER_TYPE_TAG]  # type: ignore
 
         rt_class = import_and_get_class(get_mlmodel_class_as_str(explainer_type))
 
@@ -121,8 +125,8 @@ class AlibiExplainRuntime(MLModel):
     def outputs(self, value: List[MetadataTensor]):
         self._rt.outputs = value
 
-    @property
-    def ready(self) -> bool:
+    @property  # type: ignore
+    def ready(self) -> bool:  # type: ignore
         return self._rt.ready
 
     @ready.setter

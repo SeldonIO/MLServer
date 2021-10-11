@@ -25,3 +25,5 @@ class TFMNISTModel(MLModel):
 
     async def load(self) -> bool:
         self._model = tf.keras.models.load_model(get_tf_mnist_model_uri())
+        self.ready = True
+        return self.ready

@@ -1,14 +1,16 @@
-from typing import Any, Type, Dict
+from abc import ABC
+from typing import Any, Type, Optional
 
-from alibi.api.interfaces import Explanation, Explainer
+from alibi.api.interfaces import Explainer
 from alibi.saving import load_explainer
 
 from mlserver import ModelSettings
+from mlserver.settings import ModelParameters
 from mlserver_alibi_explain.common import AlibiExplainSettings
 from mlserver_alibi_explain.runtime import AlibiExplainRuntimeBase
 
 
-class AlibiExplainWhiteBoxRuntime(AlibiExplainRuntimeBase):
+class AlibiExplainWhiteBoxRuntime(ABC, AlibiExplainRuntimeBase):
     """
     White box alibi explain requires access to the full inference model
     to compute gradients etc. usually in the same
@@ -19,7 +21,9 @@ class AlibiExplainWhiteBoxRuntime(AlibiExplainRuntimeBase):
         self._inference_model = None
         self._explainer_class = explainer_class
 
-        explainer_settings = AlibiExplainSettings(**settings.parameters.extra)
+        extra = settings.parameters.extra  # type: ignore
+        explainer_settings = AlibiExplainSettings(**extra)  # type: ignore
+
         # TODO: validate the settings are ok with this specific explainer
         super().__init__(settings, explainer_settings)
 
@@ -34,15 +38,14 @@ class AlibiExplainWhiteBoxRuntime(AlibiExplainRuntimeBase):
         else:
             # load the model from disk
             # full model is passed as `predictor`
-            self._model = load_explainer(
-                self.settings.parameters.uri, predictor=self._inference_model
-            )
+            model_parameters: Optional[ModelParameters] = self.settings.parameters
+            assert model_parameters is not None
+            uri = model_parameters.uri  # type ignore
+            assert uri is not None, "uri has to be set"
+            self._model = load_explainer(uri, predictor=self._inference_model)
 
         self.ready = True
         return self.ready
-
-    def _explain_impl(self, input_data: Any, explain_parameters: Dict) -> Explanation:
-        raise NotImplementedError
 
     async def _get_inference_model(self) -> Any:
         raise NotImplementedError
