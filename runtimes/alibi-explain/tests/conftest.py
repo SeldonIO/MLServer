@@ -1,7 +1,6 @@
 import asyncio
 import json
 import os
-import sys
 from pathlib import Path
 from typing import AsyncIterable
 from unittest.mock import patch
@@ -19,7 +18,6 @@ from mlserver.rest import RESTServer
 from mlserver.settings import ModelSettings, ModelParameters, Settings
 from mlserver_alibi_explain.common import AlibiExplainSettings
 from mlserver_alibi_explain.runtime import AlibiExplainRuntime
-from mlserver_mlflow import MLflowRuntime
 from .tf_model import TFMNISTModel
 
 # allow nesting loop
@@ -27,9 +25,7 @@ from .tf_model import TFMNISTModel
 # in the same thread for testing reasons
 nest_asyncio.apply()
 
-TESTS_PATH = os.path.dirname(__file__)
-# this path is coming from mlflow test data
-TESTDATA_PATH = Path(__file__).parent.parent.parent / "mlflow" / "tests" / "testdata"
+TESTS_PATH = Path(os.path.dirname(__file__))
 
 
 # TODO: how to make this in utils?
@@ -39,33 +35,6 @@ def pytest_collection_modifyitems(items):
     """
     for item in items:
         item.add_marker("asyncio")
-
-
-# TODO: there is a lot of common code here with testing rest calls,
-#  refactor perhaps to make it neater
-@pytest.fixture
-def pytorch_model_uri() -> str:
-    pytorch_model_path = os.path.join(TESTDATA_PATH, "pytorch_model")
-    if sys.version_info >= (3, 8):
-        return os.path.join(pytorch_model_path, "3.8")
-
-    return os.path.join(pytorch_model_path, "3.7")
-
-
-@pytest.fixture
-def model_settings_pytorch_fixed(pytorch_model_uri) -> ModelSettings:
-    return ModelSettings(
-        name="mlflow-model",
-        parameters=ModelParameters(uri=pytorch_model_uri),
-    )
-
-
-@pytest.fixture
-async def runtime_pytorch(model_settings_pytorch_fixed: ModelSettings) -> MLflowRuntime:
-    model = MLflowRuntime(model_settings_pytorch_fixed)
-    await model.load()
-
-    return model
 
 
 @pytest.fixture
@@ -87,9 +56,9 @@ def settings() -> Settings:
 
 
 @pytest.fixture
-async def model_registry(runtime_pytorch) -> MultiModelRegistry:
+async def model_registry(custom_runtime_tf) -> MultiModelRegistry:
     model_registry = MultiModelRegistry()
-    await model_registry.load(runtime_pytorch)
+    await model_registry.load(custom_runtime_tf)
     return model_registry
 
 
@@ -99,15 +68,13 @@ def data_plane(settings: Settings, model_registry: MultiModelRegistry) -> DataPl
 
 
 @pytest.fixture
-def model_repository(tmp_path, runtime_pytorch) -> ModelRepository:
+def model_repository(tmp_path, custom_runtime_tf) -> ModelRepository:
     model_settings_path = tmp_path.joinpath("model-settings.json")
+    impl = custom_runtime_tf.settings.implementation
     model_settings_dict = {
-        "name": runtime_pytorch.settings.name,
-        "implementation": "mlserver_mlflow.MLflowRuntime",
+        "name": custom_runtime_tf.settings.name,
+        "implementation": f"{impl.__module__}.{impl.__name__}",
         "parallel_workers": 0,
-        "parameters": {
-            "uri": runtime_pytorch.settings.parameters.uri,
-        },
     }
 
     model_settings_path.write_text(json.dumps(model_settings_dict, indent=4))
@@ -128,7 +95,7 @@ async def rest_server(
     settings: Settings,
     data_plane: DataPlane,
     model_repository_handlers: ModelRepositoryHandlers,
-    runtime_pytorch: MLflowRuntime,
+    custom_runtime_tf: MLModel,
 ) -> AsyncIterable[RESTServer]:
     server = RESTServer(
         settings=settings,
@@ -136,11 +103,11 @@ async def rest_server(
         model_repository_handlers=model_repository_handlers,
     )
 
-    await asyncio.gather(server.add_custom_handlers(runtime_pytorch))
+    await asyncio.gather(server.add_custom_handlers(custom_runtime_tf))
 
     yield server
 
-    await asyncio.gather(server.delete_custom_handlers(runtime_pytorch))
+    await asyncio.gather(server.delete_custom_handlers(custom_runtime_tf))
 
 
 @pytest.fixture
@@ -150,6 +117,7 @@ def rest_app(rest_server: RESTServer) -> FastAPI:
 
 @pytest.fixture
 def rest_client(rest_app: FastAPI) -> TestClient:
+
     return TestClient(rest_app)
 
 
@@ -186,7 +154,7 @@ async def anchor_image_runtime_with_remote_predict_patch(
             ModelSettings(
                 parallel_workers=0,
                 parameters=ModelParameters(
-                    uri=f"{TESTS_PATH}/data/mnist_anchor_image",
+                    uri=str(TESTS_PATH / "data" / "mnist_anchor_image"),
                     extra=AlibiExplainSettings(
                         explainer_type="anchor_image", infer_uri="dummy_call"
                     ),
@@ -207,7 +175,7 @@ async def integrated_gradients_runtime() -> AlibiExplainRuntime:
                 extra=AlibiExplainSettings(
                     init_parameters={"n_steps": 50, "method": "gausslegendre"},
                     explainer_type="integrated_gradients",
-                    infer_uri=f"{TESTS_PATH}/data/tf_mnist/model.h5",
+                    infer_uri=str(TESTS_PATH / "data" / "tf_mnist" / "model.h5"),
                 )
             ),
         )

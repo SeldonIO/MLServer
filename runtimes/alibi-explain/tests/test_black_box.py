@@ -1,4 +1,6 @@
 import json
+import os
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -12,6 +14,9 @@ from mlserver.types import InferenceRequest, Parameters, RequestInput
 from mlserver_alibi_explain import AlibiExplainRuntime
 from mlserver_alibi_explain.common import convert_from_bytes
 from .tf_model import get_tf_mnist_model_uri
+
+
+TESTS_PATH = Path(os.path.dirname(__file__))
 
 
 @pytest.fixture
@@ -69,7 +74,8 @@ async def test_predict_impl(
 @pytest.fixture()
 def alibi_anchor_image_model():
     inference_model = tf.keras.models.load_model(get_tf_mnist_model_uri())
-    model = load_explainer("data/mnist_anchor_image", inference_model.__call__)
+    model = load_explainer(
+        TESTS_PATH / "data" / "mnist_anchor_image", inference_model.__call__)
     return model
 
 

@@ -1,5 +1,4 @@
 tensorflow
 numpy
 nest_asyncio
-mlserver-mlflow
 types-requests

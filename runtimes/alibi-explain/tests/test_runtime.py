@@ -66,7 +66,7 @@ async def test_anchors__smoke(
     _ = convert_from_bytes(response.outputs[0], ty=str)
 
 
-def test_remote_predict__smoke(runtime_pytorch, rest_client):
+def test_remote_predict__smoke(custom_runtime_tf, rest_client):
     with patch("mlserver_alibi_explain.common.requests") as mock_requests:
         mock_requests.post = rest_client.post
 
@@ -83,7 +83,7 @@ def test_remote_predict__smoke(runtime_pytorch, rest_client):
             ],
         )
 
-        endpoint = f"v2/models/{runtime_pytorch.settings.name}/infer"
+        endpoint = f"v2/models/{custom_runtime_tf.settings.name}/infer"
 
         _ = remote_predict(inference_request, predictor_url=endpoint)
 
