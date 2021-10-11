@@ -9,7 +9,7 @@ pytest-mock==3.6.1
 tox==3.24.4
 
 # Linting and formatting
-flake8==3.9.1
+flake8==4.0.0
 flake8-black==0.2.3
 mypy==0.910
 mypy-protobuf==2.9
