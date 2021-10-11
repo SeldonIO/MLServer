@@ -41,6 +41,18 @@ async def start(folder: str):
     await server.start(models)
 
 
+@root.command("build")
+@click.argument("folder", nargs=1)
+@click.option("--dry-run")
+@click.option("-w", "--write-dockerfile")
+@click_async
+async def build(folder: str, dry_run: bool, write_dockerfile: bool):
+    """
+    Build a Docker image for a custom MLServer runtime.
+    """
+    pass
+
+
 def main():
     root()
 
