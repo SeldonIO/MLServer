@@ -13,7 +13,7 @@ from mlserver.codecs import NumpyCodec
 from mlserver.types import InferenceRequest, Parameters, RequestInput
 from mlserver_alibi_explain import AlibiExplainRuntime
 from mlserver_alibi_explain.common import convert_from_bytes
-from .tf_model import get_tf_mnist_model_uri
+from helpers.tf_model import get_tf_mnist_model_uri
 
 
 TESTS_PATH = Path(os.path.dirname(__file__))

@@ -9,7 +9,7 @@ from mlserver.types import InferenceRequest, InferenceResponse
 
 
 def get_tf_mnist_model_uri() -> Path:
-    return Path(os.path.dirname(__file__)) / "data" / "tf_mnist" / "model.h5"
+    return Path(os.path.dirname(__file__)).parent / "data" / "tf_mnist" / "model.h5"
 
 
 class TFMNISTModel(MLModel):
