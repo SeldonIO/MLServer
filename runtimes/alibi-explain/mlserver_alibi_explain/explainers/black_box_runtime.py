@@ -1,4 +1,4 @@
-from typing import Type, Any, Dict, Optional
+from typing import Type, Any, Dict, Optional, List, Union
 
 import numpy as np
 from alibi.api.interfaces import Explanation, Explainer
@@ -47,15 +47,19 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
     def _explain_impl(self, input_data: Any, explain_parameters: Dict) -> Explanation:
         return self._model.explain(input_data, **explain_parameters)
 
-    def _infer_impl(self, input_data: np.ndarray) -> np.ndarray:
+    def _infer_impl(self, input_data: Union[np.ndarray, List]) -> np.ndarray:
         # The contract is that alibi-explain would input/output ndarray
+        # in the case of AnchorText, we have a list of strings instead though.
         # TODO: for now we only support v2 protocol, do we need more support?
+        if type(input_data) == list:
+            arr = np.array(input_data)
+
         np_codec = NumpyCodec
 
         v2_request = InferenceRequest(
             parameters=Parameters(content_type=NumpyCodec.ContentType),
             # TODO: we probably need to tell alibi about the expected types to use
-            # or even whether it is a proba or targets etc
+            # or even whether it is a probability of classes or targets etc
             inputs=[np_codec.encode_request_input(name="predict", payload=input_data)],
         )
 
