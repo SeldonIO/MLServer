@@ -1,20 +1,40 @@
-from typing import Dict
+from typing import Tuple
 
 from ..version import __version__
 
 DockerfileTemplate = """
+FROM continuum/miniconda3:4.10.3 env-builder
+
+ARG MLSERVER_ENV_NAME="mlserver-custom-env" \
+    MLSERVER_ENV_TARBALL="environment.tar.gz"
+
+RUN conda config --add channels conda-forge && \
+    conda install conda-pack && \
+    if [[ -f environment.yaml ]]; then \
+        conda env create \
+            --name $MLSERVER_ENV_NAME \
+            --file environment.yaml; \
+        conda-pack \
+            -n $MLSERVER_ENV_NAME \
+            -o $MLSERVER_ENV_TARBALL; \
+    elif [[ -f conda.yaml ]]; then \
+        conda env create \
+            --name $MLSERVER_ENV_NAME \
+            --file conda.yaml; \
+        conda-pack \
+            -n $MLSERVER_ENV_NAME \
+            -o $MLSERVER_ENV_TARBALL; \
+    fi
+
 FROM seldonio/mlserver:{version}-slim
 
 ENV MLSERVER_MODEL_IMPLEMENTATION={default_runtime}
 
 # Copy all potential sources for custom environments
-COPY \
-    requirements.txt \
-    # setup.py \
-    environment.yaml \
-    conda.yaml \
-    .
-RUN ./hack/setup-environment.sh .
+COPY --from=env-builder environment.tar.gz .
+COPY {source_folder}/requirements.txt .
+
+RUN ./hack/setup-env.sh .
 
 # Copy everything else
 COPY {source_folder} .
@@ -64,9 +84,9 @@ coverage.xml
 """
 
 
-def generate_dockerfile(folder: str) -> Dict[str, str]:
+def generate_dockerfile(folder: str) -> Tuple[str, str]:
     dockerfile = DockerfileTemplate.format(
         version=__version__, default_runtime="", source_folder=folder
     )
 
-    return {"Dockerfile": dockerfile, ".dockerignore": Dockerignore}
+    return dockerfile, Dockerignore
