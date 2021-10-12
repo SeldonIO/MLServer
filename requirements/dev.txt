@@ -8,10 +8,6 @@ pytest-asyncio==0.15.1
 pytest-mock==3.6.1
 tox==3.24.4
 
-# We pin version of fastapi for testing
-# check https://github.com/SeldonIO/MLServer/issues/340
-fastapi<=0.68.2
-
 # Linting and formatting
 flake8==3.9.1
 flake8-black==0.2.3
