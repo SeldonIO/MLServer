@@ -75,7 +75,8 @@ async def test_predict_impl(
 def alibi_anchor_image_model():
     inference_model = tf.keras.models.load_model(get_tf_mnist_model_uri())
     model = load_explainer(
-        TESTS_PATH / "data" / "mnist_anchor_image", inference_model.__call__)
+        TESTS_PATH / "data" / "mnist_anchor_image", inference_model.__call__
+    )
     return model
 
 
