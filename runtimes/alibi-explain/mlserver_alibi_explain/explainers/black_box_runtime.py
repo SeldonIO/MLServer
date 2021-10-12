@@ -52,7 +52,7 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
         # in the case of AnchorText, we have a list of strings instead though.
         # TODO: for now we only support v2 protocol, do we need more support?
         if type(input_data) == list:
-            arr = np.array(input_data)
+            input_data = np.array(input_data)
 
         np_codec = NumpyCodec
 
