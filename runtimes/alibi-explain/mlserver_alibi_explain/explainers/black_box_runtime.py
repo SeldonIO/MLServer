@@ -5,7 +5,7 @@ from alibi.api.interfaces import Explanation, Explainer
 from alibi.saving import load_explainer
 
 from mlserver import ModelSettings
-from mlserver.codecs import NumpyCodec
+from mlserver.codecs import NumpyCodec, StringCodec
 from mlserver.settings import ModelParameters
 from mlserver.types import InferenceRequest, Parameters
 from mlserver_alibi_explain.common import AlibiExplainSettings, remote_predict
@@ -45,22 +45,31 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
         return self.ready
 
     def _explain_impl(self, input_data: Any, explain_parameters: Dict) -> Explanation:
+        if type(input_data) == list:
+            # if we get a list of strings, we can only explain the first elem and there
+            # is no way of just sending a plain string, has to be in a list as it is
+            # encoded as BYTES
+            input_data = input_data[0]
+
         return self._model.explain(input_data, **explain_parameters)
 
-    def _infer_impl(self, input_data: Union[np.ndarray, List]) -> np.ndarray:
+    def _infer_impl(self, input_data: Union[np.ndarray, List[str]]) -> np.ndarray:
         # The contract is that alibi-explain would input/output ndarray
         # in the case of AnchorText, we have a list of strings instead though.
         # TODO: for now we only support v2 protocol, do we need more support?
-        if type(input_data) == list:
-            input_data = np.array(input_data)
 
-        np_codec = NumpyCodec
+        # For List[str] (e.g. AnchorText), we use StringCodec for input
+        input_payload_codec = StringCodec if type(input_data) == list else NumpyCodec
 
         v2_request = InferenceRequest(
-            parameters=Parameters(content_type=NumpyCodec.ContentType),
+            parameters=Parameters(content_type=input_payload_codec.ContentType),
             # TODO: we probably need to tell alibi about the expected types to use
             # or even whether it is a probability of classes or targets etc
-            inputs=[np_codec.encode_request_input(name="predict", payload=input_data)],
+            inputs=[
+                input_payload_codec.encode_request_input(
+                    name="predict", payload=input_data
+                )
+            ],
         )
 
         # TODO add some exception handling here
@@ -69,4 +78,4 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
         v2_response = remote_predict(v2_payload=v2_request, predictor_url=infer_uri)
 
         # TODO: do we care about more than one output?
-        return np_codec.decode_response_output(v2_response.outputs[0])
+        return NumpyCodec.decode_response_output(v2_response.outputs[0])

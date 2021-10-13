@@ -2,7 +2,7 @@ import numpy as np
 
 from typing import Any, Union
 
-from ..types import RequestInput, ResponseOutput
+from ..types import RequestInput, ResponseOutput, Parameters
 
 from .base import InputCodec, register_input_codec, register_request_codec
 from .utils import FirstInputRequestCodec
@@ -117,6 +117,7 @@ class NumpyCodec(InputCodec):
             datatype=datatype,
             shape=list(payload.shape),
             data=_encode_data(payload, datatype),
+            parameters=Parameters(content_type=cls.ContentType),
         )
 
 
