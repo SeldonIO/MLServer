@@ -47,8 +47,8 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
     def _explain_impl(self, input_data: Any, explain_parameters: Dict) -> Explanation:
         if type(input_data) == list:
             # if we get a list of strings, we can only explain the first elem and there
-            # is no way of just sending a plain string, has to be in a list as it is
-            # encoded as BYTES
+            # is no way of just sending a plain string in v2, it has to be in a list
+            # as the encoding is List[str] with content_type "BYTES"
             input_data = input_data[0]
 
         return self._model.explain(input_data, **explain_parameters)
@@ -58,7 +58,7 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
         # in the case of AnchorText, we have a list of strings instead though.
         # TODO: for now we only support v2 protocol, do we need more support?
 
-        v2_request = self._v2_inference_request(input_data)
+        v2_request = _v2_inference_request(input_data)
 
         # TODO add some exception handling here
         infer_uri = self.alibi_explain_settings.infer_uri
@@ -77,7 +77,7 @@ def _v2_inference_request(input_data: Union[np.ndarray, List[str]]):
         # TODO: we probably need to tell alibi about the expected types to use
         # or even whether it is a probability of classes or targets etc
         inputs=[
-            input_payload_codec.encode_request_input(
+            input_payload_codec.encode_request_input(  # type: ignore
                 name="predict", payload=input_data
             )
         ],

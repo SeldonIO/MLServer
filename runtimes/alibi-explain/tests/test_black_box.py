@@ -107,35 +107,35 @@ async def test_end_2_end(
     [
         # numpy payload
         (
-                np.zeros([2, 4]),
-                InferenceRequest(
-                    parameters=Parameters(content_type=NumpyCodec.ContentType),
-                    inputs=[
-                        RequestInput(
-                            parameters=Parameters(content_type=NumpyCodec.ContentType),
-                            name="predict",
-                            data=np.zeros([2, 4]).flatten().tolist(),
-                            shape=[2, 4],
-                            datatype="FP64"  # default for np.zeros
-                        )
-                    ]
-                )
+            np.zeros([2, 4]),
+            InferenceRequest(
+                parameters=Parameters(content_type=NumpyCodec.ContentType),
+                inputs=[
+                    RequestInput(
+                        parameters=Parameters(content_type=NumpyCodec.ContentType),
+                        name="predict",
+                        data=np.zeros([2, 4]).flatten().tolist(),
+                        shape=[2, 4],
+                        datatype="FP64",  # default for np.zeros
+                    )
+                ],
+            ),
         ),
         # List[str] payload
         (
-                ["dummy text"],
-                InferenceRequest(
-                    parameters=Parameters(content_type=StringCodec.ContentType),
-                    inputs=[
-                        RequestInput(
-                            parameters=Parameters(content_type=StringCodec.ContentType),
-                            name="predict",
-                            data="dummy text",
-                            shape=[1, 10],
-                            datatype="BYTES"
-                        )
-                    ]
-                )
+            ["dummy text"],
+            InferenceRequest(
+                parameters=Parameters(content_type=StringCodec.ContentType),
+                inputs=[
+                    RequestInput(
+                        parameters=Parameters(content_type=StringCodec.ContentType),
+                        name="predict",
+                        data="dummy text",
+                        shape=[1, 10],
+                        datatype="BYTES",
+                    )
+                ],
+            ),
         ),
     ],
 )
