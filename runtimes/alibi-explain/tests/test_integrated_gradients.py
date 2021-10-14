@@ -5,12 +5,12 @@ import numpy as np
 import pytest
 import tensorflow as tf
 from alibi.explainers import IntegratedGradients
-from numpy.testing import assert_array_equal
+from numpy.testing import assert_array_almost_equal
 
+from helpers.tf_model import get_tf_mnist_model_uri
 from mlserver.codecs import NumpyCodec
 from mlserver.types import InferenceRequest, Parameters, RequestInput
 from mlserver_alibi_explain.common import convert_from_bytes
-from helpers.tf_model import get_tf_mnist_model_uri
 
 
 @pytest.fixture()
@@ -58,7 +58,7 @@ async def test_end_2_end(
     predictions = infer_model(input_data_np).numpy().argmax(axis=1)
     alibi_result = ig_model.explain(input_data_np, target=predictions)
 
-    assert_array_equal(
+    assert_array_almost_equal(
         np.array(decoded_runtime_results["data"]["attributions"]),
         alibi_result.data["attributions"],
     )
