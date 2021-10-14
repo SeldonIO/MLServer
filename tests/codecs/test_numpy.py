@@ -45,6 +45,7 @@ def test_numpy_codec(request_input, payload):
     assert response_output.datatype == request_input_result.datatype
     assert response_output.shape == request_input_result.shape
     assert response_output.data == request_input_result.data
+    assert request_input_result.parameters.content_type == codec.ContentType
 
     # similarly for decode_response_output
     output_response_decoded = codec.decode_response_output(response_output)
