@@ -3,6 +3,7 @@ from unittest.mock import patch
 
 import numpy as np
 from alibi.api.interfaces import Explanation
+from numpy.testing import assert_array_equal
 
 from mlserver import ModelSettings, MLModel
 from mlserver.codecs import NumpyCodec
@@ -162,11 +163,14 @@ async def test_explain_parameters_pass_through():
         "threshold": 0.95,
     }
 
+    data_np = np.array([[1.0, 2.0]])
+
     class _DummyExplainer(AlibiExplainRuntimeBase):
         def _explain_impl(
             self, input_data: Any, explain_parameters: Dict
         ) -> Explanation:
             assert explain_parameters == params
+            assert_array_equal(input_data, data_np)
             return Explanation(meta={}, data={})
 
     rt = _DummyExplainer(
@@ -186,8 +190,8 @@ async def test_explain_parameters_pass_through():
         inputs=[
             RequestInput(
                 name="predict",
-                shape=[1, 2],
-                data=[1.0, 2.0],
+                shape=data_np.shape,
+                data=data_np.tolist(),
                 datatype="FP32",
             )
         ],
