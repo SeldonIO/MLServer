@@ -71,3 +71,13 @@ def test_encode(decoded, expected):
     response_output = codec.encode(name="foo", payload=decoded)
 
     assert expected == response_output
+
+    # test encode_request_input
+    request_input = codec.encode_request_input(name="foo", payload=decoded)
+    assert request_input
+    assert response_output.datatype == request_input.datatype
+    assert response_output.shape == request_input.shape
+    # strings are supposed to be transferred as json over the wire for REST, so
+    # BYTES are not supported and we need to convert the data to str.
+    assert response_output.data.__root__.decode("ascii") == request_input.data.__root__
+    assert request_input.parameters.content_type == codec.ContentType

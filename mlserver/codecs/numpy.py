@@ -110,7 +110,7 @@ class NumpyCodec(InputCodec):
         data = cls.encode(name=name, payload=payload)
 
         return RequestInput(
-            name=name,
+            name=data.name,
             datatype=data.datatype,
             shape=data.shape,
             data=data.data,

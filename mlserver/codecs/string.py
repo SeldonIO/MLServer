@@ -54,12 +54,12 @@ class StringCodec(InputCodec):
     @classmethod
     def encode_request_input(cls, name: str, payload: List[str]) -> RequestInput:
         # TODO: merge this logic with `encode`
-        packed, shape = pack(map(_encode_str, payload))
+        data = cls.encode(name=name, payload=payload)
         return RequestInput(
-            name=name,
-            datatype="BYTES",
-            shape=shape,
-            data=packed.decode("ascii"),  # to allow json serialisation
+            name=data.name,
+            datatype=data.datatype,
+            shape=data.shape,
+            data=data.data.__root__.decode("ascii"),  # to allow json serialisation
             parameters=Parameters(content_type=cls.ContentType),
         )
 
