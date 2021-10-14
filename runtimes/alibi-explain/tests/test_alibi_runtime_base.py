@@ -1,12 +1,18 @@
+from typing import Any, Dict
 from unittest.mock import patch
 
 import numpy as np
+from alibi.api.interfaces import Explanation
 
 from mlserver import ModelSettings, MLModel
 from mlserver.codecs import NumpyCodec
 from mlserver.types import InferenceRequest, Parameters, RequestInput, MetadataTensor
-from mlserver_alibi_explain.common import convert_from_bytes, remote_predict
-from mlserver_alibi_explain.runtime import AlibiExplainRuntime
+from mlserver_alibi_explain.common import (
+    convert_from_bytes,
+    remote_predict,
+    AlibiExplainSettings,
+)
+from mlserver_alibi_explain.runtime import AlibiExplainRuntime, AlibiExplainRuntimeBase
 
 """
 Smoke tests for runtimes
@@ -147,3 +153,44 @@ async def test_alibi_runtime_wrapper(custom_runtime_tf: MLModel):
     )
 
     assert wrapper_public_funcs == expected_public_funcs
+
+
+async def test_explain_parameters_pass_through():
+    # test that the explain parameters are wired properly, if it runs ok then
+    # the assertion is fine
+    params = {
+        "threshold": 0.95,
+    }
+
+    class _DummyExplainer(AlibiExplainRuntimeBase):
+        def _explain_impl(
+            self, input_data: Any, explain_parameters: Dict
+        ) -> Explanation:
+            assert explain_parameters == params
+            return Explanation(meta={}, data={})
+
+    rt = _DummyExplainer(
+        settings=ModelSettings(),
+        explainer_settings=AlibiExplainSettings(
+            infer_uri=None,
+            explainer_type="dum",
+            init_parameters=None,
+        ),
+    )
+
+    inference_request = InferenceRequest(
+        parameters=Parameters(
+            content_type=NumpyCodec.ContentType,
+            explain_parameters=params,  # this is what we pass through as explain params
+        ),
+        inputs=[
+            RequestInput(
+                name="predict",
+                shape=[1, 2],
+                data=[1.0, 2.0],
+                datatype="FP32",
+            )
+        ],
+    )
+
+    _ = await rt.predict(inference_request)

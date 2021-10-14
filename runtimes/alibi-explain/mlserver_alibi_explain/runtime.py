@@ -61,8 +61,9 @@ class AlibiExplainRuntimeBase(MLModel):
         """run async"""
         explain_parameters = dict()
         if settings is not None:
-            if EXPLAIN_PARAMETERS_TAG in settings:  # type: ignore
-                explain_parameters = settings[EXPLAIN_PARAMETERS_TAG]  # type: ignore
+            settings_dict = settings.dict()
+            if EXPLAIN_PARAMETERS_TAG in settings_dict:
+                explain_parameters = settings_dict[EXPLAIN_PARAMETERS_TAG]
 
         explanation = await execute_async(
             loop=None,
