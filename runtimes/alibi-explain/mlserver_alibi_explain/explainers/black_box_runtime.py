@@ -7,8 +7,11 @@ from alibi.saving import load_explainer
 from mlserver import ModelSettings
 from mlserver.codecs import NumpyCodec
 from mlserver.settings import ModelParameters
-from mlserver_alibi_explain.common import AlibiExplainSettings, remote_predict, \
-    to_v2_inference_request
+from mlserver_alibi_explain.common import (
+    AlibiExplainSettings,
+    remote_predict,
+    to_v2_inference_request,
+)
 from mlserver_alibi_explain.runtime import AlibiExplainRuntimeBase
 
 

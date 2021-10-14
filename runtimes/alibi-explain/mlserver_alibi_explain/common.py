@@ -11,8 +11,12 @@ import requests
 from pydantic import BaseSettings
 
 from mlserver.codecs import StringCodec, NumpyCodec
-from mlserver.types import ResponseOutput, InferenceResponse, InferenceRequest, \
-    Parameters
+from mlserver.types import (
+    ResponseOutput,
+    InferenceResponse,
+    InferenceRequest,
+    Parameters,
+)
 
 EXPLAINER_TYPE_TAG = "explainer_type"
 
