@@ -3,11 +3,15 @@ from typing import Tuple
 from ..version import __version__
 
 DockerfileTemplate = """
-FROM continuum/miniconda3:4.10.3 env-builder
+FROM continuumio/miniconda3:4.10.3 AS env-builder
 
 ARG MLSERVER_ENV_NAME="mlserver-custom-env" \
     MLSERVER_ENV_TARBALL="environment.tar.gz"
 
+COPY \
+    {source_folder}/environment.yml \
+    {source_folder}/conda.yml \
+    .
 RUN conda config --add channels conda-forge && \
     conda install conda-pack && \
     if [[ -f environment.yaml ]]; then \
