@@ -58,19 +58,7 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
         # in the case of AnchorText, we have a list of strings instead though.
         # TODO: for now we only support v2 protocol, do we need more support?
 
-        # For List[str] (e.g. AnchorText), we use StringCodec for input
-        input_payload_codec = StringCodec if type(input_data) == list else NumpyCodec
-
-        v2_request = InferenceRequest(
-            parameters=Parameters(content_type=input_payload_codec.ContentType),
-            # TODO: we probably need to tell alibi about the expected types to use
-            # or even whether it is a probability of classes or targets etc
-            inputs=[
-                input_payload_codec.encode_request_input(
-                    name="predict", payload=input_data
-                )
-            ],
-        )
+        v2_request = self._v2_inference_request(input_data)
 
         # TODO add some exception handling here
         infer_uri = self.alibi_explain_settings.infer_uri
@@ -79,3 +67,19 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
 
         # TODO: do we care about more than one output?
         return NumpyCodec.decode_response_output(v2_response.outputs[0])
+
+
+def _v2_inference_request(input_data: Union[np.ndarray, List[str]]):
+    # For List[str] (e.g. AnchorText), we use StringCodec for input
+    input_payload_codec = StringCodec if type(input_data) == list else NumpyCodec
+    v2_request = InferenceRequest(
+        parameters=Parameters(content_type=input_payload_codec.ContentType),
+        # TODO: we probably need to tell alibi about the expected types to use
+        # or even whether it is a probability of classes or targets etc
+        inputs=[
+            input_payload_codec.encode_request_input(
+                name="predict", payload=input_data
+            )
+        ],
+    )
+    return v2_request

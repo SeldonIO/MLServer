@@ -9,12 +9,12 @@ from alibi.saving import load_explainer
 from numpy.testing import assert_array_equal
 
 from mlserver import MLModel
-from mlserver.codecs import NumpyCodec
+from mlserver.codecs import NumpyCodec, StringCodec
 from mlserver.types import InferenceRequest, Parameters, RequestInput
 from mlserver_alibi_explain import AlibiExplainRuntime
 from mlserver_alibi_explain.common import convert_from_bytes
 from helpers.tf_model import get_tf_mnist_model_uri
-
+from mlserver_alibi_explain.explainers.black_box_runtime import _v2_inference_request
 
 TESTS_PATH = Path(os.path.dirname(__file__))
 
@@ -100,3 +100,45 @@ async def test_end_2_end(
     assert_array_equal(
         np.array(decoded_runtime_results["data"]["anchor"]), alibi_result.data["anchor"]
     )
+
+
+@pytest.mark.parametrize(
+    "payload, expected_v2_request",
+    [
+        # numpy payload
+        (
+                np.zeros([2, 4]),
+                InferenceRequest(
+                    parameters=Parameters(content_type=NumpyCodec.ContentType),
+                    inputs=[
+                        RequestInput(
+                            parameters=Parameters(content_type=NumpyCodec.ContentType),
+                            name="predict",
+                            data=np.zeros([2, 4]).flatten().tolist(),
+                            shape=[2, 4],
+                            datatype="FP64"  # default for np.zeros
+                        )
+                    ]
+                )
+        ),
+        # List[str] payload
+        (
+                ["dummy text"],
+                InferenceRequest(
+                    parameters=Parameters(content_type=StringCodec.ContentType),
+                    inputs=[
+                        RequestInput(
+                            parameters=Parameters(content_type=StringCodec.ContentType),
+                            name="predict",
+                            data="dummy text",
+                            shape=[1, 10],
+                            datatype="BYTES"
+                        )
+                    ]
+                )
+        ),
+    ],
+)
+def test_encode_inference_request__as_expected(payload, expected_v2_request):
+    encoded_request = _v2_inference_request(payload)
+    assert encoded_request == expected_v2_request
