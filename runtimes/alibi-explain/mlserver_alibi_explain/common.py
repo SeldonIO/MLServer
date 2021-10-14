@@ -4,12 +4,15 @@ import functools
 from asyncio import AbstractEventLoop
 from enum import Enum
 from importlib import import_module
-from typing import Any, Optional, Type, Callable, Awaitable, Union
+from typing import Any, Optional, Type, Callable, Awaitable, Union, List
 
+import numpy as np
 import requests
 from pydantic import BaseSettings
 
-from mlserver.types import ResponseOutput, InferenceResponse, InferenceRequest
+from mlserver.codecs import StringCodec, NumpyCodec
+from mlserver.types import ResponseOutput, InferenceResponse, InferenceRequest, \
+    Parameters
 
 EXPLAINER_TYPE_TAG = "explainer_type"
 
@@ -114,3 +117,19 @@ def import_and_get_class(class_path: str) -> type:
     last_dot = class_path.rfind(".")
     klass = getattr(import_module(class_path[:last_dot]), class_path[last_dot + 1 :])
     return klass
+
+
+def to_v2_inference_request(input_data: Union[np.ndarray, List[str]]):
+    # For List[str] (e.g. AnchorText), we use StringCodec for input
+    input_payload_codec = StringCodec if type(input_data) == list else NumpyCodec
+    v2_request = InferenceRequest(
+        parameters=Parameters(content_type=input_payload_codec.ContentType),
+        # TODO: we probably need to tell alibi about the expected types to use
+        # or even whether it is a probability of classes or targets etc
+        inputs=[
+            input_payload_codec.encode_request_input(  # type: ignore
+                name="predict", payload=input_data
+            )
+        ],
+    )
+    return v2_request

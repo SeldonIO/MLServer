@@ -12,9 +12,8 @@ from mlserver import MLModel
 from mlserver.codecs import NumpyCodec, StringCodec
 from mlserver.types import InferenceRequest, Parameters, RequestInput
 from mlserver_alibi_explain import AlibiExplainRuntime
-from mlserver_alibi_explain.common import convert_from_bytes
+from mlserver_alibi_explain.common import convert_from_bytes, to_v2_inference_request
 from helpers.tf_model import get_tf_mnist_model_uri
-from mlserver_alibi_explain.explainers.black_box_runtime import _v2_inference_request
 
 TESTS_PATH = Path(os.path.dirname(__file__))
 
@@ -140,5 +139,5 @@ async def test_end_2_end(
     ],
 )
 def test_encode_inference_request__as_expected(payload, expected_v2_request):
-    encoded_request = _v2_inference_request(payload)
+    encoded_request = to_v2_inference_request(payload)
     assert encoded_request == expected_v2_request
