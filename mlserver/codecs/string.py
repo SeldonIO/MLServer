@@ -54,12 +54,13 @@ class StringCodec(InputCodec):
     @classmethod
     def encode_request_input(cls, name: str, payload: List[str]) -> RequestInput:
         # TODO: merge this logic with `encode`
-        data = cls.encode(name=name, payload=payload)
+        # note: this will only work with REST and not grpc as we might have
+        # variable length strings
         return RequestInput(
-            name=data.name,
-            datatype=data.datatype,
-            shape=data.shape,
-            data=data.data.__root__.decode("ascii"),  # to allow json serialisation
+            name=name,
+            datatype="BYTES",
+            shape=[len(payload), -1],  # this is discarded downstream?
+            data=payload,
             parameters=Parameters(content_type=cls.ContentType),
         )
 

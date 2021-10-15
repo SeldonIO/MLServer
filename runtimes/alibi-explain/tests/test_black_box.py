@@ -8,12 +8,12 @@ import tensorflow as tf
 from alibi.saving import load_explainer
 from numpy.testing import assert_array_equal
 
+from helpers.tf_model import get_tf_mnist_model_uri
 from mlserver import MLModel
 from mlserver.codecs import NumpyCodec, StringCodec
 from mlserver.types import InferenceRequest, Parameters, RequestInput
 from mlserver_alibi_explain import AlibiExplainRuntime
 from mlserver_alibi_explain.common import convert_from_bytes, to_v2_inference_request
-from helpers.tf_model import get_tf_mnist_model_uri
 
 TESTS_PATH = Path(os.path.dirname(__file__))
 
@@ -122,15 +122,15 @@ async def test_end_2_end(
         ),
         # List[str] payload
         (
-            ["dummy text"],
+            ["dummy", "dummy text"],
             InferenceRequest(
                 parameters=Parameters(content_type=StringCodec.ContentType),
                 inputs=[
                     RequestInput(
                         parameters=Parameters(content_type=StringCodec.ContentType),
                         name="predict",
-                        data="dummy text",
-                        shape=[1, 10],
+                        data=["dummy", "dummy text"],
+                        shape=[2, -1],
                         datatype="BYTES",
                     )
                 ],
