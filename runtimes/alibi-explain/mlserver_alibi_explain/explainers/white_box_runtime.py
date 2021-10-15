@@ -19,7 +19,10 @@ class AlibiExplainWhiteBoxRuntime(ABC, AlibiExplainRuntimeBase):
         self._inference_model = None
         self._explainer_class = explainer_class
 
-        extra = settings.parameters.extra  # type: ignore
+        # if we are here we are sure that settings.parameters is set,
+        # just helping mypy
+        assert settings.parameters is not None
+        extra = settings.parameters.extra
         explainer_settings = AlibiExplainSettings(**extra)  # type: ignore
 
         # TODO: validate the settings are ok with this specific explainer

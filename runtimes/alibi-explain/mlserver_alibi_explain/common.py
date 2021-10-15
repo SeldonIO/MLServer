@@ -71,7 +71,7 @@ class AlibiExplainSettings(BaseSettings):
     class Config:
         env_prefix = ENV_PREFIX_ALIBI_EXPLAIN_SETTINGS
 
-    infer_uri: Optional[str]
+    infer_uri: str
     explainer_type: str
     init_parameters: Optional[dict]
 

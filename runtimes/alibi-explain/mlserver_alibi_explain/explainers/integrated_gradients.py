@@ -3,6 +3,7 @@ from typing import Any, Dict
 import tensorflow as tf
 from alibi.api.interfaces import Explanation
 
+from mlserver.errors import InvalidModelURI
 from mlserver_alibi_explain.explainers.white_box_runtime import (
     AlibiExplainWhiteBoxRuntime,
 )
@@ -17,4 +18,9 @@ class IntegratedGradientsWrapper(AlibiExplainWhiteBoxRuntime):
 
     async def _get_inference_model(self) -> Any:
         inference_model_path = self.alibi_explain_settings.infer_uri
-        return tf.keras.models.load_model(inference_model_path)
+        try:
+            model = tf.keras.models.load_model(inference_model_path)
+        except IOError:
+            raise InvalidModelURI(self.name, inference_model_path)
+
+        return model

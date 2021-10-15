@@ -5,7 +5,6 @@ from alibi.api.interfaces import Explanation, Explainer
 
 from mlserver import ModelSettings
 from mlserver.codecs import NumpyCodec
-from mlserver.errors import InvalidModelURI
 from mlserver_alibi_explain.common import (
     AlibiExplainSettings,
     remote_predict,
@@ -30,8 +29,6 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
         explainer_settings = AlibiExplainSettings(**extra)  # type: ignore
 
         self.infer_uri = explainer_settings.infer_uri
-        if self.infer_uri is None:
-            raise InvalidModelURI(settings.name)
 
         # TODO: validate the settings are ok with this specific explainer
         super().__init__(settings, explainer_settings)

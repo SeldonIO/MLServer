@@ -176,7 +176,7 @@ async def test_explain_parameters_pass_through():
     rt = _DummyExplainer(
         settings=ModelSettings(),
         explainer_settings=AlibiExplainSettings(
-            infer_uri=None,
+            infer_uri="dum",
             explainer_type="dum",
             init_parameters=None,
         ),
