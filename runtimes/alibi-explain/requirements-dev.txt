@@ -1,0 +1,4 @@
+tensorflow
+numpy
+nest_asyncio
+types-requests

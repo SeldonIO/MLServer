@@ -71,3 +71,10 @@ def test_encode(decoded, expected):
     response_output = codec.encode(name="foo", payload=decoded)
 
     assert expected == response_output
+
+    # test encode_request_input
+    # we only support variable length string to be transferred over REST
+    request_input = codec.encode_request_input(name="foo", payload=decoded)
+    assert request_input.data.__root__ == decoded
+    assert response_output.datatype == request_input.datatype
+    assert request_input.parameters.content_type == codec.ContentType

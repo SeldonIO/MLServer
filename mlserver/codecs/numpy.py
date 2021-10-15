@@ -1,8 +1,8 @@
 import numpy as np
 
-from typing import Any
+from typing import Any, Union
 
-from ..types import RequestInput, ResponseOutput
+from ..types import RequestInput, ResponseOutput, Parameters
 
 from .base import InputCodec, register_input_codec, register_request_codec
 from .utils import FirstInputRequestCodec
@@ -30,13 +30,13 @@ _NumpyToDatatype["object"] = "BYTES"
 _NumpyToDatatype["S"] = "BYTES"
 
 
-def _to_dtype(request_input: RequestInput) -> "np.dtype":
-    dtype = _DatatypeToNumpy[request_input.datatype]
+def _to_dtype(v2_data: Union[RequestInput, ResponseOutput]) -> "np.dtype":
+    dtype = _DatatypeToNumpy[v2_data.datatype]
 
-    if request_input.datatype == "BYTES":
+    if v2_data.datatype == "BYTES":
         # bytes have variable size, so need to specify as part of type
         # TODO: Make elem size variable (and not just the last dimension)
-        elem_size = request_input.shape[-1]
+        elem_size = v2_data.shape[-1]
         return np.dtype((dtype, elem_size))
 
     return np.dtype(dtype)
@@ -54,11 +54,11 @@ def to_datatype(dtype: np.dtype) -> str:
     return datatype
 
 
-def _to_ndarray(request_input: RequestInput) -> np.ndarray:
-    data = getattr(request_input.data, "__root__", request_input.data)
-    dtype = _to_dtype(request_input)
+def _to_ndarray(v2_data: Union[RequestInput, ResponseOutput]) -> np.ndarray:
+    data = getattr(v2_data.data, "__root__", v2_data.data)
+    dtype = _to_dtype(v2_data)
 
-    if request_input.datatype == "BYTES":
+    if v2_data.datatype == "BYTES":
         return np.frombuffer(data, dtype)
 
     return np.array(data, dtype)
@@ -98,6 +98,24 @@ class NumpyCodec(InputCodec):
 
         # TODO: Check if reshape not valid
         return model_data.reshape(request_input.shape)
+
+    @classmethod
+    def decode_response_output(cls, response_output: ResponseOutput) -> np.ndarray:
+        # TODO: merge this logic with `decode`
+        return cls.decode(response_output)  # type: ignore
+
+    @classmethod
+    def encode_request_input(cls, name: str, payload: np.ndarray) -> RequestInput:
+        # TODO: merge this logic with `encode`
+        data = cls.encode(name=name, payload=payload)
+
+        return RequestInput(
+            name=data.name,
+            datatype=data.datatype,
+            shape=data.shape,
+            data=data.data,
+            parameters=Parameters(content_type=cls.ContentType),
+        )
 
 
 @register_request_codec

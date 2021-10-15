@@ -33,7 +33,7 @@ class AlibiDriftDetectRuntime(AlibiDetectRuntime):
 
             parameters = self.alibi_detect_settings.init_parameters
 
-            self._model = drift_detector(**detector_data, **parameters)
+            self._model = drift_detector(**detector_data, **parameters)  # type: ignore
 
         self.ready = True
         return self.ready
