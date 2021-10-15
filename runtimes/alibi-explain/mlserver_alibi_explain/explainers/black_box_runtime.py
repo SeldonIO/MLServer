@@ -6,6 +6,7 @@ from alibi.saving import load_explainer
 
 from mlserver import ModelSettings
 from mlserver.codecs import NumpyCodec
+from mlserver.errors import ModelParametersMissing, InvalidModelURI
 from mlserver.settings import ModelParameters
 from mlserver_alibi_explain.common import (
     AlibiExplainSettings,
@@ -24,7 +25,10 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
     def __init__(self, settings: ModelSettings, explainer_class: Type[Explainer]):
         self._explainer_class = explainer_class
 
-        extra = settings.parameters.extra  # type: ignore
+        # if we are here we are sure that settings.parameters is set,
+        # just helping mypy
+        assert settings.parameters is not None
+        extra = settings.parameters.extra
         explainer_settings = AlibiExplainSettings(**extra)  # type: ignore
 
         # TODO: validate the settings are ok with this specific explainer
@@ -39,9 +43,14 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
         else:
             # load the model from disk
             model_parameters: Optional[ModelParameters] = self.settings.parameters
-            assert model_parameters is not None
-            uri = model_parameters.uri  # type ignore
-            assert uri is not None, "uri has to be set"
+            if model_parameters is None:
+                raise ModelParametersMissing(self.name)
+
+            uri = model_parameters.uri
+
+            if uri is None:
+                raise InvalidModelURI(self.name)
+
             self._model = load_explainer(uri, predictor=self._infer_impl)
 
         self.ready = True
