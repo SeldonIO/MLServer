@@ -1,3 +1,4 @@
+import json
 from typing import Any, Dict
 from unittest.mock import patch
 
@@ -7,7 +8,13 @@ from numpy.testing import assert_array_equal
 
 from mlserver import ModelSettings, MLModel
 from mlserver.codecs import NumpyCodec
-from mlserver.types import InferenceRequest, Parameters, RequestInput, MetadataTensor
+from mlserver.types import (
+    InferenceRequest,
+    Parameters,
+    RequestInput,
+    MetadataTensor,
+    InferenceResponse,
+)
 from mlserver_alibi_explain.common import (
     convert_from_bytes,
     remote_predict,
@@ -70,7 +77,10 @@ async def test_anchors__smoke(
     response = await anchor_image_runtime_with_remote_predict_patch.predict(
         inference_request
     )
-    _ = convert_from_bytes(response.outputs[0], ty=str)
+    res = convert_from_bytes(response.outputs[0], ty=str)
+    res_dict = json.dumps(res)
+    assert "meta" in res_dict
+    assert "data" in res_dict
 
 
 def test_remote_predict__smoke(custom_runtime_tf, rest_client):
@@ -92,7 +102,8 @@ def test_remote_predict__smoke(custom_runtime_tf, rest_client):
 
         endpoint = f"v2/models/{custom_runtime_tf.settings.name}/infer"
 
-        _ = remote_predict(inference_request, predictor_url=endpoint)
+        res = remote_predict(inference_request, predictor_url=endpoint)
+        assert isinstance(res, InferenceResponse)
 
 
 async def test_alibi_runtime_wrapper(custom_runtime_tf: MLModel):
@@ -197,4 +208,5 @@ async def test_explain_parameters_pass_through():
         ],
     )
 
-    _ = await rt.predict(inference_request)
+    res = await rt.predict(inference_request)
+    assert isinstance(res, InferenceResponse)

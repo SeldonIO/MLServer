@@ -26,11 +26,11 @@ ENV_PREFIX_ALIBI_EXPLAIN_SETTINGS = "MLSERVER_MODEL_ALIBI_EXPLAIN_"
 EXPLAIN_PARAMETERS_TAG = "explain_parameters"
 
 
+#  TODO: add this utility in the codec.
 def convert_from_bytes(output: ResponseOutput, ty: Optional[Type]) -> Any:
     """
     This utility function decodes the response from bytes string to python object dict.
     It is related to decoding StringCodec
-    TODO: add this utility in the codec.
     """
     if ty == str:
         return bytearray(output.data).decode("UTF-8")
