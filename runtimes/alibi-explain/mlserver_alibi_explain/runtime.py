@@ -17,11 +17,13 @@ from mlserver.types import (
 from mlserver_alibi_explain.common import (
     execute_async,
     AlibiExplainSettings,
-    get_mlmodel_class_as_str,
-    get_alibi_class_as_str,
     import_and_get_class,
     EXPLAIN_PARAMETERS_TAG,
     EXPLAINER_TYPE_TAG,
+)
+from mlserver_alibi_explain.alibi_dependency_reference import (
+    get_mlmodel_class_as_str,
+    get_alibi_class_as_str,
 )
 
 

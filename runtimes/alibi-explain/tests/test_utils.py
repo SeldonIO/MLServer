@@ -1,9 +1,10 @@
 import pytest
 
-from mlserver_alibi_explain.common import _TAG_TO_RT_IMPL, import_and_get_class
+from mlserver_alibi_explain.common import import_and_get_class
+from mlserver_alibi_explain.alibi_dependency_reference import _TAG_TO_RT_IMPL
 
 
-@pytest.mark.parametrize("rt_class_str, alibi_class_str", _TAG_TO_RT_IMPL.values())
-def test_can_load_runtime_impl(rt_class_str, alibi_class_str):
-    import_and_get_class(rt_class_str)
-    import_and_get_class(alibi_class_str)
+@pytest.mark.parametrize("explainer_reference", _TAG_TO_RT_IMPL.values())
+def test_can_load_runtime_impl(explainer_reference):
+    import_and_get_class(explainer_reference.runtime_class)
+    import_and_get_class(explainer_reference.alibi_class)

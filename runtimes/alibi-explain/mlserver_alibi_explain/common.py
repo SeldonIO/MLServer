@@ -2,7 +2,6 @@ import asyncio
 import contextvars
 import functools
 from asyncio import AbstractEventLoop
-from enum import Enum
 from importlib import import_module
 from typing import Any, Optional, Type, Callable, Awaitable, Union, List
 
@@ -23,37 +22,8 @@ EXPLAINER_TYPE_TAG = "explainer_type"
 
 _MAX_RETRY_ATTEMPT = 3
 
-_ANCHOR_IMAGE_TAG = "anchor_image"
-_ANCHOR_TEXT_TAG = "anchor_text"
-_INTEGRATED_GRADIENTS_TAG = "integrated_gradients"
-
-_TAG_TO_RT_IMPL = {
-    _ANCHOR_IMAGE_TAG: (
-        "mlserver_alibi_explain.explainers.black_box_runtime."
-        "AlibiExplainBlackBoxRuntime",
-        "alibi.explainers.AnchorImage",
-    ),
-    _ANCHOR_TEXT_TAG: (
-        "mlserver_alibi_explain.explainers.black_box_runtime."
-        "AlibiExplainBlackBoxRuntime",
-        "alibi.explainers.AnchorText",
-    ),
-    _INTEGRATED_GRADIENTS_TAG: (
-        "mlserver_alibi_explain.explainers.integrated_gradients."
-        "IntegratedGradientsWrapper",
-        "alibi.explainers.IntegratedGradients",
-    ),
-}
-
-
 ENV_PREFIX_ALIBI_EXPLAIN_SETTINGS = "MLSERVER_MODEL_ALIBI_EXPLAIN_"
 EXPLAIN_PARAMETERS_TAG = "explain_parameters"
-
-
-class ExplainerEnum(str, Enum):
-    anchor_image = _ANCHOR_IMAGE_TAG
-    anchor_text = _ANCHOR_TEXT_TAG
-    integrated_gradients = _INTEGRATED_GRADIENTS_TAG
 
 
 def convert_from_bytes(output: ResponseOutput, ty: Optional[Type]) -> Any:
@@ -91,18 +61,6 @@ def execute_async(
     ctx = contextvars.copy_context()
     func_call = functools.partial(ctx.run, fn, *args, **kwargs)
     return loop.run_in_executor(None, func_call)
-
-
-def get_mlmodel_class_as_str(tag: Union[ExplainerEnum, str]) -> str:
-    if isinstance(tag, ExplainerEnum):
-        tag = tag.value
-    return _TAG_TO_RT_IMPL[tag][0]
-
-
-def get_alibi_class_as_str(tag: Union[ExplainerEnum, str]) -> str:
-    if isinstance(tag, ExplainerEnum):
-        tag = tag.value
-    return _TAG_TO_RT_IMPL[tag][1]
 
 
 class AlibiExplainSettings(BaseSettings):
