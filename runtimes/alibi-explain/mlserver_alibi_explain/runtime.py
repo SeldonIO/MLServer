@@ -76,7 +76,7 @@ class AlibiExplainRuntimeBase(MLModel):
             explain_parameters=explain_parameters,
         )
         # TODO: Convert alibi-explain output to v2 protocol, for now we use to_json
-        return StringCodec.encode(payload=[explanation.to_json()], name="explain")
+        return StringCodec.encode(payload=[explanation.to_json()], name="explanation")
 
     def _load_from_uri(self, predictor: Any) -> Explainer:
         # load the model from disk
