@@ -46,9 +46,11 @@ class AlibiDetectRuntime(MLModel):
     """
 
     def __init__(self, settings: ModelSettings):
-
-        extra = settings.parameters.extra  # type: ignore
-        self.alibi_detect_settings = AlibiDetectSettings(**extra)  # type: ignore
+        if settings.parameters is None:
+            self.alibi_detect_settings = AlibiDetectSettings()
+        else:
+            extra = settings.parameters.extra
+            self.alibi_detect_settings = AlibiDetectSettings(**extra)  # type: ignore
         super().__init__(settings)
 
     @custom_handler(rest_path="/")
