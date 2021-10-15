@@ -14,10 +14,10 @@ spec.
 - Multi-model serving, letting users run multiple models within the same
   process.
 - Ability to run [inference in parallel for vertical
-- scaling](https://mlserver.readthedocs.io/en/latest/user-guide/parallel-inference.html)
+  scaling](https://mlserver.readthedocs.io/en/latest/user-guide/parallel-inference.html)
   across multiple models through a pool of inference workers.
 - Support for [adaptive
-- batching](https://mlserver.readthedocs.io/en/latest/user-guide/adaptive-batching.html),
+  batching](https://mlserver.readthedocs.io/en/latest/user-guide/adaptive-batching.html),
   to group inference requests together on the fly.
 - Scalability with deployment in Kubernetes native frameworks, including
   [Seldon Core](https://docs.seldon.io/projects/seldon-core/en/latest/graph/protocols.html#v2-kfserving-protocol) and
