@@ -1,13 +1,10 @@
-from typing import Type, Any, Dict, Optional, List, Union
+from typing import Type, Any, Dict, List, Union
 
 import numpy as np
 from alibi.api.interfaces import Explanation, Explainer
-from alibi.saving import load_explainer
 
 from mlserver import ModelSettings
 from mlserver.codecs import NumpyCodec
-from mlserver.errors import ModelParametersMissing, InvalidModelURI
-from mlserver.settings import ModelParameters
 from mlserver_alibi_explain.common import (
     AlibiExplainSettings,
     remote_predict,
@@ -41,17 +38,7 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
             init_parameters["predictor"] = self._infer_impl
             self._model = self._explainer_class(**init_parameters)  # type: ignore
         else:
-            # load the model from disk
-            model_parameters: Optional[ModelParameters] = self.settings.parameters
-            if model_parameters is None:
-                raise ModelParametersMissing(self.name)
-
-            uri = model_parameters.uri
-
-            if uri is None:
-                raise InvalidModelURI(self.name)
-
-            self._model = load_explainer(uri, predictor=self._infer_impl)
+            self._model = self._load_from_uri(self._infer_impl)
 
         self.ready = True
         return self.ready

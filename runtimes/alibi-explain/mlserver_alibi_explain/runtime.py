@@ -1,10 +1,12 @@
 from typing import Any, Optional, List, Dict
 
-from alibi.api.interfaces import Explanation
+from alibi.api.interfaces import Explanation, Explainer
+from alibi.saving import load_explainer
 
 from mlserver.codecs import NumpyCodec, InputCodec, StringCodec
+from mlserver.errors import ModelParametersMissing, InvalidModelURI
 from mlserver.model import MLModel
-from mlserver.settings import ModelSettings
+from mlserver.settings import ModelSettings, ModelParameters
 from mlserver.types import (
     InferenceRequest,
     InferenceResponse,
@@ -75,6 +77,18 @@ class AlibiExplainRuntimeBase(MLModel):
         )
         # TODO: Convert alibi-explain output to v2 protocol, for now we use to_json
         return StringCodec.encode(payload=[explanation.to_json()], name="explain")
+
+    def _load_from_uri(self, predictor: Any) -> Explainer:
+        # load the model from disk
+        # full model is passed as `predictor`
+        # load the model from disk
+        model_parameters: Optional[ModelParameters] = self.settings.parameters
+        if model_parameters is None:
+            raise ModelParametersMissing(self.name)
+        uri = model_parameters.uri
+        if uri is None:
+            raise InvalidModelURI(self.name)
+        return load_explainer(uri, predictor=predictor)
 
     def _explain_impl(self, input_data: Any, explain_parameters: Dict) -> Explanation:
         """Actual explain to be implemented by subclasses"""
