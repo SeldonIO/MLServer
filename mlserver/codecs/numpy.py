@@ -93,16 +93,16 @@ class NumpyCodec(InputCodec):
         )
 
     @classmethod
-    def decode(cls, v2_data: RequestInput) -> np.ndarray:
-        model_data = _to_ndarray(v2_data)
+    def decode(cls, request_input: RequestInput) -> np.ndarray:
+        model_data = _to_ndarray(request_input)
 
         # TODO: Check if reshape not valid
-        return model_data.reshape(v2_data.shape)
+        return model_data.reshape(request_input.shape)
 
     @classmethod
-    def decode_response_output(cls, v2_data: ResponseOutput) -> np.ndarray:
+    def decode_response_output(cls, response_output: ResponseOutput) -> np.ndarray:
         # TODO: merge this logic with `decode`
-        return cls.decode(v2_data)  # type: ignore
+        return cls.decode(response_output)  # type: ignore
 
     @classmethod
     def encode_request_input(cls, name: str, payload: np.ndarray) -> RequestInput:
