@@ -5,6 +5,7 @@ from alibi.api.interfaces import Explanation, Explainer
 
 from mlserver import ModelSettings
 from mlserver.codecs import NumpyCodec
+from mlserver.errors import InvalidModelURI
 from mlserver_alibi_explain.common import (
     AlibiExplainSettings,
     remote_predict,
@@ -27,6 +28,10 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
         assert settings.parameters is not None
         extra = settings.parameters.extra
         explainer_settings = AlibiExplainSettings(**extra)  # type: ignore
+
+        self.infer_uri = explainer_settings.infer_uri
+        if self.infer_uri is None:
+            raise InvalidModelURI(settings.name)
 
         # TODO: validate the settings are ok with this specific explainer
         super().__init__(settings, explainer_settings)
@@ -59,10 +64,9 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
 
         v2_request = to_v2_inference_request(input_data)
 
-        # TODO add some exception handling here
-        infer_uri = self.alibi_explain_settings.infer_uri
-        assert infer_uri is not None, "infer_uri has to be set"
-        v2_response = remote_predict(v2_payload=v2_request, predictor_url=infer_uri)
+        v2_response = remote_predict(
+            v2_payload=v2_request, predictor_url=self.infer_uri
+        )
 
         # TODO: do we care about more than one output?
         return NumpyCodec.decode_response_output(v2_response.outputs[0])
