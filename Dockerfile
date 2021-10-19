@@ -57,7 +57,7 @@ COPY ./licenses/license.txt .
 COPY \
     ./hack/setup-env.sh \
     ./hack/activate-env.sh \
-    ./hack
+    ./hack/
 
 USER 1000
 
