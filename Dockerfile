@@ -1,12 +1,13 @@
 FROM python:3.8-slim AS wheel-builder
 SHELL ["/bin/bash", "-c"]
 
-COPY ./hack/build-wheels.sh ./hack/build-wheels.sh
-
-COPY setup.py .
-COPY README.md .
-COPY ./mlserver/ ./mlserver/
-COPY ./runtimes/ ./runtimes/
+COPY \
+    ./hack/build-wheels.sh \
+    setup.py \
+    README.md \
+    ./mlserver/ \
+    ./runtimes/ \
+    .
 
 # This will build the wheels and place will place them in the
 # /opt/mlserver/dist folder
@@ -52,9 +53,11 @@ RUN pip install --upgrade pip wheel setuptools && \
 COPY requirements/docker.txt requirements/docker.txt
 RUN pip install -r requirements/docker.txt
 
-COPY ./licenses/license.txt .
-
-COPY ./hack/activate-env.sh ./hack/activate-env.sh
+COPY \
+    ./licenses/license.txt \
+    ./hack/setup-env.sh \
+    ./hack/activate-env.sh \
+    .
 
 USER 1000
 
