@@ -1,96 +1,42 @@
+import subprocess
+import os
+
 from typing import Tuple
+from tempfile import TemporaryDirectory
 
-from ..version import __version__
-
-DockerfileTemplate = """
-FROM continuumio/miniconda3:4.10.3 AS env-builder
-
-ARG MLSERVER_ENV_NAME="mlserver-custom-env" \
-    MLSERVER_ENV_TARBALL="environment.tar.gz"
-
-COPY \
-    {source_folder}/environment.yml \
-    {source_folder}/conda.yml \
-    .
-RUN conda config --add channels conda-forge && \
-    conda install conda-pack && \
-    if [[ -f environment.yaml ]]; then \
-        conda env create \
-            --name $MLSERVER_ENV_NAME \
-            --file environment.yaml; \
-        conda-pack \
-            -n $MLSERVER_ENV_NAME \
-            -o $MLSERVER_ENV_TARBALL; \
-    elif [[ -f conda.yaml ]]; then \
-        conda env create \
-            --name $MLSERVER_ENV_NAME \
-            --file conda.yaml; \
-        conda-pack \
-            -n $MLSERVER_ENV_NAME \
-            -o $MLSERVER_ENV_TARBALL; \
-    fi
-
-FROM seldonio/mlserver:{version}-slim
-
-ENV MLSERVER_MODEL_IMPLEMENTATION={default_runtime}
-
-# Copy all potential sources for custom environments
-COPY --from=env-builder environment.tar.gz .
-COPY {source_folder}/requirements.txt .
-
-RUN ./hack/setup-env.sh .
-
-# Copy everything else
-COPY {source_folder} .
-"""
-
-Dockerignore = """
-# Binaries for programs and plugins
-*.exe
-*.exe~
-*.dll
-*.so
-*.dylib
-*.pyc
-*.pyo
-*.pyd
-bin
-
-# Mac file system
-**/.DS_Store
-
-# Python dev
-__pycache__
-.Python
-env
-pip-log.txt
-pip-delete-this-directory.txt
-.mypy_cache
-eggs/
-.eggs/
-*.egg-info/
-./pytest_cache
-.tox
-build/
-dist/
-
-# Notebook Checkpoints
-.ipynb_checkpoints
-
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*,cover
-*.log
-.git
-"""
+from .. import __version__
+from .constants import (
+    DockerfileName,
+    DockerfileTemplate,
+    DockerignoreName,
+    Dockerignore,
+)
 
 
-def generate_dockerfile(folder: str) -> Tuple[str, str]:
-    dockerfile = DockerfileTemplate.format(
-        version=__version__, default_runtime="", source_folder=folder
-    )
+def generate_dockerfile(default_runtime: str = "") -> str:
+    return DockerfileTemplate.format(version=__version__, default_runtime="")
 
-    return dockerfile, Dockerignore
+
+def write_dockerfile(folder: str, dockerfile: str) -> str:
+    dockerfile_path = os.path.join(folder, DockerfileName)
+    with open(dockerfile_path, "w") as dockerfile_handler:
+        dockerfile_handler.write(dockerfile)
+
+    # Point to our own .dockerignore
+    # https://docs.docker.com/engine/reference/commandline/build/#use-a-dockerignore-file
+    dockerignore_path = dockerfile_path + DockerignoreName
+    with open(dockerignore_path, "w") as dockerignore_handler:
+        dockerignore_handler.write(Dockerignore)
+
+    return dockerfile_path
+
+
+def build_image(folder: str, dockerfile: str, image_tag: str) -> str:
+    with TemporaryDirectory() as tmp_dir:
+        dockerfile_path = write_dockerfile(tmp_dir, dockerfile)
+
+        build_cmd = f"docker build {folder} -f {dockerfile_path} -t {image_tag}"
+        build_env = {"DOCKER_BUILDKIT": "1"}
+        subprocess.run(build_cmd, check=True, shell=True, env=build_env)
+
+    return image_tag

@@ -5,7 +5,11 @@ import docker
 
 from docker.client import DockerClient
 
+from mlserver.cli.build import generate_dockerfile, build_image
+
 from ..conftest import TESTDATA_PATH
+
+CustomImageTag = "test/my-custom-image:0.1.0"
 
 
 @pytest.fixture
@@ -22,3 +26,13 @@ def custom_runtime_path(model_folder: str) -> str:
 @pytest.fixture
 def docker_client() -> DockerClient:
     return docker.from_env()
+
+
+@pytest.fixture
+def custom_image(docker_client: DockerClient, custom_runtime_path: str) -> str:
+    dockerfile = generate_dockerfile()
+    build_image(custom_runtime_path, dockerfile, CustomImageTag)
+
+    yield CustomImageTag
+
+    docker_client.images.remove(image=CustomImageTag, force=True)
