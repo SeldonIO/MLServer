@@ -57,6 +57,7 @@ COPY ./licenses/license.txt .
 COPY \
     ./hack/setup-env.sh \
     ./hack/activate-env.sh \
+    ./hack/source_settings.py \
     ./hack/
 
 USER 1000
