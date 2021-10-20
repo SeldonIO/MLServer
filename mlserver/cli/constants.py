@@ -34,13 +34,11 @@ RUN mkdir $(dirname $MLSERVER_ENV_TARBALL); \\
 FROM seldonio/mlserver:{version}-slim
 SHELL ["/bin/bash", "-c"]
 
-ENV MLSERVER_MODEL_IMPLEMENTATION={default_runtime}
-
 # Copy all potential sources for custom environments
 COPY --from=env-builder /envs/*.tar.gz .
 COPY ./requirements.tx[t] .
 
-RUN ./hack/setup-env.sh .
+RUN . ./hack/setup-env.sh . && \\
 
 # Copy everything else
 COPY . .

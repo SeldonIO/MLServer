@@ -13,8 +13,8 @@ from .constants import (
 )
 
 
-def generate_dockerfile(default_runtime: str = "") -> str:
-    return DockerfileTemplate.format(version=__version__, default_runtime="")
+def generate_dockerfile() -> str:
+    return DockerfileTemplate.format(version=__version__)
 
 
 def write_dockerfile(folder: str, dockerfile: str) -> str:
