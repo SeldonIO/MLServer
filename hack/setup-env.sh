@@ -38,6 +38,11 @@ _main() {
   else
     echo "Requirements not found at '$_requirementsTxt'"
   fi
+
+  local _sourceSettings="$PARENT_FOLDER/source_settings.py"
+  local _envFile = "$_srcFolder/.env"
+  $_sourceSettings . $_envFile
+  source $_envFile
 }
 
 _main $1
