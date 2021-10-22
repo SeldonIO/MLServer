@@ -1,5 +1,6 @@
 from typing import Callable
 from fastapi import FastAPI
+from fastapi.responses import Response as FastAPIResponse
 from fastapi.routing import APIRoute as FastAPIRoute
 
 from .endpoints import Endpoints, ModelRepositoryEndpoints
@@ -19,7 +20,7 @@ class APIRoute(FastAPIRoute):
     def get_route_handler(self) -> Callable:
         original_route_handler = super().get_route_handler()
 
-        async def custom_route_handler(request: Request) -> Response:
+        async def custom_route_handler(request: Request) -> FastAPIResponse:
             request = Request(request.scope, request.receive)
             return await original_route_handler(request)
 
