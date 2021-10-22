@@ -44,7 +44,7 @@ setup(
         "numpy",
         "pandas",
     ],
-    extras_require={"all": "orjson"},
+    extras_require={"all": ["orjson"]},
     entry_points={"console_scripts": ["mlserver=mlserver.cli:main"]},
     long_description=_load_description(),
     long_description_content_type="text/markdown",
