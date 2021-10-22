@@ -22,7 +22,7 @@ COPY setup.py .
 # setup.py
 COPY README.md .
 COPY ./mlserver/ ./mlserver/
-RUN pip install .
+RUN pip install .[all]
 
 COPY ./runtimes/ ./runtimes/
 RUN for _runtime in ./runtimes/*; \

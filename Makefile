@@ -6,7 +6,7 @@ IMAGE_NAME := seldonio/mlserver
 
 install-dev:
 	pip install -r requirements/dev.txt
-	pip install --editable .
+	pip install --editable .[all]
 	for _runtime in ./runtimes/*; \
 	do \
 		pip install --editable $$_runtime; \
