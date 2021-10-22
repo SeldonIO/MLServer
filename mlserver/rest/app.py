@@ -1,5 +1,5 @@
 from typing import Callable
-from fastapi import FastAPI, Request, Response
+from fastapi import FastAPI
 from fastapi.routing import APIRoute as FastAPIRoute
 
 from .endpoints import Endpoints, ModelRepositoryEndpoints
@@ -13,7 +13,7 @@ from ..handlers import DataPlane, ModelRepositoryHandlers
 
 class APIRoute(FastAPIRoute):
     """
-    Custom route to use an Request handler.
+    Custom route to use our own Request handler.
     """
 
     def get_route_handler(self) -> Callable:
