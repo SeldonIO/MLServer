@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 set -o nounset
-# set -o errexit
+set -o errexit
 set -o pipefail
 
 # This script may be called with `source`, so we can't rely on the `$0` trick.
@@ -34,7 +34,7 @@ _main() {
   local _requirementsTxt="$_srcFolder/requirements.txt"
   if [[ -f $_requirementsTxt ]]; then
     echo "---> Found custom requirements.txt at $_requirementsTxt"
-    # _installRequirements $_requirementsTxt
+    _installRequirements $_requirementsTxt
   else
     echo "Requirements not found at '$_requirementsTxt'"
   fi

@@ -1,12 +1,19 @@
 import os
 import shutil
+import json
 
 from typing import List
 
 from ..conftest import TESTDATA_PATH
 
 
-def _copy_test_files(model_folder: str, to_copy: List[str]) -> str:
+def _copy_test_files(
+    model_folder: str, model_settings: dict, to_copy: List[str]
+) -> str:
+    model_settings_path = os.path.join(model_folder, "model-settings.json")
+    with open(model_settings_path, "w") as model_settings_file:
+        model_settings_file.write(json.dumps(model_settings))
+
     to_copy = ["models.py", "environment.yml"]
     for file_name in to_copy:
         src = os.path.join(TESTDATA_PATH, file_name)
@@ -16,25 +23,34 @@ def _copy_test_files(model_folder: str, to_copy: List[str]) -> str:
     return model_folder
 
 
-def case_no_custom_env(model_folder: str) -> str:
+def case_no_custom_env(tmp_path: str) -> str:
     """
     Custom model with no custom environment required.
     """
     to_copy = ["models.py", "environment.yml"]
-    return _copy_test_files(model_folder, to_copy=to_copy)
+    model_settings = {"name": "no_custom_env", "implementation": "models.SumModel"}
+    return _copy_test_files(tmp_path, model_settings, to_copy=to_copy)
 
 
-def case_environment_yml(model_folder: str) -> str:
+def case_environment_yml(tmp_path: str) -> str:
     """
     Custom model with environment provided through an environment.yml file.
     """
     to_copy = ["env_models.py", "environment.yml"]
-    return _copy_test_files(model_folder, to_copy=to_copy)
+    model_settings = {
+        "name": "environment-yml",
+        "implementation": "env_models.DummySKLearnModel",
+    }
+    return _copy_test_files(tmp_path, model_settings, to_copy=to_copy)
 
 
-def case_requirements_txt_path(model_folder: str) -> str:
+def case_requirements_txt_path(tmp_path: str) -> str:
     """
     Custom model with environment provided through a requirements.txt file.
     """
     to_copy = ["env_models.py", "requirements.txt"]
-    return _copy_test_files(model_folder, to_copy=to_copy)
+    model_settings = {
+        "name": "requirements-txt",
+        "implementation": "env_models.DummySKLearnModel",
+    }
+    return _copy_test_files(tmp_path, model_settings, to_copy=to_copy)
