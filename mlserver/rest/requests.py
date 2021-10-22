@@ -1,4 +1,4 @@
-from typing import Any, Type
+from typing import Any
 
 from fastapi import Request as _Request
 
