@@ -39,10 +39,10 @@ USER 1000
 
 COPY --from=wheel-builder /opt/mlserver/dist ./dist 
 RUN pip install --upgrade pip wheel setuptools && \
+    pip install ./dist/mlserver-*.whl[all]; \
     if [[ $RUNTIMES == "all" ]]; then \
-        pip install ./dist/*.whl; \
+        pip install ./dist/mlserver_*.whl; \
     else \
-        pip install "./dist/mlserver-"*.whl; \
         for _runtime in $RUNTIMES; do \
             _wheelName=$(echo $_runtime | tr '-' '_'); \
             pip install "./dist/$_wheelName-"*.whl; \

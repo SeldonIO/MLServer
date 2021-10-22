@@ -40,11 +40,11 @@ setup(
         # check https://github.com/SeldonIO/MLServer/issues/340
         "fastapi==0.68.2",
         "uvicorn",
-        "orjson",
         "click",
         "numpy",
         "pandas",
     ],
+    extras_require={"all": ["orjson"]},
     entry_points={"console_scripts": ["mlserver=mlserver.cli:main"]},
     long_description=_load_description(),
     long_description_content_type="text/markdown",
