@@ -16,9 +16,10 @@ class Request(_Request):
 
     async def json(self) -> Any:
         if orjson is None:
-            return super().json()
+            return await super().json()
 
         if not hasattr(self, "_json"):
             body = await self.body()
             self._json = orjson.loads(body)
+
         return self._json
