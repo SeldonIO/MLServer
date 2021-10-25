@@ -35,12 +35,12 @@ _main() {
   local _version=$1
 
   echo "---> Building core MLServer images"
-  # _buildImage "all" $_version
+  _buildImage "all" $_version
   _buildImage "" $_version-slim
 
-  # for _runtimePath in "$ROOT_FOLDER/runtimes/"*; do
-  # _buildRuntimeImage $_runtimePath $_version
-  # done
+  for _runtimePath in "$ROOT_FOLDER/runtimes/"*; do
+    _buildRuntimeImage $_runtimePath $_version
+  done
 }
 
 _main $1
