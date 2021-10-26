@@ -35,8 +35,6 @@ RUN useradd -u 1000 -s /bin/bash mlserver -d /opt/mlserver && \
     chown -R 1000:0 /opt/mlserver && \
     chmod -R 776 /opt/mlserver
 
-USER 1000
-
 COPY --from=wheel-builder /opt/mlserver/dist ./dist 
 RUN pip install --upgrade pip wheel setuptools && \
     pip install ./dist/mlserver-*.whl[all]; \
@@ -55,6 +53,8 @@ RUN pip install -r requirements/docker.txt
 COPY ./licenses/license.txt .
 
 COPY ./hack/activate-env.sh ./hack/activate-env.sh
+
+USER 1000
 
 # Need to source `activate-env.sh` so that env changes get persisted
 CMD . ./hack/activate-env.sh $MLSERVER_ENV_TARBALL \
