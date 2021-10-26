@@ -13,7 +13,7 @@ pytest-mock==3.6.1
 pytest-cases==3.6.4
 tox==3.24.4
 docker==5.0.0
-aiohttp==3.7.4.post0
+requests==2.26.0
 
 # Linting and formatting
 flake8==4.0.1
