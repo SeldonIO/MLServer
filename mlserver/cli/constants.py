@@ -36,12 +36,22 @@ SHELL ["/bin/bash", "-c"]
 
 # Copy all potential sources for custom environments
 COPY --from=env-builder /envs/*.tar.gz .
-COPY ./requirements.tx[t] .
+COPY \\
+    ./settings.jso[n] \\
+    ./model-settings.jso[n] \\
+    ./requirements.tx[t] \\
+    .
 
-RUN . ./hack/setup-env.sh . && \\
+RUN ./hack/build-env.sh .
 
 # Copy everything else
 COPY . .
+
+# Override MLServer's own `CMD` to activate the embedded environment
+# (optionally activating the hot-loaded one as well).
+CMD source ./hack/activate-env.sh . && \\
+    source ./hack/activate-env.sh $MLSERVER_ENV_DIR && \\
+    mlserver start $MLSERVER_MODELS_DIR
 """
 
 DockerignoreName = ".dockerignore"

@@ -19,7 +19,7 @@ SHELL ["/bin/bash", "-c"]
 ARG RUNTIMES="all"
 
 ENV MLSERVER_MODELS_DIR=/mnt/models \
-    MLSERVER_ENV_TARBALL=/mnt/models/environment.tar.gz \
+    MLSERVER_ENV_DIR=/mnt/models \
     PATH=/opt/mlserver/.local/bin:$PATH
 
 RUN apt-get update && \
@@ -55,13 +55,14 @@ RUN pip install -r requirements/docker.txt
 
 COPY ./licenses/license.txt .
 COPY \
-    ./hack/setup-env.sh \
+    ./hack/build-env.sh \
+    ./hack/generate_dotenv.py \
     ./hack/activate-env.sh \
-    ./hack/source_settings.py \
     ./hack/
 
 USER 1000
 
-# Need to source `activate-env.sh` so that env changes get persisted
-CMD . ./hack/activate-env.sh $MLSERVER_ENV_TARBALL \
-    && mlserver start $MLSERVER_MODELS_DIR
+# We need to build and activate the "hot-loaded" environment before MLServer
+# starts
+CMD source ./hack/activate-env.sh $MLSERVER_ENV_TARBALL && \
+    mlserver start $MLSERVER_MODELS_DIR

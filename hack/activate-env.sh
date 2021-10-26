@@ -4,28 +4,38 @@ set -o nounset
 set -o errexit
 set -o pipefail
 
-_printUsage() {
-  echo "Usage: ./run-in-env.sh <envTarball>"
-}
-
 if [ "$#" -ne 1 ]; then
   echo 'Invalid number of arguments'
-  _printUsage
+  echo "Usage: ./activate-env.sh <srcFolder>"
   exit 1
 fi
 
 _unpackEnv() {
   local _envTarball=$1
-  local _envName=$(basename "${_envTarball%.tar.gz}")
+  local _envFolder=$2
 
-  echo "--> Unpacking environment..."
-  mkdir -p ./envs/$_envName
-  tar -zxvf "$_envTarball" -C "./envs/$_envName"
+  if ! [[ -f $_envTarball ]]; then
+    echo "Environment tarball not found at '$_envTarball'"
+    return
+  fi
 
-  echo "--> Sourcing new environment..."
+  echo "--> Unpacking environment at $_envTarball..."
+  mkdir -p $_envFolder
+  tar -zxvf "$_envTarball" -C $_envFolder
+}
+
+_activateEnv() {
+  local _envFolder=$1
+
+  if ! [[ -d $_envFolder ]]; then
+    echo "Environment not found at '$_envFolder'"
+    return
+  fi
+
+  echo "--> Sourcing new environment at $_envFolder..."
   # Need to disable unbound errors for activate
   set +u
-  source "./envs/$_envName/bin/activate"
+  source "$_envFolder/bin/activate"
   set -u
 
   echo "--> Calling conda-unpack..."
@@ -36,14 +46,26 @@ _unpackEnv() {
   export PYTHONNOUSERSITE=True
 }
 
-_main() {
-  local _envTarball=$1
+_sourceDotenv() {
+  local _dotenv=$1
 
-  if [[ -f $_envTarball ]]; then
-    _unpackEnv $_envTarball
-  else
-    echo "Environment tarball not found at '$_envTarball'"
+  if ! [[ -f $_dotenv ]]; then
+    echo "Dotenv file not found at '$_dotenv'"
+    return
   fi
+
+  source $_envFile
+}
+
+_main() {
+  local _srcFolder=$1
+  local _envTarball="$_srcFolder/environment.tar.gz"
+  local _envFolder="$_srcFolder/envs/environment"
+  local _dotenv="$_srcFolder/.env"
+
+  _unpackEnv $_envTarball $_envFolder
+  _activateEnv $_envFolder
+  _sourceDotenv $_dotenv
 }
 
 _main $1
