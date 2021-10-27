@@ -4,9 +4,9 @@ set -o nounset
 set -o errexit
 set -o pipefail
 
-if [ "$#" -ne 1 ]; then
+if [ "$#" -ne 2 ]; then
   echo 'Invalid number of arguments'
-  echo "Usage: ./activate-env.sh <srcFolder>"
+  echo "Usage: ./activate-env.sh <envTarball> <dstFolder>"
   exit 1
 fi
 
@@ -54,18 +54,19 @@ _sourceDotenv() {
     return
   fi
 
-  source $_envFile
+  source $_dotenv
 }
 
 _main() {
-  local _srcFolder=$1
-  local _envTarball="$_srcFolder/environment.tar.gz"
-  local _envFolder="$_srcFolder/envs/environment"
-  local _dotenv="$_srcFolder/.env"
+  local _envTarball=$1
+  local _dstFolder=$2
+  local _envFolder="$_dstFolder/environment"
 
   _unpackEnv $_envTarball $_envFolder
   _activateEnv $_envFolder
+
+  local _dotenv="$_dstFolder/.env"
   _sourceDotenv $_dotenv
 }
 
-_main $1
+_main $1 $2

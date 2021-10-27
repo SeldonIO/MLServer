@@ -19,7 +19,7 @@ SHELL ["/bin/bash", "-c"]
 ARG RUNTIMES="all"
 
 ENV MLSERVER_MODELS_DIR=/mnt/models \
-    MLSERVER_ENV_DIR=/mnt/models \
+    MLSERVER_ENV_TARBALL=/mnt/models/environment.tar.gz \
     PATH=/opt/mlserver/.local/bin:$PATH
 
 RUN apt-get update && \
@@ -64,5 +64,5 @@ USER 1000
 
 # We need to build and activate the "hot-loaded" environment before MLServer
 # starts
-CMD source ./hack/activate-env.sh $MLSERVER_ENV_TARBALL && \
+CMD source ./hack/activate-env.sh $MLSERVER_ENV_TARBALL . && \
     mlserver start $MLSERVER_MODELS_DIR
