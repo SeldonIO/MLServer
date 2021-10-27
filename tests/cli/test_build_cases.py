@@ -14,7 +14,6 @@ def _copy_test_files(
     with open(model_settings_path, "w") as model_settings_file:
         model_settings_file.write(json.dumps(model_settings))
 
-    to_copy = ["models.py", "environment.yml"]
     for file_name in to_copy:
         src = os.path.join(TESTDATA_PATH, file_name)
         dst = os.path.join(model_folder, file_name)
@@ -27,7 +26,7 @@ def case_no_custom_env(tmp_path: str) -> str:
     """
     Custom model with no custom environment required.
     """
-    to_copy = ["models.py", "environment.yml"]
+    to_copy = ["models.py"]
     model_settings = {"name": "no_custom_env", "implementation": "models.SumModel"}
     return _copy_test_files(tmp_path, model_settings, to_copy=to_copy)
 

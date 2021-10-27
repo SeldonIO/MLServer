@@ -6,10 +6,12 @@ from pytest_cases import fixture, parametrize_with_cases
 from typing import Tuple
 
 from mlserver import __version__
-from mlserver.types import InferenceRequest
+from mlserver.types import InferenceRequest, Parameters
 from mlserver.settings import Settings, ModelSettings
 from mlserver.cli.constants import DockerfileTemplate
 from mlserver.cli.build import generate_dockerfile, build_image
+
+from .utils import APIClient
 
 
 @fixture
@@ -36,13 +38,13 @@ def custom_runtime_server(
 ) -> str:
     host_http_port, host_grpc_port = free_ports
 
-    breakpoint()
     container = docker_client.containers.run(
         custom_image,
         ports={
             f"{settings.http_port}/tcp": host_http_port,
             f"{settings.grpc_port}/tcp": host_grpc_port,
         },
+        detach=True,
     )
 
     yield f"127.0.0.1:{host_http_port}", f"127.0.0.1:{host_grpc_port}"
@@ -62,12 +64,19 @@ def test_build(docker_client: DockerClient, custom_image: str):
 
 
 async def test_infer_custom_runtime(
-    docker_client: DockerClient,
     custom_runtime_server: Tuple[str, str],
-    sum_model_settings: ModelSettings,
     inference_request: InferenceRequest,
 ):
-    http_server, _ = custom_runtime
-    endpoint = f"{http_server}/v2/models/{sum_model_settings.name}/infer"
-    breakpoint()
-    response = await aiohttp.post(endpoint, json=inference_request.dict())
+    http_server, _ = custom_runtime_server
+    api_client = APIClient(http_server)
+    await api_client.wait_until_ready()
+
+    loaded_models = await api_client.list_models()
+    assert len(loaded_models) == 1
+
+    model_name = loaded_models[0].name
+    inference_request.inputs[0].parameters = Parameters(content_type="np")
+    inference_response = await api_client.infer(model_name, inference_request)
+    assert len(inference_response.outputs) == 1
+
+    api_client.close()
