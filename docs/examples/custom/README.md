@@ -200,8 +200,7 @@ The next step will be to create 2 configuration files:
     "name": "numpyro-divorce",
     "implementation": "models.NumpyroModel",
     "parameters": {
-        "uri": "./numpyro-divorce.json",
-        "version": "v0.1.0",
+        "uri": "./numpyro-divorce.json"
     }
 }
 ```
@@ -240,13 +239,98 @@ inference_request = {
     ]
 }
 
-endpoint = "http://localhost:8080/v2/models/numpyro-divorce/versions/v0.1.0/infer"
+endpoint = "http://localhost:8080/v2/models/numpyro-divorce/infer"
 response = requests.post(endpoint, json=inference_request)
 
 response.json()
 ```
 
+## Deployment
+
+Now that we have written and tested our custom model, the next step is to deploy it.
+With that goal in mind, the rough outline of steps will be to first build a custom image containing our code, and then deploy it.
+
+
+### Building a custom image
+
+MLServer offers helpers to build a custom Docker image containing your code.
+In this example, we will use the `mlserver build` subcommand to create an image, which we'll be able to deploy later.
+
+
+Note that this section expects that Docker is available and running in the background, as well as a functional cluster with Seldon Core installed and some familiarity with `kubectl`. 
+
+
+```bash
+%%bash
+mlserver build . -t 'my-custom-numpyro-server'
+```
+
+To ensure that the image is fully functional, we can spin up a container and then send a test request. To start the container, you can run something along the following lines in a separate terminal:
+
+```bash
+docker run -it --rm -p 8080:8080 my-custom-numpyro-server
+```
+
 
 ```python
+import requests
 
+x_0 = [28.0]
+inference_request = {
+    "inputs": [
+        {
+          "name": "marriage",
+          "shape": [1],
+          "datatype": "FP32",
+          "data": x_0
+        }
+    ]
+}
+
+endpoint = "http://localhost:8080/v2/models/numpyro-divorce/infer"
+response = requests.post(endpoint, json=inference_request)
+
+response.json()
+```
+
+As we should be able to see, the server running within our Docker image responds as expected.
+
+### Deploying our custom image
+
+Note that this section expects access to a functional cluster with Seldon Core installed and some familiarity with `kubectl`. 
+
+Now that we've built a custom image and verified that it works as expected, we can move to the next step and deploy it.
+There is a large number of tools out there to deploy images.
+However, for our example, we will focus on deploying it to a cluster running [Seldon Core](https://docs.seldon.io/projects/seldon-core/en/latest/).
+
+For that, we will need to create a `SeldonDeployment` resource which instructs Seldon Core to deploy a model embedded within our custom image and compliant with the [V2 Inference Protocol](https://github.com/kserve/kserve/tree/master/docs/predict-api/v2).
+This can be achieved by _applying_ a `SeldonDeployment` manifest to the cluster, similar to the one below:
+
+
+```python
+%%writefile seldondeployment.yaml
+apiVersion: machinelearning.seldon.io/v1
+kind: SeldonDeployment
+metadata:
+  name: numpyro-model
+spec:
+  predictors:
+    - name: default
+      annotations:
+        seldon.io/no-engine: "true"
+      graph:
+        name: mlflow-model
+        type: MODEL
+      componentSpecs:
+        - spec:
+            containers:
+              - name: mlflow-model
+                image: my-custom-numpyro-server
+                ports:
+                  - containerPort: 8080
+                    name: http
+                    protocol: TCP
+                  - containerPort: 8081
+                    name: grpc
+                    protocol: TCP
 ```
