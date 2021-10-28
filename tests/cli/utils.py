@@ -17,7 +17,7 @@ class APIClient:
     async def wait_until_ready(self) -> None:
         endpoint = f"http://{self._http_server}/v2/health/ready"
         retry_options = ExponentialRetry(
-            attempts=5, start_timeout=0.5, exceptions={ServerDisconnectedError}
+            attempts=8, start_timeout=0.5, exceptions={ServerDisconnectedError}
         )
         retry_client = RetryClient(raise_for_status=True, retry_options=retry_options)
 
