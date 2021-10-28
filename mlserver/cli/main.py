@@ -7,7 +7,7 @@ import asyncio
 from functools import wraps
 
 from ..server import MLServer
-from ..logging import logger
+from ..logging import logger, configure_logger
 
 from .build import generate_dockerfile, build_image, write_dockerfile
 from .serve import load_settings
@@ -58,7 +58,7 @@ async def build(folder: str, tag: str):
 
 @root.command("dockerfile")
 @click.argument("folder", nargs=1)
-@click.option("-i", "--include-dockerignore")
+@click.option("-i", "--include-dockerignore", is_flag=True)
 @click_async
 async def build(folder: str, include_dockerignore: bool):
     """
@@ -72,6 +72,7 @@ async def build(folder: str, include_dockerignore: bool):
 
 
 def main():
+    configure_logger()
     root()
 
 
