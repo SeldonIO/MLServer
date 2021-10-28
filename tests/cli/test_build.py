@@ -45,7 +45,6 @@ def custom_runtime_server(
             f"{settings.grpc_port}/tcp": host_grpc_port,
         },
         detach=True,
-        user=1000,
     )
 
     yield f"127.0.0.1:{host_http_port}", f"127.0.0.1:{host_grpc_port}"
