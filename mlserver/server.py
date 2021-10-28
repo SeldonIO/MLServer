@@ -5,6 +5,7 @@ from typing import List
 
 from .model import MLModel
 from .settings import Settings
+from .logging import configure_logger
 from .registry import MultiModelRegistry
 from .repository import ModelRepository
 from .handlers import DataPlane, ModelRepositoryHandlers
@@ -34,6 +35,8 @@ class MLServer:
         self._model_repository_handlers = ModelRepositoryHandlers(
             repository=self._model_repository, model_registry=self._model_registry
         )
+
+        self._logger = configure_logger(settings)
 
     async def start(self, models: List[MLModel] = []):
         self._add_signal_handlers()

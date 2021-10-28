@@ -18,7 +18,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
     syntax="proto3",
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
-    serialized_pb=b'\n\x0f\x64\x61taplane.proto\x12\tinference"\x13\n\x11ServerLiveRequest""\n\x12ServerLiveResponse\x12\x0c\n\x04live\x18\x01 \x01(\x08"\x14\n\x12ServerReadyRequest"$\n\x13ServerReadyResponse\x12\r\n\x05ready\x18\x01 \x01(\x08"2\n\x11ModelReadyRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t"#\n\x12ModelReadyResponse\x12\r\n\x05ready\x18\x01 \x01(\x08"\x17\n\x15ServerMetadataRequest"K\n\x16ServerMetadataResponse\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\x12\x12\n\nextensions\x18\x03 \x03(\t"5\n\x14ModelMetadataRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t"\x9f\x03\n\x15ModelMetadataResponse\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08versions\x18\x02 \x03(\t\x12\x10\n\x08platform\x18\x03 \x01(\t\x12?\n\x06inputs\x18\x04 \x03(\x0b\x32/.inference.ModelMetadataResponse.TensorMetadata\x12@\n\x07outputs\x18\x05 \x03(\x0b\x32/.inference.ModelMetadataResponse.TensorMetadata\x1a\xd0\x01\n\x0eTensorMetadata\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08\x64\x61tatype\x18\x02 \x01(\t\x12\r\n\x05shape\x18\x03 \x03(\x03\x12G\n\x04tags\x18\x04 \x03(\x0b\x32\x39.inference.ModelMetadataResponse.TensorMetadata.TagsEntry\x1a\x46\n\tTagsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12(\n\x05value\x18\x02 \x01(\x0b\x32\x19.inference.InferParameter:\x02\x38\x01"\xd2\x06\n\x11ModelInferRequest\x12\x12\n\nmodel_name\x18\x01 \x01(\t\x12\x15\n\rmodel_version\x18\x02 \x01(\t\x12\n\n\x02id\x18\x03 \x01(\t\x12@\n\nparameters\x18\x04 \x03(\x0b\x32,.inference.ModelInferRequest.ParametersEntry\x12=\n\x06inputs\x18\x05 \x03(\x0b\x32-.inference.ModelInferRequest.InferInputTensor\x12H\n\x07outputs\x18\x06 \x03(\x0b\x32\x37.inference.ModelInferRequest.InferRequestedOutputTensor\x1a\x94\x02\n\x10InferInputTensor\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08\x64\x61tatype\x18\x02 \x01(\t\x12\r\n\x05shape\x18\x03 \x03(\x03\x12Q\n\nparameters\x18\x04 \x03(\x0b\x32=.inference.ModelInferRequest.InferInputTensor.ParametersEntry\x12\x30\n\x08\x63ontents\x18\x05 \x01(\x0b\x32\x1e.inference.InferTensorContents\x1aL\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12(\n\x05value\x18\x02 \x01(\x0b\x32\x19.inference.InferParameter:\x02\x38\x01\x1a\xd5\x01\n\x1aInferRequestedOutputTensor\x12\x0c\n\x04name\x18\x01 \x01(\t\x12[\n\nparameters\x18\x02 \x03(\x0b\x32G.inference.ModelInferRequest.InferRequestedOutputTensor.ParametersEntry\x1aL\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12(\n\x05value\x18\x02 \x01(\x0b\x32\x19.inference.InferParameter:\x02\x38\x01\x1aL\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12(\n\x05value\x18\x02 \x01(\x0b\x32\x19.inference.InferParameter:\x02\x38\x01"\xb8\x04\n\x12ModelInferResponse\x12\x12\n\nmodel_name\x18\x01 \x01(\t\x12\x15\n\rmodel_version\x18\x02 \x01(\t\x12\n\n\x02id\x18\x03 \x01(\t\x12\x41\n\nparameters\x18\x04 \x03(\x0b\x32-.inference.ModelInferResponse.ParametersEntry\x12@\n\x07outputs\x18\x05 \x03(\x0b\x32/.inference.ModelInferResponse.InferOutputTensor\x1a\x97\x02\n\x11InferOutputTensor\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08\x64\x61tatype\x18\x02 \x01(\t\x12\r\n\x05shape\x18\x03 \x03(\x03\x12S\n\nparameters\x18\x04 \x03(\x0b\x32?.inference.ModelInferResponse.InferOutputTensor.ParametersEntry\x12\x30\n\x08\x63ontents\x18\x05 \x01(\x0b\x32\x1e.inference.InferTensorContents\x1aL\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12(\n\x05value\x18\x02 \x01(\x0b\x32\x19.inference.InferParameter:\x02\x38\x01\x1aL\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12(\n\x05value\x18\x02 \x01(\x0b\x32\x19.inference.InferParameter:\x02\x38\x01"i\n\x0eInferParameter\x12\x14\n\nbool_param\x18\x01 \x01(\x08H\x00\x12\x15\n\x0bint64_param\x18\x02 \x01(\x03H\x00\x12\x16\n\x0cstring_param\x18\x03 \x01(\tH\x00\x42\x12\n\x10parameter_choice"\xd0\x01\n\x13InferTensorContents\x12\x15\n\rbool_contents\x18\x01 \x03(\x08\x12\x14\n\x0cint_contents\x18\x02 \x03(\x05\x12\x16\n\x0eint64_contents\x18\x03 \x03(\x03\x12\x15\n\ruint_contents\x18\x04 \x03(\r\x12\x17\n\x0fuint64_contents\x18\x05 \x03(\x04\x12\x15\n\rfp32_contents\x18\x06 \x03(\x02\x12\x15\n\rfp64_contents\x18\x07 \x03(\x01\x12\x16\n\x0e\x62ytes_contents\x18\x08 \x03(\x0c\x32\xfc\x03\n\x14GRPCInferenceService\x12K\n\nServerLive\x12\x1c.inference.ServerLiveRequest\x1a\x1d.inference.ServerLiveResponse"\x00\x12N\n\x0bServerReady\x12\x1d.inference.ServerReadyRequest\x1a\x1e.inference.ServerReadyResponse"\x00\x12K\n\nModelReady\x12\x1c.inference.ModelReadyRequest\x1a\x1d.inference.ModelReadyResponse"\x00\x12W\n\x0eServerMetadata\x12 .inference.ServerMetadataRequest\x1a!.inference.ServerMetadataResponse"\x00\x12T\n\rModelMetadata\x12\x1f.inference.ModelMetadataRequest\x1a .inference.ModelMetadataResponse"\x00\x12K\n\nModelInfer\x12\x1c.inference.ModelInferRequest\x1a\x1d.inference.ModelInferResponse"\x00\x62\x06proto3',
+    serialized_pb=b'\n\x0f\x64\x61taplane.proto\x12\tinference"\x13\n\x11ServerLiveRequest""\n\x12ServerLiveResponse\x12\x0c\n\x04live\x18\x01 \x01(\x08"\x14\n\x12ServerReadyRequest"$\n\x13ServerReadyResponse\x12\r\n\x05ready\x18\x01 \x01(\x08"2\n\x11ModelReadyRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t"#\n\x12ModelReadyResponse\x12\r\n\x05ready\x18\x01 \x01(\x08"\x17\n\x15ServerMetadataRequest"K\n\x16ServerMetadataResponse\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\x12\x12\n\nextensions\x18\x03 \x03(\t"5\n\x14ModelMetadataRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t"\xc5\x04\n\x15ModelMetadataResponse\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08versions\x18\x02 \x03(\t\x12\x10\n\x08platform\x18\x03 \x01(\t\x12?\n\x06inputs\x18\x04 \x03(\x0b\x32/.inference.ModelMetadataResponse.TensorMetadata\x12@\n\x07outputs\x18\x05 \x03(\x0b\x32/.inference.ModelMetadataResponse.TensorMetadata\x12\x44\n\nparameters\x18\x06 \x03(\x0b\x32\x30.inference.ModelMetadataResponse.ParametersEntry\x1a\xe2\x01\n\x0eTensorMetadata\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08\x64\x61tatype\x18\x02 \x01(\t\x12\r\n\x05shape\x18\x03 \x03(\x03\x12S\n\nparameters\x18\x04 \x03(\x0b\x32?.inference.ModelMetadataResponse.TensorMetadata.ParametersEntry\x1aL\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12(\n\x05value\x18\x02 \x01(\x0b\x32\x19.inference.InferParameter:\x02\x38\x01\x1aL\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12(\n\x05value\x18\x02 \x01(\x0b\x32\x19.inference.InferParameter:\x02\x38\x01"\xd2\x06\n\x11ModelInferRequest\x12\x12\n\nmodel_name\x18\x01 \x01(\t\x12\x15\n\rmodel_version\x18\x02 \x01(\t\x12\n\n\x02id\x18\x03 \x01(\t\x12@\n\nparameters\x18\x04 \x03(\x0b\x32,.inference.ModelInferRequest.ParametersEntry\x12=\n\x06inputs\x18\x05 \x03(\x0b\x32-.inference.ModelInferRequest.InferInputTensor\x12H\n\x07outputs\x18\x06 \x03(\x0b\x32\x37.inference.ModelInferRequest.InferRequestedOutputTensor\x1a\x94\x02\n\x10InferInputTensor\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08\x64\x61tatype\x18\x02 \x01(\t\x12\r\n\x05shape\x18\x03 \x03(\x03\x12Q\n\nparameters\x18\x04 \x03(\x0b\x32=.inference.ModelInferRequest.InferInputTensor.ParametersEntry\x12\x30\n\x08\x63ontents\x18\x05 \x01(\x0b\x32\x1e.inference.InferTensorContents\x1aL\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12(\n\x05value\x18\x02 \x01(\x0b\x32\x19.inference.InferParameter:\x02\x38\x01\x1a\xd5\x01\n\x1aInferRequestedOutputTensor\x12\x0c\n\x04name\x18\x01 \x01(\t\x12[\n\nparameters\x18\x02 \x03(\x0b\x32G.inference.ModelInferRequest.InferRequestedOutputTensor.ParametersEntry\x1aL\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12(\n\x05value\x18\x02 \x01(\x0b\x32\x19.inference.InferParameter:\x02\x38\x01\x1aL\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12(\n\x05value\x18\x02 \x01(\x0b\x32\x19.inference.InferParameter:\x02\x38\x01"\xb8\x04\n\x12ModelInferResponse\x12\x12\n\nmodel_name\x18\x01 \x01(\t\x12\x15\n\rmodel_version\x18\x02 \x01(\t\x12\n\n\x02id\x18\x03 \x01(\t\x12\x41\n\nparameters\x18\x04 \x03(\x0b\x32-.inference.ModelInferResponse.ParametersEntry\x12@\n\x07outputs\x18\x05 \x03(\x0b\x32/.inference.ModelInferResponse.InferOutputTensor\x1a\x97\x02\n\x11InferOutputTensor\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08\x64\x61tatype\x18\x02 \x01(\t\x12\r\n\x05shape\x18\x03 \x03(\x03\x12S\n\nparameters\x18\x04 \x03(\x0b\x32?.inference.ModelInferResponse.InferOutputTensor.ParametersEntry\x12\x30\n\x08\x63ontents\x18\x05 \x01(\x0b\x32\x1e.inference.InferTensorContents\x1aL\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12(\n\x05value\x18\x02 \x01(\x0b\x32\x19.inference.InferParameter:\x02\x38\x01\x1aL\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12(\n\x05value\x18\x02 \x01(\x0b\x32\x19.inference.InferParameter:\x02\x38\x01"i\n\x0eInferParameter\x12\x14\n\nbool_param\x18\x01 \x01(\x08H\x00\x12\x15\n\x0bint64_param\x18\x02 \x01(\x03H\x00\x12\x16\n\x0cstring_param\x18\x03 \x01(\tH\x00\x42\x12\n\x10parameter_choice"\xd0\x01\n\x13InferTensorContents\x12\x15\n\rbool_contents\x18\x01 \x03(\x08\x12\x14\n\x0cint_contents\x18\x02 \x03(\x05\x12\x16\n\x0eint64_contents\x18\x03 \x03(\x03\x12\x15\n\ruint_contents\x18\x04 \x03(\r\x12\x17\n\x0fuint64_contents\x18\x05 \x03(\x04\x12\x15\n\rfp32_contents\x18\x06 \x03(\x02\x12\x15\n\rfp64_contents\x18\x07 \x03(\x01\x12\x16\n\x0e\x62ytes_contents\x18\x08 \x03(\x0c\x32\xfc\x03\n\x14GRPCInferenceService\x12K\n\nServerLive\x12\x1c.inference.ServerLiveRequest\x1a\x1d.inference.ServerLiveResponse"\x00\x12N\n\x0bServerReady\x12\x1d.inference.ServerReadyRequest\x1a\x1e.inference.ServerReadyResponse"\x00\x12K\n\nModelReady\x12\x1c.inference.ModelReadyRequest\x1a\x1d.inference.ModelReadyResponse"\x00\x12W\n\x0eServerMetadata\x12 .inference.ServerMetadataRequest\x1a!.inference.ServerMetadataResponse"\x00\x12T\n\rModelMetadata\x12\x1f.inference.ModelMetadataRequest\x1a .inference.ModelMetadataResponse"\x00\x12K\n\nModelInfer\x12\x1c.inference.ModelInferRequest\x1a\x1d.inference.ModelInferResponse"\x00\x62\x06proto3',
 )
 
 
@@ -407,9 +407,9 @@ _MODELMETADATAREQUEST = _descriptor.Descriptor(
 )
 
 
-_MODELMETADATARESPONSE_TENSORMETADATA_TAGSENTRY = _descriptor.Descriptor(
-    name="TagsEntry",
-    full_name="inference.ModelMetadataResponse.TensorMetadata.TagsEntry",
+_MODELMETADATARESPONSE_TENSORMETADATA_PARAMETERSENTRY = _descriptor.Descriptor(
+    name="ParametersEntry",
+    full_name="inference.ModelMetadataResponse.TensorMetadata.ParametersEntry",
     filename=None,
     file=DESCRIPTOR,
     containing_type=None,
@@ -417,7 +417,7 @@ _MODELMETADATARESPONSE_TENSORMETADATA_TAGSENTRY = _descriptor.Descriptor(
     fields=[
         _descriptor.FieldDescriptor(
             name="key",
-            full_name="inference.ModelMetadataResponse.TensorMetadata.TagsEntry.key",
+            full_name="inference.ModelMetadataResponse.TensorMetadata.ParametersEntry.key",
             index=0,
             number=1,
             type=9,
@@ -436,7 +436,7 @@ _MODELMETADATARESPONSE_TENSORMETADATA_TAGSENTRY = _descriptor.Descriptor(
         ),
         _descriptor.FieldDescriptor(
             name="value",
-            full_name="inference.ModelMetadataResponse.TensorMetadata.TagsEntry.value",
+            full_name="inference.ModelMetadataResponse.TensorMetadata.ParametersEntry.value",
             index=1,
             number=2,
             type=11,
@@ -462,8 +462,8 @@ _MODELMETADATARESPONSE_TENSORMETADATA_TAGSENTRY = _descriptor.Descriptor(
     syntax="proto3",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=739,
-    serialized_end=809,
+    serialized_start=821,
+    serialized_end=897,
 )
 
 _MODELMETADATARESPONSE_TENSORMETADATA = _descriptor.Descriptor(
@@ -532,8 +532,8 @@ _MODELMETADATARESPONSE_TENSORMETADATA = _descriptor.Descriptor(
             create_key=_descriptor._internal_create_key,
         ),
         _descriptor.FieldDescriptor(
-            name="tags",
-            full_name="inference.ModelMetadataResponse.TensorMetadata.tags",
+            name="parameters",
+            full_name="inference.ModelMetadataResponse.TensorMetadata.parameters",
             index=3,
             number=4,
             type=11,
@@ -553,7 +553,7 @@ _MODELMETADATARESPONSE_TENSORMETADATA = _descriptor.Descriptor(
     ],
     extensions=[],
     nested_types=[
-        _MODELMETADATARESPONSE_TENSORMETADATA_TAGSENTRY,
+        _MODELMETADATARESPONSE_TENSORMETADATA_PARAMETERSENTRY,
     ],
     enum_types=[],
     serialized_options=None,
@@ -561,8 +561,67 @@ _MODELMETADATARESPONSE_TENSORMETADATA = _descriptor.Descriptor(
     syntax="proto3",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=601,
-    serialized_end=809,
+    serialized_start=671,
+    serialized_end=897,
+)
+
+_MODELMETADATARESPONSE_PARAMETERSENTRY = _descriptor.Descriptor(
+    name="ParametersEntry",
+    full_name="inference.ModelMetadataResponse.ParametersEntry",
+    filename=None,
+    file=DESCRIPTOR,
+    containing_type=None,
+    create_key=_descriptor._internal_create_key,
+    fields=[
+        _descriptor.FieldDescriptor(
+            name="key",
+            full_name="inference.ModelMetadataResponse.ParametersEntry.key",
+            index=0,
+            number=1,
+            type=9,
+            cpp_type=9,
+            label=1,
+            has_default_value=False,
+            default_value=b"".decode("utf-8"),
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+            create_key=_descriptor._internal_create_key,
+        ),
+        _descriptor.FieldDescriptor(
+            name="value",
+            full_name="inference.ModelMetadataResponse.ParametersEntry.value",
+            index=1,
+            number=2,
+            type=11,
+            cpp_type=10,
+            label=1,
+            has_default_value=False,
+            default_value=None,
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+            create_key=_descriptor._internal_create_key,
+        ),
+    ],
+    extensions=[],
+    nested_types=[],
+    enum_types=[],
+    serialized_options=b"8\001",
+    is_extendable=False,
+    syntax="proto3",
+    extension_ranges=[],
+    oneofs=[],
+    serialized_start=821,
+    serialized_end=897,
 )
 
 _MODELMETADATARESPONSE = _descriptor.Descriptor(
@@ -668,10 +727,30 @@ _MODELMETADATARESPONSE = _descriptor.Descriptor(
             file=DESCRIPTOR,
             create_key=_descriptor._internal_create_key,
         ),
+        _descriptor.FieldDescriptor(
+            name="parameters",
+            full_name="inference.ModelMetadataResponse.parameters",
+            index=5,
+            number=6,
+            type=11,
+            cpp_type=10,
+            label=3,
+            has_default_value=False,
+            default_value=[],
+            message_type=None,
+            enum_type=None,
+            containing_type=None,
+            is_extension=False,
+            extension_scope=None,
+            serialized_options=None,
+            file=DESCRIPTOR,
+            create_key=_descriptor._internal_create_key,
+        ),
     ],
     extensions=[],
     nested_types=[
         _MODELMETADATARESPONSE_TENSORMETADATA,
+        _MODELMETADATARESPONSE_PARAMETERSENTRY,
     ],
     enum_types=[],
     serialized_options=None,
@@ -680,7 +759,7 @@ _MODELMETADATARESPONSE = _descriptor.Descriptor(
     extension_ranges=[],
     oneofs=[],
     serialized_start=394,
-    serialized_end=809,
+    serialized_end=975,
 )
 
 
@@ -739,8 +818,8 @@ _MODELINFERREQUEST_INFERINPUTTENSOR_PARAMETERSENTRY = _descriptor.Descriptor(
     syntax="proto3",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=1292,
-    serialized_end=1368,
+    serialized_start=821,
+    serialized_end=897,
 )
 
 _MODELINFERREQUEST_INFERINPUTTENSOR = _descriptor.Descriptor(
@@ -857,8 +936,8 @@ _MODELINFERREQUEST_INFERINPUTTENSOR = _descriptor.Descriptor(
     syntax="proto3",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=1092,
-    serialized_end=1368,
+    serialized_start=1258,
+    serialized_end=1534,
 )
 
 _MODELINFERREQUEST_INFERREQUESTEDOUTPUTTENSOR_PARAMETERSENTRY = _descriptor.Descriptor(
@@ -916,8 +995,8 @@ _MODELINFERREQUEST_INFERREQUESTEDOUTPUTTENSOR_PARAMETERSENTRY = _descriptor.Desc
     syntax="proto3",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=1292,
-    serialized_end=1368,
+    serialized_start=821,
+    serialized_end=897,
 )
 
 _MODELINFERREQUEST_INFERREQUESTEDOUTPUTTENSOR = _descriptor.Descriptor(
@@ -977,8 +1056,8 @@ _MODELINFERREQUEST_INFERREQUESTEDOUTPUTTENSOR = _descriptor.Descriptor(
     syntax="proto3",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=1371,
-    serialized_end=1584,
+    serialized_start=1537,
+    serialized_end=1750,
 )
 
 _MODELINFERREQUEST_PARAMETERSENTRY = _descriptor.Descriptor(
@@ -1036,8 +1115,8 @@ _MODELINFERREQUEST_PARAMETERSENTRY = _descriptor.Descriptor(
     syntax="proto3",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=1292,
-    serialized_end=1368,
+    serialized_start=821,
+    serialized_end=897,
 )
 
 _MODELINFERREQUEST = _descriptor.Descriptor(
@@ -1175,8 +1254,8 @@ _MODELINFERREQUEST = _descriptor.Descriptor(
     syntax="proto3",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=812,
-    serialized_end=1662,
+    serialized_start=978,
+    serialized_end=1828,
 )
 
 
@@ -1235,8 +1314,8 @@ _MODELINFERRESPONSE_INFEROUTPUTTENSOR_PARAMETERSENTRY = _descriptor.Descriptor(
     syntax="proto3",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=1292,
-    serialized_end=1368,
+    serialized_start=821,
+    serialized_end=897,
 )
 
 _MODELINFERRESPONSE_INFEROUTPUTTENSOR = _descriptor.Descriptor(
@@ -1353,8 +1432,8 @@ _MODELINFERRESPONSE_INFEROUTPUTTENSOR = _descriptor.Descriptor(
     syntax="proto3",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=1876,
-    serialized_end=2155,
+    serialized_start=2042,
+    serialized_end=2321,
 )
 
 _MODELINFERRESPONSE_PARAMETERSENTRY = _descriptor.Descriptor(
@@ -1412,8 +1491,8 @@ _MODELINFERRESPONSE_PARAMETERSENTRY = _descriptor.Descriptor(
     syntax="proto3",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=1292,
-    serialized_end=1368,
+    serialized_start=821,
+    serialized_end=897,
 )
 
 _MODELINFERRESPONSE = _descriptor.Descriptor(
@@ -1531,8 +1610,8 @@ _MODELINFERRESPONSE = _descriptor.Descriptor(
     syntax="proto3",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=1665,
-    serialized_end=2233,
+    serialized_start=1831,
+    serialized_end=2399,
 )
 
 
@@ -1619,8 +1698,8 @@ _INFERPARAMETER = _descriptor.Descriptor(
             fields=[],
         ),
     ],
-    serialized_start=2235,
-    serialized_end=2340,
+    serialized_start=2401,
+    serialized_end=2506,
 )
 
 
@@ -1793,26 +1872,33 @@ _INFERTENSORCONTENTS = _descriptor.Descriptor(
     syntax="proto3",
     extension_ranges=[],
     oneofs=[],
-    serialized_start=2343,
-    serialized_end=2551,
+    serialized_start=2509,
+    serialized_end=2717,
 )
 
-_MODELMETADATARESPONSE_TENSORMETADATA_TAGSENTRY.fields_by_name[
+_MODELMETADATARESPONSE_TENSORMETADATA_PARAMETERSENTRY.fields_by_name[
     "value"
 ].message_type = _INFERPARAMETER
-_MODELMETADATARESPONSE_TENSORMETADATA_TAGSENTRY.containing_type = (
+_MODELMETADATARESPONSE_TENSORMETADATA_PARAMETERSENTRY.containing_type = (
     _MODELMETADATARESPONSE_TENSORMETADATA
 )
 _MODELMETADATARESPONSE_TENSORMETADATA.fields_by_name[
-    "tags"
-].message_type = _MODELMETADATARESPONSE_TENSORMETADATA_TAGSENTRY
+    "parameters"
+].message_type = _MODELMETADATARESPONSE_TENSORMETADATA_PARAMETERSENTRY
 _MODELMETADATARESPONSE_TENSORMETADATA.containing_type = _MODELMETADATARESPONSE
+_MODELMETADATARESPONSE_PARAMETERSENTRY.fields_by_name[
+    "value"
+].message_type = _INFERPARAMETER
+_MODELMETADATARESPONSE_PARAMETERSENTRY.containing_type = _MODELMETADATARESPONSE
 _MODELMETADATARESPONSE.fields_by_name[
     "inputs"
 ].message_type = _MODELMETADATARESPONSE_TENSORMETADATA
 _MODELMETADATARESPONSE.fields_by_name[
     "outputs"
 ].message_type = _MODELMETADATARESPONSE_TENSORMETADATA
+_MODELMETADATARESPONSE.fields_by_name[
+    "parameters"
+].message_type = _MODELMETADATARESPONSE_PARAMETERSENTRY
 _MODELINFERREQUEST_INFERINPUTTENSOR_PARAMETERSENTRY.fields_by_name[
     "value"
 ].message_type = _INFERPARAMETER
@@ -2013,18 +2099,27 @@ ModelMetadataResponse = _reflection.GeneratedProtocolMessageType(
             "TensorMetadata",
             (_message.Message,),
             {
-                "TagsEntry": _reflection.GeneratedProtocolMessageType(
-                    "TagsEntry",
+                "ParametersEntry": _reflection.GeneratedProtocolMessageType(
+                    "ParametersEntry",
                     (_message.Message,),
                     {
-                        "DESCRIPTOR": _MODELMETADATARESPONSE_TENSORMETADATA_TAGSENTRY,
+                        "DESCRIPTOR": _MODELMETADATARESPONSE_TENSORMETADATA_PARAMETERSENTRY,
                         "__module__": "dataplane_pb2"
-                        # @@protoc_insertion_point(class_scope:inference.ModelMetadataResponse.TensorMetadata.TagsEntry)
+                        # @@protoc_insertion_point(class_scope:inference.ModelMetadataResponse.TensorMetadata.ParametersEntry)
                     },
                 ),
                 "DESCRIPTOR": _MODELMETADATARESPONSE_TENSORMETADATA,
                 "__module__": "dataplane_pb2"
                 # @@protoc_insertion_point(class_scope:inference.ModelMetadataResponse.TensorMetadata)
+            },
+        ),
+        "ParametersEntry": _reflection.GeneratedProtocolMessageType(
+            "ParametersEntry",
+            (_message.Message,),
+            {
+                "DESCRIPTOR": _MODELMETADATARESPONSE_PARAMETERSENTRY,
+                "__module__": "dataplane_pb2"
+                # @@protoc_insertion_point(class_scope:inference.ModelMetadataResponse.ParametersEntry)
             },
         ),
         "DESCRIPTOR": _MODELMETADATARESPONSE,
@@ -2034,7 +2129,8 @@ ModelMetadataResponse = _reflection.GeneratedProtocolMessageType(
 )
 _sym_db.RegisterMessage(ModelMetadataResponse)
 _sym_db.RegisterMessage(ModelMetadataResponse.TensorMetadata)
-_sym_db.RegisterMessage(ModelMetadataResponse.TensorMetadata.TagsEntry)
+_sym_db.RegisterMessage(ModelMetadataResponse.TensorMetadata.ParametersEntry)
+_sym_db.RegisterMessage(ModelMetadataResponse.ParametersEntry)
 
 ModelInferRequest = _reflection.GeneratedProtocolMessageType(
     "ModelInferRequest",
@@ -2161,7 +2257,8 @@ InferTensorContents = _reflection.GeneratedProtocolMessageType(
 _sym_db.RegisterMessage(InferTensorContents)
 
 
-_MODELMETADATARESPONSE_TENSORMETADATA_TAGSENTRY._options = None
+_MODELMETADATARESPONSE_TENSORMETADATA_PARAMETERSENTRY._options = None
+_MODELMETADATARESPONSE_PARAMETERSENTRY._options = None
 _MODELINFERREQUEST_INFERINPUTTENSOR_PARAMETERSENTRY._options = None
 _MODELINFERREQUEST_INFERREQUESTEDOUTPUTTENSOR_PARAMETERSENTRY._options = None
 _MODELINFERREQUEST_PARAMETERSENTRY._options = None
@@ -2175,8 +2272,8 @@ _GRPCINFERENCESERVICE = _descriptor.ServiceDescriptor(
     index=0,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
-    serialized_start=2554,
-    serialized_end=3062,
+    serialized_start=2720,
+    serialized_end=3228,
     methods=[
         _descriptor.MethodDescriptor(
             name="ServerLive",

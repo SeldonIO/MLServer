@@ -14,18 +14,19 @@ from mlserver.codecs import (
     decode_inference_request,
 )
 from mlserver.types import (
-    Tags,
     MetadataTensor,
     RequestInput,
     InferenceRequest,
     Parameters,
 )
 
+from mlserver_mlflow.codecs import TensorDictCodec
 from mlserver_mlflow.metadata import (
     InputSpec,
     _get_content_type,
     _get_shape,
     to_metadata_tensors,
+    to_model_content_type,
 )
 
 
@@ -81,7 +82,7 @@ def test_get_shape(input_spec: InputSpec, expected: List[int]):
                     name="foo",
                     datatype="INT32",
                     shape=[2, 2],
-                    tags=Tags(content_type=NumpyCodec.ContentType),
+                    parameters=Parameters(content_type=NumpyCodec.ContentType),
                 )
             ],
         ),
@@ -92,7 +93,7 @@ def test_get_shape(input_spec: InputSpec, expected: List[int]):
                     name="input-0",
                     datatype="INT32",
                     shape=[2, 2],
-                    tags=Tags(content_type=NumpyCodec.ContentType),
+                    parameters=Parameters(content_type=NumpyCodec.ContentType),
                 )
             ],
         ),
@@ -108,13 +109,13 @@ def test_get_shape(input_spec: InputSpec, expected: List[int]):
                     name="foo",
                     datatype="INT32",
                     shape=[-1, 2],
-                    tags=Tags(content_type=NumpyCodec.ContentType),
+                    parameters=Parameters(content_type=NumpyCodec.ContentType),
                 ),
                 MetadataTensor(
                     name="bar",
                     datatype="FP32",
                     shape=[-1, 10],
-                    tags=Tags(content_type=NumpyCodec.ContentType),
+                    parameters=Parameters(content_type=NumpyCodec.ContentType),
                 ),
             ],
         ),
@@ -130,13 +131,13 @@ def test_get_shape(input_spec: InputSpec, expected: List[int]):
                     name="input-0",
                     datatype="BYTES",
                     shape=[-1],
-                    tags=Tags(content_type=StringCodec.ContentType),
+                    parameters=Parameters(content_type=StringCodec.ContentType),
                 ),
                 MetadataTensor(
                     name="input-1",
                     datatype="INT32",
                     shape=[-1],
-                    tags=Tags(content_type=NumpyCodec.ContentType),
+                    parameters=Parameters(content_type=NumpyCodec.ContentType),
                 ),
             ],
         ),
@@ -204,3 +205,51 @@ def test_content_types(tensor_spec: TensorSpec, request_input: RequestInput):
 
     # _enforce_schema will raise if something fails
     _enforce_schema(data, input_schema)
+
+
+@pytest.mark.parametrize(
+    "schema, expected",
+    [
+        (
+            # Expect DataFrame for named column inputs
+            Schema(
+                inputs=[
+                    ColSpec(name="foo", type=DataType.boolean),
+                    ColSpec(name="bar", type=DataType.boolean),
+                ]
+            ),
+            PandasCodec.ContentType,
+        ),
+        (
+            # Expect tensor dictionary for named tensor inputs
+            Schema(
+                inputs=[
+                    TensorSpec(name="foo", shape=(2, 2), type=np.dtype("int32")),
+                    TensorSpec(name="bar", shape=(3, 2), type=np.dtype("int32")),
+                ]
+            ),
+            TensorDictCodec.ContentType,
+        ),
+        (
+            # Expect tensor dictionary for named tensor inputs
+            Schema(
+                inputs=[
+                    TensorSpec(name="foo", shape=(2, 2), type=np.dtype("int32")),
+                ]
+            ),
+            TensorDictCodec.ContentType,
+        ),
+        (
+            # Expect plain tensor for unnamed single tensor input
+            Schema(
+                inputs=[
+                    TensorSpec(shape=(2, 2), type=np.dtype("int32")),
+                ]
+            ),
+            NumpyCodec.ContentType,
+        ),
+    ],
+)
+def test_to_model_content_type(schema: Schema, expected: str):
+    content_type = to_model_content_type(schema)
+    assert content_type == expected

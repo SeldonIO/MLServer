@@ -2,11 +2,12 @@ SHELL := /bin/bash
 VERSION := $(shell sed 's/^__version__ = "\(.*\)"/\1/' ./mlserver/version.py)
 IMAGE_NAME := seldonio/mlserver
 
-.PHONY: install-dev _generate generate run build push-test push test lint fmt version clean licenses
+.PHONY: install-dev _generate generate run build \
+	push-test push test lint fmt version clean licenses
 
 install-dev:
 	pip install -r requirements/dev.txt
-	pip install --editable .
+	pip install --editable .[all]
 	for _runtime in ./runtimes/*; \
 	do \
 		pip install --editable $$_runtime; \
@@ -25,17 +26,9 @@ run:
 	mlserver start \
 		./tests/testdata
 
-build: clean
-	docker build . -t ${IMAGE_NAME}:${VERSION}
-	python setup.py sdist bdist_wheel
-	for _runtime in ./runtimes/*; \
-	do \
-		cd $$_runtime; \
-		python setup.py \
-			sdist -d ../../dist \
-			bdist_wheel -d ../../dist; \
-		cd ../../; \
-	done
+build: clean 
+	./hack/build-images.sh ${VERSION}
+	./hack/build-wheels.sh ./dist
 
 clean:
 	rm -rf ./dist ./build
@@ -50,6 +43,12 @@ push-test:
 
 push:
 	docker push ${IMAGE_NAME}:${VERSION}
+	docker push ${IMAGE_NAME}:${VERSION}-slim
+	for _runtime in ./runtimes/*; \
+	do \
+	  _runtimeName=$$(basename $$_runtime); \
+		docker push ${IMAGE_NAME}:${VERSION}-$$_runtimeName; \
+	done
 	twine upload dist/*
 
 test:

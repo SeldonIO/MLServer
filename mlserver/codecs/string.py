@@ -1,6 +1,6 @@
 from typing import List
 
-from ..types import RequestInput, ResponseOutput
+from ..types import RequestInput, ResponseOutput, Parameters
 
 from .utils import FirstInputRequestCodec
 from .base import InputCodec, register_input_codec, register_request_codec
@@ -50,6 +50,19 @@ class StringCodec(InputCodec):
 
         unpacked = map(_decode_str, unpack(packed, shape))
         return list(unpacked)
+
+    @classmethod
+    def encode_request_input(cls, name: str, payload: List[str]) -> RequestInput:
+        # TODO: merge this logic with `encode`
+        # note: this will only work with REST and not grpc as we might have
+        # variable length strings
+        return RequestInput(
+            name=name,
+            datatype="BYTES",
+            shape=[len(payload), -1],  # this is discarded downstream?
+            data=payload,
+            parameters=Parameters(content_type=cls.ContentType),
+        )
 
 
 @register_request_codec

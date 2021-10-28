@@ -11,6 +11,23 @@ models through a REST and gRPC interface, fully compliant with [KFServing's V2
 Dataplane](https://github.com/kubeflow/kfserving/blob/master/docs/predict-api/v2/required_api.md)
 spec.
 
+- Multi-model serving, letting users run multiple models within the same
+  process.
+- Ability to run [inference in parallel for vertical
+  scaling](https://mlserver.readthedocs.io/en/latest/user-guide/parallel-inference.html)
+  across multiple models through a pool of inference workers.
+- Support for [adaptive
+  batching](https://mlserver.readthedocs.io/en/latest/user-guide/adaptive-batching.html),
+  to group inference requests together on the fly.
+- Scalability with deployment in Kubernetes native frameworks, including
+  [Seldon Core](https://docs.seldon.io/projects/seldon-core/en/latest/graph/protocols.html#v2-kfserving-protocol) and
+  [KServe (formerly known as KFServing)](https://kserve.github.io/website/modelserving/v1beta1/sklearn/v2/), where
+  MLServer is the core Python inference server used to serve machine learning
+  models.
+- Support for the standard [V2 Inference Protocol](https://github.com/kubeflow/kfserving/tree/master/docs/predict-api/v2) on
+  both the gRPC and REST flavours, which has been standardised and adopted by
+  various model serving frameworks.
+
 You can read more about the goals of this project on the [inital design
 document](https://docs.google.com/document/d/1C2uf4SaAtwLTlBCciOhvdiKQ2Eay4U72VxAD4bXe7iU/edit?usp=sharing).
 

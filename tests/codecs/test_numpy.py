@@ -38,6 +38,19 @@ def test_numpy_codec(request_input, payload):
     assert response_output.shape == request_input.shape
     assert response_output.data == request_input.data
 
+    # testing encode_request_input that should result in a similar output to
+    # encode but to `RequestInput`
+
+    request_input_result = codec.encode_request_input(name="foo", payload=decoded)
+    assert response_output.datatype == request_input_result.datatype
+    assert response_output.shape == request_input_result.shape
+    assert response_output.data == request_input_result.data
+    assert request_input_result.parameters.content_type == codec.ContentType
+
+    # similarly for decode_response_output
+    output_response_decoded = codec.decode_response_output(response_output)
+    np.testing.assert_array_equal(output_response_decoded, payload)
+
 
 @pytest.mark.parametrize(
     "dtype, datatype",

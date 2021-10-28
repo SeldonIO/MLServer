@@ -54,7 +54,7 @@ class DataPlane:
         model = await self._model_registry.get_model(name, version)
 
         # Run middlewares
-        inference_middlewares(payload, model._settings)
+        inference_middlewares(payload, model.settings)
 
         # TODO: Make await optional for sync methods
         prediction = await model.predict(payload)

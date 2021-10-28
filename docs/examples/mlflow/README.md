@@ -195,108 +195,72 @@ To learn more about how MLServer uses content type parameters, you can check thi
 import requests
 
 inference_request = {
-    "parameters": {
-        "content_type": "pd"
-    },
     "inputs": [
         {
           "name": "fixed acidity",
           "shape": [1],
           "datatype": "FP32",
           "data": [7.4],
-          "parameters": {
-              "content_type": "np"
-          }
         },
         {
           "name": "volatile acidity",
           "shape": [1],
           "datatype": "FP32",
           "data": [0.7000],
-          "parameters": {
-              "content_type": "np"
-          }
         },
         {
-          "name": "citric acidity",
+          "name": "citric acid",
           "shape": [1],
           "datatype": "FP32",
           "data": [0],
-          "parameters": {
-              "content_type": "np"
-          }
         },
         {
           "name": "residual sugar",
           "shape": [1],
           "datatype": "FP32",
           "data": [1.9],
-          "parameters": {
-              "content_type": "np"
-          }
         },
         {
           "name": "chlorides",
           "shape": [1],
           "datatype": "FP32",
           "data": [0.076],
-          "parameters": {
-              "content_type": "np"
-          }
         },
         {
           "name": "free sulfur dioxide",
           "shape": [1],
           "datatype": "FP32",
           "data": [11],
-          "parameters": {
-              "content_type": "np"
-          }
         },
         {
           "name": "total sulfur dioxide",
           "shape": [1],
           "datatype": "FP32",
           "data": [34],
-          "parameters": {
-              "content_type": "np"
-          }
         },
         {
           "name": "density",
           "shape": [1],
           "datatype": "FP32",
           "data": [0.9978],
-          "parameters": {
-              "content_type": "np"
-          }
         },
         {
           "name": "pH",
           "shape": [1],
           "datatype": "FP32",
           "data": [3.51],
-          "parameters": {
-              "content_type": "np"
-          }
         },
         {
           "name": "sulphates",
           "shape": [1],
           "datatype": "FP32",
           "data": [0.56],
-          "parameters": {
-              "content_type": "np"
-          }
         },
         {
           "name": "alcohol",
           "shape": [1],
           "datatype": "FP32",
           "data": [9.4],
-          "parameters": {
-              "content_type": "np"
-          }
         },
     ]
 }
@@ -374,7 +338,7 @@ For this, we will use the `/v2/models/wine-classifier/` endpoint.
 import requests
 
 
-endpoint = "http://localhost:8080/v2/models/wine-classifier/"
+endpoint = "http://localhost:8080/v2/models/wine-classifier"
 response = requests.get(endpoint)
 
 response.json()

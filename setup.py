@@ -35,7 +35,9 @@ setup(
     packages=find_packages(),
     install_requires=[
         "click",
-        "fastapi",
+        # We pin version of fastapi
+        # check https://github.com/SeldonIO/MLServer/issues/340
+        "fastapi==0.68.2",
         "grpcio",
         "importlib-metadata;python_version<'3.8'",
         "numpy",
@@ -44,6 +46,7 @@ setup(
         "protobuf",
         "uvicorn",
     ],
+    extras_require={"all": ["orjson"]},
     entry_points={"console_scripts": ["mlserver=mlserver.cli:main"]},
     long_description=_load_description(),
     long_description_content_type="text/markdown",

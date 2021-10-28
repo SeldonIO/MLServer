@@ -7,6 +7,7 @@ from ..types import (
     MetadataTensor,
     Parameters,
 )
+from ..settings import ModelSettings
 from .base import (
     find_input_codec,
     find_request_codec,
@@ -16,19 +17,19 @@ from .base import (
 )
 
 Parametrised = Union[InferenceRequest, RequestInput]
-Tagged = Union[MetadataTensor]
+Tagged = Union[MetadataTensor, ModelSettings]
 DecodedParameterName = "_decoded_payload"
 
 
 def _get_content_type(
-    parametrised_obj: Parametrised, tagged_obj: Optional[Tagged] = None
+    request: Parametrised, metadata: Optional[Tagged] = None
 ) -> Optional[str]:
-    if parametrised_obj.parameters and parametrised_obj.parameters.content_type:
-        return parametrised_obj.parameters.content_type
+    if request.parameters and request.parameters.content_type:
+        return request.parameters.content_type
 
-    if tagged_obj is not None:
-        if tagged_obj.tags and tagged_obj.tags.content_type:
-            return tagged_obj.tags.content_type
+    if metadata is not None:
+        if metadata.parameters and metadata.parameters.content_type:
+            return metadata.parameters.content_type
 
     return None
 
@@ -59,12 +60,14 @@ def decode_request_input(
 
 
 def decode_inference_request(
-    inference_request: InferenceRequest, metadata_inputs: Dict[str, MetadataTensor] = {}
+    inference_request: InferenceRequest,
+    model_settings: ModelSettings = None,
+    metadata_inputs: Dict[str, MetadataTensor] = {},
 ) -> Optional[Any]:
     for request_input in inference_request.inputs:
         decode_request_input(request_input, metadata_inputs)
 
-    request_content_type = _get_content_type(inference_request)
+    request_content_type = _get_content_type(inference_request, model_settings)
     if request_content_type is not None:
         codec = find_request_codec(request_content_type)
         if codec is not None:

@@ -26,8 +26,8 @@ dependencies:
   - joblib == 0.13.0
   - requests
   - pip:
-        - mlserver == 0.3.0.dev1
-        - mlserver-sklearn ==0.3.0.dev1
+        - mlserver == 0.6.0.dev0
+        - mlserver-sklearn ==0.6.0.dev0
 ```
 
 ### Train model in our custom environment
@@ -128,7 +128,7 @@ docker run -it --rm \
     -v "$PWD":/mnt/models \
     -e "MLSERVER_ENV_TARBALL=/mnt/models/old-sklearn.tar.gz" \
     -p 8080:8080 \
-    seldonio/mlserver:0.2.2.dev0
+    seldonio/mlserver:0.6.0.dev0
 ```
 
 Note that we need to keep the server running in the background while we send requests.

@@ -13,7 +13,7 @@
       "datatype": "FP32",
       "name": "input-0",
       "shape": [1, 4],
-      "tags": {
+      "parameters": {
         "content_type": "np"
       }
     }

@@ -1,5 +1,13 @@
 from typing import Any, Dict, Optional, List
 
+from .codecs import (
+    decode_request_input,
+    decode_inference_request,
+    InputCodec,
+    has_decoded,
+    get_decoded,
+)
+from .settings import ModelSettings
 from .types import (
     InferenceRequest,
     InferenceResponse,
@@ -7,13 +15,8 @@ from .types import (
     MetadataModelResponse,
     MetadataTensor,
 )
-from .settings import ModelSettings
-from .codecs import (
-    decode_request_input,
-    decode_inference_request,
-    InputCodec,
-    has_decoded,
-    get_decoded,
+from .types import (
+    Parameters,
 )
 
 
@@ -93,16 +96,25 @@ class MLModel:
         return request_input.data
 
     def decode_request(self, inference_request: InferenceRequest) -> Any:
-        return decode_inference_request(inference_request, self._inputs_index)
+        return decode_inference_request(
+            inference_request, self._settings, self._inputs_index
+        )
 
     async def metadata(self) -> MetadataModelResponse:
-        return MetadataModelResponse(
+        model_metadata = MetadataModelResponse(
             name=self.name,
             platform=self._settings.platform,
             versions=self._settings.versions,
             inputs=self._settings.inputs,
             outputs=self._settings.outputs,
         )
+
+        if self._settings.parameters:
+            model_metadata.parameters = Parameters(
+                content_type=self._settings.parameters.content_type
+            )
+
+        return model_metadata
 
     async def load(self) -> bool:
         self.ready = True

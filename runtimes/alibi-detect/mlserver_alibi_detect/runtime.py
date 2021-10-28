@@ -26,7 +26,7 @@ class AlibiDetectSettings(BaseSettings):
         env_prefix = ENV_PREFIX_ALIBI_DETECT_SETTINGS
 
     init_detector: bool = False
-    detector_type: PyObject = ""
+    detector_type: PyObject = ""  # type: ignore
     protocol: Optional[str] = "seldon.http"
     init_parameters: Optional[dict] = {}
     predict_parameters: Optional[dict] = {}
@@ -46,8 +46,11 @@ class AlibiDetectRuntime(MLModel):
     """
 
     def __init__(self, settings: ModelSettings):
-
-        self.alibi_detect_settings = AlibiDetectSettings(**settings.parameters.extra)
+        if settings.parameters is None:
+            self.alibi_detect_settings = AlibiDetectSettings()
+        else:
+            extra = settings.parameters.extra
+            self.alibi_detect_settings = AlibiDetectSettings(**extra)  # type: ignore
         super().__init__(settings)
 
     @custom_handler(rest_path="/")
@@ -93,7 +96,7 @@ class AlibiDetectRuntime(MLModel):
 
     async def predict_fn(self, input_data: Any) -> dict:
         parameters = self.alibi_detect_settings.predict_parameters
-        return self._model.predict(input_data, **parameters)
+        return self._model.predict(input_data, **parameters)  # type: ignore
 
     def _check_request(self, payload: types.InferenceRequest) -> types.InferenceRequest:
         if len(payload.inputs) != 1:

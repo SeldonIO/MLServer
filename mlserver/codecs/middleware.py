@@ -24,6 +24,6 @@ def codec_middleware(
     request: InferenceRequest, model_settings: ModelSettings
 ) -> InferenceRequest:
     metadata_inputs = _metadata_index(model_settings)
-    decode_inference_request(request, metadata_inputs)
+    decode_inference_request(request, model_settings, metadata_inputs)
 
     return request

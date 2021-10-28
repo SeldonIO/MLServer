@@ -174,7 +174,7 @@ class ModelMetadataResponse(google.protobuf.message.Message):
     # Metadata for a tensor.
     class TensorMetadata(google.protobuf.message.Message):
         DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
-        class TagsEntry(google.protobuf.message.Message):
+        class ParametersEntry(google.protobuf.message.Message):
             DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
             KEY_FIELD_NUMBER: builtins.int
             VALUE_FIELD_NUMBER: builtins.int
@@ -197,7 +197,7 @@ class ModelMetadataResponse(google.protobuf.message.Message):
         NAME_FIELD_NUMBER: builtins.int
         DATATYPE_FIELD_NUMBER: builtins.int
         SHAPE_FIELD_NUMBER: builtins.int
-        TAGS_FIELD_NUMBER: builtins.int
+        PARAMETERS_FIELD_NUMBER: builtins.int
         # The tensor name.
         name: typing.Text = ...
         # The tensor data type.
@@ -210,10 +210,10 @@ class ModelMetadataResponse(google.protobuf.message.Message):
         ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[
             builtins.int
         ]: ...
-        # Optional tags about the input.
+        # Optional default parameters for input.
         # NOTE: This is an extension to the standard
         @property
-        def tags(
+        def parameters(
             self,
         ) -> google.protobuf.internal.containers.MessageMap[
             typing.Text, global___InferParameter
@@ -224,7 +224,7 @@ class ModelMetadataResponse(google.protobuf.message.Message):
             name: typing.Text = ...,
             datatype: typing.Text = ...,
             shape: typing.Optional[typing.Iterable[builtins.int]] = ...,
-            tags: typing.Optional[
+            parameters: typing.Optional[
                 typing.Mapping[typing.Text, global___InferParameter]
             ] = ...,
         ) -> None: ...
@@ -235,17 +235,38 @@ class ModelMetadataResponse(google.protobuf.message.Message):
                 b"datatype",
                 "name",
                 b"name",
+                "parameters",
+                b"parameters",
                 "shape",
                 b"shape",
-                "tags",
-                b"tags",
             ],
+        ) -> None: ...
+    class ParametersEntry(google.protobuf.message.Message):
+        DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+        KEY_FIELD_NUMBER: builtins.int
+        VALUE_FIELD_NUMBER: builtins.int
+        key: typing.Text = ...
+        @property
+        def value(self) -> global___InferParameter: ...
+        def __init__(
+            self,
+            *,
+            key: typing.Text = ...,
+            value: typing.Optional[global___InferParameter] = ...,
+        ) -> None: ...
+        def HasField(
+            self, field_name: typing_extensions.Literal["value", b"value"]
+        ) -> builtins.bool: ...
+        def ClearField(
+            self,
+            field_name: typing_extensions.Literal["key", b"key", "value", b"value"],
         ) -> None: ...
     NAME_FIELD_NUMBER: builtins.int
     VERSIONS_FIELD_NUMBER: builtins.int
     PLATFORM_FIELD_NUMBER: builtins.int
     INPUTS_FIELD_NUMBER: builtins.int
     OUTPUTS_FIELD_NUMBER: builtins.int
+    PARAMETERS_FIELD_NUMBER: builtins.int
     # The model name.
     name: typing.Text = ...
     # The versions of the model available on the server.
@@ -271,6 +292,14 @@ class ModelMetadataResponse(google.protobuf.message.Message):
     ) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[
         global___ModelMetadataResponse.TensorMetadata
     ]: ...
+    # Optional default parameters for the request / response.
+    # NOTE: This is an extension to the standard
+    @property
+    def parameters(
+        self,
+    ) -> google.protobuf.internal.containers.MessageMap[
+        typing.Text, global___InferParameter
+    ]: ...
     def __init__(
         self,
         *,
@@ -283,6 +312,9 @@ class ModelMetadataResponse(google.protobuf.message.Message):
         outputs: typing.Optional[
             typing.Iterable[global___ModelMetadataResponse.TensorMetadata]
         ] = ...,
+        parameters: typing.Optional[
+            typing.Mapping[typing.Text, global___InferParameter]
+        ] = ...,
     ) -> None: ...
     def ClearField(
         self,
@@ -293,6 +325,8 @@ class ModelMetadataResponse(google.protobuf.message.Message):
             b"name",
             "outputs",
             b"outputs",
+            "parameters",
+            b"parameters",
             "platform",
             b"platform",
             "versions",
