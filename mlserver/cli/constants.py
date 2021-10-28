@@ -35,7 +35,11 @@ FROM seldonio/mlserver:{version}-slim
 SHELL ["/bin/bash", "-c"]
 
 # Copy all potential sources for custom environments
-COPY --from=env-builder /envs/base.tar.g[z] ./envs/base.tar.gz
+COPY \\
+    --chown=1000 \\
+    --from=env-builder \\
+    /envs/base.tar.g[z] \\
+    ./envs/base.tar.gz
 COPY \\
     ./settings.jso[n] \\
     ./model-settings.jso[n] \\

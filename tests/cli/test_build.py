@@ -45,6 +45,7 @@ def custom_runtime_server(
             f"{settings.grpc_port}/tcp": host_grpc_port,
         },
         detach=True,
+        user=1000,
     )
 
     yield f"127.0.0.1:{host_http_port}", f"127.0.0.1:{host_grpc_port}"
@@ -79,4 +80,4 @@ async def test_infer_custom_runtime(
     inference_response = await api_client.infer(model_name, inference_request)
     assert len(inference_response.outputs) == 1
 
-    api_client.close()
+    await api_client.close()
