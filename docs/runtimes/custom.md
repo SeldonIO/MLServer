@@ -1,16 +1,16 @@
-# Creating custom inference runtimes
+# Custom Inference Runtimes
 
-There may be cases where the [inference runtimes](../index) offered
-out-of-the-box by MLServer may not be enough, or where you may need extra
-custom functionality which is not included in MLServer (e.g. custom codecs).
+There may be cases where the [inference runtimes](./index) offered
+out-of-the-box by MLServer may not be enough, or where you may need **extra
+custom functionality** which is not included in MLServer (e.g. custom codecs).
 To cover these cases, MLServer lets you create custom runtimes very easily.
 
 This page covers some of the bigger points that need to be taken into account
 when extending MLServer.
-You can also see this [end-to-end example](../example/custom/README) which
+You can also see this [end-to-end example](../examples/custom/README) which
 walks through the process of writing a custom runtime.
 
-## Writing a custom runtime
+## Writing a custom inference runtime
 
 MLServer is designed as an easy-to-extend framework, encouraging users to write
 their own custom runtimes easily.
@@ -24,23 +24,26 @@ main methods are:
   Responsible for using a model to perform inference on an incoming data point.
 
 Therefore, the _"one-line version"_ of how to write a custom runtime is to
-write a custom class, extending from `mlserver.MLModel`, and then overriding
+write a custom class extending from `mlserver.MLModel`, and then overriding
 those methods with your custom logic.
 
-```python
+```{code-block} python
+---
+emphasize-lines: 7-8, 13-14
+---
 from mlserver import MLModel
 from mlserver.types import InferenceRequest, InferenceResponse
 
 class MyCustomRuntime(MLModel):
 
   def load(self) -> bool:
-    # Replace for custom logic to load a model artifact
+    # TODO: Replace for custom logic to load a model artifact
     self._model = load_my_custom_model()
     self.ready = True
     return self.ready
 
   def predict(self, payload: InferenceRequest) -> InferenceResponse:
-    # Replace for custom logic to run inference
+    # TODO: Replace for custom logic to run inference
     return self._model.predict(payload)
 ```
 
@@ -67,7 +70,7 @@ mlserver build . -t my-custom-server
 
 The output will be a Docker image named `my-custom-server`, ready to be used.
 
-### Custom environment
+### Custom Environment
 
 The [`mlserver build`](../reference/cli) subcommand will search for any Conda
 environment file (i.e. named either as `environment.yaml` or `conda.yaml`) and
@@ -83,7 +86,7 @@ Therefore, these files can be used to configure things like the default
 inference runtime to be used, or
 to even include **embedded models** that will always be present within your custom image.
 
-### Docker-less environments
+### Docker-less Environments
 
 In some occasions, it may not be possible to access an environment with a
 running Docker daemon.
