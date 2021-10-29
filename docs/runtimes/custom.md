@@ -51,3 +51,42 @@ This image can contain any custom code (including custom inference runtimes),
 as well as any custom environment, provided either through a [Conda environment
 file](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html)
 or a `requirements.txt` file.
+
+To leverage these, we can use the `mlserver build` command.
+Assuming that we're currently on the folder containing our custom inference
+runtime, we should be able to just run:
+
+```bash
+mlserver build . -t my-custom-server
+```
+
+The output will be a Docker image named `my-custom-server`, ready to be used.
+
+### Custom environment
+
+The [`mlserver build`](../reference/cli) subcommand will search for any Conda
+environment file (i.e. named either as `environment.yaml` or `conda.yaml`) and
+/ or any `requirements.txt` present in your root folder.
+These can be used to tell MLServer what Python environment is required in the
+final Docker image.
+
+Additionally, the `mlserver build` subcommand will also treat any
+[`settings.json`](../reference/settings) or
+[`model-settings.json`](../reference/model-settings) files present on your root
+folder as the default settings that must be set in your final image.
+Therefore, these files can be used to configure things like the default
+inference runtime to be used, or
+to even include **embedded models** that will always be present within your custom image.
+
+### Docker-less environments
+
+In some occasions, it may not be possible to access an environment with a
+running Docker daemon.
+This can be the case, for example, on some CI pipelines.
+
+To account for these use cases, MLServer also includes a [`mlserver dockerfile`](../reference/cli)
+subcommand which will just generate a `Dockerfile` (and optionally a
+`.dockerignore` file).
+This `Dockerfile` can be then by used by other _"Docker-less"_ tools, like
+[Kaniko](https://github.com/GoogleContainerTools/kaniko) or
+[Buildah](https://buildah.io/) to build the final image.
