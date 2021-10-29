@@ -34,15 +34,16 @@ setup(
     description="ML server",
     packages=find_packages(exclude=["tests", "tests.*"]),
     install_requires=[
-        "grpcio",
-        "protobuf",
+        "click",
         # We pin version of fastapi
         # check https://github.com/SeldonIO/MLServer/issues/340
         "fastapi==0.68.2",
-        "uvicorn",
-        "click",
+        "grpcio",
+        "importlib-metadata;python_version<'3.8'",
         "numpy",
         "pandas",
+        "protobuf",
+        "uvicorn",
     ],
     extras_require={"all": ["orjson"]},
     entry_points={"console_scripts": ["mlserver=mlserver.cli:main"]},
