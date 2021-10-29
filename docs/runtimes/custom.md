@@ -46,6 +46,11 @@ class MyCustomRuntime(MLModel):
 
 ## Building a custom MLServer image
 
+```{note}
+The `mlserver build` command expects that a Docker runtime is available and
+running in the background.
+```
+
 MLServer offers built-in utilities to help you build a custom MLServer image.
 This image can contain any custom code (including custom inference runtimes),
 as well as any custom environment, provided either through a [Conda environment
