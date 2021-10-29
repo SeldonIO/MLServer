@@ -32,7 +32,7 @@ setup(
     author="Seldon Technologies Ltd.",
     author_email="hello@seldon.io",
     description="Alibi-Detect runtime for MLServer",
-    packages=find_packages(),
+    packages=find_packages(exclude=["tests", "tests.*"]),
     install_requires=["mlserver", "alibi-detect", "orjson"],
     long_description=_load_description(),
     long_description_content_type="text/markdown",

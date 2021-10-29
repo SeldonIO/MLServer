@@ -32,7 +32,7 @@ setup(
     author="Seldon Technologies Ltd.",
     author_email="hello@seldon.io",
     description="ML server",
-    packages=find_packages(),
+    packages=find_packages(exclude=["tests", "tests.*"]),
     install_requires=[
         "click",
         # We pin version of fastapi
