@@ -13,8 +13,8 @@ This allows you to start serving models saved in these frameworks straight
 away.
 To avoid bringing in dependencies for frameworks that you don't need to use,
 these runtimes are implemented as independent (and optional) Python packages.
-This mechanism also allows you to rollout your [own custom
-runtimes](../examples/custom/README.md) very easily.
+This mechanism also allows you to **rollout your [own custom runtimes](./custom)
+very easily**.
 
 To pick which runtime you want to use for your model, you just need to make
 sure that the right package is installed, and then point to the correct runtime
