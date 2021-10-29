@@ -1,4 +1,7 @@
 scikit-learn
 torch==1.9.0
 pytorch-lightning==1.4.2
+# Pin torchmetrics to a version older than 0.5.0 to avoid this issue:
+# https://github.com/PyTorchLightning/pytorch-lightning/issues/10233
+torchmetrics==0.4.1
 torchvision==0.10.0

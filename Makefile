@@ -38,11 +38,12 @@ build: clean
 	done
 
 clean:
-	rm -rf ./dist ./build
+	rm -rf ./dist ./build *.egg-info
 	for _runtime in ./runtimes/*; \
 	do \
 		rm -rf $$_runtime/dist; \
 		rm -rf $$_runtime/build; \
+		rm -rf $$_runtime/*.egg-info; \
 	done
 
 push-test:
