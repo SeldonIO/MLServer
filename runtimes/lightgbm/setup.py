@@ -32,7 +32,7 @@ setup(
     author="Seldon Technologies Ltd.",
     author_email="hello@seldon.io",
     description="LightGBM runtime for MLServer",
-    packages=find_packages(),
+    packages=find_packages(exclude=["tests", "tests.*"]),
     install_requires=[
         "mlserver",
         "lightgbm",
