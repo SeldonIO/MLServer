@@ -41,4 +41,5 @@ MLflow <./mlflow>
 Tempo <https://tempo.readthedocs.com>
 Spark MLlib <./mllib>
 LightGBM <./lightgbm>
+Custom <./custom>
 ```
