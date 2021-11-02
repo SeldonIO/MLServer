@@ -10,9 +10,8 @@ of settings that we want to source always (e.g. the default runtime to use).
 import click
 import json
 import os
-import sys
 
-from typing import List, Optional, Tuple, Type
+from typing import List, Tuple, Type
 from pydantic import BaseSettings
 
 from mlserver.settings import Settings, ModelSettings, ModelParameters

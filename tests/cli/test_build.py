@@ -1,4 +1,3 @@
-import os
 import pytest
 
 from docker.client import DockerClient
@@ -7,7 +6,7 @@ from typing import Tuple
 
 from mlserver import __version__
 from mlserver.types import InferenceRequest, Parameters
-from mlserver.settings import Settings, ModelSettings
+from mlserver.settings import Settings
 from mlserver.cli.constants import DockerfileTemplate
 from mlserver.cli.build import generate_dockerfile, build_image
 

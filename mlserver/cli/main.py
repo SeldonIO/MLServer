@@ -60,7 +60,7 @@ async def build(folder: str, tag: str):
 @click.argument("folder", nargs=1)
 @click.option("-i", "--include-dockerignore", is_flag=True)
 @click_async
-async def build(folder: str, include_dockerignore: bool):
+async def dockerfile(folder: str, include_dockerignore: bool):
     """
     Generate a Dockerfile
     """

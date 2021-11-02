@@ -1,7 +1,6 @@
 import subprocess
 import os
 
-from typing import Tuple
 from tempfile import TemporaryDirectory
 
 from .. import __version__

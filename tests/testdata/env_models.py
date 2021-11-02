@@ -12,7 +12,6 @@ from sklearn.dummy import DummyClassifier
 from mlserver import MLModel
 from mlserver.types import InferenceRequest, InferenceResponse
 from mlserver.codecs import NumpyCodec
-from mlserver.handlers.custom import custom_handler
 
 
 class DummySKLearnModel(MLModel):
