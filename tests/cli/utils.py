@@ -1,6 +1,6 @@
 import aiohttp
 
-from aiohttp.client_exceptions import ServerDisconnectedError
+from aiohttp.client_exceptions import ClientOSError, ServerDisconnectedError
 from aiohttp_retry import RetryClient, ExponentialRetry
 
 from mlserver.types import RepositoryIndexResponse, InferenceRequest, InferenceResponse
@@ -17,7 +17,9 @@ class APIClient:
     async def wait_until_ready(self) -> None:
         endpoint = f"http://{self._http_server}/v2/health/ready"
         retry_options = ExponentialRetry(
-            attempts=10, start_timeout=0.5, exceptions={ServerDisconnectedError}
+            attempts=10,
+            start_timeout=0.5,
+            exceptions={ClientOSError, ServerDisconnectedError},
         )
         retry_client = RetryClient(raise_for_status=True, retry_options=retry_options)
 
