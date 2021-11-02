@@ -15,6 +15,7 @@ class ExplainerDependencyReference:
 _ANCHOR_IMAGE_TAG = "anchor_image"
 _ANCHOR_TEXT_TAG = "anchor_text"
 _ANCHOR_TABULAR_TAG = "anchor_tabular"
+_KERNEL_SHAP_TAG = "kernel_shap"
 _INTEGRATED_GRADIENTS_TAG = "integrated_gradients"
 
 
@@ -22,6 +23,10 @@ _INTEGRATED_GRADIENTS_TAG = "integrated_gradients"
 # ExplainerDependencyReference, referencing the specific runtime class in mlserver
 # and the specific alibi explain class.
 # this can be simplified when alibi moves to a config based init.
+
+# Steps:
+#  update _TAG_TO_RT_IMPL
+#  update ExplainerEnum
 
 _BLACKBOX_MODULDE = "mlserver_alibi_explain.explainers.black_box_runtime"
 _INTEGRATED_GRADIENTS_MODULE = "mlserver_alibi_explain.explainers.integrated_gradients"
@@ -42,6 +47,11 @@ _TAG_TO_RT_IMPL: Dict[str, ExplainerDependencyReference] = {
         runtime_class=f"{_BLACKBOX_MODULDE}.AlibiExplainBlackBoxRuntime",
         alibi_class="alibi.explainers.AnchorText",
     ),
+    _KERNEL_SHAP_TAG: ExplainerDependencyReference(
+        explainer_name=_KERNEL_SHAP_TAG,
+        runtime_class=f"{_BLACKBOX_MODULDE}.AlibiExplainBlackBoxRuntime",
+        alibi_class="alibi.explainers.KernelShap",
+    ),
     _INTEGRATED_GRADIENTS_TAG: ExplainerDependencyReference(
         explainer_name=_INTEGRATED_GRADIENTS_TAG,
         runtime_class=f"{_INTEGRATED_GRADIENTS_MODULE}.IntegratedGradientsWrapper",
@@ -54,6 +64,7 @@ class ExplainerEnum(str, Enum):
     anchor_image = _ANCHOR_IMAGE_TAG
     anchor_text = _ANCHOR_TEXT_TAG
     anchor_tabular = _ANCHOR_TABULAR_TAG
+    kernel_shap = _KERNEL_SHAP_TAG
     integrated_gradients = _INTEGRATED_GRADIENTS_TAG
 
 
