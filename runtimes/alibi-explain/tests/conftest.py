@@ -5,8 +5,11 @@ from pathlib import Path
 from typing import AsyncIterable
 from unittest.mock import patch
 
+import tensorflow as tf
+
 import nest_asyncio
 import pytest
+from alibi.explainers import AnchorImage
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
@@ -18,7 +21,7 @@ from mlserver.rest import RESTServer
 from mlserver.settings import ModelSettings, ModelParameters, Settings
 from mlserver_alibi_explain.common import AlibiExplainSettings
 from mlserver_alibi_explain.runtime import AlibiExplainRuntime
-from helpers.tf_model import TFMNISTModel
+from helpers.tf_model import TFMNISTModel, get_tf_mnist_model_uri
 
 # allow nesting loop
 # in our case this allows multiple runtimes to execute
@@ -26,6 +29,7 @@ from helpers.tf_model import TFMNISTModel
 nest_asyncio.apply()
 
 TESTS_PATH = Path(os.path.dirname(__file__))
+_ANCHOR_IMAGE_DIR = TESTS_PATH / "data" / "mnist_anchor_image"
 
 
 # TODO: how to make this in utils?
@@ -149,11 +153,14 @@ async def anchor_image_runtime_with_remote_predict_patch(
 
         remote_predict.side_effect = mock_predict
 
+        if not _ANCHOR_IMAGE_DIR.exists():
+            _train_anchor_image_explainer()
+
         rt = AlibiExplainRuntime(
             ModelSettings(
                 parallel_workers=0,
                 parameters=ModelParameters(
-                    uri=str(TESTS_PATH / "data" / "mnist_anchor_image"),
+                    uri=str(_ANCHOR_IMAGE_DIR),
                     extra=AlibiExplainSettings(
                         explainer_type="anchor_image", infer_uri="dummy_call"
                     ),
@@ -174,7 +181,7 @@ async def integrated_gradients_runtime() -> AlibiExplainRuntime:
                 extra=AlibiExplainSettings(
                     init_parameters={"n_steps": 50, "method": "gausslegendre"},
                     explainer_type="integrated_gradients",
-                    infer_uri=str(TESTS_PATH / "data" / "tf_mnist" / "model.h5"),
+                    infer_uri=str(get_tf_mnist_model_uri()),
                 )
             ),
         )
@@ -182,3 +189,16 @@ async def integrated_gradients_runtime() -> AlibiExplainRuntime:
     await rt.load()
 
     return rt
+
+
+@pytest.fixture
+def anchor_image_directory() -> Path:
+    return _ANCHOR_IMAGE_DIR
+
+
+def _train_anchor_image_explainer() -> None:
+    model = tf.keras.models.load_model(get_tf_mnist_model_uri())
+    anchor_image = AnchorImage(model.predict, (28, 28, 1))
+
+    _ANCHOR_IMAGE_DIR.mkdir(parents=True)
+    anchor_image.save(_ANCHOR_IMAGE_DIR)
