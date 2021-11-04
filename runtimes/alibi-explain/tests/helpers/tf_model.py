@@ -16,6 +16,8 @@ _MODEL_PATH = Path(os.path.dirname(__file__)).parent / "data" / "tf_mnist" / "mo
 
 
 def get_tf_mnist_model_uri() -> Path:
+    if not _MODEL_PATH.exists():
+        _train_tf_mnist()
     return _MODEL_PATH
 
 
@@ -31,8 +33,6 @@ class TFMNISTModel(MLModel):
         )
 
     async def load(self) -> bool:
-        if not _MODEL_PATH.exists():
-            _train_tf_mnist()
         self._model = tf.keras.models.load_model(get_tf_mnist_model_uri())
         self.ready = True
         return self.ready

@@ -125,7 +125,15 @@ def rest_client(rest_app: FastAPI) -> TestClient:
 
 
 @pytest.fixture
+def anchor_image_directory() -> Path:
+    if not _ANCHOR_IMAGE_DIR.exists():
+        _train_anchor_image_explainer()
+    return _ANCHOR_IMAGE_DIR
+
+
+@pytest.fixture
 async def anchor_image_runtime_with_remote_predict_patch(
+    anchor_image_directory,
     custom_runtime_tf: MLModel,
     remote_predict_mock_path: str = "mlserver_alibi_explain.common.remote_predict",
 ) -> AlibiExplainRuntime:
@@ -153,14 +161,11 @@ async def anchor_image_runtime_with_remote_predict_patch(
 
         remote_predict.side_effect = mock_predict
 
-        if not _ANCHOR_IMAGE_DIR.exists():
-            _train_anchor_image_explainer()
-
         rt = AlibiExplainRuntime(
             ModelSettings(
                 parallel_workers=0,
                 parameters=ModelParameters(
-                    uri=str(_ANCHOR_IMAGE_DIR),
+                    uri=str(anchor_image_directory),
                     extra=AlibiExplainSettings(
                         explainer_type="anchor_image", infer_uri="dummy_call"
                     ),
@@ -189,11 +194,6 @@ async def integrated_gradients_runtime() -> AlibiExplainRuntime:
     await rt.load()
 
     return rt
-
-
-@pytest.fixture
-def anchor_image_directory() -> Path:
-    return _ANCHOR_IMAGE_DIR
 
 
 def _train_anchor_image_explainer() -> None:
