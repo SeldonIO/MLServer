@@ -73,9 +73,7 @@ async def test_predict_impl(
 @pytest.fixture()
 def alibi_anchor_image_model(anchor_image_directory):
     inference_model = tf.keras.models.load_model(get_tf_mnist_model_uri())
-    model = load_explainer(
-        anchor_image_directory, inference_model.predict
-    )
+    model = load_explainer(anchor_image_directory, inference_model.predict)
     return model
 
 
