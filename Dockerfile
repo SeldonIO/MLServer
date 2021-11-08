@@ -37,7 +37,7 @@ RUN useradd -u 1000 -s /bin/bash mlserver -d /opt/mlserver && \
 
 COPY --from=wheel-builder /opt/mlserver/dist ./dist 
 RUN pip install --upgrade pip wheel setuptools && \
-    pip install ./dist/mlserver-*.whl[all]; \
+    pip install $(ls ./dist/mlserver-*.whl)[all]; \
     if [[ $RUNTIMES == "all" ]]; then \
         pip install ./dist/mlserver_*.whl; \
     else \
