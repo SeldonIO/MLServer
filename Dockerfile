@@ -36,6 +36,8 @@ RUN useradd -u 1000 -s /bin/bash mlserver -d /opt/mlserver && \
     chmod -R 776 /opt/mlserver
 
 COPY --from=wheel-builder /opt/mlserver/dist ./dist 
+# note: if runtime is "all" we install mlserver-<version>-py3-none-any.whl
+# we have to use this syntax to return the correct file: $(ls ./dist/mlserver-*.whl)
 RUN pip install --upgrade pip wheel setuptools && \
     pip install $(ls ./dist/mlserver-*.whl)[all]; \
     if [[ $RUNTIMES == "all" ]]; then \
