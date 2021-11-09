@@ -1,4 +1,5 @@
-tensorflow
+# Pin Tensorflow to avoid previous issues with 2.6.0 and 2.6.1
+tensorflow>=2.6.2
 numpy
 nest_asyncio
 types-requests
