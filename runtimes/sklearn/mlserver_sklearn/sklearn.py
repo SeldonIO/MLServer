@@ -33,20 +33,28 @@ class SKLearnModel(MLModel):
         return self.ready
 
     async def predict(self, payload: types.InferenceRequest) -> types.InferenceResponse:
-        payload = self._check_request(payload)
 
-        return types.InferenceResponse(
-            model_name=self.name,
-            model_version=self.version,
-            outputs=self._predict_outputs(payload),
-        )
+        try:
+            payload = self._check_request(payload)
+
+            return types.InferenceResponse(
+                model_name=self.name,
+                model_version=self.version,
+                outputs=self._predict_outputs(payload),
+            )
+        except Exception as e:
+            # TODO: Make nice logs for visibility or remove this try/catch
+            print(e)
+            raise(e)
 
     def _check_request(self, payload: types.InferenceRequest) -> types.InferenceRequest:
-        if len(payload.inputs) != 1:
-            raise InferenceError(
-                "SKLearnModel only supports a single input tensor "
-                f"({len(payload.inputs)} were received)"
-            )
+        # Does not play nice with models that need pandas dataframes
+
+        # if len(payload.inputs) != 1:
+        #     raise InferenceError(
+        #         "SKLearnModel only supports a single input tensor "
+        #         f"({len(payload.inputs)} were received)"
+        #     )
 
         if not payload.outputs:
             # By default, only return the result of `predict()`
@@ -65,10 +73,17 @@ class SKLearnModel(MLModel):
     def _predict_outputs(
         self, payload: types.InferenceRequest
     ) -> List[types.ResponseOutput]:
-        model_input = payload.inputs[0]
+        # Can't do this: decoding into a pandas dataframe requires all the inputs
+        # model_input = payload.inputs[0]
 
         default_codec = NumpyCodec()
-        input_data = self.decode(model_input, default_codec=default_codec)
+        # TODO: how to set default codec here? Needs to be in the request...?
+        decoded_request = self.decode_request(payload)
+
+        print("DECODED REQUEST", decoded_request)
+
+        # TODO: any separate handling if this is a pandas.DataFrame vs. still an InferenceRequest?
+        input_data = decoded_request
 
         outputs = []
         for request_output in payload.outputs:  # type: ignore
