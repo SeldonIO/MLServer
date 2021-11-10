@@ -33,7 +33,14 @@ setup(
     author_email="hello@seldon.io",
     description="Alibi-Explain runtime for MLServer",
     packages=find_packages(exclude=["tests", "tests.*"]),
-    install_requires=["mlserver", "alibi"],
+    install_requires=[
+        "mlserver",
+        "alibi",
+        # Pin TF to avoid previous issues with 2.6.0 and 2.6.1.
+        # This should be removed when we move to a new version of alibi that
+        # would deal internally with TF versions
+        "tensorflow==2.6.2",
+    ],
     long_description=_load_description(),
     long_description_content_type="text/markdown",
     license="Apache 2.0",
