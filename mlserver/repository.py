@@ -42,9 +42,11 @@ class ModelRepository:
 
     def _load_model_settings(self, model_settings_path: str) -> ModelSettings:
         model_settings = ModelSettings.parse_file(model_settings_path)
+        model_settings_folder = os.path.dirname(model_settings_path)
+        model_settings._source = model_settings_folder
 
         # If name not present, default to folder name
-        default_model_name = os.path.basename(os.path.dirname(model_settings_path))
+        default_model_name = os.path.basename(model_settings_folder)
         if model_settings.name:
             if model_settings.name != default_model_name:
                 # Raise warning if name is different than folder's name

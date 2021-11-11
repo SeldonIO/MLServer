@@ -70,6 +70,10 @@ class ModelParameters(BaseSettings):
 class ModelSettings(BaseSettings):
     class Config:
         env_prefix = ENV_PREFIX_MODEL_SETTINGS
+        underscore_attrs_are_private = True
+
+    # Source points to the file where model settings were loaded from
+    _source: Optional[str] = None
 
     """Name of the model."""
     name: str = ""
