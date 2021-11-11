@@ -82,8 +82,17 @@ class SKLearnModel(MLModel):
 
         print("DECODED REQUEST", decoded_request)
 
-        # TODO: any separate handling if this is a pandas.DataFrame vs. still an InferenceRequest?
-        input_data = decoded_request
+        # If we decode to an InferenceRequest again, then inputs is probably an array of tensors
+        if isinstance(decoded_request, types.InferenceRequest):
+            if len(decoded_request.inputs) != 1:
+                raise InferenceError(
+                    "SKLearnModel only supports a single input tensor "
+                    f"({len(payload.inputs)} were received)"
+                )
+            input_data = decoded_request.inputs[0]
+        # Otherwise we decoded to a different structure e.g. a pandas.DataFrame
+        else:
+            input_data = decoded_request
 
         outputs = []
         for request_output in payload.outputs:  # type: ignore
