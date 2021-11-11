@@ -3,8 +3,14 @@ import pytest
 import os
 import numpy as np
 import pandas as pd
+from sklearn.compose import ColumnTransformer
 
 from sklearn.dummy import DummyClassifier
+from sklearn.impute import SimpleImputer
+from sklearn.neural_network import MLPRegressor
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+
 from mlserver.settings import ModelSettings, ModelParameters
 from mlserver.types import InferenceRequest
 
@@ -106,7 +112,7 @@ def pandas_model_settings(pandas_model_uri: str) -> ModelSettings:
 
 @pytest.fixture
 async def pandas_model(pandas_model_settings: ModelSettings) -> SKLearnModel:
-    model = SKLearnModel(model_settings)
+    model = SKLearnModel(pandas_model_settings)
     await model.load()
 
     return model
