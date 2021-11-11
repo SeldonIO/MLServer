@@ -1,7 +1,7 @@
 import os
 import uuid
 
-from typing import Callable, List
+from typing import Callable, Optional, List
 
 from .settings import ModelSettings
 from .errors import InvalidModelURI
@@ -13,11 +13,11 @@ async def get_model_uri(
     if not settings.parameters:
         raise InvalidModelURI(settings.name)
 
-    model_uri = settings.parameters.uri
-
-    if not model_uri:
+    relative_model_uri = settings.parameters.uri
+    if not relative_model_uri:
         raise InvalidModelURI(settings.name)
 
+    model_uri = _to_absolut_path(settings._source, relative_model_uri)
     if os.path.isfile(model_uri):
         return model_uri
 
@@ -33,6 +33,15 @@ async def get_model_uri(
 
     # Otherwise, the uri is neither a file nor a folder
     raise InvalidModelURI(settings.name, model_uri)
+
+
+def _to_absolut_path(source: Optional[str], relative_model_uri: str) -> str:
+    if source is None:
+        return relative_model_uri
+
+    parent_folder = os.path.dirname(source)
+    unnormalised = os.path.join(parent_folder, relative_model_uri)
+    return os.path.normpath(unnormalised)
 
 
 def get_wrapped_method(f: Callable) -> Callable:
