@@ -44,8 +44,6 @@ class SKLearnModel(MLModel):
         )
 
     def _check_request(self, payload: types.InferenceRequest) -> types.InferenceRequest:
-        # Does not play nice with models that need pandas dataframes
-
         if not payload.outputs:
             # By default, only return the result of `predict()`
             payload.outputs = [types.RequestOutput(name=PREDICT_OUTPUT)]
@@ -75,14 +73,9 @@ class SKLearnModel(MLModel):
     def _predict_outputs(
         self, payload: types.InferenceRequest
     ) -> List[types.ResponseOutput]:
-        # Can't do this: decoding into a pandas dataframe requires all the inputs
-        # model_input = payload.inputs[0]
-
         default_codec = NumpyCodec()
         # TODO: how to set default codec here? Needs to be in the request...?
         decoded_request = self.decode_request(payload)
-
-        print("DECODED REQUEST", decoded_request)
 
         # If we decode to an InferenceRequest again, then inputs is probably an array of tensors
         if isinstance(decoded_request, types.InferenceRequest):
