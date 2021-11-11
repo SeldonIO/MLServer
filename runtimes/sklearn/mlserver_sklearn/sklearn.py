@@ -35,19 +35,13 @@ class SKLearnModel(MLModel):
         return self.ready
 
     async def predict(self, payload: types.InferenceRequest) -> types.InferenceResponse:
+        payload = self._check_request(payload)
 
-        try:
-            payload = self._check_request(payload)
-
-            return types.InferenceResponse(
-                model_name=self.name,
-                model_version=self.version,
-                outputs=self._predict_outputs(payload),
-            )
-        except Exception as e:
-            # TODO: Make nice logs for visibility or remove this try/catch
-            print(e)
-            raise(e)
+        return types.InferenceResponse(
+            model_name=self.name,
+            model_version=self.version,
+            outputs=self._predict_outputs(payload),
+        )
 
     def _check_request(self, payload: types.InferenceRequest) -> types.InferenceRequest:
         # Does not play nice with models that need pandas dataframes
