@@ -6,8 +6,6 @@ import pandas as pd
 from sklearn.compose import ColumnTransformer
 
 from sklearn.dummy import DummyClassifier, DummyRegressor
-from sklearn.impute import SimpleImputer
-from sklearn.neural_network import MLPRegressor
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 
@@ -92,16 +90,13 @@ async def regression_model(tmp_path) -> SKLearnModel:
 @pytest.fixture
 def pandas_model_uri(tmp_path) -> str:
     data: pd.DataFrame = pd.DataFrame(
-        {"a": [1, 2, 3], "b": [4, 5, 6], "c": [7, 8, 9], "op": ["+", "+", "-"], "y": [12, 15, -12]})
+        {"a": [1, 2, 3], "op": ["+", "+", "-"], "y": [11, 22, -33]})
 
     X: pd.DataFrame = data.drop("y", axis=1)
     y: pd.DataFrame = data["y"]
 
-    numeric_features = ["a", "b", "c"]
-    # Doesn't really do anything, just messing around with transformers
-    numeric_transformer = Pipeline(
-        steps=[("imputer", SimpleImputer(strategy="median")), ("scaler", StandardScaler())]
-    )
+    numeric_features = ["a"]
+    numeric_transformer = StandardScaler()
 
     categorical_features = ["op"]
     categorical_transformer = OneHotEncoder(handle_unknown="ignore")
@@ -115,7 +110,7 @@ def pandas_model_uri(tmp_path) -> str:
 
     model = Pipeline(
         steps=[("preprocessor", preprocessor),
-               ("regression", MLPRegressor(alpha=0.001, max_iter=2, hidden_layer_sizes=(4)))]
+               ("regression", DummyRegressor())]
     )
 
     model.fit(X, y)
@@ -153,18 +148,6 @@ def pandas_inference_request() -> InferenceRequest:
                 "name": "a",
                 "datatype": "INT32",
                 "data": [10],
-                "shape": [1]
-            },
-            {
-                "name": "b",
-                "datatype": "INT32",
-                "data": [7],
-                "shape": [1]
-            },
-            {
-                "name": "c",
-                "datatype": "INT32",
-                "data": [6],
                 "shape": [1]
             },
             {
