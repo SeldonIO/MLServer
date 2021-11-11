@@ -1,7 +1,32 @@
 {
-  "implementation": "mlserver_sklearn.SKLearnModel",
-  "name": "example-sklearn-pd-pipeline",
+  "name": "sum-model",
+
+  "implementation": "tests.fixtures.SumModel",
+
+  "max_batch_size": 10,
+  "max_batch_time": 0.4,
+
+  "versions": ["sum-model/v1.2.3"],
+  "platform": "mlserver",
+  "inputs": [
+    {
+      "datatype": "FP32",
+      "name": "input-0",
+      "shape": [128],
+      "parameters": {
+        "content_type": "np"
+      }
+    }
+  ],
+  "outputs": [
+    {
+      "datatype": "FP32",
+      "name": "output-0",
+      "shape": [1]
+    }
+  ],
+
   "parameters": {
-    "uri": "342-scripts/model.pkl"
+    "version": "v1.2.3"
   }
 }
