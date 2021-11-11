@@ -64,6 +64,8 @@ Out of the box, MLServer comes with a set of pre-packaged runtimes which let
 you interact with a subset of common frameworks.
 This allows you to start serving models saved in these frameworks straight
 away.
+However, it's also possible to **write [custom
+runtimes](./docs/runtimes/custom)**.
 
 Out of the box, MLServer provides support for:
 

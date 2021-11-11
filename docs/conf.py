@@ -20,11 +20,11 @@ import sphinx_material
 
 project = "MLServer"
 copyright = "2021, Seldon Technologies"
-html_title = "MLServer"
+html_title = "MLServer Documentation"
 author = "Seldon Technologies"
 
 # The full version, including alpha/beta/rc tags
-release = "0.6.0.dev2"
+release = "0.6.0.dev3"
 
 
 # -- General configuration ---------------------------------------------------
@@ -37,6 +37,7 @@ extensions = [
     "sphinx_search.extension",
     "sphinxcontrib.bibtex",
     "sphinxcontrib.autodoc_pydantic",
+    "sphinx_click",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -122,6 +123,7 @@ if html_theme == "sphinx_material":
     html_theme_path = sphinx_material.html_theme_path()
     html_context = sphinx_material.get_html_context()
 
+html_favicon = "favicon.ico"
 html_sidebars = {
     "**": ["logo-text.html", "globaltoc.html", "localtoc.html", "searchbox.html"]
 }

@@ -7,7 +7,9 @@ import asyncio
 from functools import wraps
 
 from ..server import MLServer
+from ..logging import logger, configure_logger
 
+from .build import generate_dockerfile, build_image, write_dockerfile
 from .serve import load_settings
 
 
@@ -41,7 +43,36 @@ async def start(folder: str):
     await server.start(models)
 
 
+@root.command("build")
+@click.argument("folder", nargs=1)
+@click.option("-t", "--tag", type=str)
+@click_async
+async def build(folder: str, tag: str):
+    """
+    Build a Docker image for a custom MLServer runtime.
+    """
+    dockerfile = generate_dockerfile()
+    build_image(folder, dockerfile, tag)
+    logger.info(f"Successfully built custom Docker image with tag {tag}")
+
+
+@root.command("dockerfile")
+@click.argument("folder", nargs=1)
+@click.option("-i", "--include-dockerignore", is_flag=True)
+@click_async
+async def dockerfile(folder: str, include_dockerignore: bool):
+    """
+    Generate a Dockerfile
+    """
+    dockerfile = generate_dockerfile()
+    dockerfile_path = write_dockerfile(
+        folder, dockerfile, include_dockerignore=include_dockerignore
+    )
+    logger.info(f"Successfully written Dockerfile in {dockerfile_path}")
+
+
 def main():
+    configure_logger()
     root()
 
 

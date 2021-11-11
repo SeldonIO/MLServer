@@ -2,11 +2,12 @@ FROM python:3.8-slim AS wheel-builder
 SHELL ["/bin/bash", "-c"]
 
 COPY ./hack/build-wheels.sh ./hack/build-wheels.sh
-
-COPY setup.py .
-COPY README.md .
-COPY ./mlserver/ ./mlserver/
-COPY ./runtimes/ ./runtimes/
+COPY ./mlserver ./mlserver
+COPY ./runtimes ./runtimes
+COPY \
+    setup.py \
+    README.md \
+    .
 
 # This will build the wheels and place will place them in the
 # /opt/mlserver/dist folder
@@ -53,11 +54,15 @@ COPY requirements/docker.txt requirements/docker.txt
 RUN pip install -r requirements/docker.txt
 
 COPY ./licenses/license.txt .
-
-COPY ./hack/activate-env.sh ./hack/activate-env.sh
+COPY \
+    ./hack/build-env.sh \
+    ./hack/generate_dotenv.py \
+    ./hack/activate-env.sh \
+    ./hack/
 
 USER 1000
 
-# Need to source `activate-env.sh` so that env changes get persisted
-CMD . ./hack/activate-env.sh $MLSERVER_ENV_TARBALL \
-    && mlserver start $MLSERVER_MODELS_DIR
+# We need to build and activate the "hot-loaded" environment before MLServer
+# starts
+CMD source ./hack/activate-env.sh $MLSERVER_ENV_TARBALL . && \
+    mlserver start $MLSERVER_MODELS_DIR

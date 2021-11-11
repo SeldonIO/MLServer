@@ -18,6 +18,7 @@ bin
 *.swp
 *.swo
 *~
+.env
 
 # Python dev
 .mypy_cache
