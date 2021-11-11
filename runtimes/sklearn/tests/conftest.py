@@ -56,3 +56,39 @@ async def model(model_settings: ModelSettings) -> SKLearnModel:
 def inference_request() -> InferenceRequest:
     payload_path = os.path.join(TESTDATA_PATH, "inference-request.json")
     return InferenceRequest.parse_file(payload_path)
+
+@pytest.fixture
+def pandas_model_uri(tmp_path) -> str:
+    n = 4
+    X = np.random.rand(n)
+    y = np.random.rand(n)
+
+    clf = DummyClassifier(strategy="prior")
+    clf.fit(X, y)
+
+    model_uri = os.path.join(tmp_path, "sklearn-model.joblib")
+    joblib.dump(clf, model_uri)
+
+    return model_uri
+
+
+@pytest.fixture
+def pandas_model_settings(model_uri: str) -> ModelSettings:
+    return ModelSettings(
+        name="sklearn-model",
+        parameters=ModelParameters(uri=model_uri, version="v1.2.3"),
+    )
+
+
+@pytest.fixture
+async def pandas_model(model_settings: ModelSettings) -> SKLearnModel:
+    model = SKLearnModel(model_settings)
+    await model.load()
+
+    return model
+
+
+@pytest.fixture
+def pandas_inference_request() -> InferenceRequest:
+    payload_path = os.path.join(TESTDATA_PATH, "inference-request.json")
+    return InferenceRequest.parse_file(payload_path)
