@@ -1,7 +1,7 @@
 import pytest
 import os
 
-from sklearn.dummy import DummyClassifier
+from sklearn.dummy import DummyClassifier, DummyRegressor
 from sklearn.pipeline import Pipeline
 from mlserver.settings import ModelSettings
 from mlserver.errors import InferenceError
@@ -18,6 +18,11 @@ from mlserver_sklearn.sklearn import (
 def test_load(model: SKLearnModel):
     assert model.ready
     assert type(model._model) == DummyClassifier
+
+
+def test_regression_load(regression_model: SKLearnModel):
+    assert regression_model.ready
+    assert type(regression_model._model) == DummyRegressor
 
 
 def test_pandas_load(pandas_model: SKLearnModel):
