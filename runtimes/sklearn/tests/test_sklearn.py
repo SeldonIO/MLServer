@@ -122,7 +122,7 @@ async def test_no_predict_proba_for_regression_models(regression_model: SKLearnM
 
 
 async def test_no_predict_proba_for_regression_pipelines(pandas_model: SKLearnModel,
-                                                          pandas_inference_request):
+                                                         pandas_inference_request):
     pandas_inference_request.outputs = [RequestOutput(name=PREDICT_PROBA_OUTPUT)]
 
     with pytest.raises(InferenceError):
