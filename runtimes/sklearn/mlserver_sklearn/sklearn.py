@@ -2,6 +2,8 @@ import joblib
 
 from typing import List
 
+from sklearn.pipeline import Pipeline
+
 from mlserver import types
 from mlserver.model import MLModel
 from mlserver.errors import InferenceError
@@ -50,12 +52,6 @@ class SKLearnModel(MLModel):
     def _check_request(self, payload: types.InferenceRequest) -> types.InferenceRequest:
         # Does not play nice with models that need pandas dataframes
 
-        # if len(payload.inputs) != 1:
-        #     raise InferenceError(
-        #         "SKLearnModel only supports a single input tensor "
-        #         f"({len(payload.inputs)} were received)"
-        #     )
-
         if not payload.outputs:
             # By default, only return the result of `predict()`
             payload.outputs = [types.RequestOutput(name=PREDICT_OUTPUT)]
@@ -67,6 +63,18 @@ class SKLearnModel(MLModel):
                         f"'{PREDICT_PROBA_OUTPUT}' as outputs "
                         f"({request_output.name} was received)"
                     )
+
+        # Regression models do not support `predict_proba`
+        if PREDICT_PROBA_OUTPUT in [o.name for o in payload.outputs]:
+            # Ensure model supports it
+            maybe_regressor = self._model
+            if isinstance(self._model, Pipeline):
+                maybe_regressor = maybe_regressor.steps[-1][-1]
+
+            if not hasattr(maybe_regressor, PREDICT_PROBA_OUTPUT):
+                raise InferenceError(
+                    f"{type(maybe_regressor)} models do not support '{PREDICT_PROBA_OUTPUT}"
+                )
 
         return payload
 
