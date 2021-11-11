@@ -21,6 +21,11 @@ from mlserver.settings import ModelSettings, ModelParameters
             "./my-model-folder/../model-settings.json",
             "my-model.bin",
         ),
+        (
+            "/an/absolute/path/my-model.bin",
+            "/mnt/models/model-settings.json",
+            "/an/absolute/path/my-model.bin",
+        ),
     ],
 )
 @patch("os.path.isfile", return_value=True)
