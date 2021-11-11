@@ -1,7 +1,7 @@
 import os
 import json
 
-from mlserver.repository import ModelRepository, DEFAULT_MODEL_SETTINGS_FILENAME
+from mlserver.repository import ModelRepository, DefaultModelSettingsFilename
 from mlserver.settings import ModelSettings, ENV_PREFIX_MODEL_SETTINGS
 
 from .helpers import get_import_path
@@ -23,7 +23,9 @@ async def test_list(
     assert loaded_model_settings.parameters.uri == str(  # type: ignore
         model_repository._root
     )
-    assert loaded_model_settings._source == str(model_repository._root)
+    assert loaded_model_settings._source == os.path.join(
+        model_repository._root, DefaultModelSettingsFilename
+    )
 
 
 async def test_list_multi_model(multi_model_folder: str):
@@ -34,12 +36,15 @@ async def test_list_multi_model(multi_model_folder: str):
 
     assert len(settings_list) == 5
     for idx, model_settings in enumerate(settings_list):
-        model_path = os.path.join(
-            multi_model_folder, model_settings.name, model_settings.parameters.version
+        model_settings_path = os.path.join(
+            multi_model_folder,
+            model_settings.name,
+            model_settings.parameters.version,
+            DefaultModelSettingsFilename,
         )
 
         assert model_settings.parameters.version == f"v{idx}"  # type: ignore
-        assert model_settings._source == model_path
+        assert model_settings._source == model_settings_path
 
 
 async def test_list_fallback(
@@ -58,7 +63,7 @@ async def test_list_fallback(
         get_import_path(sum_model_settings.implementation),  # type: ignore
     )
 
-    model_settings_path = os.path.join(model_folder, DEFAULT_MODEL_SETTINGS_FILENAME)
+    model_settings_path = os.path.join(model_folder, DefaultModelSettingsFilename)
     os.remove(model_settings_path)
 
     all_settings = await model_repository.list()
@@ -77,7 +82,7 @@ async def test_list_fallback(
 async def test_name_fallback(model_folder: str, model_repository: ModelRepository):
     # Create empty model-settings.json file
     model_settings = ModelSettings()
-    model_settings_path = os.path.join(model_folder, DEFAULT_MODEL_SETTINGS_FILENAME)
+    model_settings_path = os.path.join(model_folder, DefaultModelSettingsFilename)
     with open(model_settings_path, "w") as model_settings_file:
         d = model_settings.dict()
         del d["name"]

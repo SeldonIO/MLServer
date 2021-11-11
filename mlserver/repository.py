@@ -7,7 +7,7 @@ from .settings import ModelParameters, ModelSettings
 from .errors import ModelNotFound
 from .logging import logger
 
-DEFAULT_MODEL_SETTINGS_FILENAME = "model-settings.json"
+DefaultModelSettingsFilename = "model-settings.json"
 
 
 class ModelRepository:
@@ -24,7 +24,7 @@ class ModelRepository:
 
         # TODO: Use an async alternative for filesys ops
         if self._root:
-            pattern = os.path.join(self._root, "**", DEFAULT_MODEL_SETTINGS_FILENAME)
+            pattern = os.path.join(self._root, "**", DefaultModelSettingsFilename)
             matches = glob.glob(pattern, recursive=True)
 
             for model_settings_path in matches:
@@ -42,10 +42,10 @@ class ModelRepository:
 
     def _load_model_settings(self, model_settings_path: str) -> ModelSettings:
         model_settings = ModelSettings.parse_file(model_settings_path)
-        model_settings_folder = os.path.dirname(model_settings_path)
-        model_settings._source = model_settings_folder
+        model_settings._source = model_settings_path
 
         # If name not present, default to folder name
+        model_settings_folder = os.path.dirname(model_settings_path)
         default_model_name = os.path.basename(model_settings_folder)
         if model_settings.name:
             if model_settings.name != default_model_name:

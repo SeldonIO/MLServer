@@ -5,7 +5,7 @@ import shutil
 
 from mlserver.handlers import DataPlane, ModelRepositoryHandlers
 from mlserver.registry import MultiModelRegistry
-from mlserver.repository import ModelRepository, DEFAULT_MODEL_SETTINGS_FILENAME
+from mlserver.repository import ModelRepository, DefaultModelSettingsFilename
 from mlserver import types, Settings, ModelSettings
 
 from .fixtures import SumModel
@@ -100,7 +100,7 @@ def model_folder(tmp_path):
 @pytest.fixture
 def multi_model_folder(model_folder, sum_model_settings):
     # Remove original
-    model_settings_path = os.path.join(model_folder, DEFAULT_MODEL_SETTINGS_FILENAME)
+    model_settings_path = os.path.join(model_folder, DefaultModelSettingsFilename)
     os.remove(model_settings_path)
 
     num_models = 5
@@ -115,7 +115,7 @@ def multi_model_folder(model_folder, sum_model_settings):
         os.makedirs(model_version_folder)
 
         model_settings_path = os.path.join(
-            model_version_folder, DEFAULT_MODEL_SETTINGS_FILENAME
+            model_version_folder, DefaultModelSettingsFilename
         )
         with open(model_settings_path, "w") as f:
             settings_dict = sum_model_settings.dict()
