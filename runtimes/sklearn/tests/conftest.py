@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 from sklearn.compose import ColumnTransformer
 
-from sklearn.dummy import DummyClassifier
+from sklearn.dummy import DummyClassifier, DummyRegressor
 from sklearn.impute import SimpleImputer
 from sklearn.neural_network import MLPRegressor
 from sklearn.pipeline import Pipeline
@@ -63,6 +63,30 @@ async def model(model_settings: ModelSettings) -> SKLearnModel:
 def inference_request() -> InferenceRequest:
     payload_path = os.path.join(TESTDATA_PATH, "inference-request.json")
     return InferenceRequest.parse_file(payload_path)
+
+
+@pytest.fixture
+async def regression_model(tmp_path) -> SKLearnModel:
+    # Build a quick DummyRegressor
+    n = 4
+    X = np.random.rand(n)
+    y = np.random.rand(n)
+
+    clf = DummyRegressor()
+    clf.fit(X, y)
+
+    model_uri = os.path.join(tmp_path, "sklearn-regression-model.joblib")
+    joblib.dump(clf, model_uri)
+
+    settings = ModelSettings(
+        name="sklearn-regression-model",
+        parameters=ModelParameters(uri=model_uri, version="v1.2.3"),
+    )
+
+    model = SKLearnModel(settings)
+    await model.load()
+
+    return model
 
 
 @pytest.fixture
