@@ -77,7 +77,7 @@ licenses:
 
 fmt:
 	black . \
-		--exclude "(\.tox | mlserver/grpc/dataplane_pb2*)"
+		--exclude "/(\.tox.*|mlserver/grpc/dataplane_pb2.*|venv.*)/"
 
 version:
 	@echo ${VERSION}
