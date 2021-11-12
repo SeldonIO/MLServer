@@ -65,7 +65,8 @@ class SKLearnModel(MLModel):
 
             if not hasattr(maybe_regressor, PREDICT_PROBA_OUTPUT):
                 raise InferenceError(
-                    f"{type(maybe_regressor)} models do not support '{PREDICT_PROBA_OUTPUT}"
+                    f"{type(maybe_regressor)} models do not support "
+                    f"'{PREDICT_PROBA_OUTPUT}"
                 )
 
         return payload
@@ -77,7 +78,8 @@ class SKLearnModel(MLModel):
         # TODO: how to set default codec here? Needs to be in the request...?
         decoded_request = self.decode_request(payload)
 
-        # If we decode to an InferenceRequest again, then inputs is probably an array of tensors
+        # If we decode to an InferenceRequest again,
+        # then inputs is probably an array of tensors
         if isinstance(decoded_request, types.InferenceRequest):
             if len(decoded_request.inputs) != 1:
                 raise InferenceError(

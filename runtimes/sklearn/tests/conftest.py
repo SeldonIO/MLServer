@@ -90,7 +90,8 @@ async def regression_model(tmp_path) -> SKLearnModel:
 @pytest.fixture
 def pandas_model_uri(tmp_path) -> str:
     data: pd.DataFrame = pd.DataFrame(
-        {"a": [1, 2, 3], "op": ["+", "+", "-"], "y": [11, 22, -33]})
+        {"a": [1, 2, 3], "op": ["+", "+", "-"], "y": [11, 22, -33]}
+    )
 
     X: pd.DataFrame = data.drop("y", axis=1)
     y: pd.DataFrame = data["y"]
@@ -109,8 +110,7 @@ def pandas_model_uri(tmp_path) -> str:
     )
 
     model = Pipeline(
-        steps=[("preprocessor", preprocessor),
-               ("regression", DummyRegressor())]
+        steps=[("preprocessor", preprocessor), ("regression", DummyRegressor())]
     )
 
     model.fit(X, y)
@@ -140,25 +140,16 @@ async def pandas_model(pandas_model_settings: ModelSettings) -> SKLearnModel:
 @pytest.fixture
 def pandas_inference_request() -> InferenceRequest:
     inference_request = {
-        "parameters": {
-            "content_type": "pd"
-        },
+        "parameters": {"content_type": "pd"},
         "inputs": [
-            {
-                "name": "a",
-                "datatype": "INT32",
-                "data": [10],
-                "shape": [1]
-            },
+            {"name": "a", "datatype": "INT32", "data": [10], "shape": [1]},
             {
                 "name": "op",
                 "datatype": "BYTES",
                 "data": ["-"],
                 "shape": [1],
-                "parameters": {
-                    "content_type": "str"
-                }
-            }
-        ]
+                "parameters": {"content_type": "str"},
+            },
+        ],
     }
     return InferenceRequest.parse_obj(inference_request)

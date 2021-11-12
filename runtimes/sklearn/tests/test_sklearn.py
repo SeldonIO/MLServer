@@ -87,14 +87,14 @@ async def test_predict(model: SKLearnModel, inference_request, req_outputs):
         assert output.name == req_output
         assert output.shape[0] == len(input_data)  # type: ignore
 
+
 @pytest.mark.parametrize(
     "req_outputs",
-    [
-        [],
-        [PREDICT_OUTPUT]
-    ],
+    [[], [PREDICT_OUTPUT]],
 )
-async def test_pandas_predict(pandas_model: SKLearnModel, pandas_inference_request, req_outputs):
+async def test_pandas_predict(
+    pandas_model: SKLearnModel, pandas_inference_request, req_outputs
+):
     # The `pandas_model` is a regression model that does not support `predict_proba`
     pandas_inference_request.outputs = [
         RequestOutput(name=req_output) for req_output in req_outputs
@@ -113,16 +113,18 @@ async def test_pandas_predict(pandas_model: SKLearnModel, pandas_inference_reque
         assert output.shape[0] == len(input_data)  # type: ignore
 
 
-async def test_no_predict_proba_for_regression_models(regression_model: SKLearnModel,
-                                                      inference_request):
+async def test_no_predict_proba_for_regression_models(
+    regression_model: SKLearnModel, inference_request
+):
     inference_request.outputs = [RequestOutput(name=PREDICT_PROBA_OUTPUT)]
 
     with pytest.raises(InferenceError):
         await regression_model.predict(inference_request)
 
 
-async def test_no_predict_proba_for_regression_pipelines(pandas_model: SKLearnModel,
-                                                         pandas_inference_request):
+async def test_no_predict_proba_for_regression_pipelines(
+    pandas_model: SKLearnModel, pandas_inference_request
+):
     pandas_inference_request.outputs = [RequestOutput(name=PREDICT_PROBA_OUTPUT)]
 
     with pytest.raises(InferenceError):
