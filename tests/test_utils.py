@@ -28,12 +28,10 @@ from mlserver.settings import ModelSettings, ModelParameters
         ),
     ],
 )
-@patch("os.path.isfile", return_value=True)
-async def test_get_model_uri(
-    mock_isfile, uri: str, source: Optional[str], expected: str
-):
+async def test_get_model_uri(uri: str, source: Optional[str], expected: str):
     model_settings = ModelSettings(parameters=ModelParameters(uri=uri))
     model_settings._source = source
-    model_uri = await get_model_uri(model_settings)
+    with patch("os.path.isfile", return_value=True):
+        model_uri = await get_model_uri(model_settings)
 
     assert model_uri == expected
