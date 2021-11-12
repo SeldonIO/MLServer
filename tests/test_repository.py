@@ -13,25 +13,38 @@ async def test_list(
     settings_list = await model_repository.list()
 
     assert len(settings_list) == 1
-    assert settings_list[0].name == sum_model_settings.name
+
+    loaded_model_settings = settings_list[0]
+    assert loaded_model_settings.name == sum_model_settings.name
     assert (
-        settings_list[0].parameters.version  # type: ignore
+        loaded_model_settings.parameters.version  # type: ignore
         == sum_model_settings.parameters.version  # type: ignore
     )
-    assert settings_list[0].parameters.uri == str(  # type: ignore
+    assert loaded_model_settings.parameters.uri == str(  # type: ignore
         model_repository._root
+    )
+    assert loaded_model_settings._source == os.path.join(
+        model_repository._root, DEFAULT_MODEL_SETTINGS_FILENAME
     )
 
 
 async def test_list_multi_model(multi_model_folder: str):
-    multi_model_loader = ModelRepository(multi_model_folder)
+    multi_model_repository = ModelRepository(multi_model_folder)
 
-    settings_list = await multi_model_loader.list()
+    settings_list = await multi_model_repository.list()
     settings_list.sort(key=lambda ms: ms.parameters.version)  # type: ignore
 
     assert len(settings_list) == 5
     for idx, model_settings in enumerate(settings_list):
+        model_settings_path = os.path.join(
+            multi_model_folder,
+            model_settings.name,
+            model_settings.parameters.version,
+            DEFAULT_MODEL_SETTINGS_FILENAME,
+        )
+
         assert model_settings.parameters.version == f"v{idx}"  # type: ignore
+        assert model_settings._source == model_settings_path
 
 
 async def test_list_fallback(
@@ -56,11 +69,14 @@ async def test_list_fallback(
     all_settings = await model_repository.list()
 
     assert len(all_settings) == 1
-    assert all_settings[0].name == sum_model_settings.name
+
+    default_model_settings = all_settings[0]
+    assert default_model_settings.name == sum_model_settings.name
     assert (
-        all_settings[0].parameters.version  # type: ignore
+        default_model_settings.parameters.version  # type: ignore
         == sum_model_settings.parameters.version  # type: ignore
     )
+    assert default_model_settings._source is None
 
 
 async def test_name_fallback(model_folder: str, model_repository: ModelRepository):
