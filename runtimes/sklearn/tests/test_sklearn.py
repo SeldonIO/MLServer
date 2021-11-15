@@ -1,7 +1,8 @@
 import pytest
 import os
 
-from sklearn.dummy import DummyClassifier
+from sklearn.dummy import DummyClassifier, DummyRegressor
+from sklearn.pipeline import Pipeline
 from mlserver.settings import ModelSettings
 from mlserver.errors import InferenceError
 from mlserver.types import RequestInput, RequestOutput
@@ -17,6 +18,16 @@ from mlserver_sklearn.sklearn import (
 def test_load(model: SKLearnModel):
     assert model.ready
     assert type(model._model) == DummyClassifier
+
+
+def test_regression_load(regression_model: SKLearnModel):
+    assert regression_model.ready
+    assert type(regression_model._model) == DummyRegressor
+
+
+def test_pandas_load(pandas_model: SKLearnModel):
+    assert pandas_model.ready
+    assert type(pandas_model._model) == Pipeline
 
 
 @pytest.mark.parametrize("fname", WELLKNOWN_MODEL_FILENAMES)
@@ -75,3 +86,46 @@ async def test_predict(model: SKLearnModel, inference_request, req_outputs):
     for req_output, output in zip(req_outputs, response.outputs):
         assert output.name == req_output
         assert output.shape[0] == len(input_data)  # type: ignore
+
+
+@pytest.mark.parametrize(
+    "req_outputs",
+    [[], [PREDICT_OUTPUT]],
+)
+async def test_pandas_predict(
+    pandas_model: SKLearnModel, pandas_inference_request, req_outputs
+):
+    # The `pandas_model` is a regression model that does not support `predict_proba`
+    pandas_inference_request.outputs = [
+        RequestOutput(name=req_output) for req_output in req_outputs
+    ]
+
+    response = await pandas_model.predict(pandas_inference_request)
+
+    input_data = pandas_inference_request.inputs[0].data
+    if len(req_outputs) == 0:
+        # Assert that PREDICT_OUTPUT is added by default
+        req_outputs = [PREDICT_OUTPUT]
+
+    assert len(response.outputs) == len(req_outputs)
+    for req_output, output in zip(req_outputs, response.outputs):
+        assert output.name == req_output
+        assert output.shape[0] == len(input_data)  # type: ignore
+
+
+async def test_no_predict_proba_for_regression_models(
+    regression_model: SKLearnModel, inference_request
+):
+    inference_request.outputs = [RequestOutput(name=PREDICT_PROBA_OUTPUT)]
+
+    with pytest.raises(InferenceError):
+        await regression_model.predict(inference_request)
+
+
+async def test_no_predict_proba_for_regression_pipelines(
+    pandas_model: SKLearnModel, pandas_inference_request
+):
+    pandas_inference_request.outputs = [RequestOutput(name=PREDICT_PROBA_OUTPUT)]
+
+    with pytest.raises(InferenceError):
+        await pandas_model.predict(pandas_inference_request)

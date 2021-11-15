@@ -2,6 +2,8 @@ import joblib
 
 from typing import List
 
+from sklearn.pipeline import Pipeline
+
 from mlserver import types
 from mlserver.model import MLModel
 from mlserver.errors import InferenceError
@@ -42,12 +44,6 @@ class SKLearnModel(MLModel):
         )
 
     def _check_request(self, payload: types.InferenceRequest) -> types.InferenceRequest:
-        if len(payload.inputs) != 1:
-            raise InferenceError(
-                "SKLearnModel only supports a single input tensor "
-                f"({len(payload.inputs)} were received)"
-            )
-
         if not payload.outputs:
             # By default, only return the result of `predict()`
             payload.outputs = [types.RequestOutput(name=PREDICT_OUTPUT)]
@@ -60,15 +56,40 @@ class SKLearnModel(MLModel):
                         f"({request_output.name} was received)"
                     )
 
+        # Regression models do not support `predict_proba`
+        if PREDICT_PROBA_OUTPUT in [o.name for o in payload.outputs]:
+            # Ensure model supports it
+            maybe_regressor = self._model
+            if isinstance(self._model, Pipeline):
+                maybe_regressor = maybe_regressor.steps[-1][-1]
+
+            if not hasattr(maybe_regressor, PREDICT_PROBA_OUTPUT):
+                raise InferenceError(
+                    f"{type(maybe_regressor)} models do not support "
+                    f"'{PREDICT_PROBA_OUTPUT}"
+                )
+
         return payload
 
     def _predict_outputs(
         self, payload: types.InferenceRequest
     ) -> List[types.ResponseOutput]:
-        model_input = payload.inputs[0]
-
         default_codec = NumpyCodec()
-        input_data = self.decode(model_input, default_codec=default_codec)
+        # TODO: how to set default codec here? Needs to be in the request...?
+        decoded_request = self.decode_request(payload)
+
+        # If we decode to an InferenceRequest again,
+        # then inputs is probably an array of tensors
+        if isinstance(decoded_request, types.InferenceRequest):
+            if len(decoded_request.inputs) != 1:
+                raise InferenceError(
+                    "SKLearnModel only supports a single input tensor "
+                    f"({len(payload.inputs)} were received)"
+                )
+            input_data = decoded_request.inputs[0]
+        # Otherwise we decoded to a different structure e.g. a pandas.DataFrame
+        else:
+            input_data = decoded_request
 
         outputs = []
         for request_output in payload.outputs:  # type: ignore
