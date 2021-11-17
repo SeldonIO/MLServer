@@ -2,6 +2,7 @@ from typing import Callable
 from fastapi import FastAPI
 from fastapi.responses import Response as FastAPIResponse
 from fastapi.routing import APIRoute as FastAPIRoute
+from fastapi.middleware.cors import CORSMiddleware
 
 from .endpoints import Endpoints, ModelRepositoryEndpoints
 from .requests import Request
@@ -100,5 +101,16 @@ def create_app(
         default_response_class=Response,
         exception_handlers=_EXCEPTION_HANDLERS,  # type: ignore
     )
+
+    if settings.cors_settings is not None:
+        app.add_middleware(
+            CORSMiddleware,
+            allow_origins=settings.cors_settings.allow_origins,
+            allow_origin_regex=settings.cors_settings.allow_origin_regex,
+            allow_credentials=settings.cors_settings.allow_credentials,
+            allow_methods=settings.cors_settings.allow_methods,
+            allow_headers=settings.cors_settings.allow_headers,
+            max_age=settings.cors_settings.max_age,
+        )
 
     return app
