@@ -4,4 +4,4 @@ readthedocs-sphinx-search==0.1.1
 myst-parser==0.15.2
 sphinxcontrib-bibtex==2.4.1
 autodoc_pydantic==1.5.1
-sphinx-click==3.0.1
+sphinx-click==3.0.2
