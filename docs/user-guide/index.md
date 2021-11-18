@@ -8,4 +8,5 @@ how to use them.
 
 ./parallel-inference.md
 ./adaptive-batching.md
+./deployment.md
 ```
