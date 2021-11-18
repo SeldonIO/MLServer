@@ -23,21 +23,32 @@ infrastructure.
 :footer: text-center
 :column: col-md-6
 
-:img-top: ../assets/seldon-core-logo.png
+:img-top: ../../assets/seldon-core-logo.png
 
 +++
 
-```{link-button} ./seldon-core.md
+```{link-button} ./seldon-core
+:type: ref
 :text: Deploy to Seldon Core
 :classes: stretched-link
 ```
 ---
-:img-top: ../assets/kserve-logo.png
+:img-top: ../../assets/kserve-logo.png
 
 +++
 
-```{link-button} ./kserve.md
+```{link-button} ./kserve
+:type: ref
 :text: Deploy to KServe
 :classes: stretched-link
 ```
 ````
+
+```{toctree}
+:hidden:
+:titlesonly:
+:maxdepth: 1
+
+./seldon-core.md
+./kserve.md
+```
