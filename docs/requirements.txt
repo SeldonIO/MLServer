@@ -6,3 +6,4 @@ sphinxcontrib-bibtex==2.4.1
 autodoc_pydantic==1.5.1
 sphinx-click==3.0.2
 sphinx-panels==0.6.0
+sphinx-autobuild==2021.3.14
