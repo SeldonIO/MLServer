@@ -1,4 +1,4 @@
-# Deployment to Seldon Core
+# Deployment with Seldon Core
 
 MLServer is used as the [core Python inference
 server](https://docs.seldon.io/projects/seldon-core/en/latest/graph/protocols.html#v2-kfserving-protocol)

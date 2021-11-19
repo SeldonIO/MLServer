@@ -29,7 +29,7 @@ infrastructure.
 
 ```{link-button} ./seldon-core
 :type: ref
-:text: Deploy to Seldon Core
+:text: Deploy with Seldon Core
 :classes: stretched-link
 ```
 ---
@@ -39,7 +39,7 @@ infrastructure.
 
 ```{link-button} ./kserve
 :type: ref
-:text: Deploy to KServe
+:text: Deploy with KServe
 :classes: stretched-link
 ```
 ````
