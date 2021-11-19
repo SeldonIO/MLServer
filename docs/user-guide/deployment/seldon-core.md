@@ -101,6 +101,13 @@ MLServer runtime will be enabled internally on your model deployment when used.
 | MLflow       | [MLServer MLflow](../../runtimes/mlflow)         | `MLFLOW_SERVER`                 | [MLflow Server](https://docs.seldon.io/projects/seldon-core/en/latest/servers/mlflow.html)   |
 | Tempo        | [Tempo](https://tempo.readthedocs.io/en/latest/) | `TEMPO_SERVER`                  | [Tempo Server](https://docs.seldon.io/projects/seldon-core/en/latest/servers/tempo.html)     |
 
+Note that, on top of the ones shown above (backed by MLServer), Seldon Core
+**also provides a [wider
+set](https://docs.seldon.io/projects/seldon-core/en/latest/nav/config/servers.html)**
+of pre-packaged servers.
+To check the full list, please visit the [Seldon Core
+documentation](https://docs.seldon.io/projects/seldon-core/en/latest/nav/config/servers.html).
+
 ## Custom Runtimes
 
 There could be cases where the pre-packaged MLServer runtimes supported
@@ -158,8 +165,9 @@ custom MLServer image is:
   [V2 inference
   protocol](https://kserve.github.io/website/modelserving/inference_api/)) by
   setting the `protocol` field to `kserving`.
-- Pointing our model container to use our custom MLServer image, by specifying
-  it on the `componentSpecs` section of the manifest.
+- Pointing our model container to use our **custom MLServer image**, by
+  specifying it on the `image` field of the `componentSpecs` section of the
+  manifest.
 - Adding a couple workarounds to ensure that the serving environment used by
   Seldon Core is compatible with the custom MLServer images.
 

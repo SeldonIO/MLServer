@@ -3,15 +3,15 @@
 MLServer is used as the [core Python inference
 server](https://kserve.github.io/website/modelserving/v1beta1/sklearn/v2/) in
 [KServe (formerly known as KFServing)](https://kserve.github.io/website/).
-Therefore, this allows for an easier integration between your local and remote
-environments.
+This allows for a straightforward avenue to deploy your models into a scalable
+serving infrastructure backed by Kubernetes.
 
 ```{note}
 This section assumes a basic knowledge of KServe and Kubernetes, as well as
 access to a working Kubernetes cluster with KServe installed.
 To learn more about [KServe](https://kserve.github.io/website/) or [how to
 install it](https://kserve.github.io/website/get_started/), please visit the
-[KServe documentation](https://kserve.github.io/).
+[KServe documentation](https://kserve.github.io/website/).
 ```
 
 ## Serving Runtimes
@@ -19,17 +19,17 @@ install it](https://kserve.github.io/website/get_started/), please visit the
 KServe provides built-in [serving
 runtimes](https://kserve.github.io/website/modelserving/v1beta1/serving_runtime/)
 to deploy models trained in common ML frameworks.
-These allow you to deploy your models by just pointing to where the model
-artifacts are stored remotely.
+These allow you to deploy your models into a robust infrastructure by just
+pointing to where the model artifacts are stored remotely.
 
 Some of these runtimes leverage MLServer as the core inference server.
-Therefore, it should be straightforward to move them from your local testing to
-your serving infrastructure.
+Therefore, it should be straightforward to move from your local testing to your
+serving infrastructure.
 
 ### Usage
 
 To use any of the built-in serving runtimes offered by KServe, it should be
-enough to select any of the available ones on your `InferenceService` manifest.
+enough to select the relevant one your `InferenceService` manifest.
 
 For example, to serve a Scikit-Learn model, you could use a manifest like the
 one below:
@@ -69,8 +69,8 @@ kubectl apply -f my-inferenceservice-manifest.yaml
 
 ### Supported Serving Runtimes
 
-As mentioned above, KServe supports a limited number of serving runtimes
-out-of-the-box, some of which leverage MLServer as the inference server.
+As mentioned above, KServe offers support for built-in serving runtimes, some
+of which leverage MLServer as the inference server.
 Below you can find a table listing these runtimes, and the MLServer inference
 runtime that they correspond to.
 
@@ -79,14 +79,23 @@ runtime that they correspond to.
 | Scikit-Learn | [MLServer SKLearn](../../runtimes/sklearn) | `sklearn`              | [SKLearn Serving Runtime](https://kserve.github.io/website/modelserving/v1beta1/sklearn/v2/) |
 | XGBoost      | [MLServer XGBoost](../../runtimes/xgboost) | `xgboost`              | [XGBoost Serving Runtime](https://kserve.github.io/website/modelserving/v1beta1/xgboost/)    |
 
+Note that, on top of the ones shown above (backed by MLServer), KServe also
+provides a [wider
+set](https://kserve.github.io/website/modelserving/v1beta1/serving_runtime/) of
+serving runtimes.
+To see the full list, please visit the [KServe
+documentation](https://kserve.github.io/website/modelserving/v1beta1/serving_runtime/).
+
 ## Custom Images
 
-Some times, the serving runtimes built into KServe may not be enough for
-our use case.
+Sometimes, the serving runtimes built into KServe may not be enough for our use
+case.
 The framework provided by MLServer makes it easy to [write custom
 runtimes](../../runtimes/custom), which can then get packaged up as images.
-These images then become self-contained model servers with your custom runtime,
-which can be easily deployed by KServe into your serving infrastructure.
+These images then become self-contained model servers with your custom runtime.
+Therefore, it's easy to deploy them into your serving infrastructure leveraging
+KServe support for [custom
+runtimes](https://kserve.github.io/website/modelserving/v1beta1/custom/custom_model/#deploy-the-custom-predictor-on-kserve).
 
 ### Usage
 
@@ -124,7 +133,7 @@ account are:
 
 - Pointing to our custom MLServer `image` in the custom container section of
   our `InferenceService`.
-- Explicitly choosing the [v2 inference
+- Explicitly choosing the [V2 inference
   protocol](https://kserve.github.io/website/modelserving/inference_api/) to
   serve our model.
 - Let KServe know what port will be exposed by our custom container to send
