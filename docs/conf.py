@@ -75,8 +75,8 @@ if html_theme == "sphinx_material":
         "color_accent": "light-blue",
         "repo_url": "https://github.com/SeldonIO/MLServer/",
         "repo_name": "MLServer",
-        "globaltoc_depth": 2,
-        "globaltoc_collapse": False,
+        "globaltoc_depth": 4,
+        "globaltoc_collapse": True,
         "globaltoc_includehidden": True,
         "repo_type": "github",
         "nav_links": [
