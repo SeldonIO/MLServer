@@ -15,7 +15,7 @@ from mlserver.types import (
     ResponseOutput,
     InferenceResponse,
     InferenceRequest,
-    Parameters,
+    Parameters, MetadataModelResponse,
 )
 
 EXPLAINER_TYPE_TAG = "explainer_type"
@@ -41,7 +41,7 @@ def convert_from_bytes(output: ResponseOutput, ty: Optional[Type]) -> Any:
         return literal_eval(py_str)
 
 
-# TODO: add retry
+# TODO: add retry and better exceptions handling
 def remote_predict(
     v2_payload: InferenceRequest, predictor_url: str
 ) -> InferenceResponse:
@@ -49,6 +49,13 @@ def remote_predict(
     if response_raw.status_code != 200:
         raise RemoteInferenceError(response_raw.status_code, response_raw.reason)
     return InferenceResponse.parse_raw(response_raw.text)
+
+
+def remote_metadata(url: str) -> MetadataModelResponse:
+    response_raw = requests.get(url)
+    if response_raw.status_code != 200:
+        raise RemoteInferenceError(response_raw.status_code, response_raw.reason)
+    return MetadataModelResponse.parse_raw(response_raw.text)
 
 
 # TODO: this is very similar to `asyncio.to_thread` (python 3.9+),
