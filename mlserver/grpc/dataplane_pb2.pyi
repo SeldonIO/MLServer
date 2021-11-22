@@ -11,9 +11,11 @@ import typing_extensions
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
 
-#
-# ServerLive messages.
 class ServerLiveRequest(google.protobuf.message.Message):
+    """
+    ServerLive messages.
+    """
+
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     def __init__(
         self,
@@ -24,8 +26,8 @@ global___ServerLiveRequest = ServerLiveRequest
 class ServerLiveResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     LIVE_FIELD_NUMBER: builtins.int
-    # True if the inference server is live, false if not live.
     live: builtins.bool = ...
+    """True if the inference server is live, false if not live."""
     def __init__(
         self,
         *,
@@ -37,9 +39,11 @@ class ServerLiveResponse(google.protobuf.message.Message):
 
 global___ServerLiveResponse = ServerLiveResponse
 
-#
-# ServerReady messages.
 class ServerReadyRequest(google.protobuf.message.Message):
+    """
+    ServerReady messages.
+    """
+
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     def __init__(
         self,
@@ -50,8 +54,8 @@ global___ServerReadyRequest = ServerReadyRequest
 class ServerReadyResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     READY_FIELD_NUMBER: builtins.int
-    # True if the inference server is ready, false if not ready.
     ready: builtins.bool = ...
+    """True if the inference server is ready, false if not ready."""
     def __init__(
         self,
         *,
@@ -63,17 +67,21 @@ class ServerReadyResponse(google.protobuf.message.Message):
 
 global___ServerReadyResponse = ServerReadyResponse
 
-#
-# ModelReady messages.
 class ModelReadyRequest(google.protobuf.message.Message):
+    """
+    ModelReady messages.
+    """
+
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     NAME_FIELD_NUMBER: builtins.int
     VERSION_FIELD_NUMBER: builtins.int
-    # The name of the model to check for readiness.
     name: typing.Text = ...
-    # The version of the model to check for readiness. If not given the
-    # server will choose a version based on the model and internal policy.
+    """The name of the model to check for readiness."""
+
     version: typing.Text = ...
+    """The version of the model to check for readiness. If not given the
+    server will choose a version based on the model and internal policy.
+    """
     def __init__(
         self,
         *,
@@ -90,8 +98,8 @@ global___ModelReadyRequest = ModelReadyRequest
 class ModelReadyResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     READY_FIELD_NUMBER: builtins.int
-    # True if the model is ready, false if not ready.
     ready: builtins.bool = ...
+    """True if the model is ready, false if not ready."""
     def __init__(
         self,
         *,
@@ -103,9 +111,11 @@ class ModelReadyResponse(google.protobuf.message.Message):
 
 global___ModelReadyResponse = ModelReadyResponse
 
-#
-# ServerMetadata messages.
 class ServerMetadataRequest(google.protobuf.message.Message):
+    """
+    ServerMetadata messages.
+    """
+
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     def __init__(
         self,
@@ -118,17 +128,17 @@ class ServerMetadataResponse(google.protobuf.message.Message):
     NAME_FIELD_NUMBER: builtins.int
     VERSION_FIELD_NUMBER: builtins.int
     EXTENSIONS_FIELD_NUMBER: builtins.int
-    # The server name.
     name: typing.Text = ...
-    # The server version.
+    """The server name."""
+
     version: typing.Text = ...
-    # The extensions supported by the server.
+    """The server version."""
     @property
     def extensions(
         self,
-    ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[
-        typing.Text
-    ]: ...
+    ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[typing.Text]:
+        """The extensions supported by the server."""
+        pass
     def __init__(
         self,
         *,
@@ -145,17 +155,21 @@ class ServerMetadataResponse(google.protobuf.message.Message):
 
 global___ServerMetadataResponse = ServerMetadataResponse
 
-#
-# ModelMetadata messages.
 class ModelMetadataRequest(google.protobuf.message.Message):
+    """
+    ModelMetadata messages.
+    """
+
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     NAME_FIELD_NUMBER: builtins.int
     VERSION_FIELD_NUMBER: builtins.int
-    # The name of the model.
     name: typing.Text = ...
-    # The version of the model to check for readiness. If not given the
-    # server will choose a version based on the model and internal policy.
+    """The name of the model."""
+
     version: typing.Text = ...
+    """The version of the model to check for readiness. If not given the
+    server will choose a version based on the model and internal policy.
+    """
     def __init__(
         self,
         *,
@@ -171,8 +185,9 @@ global___ModelMetadataRequest = ModelMetadataRequest
 
 class ModelMetadataResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
-    # Metadata for a tensor.
     class TensorMetadata(google.protobuf.message.Message):
+        """Metadata for a tensor."""
+
         DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
         class ParametersEntry(google.protobuf.message.Message):
             DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
@@ -198,26 +213,31 @@ class ModelMetadataResponse(google.protobuf.message.Message):
         DATATYPE_FIELD_NUMBER: builtins.int
         SHAPE_FIELD_NUMBER: builtins.int
         PARAMETERS_FIELD_NUMBER: builtins.int
-        # The tensor name.
         name: typing.Text = ...
-        # The tensor data type.
+        """The tensor name."""
+
         datatype: typing.Text = ...
-        # The tensor shape. A variable-size dimension is represented
-        # by a -1 value.
+        """The tensor data type."""
         @property
         def shape(
             self,
         ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[
             builtins.int
-        ]: ...
-        # Optional default parameters for input.
-        # NOTE: This is an extension to the standard
+        ]:
+            """The tensor shape. A variable-size dimension is represented
+            by a -1 value.
+            """
+            pass
         @property
         def parameters(
             self,
         ) -> google.protobuf.internal.containers.MessageMap[
             typing.Text, global___InferParameter
-        ]: ...
+        ]:
+            """Optional default parameters for input.
+            NOTE: This is an extension to the standard
+            """
+            pass
         def __init__(
             self,
             *,
@@ -267,39 +287,42 @@ class ModelMetadataResponse(google.protobuf.message.Message):
     INPUTS_FIELD_NUMBER: builtins.int
     OUTPUTS_FIELD_NUMBER: builtins.int
     PARAMETERS_FIELD_NUMBER: builtins.int
-    # The model name.
     name: typing.Text = ...
-    # The versions of the model available on the server.
+    """The model name."""
     @property
     def versions(
         self,
-    ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[
-        typing.Text
-    ]: ...
-    # The model's platform. See Platforms.
+    ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[typing.Text]:
+        """The versions of the model available on the server."""
+        pass
     platform: typing.Text = ...
-    # The model's inputs.
+    """The model's platform. See Platforms."""
     @property
     def inputs(
         self,
     ) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[
         global___ModelMetadataResponse.TensorMetadata
-    ]: ...
-    # The model's outputs.
+    ]:
+        """The model's inputs."""
+        pass
     @property
     def outputs(
         self,
     ) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[
         global___ModelMetadataResponse.TensorMetadata
-    ]: ...
-    # Optional default parameters for the request / response.
-    # NOTE: This is an extension to the standard
+    ]:
+        """The model's outputs."""
+        pass
     @property
     def parameters(
         self,
     ) -> google.protobuf.internal.containers.MessageMap[
         typing.Text, global___InferParameter
-    ]: ...
+    ]:
+        """Optional default parameters for the request / response.
+        NOTE: This is an extension to the standard
+        """
+        pass
     def __init__(
         self,
         *,
@@ -336,12 +359,15 @@ class ModelMetadataResponse(google.protobuf.message.Message):
 
 global___ModelMetadataResponse = ModelMetadataResponse
 
-#
-# ModelInfer messages.
 class ModelInferRequest(google.protobuf.message.Message):
+    """
+    ModelInfer messages.
+    """
+
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
-    # An input tensor for an inference request.
     class InferInputTensor(google.protobuf.message.Message):
+        """An input tensor for an inference request."""
+
         DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
         class ParametersEntry(google.protobuf.message.Message):
             DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
@@ -368,27 +394,31 @@ class ModelInferRequest(google.protobuf.message.Message):
         SHAPE_FIELD_NUMBER: builtins.int
         PARAMETERS_FIELD_NUMBER: builtins.int
         CONTENTS_FIELD_NUMBER: builtins.int
-        # The tensor name.
         name: typing.Text = ...
-        # The tensor data type.
+        """The tensor name."""
+
         datatype: typing.Text = ...
-        # The tensor shape.
+        """The tensor data type."""
         @property
         def shape(
             self,
         ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[
             builtins.int
-        ]: ...
-        # Optional inference input tensor parameters.
+        ]:
+            """The tensor shape."""
+            pass
         @property
         def parameters(
             self,
         ) -> google.protobuf.internal.containers.MessageMap[
             typing.Text, global___InferParameter
-        ]: ...
-        # The input tensor data.
+        ]:
+            """Optional inference input tensor parameters."""
+            pass
         @property
-        def contents(self) -> global___InferTensorContents: ...
+        def contents(self) -> global___InferTensorContents:
+            """The input tensor data."""
+            pass
         def __init__(
             self,
             *,
@@ -418,8 +448,9 @@ class ModelInferRequest(google.protobuf.message.Message):
                 b"shape",
             ],
         ) -> None: ...
-    # An output tensor requested for an inference request.
     class InferRequestedOutputTensor(google.protobuf.message.Message):
+        """An output tensor requested for an inference request."""
+
         DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
         class ParametersEntry(google.protobuf.message.Message):
             DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
@@ -443,15 +474,16 @@ class ModelInferRequest(google.protobuf.message.Message):
             ) -> None: ...
         NAME_FIELD_NUMBER: builtins.int
         PARAMETERS_FIELD_NUMBER: builtins.int
-        # The tensor name.
         name: typing.Text = ...
-        # Optional requested output tensor parameters.
+        """The tensor name."""
         @property
         def parameters(
             self,
         ) -> google.protobuf.internal.containers.MessageMap[
             typing.Text, global___InferParameter
-        ]: ...
+        ]:
+            """Optional requested output tensor parameters."""
+            pass
         def __init__(
             self,
             *,
@@ -492,36 +524,44 @@ class ModelInferRequest(google.protobuf.message.Message):
     PARAMETERS_FIELD_NUMBER: builtins.int
     INPUTS_FIELD_NUMBER: builtins.int
     OUTPUTS_FIELD_NUMBER: builtins.int
-    # The name of the model to use for inferencing.
     model_name: typing.Text = ...
-    # The version of the model to use for inference. If not given the
-    # server will choose a version based on the model and internal policy.
+    """The name of the model to use for inferencing."""
+
     model_version: typing.Text = ...
-    # Optional identifier for the request. If specified will be
-    # returned in the response.
+    """The version of the model to use for inference. If not given the
+    server will choose a version based on the model and internal policy.
+    """
+
     id: typing.Text = ...
-    # Optional inference parameters.
+    """Optional identifier for the request. If specified will be
+    returned in the response.
+    """
     @property
     def parameters(
         self,
     ) -> google.protobuf.internal.containers.MessageMap[
         typing.Text, global___InferParameter
-    ]: ...
-    # The input tensors for the inference.
+    ]:
+        """Optional inference parameters."""
+        pass
     @property
     def inputs(
         self,
     ) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[
         global___ModelInferRequest.InferInputTensor
-    ]: ...
-    # The requested output tensors for the inference. Optional, if not
-    # specified all outputs produced by the model will be returned.
+    ]:
+        """The input tensors for the inference."""
+        pass
     @property
     def outputs(
         self,
     ) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[
         global___ModelInferRequest.InferRequestedOutputTensor
-    ]: ...
+    ]:
+        """The requested output tensors for the inference. Optional, if not
+        specified all outputs produced by the model will be returned.
+        """
+        pass
     def __init__(
         self,
         *,
@@ -560,8 +600,9 @@ global___ModelInferRequest = ModelInferRequest
 
 class ModelInferResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
-    # An output tensor returned for an inference request.
     class InferOutputTensor(google.protobuf.message.Message):
+        """An output tensor returned for an inference request."""
+
         DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
         class ParametersEntry(google.protobuf.message.Message):
             DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
@@ -588,27 +629,31 @@ class ModelInferResponse(google.protobuf.message.Message):
         SHAPE_FIELD_NUMBER: builtins.int
         PARAMETERS_FIELD_NUMBER: builtins.int
         CONTENTS_FIELD_NUMBER: builtins.int
-        # The tensor name.
         name: typing.Text = ...
-        # The tensor data type.
+        """The tensor name."""
+
         datatype: typing.Text = ...
-        # The tensor shape.
+        """The tensor data type."""
         @property
         def shape(
             self,
         ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[
             builtins.int
-        ]: ...
-        # Optional output tensor parameters.
+        ]:
+            """The tensor shape."""
+            pass
         @property
         def parameters(
             self,
         ) -> google.protobuf.internal.containers.MessageMap[
             typing.Text, global___InferParameter
-        ]: ...
-        # The output tensor data.
+        ]:
+            """Optional output tensor parameters."""
+            pass
         @property
-        def contents(self) -> global___InferTensorContents: ...
+        def contents(self) -> global___InferTensorContents:
+            """The output tensor data."""
+            pass
         def __init__(
             self,
             *,
@@ -663,26 +708,30 @@ class ModelInferResponse(google.protobuf.message.Message):
     ID_FIELD_NUMBER: builtins.int
     PARAMETERS_FIELD_NUMBER: builtins.int
     OUTPUTS_FIELD_NUMBER: builtins.int
-    # The name of the model used for inference.
     model_name: typing.Text = ...
-    # The version of the model used for inference.
+    """The name of the model used for inference."""
+
     model_version: typing.Text = ...
-    # The id of the inference request if one was specified.
+    """The version of the model used for inference."""
+
     id: typing.Text = ...
-    # Optional inference response parameters.
+    """The id of the inference request if one was specified."""
     @property
     def parameters(
         self,
     ) -> google.protobuf.internal.containers.MessageMap[
         typing.Text, global___InferParameter
-    ]: ...
-    # The output tensors holding inference results.
+    ]:
+        """Optional inference response parameters."""
+        pass
     @property
     def outputs(
         self,
     ) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[
         global___ModelInferResponse.InferOutputTensor
-    ]: ...
+    ]:
+        """The output tensors holding inference results."""
+        pass
     def __init__(
         self,
         *,
@@ -714,19 +763,23 @@ class ModelInferResponse(google.protobuf.message.Message):
 
 global___ModelInferResponse = ModelInferResponse
 
-#
-# An inference parameter value.
 class InferParameter(google.protobuf.message.Message):
+    """
+    An inference parameter value.
+    """
+
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     BOOL_PARAM_FIELD_NUMBER: builtins.int
     INT64_PARAM_FIELD_NUMBER: builtins.int
     STRING_PARAM_FIELD_NUMBER: builtins.int
-    # A boolean parameter value.
     bool_param: builtins.bool = ...
-    # An int64 parameter value.
+    """A boolean parameter value."""
+
     int64_param: builtins.int = ...
-    # A string parameter value.
+    """An int64 parameter value."""
+
     string_param: typing.Text = ...
+    """A string parameter value."""
     def __init__(
         self,
         *,
@@ -769,12 +822,14 @@ class InferParameter(google.protobuf.message.Message):
 
 global___InferParameter = InferParameter
 
-#
-# The data contained in a tensor. For a given data type the
-# tensor contents can be represented in "raw" bytes form or in
-# the repeated type that matches the tensor's data type. Protobuf
-# oneof is not used because oneofs cannot contain repeated fields.
 class InferTensorContents(google.protobuf.message.Message):
+    """
+    The data contained in a tensor. For a given data type the
+    tensor contents can be represented in "raw" bytes form or in
+    the repeated type that matches the tensor's data type. Protobuf
+    oneof is not used because oneofs cannot contain repeated fields.
+    """
+
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     BOOL_CONTENTS_FIELD_NUMBER: builtins.int
     INT_CONTENTS_FIELD_NUMBER: builtins.int
@@ -784,80 +839,88 @@ class InferTensorContents(google.protobuf.message.Message):
     FP32_CONTENTS_FIELD_NUMBER: builtins.int
     FP64_CONTENTS_FIELD_NUMBER: builtins.int
     BYTES_CONTENTS_FIELD_NUMBER: builtins.int
-    # Representation for BOOL data type. The size must match what is
-    # expected by the tensor's shape. The contents must be the flattened,
-    # one-dimensional, row-major order of the tensor elements.
     @property
     def bool_contents(
         self,
     ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[
         builtins.bool
-    ]: ...
-    # Representation for INT8, INT16, and INT32 data types. The size
-    # must match what is expected by the tensor's shape. The contents
-    # must be the flattened, one-dimensional, row-major order of the
-    # tensor elements.
+    ]:
+        """Representation for BOOL data type. The size must match what is
+        expected by the tensor's shape. The contents must be the flattened,
+        one-dimensional, row-major order of the tensor elements.
+        """
+        pass
     @property
     def int_contents(
         self,
-    ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[
-        builtins.int
-    ]: ...
-    # Representation for INT64 data types. The size must match what
-    # is expected by the tensor's shape. The contents must be the
-    # flattened, one-dimensional, row-major order of the tensor elements.
+    ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.int]:
+        """Representation for INT8, INT16, and INT32 data types. The size
+        must match what is expected by the tensor's shape. The contents
+        must be the flattened, one-dimensional, row-major order of the
+        tensor elements.
+        """
+        pass
     @property
     def int64_contents(
         self,
-    ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[
-        builtins.int
-    ]: ...
-    # Representation for UINT8, UINT16, and UINT32 data types. The size
-    # must match what is expected by the tensor's shape. The contents
-    # must be the flattened, one-dimensional, row-major order of the
-    # tensor elements.
+    ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.int]:
+        """Representation for INT64 data types. The size must match what
+        is expected by the tensor's shape. The contents must be the
+        flattened, one-dimensional, row-major order of the tensor elements.
+        """
+        pass
     @property
     def uint_contents(
         self,
-    ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[
-        builtins.int
-    ]: ...
-    # Representation for UINT64 data types. The size must match what
-    # is expected by the tensor's shape. The contents must be the
-    # flattened, one-dimensional, row-major order of the tensor elements.
+    ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.int]:
+        """Representation for UINT8, UINT16, and UINT32 data types. The size
+        must match what is expected by the tensor's shape. The contents
+        must be the flattened, one-dimensional, row-major order of the
+        tensor elements.
+        """
+        pass
     @property
     def uint64_contents(
         self,
-    ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[
-        builtins.int
-    ]: ...
-    # Representation for FP32 data type. The size must match what is
-    # expected by the tensor's shape. The contents must be the flattened,
-    # one-dimensional, row-major order of the tensor elements.
+    ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.int]:
+        """Representation for UINT64 data types. The size must match what
+        is expected by the tensor's shape. The contents must be the
+        flattened, one-dimensional, row-major order of the tensor elements.
+        """
+        pass
     @property
     def fp32_contents(
         self,
     ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[
         builtins.float
-    ]: ...
-    # Representation for FP64 data type. The size must match what is
-    # expected by the tensor's shape. The contents must be the flattened,
-    # one-dimensional, row-major order of the tensor elements.
+    ]:
+        """Representation for FP32 data type. The size must match what is
+        expected by the tensor's shape. The contents must be the flattened,
+        one-dimensional, row-major order of the tensor elements.
+        """
+        pass
     @property
     def fp64_contents(
         self,
     ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[
         builtins.float
-    ]: ...
-    # Representation for BYTES data type. The size must match what is
-    # expected by the tensor's shape. The contents must be the flattened,
-    # one-dimensional, row-major order of the tensor elements.
+    ]:
+        """Representation for FP64 data type. The size must match what is
+        expected by the tensor's shape. The contents must be the flattened,
+        one-dimensional, row-major order of the tensor elements.
+        """
+        pass
     @property
     def bytes_contents(
         self,
     ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[
         builtins.bytes
-    ]: ...
+    ]:
+        """Representation for BYTES data type. The size must match what is
+        expected by the tensor's shape. The contents must be the flattened,
+        one-dimensional, row-major order of the tensor elements.
+        """
+        pass
     def __init__(
         self,
         *,

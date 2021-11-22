@@ -15,11 +15,13 @@ class RepositoryIndexRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     REPOSITORY_NAME_FIELD_NUMBER: builtins.int
     READY_FIELD_NUMBER: builtins.int
-    # The name of the repository. If empty the index is returned
-    # for all repositories.
     repository_name: typing.Text = ...
-    # If true return only models currently ready for inferencing.
+    """The name of the repository. If empty the index is returned
+    for all repositories.
+    """
+
     ready: builtins.bool = ...
+    """If true return only models currently ready for inferencing."""
     def __init__(
         self,
         *,
@@ -37,21 +39,25 @@ global___RepositoryIndexRequest = RepositoryIndexRequest
 
 class RepositoryIndexResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
-    # Index entry for a model.
     class ModelIndex(google.protobuf.message.Message):
+        """Index entry for a model."""
+
         DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
         NAME_FIELD_NUMBER: builtins.int
         VERSION_FIELD_NUMBER: builtins.int
         STATE_FIELD_NUMBER: builtins.int
         REASON_FIELD_NUMBER: builtins.int
-        # The name of the model.
         name: typing.Text = ...
-        # The version of the model.
+        """The name of the model."""
+
         version: typing.Text = ...
-        # The state of the model.
+        """The version of the model."""
+
         state: typing.Text = ...
-        # The reason, if any, that the model is in the given state.
+        """The state of the model."""
+
         reason: typing.Text = ...
+        """The reason, if any, that the model is in the given state."""
         def __init__(
             self,
             *,
@@ -74,13 +80,14 @@ class RepositoryIndexResponse(google.protobuf.message.Message):
             ],
         ) -> None: ...
     MODELS_FIELD_NUMBER: builtins.int
-    # An index entry for each model.
     @property
     def models(
         self,
     ) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[
         global___RepositoryIndexResponse.ModelIndex
-    ]: ...
+    ]:
+        """An index entry for each model."""
+        pass
     def __init__(
         self,
         *,
@@ -98,11 +105,13 @@ class RepositoryModelLoadRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     REPOSITORY_NAME_FIELD_NUMBER: builtins.int
     MODEL_NAME_FIELD_NUMBER: builtins.int
-    # The name of the repository to load from. If empty the model
-    # is loaded from any repository.
     repository_name: typing.Text = ...
-    # The name of the model to load, or reload.
+    """The name of the repository to load from. If empty the model
+    is loaded from any repository.
+    """
+
     model_name: typing.Text = ...
+    """The name of the model to load, or reload."""
     def __init__(
         self,
         *,
@@ -130,11 +139,13 @@ class RepositoryModelUnloadRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     REPOSITORY_NAME_FIELD_NUMBER: builtins.int
     MODEL_NAME_FIELD_NUMBER: builtins.int
-    # The name of the repository from which the model was originally
-    # loaded. If empty the repository is not considered.
     repository_name: typing.Text = ...
-    # The name of the model to unload.
+    """The name of the repository from which the model was originally
+    loaded. If empty the repository is not considered.
+    """
+
     model_name: typing.Text = ...
+    """The name of the model to unload."""
     def __init__(
         self,
         *,
