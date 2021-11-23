@@ -143,10 +143,7 @@ async def anchor_image_runtime_with_remote_predict_patch(
         with patch(remote_metadata_mock_path) as remote_metadata:
 
             def mock_metadata(*args, **kwargs):
-                return MetadataModelResponse(
-                    name="dummy",
-                    platform="dummy"
-                )
+                return MetadataModelResponse(name="dummy", platform="dummy")
 
             def mock_predict(*args, **kwargs):
                 # note: sometimes the event loop is not running and in this case

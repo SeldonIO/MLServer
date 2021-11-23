@@ -8,7 +8,9 @@ from mlserver.codecs import NumpyCodec
 from mlserver_alibi_explain.common import (
     AlibiExplainSettings,
     remote_predict,
-    to_v2_inference_request, remote_metadata, construct_metadata_url,
+    to_v2_inference_request,
+    remote_metadata,
+    construct_metadata_url,
 )
 from mlserver_alibi_explain.runtime import AlibiExplainRuntimeBase
 

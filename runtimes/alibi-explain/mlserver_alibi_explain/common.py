@@ -16,7 +16,8 @@ from mlserver.types import (
     ResponseOutput,
     InferenceResponse,
     InferenceRequest,
-    Parameters, MetadataModelResponse,
+    Parameters,
+    MetadataModelResponse,
 )
 
 EXPLAINER_TYPE_TAG = "explainer_type"
@@ -53,7 +54,7 @@ def remote_predict(
 
 
 def remote_metadata(url: str) -> MetadataModelResponse:
-    """ Get metadata from v2 endpoint """
+    """Get metadata from v2 endpoint"""
     response_raw = requests.get(url)
     if response_raw.status_code != 200:
         raise RemoteInferenceError(response_raw.status_code, response_raw.reason)
@@ -61,7 +62,7 @@ def remote_metadata(url: str) -> MetadataModelResponse:
 
 
 def construct_metadata_url(infer_url: str) -> str:
-    """ Construct v2 metadata endpoint from v2 infer endpoint """
+    """Construct v2 metadata endpoint from v2 infer endpoint"""
     return re.sub(r"/infer$", "", infer_url)
 
 
@@ -97,8 +98,8 @@ def import_and_get_class(class_path: str) -> type:
 
 
 def to_v2_inference_request(
-        input_data: Union[np.ndarray, List[str]],
-        metadata: Optional[MetadataModelResponse],
+    input_data: Union[np.ndarray, List[str]],
+    metadata: Optional[MetadataModelResponse],
 ) -> InferenceRequest:
     """
     Encode numpy payload to v2 protocol.
@@ -133,6 +134,6 @@ def to_v2_inference_request(
             )
         ],
         # set outputs as empty list, this will return everything?
-        outputs=outputs
+        outputs=outputs,
     )
     return v2_request

@@ -11,8 +11,14 @@ from numpy.testing import assert_array_equal
 from helpers.tf_model import get_tf_mnist_model_uri
 from mlserver import MLModel
 from mlserver.codecs import NumpyCodec, StringCodec
-from mlserver.types import InferenceRequest, Parameters, RequestInput, \
-    MetadataModelResponse, MetadataTensor, RequestOutput
+from mlserver.types import (
+    InferenceRequest,
+    Parameters,
+    RequestInput,
+    MetadataModelResponse,
+    MetadataTensor,
+    RequestOutput,
+)
 from mlserver_alibi_explain import AlibiExplainRuntime
 from mlserver_alibi_explain.common import convert_from_bytes, to_v2_inference_request
 
@@ -123,44 +129,31 @@ async def test_end_2_end(
         ),
         # numpy with metadata
         (
-                np.zeros([2, 4]),
-                MetadataModelResponse(
-                    name="dummy",
-                    platform="dummy",
-                    inputs=[
-                        MetadataTensor(
-                            name="input_name",
-                            datatype="dummy",
-                            shape=[]
-                        )
-                    ],
-                    outputs=[
-                        MetadataTensor(
-                            name="output_name",
-                            datatype="dummy",
-                            shape=[]
-                        )
-                    ]
-                ),
-                InferenceRequest(
-                    parameters=Parameters(content_type=NumpyCodec.ContentType),
-                    inputs=[
-                        RequestInput(
-                            parameters=Parameters(content_type=NumpyCodec.ContentType),
-                            name="input_name",  # inserted from metadata above
-                            data=np.zeros([2, 4]).flatten().tolist(),
-                            shape=[2, 4],
-                            datatype="FP64",  # default for np.zeros
-                        )
-                    ],
-                    outputs=[
-                        RequestOutput(
-                            name="output_name"
-                        )
-                    ],  # inserted from metadata above
-                ),
+            np.zeros([2, 4]),
+            MetadataModelResponse(
+                name="dummy",
+                platform="dummy",
+                inputs=[MetadataTensor(name="input_name", datatype="dummy", shape=[])],
+                outputs=[
+                    MetadataTensor(name="output_name", datatype="dummy", shape=[])
+                ],
+            ),
+            InferenceRequest(
+                parameters=Parameters(content_type=NumpyCodec.ContentType),
+                inputs=[
+                    RequestInput(
+                        parameters=Parameters(content_type=NumpyCodec.ContentType),
+                        name="input_name",  # inserted from metadata above
+                        data=np.zeros([2, 4]).flatten().tolist(),
+                        shape=[2, 4],
+                        datatype="FP64",  # default for np.zeros
+                    )
+                ],
+                outputs=[
+                    RequestOutput(name="output_name")
+                ],  # inserted from metadata above
+            ),
         ),
-
         # List[str] payload
         (
             ["dummy", "dummy text"],
