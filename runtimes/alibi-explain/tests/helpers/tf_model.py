@@ -12,7 +12,7 @@ from mlserver.codecs import NumpyCodec
 from mlserver.types import InferenceRequest, InferenceResponse
 
 
-_MODEL_PATH = Path(os.path.dirname(__file__)).parent / "data" / "tf_mnist" / "model.h5"
+_MODEL_PATH = Path(os.path.dirname(__file__)).parent / ".data" / "tf_mnist" / "model.h5"
 
 
 def get_tf_mnist_model_uri() -> Path:

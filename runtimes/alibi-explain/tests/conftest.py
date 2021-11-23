@@ -30,7 +30,7 @@ from helpers.tf_model import TFMNISTModel, get_tf_mnist_model_uri
 nest_asyncio.apply()
 
 TESTS_PATH = Path(os.path.dirname(__file__))
-_ANCHOR_IMAGE_DIR = TESTS_PATH / "data" / "mnist_anchor_image"
+_ANCHOR_IMAGE_DIR = TESTS_PATH / ".data" / "mnist_anchor_image"
 
 
 # TODO: how to make this in utils?
