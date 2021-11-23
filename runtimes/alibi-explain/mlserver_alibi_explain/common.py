@@ -96,7 +96,31 @@ def import_and_get_class(class_path: str) -> type:
     return klass
 
 
-def to_v2_inference_request(input_data: Union[np.ndarray, List[str]]):
+def to_v2_inference_request(
+        input_data: Union[np.ndarray, List[str]],
+        metadata: Optional[MetadataModelResponse],
+) -> InferenceRequest:
+    """
+    Encode numpy payload to v2 protocol.
+
+    Parameters
+    ----------
+    input_data
+       Numpy ndarray to encode
+    metadata
+       Extra metadata that can help encode the payload.
+    """
+
+    # MLServer does not really care about a correct input name!
+    input_name = "predict"
+    output_names = []
+    if metadata is not None:
+        if metadata.inputs:
+            # we only support a big single input numpy
+            input_name = metadata.inputs[0].name
+        if metadata.outputs:
+            output_names = metadata.outputs
+
     # For List[str] (e.g. AnchorText), we use StringCodec for input
     input_payload_codec = StringCodec if type(input_data) == list else NumpyCodec
     v2_request = InferenceRequest(
@@ -105,8 +129,10 @@ def to_v2_inference_request(input_data: Union[np.ndarray, List[str]]):
         # or even whether it is a probability of classes or targets etc
         inputs=[
             input_payload_codec.encode_request_input(  # type: ignore
-                name="predict", payload=input_data
+                name=input_name, payload=input_data
             )
         ],
+        # set outputs as empty list, this will return everything?
+        outputs=[]
     )
     return v2_request

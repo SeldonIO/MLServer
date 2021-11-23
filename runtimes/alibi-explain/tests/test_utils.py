@@ -1,3 +1,4 @@
+from typing import Dict
 from unittest.mock import patch
 
 import pytest
@@ -15,40 +16,68 @@ def test_can_load_runtime_impl(explainer_reference):
     import_and_get_class(explainer_reference.alibi_class)
 
 
-@pytest.fixture()
-def test_client() -> TestClient:
-    app = FastAPI()
+class _TestClientWrapper:
+    def __init__(self, data:Dict):
+        self.response = data
 
-    @app.get("/")
-    async def metadata():
-        return {
-            "name": "cifar10",
-            "versions": ["1"],
-            "platform": "tensorflow_savedmodel",
-            "inputs": [
-                {
-                    "name": "input_1",
-                    "datatype": "FP32",
-                    "shape": [-1, 32, 32, 3]}
-            ],
-            "outputs": [
-                {
-                    "name": "fc10",
-                    "datatype": "FP32",
-                    "shape": [-1, 10]
-                }
-            ]
-        }
+    def get_test_client(self):
+        app = FastAPI()
 
-    return TestClient(app)
+        @app.get("/")
+        async def metadata() -> Dict:
+            return self.response
+
+        return TestClient(app)
 
 
-def test_remote_metadata__smoke(test_client):
+@pytest.mark.parametrize(
+    "data, expected_input_name, expected_name",
+    [
+        (
+            {
+                "name": "cifar10",
+                "versions": ["1"],
+                "platform": "tensorflow_savedmodel",
+                "inputs": [
+                    {
+                        "name": "input_1",
+                        "datatype": "FP32",
+                        "shape": [-1, 32, 32, 3]}
+                ],
+                "outputs": [
+                    {
+                        "name": "fc10",
+                        "datatype": "FP32",
+                        "shape": [-1, 10]
+                    }
+                ]
+            },
+            "input_1",
+            "cifar10"
+        ),
+        (
+            {
+                "name": "classifier",
+                "versions": [],
+                "platform": "",
+                "inputs": [],
+                "outputs": []
+            },
+            None,
+            "classifier"
+        )
+    ]
+)
+def test_remote_metadata__smoke(data, expected_input_name, expected_name):
     with patch("mlserver_alibi_explain.common.requests") as mock_requests:
-        mock_requests.get = test_client.get
+        test_client = _TestClientWrapper(data)
+
+        mock_requests.get = test_client.get_test_client().get
         result = remote_metadata("/")
-        assert result.inputs[0].name == "input_1"
-        assert result.name == "cifar10"
+
+        if result.inputs:
+            assert result.inputs[0].name == expected_input_name
+        assert result.name == expected_name
 
 
 @pytest.mark.parametrize(

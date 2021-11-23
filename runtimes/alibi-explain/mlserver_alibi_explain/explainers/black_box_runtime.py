@@ -8,7 +8,7 @@ from mlserver.codecs import NumpyCodec
 from mlserver_alibi_explain.common import (
     AlibiExplainSettings,
     remote_predict,
-    to_v2_inference_request, remote_metadata,
+    to_v2_inference_request, remote_metadata, construct_metadata_url,
 )
 from mlserver_alibi_explain.runtime import AlibiExplainRuntimeBase
 
@@ -44,7 +44,7 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
             self._model = self._load_from_uri(self._infer_impl)
 
         # get the metadata of the underlying inference model via v2 metadata endpoint
-        self.infer_metadata = remote_metadata()
+        self.infer_metadata = remote_metadata(construct_metadata_url(self.infer_uri))
 
         self.ready = True
         return self.ready
@@ -63,7 +63,7 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
         # in the case of AnchorText, we have a list of strings instead though.
         # TODO: for now we only support v2 protocol, do we need more support?
 
-        v2_request = to_v2_inference_request(input_data)
+        v2_request = to_v2_inference_request(input_data, self.infer_metadata)
 
         v2_response = remote_predict(
             v2_payload=v2_request, predictor_url=self.infer_uri
