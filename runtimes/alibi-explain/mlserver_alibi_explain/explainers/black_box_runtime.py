@@ -8,7 +8,7 @@ from mlserver.codecs import NumpyCodec
 from mlserver_alibi_explain.common import (
     AlibiExplainSettings,
     remote_predict,
-    to_v2_inference_request,
+    to_v2_inference_request, remote_metadata,
 )
 from mlserver_alibi_explain.runtime import AlibiExplainRuntimeBase
 
@@ -29,6 +29,7 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
         explainer_settings = AlibiExplainSettings(**extra)  # type: ignore
 
         self.infer_uri = explainer_settings.infer_uri
+        self.infer_metadata = None
 
         # TODO: validate the settings are ok with this specific explainer
         super().__init__(settings, explainer_settings)
@@ -41,6 +42,9 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
             self._model = self._explainer_class(**init_parameters)  # type: ignore
         else:
             self._model = self._load_from_uri(self._infer_impl)
+
+        # get the metadata of the underlying inference model via v2 metadata endpoint
+        self.infer_metadata = remote_metadata()
 
         self.ready = True
         return self.ready

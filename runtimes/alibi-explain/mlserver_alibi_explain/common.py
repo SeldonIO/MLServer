@@ -1,6 +1,7 @@
 import asyncio
 import contextvars
 import functools
+import re
 from asyncio import AbstractEventLoop
 from importlib import import_module
 from typing import Any, Optional, Type, Callable, Awaitable, Union, List
@@ -52,10 +53,16 @@ def remote_predict(
 
 
 def remote_metadata(url: str) -> MetadataModelResponse:
+    """ Get metadata from v2 endpoint """
     response_raw = requests.get(url)
     if response_raw.status_code != 200:
         raise RemoteInferenceError(response_raw.status_code, response_raw.reason)
     return MetadataModelResponse.parse_raw(response_raw.text)
+
+
+def construct_metadata_url(infer_url: str) -> str:
+    """ Construct v2 metadata endpoint from v2 infer endpoint """
+    return re.sub(r"/infer$", "", infer_url)
 
 
 # TODO: this is very similar to `asyncio.to_thread` (python 3.9+),
