@@ -11,7 +11,8 @@ from numpy.testing import assert_array_equal
 from helpers.tf_model import get_tf_mnist_model_uri
 from mlserver import MLModel
 from mlserver.codecs import NumpyCodec, StringCodec
-from mlserver.types import InferenceRequest, Parameters, RequestInput
+from mlserver.types import InferenceRequest, Parameters, RequestInput, \
+    MetadataModelResponse, MetadataTensor, RequestOutput
 from mlserver_alibi_explain import AlibiExplainRuntime
 from mlserver_alibi_explain.common import convert_from_bytes, to_v2_inference_request
 
@@ -100,11 +101,12 @@ async def test_end_2_end(
 
 
 @pytest.mark.parametrize(
-    "payload, expected_v2_request",
+    "payload, metadata, expected_v2_request",
     [
         # numpy payload
         (
             np.zeros([2, 4]),
+            None,
             InferenceRequest(
                 parameters=Parameters(content_type=NumpyCodec.ContentType),
                 inputs=[
@@ -116,11 +118,53 @@ async def test_end_2_end(
                         datatype="FP64",  # default for np.zeros
                     )
                 ],
+                outputs=[],
             ),
         ),
+        # numpy with metadata
+        (
+                np.zeros([2, 4]),
+                MetadataModelResponse(
+                    name="dummy",
+                    platform="dummy",
+                    inputs=[
+                        MetadataTensor(
+                            name="input_name",
+                            datatype="dummy",
+                            shape=[]
+                        )
+                    ],
+                    outputs=[
+                        MetadataTensor(
+                            name="output_name",
+                            datatype="dummy",
+                            shape=[]
+                        )
+                    ]
+                ),
+                InferenceRequest(
+                    parameters=Parameters(content_type=NumpyCodec.ContentType),
+                    inputs=[
+                        RequestInput(
+                            parameters=Parameters(content_type=NumpyCodec.ContentType),
+                            name="input_name",  # inserted from metadata above
+                            data=np.zeros([2, 4]).flatten().tolist(),
+                            shape=[2, 4],
+                            datatype="FP64",  # default for np.zeros
+                        )
+                    ],
+                    outputs=[
+                        RequestOutput(
+                            name="output_name"
+                        )
+                    ],  # inserted from metadata above
+                ),
+        ),
+
         # List[str] payload
         (
             ["dummy", "dummy text"],
+            None,
             InferenceRequest(
                 parameters=Parameters(content_type=StringCodec.ContentType),
                 inputs=[
@@ -132,10 +176,11 @@ async def test_end_2_end(
                         datatype="BYTES",
                     )
                 ],
+                outputs=[],
             ),
         ),
     ],
 )
-def test_encode_inference_request__as_expected(payload, expected_v2_request):
-    encoded_request = to_v2_inference_request(payload)
+def test_encode_inference_request__as_expected(payload, metadata, expected_v2_request):
+    encoded_request = to_v2_inference_request(payload, metadata)
     assert encoded_request == expected_v2_request
