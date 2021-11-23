@@ -1,10 +1,11 @@
-from typing import Type, Any, Dict, List, Union
+from typing import Type, Any, Dict, List, Union, Optional
 
 import numpy as np
 from alibi.api.interfaces import Explanation, Explainer
 
 from mlserver import ModelSettings
 from mlserver.codecs import NumpyCodec
+from mlserver.types import MetadataModelResponse
 from mlserver_alibi_explain.common import (
     AlibiExplainSettings,
     remote_predict,
@@ -31,7 +32,7 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
         explainer_settings = AlibiExplainSettings(**extra)  # type: ignore
 
         self.infer_uri = explainer_settings.infer_uri
-        self.infer_metadata = None
+        self.infer_metadata: Optional[MetadataModelResponse] = None
 
         # TODO: validate the settings are ok with this specific explainer
         super().__init__(settings, explainer_settings)
