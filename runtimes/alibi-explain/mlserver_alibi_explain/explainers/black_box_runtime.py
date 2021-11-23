@@ -38,6 +38,9 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
         super().__init__(settings, explainer_settings)
 
     async def load(self) -> bool:
+        # get the metadata of the underlying inference model via v2 metadata endpoint
+        self.infer_metadata = remote_metadata(construct_metadata_url(self.infer_uri))
+
         # TODO: use init explainer field instead?
         if self.alibi_explain_settings.init_parameters is not None:
             init_parameters = self.alibi_explain_settings.init_parameters
@@ -45,9 +48,6 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
             self._model = self._explainer_class(**init_parameters)  # type: ignore
         else:
             self._model = self._load_from_uri(self._infer_impl)
-
-        # get the metadata of the underlying inference model via v2 metadata endpoint
-        self.infer_metadata = remote_metadata(construct_metadata_url(self.infer_uri))
 
         self.ready = True
         return self.ready
@@ -67,7 +67,6 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
         # TODO: for now we only support v2 protocol, do we need more support?
 
         v2_request = to_v2_inference_request(input_data, self.infer_metadata)
-
         v2_response = remote_predict(
             v2_payload=v2_request, predictor_url=self.infer_uri
         )

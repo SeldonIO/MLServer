@@ -20,7 +20,12 @@ from mlserver.types import (
     RequestOutput,
 )
 from mlserver_alibi_explain import AlibiExplainRuntime
-from mlserver_alibi_explain.common import convert_from_bytes, to_v2_inference_request
+from mlserver_alibi_explain.common import (
+    convert_from_bytes,
+    to_v2_inference_request,
+    _DEFAULT_INPUT_NAME,
+    _DEFAULT_ID_NAME,
+)
 
 TESTS_PATH = Path(os.path.dirname(__file__))
 
@@ -114,11 +119,12 @@ async def test_end_2_end(
             np.zeros([2, 4]),
             None,
             InferenceRequest(
+                id=_DEFAULT_ID_NAME,
                 parameters=Parameters(content_type=NumpyCodec.ContentType),
                 inputs=[
                     RequestInput(
                         parameters=Parameters(content_type=NumpyCodec.ContentType),
-                        name="predict",
+                        name=_DEFAULT_INPUT_NAME,
                         data=np.zeros([2, 4]).flatten().tolist(),
                         shape=[2, 4],
                         datatype="FP64",  # default for np.zeros
@@ -139,6 +145,7 @@ async def test_end_2_end(
                 ],
             ),
             InferenceRequest(
+                id=_DEFAULT_ID_NAME,
                 parameters=Parameters(content_type=NumpyCodec.ContentType),
                 inputs=[
                     RequestInput(
@@ -159,11 +166,12 @@ async def test_end_2_end(
             ["dummy", "dummy text"],
             None,
             InferenceRequest(
+                id=_DEFAULT_ID_NAME,
                 parameters=Parameters(content_type=StringCodec.ContentType),
                 inputs=[
                     RequestInput(
                         parameters=Parameters(content_type=StringCodec.ContentType),
-                        name="predict",
+                        name=_DEFAULT_INPUT_NAME,
                         data=["dummy", "dummy text"],
                         shape=[2, -1],
                         datatype="BYTES",

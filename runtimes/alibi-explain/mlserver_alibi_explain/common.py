@@ -20,6 +20,10 @@ from mlserver.types import (
     MetadataModelResponse,
 )
 
+_DEFAULT_ID_NAME = "explain_inference"
+
+_DEFAULT_INPUT_NAME = "predict"
+
 EXPLAINER_TYPE_TAG = "explainer_type"
 
 _MAX_RETRY_ATTEMPT = 3
@@ -113,8 +117,10 @@ def to_v2_inference_request(
     """
 
     # MLServer does not really care about a correct input name!
-    input_name = "predict"
+    input_name = _DEFAULT_INPUT_NAME
+    id_name = _DEFAULT_ID_NAME
     outputs = []
+
     if metadata is not None:
         if metadata.inputs:
             # we only support a big single input numpy
@@ -125,6 +131,7 @@ def to_v2_inference_request(
     # For List[str] (e.g. AnchorText), we use StringCodec for input
     input_payload_codec = StringCodec if type(input_data) == list else NumpyCodec
     v2_request = InferenceRequest(
+        id=id_name,
         parameters=Parameters(content_type=input_payload_codec.ContentType),
         # TODO: we probably need to tell alibi about the expected types to use
         # or even whether it is a probability of classes or targets etc
