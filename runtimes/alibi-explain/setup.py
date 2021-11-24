@@ -36,10 +36,6 @@ setup(
     install_requires=[
         "mlserver",
         "alibi[shap]",
-        # Pin TF to avoid previous issues with 2.6.0 and 2.6.1.
-        # This should be removed when we move to a new version of alibi that
-        # would deal internally with TF versions
-        "tensorflow==2.6.2",
     ],
     long_description=_load_description(),
     long_description_content_type="text/markdown",
