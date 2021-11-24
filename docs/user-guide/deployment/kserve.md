@@ -101,7 +101,7 @@ runtimes](https://kserve.github.io/website/modelserving/v1beta1/custom/custom_mo
 
 The `InferenceService` manifest gives you full control over the containers used
 to deploy your machine learning model.
-This can be leveraged to poing your deployment to the [custom MLServer image
+This can be leveraged to point your deployment to the [custom MLServer image
 containing your custom logic](../../runtimes/custom).
 For example, if we assume that our custom image has been tagged as
 `my-custom-server:0.1.0`, we could write an `InferenceService` manifest like
