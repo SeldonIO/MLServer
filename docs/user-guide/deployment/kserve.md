@@ -86,7 +86,7 @@ serving runtimes.
 To see the full list, please visit the [KServe
 documentation](https://kserve.github.io/website/modelserving/v1beta1/serving_runtime/).
 
-## Custom Images
+## Custom Runtimes
 
 Sometimes, the serving runtimes built into KServe may not be enough for our use
 case.
