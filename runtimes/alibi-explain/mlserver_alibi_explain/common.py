@@ -143,7 +143,6 @@ def to_v2_inference_request(
                 name=input_name, payload=input_data
             )
         ],
-        # set outputs as empty list, this will return everything?
         outputs=outputs,
     )
     return v2_request
