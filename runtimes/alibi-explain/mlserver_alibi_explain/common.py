@@ -108,6 +108,9 @@ def to_v2_inference_request(
     """
     Encode numpy payload to v2 protocol.
 
+    Note: We only fetch the first-input name and the list of outputs from the metadata
+    endpoint currently. We should consider wider reconciliation with data types etc.
+
     Parameters
     ----------
     input_data
