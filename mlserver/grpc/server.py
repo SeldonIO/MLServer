@@ -1,6 +1,7 @@
 from grpc import aio
 from concurrent.futures import ThreadPoolExecutor
 from typing import Any, List, Tuple
+from py_grpc_prometheus.prometheus_server_interceptor import PromServerInterceptor
 
 from ..handlers import DataPlane, ModelRepositoryHandlers
 from ..settings import Settings
@@ -33,9 +34,10 @@ class GRPCServer:
         )
 
         logging_interceptor = LoggingInterceptor()
+        prom_interceptor = PromServerInterceptor()
         self._server = aio.server(
             ThreadPoolExecutor(max_workers=DefaultGrpcWorkers),
-            interceptors=(logging_interceptor,),
+            interceptors=(prom_interceptor, logging_interceptor),
             options=self._get_options(),
         )
 

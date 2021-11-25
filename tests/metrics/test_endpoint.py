@@ -7,8 +7,9 @@ async def test_metrics(metrics_client: MetricsClient):
 
     assert metrics is not None
 
-    expected_prefixes = ("python_", "process_", "mlserver_")
+    expected_prefixes = ("python_", "process_", "rest_server_", "grpc_server_")
     metrics_list = list(iter(metrics))
     assert len(metrics_list) > 0
     for metric in metrics_list:
+        print(metric.name)
         assert metric.name.startswith(expected_prefixes)
