@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from fastapi.responses import Response as FastAPIResponse
 from fastapi.routing import APIRoute as FastAPIRoute
 from fastapi.middleware.cors import CORSMiddleware
+from starlette_exporter import PrometheusMiddleware, handle_metrics
 
 from .endpoints import Endpoints, ModelRepositoryEndpoints
 from .requests import Request
@@ -112,5 +113,10 @@ def create_app(
             allow_headers=settings.cors_settings.allow_headers,
             max_age=settings.cors_settings.max_age,
         )
+
+    # TODO: Make optional? Change endpoint to match Triton?
+    # Enable metrics
+    app.add_middleware(PrometheusMiddleware)
+    app.add_route("/metrics", handle_metrics)
 
     return app
