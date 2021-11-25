@@ -114,9 +114,12 @@ def create_app(
             max_age=settings.cors_settings.max_age,
         )
 
-    # TODO: Make optional? Change endpoint to match Triton?
-    # Enable metrics
-    app.add_middleware(PrometheusMiddleware)
+    app.add_middleware(
+        PrometheusMiddleware,
+        app_name="mlserver",
+        prefix="mlserver",
+        skip_paths=["/metrics"],
+    )
     app.add_route("/metrics", handle_metrics)
 
     return app
