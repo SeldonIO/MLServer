@@ -19,6 +19,7 @@ from mlserver.registry import MultiModelRegistry
 from mlserver.repository import ModelRepository
 from mlserver.rest import RESTServer
 from mlserver.settings import ModelSettings, ModelParameters, Settings
+from mlserver.types import MetadataModelResponse
 from mlserver_alibi_explain.common import AlibiExplainSettings
 from mlserver_alibi_explain.runtime import AlibiExplainRuntime
 from helpers.tf_model import TFMNISTModel, get_tf_mnist_model_uri
@@ -29,7 +30,7 @@ from helpers.tf_model import TFMNISTModel, get_tf_mnist_model_uri
 nest_asyncio.apply()
 
 TESTS_PATH = Path(os.path.dirname(__file__))
-_ANCHOR_IMAGE_DIR = TESTS_PATH / "data" / "mnist_anchor_image"
+_ANCHOR_IMAGE_DIR = TESTS_PATH / ".data" / "mnist_anchor_image"
 
 
 # TODO: how to make this in utils?
@@ -136,45 +137,51 @@ async def anchor_image_runtime_with_remote_predict_patch(
     anchor_image_directory,
     custom_runtime_tf: MLModel,
     remote_predict_mock_path: str = "mlserver_alibi_explain.common.remote_predict",
+    remote_metadata_mock_path: str = "mlserver_alibi_explain.common.remote_metadata",
 ) -> AlibiExplainRuntime:
     with patch(remote_predict_mock_path) as remote_predict:
+        with patch(remote_metadata_mock_path) as remote_metadata:
 
-        def mock_predict(*args, **kwargs):
-            # note: sometimes the event loop is not running and in this case
-            # we create a new one otherwise
-            # we use the existing one.
-            # this mock implementation is required as we dont want to spin up a server,
-            # we just use MLModel.predict
-            try:
-                loop = asyncio.get_event_loop()
-                res = loop.run_until_complete(
-                    custom_runtime_tf.predict(kwargs["v2_payload"])
-                )
-                return res
-            except Exception:
-                loop = asyncio.new_event_loop()
-                asyncio.set_event_loop(loop)
-                res = loop.run_until_complete(
-                    custom_runtime_tf.predict(kwargs["v2_payload"])
-                )
-                return res
+            def mock_metadata(*args, **kwargs):
+                return MetadataModelResponse(name="dummy", platform="dummy")
 
-        remote_predict.side_effect = mock_predict
+            def mock_predict(*args, **kwargs):
+                # note: sometimes the event loop is not running and in this case
+                # we create a new one otherwise
+                # we use the existing one.
+                # mock implementation is required as we dont want to spin up a server,
+                # we just use MLModel.predict
+                try:
+                    loop = asyncio.get_event_loop()
+                    res = loop.run_until_complete(
+                        custom_runtime_tf.predict(kwargs["v2_payload"])
+                    )
+                    return res
+                except Exception:
+                    loop = asyncio.new_event_loop()
+                    asyncio.set_event_loop(loop)
+                    res = loop.run_until_complete(
+                        custom_runtime_tf.predict(kwargs["v2_payload"])
+                    )
+                    return res
 
-        rt = AlibiExplainRuntime(
-            ModelSettings(
-                parallel_workers=0,
-                parameters=ModelParameters(
-                    uri=str(anchor_image_directory),
-                    extra=AlibiExplainSettings(
-                        explainer_type="anchor_image", infer_uri="dummy_call"
+            remote_predict.side_effect = mock_predict
+            remote_metadata.side_effect = mock_metadata
+
+            rt = AlibiExplainRuntime(
+                ModelSettings(
+                    parallel_workers=0,
+                    parameters=ModelParameters(
+                        uri=str(anchor_image_directory),
+                        extra=AlibiExplainSettings(
+                            explainer_type="anchor_image", infer_uri="dummy_call"
+                        ),
                     ),
-                ),
+                )
             )
-        )
-        await rt.load()
+            await rt.load()
 
-        return rt
+            return rt
 
 
 @pytest.fixture

@@ -46,3 +46,6 @@ mlruns
 
 # Sphinx documentation
 docs/_build/
+
+# alibi .data
+runtimes/alibi-explain/tests/.data/**

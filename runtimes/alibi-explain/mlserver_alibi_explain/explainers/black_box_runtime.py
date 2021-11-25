@@ -1,14 +1,17 @@
-from typing import Type, Any, Dict, List, Union
+from typing import Type, Any, Dict, List, Union, Optional
 
 import numpy as np
 from alibi.api.interfaces import Explanation, Explainer
 
 from mlserver import ModelSettings
 from mlserver.codecs import NumpyCodec
+from mlserver.types import MetadataModelResponse
 from mlserver_alibi_explain.common import (
     AlibiExplainSettings,
     remote_predict,
     to_v2_inference_request,
+    remote_metadata,
+    construct_metadata_url,
 )
 from mlserver_alibi_explain.runtime import AlibiExplainRuntimeBase
 
@@ -29,11 +32,15 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
         explainer_settings = AlibiExplainSettings(**extra)  # type: ignore
 
         self.infer_uri = explainer_settings.infer_uri
+        self.infer_metadata: Optional[MetadataModelResponse] = None
 
         # TODO: validate the settings are ok with this specific explainer
         super().__init__(settings, explainer_settings)
 
     async def load(self) -> bool:
+        # get the metadata of the underlying inference model via v2 metadata endpoint
+        self.infer_metadata = remote_metadata(construct_metadata_url(self.infer_uri))
+
         # TODO: use init explainer field instead?
         if self.alibi_explain_settings.init_parameters is not None:
             init_parameters = self.alibi_explain_settings.init_parameters
@@ -59,8 +66,7 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
         # in the case of AnchorText, we have a list of strings instead though.
         # TODO: for now we only support v2 protocol, do we need more support?
 
-        v2_request = to_v2_inference_request(input_data)
-
+        v2_request = to_v2_inference_request(input_data, self.infer_metadata)
         v2_response = remote_predict(
             v2_payload=v2_request, predictor_url=self.infer_uri
         )
