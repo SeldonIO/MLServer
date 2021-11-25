@@ -1,6 +1,7 @@
 import json
 import os
 from pathlib import Path
+from unittest.mock import patch, MagicMock
 
 import numpy as np
 import pytest
@@ -24,10 +25,10 @@ from mlserver_alibi_explain.common import (
     convert_from_bytes,
     to_v2_inference_request,
     _DEFAULT_INPUT_NAME,
-    _DEFAULT_ID_NAME,
 )
 
 TESTS_PATH = Path(os.path.dirname(__file__))
+_DEFAULT_ID_NAME = "dummy_id"
 
 
 @pytest.fixture
@@ -181,6 +182,10 @@ async def test_end_2_end(
             ),
         ),
     ],
+)
+@patch(
+    "mlserver_alibi_explain.common.generate_uuid",
+    MagicMock(return_value=_DEFAULT_ID_NAME),
 )
 def test_encode_inference_request__as_expected(payload, metadata, expected_v2_request):
     encoded_request = to_v2_inference_request(payload, metadata)

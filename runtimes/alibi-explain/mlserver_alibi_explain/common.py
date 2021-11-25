@@ -19,8 +19,7 @@ from mlserver.types import (
     Parameters,
     MetadataModelResponse,
 )
-
-_DEFAULT_ID_NAME = "explain_inference"
+from mlserver.utils import generate_uuid
 
 _DEFAULT_INPUT_NAME = "predict"
 
@@ -121,7 +120,7 @@ def to_v2_inference_request(
 
     # MLServer does not really care about a correct input name!
     input_name = _DEFAULT_INPUT_NAME
-    id_name = _DEFAULT_ID_NAME
+    id_name = generate_uuid()
     outputs = []
 
     if metadata is not None:
