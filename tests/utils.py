@@ -1,4 +1,5 @@
 import aiohttp
+import socket
 
 from aiohttp.client_exceptions import ClientOSError, ServerDisconnectedError
 from aiohttp_retry import RetryClient, ExponentialRetry
@@ -6,7 +7,15 @@ from aiohttp_retry import RetryClient, ExponentialRetry
 from mlserver.types import RepositoryIndexResponse, InferenceRequest, InferenceResponse
 
 
-class APIClient:
+def get_available_port() -> int:
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.bind(("", 0))
+    port = s.getsockname()[1]
+    s.close()
+    return port
+
+
+class RESTClient:
     def __init__(self, http_server: str):
         self._session = aiohttp.ClientSession(raise_for_status=True)
         self._http_server = http_server
