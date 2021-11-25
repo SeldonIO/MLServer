@@ -44,6 +44,8 @@ setup(
         "pandas",
         "protobuf",
         "uvicorn",
+        "starlette_exporter",
+        "py-grpc-prometheus",
     ],
     extras_require={"all": ["orjson"]},
     entry_points={"console_scripts": ["mlserver=mlserver.cli:main"]},
