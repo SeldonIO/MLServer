@@ -1,4 +1,5 @@
 import pytest
+import asyncio
 
 from typing import AsyncGenerator
 
@@ -37,8 +38,12 @@ async def test_grpc_metrics(
     assert len(grpc_server_handled.samples) == 0
 
     expected_handled = 5
-    for _ in range(expected_handled):
-        await inference_service_stub.ModelInfer(model_infer_request)
+    await asyncio.gather(
+        *[
+            inference_service_stub.ModelInfer(model_infer_request)
+            for _ in range(expected_handled)
+        ]
+    )
 
     # Get metrics for gRPC server after sending a few requests
     metrics = await metrics_client.metrics()
