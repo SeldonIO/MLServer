@@ -4,6 +4,7 @@ import os
 from sklearn.dummy import DummyClassifier, DummyRegressor
 from sklearn.pipeline import Pipeline
 from mlserver.settings import ModelSettings
+from mlserver.codecs import CodecError
 from mlserver.errors import InferenceError
 from mlserver.types import RequestInput, RequestOutput
 
@@ -50,7 +51,7 @@ async def test_multiple_inputs_error(model: SKLearnModel, inference_request):
         RequestInput(name="input-1", shape=[2], data=[0, 1], datatype="FP32")
     )
 
-    with pytest.raises(InferenceError):
+    with pytest.raises(CodecError):
         await model.predict(inference_request)
 
 

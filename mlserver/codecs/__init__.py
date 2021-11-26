@@ -1,9 +1,10 @@
-from .numpy import NumpyCodec
+from .numpy import NumpyCodec, NumpyRequestCodec
 from .pandas import PandasCodec
 from .string import StringCodec
 from .base64 import Base64Codec
 from .datetime import DatetimeCodec
 from .base import (
+    CodecError,
     InputCodec,
     RequestCodec,
     register_input_codec,
@@ -19,7 +20,9 @@ from .utils import (
 )
 
 __all__ = [
+    "CodecError",
     "NumpyCodec",
+    "NumpyRequestCodec",
     "StringCodec",
     "Base64Codec",
     "DatetimeCodec",

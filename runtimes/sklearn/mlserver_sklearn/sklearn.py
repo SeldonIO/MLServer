@@ -8,7 +8,7 @@ from mlserver import types
 from mlserver.model import MLModel
 from mlserver.errors import InferenceError
 from mlserver.utils import get_model_uri
-from mlserver.codecs import NumpyCodec
+from mlserver.codecs import NumpyCodec, NumpyRequestCodec
 
 
 PREDICT_OUTPUT = "predict"
@@ -74,30 +74,15 @@ class SKLearnModel(MLModel):
     def _predict_outputs(
         self, payload: types.InferenceRequest
     ) -> List[types.ResponseOutput]:
-        default_codec = NumpyCodec()
-        # TODO: how to set default codec here? Needs to be in the request...?
-        decoded_request = self.decode_request(payload)
-
-        # If we decode to an InferenceRequest again,
-        # then inputs is probably an array of tensors
-        if isinstance(decoded_request, types.InferenceRequest):
-            if len(decoded_request.inputs) != 1:
-                raise InferenceError(
-                    "SKLearnModel only supports a single input tensor "
-                    f"({len(payload.inputs)} were received)"
-                )
-            input_data = decoded_request.inputs[0]
-        # Otherwise we decoded to a different structure e.g. a pandas.DataFrame
-        else:
-            input_data = decoded_request
+        decoded_request = self.decode_request(payload, default_codec=NumpyRequestCodec)
 
         outputs = []
         for request_output in payload.outputs:  # type: ignore
             predict_fn = getattr(self._model, request_output.name)
-            y = predict_fn(input_data)
+            y = predict_fn(decoded_request)
 
             # TODO: Set datatype (cast from numpy?)
-            response_output = default_codec.encode(name=request_output.name, payload=y)
+            response_output = NumpyCodec.encode(name=request_output.name, payload=y)
             outputs.append(response_output)
 
         return outputs
