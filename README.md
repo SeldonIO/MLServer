@@ -24,7 +24,7 @@ spec.
   [KServe (formerly known as KFServing)](https://kserve.github.io/website/modelserving/v1beta1/sklearn/v2/), where
   MLServer is the core Python inference server used to serve machine learning
   models.
-- Support for the standard [V2 Inference Protocol](https://github.com/kubeflow/kfserving/tree/master/docs/predict-api/v2) on
+- Support for the standard [V2 Inference Protocol](https://kserve.github.io/website/modelserving/inference_api/) on
   both the gRPC and REST flavours, which has been standardised and adopted by
   various model serving frameworks.
 

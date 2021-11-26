@@ -19,6 +19,9 @@ help:
 %: Makefile
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
+start:
+	sphinx-autobuild . ./_build/html
+
 install-dev:
 	pip install -e ../
 	pip install -r ./requirements.txt
