@@ -1,10 +1,11 @@
 import pytest
 import numpy as np
 
-from typing import Any
+from typing import Any, Optional
 
-from mlserver.types import RequestInput, Parameters, TensorData
-from mlserver.codecs import NumpyCodec, StringCodec
+from mlserver.types import InferenceRequest, RequestInput, Parameters, TensorData
+from mlserver.codecs import RequestCodec, NumpyCodec, StringCodec
+from mlserver.codecs.numpy import NumpyRequestCodec
 from mlserver.model import MLModel
 
 
@@ -75,3 +76,122 @@ def test_decode(sum_model: MLModel, request_input: RequestInput, expected: Any):
         np.testing.assert_array_equal(decoded, expected)  # type: ignore
     else:
         assert decoded == expected  # type: ignore
+
+
+@pytest.mark.parametrize(
+    "inference_request, expected, default_codec",
+    [
+        # Request with no content type
+        (
+            InferenceRequest(
+                inputs=[
+                    RequestInput(
+                        name="bar",
+                        shape=[2],
+                        data=[1, 2],
+                        datatype="FP32",
+                    )
+                ]
+            ),
+            InferenceRequest(
+                inputs=[
+                    RequestInput(
+                        name="bar",
+                        shape=[2],
+                        data=[1, 2],
+                        datatype="FP32",
+                    )
+                ]
+            ),
+            None,
+        ),
+        # Request with no content type BUT a default codec
+        (
+            InferenceRequest(
+                inputs=[
+                    RequestInput(
+                        name="bar",
+                        shape=[2],
+                        data=[1, 2],
+                        datatype="FP32",
+                    )
+                ]
+            ),
+            np.array([1, 2], dtype=float),
+            NumpyRequestCodec,
+        ),
+        # Request with a content type
+        (
+            InferenceRequest(
+                parameters=Parameters(content_type="np"),
+                inputs=[
+                    RequestInput(
+                        name="bar",
+                        shape=[2],
+                        data=[1, 2],
+                        datatype="FP32",
+                    )
+                ],
+            ),
+            np.array([1, 2], dtype=float),
+            None,
+        ),
+        # Request with a content type AND a default codec
+        (
+            InferenceRequest(
+                parameters=Parameters(content_type="np"),
+                inputs=[
+                    RequestInput(
+                        name="bar",
+                        shape=[2],
+                        data=[1, 2],
+                        datatype="FP32",
+                    )
+                ],
+            ),
+            np.array([1, 2], dtype=float),
+            StringCodec,
+        ),
+        # Request with a content type at the input level
+        (
+            InferenceRequest(
+                inputs=[
+                    RequestInput(
+                        name="bar",
+                        shape=[1, 3],
+                        data=b"abc",
+                        datatype="BYTES",
+                        parameters=Parameters(content_type="str"),
+                    )
+                ],
+            ),
+            InferenceRequest(
+                inputs=[
+                    RequestInput(
+                        name="bar",
+                        shape=[1, 3],
+                        data=b"abc",
+                        datatype="BYTES",
+                        parameters=Parameters(
+                            content_type="str",
+                            _decoded_payload=["abc"],
+                        ),
+                    )
+                ],
+            ),
+            None,
+        ),
+    ],
+)
+def test_decode_request(
+    sum_model: MLModel,
+    inference_request: InferenceRequest,
+    expected: Any,
+    default_codec: Optional[RequestCodec],
+):
+    decoded_request = sum_model.decode_request(inference_request, default_codec)
+
+    if isinstance(expected, np.ndarray):
+        np.testing.assert_array_equal(decoded_request, expected)  # type: ignore
+    else:
+        assert decoded_request == expected

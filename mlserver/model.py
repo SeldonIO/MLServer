@@ -6,6 +6,7 @@ from .codecs import (
     InputCodec,
     has_decoded,
     get_decoded,
+    RequestCodec,
 )
 from .settings import ModelSettings
 from .types import (
@@ -95,10 +96,18 @@ class MLModel:
 
         return request_input.data
 
-    def decode_request(self, inference_request: InferenceRequest) -> Any:
-        return decode_inference_request(
-            inference_request, self._settings, self._inputs_index
-        )
+    def decode_request(
+        self, inference_request: InferenceRequest, default_codec: Optional[RequestCodec]
+    ) -> Any:
+        decode_inference_request(inference_request, self._settings, self._inputs_index)
+
+        if has_decoded(inference_request):
+            return get_decoded(inference_request)
+
+        if default_codec:
+            return default_codec.decode(inference_request)
+
+        return inference_request
 
     async def metadata(self) -> MetadataModelResponse:
         model_metadata = MetadataModelResponse(
