@@ -2,7 +2,6 @@ import xgboost as xgb
 
 from mlserver import types
 from mlserver.model import MLModel
-from mlserver.errors import InferenceError
 from mlserver.utils import get_model_uri
 
 from .codecs import DMatrixCodec, DMatrixRequestCodec

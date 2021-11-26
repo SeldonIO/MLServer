@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional, List
+from typing import Any, Dict, Optional, List, Union, Type
 
 from .codecs import (
     decode_request_input,
@@ -84,7 +84,9 @@ class MLModel:
         self._outputs_index = _generate_metadata_index(self._settings.outputs)
 
     def decode(
-        self, request_input: RequestInput, default_codec: Optional[InputCodec] = None
+        self,
+        request_input: RequestInput,
+        default_codec: Optional[Union[Type[InputCodec], InputCodec]] = None,
     ) -> Any:
         decode_request_input(request_input, self._inputs_index)
 
@@ -97,7 +99,9 @@ class MLModel:
         return request_input.data
 
     def decode_request(
-        self, inference_request: InferenceRequest, default_codec: Optional[RequestCodec]
+        self,
+        inference_request: InferenceRequest,
+        default_codec: Optional[Union[Type[RequestCodec], RequestCodec]] = None,
     ) -> Any:
         decode_inference_request(inference_request, self._settings, self._inputs_index)
 

@@ -1,10 +1,9 @@
-from typing import Any, Optional, List, Dict
+from typing import Any, Optional, List, Dict, Union, Type
 
 from alibi.api.interfaces import Explanation, Explainer
 from alibi.saving import load_explainer
 
 from mlserver.codecs import (
-    NumpyCodec,
     NumpyRequestCodec,
     InputCodec,
     StringCodec,
@@ -54,7 +53,6 @@ class AlibiExplainRuntimeBase(MLModel):
         """
 
         # TODO: convert and validate?
-        model_input = payload.inputs[0]
         input_data = self.decode_request(payload, default_codec=NumpyRequestCodec)
         output_data = await self._async_explain_impl(input_data, payload.parameters)
 
@@ -156,12 +154,16 @@ class AlibiExplainRuntime(MLModel):
         self._rt.ready = value
 
     def decode(
-        self, request_input: RequestInput, default_codec: Optional[InputCodec] = None
+        self,
+        request_input: RequestInput,
+        default_codec: Optional[Union[Type[InputCodec], InputCodec]] = None,
     ) -> Any:
         return self._rt.decode(request_input, default_codec)
 
     def decode_request(
-        self, inference_request: InferenceRequest, default_codec: Optional[RequestCodec]
+        self,
+        inference_request: InferenceRequest,
+        default_codec: Optional[Union[Type[RequestCodec], RequestCodec]] = None,
     ) -> Any:
         return self._rt.decode_request(inference_request, default_codec)
 

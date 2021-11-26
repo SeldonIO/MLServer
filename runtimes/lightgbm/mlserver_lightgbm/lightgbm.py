@@ -3,7 +3,7 @@ import lightgbm as lgb
 from mlserver import types
 from mlserver.model import MLModel
 from mlserver.utils import get_model_uri
-from mlserver.codecs import NumpyCodec, NumpyRequestCodec, CodecError
+from mlserver.codecs import NumpyCodec, NumpyRequestCodec
 
 
 WELLKNOWN_MODEL_FILENAMES = ["model.bst"]
