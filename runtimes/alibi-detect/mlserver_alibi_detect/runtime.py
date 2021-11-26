@@ -2,7 +2,7 @@ from mlserver import types
 from mlserver.settings import ModelSettings
 from mlserver.model import MLModel
 from mlserver.errors import InferenceError
-from mlserver.codecs import NumpyCodec
+from mlserver.codecs import NumpyCodec, NumpyRequestCodec
 from fastapi import Request, Response
 from mlserver.handlers import custom_handler
 from .protocols.util import (
@@ -78,10 +78,7 @@ class AlibiDetectRuntime(MLModel):
         return Response(content=output_data, media_type="application/json")
 
     async def predict(self, payload: types.InferenceRequest) -> types.InferenceResponse:
-        payload = self._check_request(payload)
-        model_input = payload.inputs[0]
-        default_codec = NumpyCodec()
-        input_data = self.decode(model_input, default_codec=default_codec)
+        input_data = self.decode_request(payload, default_codec=NumpyRequestCodec)
         y = await self.predict_fn(input_data)
 
         # TODO: Convert alibi-detect output to v2 protocol
@@ -91,17 +88,9 @@ class AlibiDetectRuntime(MLModel):
             model_name=self.name,
             model_version=self.version,
             parameters=y["meta"],
-            outputs=[default_codec.encode(name="detect", payload=output_data)],
+            outputs=[NumpyCodec.encode(name="detect", payload=output_data)],
         )
 
     async def predict_fn(self, input_data: Any) -> dict:
         parameters = self.alibi_detect_settings.predict_parameters
         return self._model.predict(input_data, **parameters)  # type: ignore
-
-    def _check_request(self, payload: types.InferenceRequest) -> types.InferenceRequest:
-        if len(payload.inputs) != 1:
-            raise InferenceError(
-                "AlibiDetector only supports a single input tensor "
-                f"({len(payload.inputs)} were received)"
-            )
-        return payload
