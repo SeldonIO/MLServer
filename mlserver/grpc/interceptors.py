@@ -189,10 +189,10 @@ class PromServerInterceptor(ServerInterceptor):
                 # in order to suppress the noise in logging
                 if self._interceptor._skip_exceptions:
                     if self._interceptor._log_exceptions:
-                        _LOGGER.error(e)
+                        logger.error(e)
                     if response_or_iterator is None:
                         return response_or_iterator
-                    return behavior(request_or_iterator, servicer_context)
+                    return old_handler(request_or_iterator, servicer_context)
                 raise e
 
         return _new_handler

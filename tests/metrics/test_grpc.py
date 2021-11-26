@@ -12,7 +12,7 @@ from mlserver.settings import Settings
 from .utils import MetricsClient, find_metric
 
 # Import fixture from `grpc` module
-from ..grpc.conftest import model_infer_request
+from ..grpc.conftest import model_infer_request  # noqa: F401
 
 
 @pytest.fixture
@@ -26,7 +26,7 @@ async def inference_service_stub(
 async def test_grpc_metrics(
     metrics_client: MetricsClient,
     inference_service_stub: GRPCInferenceServiceStub,
-    model_infer_request: pb.ModelInferRequest,
+    model_infer_request: pb.ModelInferRequest,  # noqa: F811
 ):
     await metrics_client.wait_until_ready()
     metric_name = "grpc_server_handled"
