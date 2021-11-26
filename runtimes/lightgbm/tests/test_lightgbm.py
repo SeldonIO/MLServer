@@ -3,7 +3,7 @@ import os
 import lightgbm as lgb
 
 from mlserver.settings import ModelSettings
-from mlserver.errors import InferenceError
+from mlserver.codecs import CodecError
 from mlserver.types import RequestInput, InferenceRequest
 
 from mlserver_lightgbm import LightGBMModel
@@ -44,5 +44,5 @@ async def test_multiple_inputs_error(
         RequestInput(name="input-1", shape=[1, 2], data=[[0, 1]], datatype="FP32")
     )
 
-    with pytest.raises(InferenceError):
+    with pytest.raises(CodecError):
         await model.predict(inference_request)
