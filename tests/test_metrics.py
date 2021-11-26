@@ -8,7 +8,7 @@ from prometheus_client.parser import text_string_to_metric_families
 from mlserver.server import MLServer
 from mlserver.settings import Settings
 
-from ..utils import RESTClient, get_available_port
+from .utils import RESTClient, get_available_port
 
 
 class MetricsClient(RESTClient):
@@ -58,3 +58,16 @@ async def rest_client(mlserver: MLServer, settings: Settings):
 async def metrics_client(mlserver: MLServer, settings: Settings):
     http_server = f"{settings.host}:{settings.http_port}"
     return MetricsClient(http_server)
+
+
+async def test_metrics(metrics_client: MetricsClient):
+    await metrics_client.wait_until_ready()
+    metrics = await metrics_client.metrics()
+
+    assert metrics is not None
+
+    expected_prefixes = ("python_", "process_", "rest_server_", "grpc_server_")
+    metrics_list = list(iter(metrics))
+    assert len(metrics_list) > 0
+    for metric in metrics_list:
+        assert metric.name.startswith(expected_prefixes)

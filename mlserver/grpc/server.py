@@ -1,7 +1,6 @@
 from grpc import aio
 from concurrent.futures import ThreadPoolExecutor
 from typing import Any, List, Tuple
-from py_grpc_prometheus.prometheus_server_interceptor import PromServerInterceptor
 
 from ..handlers import DataPlane, ModelRepositoryHandlers
 from ..settings import Settings
@@ -9,7 +8,7 @@ from ..settings import Settings
 from .servicers import InferenceServicer, ModelRepositoryServicer
 from .dataplane_pb2_grpc import add_GRPCInferenceServiceServicer_to_server
 from .model_repository_pb2_grpc import add_ModelRepositoryServiceServicer_to_server
-from .interceptors import LoggingInterceptor
+from .interceptors import LoggingInterceptor, PromServerInterceptor
 from .logging import logger
 
 # Workers used for non-AsyncIO workloads (which aren't any in our case)
