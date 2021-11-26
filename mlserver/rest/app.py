@@ -114,12 +114,12 @@ def create_app(
             max_age=settings.cors_settings.max_age,
         )
 
-    # TODO: Differentiate between REST and gRPC metrics through prefix
     app.add_middleware(
         PrometheusMiddleware,
         app_name="mlserver",
         prefix="rest_server",
-        skip_paths=["/metrics"],
+        # TODO: Should we also exclude model's health endpoints?
+        skip_paths=["/metrics", "/v2/health/live", "/v2/health/ready"],
     )
     app.add_route("/metrics", handle_metrics)
 

@@ -5,7 +5,7 @@ from mlserver.server import MLServer
 from mlserver.settings import Settings
 from mlserver.model import MLModel
 
-from ..utils import RESTClient, get_available_port
+from ..utils import get_available_port
 from .utils import MetricsClient
 
 
@@ -38,12 +38,6 @@ async def mlserver(settings: Settings, sum_model: MLModel):
         await server.stop()
     except Exception:
         pass
-
-
-@pytest.fixture
-async def rest_client(mlserver: MLServer, settings: Settings):
-    http_server = f"{settings.host}:{settings.http_port}"
-    return RESTClient(http_server)
 
 
 @pytest.fixture
