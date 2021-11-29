@@ -16,6 +16,10 @@ from .base import (
     CodecError,
 )
 
+
+InputCodecLike = Union[Type[InputCodec], InputCodec]
+RequestCodecLike = Union[Type[RequestCodec], RequestCodec]
+
 Parametrised = Union[InferenceRequest, RequestInput]
 Tagged = Union[MetadataTensor, ModelSettings]
 DecodedParameterName = "_decoded_payload"

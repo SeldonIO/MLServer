@@ -3,9 +3,10 @@ from typing import Any, Dict, Optional, List
 from .codecs import (
     decode_request_input,
     decode_inference_request,
-    InputCodec,
     has_decoded,
     get_decoded,
+    InputCodecLike,
+    RequestCodecLike,
 )
 from .settings import ModelSettings
 from .types import (
@@ -83,7 +84,9 @@ class MLModel:
         self._outputs_index = _generate_metadata_index(self._settings.outputs)
 
     def decode(
-        self, request_input: RequestInput, default_codec: Optional[InputCodec] = None
+        self,
+        request_input: RequestInput,
+        default_codec: Optional[InputCodecLike] = None,
     ) -> Any:
         decode_request_input(request_input, self._inputs_index)
 
@@ -95,10 +98,20 @@ class MLModel:
 
         return request_input.data
 
-    def decode_request(self, inference_request: InferenceRequest) -> Any:
-        return decode_inference_request(
-            inference_request, self._settings, self._inputs_index
-        )
+    def decode_request(
+        self,
+        inference_request: InferenceRequest,
+        default_codec: Optional[RequestCodecLike] = None,
+    ) -> Any:
+        decode_inference_request(inference_request, self._settings, self._inputs_index)
+
+        if has_decoded(inference_request):
+            return get_decoded(inference_request)
+
+        if default_codec:
+            return default_codec.decode(inference_request)
+
+        return inference_request
 
     async def metadata(self) -> MetadataModelResponse:
         model_metadata = MetadataModelResponse(
