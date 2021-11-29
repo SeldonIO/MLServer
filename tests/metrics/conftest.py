@@ -22,7 +22,9 @@ def settings(settings: Settings) -> Settings:
 
 @pytest.fixture
 async def mlserver(
-    settings: Settings, sum_model: MLModel, prometheus_registry: CollectorRegistry
+    settings: Settings,
+    sum_model: MLModel,
+    prometheus_registry: CollectorRegistry,  # noqa: F811
 ):
     server = MLServer(settings)
 
