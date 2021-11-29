@@ -4,7 +4,7 @@ datamodel-code-generator==0.11.14
 ## Locking `prance` (a subdep of `datamodel-code-generator`) to an older
 ## version due to issues with the latest version of `pip`:
 ## https://github.com/pypa/pip/issues/9613 
-prance==0.20.0
+prance==0.21.8.0
 
 # Testing
 pytest==6.2.2
