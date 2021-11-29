@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional, List, Union, Type
+from typing import Any, Dict, Optional, List
 
 from .codecs import (
     decode_request_input,

@@ -1,4 +1,4 @@
-from typing import Any, Optional, List, Dict, Union, Type
+from typing import Any, Optional, List, Dict
 
 from alibi.api.interfaces import Explanation, Explainer
 from alibi.saving import load_explainer
