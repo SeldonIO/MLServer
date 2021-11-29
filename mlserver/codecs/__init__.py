@@ -17,6 +17,8 @@ from .utils import (
     get_decoded_or_raw,
     decode_request_input,
     decode_inference_request,
+    InputCodecLike,
+    RequestCodecLike,
 )
 
 __all__ = [

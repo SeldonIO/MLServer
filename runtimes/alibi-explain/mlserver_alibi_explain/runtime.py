@@ -5,9 +5,9 @@ from alibi.saving import load_explainer
 
 from mlserver.codecs import (
     NumpyRequestCodec,
-    InputCodec,
+    InputCodecLike,
     StringCodec,
-    RequestCodec,
+    RequestCodecLike,
 )
 from mlserver.errors import ModelParametersMissing, InvalidModelURI
 from mlserver.model import MLModel
@@ -156,14 +156,14 @@ class AlibiExplainRuntime(MLModel):
     def decode(
         self,
         request_input: RequestInput,
-        default_codec: Optional[Union[Type[InputCodec], InputCodec]] = None,
+        default_codec: Optional[InputCodecLike] = None,
     ) -> Any:
         return self._rt.decode(request_input, default_codec)
 
     def decode_request(
         self,
         inference_request: InferenceRequest,
-        default_codec: Optional[Union[Type[RequestCodec], RequestCodec]] = None,
+        default_codec: Optional[RequestCodecLike] = None,
     ) -> Any:
         return self._rt.decode_request(inference_request, default_codec)
 
