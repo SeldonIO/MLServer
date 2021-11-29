@@ -1,10 +1,13 @@
 import pytest
 import asyncio
 
+from prometheus_client.registry import CollectorRegistry
+
 from mlserver.server import MLServer
 from mlserver.settings import Settings
 from mlserver.model import MLModel
 
+from ..grpc.conftest import prometheus_registry  # noqa: F401
 from ..utils import get_available_port
 from .utils import MetricsClient
 
@@ -18,7 +21,9 @@ def settings(settings: Settings) -> Settings:
 
 
 @pytest.fixture
-async def mlserver(settings: Settings, sum_model: MLModel):
+async def mlserver(
+    settings: Settings, sum_model: MLModel, prometheus_registry: CollectorRegistry
+):
     server = MLServer(settings)
 
     # Start server without blocking, and cancel afterwards

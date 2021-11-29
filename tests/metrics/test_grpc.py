@@ -4,6 +4,7 @@ import asyncio
 from typing import AsyncGenerator
 
 from grpc import aio
+
 from mlserver.grpc import dataplane_pb2 as pb
 from mlserver.grpc.dataplane_pb2_grpc import GRPCInferenceServiceStub
 from mlserver.server import MLServer
