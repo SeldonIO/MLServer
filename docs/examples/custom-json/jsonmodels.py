@@ -37,11 +37,10 @@ class JsonHelloWorldModel(MLModel):
         )
 
     def _extract_json(self, payload: types.InferenceRequest) -> Dict[str, Any]:
-        codec = StringCodec()
         inputs = {}
         for inp in payload.inputs:
             inputs[inp.name] = json.loads(
-                "".join(self.decode(inp, default_codec=codec))
+                "".join(self.decode(inp, default_codec=StringCodec))
             )
 
         return inputs
