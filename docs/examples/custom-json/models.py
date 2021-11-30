@@ -4,8 +4,6 @@ from typing import Dict, Any
 from mlserver import MLModel, types
 from mlserver.codecs import StringCodec
 
-from mlserver.cli.main import main
-
 
 class JsonHelloWorldModel(MLModel):
     async def load(self) -> bool:
@@ -19,7 +17,7 @@ class JsonHelloWorldModel(MLModel):
         request = self._extract_json(payload)
         response = { 
             "request": request,
-            "server_response": f"Got your request. Hello from the server."
+            "server_response": "Got your request. Hello from the server."
         }
         response_bytes = json.dumps(response).encode("UTF-8")
 
@@ -39,8 +37,9 @@ class JsonHelloWorldModel(MLModel):
         )
 
     def _extract_json(self, payload: types.InferenceRequest) -> Dict[str, Any]:
+        codec = StringCodec()
         inputs = {}
         for inp in payload.inputs:
-            inputs[inp.name] = json.loads("".join(self.decode(inp)))
+            inputs[inp.name] = json.loads("".join(self.decode(inp, default_codec=codec)))
 
         return inputs
