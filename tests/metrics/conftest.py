@@ -37,14 +37,8 @@ async def mlserver(
 
     yield server
 
-    server_task.cancel()
-
-    try:
-        # Ignore error from cancelling server task
-        await server_task
-        await server.stop()
-    except Exception:
-        pass
+    await server.stop()
+    await server_task
 
 
 @pytest.fixture
