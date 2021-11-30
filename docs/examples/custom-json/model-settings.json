@@ -1,4 +1,4 @@
 {
     "name": "json-hello-world",
-    "implementation": "models.JsonHelloWorldModel"
+    "implementation": "jsonmodels.JsonHelloWorldModel"
 }

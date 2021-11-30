@@ -24,7 +24,7 @@ This is a trivial model to demonstrate how to conceptually work with JSON inputs
 
 
 ```python
-%%writefile models.py
+%%writefile jsonmodels.py
 import json
 
 from typing import Dict, Any
@@ -39,10 +39,10 @@ class JsonHelloWorldModel(MLModel):
 
         # Set readiness flag for model
         return await super().load()
-    
+
     async def predict(self, payload: types.InferenceRequest) -> types.InferenceResponse:
         request = self._extract_json(payload)
-        response = { 
+        response = {
             "request": request,
             "server_response": "Got your request. Hello from the server."
         }
@@ -67,7 +67,9 @@ class JsonHelloWorldModel(MLModel):
         codec = StringCodec()
         inputs = {}
         for inp in payload.inputs:
-            inputs[inp.name] = json.loads("".join(self.decode(inp, default_codec=codec)))
+            inputs[inp.name] = json.loads(
+                "".join(self.decode(inp, default_codec=codec))
+            )
 
         return inputs
 
@@ -97,7 +99,7 @@ The next step will be to create 2 configuration files:
 %%writefile model-settings.json
 {
     "name": "json-hello-world",
-    "implementation": "models.JsonHelloWorldModel"
+    "implementation": "jsonmodels.JsonHelloWorldModel"
 }
 ```
 
