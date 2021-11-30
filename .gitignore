@@ -49,3 +49,6 @@ docs/_build/
 
 # alibi .data
 runtimes/alibi-explain/tests/.data/**
+
+# Docker metadata
+.docker/
