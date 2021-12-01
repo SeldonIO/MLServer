@@ -50,8 +50,9 @@ lightning_logs
 # Sphinx documentation
 docs/_build/
 
-# alibi .data
+# Tests cache folders
 runtimes/alibi-explain/tests/.data/**
+runtimes/mlflow/tests/testdata/.cache/**
 
 # Docker metadata
 .docker/

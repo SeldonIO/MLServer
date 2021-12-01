@@ -17,6 +17,7 @@ from .fixtures import MNISTDataModule, LightningMNISTClassifier
 
 TESTS_PATH = os.path.dirname(__file__)
 TESTDATA_PATH = os.path.join(TESTS_PATH, "testdata")
+TESTDATA_CACHE_PATH = os.path.join(TESTDATA_PATH, ".cache")
 
 
 def pytest_collection_modifyitems(items):
@@ -61,7 +62,11 @@ def model_uri(tmp_path, dataset: tuple, model_signature: ModelSignature) -> str:
 
 
 @pytest.fixture
-def pytorch_model_uri(tmp_path) -> str:
+def pytorch_model_uri() -> str:
+    model_path = os.path.join(TESTDATA_CACHE_PATH, "pytorch-model")
+    if os.path.exists(model_path):
+        return model_path
+
     model = LightningMNISTClassifier(batch_size=64, num_workers=3, lr=0.001)
 
     dm = MNISTDataModule(batch_size=64, num_workers=3)
@@ -77,7 +82,6 @@ def pytorch_model_uri(tmp_path) -> str:
     trainer = Trainer(callbacks=[early_stopping])
     trainer.fit(model, dm)
 
-    model_path = os.path.join(tmp_path, "pytorch-model")
     mlflow.pytorch.save_model(model, path=model_path)
 
     return model_path
