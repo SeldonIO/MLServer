@@ -4,7 +4,7 @@ import pytest
 from grpc import aio
 from typing import AsyncGenerator, Dict
 from google.protobuf import json_format
-from prometheus_client.registry import REGISTRY, CollectorRegistry
+from prometheus_client.registry import CollectorRegistry
 
 from mlserver.parallel import load_inference_pool, unload_inference_pool
 from mlserver.batching import load_batching
@@ -18,6 +18,7 @@ from mlserver.grpc import GRPCServer
 
 from ..conftest import TESTDATA_PATH
 from ..fixtures import SumModel
+from ..metrics.conftest import prometheus_registry  # noqa: F401
 
 TESTDATA_GRPC_PATH = os.path.join(TESTDATA_PATH, "grpc")
 
@@ -64,27 +65,6 @@ async def model_repository_service_stub(
 ) -> AsyncGenerator[ModelRepositoryServiceStub, None]:
     async with aio.insecure_channel(f"{settings.host}:{settings.grpc_port}") as channel:
         yield ModelRepositoryServiceStub(channel)
-
-
-@pytest.fixture()
-def prometheus_registry() -> CollectorRegistry:
-    """
-    Fixture used to ensure the registry is cleaned on each run.
-    Otherwise, `py-grpc-prometheus` will complain that metrics already exist.
-
-    TODO: Open issue in `py-grpc-prometheus` to check whether a metric exists
-    before creating it.
-    For an example on how to do this, see `starlette_exporter`'s implementation
-
-        https://github.com/stephenhillier/starlette_exporter/blob/947d4d631dd9a6a8c1071b45573c5562acba4834/starlette_exporter/middleware.py#L67
-    """
-    # NOTE: Since the `REGISTRY` object is global, this fixture is NOT
-    # thread-safe!!
-    collectors = list(REGISTRY._collector_to_names.keys())
-    for collector in collectors:
-        REGISTRY.unregister(collector)
-
-    yield REGISTRY
 
 
 @pytest.fixture
