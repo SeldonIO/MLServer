@@ -73,7 +73,7 @@ async def grpc_server(
     data_plane: DataPlane,
     model_repository_handlers: ModelRepositoryHandlers,
     sum_model: SumModel,
-    prometheus_registry: CollectorRegistry,
+    prometheus_registry: CollectorRegistry,  # noqa: F811
 ):
     server = GRPCServer(
         settings,
