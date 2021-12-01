@@ -7,6 +7,7 @@ https://github.com/mlflow/mlflow/blob/master/examples/pytorch/MNIST/mnist_autolo
 import pytorch_lightning as pl
 import torch
 
+from argparse import ArgumentParser
 from torch.nn import functional as F
 from torch.utils.data import DataLoader, random_split
 from torchvision import datasets, transforms
@@ -34,7 +35,8 @@ class MNISTDataModule(pl.LightningDataModule):
 
     def setup(self, stage=None):
         """
-        Downloads the data, parse it and split the data into train, test, validation data
+        Downloads the data, parse it and split the data into train, test,
+        validation data
         :param stage: Stage - training or testing
         """
 
