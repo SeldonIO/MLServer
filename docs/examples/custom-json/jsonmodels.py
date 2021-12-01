@@ -17,7 +17,7 @@ class JsonHelloWorldModel(MLModel):
         request = self._extract_json(payload)
         response = {
             "request": request,
-            "server_response": "Got your request. Hello from the server."
+            "server_response": "Got your request. Hello from the server.",
         }
         response_bytes = json.dumps(response).encode("UTF-8")
 
@@ -31,9 +31,9 @@ class JsonHelloWorldModel(MLModel):
                     shape=[len(response_bytes)],
                     datatype="BYTES",
                     data=[response_bytes],
-                    parameters=types.Parameters(content_type="str")
+                    parameters=types.Parameters(content_type="str"),
                 )
-            ]
+            ],
         )
 
     def _extract_json(self, payload: types.InferenceRequest) -> Dict[str, Any]:
