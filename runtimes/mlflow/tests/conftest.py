@@ -5,11 +5,15 @@ import pytest
 import numpy as np
 
 from sklearn.dummy import DummyClassifier
+from pytorch_lightning import Trainer
+from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from mlflow.models.signature import ModelSignature, infer_signature
 from mlserver.settings import ModelSettings, ModelParameters
 from mlserver.types import InferenceRequest
 
 from mlserver_mlflow import MLflowRuntime
+
+from .fixtures import MNISTDataModule, LightningMNISTClassifier
 
 TESTS_PATH = os.path.dirname(__file__)
 TESTDATA_PATH = os.path.join(TESTS_PATH, "testdata")
@@ -57,12 +61,26 @@ def model_uri(tmp_path, dataset: tuple, model_signature: ModelSignature) -> str:
 
 
 @pytest.fixture
-def pytorch_model_uri() -> str:
-    pytorch_model_path = os.path.join(TESTDATA_PATH, "pytorch_model")
-    if sys.version_info >= (3, 8):
-        return os.path.join(pytorch_model_path, "3.8")
+def pytorch_model_uri(tmp_path) -> str:
+    model = LightningMNISTClassifier(batch_size=64, num_workers=3, lr=0.001)
 
-    return os.path.join(pytorch_model_path, "3.7")
+    dm = MNISTDataModule(batch_size=64, num_workers=3)
+    dm.setup(stage="fit")
+
+    early_stopping = EarlyStopping(
+        monitor="val_loss",
+        mode="min",
+        verbose=False,
+        patience=3,
+    )
+
+    trainer = Trainer(callbacks=[early_stopping])
+    trainer.fit(model, dm)
+
+    model_path = os.path.join(tmp_path, "pytorch-model")
+    mlflow.pytorch.save_model(model, path=model_path)
+
+    return model_path
 
 
 @pytest.fixture
