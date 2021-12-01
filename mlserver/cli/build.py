@@ -43,7 +43,8 @@ def build_image(folder: str, dockerfile: str, image_tag: str) -> str:
         dockerfile_path = write_dockerfile(tmp_dir, dockerfile)
 
         build_cmd = f"docker build {folder} -f {dockerfile_path} -t {image_tag}"
-        build_env = {"DOCKER_BUILDKIT": "1"}
+        build_env = os.environ.copy()
+        build_env["DOCKER_BUILDKIT"] = "1"
         subprocess.run(build_cmd, check=True, shell=True, env=build_env)
 
     return image_tag

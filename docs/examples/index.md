@@ -42,6 +42,8 @@ serving), check out the examples below.
 - [Loading / unloading models from a model repository](./model-repository/README.md)
 - [Content-Type Decoding](./content-type/README.md)
 - [Custom Conda environment](./conda/README.md)
+- [Serving custom models requiring JSON inputs or outputs](./custom-json/README.md)
+
 
 ```{toctree}
 :caption: MLServer Features
@@ -52,4 +54,5 @@ serving), check out the examples below.
 ./model-repository/README.md
 ./content-type/README.md
 ./conda/README.md
+./custom-json/README.md
 ```
