@@ -49,13 +49,16 @@ async def test_integrated_gradients__smoke(
         ],
     )
     response = await integrated_gradients_runtime.predict(inference_request)
-    _ = convert_from_bytes(response.outputs[0], ty=str)
+    res = convert_from_bytes(response.outputs[0], ty=str)
+    res_dict = json.dumps(res)
+    assert "meta" in res_dict
+    assert "data" in res_dict
 
 
 async def test_anchors__smoke(
     anchor_image_runtime_with_remote_predict_patch: AlibiExplainRuntime,
 ):
-    data = np.random.randn(28, 28, 1) * 255
+    data = np.random.randn(1, 28, 28, 1) * 255
     inference_request = InferenceRequest(
         parameters=Parameters(
             content_type=NumpyCodec.ContentType,
@@ -108,7 +111,7 @@ def test_remote_predict__smoke(custom_runtime_tf, rest_client):
 
 async def test_alibi_runtime_wrapper(custom_runtime_tf: MLModel):
     """
-    Checks that the wrappers returns back the expected valued from the underlying rt
+    Checks that the wrapper returns back the expected valued from the underlying rt
     """
 
     class _MockInit(AlibiExplainRuntime):
@@ -128,7 +131,7 @@ async def test_alibi_runtime_wrapper(custom_runtime_tf: MLModel):
         ],
     )
 
-    # settings is dummy and discarded
+    # settings object is dummy and discarded
     wrapper = _MockInit(ModelSettings())
 
     assert wrapper.settings == custom_runtime_tf.settings

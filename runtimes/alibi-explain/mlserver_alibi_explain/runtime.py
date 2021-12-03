@@ -1,6 +1,7 @@
 import json
 from typing import Any, Optional, List, Dict
 
+import orjson
 from alibi.api.interfaces import Explanation, Explainer
 from alibi.saving import load_explainer
 from starlette.requests import Request
@@ -50,8 +51,8 @@ class AlibiExplainRuntimeBase(MLModel):
         self.alibi_explain_settings = explainer_settings
         super().__init__(settings)
 
-    @custom_handler(rest_path="/v1/explain")
-    async def invocations(self, request: Request) -> Response:
+    @custom_handler(rest_path="/explain_v1_output")
+    async def explain_v1_output(self, request: Request) -> Response:
         """
         A custom endpoint to return explanation results in plain json format (no v2
         encoding) to keep backward compatibility of legacy downstream users.
@@ -61,10 +62,10 @@ class AlibiExplainRuntimeBase(MLModel):
         """
         # convert raw to v2
         raw_data = await request.body()
-        payload = InferenceRequest.parse_raw(raw_data)
+        payload = InferenceRequest.parse_raw(json.loads(raw_data))
 
         v2_response = await self.predict(payload)
-        explanation = json.loads(v2_response.outputs[0]["data"])
+        explanation = orjson.dumps(json.loads(v2_response.outputs[0].data.__root__))
 
         return Response(content=explanation, media_type="application/json")
 
@@ -197,3 +198,4 @@ class AlibiExplainRuntime(MLModel):
 
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
         return await self._rt.predict(payload)
+
