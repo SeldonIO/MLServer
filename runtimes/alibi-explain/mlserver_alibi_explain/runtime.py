@@ -51,7 +51,7 @@ class AlibiExplainRuntimeBase(MLModel):
         self.alibi_explain_settings = explainer_settings
         super().__init__(settings)
 
-    @custom_handler(rest_path="/explain_v1_output")
+    @custom_handler(rest_path="/explain")
     async def explain_v1_output(self, request: Request) -> Response:
         """
         A custom endpoint to return explanation results in plain json format (no v2
@@ -198,4 +198,3 @@ class AlibiExplainRuntime(MLModel):
 
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
         return await self._rt.predict(payload)
-

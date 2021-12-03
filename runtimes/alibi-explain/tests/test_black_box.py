@@ -129,10 +129,11 @@ async def test_end_2_end_explain_v1_output(
 
     request = Request(scope={"type": "http"}, receive=_receive)
 
-    response = await \
-        anchor_image_runtime_with_remote_predict_patch._rt.explain_v1_output(
+    response = (
+        await anchor_image_runtime_with_remote_predict_patch._rt.explain_v1_output(
             request
         )
+    )
 
     response_body = json.loads(response.body)
     assert "meta" in response_body
