@@ -1,7 +1,10 @@
+import json
 from typing import Any, Optional, List, Dict
 
 from alibi.api.interfaces import Explanation, Explainer
 from alibi.saving import load_explainer
+from starlette.requests import Request
+from starlette.responses import Response
 
 from mlserver.codecs import (
     NumpyRequestCodec,
@@ -10,6 +13,7 @@ from mlserver.codecs import (
     RequestCodecLike,
 )
 from mlserver.errors import ModelParametersMissing, InvalidModelURI
+from mlserver.handlers import custom_handler
 from mlserver.model import MLModel
 from mlserver.settings import ModelSettings, ModelParameters
 from mlserver.types import (
@@ -45,6 +49,24 @@ class AlibiExplainRuntimeBase(MLModel):
 
         self.alibi_explain_settings = explainer_settings
         super().__init__(settings)
+
+    @custom_handler(rest_path="/v1/explain")
+    async def invocations(self, request: Request) -> Response:
+        """
+        A custom endpoint to return explanation results in plain json format (no v2
+        encoding) to keep backward compatibility of legacy downstream users.
+
+        This does not work with multi-model serving as no reference to the model exists
+        in the endpoint.
+        """
+        # convert raw to v2
+        raw_data = await request.body()
+        payload = InferenceRequest.parse_raw(raw_data)
+
+        v2_response = await self.predict(payload)
+        explanation = json.loads(v2_response.outputs[0]["data"])
+
+        return Response(content=explanation, media_type="application/json")
 
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
         """
