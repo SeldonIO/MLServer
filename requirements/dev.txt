@@ -13,7 +13,7 @@ pytest-mock==3.6.1
 pytest-cases==3.6.5
 tox==3.24.4
 docker==5.0.3
-aiohttp==3.7.4.post0
+aiohttp==3.8.1
 aiohttp-retry==2.4.6
 
 # Linting and formatting
