@@ -33,7 +33,7 @@ _DEFAULT_ID_NAME = "dummy_id"
 
 @pytest.fixture
 def payload() -> InferenceRequest:
-    data = np.random.randn(28, 28, 1) * 255
+    data = np.random.randn(1, 28, 28, 1) * 255
 
     # now we go via the inference model and see if we get the same results
     inference_request = InferenceRequest(
@@ -95,7 +95,7 @@ async def test_end_2_end(
     alibi_anchor_image_model,
     payload: InferenceRequest,
 ):
-    # in this test we are getting explanation and making sure that it the same one
+    # in this test we are getting explanation and making sure that is the same one
     # as returned by alibi directly
     runtime_result = await anchor_image_runtime_with_remote_predict_patch.predict(
         payload
@@ -104,12 +104,31 @@ async def test_end_2_end(
         convert_from_bytes(runtime_result.outputs[0], ty=str)
     )
     alibi_result = alibi_anchor_image_model.explain(
-        NumpyCodec.decode(payload.inputs[0])
+        NumpyCodec.decode(payload.inputs[0])[0]  # payload has batch dimension,
+        # we remove it for alibi
     )
 
     assert_array_equal(
         np.array(decoded_runtime_results["data"]["anchor"]), alibi_result.data["anchor"]
     )
+
+
+async def test_end_2_end_explain_v1_output(
+    anchor_image_runtime_with_remote_predict_patch: AlibiExplainRuntime,
+    alibi_anchor_image_model,
+    payload: InferenceRequest,
+):
+    # in this test we get raw explanation as opposed to v2
+
+    response = (
+        await anchor_image_runtime_with_remote_predict_patch._rt.explain_v1_output(
+            payload
+        )
+    )
+
+    response_body = json.loads(response.body)
+    assert "meta" in response_body
+    assert "data" in response_body
 
 
 @pytest.mark.parametrize(
