@@ -61,7 +61,7 @@ class AlibiExplainRuntimeBase(MLModel):
         """
         # convert raw to v2
         raw_data = await request.body()
-        payload = InferenceRequest.parse_raw(json.loads(raw_data))
+        payload = InferenceRequest.parse_raw(raw_data)
 
         v2_response = await self.predict(payload)
         explanation = orjson.dumps(json.loads(v2_response.outputs[0].data.__root__))

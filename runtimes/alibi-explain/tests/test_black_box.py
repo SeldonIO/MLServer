@@ -124,7 +124,7 @@ async def test_end_2_end_explain_v1_output(
     async def _receive():
         return {
             "type": "http.request",
-            "body": json.dumps(payload.json()).encode("utf-8"),
+            "body": json.dumps(payload.dict()).encode("utf-8"),
         }
 
     request = Request(scope={"type": "http"}, receive=_receive)
