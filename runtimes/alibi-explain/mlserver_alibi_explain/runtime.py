@@ -5,7 +5,6 @@ import orjson
 from alibi.api.interfaces import Explanation, Explainer
 from alibi.saving import load_explainer
 from starlette.requests import Request
-from starlette.responses import Response
 
 from mlserver.codecs import (
     NumpyRequestCodec,
@@ -16,6 +15,7 @@ from mlserver.codecs import (
 from mlserver.errors import ModelParametersMissing, InvalidModelURI
 from mlserver.handlers import custom_handler
 from mlserver.model import MLModel
+from mlserver.rest.responses import Response
 from mlserver.settings import ModelSettings, ModelParameters
 from mlserver.types import (
     InferenceRequest,
@@ -64,7 +64,7 @@ class AlibiExplainRuntimeBase(MLModel):
         payload = InferenceRequest.parse_raw(raw_data)
 
         v2_response = await self.predict(payload)
-        explanation = orjson.dumps(json.loads(v2_response.outputs[0].data.__root__))
+        explanation = json.loads(v2_response.outputs[0].data.__root__)
 
         return Response(content=explanation, media_type="application/json")
 
@@ -198,8 +198,8 @@ class AlibiExplainRuntime(MLModel):
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
         return await self._rt.predict(payload)
 
-    # we add explain_v1_output here to enable the registration and routing of custom
+    # we add _explain_v1_output here to enable the registration and routing of custom
     # endpoint to `_rt.explain_v1_output`
     @custom_handler(rest_path="/explain")
-    async def explain_v1_output(self, request: Request) -> Response:
+    async def _explain_v1_output(self, request: Request) -> Response:
         return await self._rt.explain_v1_output(request)

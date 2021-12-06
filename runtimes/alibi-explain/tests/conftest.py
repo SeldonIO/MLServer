@@ -235,36 +235,37 @@ async def dummy_alibi_explain_client(tmp_path, settings) -> TestClient:
     # set the actual runtime inside wrapper to the dummy runtime we created
     rt._rt = _rt
 
-    model_registry = MultiModelRegistry()
-    await model_registry.load(rt)
-
-    data_plane = DataPlane(settings=settings, model_registry=model_registry)
-
-    model_settings_path = tmp_path.joinpath("model-settings.json")
-    model_settings_dict = {
-        "name": rt.settings.name,
-        "implementation": "mlserver_alibi_explain.AlibiExplainRuntime",
-        "parallel_workers": 0,
-    }
-
-    model_settings_path.write_text(json.dumps(model_settings_dict, indent=4))
-    model_repository = ModelRepository(tmp_path)
-
-    handlers = ModelRepositoryHandlers(
-        repository=model_repository, model_registry=model_registry
-    )
-
-    server = RESTServer(
-        settings=settings,
-        data_plane=data_plane,
-        model_repository_handlers=handlers,
-    )
+    server = await _build_rest_server_with_dummy_explain_model(rt, settings, tmp_path)
 
     await asyncio.gather(server.add_custom_handlers(rt))
 
     yield TestClient(server._app)
 
     await asyncio.gather(server.delete_custom_handlers(rt))
+
+
+async def _build_rest_server_with_dummy_explain_model(
+        rt: AlibiExplainRuntime, settings: Settings, tmp_path: Path) -> RESTServer:
+    model_registry = MultiModelRegistry()
+    await model_registry.load(rt)
+    data_plane = DataPlane(settings=settings, model_registry=model_registry)
+    model_settings_path = tmp_path.joinpath("model-settings.json")
+    model_settings_dict = {
+        "name": rt.settings.name,
+        "implementation": "mlserver_alibi_explain.AlibiExplainRuntime",
+        "parallel_workers": 0,
+    }
+    model_settings_path.write_text(json.dumps(model_settings_dict, indent=4))
+    model_repository = ModelRepository(tmp_path)
+    handlers = ModelRepositoryHandlers(
+        repository=model_repository, model_registry=model_registry
+    )
+    server = RESTServer(
+        settings=settings,
+        data_plane=data_plane,
+        model_repository_handlers=handlers,
+    )
+    return server
 
 
 def _train_anchor_image_explainer() -> None:

@@ -36,6 +36,7 @@ setup(
     install_requires=[
         "mlserver",
         "alibi[shap]",
+        "orjson",
     ],
     long_description=_load_description(),
     long_description_content_type="text/markdown",
