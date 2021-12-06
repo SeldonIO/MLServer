@@ -10,7 +10,7 @@ from mlserver.settings import Settings
 from mlserver.cli.constants import DockerfileTemplate
 from mlserver.cli.build import generate_dockerfile, build_image
 
-from .utils import APIClient
+from ..utils import RESTClient
 
 
 @fixture
@@ -33,15 +33,15 @@ def custom_runtime_server(
     docker_client: DockerClient,
     custom_image: str,
     settings: Settings,
-    free_ports: Tuple[str, str],
+    free_ports: Tuple[int, int],
 ) -> str:
     host_http_port, host_grpc_port = free_ports
 
     container = docker_client.containers.run(
         custom_image,
         ports={
-            f"{settings.http_port}/tcp": host_http_port,
-            f"{settings.grpc_port}/tcp": host_grpc_port,
+            f"{settings.http_port}/tcp": str(host_http_port),
+            f"{settings.grpc_port}/tcp": str(host_grpc_port),
         },
         detach=True,
     )
@@ -67,15 +67,15 @@ async def test_infer_custom_runtime(
     inference_request: InferenceRequest,
 ):
     http_server, _ = custom_runtime_server
-    api_client = APIClient(http_server)
-    await api_client.wait_until_ready()
+    rest_client = RESTClient(http_server)
+    await rest_client.wait_until_ready()
 
-    loaded_models = await api_client.list_models()
+    loaded_models = await rest_client.list_models()
     assert len(loaded_models) == 1
 
     model_name = loaded_models[0].name
     inference_request.inputs[0].parameters = Parameters(content_type="np")
-    inference_response = await api_client.infer(model_name, inference_request)
+    inference_response = await rest_client.infer(model_name, inference_request)
     assert len(inference_response.outputs) == 1
 
-    await api_client.close()
+    await rest_client.close()

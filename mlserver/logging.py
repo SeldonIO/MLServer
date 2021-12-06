@@ -19,7 +19,7 @@ def configure_logger(settings: Settings = None):
     logger = get_logger()
 
     # Don't add handler twice
-    if not logger.hasHandlers():
+    if not logger.handlers:
         stream_handler = StreamHandler(sys.stdout)
         formatter = Formatter(LoggerFormat)
         stream_handler.setFormatter(formatter)

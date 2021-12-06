@@ -9,28 +9,36 @@ ENV_PREFIX_MODEL_SETTINGS = "MLSERVER_MODEL_"
 
 
 class CORSSettings(BaseSettings):
+    class Config:
+        env_prefix = ENV_PREFIX_SETTINGS
+
     """
     A list of origins that should be permitted to make
     cross-origin requests. E.g. ['https://example.org', 'https://www.example.org'].
     You can use ['*'] to allow any origin
     """
-
     allow_origins: Optional[List[str]] = []
+
     """
     A regex string to match against origins that
     should be permitted to make cross-origin requests.
     e.g. 'https:\\/\\/.*\\.example\\.org'
     """
     allow_origin_regex: Optional[str] = None
+
     """Indicate that cookies should be supported for cross-origin requests"""
     allow_credentials: Optional[bool] = False
+
     """A list of HTTP methods that should be allowed for cross-origin requests"""
     allow_methods: Optional[List[str]] = ["GET"]
+
     """A list of HTTP request headers that should be supported for
     cross-origin requests"""
     allow_headers: Optional[List[str]] = []
+
     """Indicate any response headers that should be made accessible to the browser"""
     expose_headers: Optional[List[str]] = []
+
     """Sets a maximum time in seconds for browsers to cache CORS responses"""
     max_age: Optional[int] = 600
 
