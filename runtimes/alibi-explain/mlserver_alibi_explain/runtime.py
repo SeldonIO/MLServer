@@ -1,10 +1,8 @@
 import json
 from typing import Any, Optional, List, Dict
 
-import orjson
 from alibi.api.interfaces import Explanation, Explainer
 from alibi.saving import load_explainer
-from starlette.requests import Request
 
 from mlserver.codecs import (
     NumpyRequestCodec,

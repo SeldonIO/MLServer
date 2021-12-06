@@ -8,7 +8,6 @@ import pytest
 import tensorflow as tf
 from alibi.saving import load_explainer
 from numpy.testing import assert_array_equal
-from starlette.requests import Request
 
 from helpers.tf_model import get_tf_mnist_model_uri
 from mlserver import MLModel

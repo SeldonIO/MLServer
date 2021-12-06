@@ -204,7 +204,7 @@ async def integrated_gradients_runtime() -> AlibiExplainRuntime:
 
 
 @pytest.yield_fixture
-async def dummy_alibi_explain_client(tmp_path, settings) -> TestClient:
+async def dummy_alibi_explain_client(tmp_path, settings) -> AsyncIterable[TestClient]:
     rt = AlibiExplainRuntime(
         ModelSettings(
             parallel_workers=0,
@@ -257,7 +257,7 @@ async def _build_rest_server_with_dummy_explain_model(
         "parallel_workers": 0,
     }
     model_settings_path.write_text(json.dumps(model_settings_dict, indent=4))
-    model_repository = ModelRepository(tmp_path)
+    model_repository = ModelRepository(str(tmp_path))
     handlers = ModelRepositoryHandlers(
         repository=model_repository, model_registry=model_registry
     )
