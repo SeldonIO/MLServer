@@ -245,7 +245,8 @@ async def dummy_alibi_explain_client(tmp_path, settings) -> TestClient:
 
 
 async def _build_rest_server_with_dummy_explain_model(
-        rt: AlibiExplainRuntime, settings: Settings, tmp_path: Path) -> RESTServer:
+    rt: AlibiExplainRuntime, settings: Settings, tmp_path: Path
+) -> RESTServer:
     model_registry = MultiModelRegistry()
     await model_registry.load(rt)
     data_plane = DataPlane(settings=settings, model_registry=model_registry)

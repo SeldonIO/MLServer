@@ -51,7 +51,7 @@ class AlibiExplainRuntimeBase(MLModel):
         self.alibi_explain_settings = explainer_settings
         super().__init__(settings)
 
-    async def explain_v1_output(self, request: Request) -> Response:
+    async def explain_v1_output(self, request: InferenceRequest) -> Response:
         """
         A custom endpoint to return explanation results in plain json format (no v2
         encoding) to keep backward compatibility of legacy downstream users.
@@ -59,11 +59,7 @@ class AlibiExplainRuntimeBase(MLModel):
         This does not work with multi-model serving as no reference to the model exists
         in the endpoint.
         """
-        # convert raw to v2
-        raw_data = await request.body()
-        payload = InferenceRequest.parse_raw(raw_data)
-
-        v2_response = await self.predict(payload)
+        v2_response = await self.predict(request)
         explanation = json.loads(v2_response.outputs[0].data.__root__)
 
         return Response(content=explanation, media_type="application/json")
@@ -201,5 +197,5 @@ class AlibiExplainRuntime(MLModel):
     # we add _explain_v1_output here to enable the registration and routing of custom
     # endpoint to `_rt.explain_v1_output`
     @custom_handler(rest_path="/explain")
-    async def _explain_v1_output(self, request: Request) -> Response:
+    async def _explain_v1_output(self, request: InferenceRequest) -> Response:
         return await self._rt.explain_v1_output(request)

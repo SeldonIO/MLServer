@@ -121,17 +121,9 @@ async def test_end_2_end_explain_v1_output(
 ):
     # in this test we get raw explanation as opposed to v2
 
-    async def _receive():
-        return {
-            "type": "http.request",
-            "body": json.dumps(payload.dict()).encode("utf-8"),
-        }
-
-    request = Request(scope={"type": "http"}, receive=_receive)
-
     response = (
         await anchor_image_runtime_with_remote_predict_patch._rt.explain_v1_output(
-            request
+            payload
         )
     )
 
