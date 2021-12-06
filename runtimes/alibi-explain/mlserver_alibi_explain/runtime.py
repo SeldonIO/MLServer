@@ -26,16 +26,16 @@ from mlserver.types import (
     MetadataTensor,
     ResponseOutput,
 )
+from mlserver_alibi_explain.alibi_dependency_reference import (
+    get_mlmodel_class_as_str,
+    get_alibi_class_as_str,
+)
 from mlserver_alibi_explain.common import (
     execute_async,
     AlibiExplainSettings,
     import_and_get_class,
     EXPLAIN_PARAMETERS_TAG,
     EXPLAINER_TYPE_TAG,
-)
-from mlserver_alibi_explain.alibi_dependency_reference import (
-    get_mlmodel_class_as_str,
-    get_alibi_class_as_str,
 )
 
 
@@ -51,7 +51,6 @@ class AlibiExplainRuntimeBase(MLModel):
         self.alibi_explain_settings = explainer_settings
         super().__init__(settings)
 
-    @custom_handler(rest_path="/explain")
     async def explain_v1_output(self, request: Request) -> Response:
         """
         A custom endpoint to return explanation results in plain json format (no v2
@@ -198,3 +197,9 @@ class AlibiExplainRuntime(MLModel):
 
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
         return await self._rt.predict(payload)
+
+    # we add explain_v1_output here to enable the registration and routing of custom
+    # endpoint to `_rt.explain_v1_output`
+    @custom_handler(rest_path="/explain")
+    async def explain_v1_output(self, request: Request) -> Response:
+        return await self._rt.explain_v1_output(request)

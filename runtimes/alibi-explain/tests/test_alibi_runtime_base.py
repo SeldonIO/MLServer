@@ -213,3 +213,26 @@ async def test_explain_parameters_pass_through():
 
     res = await rt.predict(inference_request)
     assert isinstance(res, InferenceResponse)
+
+
+async def test_custom_explain_endpoint(dummy_alibi_explain_client):
+    # a test for `/explain` endpoint that returns raw explanation directly
+    data = np.random.randn(1, 1)
+    inference_request = InferenceRequest(
+        parameters=Parameters(content_type=NumpyCodec.ContentType),
+        inputs=[
+            RequestInput(
+                name="predict",
+                shape=data.shape,
+                data=data.tolist(),
+                datatype="FP32",
+            )
+        ],
+    )
+
+    response = dummy_alibi_explain_client.post(
+        "/explain", json=inference_request.json()
+    )
+    response_text = json.loads(response.text)
+    assert "meta" in response_text
+    assert "data" in response_text
