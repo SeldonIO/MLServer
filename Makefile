@@ -43,6 +43,7 @@ push-test:
 	twine upload --repository-url https://test.pypi.org/legacy/ dist/*
 
 push:
+	twine upload dist/*
 	docker push ${IMAGE_NAME}:${VERSION}
 	docker push ${IMAGE_NAME}:${VERSION}-slim
 	for _runtime in ./runtimes/*; \
@@ -50,7 +51,6 @@ push:
 	  _runtimeName=$$(basename $$_runtime); \
 		docker push ${IMAGE_NAME}:${VERSION}-$$_runtimeName; \
 	done
-	twine upload dist/*
 
 test:
 	tox
