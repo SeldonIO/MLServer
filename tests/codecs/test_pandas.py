@@ -18,7 +18,7 @@ from mlserver.types import (
         (
             pd.Series(data=["hey", "abc"], name="foo"),
             ResponseOutput(
-                name="foo", shape=[2], data=["hey", "abc"], datatype="BYTES"
+                name="foo", shape=[2], data=[b"hey", b"abc"], datatype="BYTES"
             ),
         ),
         (
@@ -62,7 +62,7 @@ def test_to_response_output(series, expected):
                         name="a", shape=[3], datatype="INT64", data=[1, 2, 3]
                     ),
                     ResponseOutput(
-                        name="b", shape=[3], datatype="BYTES", data=["A", "B", "C"]
+                        name="b", shape=[3], datatype="BYTES", data=[b"A", b"B", b"C"]
                     ),
                 ],
             ),
@@ -95,7 +95,7 @@ def test_encode(dataframe, expected):
                         name="b",
                         data=b"hello world",
                         datatype="BYTES",
-                        shape=[1, 11],
+                        shape=[1],
                         parameters=Parameters(_decoded_payload=["hello world"]),
                     ),
                 ]
@@ -118,7 +118,7 @@ def test_encode(dataframe, expected):
                         name="b",
                         data=b"ABC",
                         datatype="BYTES",
-                        shape=[3, 1],
+                        shape=[3],
                     ),
                 ]
             ),

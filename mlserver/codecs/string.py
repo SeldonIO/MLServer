@@ -9,7 +9,7 @@ from .pack import unpack, PackElement
 _DefaultStrCodec = "utf-8"
 
 
-def _encode_str(elem: str) -> bytes:
+def encode_str(elem: str) -> bytes:
     return elem.encode(_DefaultStrCodec)
 
 
@@ -35,7 +35,7 @@ class StringCodec(InputCodec):
 
     @classmethod
     def encode(cls, name: str, payload: List[str]) -> ResponseOutput:
-        packed = map(_encode_str, payload)
+        packed = map(encode_str, payload)
         shape = [len(payload)]
         return ResponseOutput(
             name=name,
