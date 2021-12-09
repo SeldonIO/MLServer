@@ -37,10 +37,15 @@ def convert_from_bytes(output: ResponseOutput, ty: Optional[Type]) -> Any:
     This utility function decodes the response from bytes string to python object dict.
     It is related to decoding StringCodec
     """
+    if output.shape != [1]:
+        # TODO: Does this default value make sense here?
+        return ""
+
     if ty == str:
-        return bytearray(output.data).decode("UTF-8")
+        return bytearray(output.data[0]).decode("UTF-8")
     else:
-        py_str = bytearray(output.data).decode("UTF-8")
+        py_str = bytearray(output.data[0]).decode("UTF-8")
+
         from ast import literal_eval
 
         return literal_eval(py_str)
