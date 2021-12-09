@@ -1,0 +1,173 @@
+import pytest
+import numpy as np
+import pandas as pd
+
+from typing import Any
+
+from mlserver.codecs import (
+    InputCodec,
+    RequestCodec,
+    NumpyCodec,
+    StringCodec,
+    PandasCodec,
+    decode_inference_request,
+)
+from mlserver.grpc import dataplane_pb2 as pb
+from mlserver.grpc.converters import (
+    ModelInferResponseConverter,
+    ModelInferRequestConverter,
+    InferOutputTensorConverter,
+    InferInputTensorConverter,
+)
+
+
+@pytest.mark.parametrize(
+    "decoded, codec, expected",
+    [
+        (
+            pd.DataFrame(
+                {
+                    "a": [1, 2, 3],
+                    "b": ["A", "B", "C"],
+                }
+            ),
+            PandasCodec,
+            pb.ModelInferResponse(
+                model_name="my-model",
+                outputs=[
+                    pb.ModelInferResponse.InferOutputTensor(
+                        name="a",
+                        datatype="INT64",
+                        shape=[3],
+                        contents=pb.InferTensorContents(int64_contents=[1, 2, 3]),
+                    ),
+                    pb.ModelInferResponse.InferOutputTensor(
+                        name="b",
+                        datatype="BYTES",
+                        shape=[3],
+                        contents=pb.InferTensorContents(
+                            bytes_contents=[b"A", b"B", b"C"]
+                        ),
+                    ),
+                ],
+            ),
+        )
+    ],
+)
+def test_encode_infer_response(
+    decoded: Any, codec: RequestCodec, expected: pb.ModelInferResponse
+):
+    response_output = codec.encode("my-model", decoded)
+    model_infer_response = ModelInferResponseConverter.from_types(response_output)
+    assert model_infer_response == expected
+
+
+@pytest.mark.parametrize(
+    "encoded, expected",
+    [
+        (
+            pb.ModelInferRequest(
+                parameters={"content_type": pb.InferParameter(string_param="pd")},
+                inputs=[
+                    pb.ModelInferRequest.InferInputTensor(
+                        name="a",
+                        datatype="INT64",
+                        shape=[3],
+                        contents=pb.InferTensorContents(int64_contents=[1, 2, 3]),
+                    ),
+                    pb.ModelInferRequest.InferInputTensor(
+                        name="b",
+                        datatype="BYTES",
+                        shape=[3],
+                        parameters={
+                            "content_type": pb.InferParameter(string_param="str")
+                        },
+                        contents=pb.InferTensorContents(
+                            bytes_contents=[b"A", b"B", b"C"]
+                        ),
+                    ),
+                ],
+            ),
+            pd.DataFrame(
+                {
+                    "a": [1, 2, 3],
+                    "b": ["A", "B", "C"],
+                }
+            ),
+        )
+    ],
+)
+def test_decode_infer_request(encoded: pb.ModelInferRequest, expected: Any):
+    inference_request = ModelInferRequestConverter.to_types(encoded)
+    decoded = decode_inference_request(inference_request)
+    pd.testing.assert_frame_equal(decoded, expected)
+
+
+@pytest.mark.parametrize(
+    "decoded, codec, expected",
+    [
+        (
+            np.array([21.0]),
+            NumpyCodec,
+            pb.ModelInferResponse.InferOutputTensor(
+                name="output-0",
+                datatype="FP64",
+                shape=[1],
+                contents=pb.InferTensorContents(fp64_contents=[21.0]),
+            ),
+        ),
+        (
+            ["hey", "what's", "up"],
+            StringCodec,
+            pb.ModelInferResponse.InferOutputTensor(
+                name="output-0",
+                datatype="BYTES",
+                shape=[3],
+                contents=pb.InferTensorContents(
+                    bytes_contents=[b"hey", b"what's", b"up"]
+                ),
+            ),
+        ),
+    ],
+)
+def test_encode_output_tensor(
+    decoded: Any, codec: InputCodec, expected: pb.ModelInferResponse.InferOutputTensor
+):
+    response_output = codec.encode(name="output-0", payload=decoded)
+    infer_output_tensor = InferOutputTensorConverter.from_types(response_output)
+    assert infer_output_tensor == expected
+
+
+@pytest.mark.parametrize(
+    "encoded, codec, expected",
+    [
+        (
+            pb.ModelInferRequest.InferInputTensor(
+                name="output-0",
+                datatype="FP64",
+                shape=[1],
+                contents=pb.InferTensorContents(fp64_contents=[21.0]),
+            ),
+            NumpyCodec,
+            np.array([21.0]),
+        ),
+        (
+            pb.ModelInferRequest.InferInputTensor(
+                name="output-0",
+                datatype="BYTES",
+                shape=[3],
+                contents=pb.InferTensorContents(
+                    bytes_contents=[b"hey", b"what's", b"up"]
+                ),
+            ),
+            StringCodec,
+            ["hey", "what's", "up"],
+        ),
+    ],
+)
+def test_decode_input_tensor(
+    encoded: pb.ModelInferRequest.InferInputTensor, codec: InputCodec, expected: Any
+):
+    request_input = InferInputTensorConverter.to_types(encoded)
+    decoded = codec.decode(request_input)
+    assert decoded == expected

@@ -141,13 +141,13 @@ def test_parameters_from_types(grpc_parameters):
             types.ResponseOutput(
                 name="output-0",
                 datatype="BYTES",
-                shape=[2, 3],
+                shape=[2],
                 data=[b"hey", b"hello world"],
             ),
             pb.ModelInferResponse.InferOutputTensor(
                 name="output-0",
                 datatype="BYTES",
-                shape=[2, 3],
+                shape=[2],
                 contents=pb.InferTensorContents(
                     bytes_contents=[b"hey", b"hello world"]
                 ),
