@@ -3,7 +3,7 @@ from datetime import datetime
 
 from ..types import RequestInput, ResponseOutput
 from .base import InputCodec, register_input_codec
-from .pack import pack, unpack, PackElement
+from .pack import unpack, PackElement
 
 _Datetime = Union[str, datetime]
 _DatetimeStrCodec = "ascii"

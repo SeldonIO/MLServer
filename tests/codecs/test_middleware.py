@@ -41,8 +41,8 @@ from mlserver.settings import ModelSettings
                     ),
                     RequestInput(
                         name="bar",
-                        shape=[2, 3],
-                        data=b"heyabc",
+                        shape=[2],
+                        data=[b"hey", b"abc"],
                         datatype="BYTES",
                         parameters=Parameters(content_type=StringCodec.ContentType),
                     ),
