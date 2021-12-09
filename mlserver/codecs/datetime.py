@@ -45,17 +45,17 @@ class DatetimeCodec(InputCodec):
     @classmethod
     def encode(cls, name: str, payload: List[_Datetime]) -> ResponseOutput:
         # Assume that payload is already in b64, so we only need to pack it
-        packed, shape = pack(map(_encode_datetime, payload))
+        packed = map(_encode_datetime, payload)
+        shape = [len(payload)]
         return ResponseOutput(
             name=name,
             datatype="BYTES",
             shape=shape,
-            data=packed,
+            data=list(packed),
         )
 
     @classmethod
     def decode(cls, request_input: RequestInput) -> List[datetime]:
         packed = request_input.data.__root__
-        shape = request_input.shape
 
-        return list(map(_decode_datetime, unpack(packed, shape)))
+        return list(map(_decode_datetime, unpack(packed)))
