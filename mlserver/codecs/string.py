@@ -4,7 +4,7 @@ from ..types import RequestInput, ResponseOutput, Parameters
 
 from .utils import FirstInputRequestCodec
 from .base import InputCodec, register_input_codec, register_request_codec
-from .pack import pack, unpack, PackElement
+from .pack import unpack, PackElement
 
 _DefaultStrCodec = "utf-8"
 
@@ -35,20 +35,20 @@ class StringCodec(InputCodec):
 
     @classmethod
     def encode(cls, name: str, payload: List[str]) -> ResponseOutput:
-        packed, shape = pack(map(_encode_str, payload))
+        packed = map(_encode_str, payload)
+        shape = [len(payload)]
         return ResponseOutput(
             name=name,
             datatype="BYTES",
             shape=shape,
-            data=packed,
+            data=list(packed),
         )
 
     @classmethod
     def decode(cls, request_input: RequestInput) -> List[str]:
         packed = request_input.data.__root__
-        shape = request_input.shape
 
-        unpacked = map(_decode_str, unpack(packed, shape))
+        unpacked = map(_decode_str, unpack(packed))
         return list(unpacked)
 
     @classmethod
@@ -59,7 +59,7 @@ class StringCodec(InputCodec):
         return RequestInput(
             name=name,
             datatype="BYTES",
-            shape=[len(payload), -1],  # this is discarded downstream?
+            shape=[len(payload)],  # this is discarded downstream?
             data=payload,
             parameters=Parameters(content_type=cls.ContentType),
         )

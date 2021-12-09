@@ -24,23 +24,23 @@ from mlserver.types import RequestInput, ResponseOutput
             ["hello world"],
         ),
         (
-            RequestInput(
-                name="foo", datatype="BYTES", shape=[1, 11], data=b"hello world"
-            ),
+            RequestInput(name="foo", datatype="BYTES", shape=[1], data=b"hello world"),
             ["hello world"],
         ),
         (
             RequestInput(
                 name="foo",
                 datatype="BYTES",
-                shape=[2, 11],
+                shape=[2],
                 data=["hello world", "hello world"],
             ),
             ["hello world", "hello world"],
         ),
         (
-            RequestInput(name="foo", datatype="BYTES", shape=[2, 3], data=b"heyabc"),
-            ["hey", "abc"],
+            RequestInput(
+                name="foo", datatype="BYTES", shape=[2], data=[b"hey", b"whats"]
+            ),
+            ["hey", "whats"],
         ),
     ],
 )
@@ -57,12 +57,14 @@ def test_decode(request_input, expected):
         (
             ["hello world"],
             ResponseOutput(
-                name="foo", shape=[1, 11], datatype="BYTES", data=b"hello world"
+                name="foo", shape=[1], datatype="BYTES", data=[b"hello world"]
             ),
         ),
         (
-            ["hey", "abc"],
-            ResponseOutput(name="foo", shape=[2, 3], datatype="BYTES", data=b"heyabc"),
+            ["hey", "whats"],
+            ResponseOutput(
+                name="foo", shape=[2], datatype="BYTES", data=[b"hey", b"whats"]
+            ),
         ),
     ],
 )
@@ -72,8 +74,29 @@ def test_encode(decoded, expected):
 
     assert expected == response_output
 
-    # test encode_request_input
+
+@pytest.mark.parametrize(
+    "decoded, expected",
+    [
+        (
+            ["hello world"],
+            ResponseOutput(
+                name="foo", shape=[1], datatype="BYTES", data=[b"hello world"]
+            ),
+        ),
+        (
+            ["hey", "whats"],
+            ResponseOutput(
+                name="foo", shape=[2], datatype="BYTES", data=[b"hey", b"whats"]
+            ),
+        ),
+    ],
+)
+def test_encode_request_input(decoded, expected):
     # we only support variable length string to be transferred over REST
+    codec = StringCodec()
+    response_output = codec.encode(name="foo", payload=decoded)
+
     request_input = codec.encode_request_input(name="foo", payload=decoded)
     assert request_input.data.__root__ == decoded
     assert response_output.datatype == request_input.datatype

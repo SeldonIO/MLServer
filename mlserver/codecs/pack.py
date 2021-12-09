@@ -5,22 +5,13 @@ PackElement = Union[bytes, str]
 PackedPayload = Union[PackElement, List[PackElement]]
 
 
-def unpack(
-    packed: PackedPayload, shape: List[int]
-) -> Generator[PackElement, None, None]:
+def unpack(packed: PackedPayload) -> Generator[PackElement, None, None]:
     if isinstance(packed, list):
         # If it's a list, assume list of strings
         yield from packed
     else:
-        if len(shape) == 0:
-            # If there is no shape, assume that it's a single element
-            yield packed
-        else:
-            # Otherwise, assume content is a concatenated list of same-length
-            # strings and get the common length from the shape
-            common_length = shape[-1]
-            for i in range(0, len(packed), common_length):
-                yield packed[i : i + common_length]
+        # If there is no shape, assume that it's a single element
+        yield packed
 
 
 def pack(unpacked: Iterable[bytes]) -> Tuple[PackedPayload, List[int]]:
