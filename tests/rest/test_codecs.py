@@ -4,7 +4,7 @@ import json
 
 from typing import Any
 
-from mlserver.codecs import NumpyCodec, StringCodec, InputCodec
+from mlserver.codecs import NumpyCodec, StringCodec, InputCodec, Base64Codec
 from mlserver.types import RequestInput
 from mlserver.rest.responses import Response
 
@@ -21,6 +21,17 @@ from mlserver.rest.responses import Response
                 "shape": [1],
                 "parameters": None,
                 "data": [21.0],
+            },
+        ),
+        (
+            np.array([[b"\x01"], [b"\x02"]], dtype=bytes),
+            NumpyCodec,
+            {
+                "name": "output-0",
+                "datatype": "BYTES",
+                "shape": [2, 1],
+                "parameters": None,
+                "data": ["\x01\x02"],
             },
         ),
         (
