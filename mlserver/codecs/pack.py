@@ -1,4 +1,4 @@
-from typing import Generator, Union, Iterable, List, Tuple
+from typing import Generator, Union, List
 
 
 PackElement = Union[bytes, str]

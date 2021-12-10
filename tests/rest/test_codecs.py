@@ -5,7 +5,6 @@ import json
 from typing import Any
 
 from mlserver.codecs import NumpyCodec, StringCodec, InputCodec, Base64Codec
-from mlserver.types import RequestInput
 from mlserver.rest.responses import Response
 
 
