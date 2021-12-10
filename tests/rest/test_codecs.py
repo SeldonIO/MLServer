@@ -34,6 +34,17 @@ from mlserver.rest.responses import Response
                 "data": ["hey", "what's", "up"],
             },
         ),
+        (
+            [b"Python is fun"],
+            Base64Codec,
+            {
+                "name": "output-0",
+                "datatype": "BYTES",
+                "shape": [1],
+                "parameters": None,
+                "data": ["UHl0aG9uIGlzIGZ1bg=="],
+            },
+        ),
     ],
 )
 def test_encode_output_tensor(decoded: Any, codec: InputCodec, expected: dict):

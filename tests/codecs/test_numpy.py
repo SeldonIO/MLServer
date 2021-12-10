@@ -21,34 +21,57 @@ from mlserver.types import RequestInput
             np.array([1.0, 2.0]),
         ),
         (
-            RequestInput(name="foo", shape=[2, 1], data=b"\x01\x02", datatype="BYTES"),
+            RequestInput(
+                name="foo", shape=[2, 1], data=[b"\x01\x02"], datatype="BYTES"
+            ),
             np.array([[b"\x01"], [b"\x02"]], dtype=bytes),
         ),
     ],
 )
 def test_numpy_codec(request_input, payload):
-    codec = NumpyCodec()
-    decoded = codec.decode(request_input)
+    decoded = NumpyCodec.decode(request_input)
 
     np.testing.assert_array_equal(decoded, payload)
 
-    response_output = codec.encode(name="foo", payload=decoded)
+    response_output = NumpyCodec.encode(name="foo", payload=decoded)
 
     assert response_output.datatype == request_input.datatype
     assert response_output.shape == request_input.shape
     assert response_output.data == request_input.data
 
-    # testing encode_request_input that should result in a similar output to
-    # encode but to `RequestInput`
 
-    request_input_result = codec.encode_request_input(name="foo", payload=decoded)
+@pytest.mark.parametrize(
+    "request_input",
+    [
+        RequestInput(name="foo", shape=[3], data=[1, 2, 3], datatype="INT32"),
+        RequestInput(name="foo", shape=[2, 2], data=[1, 2, 3, 4], datatype="INT32"),
+        RequestInput(name="foo", shape=[2], data=[1, 2], datatype="FP32"),
+        RequestInput(name="foo", shape=[2, 1], data=[b"\x01\x02"], datatype="BYTES"),
+    ],
+)
+def test_encode_request_input(request_input):
+    decoded = NumpyCodec.decode(request_input)
+    response_output = NumpyCodec.encode(name="foo", payload=decoded)
+
+    request_input_result = NumpyCodec.encode_request_input(name="foo", payload=decoded)
     assert response_output.datatype == request_input_result.datatype
     assert response_output.shape == request_input_result.shape
     assert response_output.data == request_input_result.data
-    assert request_input_result.parameters.content_type == codec.ContentType
+    assert request_input_result.parameters.content_type == NumpyCodec.ContentType
 
-    # similarly for decode_response_output
-    output_response_decoded = codec.decode_response_output(response_output)
+
+@pytest.mark.parametrize(
+    "payload",
+    [
+        np.array([1, 2, 3]),
+        np.array([[1, 2], [3, 4]]),
+        np.array([1.0, 2.0]),
+        np.array([[b"\x01"], [b"\x02"]], dtype=bytes),
+    ],
+)
+def test_decode_response_output(payload):
+    response_output = NumpyCodec.encode(name="foo", payload=payload)
+    output_response_decoded = NumpyCodec.decode_response_output(response_output)
     np.testing.assert_array_equal(output_response_decoded, payload)
 
 
