@@ -58,7 +58,12 @@ class AlibiExplainRuntimeBase(MLModel):
         in the endpoint.
         """
         v2_response = await self.predict(request)
-        explanation = json.loads(v2_response.outputs[0].data.__root__)
+        output = v2_response.outputs[0]
+
+        # TODO: Does this default value make sense here?
+        explanation = {}
+        if output.shape == [1]:
+            explanation = json.loads(output.data[0])
 
         return Response(content=explanation, media_type="application/json")
 
