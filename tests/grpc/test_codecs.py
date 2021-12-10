@@ -10,6 +10,7 @@ from mlserver.codecs import (
     NumpyCodec,
     StringCodec,
     PandasCodec,
+    Base64Codec,
     decode_inference_request,
 )
 from mlserver.grpc import dataplane_pb2 as pb
@@ -117,6 +118,16 @@ def test_decode_infer_request(encoded: pb.ModelInferRequest, expected: Any):
             ),
         ),
         (
+            np.array([[b"\x01"], [b"\x02"]], dtype=bytes),
+            NumpyCodec,
+            pb.ModelInferResponse.InferOutputTensor(
+                name="output-0",
+                datatype="BYTES",
+                shape=[2, 1],
+                contents=pb.InferTensorContents(bytes_contents=[b"\x01\x02"]),
+            ),
+        ),
+        (
             ["hey", "what's", "up"],
             StringCodec,
             pb.ModelInferResponse.InferOutputTensor(
@@ -125,6 +136,18 @@ def test_decode_infer_request(encoded: pb.ModelInferRequest, expected: Any):
                 shape=[3],
                 contents=pb.InferTensorContents(
                     bytes_contents=[b"hey", b"what's", b"up"]
+                ),
+            ),
+        ),
+        (
+            [b"Python is fun"],
+            Base64Codec,
+            pb.ModelInferResponse.InferOutputTensor(
+                name="output-0",
+                datatype="BYTES",
+                shape=[1],
+                contents=pb.InferTensorContents(
+                    bytes_contents=[b"UHl0aG9uIGlzIGZ1bg=="]
                 ),
             ),
         ),
