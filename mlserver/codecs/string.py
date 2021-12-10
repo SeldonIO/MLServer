@@ -13,7 +13,7 @@ def encode_str(elem: str) -> bytes:
     return elem.encode(_DefaultStrCodec)
 
 
-def _decode_str(encoded: PackElement, str_codec=_DefaultStrCodec) -> str:
+def decode_str(encoded: PackElement, str_codec=_DefaultStrCodec) -> str:
     if isinstance(encoded, bytes):
         return encoded.decode(str_codec)
 
@@ -48,7 +48,7 @@ class StringCodec(InputCodec):
     def decode(cls, request_input: RequestInput) -> List[str]:
         packed = request_input.data.__root__
 
-        unpacked = map(_decode_str, unpack(packed))
+        unpacked = map(decode_str, unpack(packed))
         return list(unpacked)
 
     @classmethod
