@@ -33,7 +33,7 @@ EXPLAIN_PARAMETERS_TAG = "explain_parameters"
 
 
 #  TODO: add this utility in the codec.
-def convert_from_bytes(output: ResponseOutput, ty: Optional[Type]) -> Any:
+def convert_from_bytes(output: ResponseOutput, ty: Optional[Type] = None) -> Any:
     """
     This utility function decodes the response from bytes string to python object dict.
     It is related to decoding StringCodec
