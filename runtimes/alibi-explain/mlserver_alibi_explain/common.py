@@ -11,7 +11,6 @@ import requests
 from pydantic import BaseSettings
 
 from mlserver.codecs import StringCodec, NumpyCodec
-from mlserver.errors import RemoteInferenceError
 from mlserver.types import (
     ResponseOutput,
     InferenceResponse,
@@ -20,6 +19,8 @@ from mlserver.types import (
     MetadataModelResponse,
 )
 from mlserver.utils import generate_uuid
+
+from mlserver_alibi_explain.errors import RemoteInferenceError, InvalidExplanationShape
 
 _DEFAULT_INPUT_NAME = "predict"
 
@@ -32,15 +33,19 @@ EXPLAIN_PARAMETERS_TAG = "explain_parameters"
 
 
 #  TODO: add this utility in the codec.
-def convert_from_bytes(output: ResponseOutput, ty: Optional[Type]) -> Any:
+def convert_from_bytes(output: ResponseOutput, ty: Optional[Type] = None) -> Any:
     """
     This utility function decodes the response from bytes string to python object dict.
     It is related to decoding StringCodec
     """
+    if output.shape != [1]:
+        raise InvalidExplanationShape(output.shape)
+
     if ty == str:
-        return bytearray(output.data).decode("UTF-8")
+        return bytearray(output.data[0]).decode("UTF-8")
     else:
-        py_str = bytearray(output.data).decode("UTF-8")
+        py_str = bytearray(output.data[0]).decode("UTF-8")
+
         from ast import literal_eval
 
         return literal_eval(py_str)

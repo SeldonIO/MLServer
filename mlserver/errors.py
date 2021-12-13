@@ -26,11 +26,6 @@ class InferenceError(MLServerError):
         super().__init__(msg)
 
 
-class RemoteInferenceError(MLServerError):
-    def __init__(self, code: int, reason: str):
-        super().__init__(f"Remote inference call failed with {code}, {reason}")
-
-
 class ModelParametersMissing(MLServerError):
     def __init__(self, model_name: str):
         super().__init__(f"Parameters missing for model {model_name}")

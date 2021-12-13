@@ -21,7 +21,7 @@ class KFservingV2RequestHandler(RequestHandler):
                 "KFServing protocol BYTES data can not be presently handled"
             )
 
-    def extract_request(self) -> np.array:
+    def extract_request(self) -> np.ndarray:
         inputs = self.request["inputs"][0]
         default_codec = NumpyCodec()
         return default_codec.decode(types.RequestInput(**inputs))

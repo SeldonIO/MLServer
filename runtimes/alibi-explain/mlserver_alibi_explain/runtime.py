@@ -35,6 +35,7 @@ from mlserver_alibi_explain.common import (
     EXPLAIN_PARAMETERS_TAG,
     EXPLAINER_TYPE_TAG,
 )
+from mlserver_alibi_explain.errors import InvalidExplanationShape
 
 
 class AlibiExplainRuntimeBase(MLModel):
@@ -58,7 +59,16 @@ class AlibiExplainRuntimeBase(MLModel):
         in the endpoint.
         """
         v2_response = await self.predict(request)
-        explanation = json.loads(v2_response.outputs[0].data.__root__)
+
+        if len(v2_response.outputs) != 1:
+            raise InvalidExplanationShape(len(v2_response.outputs))
+
+        output = v2_response.outputs[0]
+
+        if output.shape != [1]:
+            raise InvalidExplanationShape(output.shape)
+
+        explanation = json.loads(output.data[0])
 
         return Response(content=explanation, media_type="application/json")
 

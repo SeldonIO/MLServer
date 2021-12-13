@@ -1,4 +1,7 @@
+import pytest
+
 from google.protobuf import json_format
+
 from mlserver import types
 from mlserver.grpc.converters import (
     ModelInferRequestConverter,
@@ -8,6 +11,7 @@ from mlserver.grpc.converters import (
     RepositoryIndexRequestConverter,
     RepositoryIndexResponseConverter,
     ParametersConverter,
+    InferOutputTensorConverter,
 )
 from mlserver.grpc import dataplane_pb2 as pb
 
@@ -117,3 +121,43 @@ def test_parameters_from_types(grpc_parameters):
     conv_parameters = ParametersConverter.from_types(parameters)
 
     assert conv_parameters == grpc_parameters
+
+
+@pytest.mark.parametrize(
+    "response_output, expected",
+    [
+        (
+            types.ResponseOutput(
+                name="output-0", datatype="FP32", shape=[1], data=[21.0]
+            ),
+            pb.ModelInferResponse.InferOutputTensor(
+                name="output-0",
+                datatype="FP32",
+                shape=[1],
+                contents=pb.InferTensorContents(fp32_contents=[21.0]),
+            ),
+        ),
+        (
+            types.ResponseOutput(
+                name="output-0",
+                datatype="BYTES",
+                shape=[2],
+                data=[b"hey", b"hello world"],
+            ),
+            pb.ModelInferResponse.InferOutputTensor(
+                name="output-0",
+                datatype="BYTES",
+                shape=[2],
+                contents=pb.InferTensorContents(
+                    bytes_contents=[b"hey", b"hello world"]
+                ),
+            ),
+        ),
+    ],
+)
+def test_inferoutputtensor_from_types(
+    response_output: types.ResponseOutput,
+    expected: pb.ModelInferResponse.InferOutputTensor,
+):
+    infer_output_tensor = InferOutputTensorConverter.from_types(response_output)
+    assert infer_output_tensor == expected
