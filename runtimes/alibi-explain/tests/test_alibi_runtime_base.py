@@ -16,7 +16,6 @@ from mlserver.types import (
     RequestInput,
     ResponseOutput,
     MetadataTensor,
-    InferenceResponse,
 )
 from mlserver_alibi_explain.common import (
     convert_from_bytes,
@@ -275,6 +274,4 @@ async def test_v1_invalid_predict(
     with patch.object(integrated_gradients_runtime._rt, "predict", _mocked_predict):
         request = InferenceRequest(inputs=[])
         with pytest.raises(InvalidExplanationShape):
-            v1_output = await integrated_gradients_runtime._rt.explain_v1_output(
-                request
-            )
+            await integrated_gradients_runtime._rt.explain_v1_output(request)
