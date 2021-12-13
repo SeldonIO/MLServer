@@ -10,7 +10,7 @@ from mlserver.codecs import (
     StringCodec,
     RequestCodecLike,
 )
-from mlserver.errors import MLServerError, ModelParametersMissing, InvalidModelURI
+from mlserver.errors import ModelParametersMissing, InvalidModelURI
 from mlserver.handlers import custom_handler
 from mlserver.model import MLModel
 from mlserver.rest.responses import Response
@@ -35,6 +35,7 @@ from mlserver_alibi_explain.common import (
     EXPLAIN_PARAMETERS_TAG,
     EXPLAINER_TYPE_TAG,
 )
+from mlserver_alibi_explain.errors import InvalidExplanationShape
 
 
 class AlibiExplainRuntimeBase(MLModel):
@@ -60,16 +61,12 @@ class AlibiExplainRuntimeBase(MLModel):
         v2_response = await self.predict(request)
 
         if len(v2_response.outputs) != 1:
-            raise MLServerError(
-                f"Expected a single output, but multiple outputs were returned ({len(v2_response.outputs)})"
-            )
+            raise InvalidExplanationShape(len(v2_response.outputs))
 
         output = v2_response.outputs[0]
 
         if output.shape != [1]:
-            raise MLServerError(
-                f"Expected a single element, but multiple were returned ({output.shape})"
-            )
+            raise InvalidExplanationShape(output.shape)
 
         explanation = json.loads(output.data[0])
 

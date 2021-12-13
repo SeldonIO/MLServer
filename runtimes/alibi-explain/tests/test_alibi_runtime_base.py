@@ -8,7 +8,6 @@ from alibi.api.interfaces import Explanation
 from numpy.testing import assert_array_equal
 
 from mlserver import ModelSettings, MLModel
-from mlserver.errors import MLServerError
 from mlserver.codecs import NumpyCodec
 from mlserver.types import (
     InferenceRequest,
@@ -25,6 +24,7 @@ from mlserver_alibi_explain.common import (
     AlibiExplainSettings,
 )
 from mlserver_alibi_explain.runtime import AlibiExplainRuntime, AlibiExplainRuntimeBase
+from mlserver_alibi_explain.errors import InvalidExplanationShape
 
 """
 Smoke tests for runtimes
@@ -274,7 +274,7 @@ async def test_v1_invalid_predict(
 
     with patch.object(integrated_gradients_runtime._rt, "predict", _mocked_predict):
         request = InferenceRequest(inputs=[])
-        with pytest.raises(MLServerError):
+        with pytest.raises(InvalidExplanationShape):
             v1_output = await integrated_gradients_runtime._rt.explain_v1_output(
                 request
             )
