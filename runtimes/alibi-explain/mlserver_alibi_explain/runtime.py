@@ -10,7 +10,7 @@ from mlserver.codecs import (
     StringCodec,
     RequestCodecLike,
 )
-from mlserver.errors import ModelParametersMissing, InvalidModelURI
+from mlserver.errors import MLServerError, ModelParametersMissing, InvalidModelURI
 from mlserver.handlers import custom_handler
 from mlserver.model import MLModel
 from mlserver.rest.responses import Response
@@ -58,12 +58,20 @@ class AlibiExplainRuntimeBase(MLModel):
         in the endpoint.
         """
         v2_response = await self.predict(request)
+
+        if len(v2_response.outputs) != 1:
+            raise MLServerError(
+                f"Expected a single output, but multiple outputs were returned ({len(v2_response.outputs)})"
+            )
+
         output = v2_response.outputs[0]
 
-        # TODO: Does this default value make sense here?
-        explanation = {}
-        if output.shape == [1]:
-            explanation = json.loads(output.data[0])
+        if output.shape != [1]:
+            raise MLServerError(
+                f"Expected a single element, but multiple were returned ({output.shape})"
+            )
+
+        explanation = json.loads(output.data[0])
 
         return Response(content=explanation, media_type="application/json")
 

@@ -1,4 +1,5 @@
 import json
+import pytest
 from typing import Any, Dict
 from unittest.mock import patch
 
@@ -7,11 +8,14 @@ from alibi.api.interfaces import Explanation
 from numpy.testing import assert_array_equal
 
 from mlserver import ModelSettings, MLModel
+from mlserver.errors import MLServerError
 from mlserver.codecs import NumpyCodec
 from mlserver.types import (
     InferenceRequest,
+    InferenceResponse,
     Parameters,
     RequestInput,
+    ResponseOutput,
     MetadataTensor,
     InferenceResponse,
 )
@@ -236,3 +240,41 @@ async def test_custom_explain_endpoint(dummy_alibi_explain_client):
     response_text = json.loads(response.text)
     assert "meta" in response_text
     assert "data" in response_text
+
+
+@pytest.mark.parametrize(
+    "response",
+    [
+        InferenceResponse(
+            model_name="my-model",
+            outputs=[
+                ResponseOutput(name="foo", datatype="INT32", shape=[1], data=[1]),
+                ResponseOutput(name="bar", datatype="INT32", shape=[1], data=[2]),
+            ],
+        ),
+        InferenceResponse(
+            model_name="my-model",
+            outputs=[
+                ResponseOutput(name="foo", datatype="INT32", shape=[1, 1], data=[1]),
+            ],
+        ),
+        InferenceResponse(
+            model_name="my-model",
+            outputs=[
+                ResponseOutput(name="foo", datatype="INT32", shape=[1, 2], data=[1, 2]),
+            ],
+        ),
+    ],
+)
+async def test_v1_invalid_predict(
+    response: InferenceResponse, integrated_gradients_runtime: AlibiExplainRuntime
+):
+    async def _mocked_predict(request: InferenceRequest) -> InferenceResponse:
+        return response
+
+    with patch.object(integrated_gradients_runtime._rt, "predict", _mocked_predict):
+        request = InferenceRequest(inputs=[])
+        with pytest.raises(MLServerError):
+            v1_output = await integrated_gradients_runtime._rt.explain_v1_output(
+                request
+            )
