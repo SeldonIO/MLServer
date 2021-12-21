@@ -58,13 +58,14 @@ class ModelRepositoryHandlers:
         return State.UNKNOWN
 
     async def load(self, name: str) -> bool:
-        model_settings = await self._repository.find(name)
+        all_model_settings = await self._repository.find(name)
 
-        # TODO: Move to separate method
-        model_class = model_settings.implementation
-        model = model_class(model_settings)  # type: ignore
+        for model_settings in all_model_settings:
+            # TODO: Move to separate method
+            model_class = model_settings.implementation
+            model = model_class(model_settings)  # type: ignore
 
-        await self._model_registry.load(model)
+            await self._model_registry.load(model)
 
         return True
 

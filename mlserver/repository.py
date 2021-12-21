@@ -49,10 +49,14 @@ class ModelRepository:
         default_model_name = os.path.basename(model_settings_folder)
         if model_settings.name:
             if model_settings.name != default_model_name:
-                # Raise warning if name is different than folder's name
-                logger.warning(
-                    f"Model name '{model_settings.name}' is different than "
-                    f"model's folder name '{default_model_name}'."
+                if model_settings.parameters and \
+                        model_settings.parameters.version == default_model_name:
+                    pass
+                else:
+                    # Raise warning if name is different than folder's name
+                    logger.warning(
+                       f"Model name '{model_settings.name}' is different than "
+                       f"model's folder name '{default_model_name}'."
                 )
         else:
             model_settings.name = default_model_name
@@ -67,11 +71,16 @@ class ModelRepository:
 
         return model_settings
 
-    async def find(self, name: str) -> ModelSettings:
+    async def find(self, name: str) -> List[ModelSettings]:
         all_settings = await self.list()
+        selected = []
         for model_settings in all_settings:
             if model_settings.name == name:
+                selected.append(model_settings)
                 # TODO: Implement version policy
-                return model_settings
 
-        raise ModelNotFound(name)
+        if len(selected) == 0:
+            raise ModelNotFound(name)
+        else:
+            return selected
+
