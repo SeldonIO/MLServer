@@ -6,7 +6,8 @@ from sklearn.pipeline import Pipeline
 from mlserver.settings import ModelSettings
 from mlserver.codecs import CodecError
 from mlserver.errors import InferenceError
-from mlserver.types import RequestInput, RequestOutput
+from mlserver.types import RequestInput, RequestOutput, Parameters
+from mlserver.codecs.base import _codec_registry
 
 from mlserver_sklearn import SKLearnModel
 from mlserver_sklearn.sklearn import (
@@ -130,3 +131,31 @@ async def test_no_predict_proba_for_regression_pipelines(
 
     with pytest.raises(InferenceError):
         await pandas_model.predict(pandas_inference_request)
+
+
+async def test_string_model_output(string_model: SKLearnModel, inference_request):
+    inference_request.outputs = [RequestOutput(name=PREDICT_OUTPUT,
+                                               parameters=Parameters(content_type="str"))]
+
+    print("codecccccccccccccs")
+    print(_codec_registry)
+    print(_codec_registry.__dict__)
+
+    response = await string_model.predict(inference_request)
+
+
+async def test_dataframe_model_output(dataframe_model: SKLearnModel, inference_request):
+    inference_request.outputs = [RequestOutput(name=PREDICT_OUTPUT,
+                                               parameters=Parameters(content_type="pd")),
+                                 RequestOutput(name=PREDICT_PROBA_OUTPUT,
+                                               parameters=Parameters(content_type="pd"))
+                                 ]
+
+    print("codecccccccccccccs")
+    print(_codec_registry)
+    print(_codec_registry.__dict__)
+
+    response = await dataframe_model.predict(inference_request)
+
+    print("\n\n\n", response, "\n\n\n")
+    assert 1 == 2

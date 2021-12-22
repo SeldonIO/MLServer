@@ -5,11 +5,12 @@ from typing import List
 from sklearn.pipeline import Pipeline
 
 from mlserver import types
+from mlserver.codecs.base import find_input_codec, find_request_codec
 from mlserver.model import MLModel
 from mlserver.errors import InferenceError
+from mlserver.types import ResponseOutput
 from mlserver.utils import get_model_uri
-from mlserver.codecs import NumpyCodec, NumpyRequestCodec
-
+from mlserver.codecs import NumpyCodec, NumpyRequestCodec, PandasCodec
 
 PREDICT_OUTPUT = "predict"
 PREDICT_PROBA_OUTPUT = "predict_proba"
@@ -81,8 +82,27 @@ class SKLearnModel(MLModel):
             predict_fn = getattr(self._model, request_output.name)
             y = predict_fn(decoded_request)
 
+            output_codec = NumpyCodec
+            if request_output.parameters:
+                output_content_type = request_output.parameters.content_type
+                if output_content_type:
+                    output_codec = None#find_input_codec(output_content_type)
+                    if not output_codec:
+                        output_codec = find_request_codec(output_content_type)
+
             # TODO: Set datatype (cast from numpy?)
-            response_output = NumpyCodec.encode(name=request_output.name, payload=y)
-            outputs.append(response_output)
+            # response_output = output_codec.encode(name=request_output.name, payload=y)
+
+            # response_output = output_codec.encode(model_name="foo", payload=y)
+
+            print("encoding ", y)
+            response_output = PandasCodec.encode(model_name=self.name, payload=y)
+
+            foo = ResponseOutput(name=request_output.name, shape=[1], datatype="pd", data=response_output.outputs)
+            outputs.append(foo)
+
+            print("got", response_output)
+
+            # self.
 
         return outputs
