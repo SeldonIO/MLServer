@@ -10,7 +10,7 @@ prance==0.20.0
 pytest==6.2.2
 pytest-asyncio==0.16.0
 pytest-mock==3.6.1
-pytest-cases==3.6.5
+pytest-cases==3.6.7
 tox==3.24.4
 docker==5.0.3
 aiohttp==3.8.1
@@ -21,7 +21,7 @@ flake8==4.0.1
 flake8-black==0.2.3
 mypy==0.910
 mypy-protobuf==3.0.0
-types-protobuf==3.18.0
+types-protobuf==3.18.2
 types-orjson==3.6.1
 black==21.7b0
 
