@@ -1,14 +1,16 @@
 import joblib
 
-from typing import List
+from typing import List, Tuple
 
+import pandas as pd
+from pandas import DataFrame
 from sklearn.pipeline import Pipeline
 
 from mlserver import types
 from mlserver.codecs.base import find_input_codec, find_request_codec
 from mlserver.model import MLModel
 from mlserver.errors import InferenceError
-from mlserver.types import ResponseOutput
+from mlserver.types import ResponseOutput, RequestOutput
 from mlserver.utils import get_model_uri
 from mlserver.codecs import NumpyCodec, NumpyRequestCodec, PandasCodec
 
@@ -38,11 +40,21 @@ class SKLearnModel(MLModel):
     async def predict(self, payload: types.InferenceRequest) -> types.InferenceResponse:
         payload = self._check_request(payload)
 
+        model_responses = self._get_model_outputs(payload)
+
+        if (len(model_responses) == 1 and isinstance(model_responses[0][1], DataFrame)):
+            print("Trying to encode data frame")
+            df: DataFrame = model_responses[0][1]
+            return PandasCodec.encode(model_name=self.name,
+                                      model_version=self.version,
+                                      payload=df)
+
+        print("Not encoding dataframe")
         return types.InferenceResponse(
-            model_name=self.name,
-            model_version=self.version,
-            outputs=self._predict_outputs(payload),
-        )
+                model_name=self.name,
+                model_version=self.version,
+                outputs=self._encode_outputs(model_responses),
+            )
 
     def _check_request(self, payload: types.InferenceRequest) -> types.InferenceRequest:
         if not payload.outputs:
@@ -72,37 +84,30 @@ class SKLearnModel(MLModel):
 
         return payload
 
-    def _predict_outputs(
-        self, payload: types.InferenceRequest
-    ) -> List[types.ResponseOutput]:
+    def _get_model_outputs(self, payload: types.InferenceRequest) -> List[Tuple[RequestOutput, object]]:
         decoded_request = self.decode_request(payload, default_codec=NumpyRequestCodec)
 
         outputs = []
         for request_output in payload.outputs:  # type: ignore
             predict_fn = getattr(self._model, request_output.name)
             y = predict_fn(decoded_request)
-
-            output_codec = NumpyCodec
-            if request_output.parameters:
-                output_content_type = request_output.parameters.content_type
-                if output_content_type:
-                    output_codec = None#find_input_codec(output_content_type)
-                    if not output_codec:
-                        output_codec = find_request_codec(output_content_type)
-
-            # TODO: Set datatype (cast from numpy?)
-            # response_output = output_codec.encode(name=request_output.name, payload=y)
-
-            # response_output = output_codec.encode(model_name="foo", payload=y)
-
-            print("encoding ", y)
-            response_output = PandasCodec.encode(model_name=self.name, payload=y)
-
-            foo = ResponseOutput(name=request_output.name, shape=[1], datatype="pd", data=response_output.outputs)
-            outputs.append(foo)
-
-            print("got", response_output)
-
-            # self.
+            outputs.append((request_output, y))
 
         return outputs
+
+    def _encode_outputs(self, outputs: List[Tuple[RequestOutput, object]]) -> List[types.ResponseOutput]:
+        response_outputs = []
+
+        all_output_names = [o[0].name for o in outputs]
+
+        for output, response in outputs:
+            if isinstance(response, pd.DataFrame):
+                raise InferenceError(f"{output.name} is of type DataFrame and {all_output_names} were"
+                                     f" requested. Cannot encode multiple DataFrames in one response."
+                                     f" Please request only a single DataFrame output.")
+
+            # TODO: accommodate more things like Strings
+            response_output = NumpyCodec.encode(name=output.name, payload=response)
+            response_outputs.append(response_output)
+
+        return response_outputs
