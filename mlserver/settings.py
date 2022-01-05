@@ -76,6 +76,9 @@ class Settings(BaseSettings):
     # CORS settings
     cors_settings: Optional[CORSSettings] = None
 
+    # Metrics settings
+    metrics_endpoint: Optional[str] = "/metrics"
+
 
 class ModelParameters(BaseSettings):
     """

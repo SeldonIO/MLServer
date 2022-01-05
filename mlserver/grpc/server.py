@@ -32,11 +32,14 @@ class GRPCServer:
             self._model_repository_handlers
         )
 
-        logging_interceptor = LoggingInterceptor()
-        prom_interceptor = PromServerInterceptor()
+        interceptors = [LoggingInterceptor()]
+
+        if self._settings.metrics_endpoint:
+            interceptors.append(PromServerInterceptor())
+
         self._server = aio.server(
             ThreadPoolExecutor(max_workers=DefaultGrpcWorkers),
-            interceptors=(prom_interceptor, logging_interceptor),
+            interceptors=tuple(interceptors),
             options=self._get_options(),
         )
 

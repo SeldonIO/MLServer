@@ -69,4 +69,4 @@ async def mlserver(
 @pytest.fixture
 async def metrics_client(mlserver: MLServer, settings: Settings):
     http_server = f"{settings.host}:{settings.http_port}"
-    return MetricsClient(http_server)
+    return MetricsClient(http_server, metrics_endpoint=settings.metrics_endpoint)

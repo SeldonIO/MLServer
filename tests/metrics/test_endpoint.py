@@ -1,3 +1,5 @@
+import pytest
+
 from .utils import MetricsClient
 
 
