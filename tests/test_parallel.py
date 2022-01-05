@@ -70,6 +70,17 @@ async def test_load_inference_pool(sum_model: MLModel):
 
     assert hasattr(sum_model, _InferencePoolAttr)
 
+async def test_load_inference_pool_warmed(sum_model: MLModel):
+    sum_model.settings.warm_workers = True
+    await load_inference_pool(sum_model)
+    pool = getattr(sum_model, _InferencePoolAttr)
+    assert hasattr(pool, "_warmed")
+
+async def test_load_inference_pool_not_warmed(sum_model: MLModel):
+    sum_model.settings.warm_workers = False
+    await load_inference_pool(sum_model)
+    pool = getattr(sum_model, _InferencePoolAttr)
+    assert not hasattr(pool, "_warmed")
 
 async def test_dont_load_if_disabled(sum_model: MLModel):
     sum_model.settings.parallel_workers = 0

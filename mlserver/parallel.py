@@ -58,6 +58,11 @@ def _mp_predict(payload: InferenceRequest) -> InferenceResponse:
     global _mp_model
     return asyncio.run(_mp_model.predict(payload))
 
+def _mp_noop():
+    time.sleep(0.1)
+    return None
+
+
 
 class InferencePool:
     """
@@ -94,14 +99,13 @@ class InferencePool:
             f"Warm workers enabled - loading {model.name} in inference pool workers"
         )
         loop = asyncio.get_event_loop()
-
         # Submit tasks to trigger initializer
         loading_tasks = [
-            loop.run_in_executor(self._executor, _noop)
+            loop.run_in_executor(self._executor, _mp_noop)
             for _ in range(model.settings.parallel_workers)
         ]
         logger.info("Waiting for models to be loaded")
-
+        setattr(self, "_warmed", True)
         return await asyncio.wait(loading_tasks)
 
     def __del__(self):
@@ -163,8 +167,3 @@ async def unload_inference_pool(model: MLModel):
 
     pool.__del__()
     delattr(model, _InferencePoolAttr)
-
-
-def _noop():
-    time.sleep(0.1)
-    return None
