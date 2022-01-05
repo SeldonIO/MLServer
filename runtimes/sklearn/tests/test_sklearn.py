@@ -133,7 +133,7 @@ async def test_no_predict_proba_for_regression_pipelines(
     with pytest.raises(InferenceError):
         await pandas_model.predict(pandas_inference_request)
 
-# TODO: not implemeted yet
+# TODO: implement other basic codecs
 # async def test_string_model_output(string_model: SKLearnModel, inference_request):
 #     inference_request.outputs = [RequestOutput(name=PREDICT_OUTPUT,
 #                                                parameters=Parameters(content_type="str"))]
@@ -141,7 +141,6 @@ async def test_no_predict_proba_for_regression_pipelines(
 #     response = await string_model.predict(inference_request)
 
 
-# TODO: is error case
 async def test_error_on_multiple_dataframe_outputs(dataframe_model: SKLearnModel, inference_request):
     inference_request.outputs = [RequestOutput(name=PREDICT_OUTPUT,
                                                parameters=Parameters(content_type="pd")),
@@ -152,7 +151,6 @@ async def test_error_on_multiple_dataframe_outputs(dataframe_model: SKLearnModel
         await dataframe_model.predict(inference_request)
 
     assert "Please request only a single DataFrame output" in str(e.value)
-
 
 
 async def test_dataframe_model_output(dataframe_model: SKLearnModel, inference_request):

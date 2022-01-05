@@ -7,7 +7,6 @@ from pandas import DataFrame
 from sklearn.pipeline import Pipeline
 
 from mlserver import types
-from mlserver.codecs.base import find_input_codec, find_request_codec
 from mlserver.model import MLModel
 from mlserver.errors import InferenceError
 from mlserver.types import ResponseOutput, RequestOutput
@@ -95,7 +94,7 @@ class SKLearnModel(MLModel):
 
         return outputs
 
-    def _encode_outputs(self, outputs: List[Tuple[RequestOutput, object]]) -> List[types.ResponseOutput]:
+    def _encode_outputs(self, outputs: List[Tuple[RequestOutput, object]]) -> List[ResponseOutput]:
         response_outputs = []
 
         all_output_names = [o[0].name for o in outputs]
