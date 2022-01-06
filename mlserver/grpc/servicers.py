@@ -87,8 +87,9 @@ class InferenceServicer(GRPCInferenceServiceServicer):
         )
 
         response_headers = extract_headers(result)
-        response_metadata = to_metadata(response_headers)
-        context.set_trailing_metadata(response_metadata)
+        if response_headers:
+            response_metadata = to_metadata(response_headers)
+            context.set_trailing_metadata(response_metadata)
 
         response = ModelInferResponseConverter.from_types(result)
         return response

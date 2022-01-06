@@ -12,5 +12,5 @@ def to_headers(context: ServicerContext) -> Dict[str, str]:
     return headers
 
 
-def to_metadata(headers: Dict[str, str]) -> Tuple[Tuple[str, str]]:
+def to_metadata(headers: Dict[str, str]) -> Tuple[Tuple[str, str], ...]:
     return tuple(headers.items())
