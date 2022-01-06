@@ -1,8 +1,10 @@
 import os
 import uuid
 
-from typing import Callable, Optional, List
+from typing import Callable, Dict, Optional, List
 
+from .logging import logger
+from .types import InferenceRequest, Parameters
 from .settings import ModelSettings
 from .errors import InvalidModelURI
 
@@ -55,3 +57,27 @@ def get_wrapped_method(f: Callable) -> Callable:
 
 def generate_uuid() -> str:
     return str(uuid.uuid4())
+
+
+def insert_headers(
+    inference_request: InferenceRequest, headers: Dict[str, str]
+) -> InferenceRequest:
+    # Ensure parameters are present
+    if inference_request.parameters is None:
+        inference_request.parameters = Parameters()
+
+    parameters = inference_request.parameters
+
+    if parameters.headers:
+        # TODO: Raise warning that headers will be replaced and shouldn't be used
+        logger.warning(
+            f"There are {len(parameters.headers)} entries present in the"
+            "`headers` field of the request `parameters` object."
+            "The `headers` field of the `parameters` object "
+            "SHOULDN'T BE USED directly."
+            "These entries will be replaced by the actual headers (REST) or"
+            "metadata (gRPC) of the incoming request."
+        )
+
+    parameters.headers = headers
+    return inference_request

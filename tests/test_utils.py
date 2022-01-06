@@ -3,7 +3,8 @@ import pytest
 from typing import Optional
 from unittest.mock import patch
 
-from mlserver.utils import get_model_uri
+from mlserver.utils import get_model_uri, insert_headers
+from mlserver.types import InferenceRequest, Parameters
 from mlserver.settings import ModelSettings, ModelParameters
 
 
@@ -35,3 +36,20 @@ async def test_get_model_uri(uri: str, source: Optional[str], expected: str):
         model_uri = await get_model_uri(model_settings)
 
     assert model_uri == expected
+
+
+@pytest.mark.parametrize(
+    "inference_request",
+    [
+        InferenceRequest(inputs=[]),
+        InferenceRequest(inputs=[], parameters=Parameters()),
+        InferenceRequest(inputs=[], parameters=Parameters(headers={"foo": "bar2"})),
+        InferenceRequest(inputs=[], parameters=Parameters(headers={"bar": "foo"})),
+    ],
+)
+def test_insert_headers(inference_request: InferenceRequest):
+    headers = {"foo": "bar", "hello": "world"}
+    insert_headers(inference_request, headers)
+
+    assert inference_request.parameters is not None
+    assert inference_request.parameters.headers == headers
