@@ -4,7 +4,7 @@ import uuid
 from typing import Callable, Dict, Optional, List
 
 from .logging import logger
-from .types import InferenceRequest, Parameters
+from .types import InferenceRequest, InferenceResponse, Parameters
 from .settings import ModelSettings
 from .errors import InvalidModelURI
 
@@ -68,7 +68,7 @@ def insert_headers(
 
     parameters = inference_request.parameters
 
-    if parameters.headers:
+    if parameters.headers is not None:
         # TODO: Raise warning that headers will be replaced and shouldn't be used
         logger.warning(
             f"There are {len(parameters.headers)} entries present in the"
@@ -81,3 +81,16 @@ def insert_headers(
 
     parameters.headers = headers
     return inference_request
+
+
+def extract_headers(inference_response: InferenceResponse) -> Optional[Dict[str, str]]:
+    if inference_response.parameters is None:
+        return None
+
+    parameters = inference_response.parameters
+    if parameters.headers is None:
+        return None
+
+    headers = parameters.headers
+    parameters.headers = None
+    return headers

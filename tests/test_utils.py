@@ -1,10 +1,10 @@
 import pytest
 
-from typing import Optional
+from typing import Dict, Optional
 from unittest.mock import patch
 
-from mlserver.utils import get_model_uri, insert_headers
-from mlserver.types import InferenceRequest, Parameters
+from mlserver.utils import get_model_uri, extract_headers, insert_headers
+from mlserver.types import InferenceRequest, InferenceResponse, Parameters
 from mlserver.settings import ModelSettings, ModelParameters
 
 
@@ -39,17 +39,38 @@ async def test_get_model_uri(uri: str, source: Optional[str], expected: str):
 
 
 @pytest.mark.parametrize(
-    "inference_request",
+    "parameters",
     [
-        InferenceRequest(inputs=[]),
-        InferenceRequest(inputs=[], parameters=Parameters()),
-        InferenceRequest(inputs=[], parameters=Parameters(headers={"foo": "bar2"})),
-        InferenceRequest(inputs=[], parameters=Parameters(headers={"bar": "foo"})),
+        None,
+        Parameters(),
+        Parameters(headers={"foo": "bar2"}),
+        Parameters(headers={"bar": "foo"}),
     ],
 )
-def test_insert_headers(inference_request: InferenceRequest):
+def test_insert_headers(parameters: Parameters):
+    inference_request = InferenceRequest(inputs=[], parameters=parameters)
     headers = {"foo": "bar", "hello": "world"}
     insert_headers(inference_request, headers)
 
     assert inference_request.parameters is not None
     assert inference_request.parameters.headers == headers
+
+
+@pytest.mark.parametrize(
+    "parameters, expected",
+    [
+        (None, None),
+        (Parameters(), None),
+        (Parameters(headers={}), {}),
+        (Parameters(headers={"foo": "bar"}), {"foo": "bar"}),
+    ],
+)
+def test_extract_headers(parameters: Parameters, expected: Dict[str, str]):
+    inference_response = InferenceResponse(
+        model_name="foo", outputs=[], parameters=parameters
+    )
+    headers = extract_headers(inference_response)
+
+    assert headers == expected
+    if inference_response.parameters:
+        assert inference_response.parameters.headers is None
