@@ -15,7 +15,7 @@ from .converters import (
     RepositoryIndexResponseConverter,
 )
 from .logging import logger
-from .utils import to_headers
+from .utils import to_headers, to_metadata
 
 from ..utils import insert_headers, extract_headers
 from ..handlers import DataPlane, ModelRepositoryHandlers
@@ -87,7 +87,8 @@ class InferenceServicer(GRPCInferenceServiceServicer):
         )
 
         response_headers = extract_headers(result)
-        context.set_trailing_metadata(response_headers)
+        response_metadata = to_metadata(response_headers)
+        context.set_trailing_metadata(response_metadata)
 
         response = ModelInferResponseConverter.from_types(result)
         return response
