@@ -19,7 +19,7 @@ aiohttp-retry==2.4.6
 # Linting and formatting
 flake8==4.0.1
 flake8-black==0.2.3
-mypy==0.910
+mypy==0.930
 mypy-protobuf==3.1.0
 types-protobuf==3.18.3
 types-orjson==3.6.1
