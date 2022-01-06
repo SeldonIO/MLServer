@@ -63,6 +63,17 @@ def test_infer(rest_client, inference_request, model_name, model_version):
     assert prediction.outputs[0].data.__root__ == [6]
 
 
+def test_infer_headers(rest_client, inference_request, sum_model_settings):
+    endpoint = f"/v2/models/{sum_model_settings.name}/infer"
+    response = rest_client.post(
+        endpoint, json=inference_request.dict(), headers={"x-foo": "bar"}
+    )
+
+    assert response.status_code == 200
+    assert "x-foo" in response.headers
+    assert response.headers["x-foo"] == "bar"
+
+
 def test_infer_error(rest_client, inference_request):
     endpoint = "/v2/models/my-model/versions/v0/infer"
     response = rest_client.post(endpoint, json=inference_request.dict())
