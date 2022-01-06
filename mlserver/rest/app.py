@@ -114,13 +114,18 @@ def create_app(
             max_age=settings.cors_settings.max_age,
         )
 
-    app.add_middleware(
-        PrometheusMiddleware,
-        app_name="mlserver",
-        prefix="rest_server",
-        # TODO: Should we also exclude model's health endpoints?
-        skip_paths=["/metrics", "/v2/health/live", "/v2/health/ready"],
-    )
-    app.add_route("/metrics", handle_metrics)
+    if settings.metrics_endpoint:
+        app.add_middleware(
+            PrometheusMiddleware,
+            app_name="mlserver",
+            prefix="rest_server",
+            # TODO: Should we also exclude model's health endpoints?
+            skip_paths=[
+                settings.metrics_endpoint,
+                "/v2/health/live",
+                "/v2/health/ready",
+            ],
+        )
+        app.add_route(settings.metrics_endpoint, handle_metrics)
 
     return app
