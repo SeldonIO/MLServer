@@ -1,3 +1,4 @@
+from fastapi.requests import Request
 from fastapi.responses import Response
 
 from ..types import (
@@ -9,6 +10,7 @@ from ..types import (
     RepositoryIndexResponse,
 )
 from ..handlers import DataPlane, ModelRepositoryHandlers
+from ..utils import insert_headers, extract_headers
 
 from .utils import to_status_code
 
@@ -45,11 +47,24 @@ class Endpoints:
 
     async def infer(
         self,
+        raw_request: Request,
+        raw_response: Response,
         payload: InferenceRequest,
         model_name: str,
         model_version: str = None,
     ) -> InferenceResponse:
-        return await self._data_plane.infer(payload, model_name, model_version)
+        request_headers = raw_request.headers
+        insert_headers(payload, request_headers)
+
+        inference_response = await self._data_plane.infer(
+            payload, model_name, model_version
+        )
+
+        response_headers = extract_headers(inference_response)
+        if response_headers:
+            raw_response.headers.update(response_headers)
+
+        return inference_response
 
 
 class ModelRepositoryEndpoints:
