@@ -83,6 +83,9 @@ emphasize-lines: 2-4, 9-11
 To learn more about the available content types and how to use them, you can
 see all the available ones in the [Available Content
 Types](#available-content-types) section below.
+For a full end-to-end example on how content types work under the hood, you can
+also check out this [Content Type Decoding
+example](../examples/content-type/README.md).
 
 ```{note}
 It's important to keep in mind that content types can be specified at both the
@@ -98,11 +101,20 @@ However, this can be extended through the use of 3rd-party or custom runtimes.
 
 | Python Type                           | Content Type | Request Level | Input Level |
 | ------------------------------------- | ------------ | ------------- | ----------- |
-| [NumPy Array](#numpy-array)           | `np`         | 👍            | 👍          |
-| [Pandas DataFrame](#pandas-dataframe) | `pd`         | 👍            | ❌          |
-| UTF-8 String                          | `str`        | 👍            | 👍          |
-| Base64 Binary Payload                 | `base64`     | 👍            | 👍          |
-| Datetime                              | `datetime`   | 👍            | 👍          |
+| [NumPy Array](#numpy-array)           | `np`         | ✅            | ✅          |
+| [Pandas DataFrame](#pandas-dataframe) | `pd`         | ✅            | ❌          |
+| [UTF-8 String](#utf-8-string)         | `str`        | ✅            | ✅          |
+| [Base64](#base64)                     | `base64`     | ✅            | ❌          |
+| [Datetime](#datetime)                 | `datetime`   | ✅            | ❌          |
+
+```{note}
+MLServer allows you extend the supported content types by **adding custom
+ones**.
+To learn more about how to write your own custom content types, you can check
+this [full end-to-end example](../examples/content-type/README.md).
+You can also learn more about building custom extensions for MLServer on the
+[Custom Inference Runtime section](../runtimes/custom) of the docs.
+```
 
 ### NumPy Array
 
@@ -114,8 +126,8 @@ into account the following:
 - The `shape` field will be used to reshape the flattened array expected by the
   V2 protocol into the expected tensor shape.
 
-When using the NumPy Array at the request-level, it will decode the entire
-request by considering only the first `input` element.
+When using the NumPy Array content type at the request-level, it will decode
+the entire request by considering only the first `input` element.
 This can be used as a helper for models which only expect a single tensor.
 
 ### Pandas DataFrame
@@ -179,3 +191,42 @@ emphasize-lines: 3, 7-8, 13-14, 19-20
   ]
 }
 ```
+
+### UTF-8 String
+
+The `str` content type lets you encode / decode a V2 input into a UTF-8
+Python string, taking into account the following:
+
+- The expected `datatype` is `BYTES`.
+- The `shape` field represents the number of "strings" that are encoded in
+  the payload (e.g. the `["hello world", "one more time"]` payload will have a
+  shape of 2 elements).
+
+When using the `str` content type at the request-level, it will decode the
+entire request by considering only the first `input` element.
+This can be used as a helper for models which only expect a single string or of
+set of strings.
+
+### Base64
+
+The `base64` content type will decode a binary V2 payload into a Base64-encoded
+string (and viceversa), taking into account the following:
+
+- The expected `datatype` is `BYTES`.
+- The `data` field should contain the **raw bytes** (i.e. before encoding them
+  into Base64).
+- The `shape` field represents the number of binary strings that are encoded in
+  the payload.
+
+### Datetime
+
+The `datetime` content type will decode a V2 input into a [Python
+`datetime.datetime`
+object](https://docs.python.org/3/library/datetime.html#datetime.datetime),
+taking into account the following:
+
+- The expected `datatype` is `BYTES`.
+- The `data` field should contain the dates serialised following the [ISO 8601
+  standard](https://en.wikipedia.org/wiki/ISO_8601).
+- The `shape` field represents the number of datetimes that are encoded in
+  the payload.

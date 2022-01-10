@@ -71,12 +71,12 @@ Out of the box, MLServer provides support for:
 
 | Framework    | Supported | Documentation                                                    |
 | ------------ | --------- | ---------------------------------------------------------------- |
-| Scikit-Learn | 👍        | [MLServer SKLearn](./runtimes/sklearn)                           |
-| XGBoost      | 👍        | [MLServer XGBoost](./runtimes/xgboost)                           |
-| Spark MLlib  | 👍        | [MLServer MLlib](./runtimes/mllib)                               |
-| LightGBM     | 👍        | [MLServer LightGBM](./runtimes/lightgbm)                         |
-| Tempo        | 👍        | [`github.com/SeldonIO/tempo`](https://github.com/SeldonIO/tempo) |
-| MLflow       | 👍        | [MLServer MLflow](./runtimes/mlflow)                             |
+| Scikit-Learn | ✅        | [MLServer SKLearn](./runtimes/sklearn)                           |
+| XGBoost      | ✅        | [MLServer XGBoost](./runtimes/xgboost)                           |
+| Spark MLlib  | ✅        | [MLServer MLlib](./runtimes/mllib)                               |
+| LightGBM     | ✅        | [MLServer LightGBM](./runtimes/lightgbm)                         |
+| Tempo        | ✅        | [`github.com/SeldonIO/tempo`](https://github.com/SeldonIO/tempo) |
+| MLflow       | ✅        | [MLServer MLflow](./runtimes/mlflow)                             |
 
 ## Examples
 
