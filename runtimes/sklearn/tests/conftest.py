@@ -157,27 +157,6 @@ def pandas_inference_request() -> InferenceRequest:
     return InferenceRequest.parse_obj(inference_request)
 
 
-class DummyStringModel(BaseEstimator):
-    """Predict returns a string"""
-
-    def predict(self, X):
-        return "some string"
-
-@pytest.fixture
-async def string_model(tmp_path) -> SKLearnModel:
-    dummy = DummyStringModel()
-    model_uri = os.path.join(tmp_path, "string-model.joblib")
-    joblib.dump(dummy, model_uri)
-
-    dummy_model_settings = ModelSettings(
-        name="string-model",
-        parameters=ModelParameters(uri=model_uri, version="v1.2.3"),
-    )
-
-    model = SKLearnModel(dummy_model_settings)
-    await model.load()
-    return model
-
 @pytest.fixture
 async def dataframe_model(tmp_path) -> SKLearnModel:
     dummy = DummyDataframeModel()
