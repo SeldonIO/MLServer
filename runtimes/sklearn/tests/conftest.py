@@ -9,7 +9,6 @@ from sklearn.dummy import DummyClassifier, DummyRegressor
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.base import BaseEstimator
-from .dummy_model import DummyDataframeModel
 
 from mlserver.settings import ModelSettings, ModelParameters
 from mlserver.types import InferenceRequest
@@ -157,17 +156,31 @@ def pandas_inference_request() -> InferenceRequest:
     return InferenceRequest.parse_obj(inference_request)
 
 
+class DummyDataframeModel(BaseEstimator):
+    """predict/_proba return data frames"""
+
+    def predict(self, X):
+        frame = pd.DataFrame()
+        frame["label_1"] = np.array([1])
+        frame["label_2"] = np.array([2])
+        frame["label_3"] = 3
+        return frame
+
+    def predict_proba(self, X):
+        frame = pd.DataFrame()
+        frame["label_1_prob"] = np.array([0.123])
+        frame["label_2_prob"] = np.array([0.456])
+        frame["label_3_prob"] = 0.789
+        return frame
+
+
 @pytest.fixture
-async def dataframe_model(tmp_path) -> SKLearnModel:
+async def dataframe_model(model_settings: ModelSettings) -> SKLearnModel:
     dummy = DummyDataframeModel()
-    model_uri = os.path.join(tmp_path, "dataframe-model.joblib")
-    joblib.dump(dummy, model_uri)
 
-    dummy_model_settings = ModelSettings(
-        name="frame-model",
-        parameters=ModelParameters(uri=model_uri, version="v1.2.3"),
-    )
-
-    model = SKLearnModel(dummy_model_settings)
+    model = SKLearnModel(model_settings)
     await model.load()
+
+    # Replace internal model with dummy model
+    model._model = dummy
     return model
