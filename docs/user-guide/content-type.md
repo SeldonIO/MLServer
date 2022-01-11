@@ -100,6 +100,49 @@ The former will apply to the **entire set of inputs**, whereas the latter will
 only apply to a **particular input** of the payload.
 ```
 
+### Model Metadata
+
+Content types can also be defined as part of the [model's
+metadata](../reference/model-settings).
+This lets the user pre-configure what content types should a model use by
+default to decode / encode its requests / responses, without the need to
+specify it on each request.
+
+For example, to configure the content type values of the [example
+above](#usage), one could create a `model-settings.json` file like the one
+below:
+
+```{code-block} json
+---
+emphasize-lines: 2-4, 9-11
+caption: model-settings.json
+---
+{
+  "parameters": {
+    "content_type": "pd"
+  },
+  "inputs": [
+    {
+      "name": "First Name",
+      "datatype": "BYTES",
+      "parameters": {
+        "content_type": "str"
+      },
+      "shape": [-1],
+    },
+    {
+      "name": "Age",
+      "datatype": "INT32",
+      "shape": [-1],
+    },
+  ]
+}
+```
+
+It's important to keep in mind that content types passed explicitly as part of
+the request will always **take precedence over the model's metadata**.
+Therefore, we can leverage this to override the model's metadata when needed.
+
 ## Available Content Types
 
 Out of the box, MLServer supports the following list of content types.
