@@ -32,6 +32,12 @@ payloads.
 
 ## Usage
 
+```{note}
+Some inference runtimes may apply a content type by default if none is present.
+To learn more about each runtime's defaults, please check the [relevant
+inference runtime's docs](../runtimes/index).
+```
+
 To let MLServer know that a particular payload must be decoded / encoded as a
 different Python data type (e.g. NumPy Array, Pandas DataFrame, etc.), you can
 specifity it through the `content_type` field of the `parameters` section of
