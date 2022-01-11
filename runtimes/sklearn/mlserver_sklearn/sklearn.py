@@ -9,6 +9,7 @@ from mlserver import types
 from mlserver.codecs import NumpyRequestCodec
 from mlserver.errors import InferenceError
 from mlserver.model import MLModel
+from mlserver.types import InferenceResponse
 from mlserver.utils import get_model_uri
 
 PREDICT_OUTPUT = "predict"
@@ -39,7 +40,11 @@ class SKLearnModel(MLModel):
 
         model_responses = self._get_model_outputs(payload)
 
-        return encoding.to_response(self.name, self.version, model_responses)
+        return InferenceResponse(
+            model_name=self.name,
+            model_version=self.version,
+            outputs=encoding.to_outputs(sklearn_payloads=model_responses)
+        )
 
     def _check_request(self, payload: types.InferenceRequest) -> types.InferenceRequest:
         if not payload.outputs:

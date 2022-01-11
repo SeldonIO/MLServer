@@ -1,21 +1,20 @@
-import pytest
 import os
+
 import pandas as pd
-
-from sklearn.dummy import DummyClassifier, DummyRegressor
-from sklearn.pipeline import Pipeline
-from mlserver.settings import ModelSettings
-from mlserver.codecs import CodecError
-from mlserver.errors import InferenceError
-from mlserver.types import RequestInput, RequestOutput, Parameters
-from mlserver.codecs.base import _codec_registry
-
+import pytest
 from mlserver_sklearn import SKLearnModel
 from mlserver_sklearn.sklearn import (
     PREDICT_OUTPUT,
     PREDICT_PROBA_OUTPUT,
     WELLKNOWN_MODEL_FILENAMES,
 )
+from sklearn.dummy import DummyClassifier, DummyRegressor
+from sklearn.pipeline import Pipeline
+
+from mlserver.codecs import CodecError
+from mlserver.errors import InferenceError
+from mlserver.settings import ModelSettings
+from mlserver.types import RequestInput, RequestOutput, Parameters
 
 
 def test_load(model: SKLearnModel):
@@ -133,13 +132,6 @@ async def test_no_predict_proba_for_regression_pipelines(
     with pytest.raises(InferenceError):
         await pandas_model.predict(pandas_inference_request)
 
-# TODO: implement other basic codecs
-# async def test_string_model_output(string_model: SKLearnModel, inference_request):
-#     inference_request.outputs = [RequestOutput(name=PREDICT_OUTPUT,
-#                                                parameters=Parameters(content_type="str"))]
-#
-#     response = await string_model.predict(inference_request)
-
 
 async def test_error_on_multiple_dataframe_outputs(dataframe_model: SKLearnModel, inference_request):
     inference_request.outputs = [RequestOutput(name=PREDICT_OUTPUT,
@@ -150,12 +142,14 @@ async def test_error_on_multiple_dataframe_outputs(dataframe_model: SKLearnModel
     with pytest.raises(InferenceError) as e:
         await dataframe_model.predict(inference_request)
 
-    assert "Please request only a single DataFrame output" in str(e.value)
+    assert "Cannot encode" in str(e.value)
 
 
 async def test_dataframe_model_output(dataframe_model: SKLearnModel, inference_request):
     inference_request.outputs = [RequestOutput(name=PREDICT_OUTPUT,
                                                parameters=Parameters(content_type="pd"))]
+    # Test that one `predict` output that returns columnar data in a pd.DataFrame can be encoded as
+    # multiple named outputs
     response = await dataframe_model.predict(inference_request)
 
     raw_response: pd.DataFrame = dataframe_model._model.predict("")
