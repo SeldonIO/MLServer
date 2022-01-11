@@ -47,7 +47,7 @@ class MyCustomRuntime(MLModel):
     return self._model.predict(payload)
 ```
 
-### Access and return headers
+### Read and write headers
 
 ```{note}
 The `headers` field within the `parameters` section of the request / response
@@ -56,7 +56,7 @@ Therefore, incoming payloads where this field has been explicitly modified will
 be overriden.
 ```
 
-There're occasions where custom logic must be made conditional to extra
+There are occasions where custom logic must be made conditional to extra
 information sent by the client outside of the payload.
 To allow for these use cases, MLServer will map all incoming HTTP headers (in
 the case of REST) or metadata (in the case of gRPC) into the `headers` field of
@@ -83,6 +83,26 @@ class CustomHeadersRuntime(MLModel):
 Similarly, to return any HTTP headers (in the case of REST) or metadata (in the
 case of gRPC), you can append any values to the `headers` field within the
 `parameters` object of the returned `InferenceResponse` instance.
+
+```{code-block} python
+---
+emphasize-lines: 13
+---
+from mlserver import MLModel
+from mlserver.types import InferenceRequest, InferenceResponse
+
+class CustomHeadersRuntime(MLModel):
+
+  ...
+
+  def predict(self, payload: InferenceRequest) -> InferenceResponse:
+    ...
+    return InferenceResponse(
+      # Include any actual outputs from inference
+      outputs=[],
+      parameters=Parameters(headers={"foo": "bar"})
+    )
+```
 
 ## Building a custom MLServer image
 
