@@ -9,7 +9,7 @@ Unfortunately, the definition of the [V2 Inference
 Protocol](https://kserve.github.io/website/modelserving/inference_api/) doesn't
 cover any of the specific use cases.
 This protocol can be thought of a wider _"lower level"_ spec, which only
-defines what fields should a payload have.
+defines what fields a payload should have.
 
 To account for this gap, MLServer introduces support for **content types**,
 which offer a way to let MLServer know how it should _"decode"_ V2-compatible
@@ -21,7 +21,7 @@ required for a model.
 To illustrate the above, we can think of a Scikit-Learn pipeline, which takes
 in a Pandas DataFrame and returns a NumPy Array.
 Without the use of **content types**, the V2 payload itself would probably lack
-information about how should this payload be treated by MLServer.
+information about how this payload should be treated by MLServer
 Likewise, the Scikit-Learn pipeline wouldn't know how to treat a raw V2
 payload.
 In this scenario, the use of content types allows us to specify information on
@@ -55,7 +55,7 @@ This table, could be specified in the V2 protocol as the following payload, wher
 
 - The whole set of inputs should be decoded as a Pandas Dataframe (i.e. setting
   the content type as `pd`).
-- The Age column should be decoded as a UTF-8 string (i.e. setting the content
+- The First Name column should be decoded as a UTF-8 string (i.e. setting the content
   type as `str`).
 
 ```{code-block} json
@@ -291,7 +291,7 @@ Python string, taking into account the following:
 
 When using the `str` content type at the request-level, it will decode the
 entire request by considering only the first `input` element.
-This can be used as a helper for models which only expect a single string or of
+This can be used as a helper for models which only expect a single string or a
 set of strings.
 
 ### Base64
