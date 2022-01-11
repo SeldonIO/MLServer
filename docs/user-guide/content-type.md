@@ -118,6 +118,15 @@ You can also learn more about building custom extensions for MLServer on the
 
 ### NumPy Array
 
+```{note}
+The [V2 Inference
+Protocol](https://kserve.github.io/website/modelserving/inference_api/) expects
+that the `data` of each input is sent as a **flat array**.
+Therefore, the `np` content type will expect that tensors are sent flattened.
+The information in the `shape` field will then be used to reshape the vector
+into the right dimensions.
+```
+
 The `np` content type will decode / encode V2 payloads to a NumPy Array, taking
 into account the following:
 
@@ -126,7 +135,36 @@ into account the following:
 - The `shape` field will be used to reshape the flattened array expected by the
   V2 protocol into the expected tensor shape.
 
-When using the NumPy Array content type at the request-level, it will decode
+For example, if we think of the following NumPy Array:
+
+```python
+import numpy as np
+
+foo = np.array([[1, 2], [3, 4]])
+```
+
+We could encode it as the input `foo` in a V2 protocol request as:
+
+```{code-block} json
+---
+emphasize-lines: 8-10
+---
+{
+  "inputs": [
+    {
+      "name": "foo",
+      "parameters": {
+        "content_type": "np"
+      },
+      "data": [1, 2, 3, 4]
+      "datatype": "INT32",
+      "shape": [2, 2],
+    }
+  ]
+}
+```
+
+When using the NumPy Array content type at the **request-level**, it will decode
 the entire request by considering only the first `input` element.
 This can be used as a helper for models which only expect a single tensor.
 
@@ -213,10 +251,36 @@ The `base64` content type will decode a binary V2 payload into a Base64-encoded
 string (and viceversa), taking into account the following:
 
 - The expected `datatype` is `BYTES`.
-- The `data` field should contain the **raw bytes** (i.e. before encoding them
-  into Base64).
+- The `data` field should contain the base64-encoded binary strings.
 - The `shape` field represents the number of binary strings that are encoded in
   the payload.
+
+For example, if we think of the following _"bytes array"_:
+
+```python
+foo = b"Python is fun"
+```
+
+We could encode it as the input `foo` of a V2 request as:
+
+```{code-block} json
+---
+emphasize-lines: 8-10
+---
+{
+  "inputs": [
+    {
+      "name": "foo",
+      "parameters": {
+        "content_type": "base64"
+      },
+      "data": ["UHl0aG9uIGlzIGZ1bg=="]
+      "datatype": "BYTES",
+      "shape": [1],
+    }
+  ]
+}
+```
 
 ### Datetime
 
@@ -230,3 +294,32 @@ taking into account the following:
   standard](https://en.wikipedia.org/wiki/ISO_8601).
 - The `shape` field represents the number of datetimes that are encoded in
   the payload.
+
+For example, if we think of the following `datetime` object:
+
+```python
+import datetime
+
+foo = datetime.datetime(2022, 1, 11, 11, 0, 0)
+```
+
+We could encode it as the input `foo` of a V2 request as:
+
+```{code-block} json
+---
+emphasize-lines: 8-10
+---
+{
+  "inputs": [
+    {
+      "name": "foo",
+      "parameters": {
+        "content_type": "datetime"
+      },
+      "data": ["2022-01-11T11:00:00"]
+      "datatype": "BYTES",
+      "shape": [1],
+    }
+  ]
+}
+```
