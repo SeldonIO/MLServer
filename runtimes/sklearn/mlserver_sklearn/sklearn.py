@@ -43,7 +43,7 @@ class SKLearnModel(MLModel):
         return InferenceResponse(
             model_name=self.name,
             model_version=self.version,
-            outputs=encoding.to_outputs(sklearn_payloads=model_responses)
+            outputs=encoding.to_outputs(sklearn_payloads=model_responses),
         )
 
     def _check_request(self, payload: types.InferenceRequest) -> types.InferenceRequest:
@@ -74,7 +74,9 @@ class SKLearnModel(MLModel):
 
         return payload
 
-    def _get_model_outputs(self, payload: types.InferenceRequest) -> List[SKLearnPayload]:
+    def _get_model_outputs(
+        self, payload: types.InferenceRequest
+    ) -> List[SKLearnPayload]:
         decoded_request = self.decode_request(payload, default_codec=NumpyRequestCodec)
 
         outputs = []

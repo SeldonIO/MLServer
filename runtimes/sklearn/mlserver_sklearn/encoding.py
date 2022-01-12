@@ -15,6 +15,7 @@ SKLearnResponse = Union[np.ndarray, pd.DataFrame]
 @dataclass
 class SKLearnPayload:
     """Class for keeping track of requested outputs and corresponding model responses."""
+
     requested_output: ResponseOutput
     model_output: SKLearnResponse
 
@@ -33,18 +34,21 @@ def to_outputs(sklearn_payloads: List[SKLearnPayload]) -> List[ResponseOutput]:
 
     for payload in sklearn_payloads:
         if _is_columnar_data(payload) and len(sklearn_payloads) > 1:
-            raise InferenceError(f"{payload.requested_output.name} returned columnar data of type"
-                                 f" {type(payload.model_output)} and {all_output_names} were"
-                                 f" requested. Cannot encode multiple columnar data responses"
-                                 f" one response.")
+            raise InferenceError(
+                f"{payload.requested_output.name} returned columnar data of type"
+                f" {type(payload.model_output)} and {all_output_names} were"
+                f" requested. Cannot encode multiple columnar data responses"
+                f" one response."
+            )
 
         if isinstance(payload.model_output, pd.DataFrame):
             # Immediately return the outputs of columnar data encoding,
             # don't try to jam more outputs together in one response.
             return PandasCodec.encode("some-model", payload.model_output).outputs
 
-        response_output = NumpyCodec.encode(name=payload.requested_output.name,
-                                            payload=payload.model_output)
+        response_output = NumpyCodec.encode(
+            name=payload.requested_output.name, payload=payload.model_output
+        )
         response_outputs.append(response_output)
 
     return response_outputs

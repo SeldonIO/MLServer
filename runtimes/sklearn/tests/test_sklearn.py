@@ -133,12 +133,15 @@ async def test_no_predict_proba_for_regression_pipelines(
         await pandas_model.predict(pandas_inference_request)
 
 
-async def test_error_on_multiple_dataframe_outputs(dataframe_model: SKLearnModel, inference_request):
-    inference_request.outputs = [RequestOutput(name=PREDICT_OUTPUT,
-                                               parameters=Parameters(content_type="pd")),
-                                 RequestOutput(name=PREDICT_PROBA_OUTPUT,
-                                               parameters=Parameters(content_type="pd"))
-                                 ]
+async def test_error_on_multiple_dataframe_outputs(
+    dataframe_model: SKLearnModel, inference_request
+):
+    inference_request.outputs = [
+        RequestOutput(name=PREDICT_OUTPUT, parameters=Parameters(content_type="pd")),
+        RequestOutput(
+            name=PREDICT_PROBA_OUTPUT, parameters=Parameters(content_type="pd")
+        ),
+    ]
     with pytest.raises(InferenceError) as e:
         await dataframe_model.predict(inference_request)
 
@@ -146,8 +149,9 @@ async def test_error_on_multiple_dataframe_outputs(dataframe_model: SKLearnModel
 
 
 async def test_dataframe_model_output(dataframe_model: SKLearnModel, inference_request):
-    inference_request.outputs = [RequestOutput(name=PREDICT_OUTPUT,
-                                               parameters=Parameters(content_type="pd"))]
+    inference_request.outputs = [
+        RequestOutput(name=PREDICT_OUTPUT, parameters=Parameters(content_type="pd"))
+    ]
     # Test that one `predict` output that returns columnar data in a pd.DataFrame can be encoded as
     # multiple named outputs
     response = await dataframe_model.predict(inference_request)
