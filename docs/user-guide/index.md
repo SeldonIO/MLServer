@@ -6,6 +6,7 @@ how to use them.
 ```{toctree}
 :titlesonly:
 
+./content-type
 ./parallel-inference
 ./adaptive-batching
 ./deployment/index
