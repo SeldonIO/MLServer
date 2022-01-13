@@ -14,7 +14,8 @@ SKLearnResponse = Union[np.ndarray, pd.DataFrame]
 
 @dataclass
 class SKLearnPayload:
-    """Class for keeping track of requested outputs and corresponding model responses."""
+    """Class for keeping track of requested outputs
+    and corresponding model responses."""
 
     requested_output: ResponseOutput
     model_output: SKLearnResponse
@@ -24,7 +25,8 @@ def to_outputs(sklearn_payloads: List[SKLearnPayload]) -> List[ResponseOutput]:
     """
     Encodes a list of SKLearn payloads into a list of proto-able ResponseOutputs.
 
-    :param sklearn_payloads: List of requested outputs + the responses from the SKLearn model
+    :param sklearn_payloads: List of requested outputs + the responses from the
+        SKLearn model
     :return: response_outputs: List of encoded response outputs
     :raises: InferenceError if multiple columnar responses were returned by the model
     """

@@ -152,8 +152,8 @@ async def test_dataframe_model_output(dataframe_model: SKLearnModel, inference_r
     inference_request.outputs = [
         RequestOutput(name=PREDICT_OUTPUT, parameters=Parameters(content_type="pd"))
     ]
-    # Test that one `predict` output that returns columnar data in a pd.DataFrame can be encoded as
-    # multiple named outputs
+    # Test that one `predict` output that returns columnar data in a pd.DataFrame can
+    # be encoded as multiple named outputs
     response = await dataframe_model.predict(inference_request)
 
     raw_response: pd.DataFrame = dataframe_model._model.predict("")
