@@ -1,3 +1,7 @@
+# Required to deal with annotations including `Queue`
+# https://mypy.readthedocs.io/en/latest/common_issues.html#issues-with-code-at-runtime
+from __future__ import annotations
+
 import time
 import asyncio
 
