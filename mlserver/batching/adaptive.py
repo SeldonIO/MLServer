@@ -3,7 +3,7 @@ import asyncio
 
 from asyncio import Future, Queue, wait_for, Task
 from functools import partial
-from typing import AsyncIterator, Awaitable, Dict, Tuple
+from typing import AsyncIterator, Awaitable, Dict, Optional, Tuple
 
 from ..model import MLModel
 from ..types import (
@@ -24,7 +24,7 @@ class AdaptiveBatcher:
 
         # Save predict function before it gets decorated
         self._predict_fn = model.predict
-        self.__requests = None
+        self.__requests: Optional[Queue[Tuple[str, InferenceRequest]]] = None
         self._async_responses: Dict[str, Future[InferenceResponse]] = {}
         self._batching_task = None
 
