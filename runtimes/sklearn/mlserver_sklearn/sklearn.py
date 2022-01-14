@@ -1,15 +1,16 @@
-import joblib
-
 from typing import List
 
+import joblib
+from mlserver_sklearn import encoding
+from mlserver_sklearn.encoding import SKLearnPayload
 from sklearn.pipeline import Pipeline
 
 from mlserver import types
-from mlserver.model import MLModel
+from mlserver.codecs import NumpyRequestCodec
 from mlserver.errors import InferenceError
+from mlserver.model import MLModel
+from mlserver.types import InferenceResponse
 from mlserver.utils import get_model_uri
-from mlserver.codecs import NumpyCodec, NumpyRequestCodec
-
 
 PREDICT_OUTPUT = "predict"
 PREDICT_PROBA_OUTPUT = "predict_proba"
@@ -37,10 +38,12 @@ class SKLearnModel(MLModel):
     async def predict(self, payload: types.InferenceRequest) -> types.InferenceResponse:
         payload = self._check_request(payload)
 
-        return types.InferenceResponse(
+        model_responses = self._get_model_outputs(payload)
+
+        return InferenceResponse(
             model_name=self.name,
             model_version=self.version,
-            outputs=self._predict_outputs(payload),
+            outputs=encoding.to_outputs(sklearn_payloads=model_responses),
         )
 
     def _check_request(self, payload: types.InferenceRequest) -> types.InferenceRequest:
@@ -71,18 +74,16 @@ class SKLearnModel(MLModel):
 
         return payload
 
-    def _predict_outputs(
+    def _get_model_outputs(
         self, payload: types.InferenceRequest
-    ) -> List[types.ResponseOutput]:
+    ) -> List[SKLearnPayload]:
         decoded_request = self.decode_request(payload, default_codec=NumpyRequestCodec)
 
         outputs = []
         for request_output in payload.outputs:  # type: ignore
             predict_fn = getattr(self._model, request_output.name)
             y = predict_fn(decoded_request)
-
-            # TODO: Set datatype (cast from numpy?)
-            response_output = NumpyCodec.encode(name=request_output.name, payload=y)
-            outputs.append(response_output)
+            payload = SKLearnPayload(requested_output=request_output, model_output=y)
+            outputs.append(payload)
 
         return outputs

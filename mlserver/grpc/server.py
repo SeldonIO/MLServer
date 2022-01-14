@@ -8,7 +8,7 @@ from ..settings import Settings
 from .servicers import InferenceServicer, ModelRepositoryServicer
 from .dataplane_pb2_grpc import add_GRPCInferenceServiceServicer_to_server
 from .model_repository_pb2_grpc import add_ModelRepositoryServiceServicer_to_server
-from .interceptors import LoggingInterceptor
+from .interceptors import LoggingInterceptor, PromServerInterceptor
 from .logging import logger
 
 # Workers used for non-AsyncIO workloads (which aren't any in our case)
@@ -32,10 +32,14 @@ class GRPCServer:
             self._model_repository_handlers
         )
 
-        logging_interceptor = LoggingInterceptor()
+        interceptors = [LoggingInterceptor()]
+
+        if self._settings.metrics_endpoint:
+            interceptors.append(PromServerInterceptor())
+
         self._server = aio.server(
             ThreadPoolExecutor(max_workers=DefaultGrpcWorkers),
-            interceptors=(logging_interceptor,),
+            interceptors=tuple(interceptors),
             options=self._get_options(),
         )
 

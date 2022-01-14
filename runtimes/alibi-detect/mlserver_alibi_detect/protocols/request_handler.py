@@ -12,7 +12,7 @@ class RequestHandler(object):
         """
         raise NotImplementedError
 
-    def extract_request(self) -> np.array:
+    def extract_request(self) -> np.ndarray:
         """
         Extract the request
 

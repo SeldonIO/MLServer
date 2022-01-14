@@ -15,7 +15,9 @@ from .converters import (
     RepositoryIndexResponseConverter,
 )
 from .logging import logger
+from .utils import to_headers, to_metadata
 
+from ..utils import insert_headers, extract_headers
 from ..handlers import DataPlane, ModelRepositoryHandlers
 from ..errors import MLServerError
 
@@ -73,12 +75,22 @@ class InferenceServicer(GRPCInferenceServiceServicer):
 
     @_handle_mlserver_error
     async def ModelInfer(
-        self, request: pb.ModelInferRequest, context
+        self, request: pb.ModelInferRequest, context: grpc.ServicerContext
     ) -> pb.ModelInferResponse:
         payload = ModelInferRequestConverter.to_types(request)
+
+        request_headers = to_headers(context)
+        insert_headers(payload, request_headers)
+
         result = await self._data_plane.infer(
             payload=payload, name=request.model_name, version=request.model_version
         )
+
+        response_headers = extract_headers(result)
+        if response_headers:
+            response_metadata = to_metadata(response_headers)
+            context.set_trailing_metadata(response_metadata)
+
         response = ModelInferResponseConverter.from_types(result)
         return response
 

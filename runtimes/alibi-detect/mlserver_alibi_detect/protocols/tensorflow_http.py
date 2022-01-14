@@ -11,5 +11,5 @@ class TensorflowRequestHandler(RequestHandler):
         if "instances" not in self.request:
             raise InferenceError("Expected key `instances` in request body")
 
-    def extract_request(self) -> np.array:
+    def extract_request(self) -> np.ndarray:
         return np.array(self.request["instances"])

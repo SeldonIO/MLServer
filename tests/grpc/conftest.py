@@ -2,9 +2,9 @@ import os
 import pytest
 
 from grpc import aio
-
 from typing import AsyncGenerator, Dict
 from google.protobuf import json_format
+from prometheus_client.registry import CollectorRegistry
 
 from mlserver.parallel import load_inference_pool, unload_inference_pool
 from mlserver.batching import load_batching
@@ -18,6 +18,7 @@ from mlserver.grpc import GRPCServer
 
 from ..conftest import TESTDATA_PATH
 from ..fixtures import SumModel
+from ..metrics.conftest import prometheus_registry  # noqa: F401
 
 TESTDATA_GRPC_PATH = os.path.join(TESTDATA_PATH, "grpc")
 
@@ -72,6 +73,7 @@ async def grpc_server(
     data_plane: DataPlane,
     model_repository_handlers: ModelRepositoryHandlers,
     sum_model: SumModel,
+    prometheus_registry: CollectorRegistry,  # noqa: F811
 ):
     server = GRPCServer(
         settings,

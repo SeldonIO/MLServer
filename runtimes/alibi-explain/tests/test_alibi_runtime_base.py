@@ -1,4 +1,5 @@
 import json
+import pytest
 from typing import Any, Dict
 from unittest.mock import patch
 
@@ -10,10 +11,11 @@ from mlserver import ModelSettings, MLModel
 from mlserver.codecs import NumpyCodec
 from mlserver.types import (
     InferenceRequest,
+    InferenceResponse,
     Parameters,
     RequestInput,
+    ResponseOutput,
     MetadataTensor,
-    InferenceResponse,
 )
 from mlserver_alibi_explain.common import (
     convert_from_bytes,
@@ -21,6 +23,7 @@ from mlserver_alibi_explain.common import (
     AlibiExplainSettings,
 )
 from mlserver_alibi_explain.runtime import AlibiExplainRuntime, AlibiExplainRuntimeBase
+from mlserver_alibi_explain.errors import InvalidExplanationShape
 
 """
 Smoke tests for runtimes
@@ -49,13 +52,16 @@ async def test_integrated_gradients__smoke(
         ],
     )
     response = await integrated_gradients_runtime.predict(inference_request)
-    _ = convert_from_bytes(response.outputs[0], ty=str)
+    res = convert_from_bytes(response.outputs[0], ty=str)
+    res_dict = json.dumps(res)
+    assert "meta" in res_dict
+    assert "data" in res_dict
 
 
 async def test_anchors__smoke(
     anchor_image_runtime_with_remote_predict_patch: AlibiExplainRuntime,
 ):
-    data = np.random.randn(28, 28, 1) * 255
+    data = np.random.randn(1, 28, 28, 1) * 255
     inference_request = InferenceRequest(
         parameters=Parameters(
             content_type=NumpyCodec.ContentType,
@@ -108,7 +114,7 @@ def test_remote_predict__smoke(custom_runtime_tf, rest_client):
 
 async def test_alibi_runtime_wrapper(custom_runtime_tf: MLModel):
     """
-    Checks that the wrappers returns back the expected valued from the underlying rt
+    Checks that the wrapper returns back the expected valued from the underlying rt
     """
 
     class _MockInit(AlibiExplainRuntime):
@@ -128,7 +134,7 @@ async def test_alibi_runtime_wrapper(custom_runtime_tf: MLModel):
         ],
     )
 
-    # settings is dummy and discarded
+    # settings object is dummy and discarded
     wrapper = _MockInit(ModelSettings())
 
     assert wrapper.settings == custom_runtime_tf.settings
@@ -210,3 +216,62 @@ async def test_explain_parameters_pass_through():
 
     res = await rt.predict(inference_request)
     assert isinstance(res, InferenceResponse)
+
+
+async def test_custom_explain_endpoint(dummy_alibi_explain_client):
+    # a test for `/explain` endpoint that returns raw explanation directly
+    data = np.random.randn(1, 1)
+    inference_request = InferenceRequest(
+        parameters=Parameters(content_type=NumpyCodec.ContentType),
+        inputs=[
+            RequestInput(
+                name="predict",
+                shape=data.shape,
+                data=data.tolist(),
+                datatype="FP32",
+            )
+        ],
+    )
+
+    response = dummy_alibi_explain_client.post(
+        "/explain", json=inference_request.dict()
+    )
+    response_text = json.loads(response.text)
+    assert "meta" in response_text
+    assert "data" in response_text
+
+
+@pytest.mark.parametrize(
+    "response",
+    [
+        InferenceResponse(
+            model_name="my-model",
+            outputs=[
+                ResponseOutput(name="foo", datatype="INT32", shape=[1], data=[1]),
+                ResponseOutput(name="bar", datatype="INT32", shape=[1], data=[2]),
+            ],
+        ),
+        InferenceResponse(
+            model_name="my-model",
+            outputs=[
+                ResponseOutput(name="foo", datatype="INT32", shape=[1, 1], data=[1]),
+            ],
+        ),
+        InferenceResponse(
+            model_name="my-model",
+            outputs=[
+                ResponseOutput(name="foo", datatype="INT32", shape=[1, 2], data=[1, 2]),
+            ],
+        ),
+    ],
+)
+async def test_v1_invalid_predict(
+    response: InferenceResponse, integrated_gradients_runtime: AlibiExplainRuntime
+):
+    async def _mocked_predict(request: InferenceRequest) -> InferenceResponse:
+        return response
+
+    with patch.object(integrated_gradients_runtime._rt, "predict", _mocked_predict):
+        request = InferenceRequest(inputs=[])
+        with pytest.raises(InvalidExplanationShape):
+            await integrated_gradients_runtime._rt.explain_v1_output(request)
