@@ -39,7 +39,7 @@ setup(
         "grpcio",
         "importlib-metadata;python_version<'3.8'",
         # numba 0.55.0 requires: numpy <1.22 (for Shap / alibi)
-        "numpy<1.22",
+        "numpy==1.21.5",
         "pandas",
         "protobuf",
         "uvicorn",
