@@ -1,9 +1,13 @@
+# Required to deal with annotations including `Queue`
+# https://mypy.readthedocs.io/en/latest/common_issues.html#issues-with-code-at-runtime
+from __future__ import annotations
+
 import time
 import asyncio
 
 from asyncio import Future, Queue, wait_for, Task
 from functools import partial
-from typing import AsyncIterator, Awaitable, Dict, Tuple
+from typing import AsyncIterator, Awaitable, Dict, Optional, Tuple
 
 from ..model import MLModel
 from ..types import (
@@ -24,9 +28,7 @@ class AdaptiveBatcher:
 
         # Save predict function before it gets decorated
         self._predict_fn = model.predict
-        self._requests: Queue[Tuple[str, InferenceRequest]] = Queue(
-            maxsize=self._max_batch_size
-        )
+        self.__requests: Optional[Queue[Tuple[str, InferenceRequest]]] = None
         self._async_responses: Dict[str, Future[InferenceResponse]] = {}
         self._batching_task = None
 
@@ -35,11 +37,21 @@ class AdaptiveBatcher:
         self._start_batcher_if_needed()
         return await self._wait_response(internal_id)
 
+    @property
+    def _requests(self) -> Queue[Tuple[str, InferenceRequest]]:
+        # NOTE: We need to create Queue within the async request path (and not
+        # during __init__!!) to ensure that it shares the same AsyncIO loop.
+        if self.__requests is None:
+            self.__requests = Queue(maxsize=self._max_batch_size)
+
+        return self.__requests
+
     async def _queue_request(
         self,
         req: InferenceRequest,
     ) -> Tuple[str, Awaitable[InferenceResponse]]:
         internal_id = generate_uuid()
+
         await self._requests.put((internal_id, req))
 
         loop = asyncio.get_running_loop()

@@ -35,9 +35,7 @@ setup(
     packages=find_packages(exclude=["tests", "tests.*"]),
     install_requires=[
         "click",
-        # We pin version of fastapi
-        # check https://github.com/SeldonIO/MLServer/issues/340
-        "fastapi==0.68.2",
+        "fastapi",
         "grpcio",
         "importlib-metadata;python_version<'3.8'",
         "numpy",
