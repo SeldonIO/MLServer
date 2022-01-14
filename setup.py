@@ -38,7 +38,8 @@ setup(
         "fastapi",
         "grpcio",
         "importlib-metadata;python_version<'3.8'",
-        "numpy",
+        # numba 0.55.0 requires: numpy <1.22 (for Shap / alibi)
+        "numpy<1.22",
         "pandas",
         "protobuf",
         "uvicorn",
