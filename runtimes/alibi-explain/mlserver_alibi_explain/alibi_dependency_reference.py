@@ -50,7 +50,7 @@ _TAG_TO_RT_IMPL: Dict[str, ExplainerDependencyReference] = {
     _KERNEL_SHAP_TAG: ExplainerDependencyReference(
         explainer_name=_KERNEL_SHAP_TAG,
         runtime_class=f"{_BLACKBOX_MODULDE}.AlibiExplainBlackBoxRuntime",
-        alibi_class="alibi.explainers.shap_wrappers.KernelShap",
+        alibi_class="alibi.explainers.KernelShap",
     ),
     _INTEGRATED_GRADIENTS_TAG: ExplainerDependencyReference(
         explainer_name=_INTEGRATED_GRADIENTS_TAG,
