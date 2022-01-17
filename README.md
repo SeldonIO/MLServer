@@ -65,7 +65,7 @@ you interact with a subset of common frameworks.
 This allows you to start serving models saved in these frameworks straight
 away.
 However, it's also possible to **write [custom
-runtimes](./docs/runtimes/custom)**.
+runtimes](./docs/examples/custom/README.md)**.
 
 Out of the box, MLServer provides support for:
 
