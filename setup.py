@@ -38,6 +38,7 @@ setup(
         "fastapi",
         "grpcio",
         "importlib-metadata;python_version<'3.8'",
+        "numpy",
         "pandas",
         "protobuf",
         "uvicorn",
