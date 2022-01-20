@@ -6,6 +6,21 @@ from mlserver.registry import MultiModelRegistry
 from mlserver.settings import ModelSettings
 
 
+@pytest.fixture
+def model_registry(model_registry: MultiModelRegistry, mocker) -> MultiModelRegistry:
+    async def _async_val():
+        return None
+
+    for single_registry in model_registry._models.values():
+        single_registry._on_model_load = [mocker.stub("_on_model_load")]
+        single_registry._on_model_load[0].return_value = _async_val()
+
+        single_registry._on_model_unload = [mocker.stub("_on_model_unload")]
+        single_registry._on_model_unload[0].return_value = _async_val()
+
+    return model_registry
+
+
 @pytest.mark.parametrize(
     "name, version",
     [
@@ -35,18 +50,9 @@ async def test_get_model(model_registry, sum_model, name, version):
 
 
 async def test_model_hooks(
-    model_registry: MultiModelRegistry, sum_model_settings: ModelSettings, mocker
+    model_registry: MultiModelRegistry, sum_model_settings: ModelSettings
 ):
     sum_model_settings.name = "sum-model-2"
-
-    async def _async_val():
-        return None
-
-    model_registry._on_model_load = [mocker.stub("_on_model_load")]
-    model_registry._on_model_load[0].return_value = _async_val()
-
-    model_registry._on_model_unload = [mocker.stub("_on_model_unload")]
-    model_registry._on_model_unload[0].return_value = _async_val()
 
     sum_model = await model_registry.load(sum_model_settings)
     for callback in model_registry._on_model_load:
@@ -55,3 +61,20 @@ async def test_model_hooks(
     await model_registry.unload(sum_model.name)
     for callback in model_registry._on_model_unload:
         callback.assert_called_once_with(sum_model)
+
+
+async def test_load_refresh(
+    model_registry: MultiModelRegistry, sum_model_settings: ModelSettings
+):
+    existing_model = await model_registry.get_model(sum_model_settings.name)
+    new_model = await model_registry.load(sum_model_settings)
+
+    reloaded_model = await model_registry.get_model(sum_model_settings.name)
+    assert new_model != existing_model
+    assert new_model == reloaded_model
+
+    for callback in model_registry._on_model_load:
+        callback.assert_called_once_with(new_model)
+
+    for callback in model_registry._on_model_unload:
+        callback.assert_called_once_with(existing_model)
