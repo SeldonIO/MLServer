@@ -104,7 +104,8 @@ class SingleModelRegistry:
         if model.version:
             self._versions[model.version] = model
 
-        # TODO: Support version policies
+        # TODO: Set latest as default (i.e. if default is present, compare with
+        # new one to check which one is newer)
         self._default = model
 
 
