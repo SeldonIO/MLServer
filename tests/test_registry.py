@@ -3,6 +3,7 @@ import pytest
 from mlserver.errors import ModelNotFound
 from mlserver.model import MLModel
 from mlserver.registry import MultiModelRegistry
+from mlserver.settings import ModelSettings
 
 
 @pytest.mark.parametrize(
@@ -34,9 +35,9 @@ async def test_get_model(model_registry, sum_model, name, version):
 
 
 async def test_model_hooks(
-    model_registry: MultiModelRegistry, sum_model: MLModel, mocker
+    model_registry: MultiModelRegistry, sum_model_settings: ModelSettings, mocker
 ):
-    sum_model._settings.name = "sum-model-2"
+    sum_model_settings.name = "sum-model-2"
 
     async def _async_val():
         return None
@@ -47,7 +48,7 @@ async def test_model_hooks(
     model_registry._on_model_unload = [mocker.stub("_on_model_unload")]
     model_registry._on_model_unload[0].return_value = _async_val()
 
-    await model_registry.load(sum_model)
+    sum_model = await model_registry.load(sum_model_settings)
     for callback in model_registry._on_model_load:
         callback.assert_called_once_with(sum_model)
 

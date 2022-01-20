@@ -30,8 +30,10 @@ def sum_model_settings() -> ModelSettings:
 
 
 @pytest.fixture
-def sum_model(sum_model_settings: ModelSettings) -> SumModel:
-    return SumModel(settings=sum_model_settings)
+async def sum_model(
+    model_registry: MultiModelRegistry, sum_model_settings: ModelSettings
+) -> SumModel:
+    return await model_registry.get_model(sum_model_settings.name)
 
 
 @pytest.fixture
@@ -59,9 +61,9 @@ def inference_response() -> types.InferenceResponse:
 
 
 @pytest.fixture
-async def model_registry(sum_model: SumModel) -> MultiModelRegistry:
+async def model_registry(sum_model_settings: ModelSettings) -> MultiModelRegistry:
     model_registry = MultiModelRegistry()
-    await model_registry.load(sum_model)
+    await model_registry.load(sum_model_settings)
     return model_registry
 
 

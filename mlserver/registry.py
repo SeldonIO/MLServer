@@ -7,6 +7,7 @@ from .model import MLModel
 from .errors import ModelNotFound
 from .types import RepositoryIndexResponse
 from .logging import logger
+from .settings import ModelSettings
 
 ModelRegistryHook = Callable[[MLModel], Coroutine[None, None, None]]
 
@@ -16,18 +17,46 @@ class SingleModelRegistry:
     Registry for a single model with multiple versions.
     """
 
-    def __init__(self, model: MLModel):
+    def __init__(
+        self,
+        model_settings: ModelSettings,
+        on_model_load: List[ModelRegistryHook] = [],
+        on_model_unload: List[ModelRegistryHook] = [],
+    ):
         self._versions: Dict[str, MLModel] = {}
-        self._name = model.name
 
-        self._register(model)
+        self._name = model_settings.name
+        self._on_model_load = on_model_load
+        self._on_model_unload = on_model_unload
 
     async def index(self) -> RepositoryIndexResponse:
         pass
 
-    async def load(self, model: MLModel):
+    async def load(self, model_settings: ModelSettings) -> MLModel:
+        model_class = model_settings.implementation
+        model = model_class(model_settings)  # type: ignore
+
         await model.load()
         self._register(model)
+
+        if self._on_model_load:
+            # TODO: Expose custom handlers on ParallelRuntime
+            await asyncio.gather(*[callback(model) for callback in self._on_model_load])
+
+        logger.info(f"Loaded model '{model.name}' succesfully.")
+        return model
+
+    async def unload(self):
+        models = await self.get_models()
+        await asyncio.gather(*[self._unload_model(model) for model in models])
+
+    async def _unload_model(self, model: MLModel):
+        if self._on_model_unload:
+            await asyncio.gather(
+                *[callback(model) for callback in self._on_model_unload]
+            )
+
+        logger.info(f"Unloaded model '{model.name}' succesfully.")
 
     async def get_model(self, version: str = None) -> MLModel:
         if version:
@@ -70,31 +99,22 @@ class MultiModelRegistry:
         self._on_model_load = on_model_load
         self._on_model_unload = on_model_unload
 
-    async def load(self, model: MLModel):
-        if model.name not in self._models:
-            self._models[model.name] = SingleModelRegistry(model)
+    async def load(self, model_settings: ModelSettings) -> MLModel:
+        if model_settings.name not in self._models:
+            self._models[model_settings.name] = SingleModelRegistry(
+                model_settings,
+                on_model_load=self._on_model_load,
+                on_model_unload=self._on_model_unload,
+            )
 
-        await self._models[model.name].load(model)
-
-        if self._on_model_load:
-            # TODO: Expose custom handlers on ParallelRuntime
-            await asyncio.gather(*[callback(model) for callback in self._on_model_load])
-
-        logger.info(f"Loaded model '{model.name}' succesfully.")
+        return await self._models[model_settings.name].load(model_settings)
 
     async def unload(self, name: str):
         if name not in self._models:
             raise ModelNotFound(name)
 
-        model = await self._models[name].get_model()
+        await self._models[name].unload()
         del self._models[name]
-
-        if self._on_model_unload:
-            await asyncio.gather(
-                *[callback(model) for callback in self._on_model_unload]
-            )
-
-        logger.info(f"Unloaded model '{model.name}' succesfully.")
 
     async def get_model(self, name: str, version: str = None) -> MLModel:
         if name not in self._models:
