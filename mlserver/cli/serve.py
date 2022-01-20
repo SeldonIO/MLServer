@@ -10,7 +10,7 @@ from ..settings import Settings, ModelSettings
 DEFAULT_SETTINGS_FILENAME = "settings.json"
 
 
-async def load_settings(folder: str = None) -> Tuple[Settings, List[MLModel]]:
+async def load_settings(folder: str = None) -> Tuple[Settings, ModelSettings]:
     """
     Load server and model settings.
     """
@@ -31,13 +31,12 @@ async def load_settings(folder: str = None) -> Tuple[Settings, List[MLModel]]:
     if folder is not None:
         settings.model_repository_root = folder
 
-    models = []
+    models_settings = []
     if settings.load_models_at_startup:
         repository = ModelRepository(settings.model_repository_root)
-        available_models = await repository.list()
-        models = [_init_model(model) for model in available_models]
+        models_settings = await repository.list()
 
-    return settings, models
+    return settings, models_settings
 
 
 def _path_exists(folder: Union[str, None], file: str) -> bool:
@@ -46,8 +45,3 @@ def _path_exists(folder: Union[str, None], file: str) -> bool:
 
     file_path = os.path.join(folder, file)
     return os.path.isfile(file_path)
-
-
-def _init_model(model_settings: ModelSettings) -> MLModel:
-    model_class = model_settings.implementation
-    return model_class(model_settings)  # type: ignore
