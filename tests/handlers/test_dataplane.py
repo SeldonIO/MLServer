@@ -12,8 +12,7 @@ async def test_ready(data_plane, model_registry, ready):
     model_settings = ModelSettings(
         name="sum-model-2", parameters=ModelParameters(version="v1.2.3")
     )
-    new_model = SumModel(model_settings)
-    await model_registry.load(new_model)
+    new_model = await model_registry.load(model_settings)
 
     new_model.ready = ready
 

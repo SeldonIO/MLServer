@@ -61,11 +61,9 @@ class ModelRepositoryHandlers:
         all_model_settings = await self._repository.find(name)
 
         for model_settings in all_model_settings:
-            # TODO: Move to separate method
-            model_class = model_settings.implementation
-            model = model_class(model_settings)  # type: ignore
+            await self._model_registry.load(model_settings)
 
-            await self._model_registry.load(model)
+        # TODO: Remove delta between existing models and new ones
 
         return True
 
