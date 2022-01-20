@@ -1,6 +1,7 @@
 import pytest
 
 from fastapi import status
+from fastapi.routing import APIRoute
 from mlserver.rest.utils import to_status_code
 
 
