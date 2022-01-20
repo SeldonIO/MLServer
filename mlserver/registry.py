@@ -1,6 +1,6 @@
 import asyncio
 
-from typing import Callable, Coroutine, List, Dict
+from typing import Callable, Coroutine, List, Dict, Optional
 from itertools import chain
 
 from .model import MLModel
@@ -33,18 +33,28 @@ class SingleModelRegistry:
         pass
 
     async def load(self, model_settings: ModelSettings) -> MLModel:
-        model_class = model_settings.implementation
-        model = model_class(model_settings)  # type: ignore
+        # If there's a previously loaded model, we'll need to unload it at the
+        # end
+        previous_loaded_model = await self._find_model(model_settings)
 
+        model_class = model_settings.implementation
+        new_model = model_class(model_settings)  # type: ignore
+
+        await self._load_model(new_model)
+
+        if previous_loaded_model:
+            await self._unload_model(previous_loaded_model)
+
+        logger.info(f"Loaded model '{new_model.name}' succesfully.")
+        return new_model
+
+    async def _load_model(self, model: MLModel):
         await model.load()
         self._register(model)
 
         if self._on_model_load:
             # TODO: Expose custom handlers on ParallelRuntime
             await asyncio.gather(*[callback(model) for callback in self._on_model_load])
-
-        logger.info(f"Loaded model '{model.name}' succesfully.")
-        return model
 
     async def unload(self):
         models = await self.get_models()
@@ -60,6 +70,16 @@ class SingleModelRegistry:
             )
 
         logger.info(f"Unloaded model '{model.name}' succesfully.")
+
+    async def _find_model(self, model_settings: ModelSettings) -> Optional[MLModel]:
+        version = None
+        if model_settings.parameters and model_settings.parameters.version:
+            version = model_settings.parameters.version
+
+        try:
+            return await self.get_model(version)
+        except ModelNotFound:
+            return None
 
     async def get_model(self, version: str = None) -> MLModel:
         if version:
