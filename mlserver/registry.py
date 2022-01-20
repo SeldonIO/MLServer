@@ -50,6 +50,9 @@ class SingleModelRegistry:
         models = await self.get_models()
         await asyncio.gather(*[self._unload_model(model) for model in models])
 
+        self._versions.clear()
+        self._default = None
+
     async def _unload_model(self, model: MLModel):
         if self._on_model_unload:
             await asyncio.gather(
@@ -120,8 +123,7 @@ class MultiModelRegistry:
         if name not in self._models:
             raise ModelNotFound(name, version)
 
-        model = await self._models[name].get_model(version)
-        return model
+        return await self._models[name].get_model(version)
 
     async def get_models(self) -> List[MLModel]:
         models_list = await asyncio.gather(
