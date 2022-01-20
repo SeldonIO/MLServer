@@ -78,3 +78,31 @@ async def test_load_refresh(
 
     for callback in model_registry._on_model_unload:
         callback.assert_called_once_with(existing_model)
+
+
+async def test_load_multi_version(
+    model_registry: MultiModelRegistry, sum_model_settings: ModelSettings
+):
+    existing_model = await model_registry.get_model(sum_model_settings.name)
+    existing_version = sum_model_settings.parameters.version
+
+    # Load new model
+    sum_model_settings.parameters.version = "v2.0.0"
+    new_model = await model_registry.load(sum_model_settings)
+
+    # Ensure latest model is now the default one
+    default_model = await model_registry.get_model(sum_model_settings.name)
+    assert new_model != existing_model
+    assert new_model == default_model
+
+    for callback in model_registry._on_model_load:
+        callback.assert_called_once_with(new_model)
+
+    # Ensure old model is still reachable
+    old_model = await model_registry.get_model(
+        sum_model_settings.name, existing_version
+    )
+    assert old_model == existing_model
+
+    for callback in model_registry._on_model_unload:
+        callback.assert_not_called_with(existing_model)
