@@ -108,11 +108,11 @@ async def rest_server(
         model_repository_handlers=model_repository_handlers,
     )
 
-    await asyncio.gather(server.add_custom_handlers(custom_runtime_tf))
+    await server.add_custom_handlers(custom_runtime_tf)
 
     yield server
 
-    await asyncio.gather(server.delete_custom_handlers(custom_runtime_tf))
+    await server.delete_custom_handlers(custom_runtime_tf)
 
 
 @pytest.fixture
@@ -240,11 +240,11 @@ async def dummy_alibi_explain_client(
 ) -> AsyncIterable[TestClient]:
     dummy_explainer = await model_registry.load(dummy_explainer_settings)
 
-    await asyncio.gather(rest_server.add_custom_handlers(dummy_explainer))
+    await rest_server.add_custom_handlers(dummy_explainer)
 
     yield TestClient(rest_server._app)
 
-    await asyncio.gather(rest_server.add_custom_handlers(dummy_explainer))
+    await rest_server.add_custom_handlers(dummy_explainer)
 
 
 def _train_anchor_image_explainer() -> None:
