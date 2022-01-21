@@ -2,7 +2,7 @@ import asyncio
 import json
 import os
 from pathlib import Path
-from typing import AsyncIterable, Dict, Any
+from typing import AsyncIterable, Dict, Any, Iterable, Tuple
 from unittest.mock import patch
 
 import nest_asyncio
@@ -43,16 +43,16 @@ def pytest_collection_modifyitems(items):
 
 
 @pytest.fixture
-async def custom_runtime_tf() -> MLModel:
-    model = TFMNISTModel(
-        ModelSettings(
-            name="custom_tf_mnist_model",
-            implementation="helpers.tf_model.TFMNISTModel",
-        )
+def custom_runtime_tf_settings() -> MLModel:
+    return ModelSettings(
+        name="custom_tf_mnist_model",
+        implementation="helpers.tf_model.TFMNISTModel",
     )
-    await model.load()
 
-    return model
+
+@pytest.fixture
+async def custom_runtime_tf(model_registry, custom_runtime_tf_settings) -> MLModel:
+    return await model_registry.get_model(custom_runtime_tf_settings.name)
 
 
 @pytest.fixture
@@ -61,9 +61,9 @@ def settings() -> Settings:
 
 
 @pytest.fixture
-async def model_registry(custom_runtime_tf) -> MultiModelRegistry:
+async def model_registry(custom_runtime_tf_settings) -> MultiModelRegistry:
     model_registry = MultiModelRegistry()
-    await model_registry.load(custom_runtime_tf)
+    await model_registry.load(custom_runtime_tf_settings)
     return model_registry
 
 
@@ -203,61 +203,36 @@ async def integrated_gradients_runtime() -> AlibiExplainRuntime:
     return rt
 
 
-@pytest.yield_fixture
-async def dummy_alibi_explain_client(tmp_path, settings) -> AsyncIterable[TestClient]:
-    rt = AlibiExplainRuntime(
-        ModelSettings(
-            parallel_workers=0,
-            parameters=ModelParameters(
-                extra=AlibiExplainSettings(
-                    explainer_type="anchor_image", infer_uri="dummy_call"
-                ),
-            ),
-        )
-    )
-
-    # dummy inner runtime
+@pytest.fixture
+def dummy_explainer_settings() -> Iterable[ModelSettings]:
     class _DummyExplainer(AlibiExplainRuntimeBase):
         def _explain_impl(
             self, input_data: Any, explain_parameters: Dict
         ) -> Explanation:
             return Explanation(meta={}, data={})
 
-    _rt = _DummyExplainer(
-        settings=ModelSettings(name="dummy_name"),
-        explainer_settings=AlibiExplainSettings(
-            infer_uri="dummy_call",
-            explainer_type="anchor_image",
-            init_parameters=None,
-        ),
-    )
-
-    # set the actual runtime inside wrapper to the dummy runtime we created
-    rt._rt = _rt
-
-    server = await _build_rest_server_with_dummy_explain_model(rt, settings, tmp_path)
-
-    await asyncio.gather(server.add_custom_handlers(rt))
-
-    yield TestClient(server._app)
-
-    await asyncio.gather(server.delete_custom_handlers(rt))
+    with patch(
+        "mlserver_alibi_explain.explainers.black_box_runtime.AlibiExplainBlackBoxRuntime",
+        _DummyExplainer,
+    ):
+        yield ModelSettings(
+            parallel_workers=0,
+            implementation=AlibiExplainRuntime,
+            parameters=ModelParameters(
+                extra=AlibiExplainSettings(
+                    explainer_type="anchor_image", infer_uri="dummy_call"
+                ),
+            ),
+        )
 
 
-async def _build_rest_server_with_dummy_explain_model(
-    rt: AlibiExplainRuntime, settings: Settings, tmp_path: Path
-) -> RESTServer:
+@pytest.fixture
+async def rest_server(
+    settings: Settings, dummy_explainer_settings: ModelSettings
+) -> AsyncIterable[RESTServer]:
     model_registry = MultiModelRegistry()
-    await model_registry.load(rt)
     data_plane = DataPlane(settings=settings, model_registry=model_registry)
-    model_settings_path = tmp_path.joinpath("model-settings.json")
-    model_settings_dict = {
-        "name": rt.settings.name,
-        "implementation": "mlserver_alibi_explain.AlibiExplainRuntime",
-        "parallel_workers": 0,
-    }
-    model_settings_path.write_text(json.dumps(model_settings_dict, indent=4))
-    model_repository = ModelRepository(str(tmp_path))
+    model_repository = ModelRepository()
     handlers = ModelRepositoryHandlers(
         repository=model_repository, model_registry=model_registry
     )
@@ -266,7 +241,24 @@ async def _build_rest_server_with_dummy_explain_model(
         data_plane=data_plane,
         model_repository_handlers=handlers,
     )
-    return server
+
+    model_registry._on_model_load = [server.add_custom_handlers]
+    model_registry._on_model_unload = [server.delete_custom_handlers]
+
+    dummy_explainer = await model_registry.load(dummy_explainer_settings)
+
+    await asyncio.gather(server.add_custom_handlers(dummy_explainer))
+
+    yield server
+
+    await asyncio.gather(server.delete_custom_handlers(dummy_explainer))
+
+
+@pytest.fixture
+async def dummy_alibi_explain_client(
+    rest_server: RESTServer,
+) -> TestClient:
+    return TestClient(rest_server._app)
 
 
 def _train_anchor_image_explainer() -> None:

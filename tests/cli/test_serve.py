@@ -8,8 +8,11 @@ async def test_load_models(sum_model_settings: ModelSettings, model_folder: str)
     _, models_settings = await load_settings(model_folder)
 
     assert len(models_settings) == 1
-    assert models_settings[0].name == sum_model_settings.name
-    assert models_settings[0].parameters.version == sum_model_settings.parameters.version  # type: ignore
+
+    model_settings = models_settings[0]
+    parameters = models_settings[0].parameters
+    assert model_settings.name == sum_model_settings.name
+    assert parameters.version == sum_model_settings.parameters.version  # type: ignore
 
 
 async def test_disable_load_models(settings: Settings, model_folder: str):

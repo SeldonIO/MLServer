@@ -47,7 +47,7 @@ class RESTServer:
         # added routes and we can remove routes on-the-fly
         for i, route in reversed(list(enumerate(self._app.routes))):
             for j, (custom_handler, handler_method) in enumerate(handlers):
-                if matches(route, custom_handler, handler_method):
+                if matches(route, custom_handler, handler_method):  # type: ignore
                     self._app.routes.pop(i)
                     handlers.pop(j)
 

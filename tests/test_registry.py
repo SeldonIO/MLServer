@@ -1,7 +1,6 @@
 import pytest
 
 from mlserver.errors import ModelNotFound
-from mlserver.model import MLModel
 from mlserver.registry import MultiModelRegistry
 from mlserver.settings import ModelSettings
 

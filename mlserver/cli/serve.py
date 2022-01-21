@@ -3,14 +3,13 @@ import sys
 
 from typing import List, Tuple, Union
 
-from ..model import MLModel
 from ..repository import ModelRepository
 from ..settings import Settings, ModelSettings
 
 DEFAULT_SETTINGS_FILENAME = "settings.json"
 
 
-async def load_settings(folder: str = None) -> Tuple[Settings, ModelSettings]:
+async def load_settings(folder: str = None) -> Tuple[Settings, List[ModelSettings]]:
     """
     Load server and model settings.
     """

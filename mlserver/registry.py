@@ -12,6 +12,13 @@ from .settings import ModelSettings
 ModelRegistryHook = Callable[[MLModel], Coroutine[None, None, None]]
 
 
+def _get_version(model_settings: ModelSettings) -> Optional[str]:
+    if model_settings.parameters:
+        return model_settings.parameters.version
+
+    return None
+
+
 class SingleModelRegistry:
     """
     Registry for a single model with multiple versions.
@@ -24,6 +31,7 @@ class SingleModelRegistry:
         on_model_unload: List[ModelRegistryHook] = [],
     ):
         self._versions: Dict[str, MLModel] = {}
+        self._default: Optional[MLModel] = None
 
         self._name = model_settings.name
         self._on_model_load = on_model_load
@@ -35,7 +43,8 @@ class SingleModelRegistry:
     async def load(self, model_settings: ModelSettings) -> MLModel:
         # If there's a previously loaded model, we'll need to unload it at the
         # end
-        previous_loaded_model = await self._find_model(model_settings)
+        previous_version = _get_version(model_settings)
+        previous_loaded_model = self._find_model(previous_version)
 
         model_class = model_settings.implementation
         new_model = model_class(model_settings)  # type: ignore
@@ -71,24 +80,22 @@ class SingleModelRegistry:
 
         logger.info(f"Unloaded model '{model.name}' succesfully.")
 
-    async def _find_model(self, model_settings: ModelSettings) -> Optional[MLModel]:
-        version = None
-        if model_settings.parameters and model_settings.parameters.version:
-            version = model_settings.parameters.version
-
-        try:
-            return await self.get_model(version)
-        except ModelNotFound:
-            return None
-
-    async def get_model(self, version: str = None) -> MLModel:
+    def _find_model(self, version: str = None) -> Optional[MLModel]:
         if version:
             if version not in self._versions:
-                raise ModelNotFound(self._name, version)
+                return None
 
             return self._versions[version]
 
         return self._default
+
+    async def get_model(self, version: str = None) -> MLModel:
+        model = self._find_model(version)
+
+        if model is None:
+            raise ModelNotFound(self._name, version)
+
+        return model
 
     async def get_models(self) -> List[MLModel]:
         # NOTE: `.values()` returns a "view" instead of a list
