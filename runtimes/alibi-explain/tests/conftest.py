@@ -2,7 +2,7 @@ import asyncio
 import json
 import os
 from pathlib import Path
-from typing import AsyncIterable, Dict, Any, Iterable, Tuple
+from typing import AsyncIterable, Dict, Any, Iterable
 from unittest.mock import patch
 
 import nest_asyncio
@@ -13,7 +13,7 @@ from alibi.explainers import AnchorImage
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from helpers.tf_model import TFMNISTModel, get_tf_mnist_model_uri
+from helpers.tf_model import get_tf_mnist_model_uri
 from mlserver import MLModel
 from mlserver.handlers import DataPlane, ModelRepositoryHandlers
 from mlserver.registry import MultiModelRegistry
@@ -43,7 +43,7 @@ def pytest_collection_modifyitems(items):
 
 
 @pytest.fixture
-def custom_runtime_tf_settings() -> MLModel:
+def custom_runtime_tf_settings() -> ModelSettings:
     return ModelSettings(
         name="custom_tf_mnist_model",
         implementation="helpers.tf_model.TFMNISTModel",
@@ -211,8 +211,14 @@ def dummy_explainer_settings() -> Iterable[ModelSettings]:
         ) -> Explanation:
             return Explanation(meta={}, data={})
 
+    # Patch the explainer inner runtime that will be used by the `anchor_image`
+    # explainer type
+    blackbox_import_path = (
+        "mlserver_alibi_explain.explainers.black_box_runtime."
+        "AlibiExplainBlackBoxRuntime"
+    )
     with patch(
-        "mlserver_alibi_explain.explainers.black_box_runtime.AlibiExplainBlackBoxRuntime",
+        blackbox_import_path,
         _DummyExplainer,
     ):
         yield ModelSettings(
@@ -231,7 +237,7 @@ async def dummy_alibi_explain_client(
     rest_server: RESTServer,
     model_registry: MultiModelRegistry,
     dummy_explainer_settings: ModelSettings,
-) -> TestClient:
+) -> AsyncIterable[TestClient]:
     dummy_explainer = await model_registry.load(dummy_explainer_settings)
 
     await asyncio.gather(rest_server.add_custom_handlers(dummy_explainer))

@@ -101,8 +101,9 @@ class SingleModelRegistry:
         # NOTE: `.values()` returns a "view" instead of a list
         models = list(self._versions.values())
 
-        # Add default if not versioned
-        if not self._default.version:
+        # Add default if not versioned (as it won't be present on the
+        # `_versions` dict
+        if self._default and not self._default.version:
             models.append(self._default)
 
         return models
