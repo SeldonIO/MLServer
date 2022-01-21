@@ -7,6 +7,7 @@ from mlserver.handlers import DataPlane, ModelRepositoryHandlers
 from mlserver.registry import MultiModelRegistry
 from mlserver.rest import RESTServer
 from mlserver.repository import ModelRepository
+from mlserver.model import MLModel
 from mlserver import Settings, ModelSettings
 
 from mlserver_mlflow import MLflowRuntime
@@ -27,7 +28,7 @@ async def model_registry(model_settings: ModelSettings) -> MultiModelRegistry:
 @pytest.fixture
 async def runtime(
     model_registry: MultiModelRegistry, model_settings: ModelSettings
-) -> MLflowRuntime:
+) -> MLModel:
     return await model_registry.get_model(model_settings.name)
 
 
