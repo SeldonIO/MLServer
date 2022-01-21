@@ -227,38 +227,18 @@ def dummy_explainer_settings() -> Iterable[ModelSettings]:
 
 
 @pytest.fixture
-async def rest_server(
-    settings: Settings, dummy_explainer_settings: ModelSettings
-) -> AsyncIterable[RESTServer]:
-    model_registry = MultiModelRegistry()
-    data_plane = DataPlane(settings=settings, model_registry=model_registry)
-    model_repository = ModelRepository()
-    handlers = ModelRepositoryHandlers(
-        repository=model_repository, model_registry=model_registry
-    )
-    server = RESTServer(
-        settings=settings,
-        data_plane=data_plane,
-        model_repository_handlers=handlers,
-    )
-
-    model_registry._on_model_load = [server.add_custom_handlers]
-    model_registry._on_model_unload = [server.delete_custom_handlers]
-
-    dummy_explainer = await model_registry.load(dummy_explainer_settings)
-
-    await asyncio.gather(server.add_custom_handlers(dummy_explainer))
-
-    yield server
-
-    await asyncio.gather(server.delete_custom_handlers(dummy_explainer))
-
-
-@pytest.fixture
 async def dummy_alibi_explain_client(
     rest_server: RESTServer,
+    model_registry: MultiModelRegistry,
+    dummy_explainer_settings: ModelSettings,
 ) -> TestClient:
-    return TestClient(rest_server._app)
+    dummy_explainer = await model_registry.load(dummy_explainer_settings)
+
+    await asyncio.gather(rest_server.add_custom_handlers(dummy_explainer))
+
+    yield TestClient(rest_server._app)
+
+    await asyncio.gather(rest_server.add_custom_handlers(dummy_explainer))
 
 
 def _train_anchor_image_explainer() -> None:
