@@ -81,14 +81,16 @@ class AlibiDetectRuntime(MLModel):
         input_data = self.decode_request(payload, default_codec=NumpyRequestCodec)
         y = await self.predict_fn(input_data)
 
-        # TODO: Convert alibi-detect output to v2 protocol
-        output_data = np.array(y["data"])
-
+        outputs = []
+        for key in y["data"]:
+            outputs.append(
+                NumpyCodec.encode(name=key, payload=np.array([y["data"][key]]))
+            )
         return types.InferenceResponse(
             model_name=self.name,
             model_version=self.version,
             parameters=y["meta"],
-            outputs=[NumpyCodec.encode(name="detect", payload=output_data)],
+            outputs=outputs,
         )
 
     async def predict_fn(self, input_data: Any) -> dict:
