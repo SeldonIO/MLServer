@@ -27,10 +27,10 @@ def _is_newer(a: MLModel, b: MLModel) -> int:
     TODO: Support other ordering schemes (e.g. semver).
     """
     if a.version is None:
-        return a
+        return 1
 
     if b.version is None:
-        return b
+        return -1
 
     try:
         a_int = int(a.version)
