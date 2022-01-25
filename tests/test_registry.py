@@ -1,4 +1,5 @@
 import pytest
+import asyncio
 
 from typing import List, Union, Union
 
@@ -8,18 +9,32 @@ from mlserver.settings import ModelSettings
 
 
 @pytest.fixture
-def model_registry(model_registry: MultiModelRegistry, mocker) -> MultiModelRegistry:
+async def model_registry(
+    model_registry: MultiModelRegistry, mocker
+) -> MultiModelRegistry:
     async def _async_val():
         return None
 
+    coros = []
     for single_registry in model_registry._models.values():
+        load_coro = _async_val()
         single_registry._on_model_load = [mocker.stub("_on_model_load")]
-        single_registry._on_model_load[0].return_value = _async_val()
+        single_registry._on_model_load[0].return_value = load_coro
+        coros.append(load_coro)
 
+        unload_coro = _async_val()
         single_registry._on_model_unload = [mocker.stub("_on_model_unload")]
-        single_registry._on_model_unload[0].return_value = _async_val()
+        single_registry._on_model_unload[0].return_value = unload_coro
+        coros.append(unload_coro)
 
-    return model_registry
+    yield model_registry
+
+    # Remove warning about "coroutine never awaited"
+    for coro in coros:
+        try:
+            await coro
+        except RuntimeError:
+            pass
 
 
 @pytest.mark.parametrize(
