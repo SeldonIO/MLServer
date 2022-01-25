@@ -2,6 +2,7 @@ import asyncio
 
 from typing import Callable, Coroutine, List, Dict, Optional
 from itertools import chain
+from functools import cmp_to_key
 
 from .model import MLModel
 from .errors import ModelNotFound
@@ -17,6 +18,30 @@ def _get_version(model_settings: ModelSettings) -> Optional[str]:
         return model_settings.parameters.version
 
     return None
+
+
+def _is_newer(a: MLModel, b: MLModel) -> int:
+    """
+    Returns true if 'a' is newer than 'b'.
+    """
+    if a.version is None:
+        return a
+
+    if b.version is None:
+        return b
+
+    try:
+        a_int = int(a.version)
+        b_int = int(b.version)
+
+        return a_int - b_int
+    except ValueError:
+        if a.version > b.version:
+            return 1
+        elif a.version < b.version:
+            return -1
+        else:
+            return 0
 
 
 class SingleModelRegistry:
@@ -46,10 +71,10 @@ class SingleModelRegistry:
 
     def _find_default(self) -> Optional[MLModel]:
         if self._default is None:
-            # TODO: Compare versions
             if self._versions:
-                versioned_models = self._versions.values()
-                return list(versioned_models)[0]
+                version_key = cmp_to_key(_is_newer)
+                latest_model = max(self._versions.values(), key=version_key)
+                return latest_model
 
         return self._default
 

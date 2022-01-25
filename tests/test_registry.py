@@ -3,7 +3,7 @@ import pytest
 from typing import List, Union
 
 from mlserver.errors import ModelNotFound
-from mlserver.registry import MultiModelRegistry
+from mlserver.registry import MultiModelRegistry, SingleModelRegistry
 from mlserver.settings import ModelSettings
 
 
@@ -169,3 +169,33 @@ async def test_unload_version(
         if None in versions_to_unload:
             new_default_model = await model_registry.get_model(sum_model_settings.name)
             assert new_default_model != default_model
+
+
+@pytest.mark.parametrize(
+    "versions, expected",
+    [
+        (["4", "3", "2", "1", "7", "5", "6"], "7"),
+        (["v1", "v3", "v2"], "v3"),
+        (["v10", "v3", "v2"], "v3"),
+        (["8", "v3", "7"], "v3"),
+        (["v1.0.0", "v1.2.3", "v12.3.4"], "v12.3.4"),
+    ],
+)
+async def test_find_default(
+    versions: List[str],
+    expected: str,
+    sum_model_settings: ModelSettings,
+):
+    model_settings = sum_model_settings.copy(deep=True)
+    model_settings.name = "model-foo"
+    foo_registry = SingleModelRegistry(model_settings)
+
+    # Load mock models
+    for version in versions:
+        model_settings = model_settings.copy(deep=True)
+        model_settings.parameters.version = version
+        await foo_registry.load(model_settings)
+
+    foo_registry._clear_default()
+    default_model = foo_registry._find_default()
+    assert default_model.version == expected
