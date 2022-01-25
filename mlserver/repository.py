@@ -84,7 +84,7 @@ class ModelRepository:
         all_settings = await self.list()
         selected = []
         for model_settings in all_settings:
-            # TODO: Implement other version policies
+            # TODO: Implement other version policies (e.g. "Last N")
             if model_settings.name == name:
                 selected.append(model_settings)
 
