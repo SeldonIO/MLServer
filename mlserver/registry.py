@@ -106,7 +106,7 @@ class SingleModelRegistry:
                 return self._default
 
             # Otherwise, compare versions
-            if _is_newer(new_model, self._default) > 0:
+            if _is_newer(new_model, self._default) >= 0:
                 self._default = new_model
                 return new_model
 
@@ -177,6 +177,9 @@ class SingleModelRegistry:
             await asyncio.gather(
                 *[callback(model) for callback in self._on_model_unload]
             )
+
+        if model == self.default:
+            self._clear_default()
 
         logger.info(f"Unloaded model '{model.name}' succesfully.")
 
