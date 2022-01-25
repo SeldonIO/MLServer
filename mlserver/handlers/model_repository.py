@@ -9,6 +9,8 @@ from ..types import (
     State,
 )
 
+NO_VERSION_KEY = "__no_version__"
+
 
 class ModelRepositoryHandlers:
     def __init__(self, repository: ModelRepository, model_registry: MultiModelRegistry):
@@ -60,10 +62,20 @@ class ModelRepositoryHandlers:
     async def load(self, name: str) -> bool:
         all_model_settings = await self._repository.find(name)
 
+        loaded_versions = set()
         for model_settings in all_model_settings:
-            await self._model_registry.load(model_settings)
+            model = await self._model_registry.load(model_settings)
 
-        # TODO: Remove delta between existing models and new ones
+            # Add to loaded versions set to later remove stale models
+            model_version = model.version if model.version else NO_VERSION_KEY
+            loaded_versions.add(model_version)
+
+        # Remove stale models
+        all_models = await self._model_registry.get_models(name)
+        for model in all_models:
+            model_version = model.version if model.version else NO_VERSION_KEY
+            if model_version not in loaded_versions:
+                await self._model_registry.unload_version(model.name, model.version)
 
         return True
 
