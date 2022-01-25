@@ -37,6 +37,61 @@ class SingleModelRegistry:
         self._on_model_load = on_model_load
         self._on_model_unload = on_model_unload
 
+    @property
+    def default(self) -> MLModel:
+        if self._default is None:
+            self._default = self._find_default()
+
+        return self._default
+
+    def _find_default(self) -> Optional[MLModel]:
+        if self._default is None:
+            # TODO: Compare versions
+            if self._versions:
+                versioned_models = self._versions.values()
+                return list(versioned_models)[0]
+
+        return self._default
+
+    def _clear_default(self):
+        self._default = None
+
+    def _refresh_default(self, new_model: MLModel = None) -> Optional[MLModel]:
+        if new_model:
+            # Check whether new model is "defaulter" than current default
+            # NOTE: This should help to avoid iterating through all versioned
+            # models each time a new model is loaded to find the latest
+
+            if self._default is None:
+                # If default is currently empty, take new one as new default
+                self._default = new_model
+                return new_model
+
+            if new_model.version is None:
+                # If new model doesn't have a version, assume it's "defaulter"
+                # than previous default
+                self._default = new_model
+                return new_model
+
+            if self._default.version is None:
+                # If default doesn't have a version (and new one does), assume
+                # that current default is "defaulter" than new one
+                return self._default
+
+            # Otherwise, compare versions
+            # TODO: Compare versions
+            self._default = new_model
+
+        if self._default and self._default.version is None:
+            # If there isn't a new model to compare, and current default has no
+            # version, then consider that current one is "defaulter" than other
+            # versioned models
+            return self._default
+
+        # Otherwise, find latest from current set of versions
+        self._default = self._find_default()
+        return self._default
+
     async def index(self) -> RepositoryIndexResponse:
         pass
 
@@ -70,7 +125,22 @@ class SingleModelRegistry:
         await asyncio.gather(*[self._unload_model(model) for model in models])
 
         self._versions.clear()
-        self._default = None
+        self._clear_default()
+
+    async def unload_version(self, version: str = None):
+        if version:
+            model = await self.get_model(version)
+            await self._unload_model(model)
+            del self._versions[version]
+
+            if model == self.default:
+                self._clear_default()
+
+        elif self.default and not self.default.version:
+            # If version is None, and default model doesn't have a version,
+            # then unload and find a new default
+            await self._unload_model(self.default)
+            self._clear_default()
 
     async def _unload_model(self, model: MLModel):
         if self._on_model_unload:
@@ -87,7 +157,7 @@ class SingleModelRegistry:
 
             return self._versions[version]
 
-        return self._default
+        return self.default
 
     async def get_model(self, version: str = None) -> MLModel:
         model = self._find_model(version)
@@ -103,8 +173,8 @@ class SingleModelRegistry:
 
         # Add default if not versioned (as it won't be present on the
         # `_versions` dict
-        if self._default and not self._default.version:
-            models.append(self._default)
+        if self.default and not self.default.version:
+            models.append(self.default)
 
         return models
 
@@ -112,9 +182,13 @@ class SingleModelRegistry:
         if model.version:
             self._versions[model.version] = model
 
-        # TODO: Set latest as default (i.e. if default is present, compare with
-        # new one to check which one is newer)
-        self._default = model
+        self._refresh_default(model)
+
+    def empty(self) -> bool:
+        if self._versions:
+            return False
+
+        return self.default is None
 
 
 class MultiModelRegistry:
@@ -142,21 +216,35 @@ class MultiModelRegistry:
         return await self._models[model_settings.name].load(model_settings)
 
     async def unload(self, name: str):
-        if name not in self._models:
-            raise ModelNotFound(name)
-
-        await self._models[name].unload()
+        model_registry = self._get_model_registry(name)
+        await model_registry.unload()
         del self._models[name]
 
+    async def unload_version(self, name: str, version: str = None):
+        model_registry = self._get_model_registry(name, version)
+        await model_registry.unload_version(version)
+        if model_registry.empty():
+            del self._models[name]
+
     async def get_model(self, name: str, version: str = None) -> MLModel:
-        if name not in self._models:
-            raise ModelNotFound(name, version)
+        model_registry = self._get_model_registry(name, version)
+        return await model_registry.get_model(version)
 
-        return await self._models[name].get_model(version)
+    async def get_models(self, name: str = None) -> List[MLModel]:
+        if name is not None:
+            model_registry = self._get_model_registry(name)
+            return await model_registry.get_models()
 
-    async def get_models(self) -> List[MLModel]:
         models_list = await asyncio.gather(
             *[model.get_models() for model in self._models.values()]
         )
 
         return chain.from_iterable(models_list)  # type: ignore
+
+    def _get_model_registry(
+        self, name: str, version: str = None
+    ) -> SingleModelRegistry:
+        if name not in self._models:
+            raise ModelNotFound(name, version)
+
+        return self._models[name]

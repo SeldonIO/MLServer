@@ -1,5 +1,7 @@
 import pytest
 
+from typing import List, Union, Union
+
 from mlserver.errors import ModelNotFound
 from mlserver.registry import MultiModelRegistry
 from mlserver.settings import ModelSettings
@@ -105,3 +107,51 @@ async def test_load_multi_version(
 
     for callback in model_registry._on_model_unload:
         callback.assert_not_called_with(existing_model)
+
+
+@pytest.mark.parametrize(
+    "versions_to_unload",
+    [
+        [None],
+        [None, "v0"],
+        ["v0", None],
+        ["v0"],
+        ["v0", "v1", "v2"],
+        [None, "v0", "v1", "v2"],
+        ["v0", "v1", "v2", None],
+    ],
+)
+async def test_unload_version(
+    versions_to_unload: List[Union[str, None]],
+    model_registry: MultiModelRegistry,
+    sum_model_settings: ModelSettings,
+):
+    # Load multiple versions
+    to_load = ["v0", "v1", "v2"]
+    sum_model_settings.name = "model-foo"
+
+    sum_model_settings = sum_model_settings.copy(deep=True)
+    sum_model_settings.parameters.version = None
+    default_model = await model_registry.load(sum_model_settings)
+    for version in to_load:
+        sum_model_settings = sum_model_settings.copy(deep=True)
+        sum_model_settings.parameters.version = version
+        await model_registry.load(sum_model_settings)
+
+    # Unload versions
+    for version in versions_to_unload:
+        await model_registry.unload_version(sum_model_settings.name, version)
+
+    if len(versions_to_unload) == len(to_load) + 1:
+        # If we have unloaded all models (including the default one), assert
+        # that the model has been completely unloaded
+        with pytest.raises(ModelNotFound):
+            await model_registry.get_models(sum_model_settings.name)
+    else:
+        models = await model_registry.get_models(sum_model_settings.name)
+        for model in models:
+            assert model.version not in versions_to_unload
+
+        if None in versions_to_unload:
+            new_default_model = await model_registry.get_model(sum_model_settings.name)
+            assert new_default_model != default_model
