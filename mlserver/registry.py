@@ -23,6 +23,8 @@ def _get_version(model_settings: ModelSettings) -> Optional[str]:
 def _is_newer(a: MLModel, b: MLModel) -> int:
     """
     Returns true if 'a' is newer than 'b'.
+
+    TODO: Support other ordering schemes (e.g. semver).
     """
     if a.version is None:
         return a
@@ -104,8 +106,11 @@ class SingleModelRegistry:
                 return self._default
 
             # Otherwise, compare versions
-            # TODO: Compare versions
-            self._default = new_model
+            if _is_newer(new_model, self._default) > 0:
+                self._default = new_model
+                return new_model
+
+            return self._default
 
         if self._default and self._default.version is None:
             # If there isn't a new model to compare, and current default has no

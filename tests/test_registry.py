@@ -102,8 +102,9 @@ async def test_load_multi_version(
     existing_version = sum_model_settings.parameters.version
 
     # Load new model
-    sum_model_settings.parameters.version = "v2.0.0"
-    new_model = await model_registry.load(sum_model_settings)
+    new_model_settings = sum_model_settings.copy(deep=True)
+    new_model_settings.parameters.version = "v2.0.0"
+    new_model = await model_registry.load(new_model_settings)
 
     # Ensure latest model is now the default one
     default_model = await model_registry.get_model(sum_model_settings.name)
