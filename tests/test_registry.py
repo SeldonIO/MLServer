@@ -1,7 +1,6 @@
 import pytest
-import asyncio
 
-from typing import List, Union, Union
+from typing import List, Union
 
 from mlserver.errors import ModelNotFound
 from mlserver.registry import MultiModelRegistry

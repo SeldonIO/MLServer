@@ -38,7 +38,7 @@ class SingleModelRegistry:
         self._on_model_unload = on_model_unload
 
     @property
-    def default(self) -> MLModel:
+    def default(self) -> Optional[MLModel]:
         if self._default is None:
             self._default = self._find_default()
 
