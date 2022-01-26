@@ -5,8 +5,7 @@ from prometheus_client.registry import REGISTRY, CollectorRegistry
 from starlette_exporter import PrometheusMiddleware
 
 from mlserver.server import MLServer
-from mlserver.settings import Settings
-from mlserver.model import MLModel
+from mlserver.settings import Settings, ModelSettings
 
 from ..utils import get_available_port
 from .utils import MetricsClient
@@ -48,7 +47,7 @@ def settings(settings: Settings) -> Settings:
 @pytest.fixture
 async def mlserver(
     settings: Settings,
-    sum_model: MLModel,
+    sum_model_settings: ModelSettings,
     prometheus_registry: CollectorRegistry,  # noqa: F811
 ):
     server = MLServer(settings)
@@ -58,7 +57,7 @@ async def mlserver(
     server_task = loop.create_task(server.start())
 
     # Load sample model
-    await server._model_registry.load(sum_model)
+    await server._model_registry.load(sum_model_settings)
 
     yield server
 

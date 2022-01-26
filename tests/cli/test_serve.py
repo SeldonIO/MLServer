@@ -5,11 +5,14 @@ from mlserver.settings import Settings, ModelSettings
 
 
 async def test_load_models(sum_model_settings: ModelSettings, model_folder: str):
-    _, models = await load_settings(model_folder)
+    _, models_settings = await load_settings(model_folder)
 
-    assert len(models) == 1
-    assert models[0].name == sum_model_settings.name
-    assert models[0].version == sum_model_settings.parameters.version  # type: ignore
+    assert len(models_settings) == 1
+
+    model_settings = models_settings[0]
+    parameters = models_settings[0].parameters
+    assert model_settings.name == sum_model_settings.name
+    assert parameters.version == sum_model_settings.parameters.version  # type: ignore
 
 
 async def test_disable_load_models(settings: Settings, model_folder: str):
@@ -19,6 +22,6 @@ async def test_disable_load_models(settings: Settings, model_folder: str):
     with open(settings_path, "w") as settings_file:
         settings_file.write(settings.json())
 
-    _, models = await load_settings(model_folder)
+    _, models_settings = await load_settings(model_folder)
 
-    assert len(models) == 0
+    assert len(models_settings) == 0

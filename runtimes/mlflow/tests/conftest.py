@@ -90,6 +90,7 @@ def pytorch_model_uri() -> str:
 def model_settings(model_uri: str) -> ModelSettings:
     return ModelSettings(
         name="mlflow-model",
+        implementation=MLflowRuntime,
         parameters=ModelParameters(uri=model_uri),
     )
 

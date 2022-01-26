@@ -4,7 +4,7 @@ from ..settings import Settings
 from ..handlers import DataPlane, ModelRepositoryHandlers, get_custom_handlers
 from ..model import MLModel
 
-from .utils import to_scope
+from .utils import matches
 from .app import create_app
 
 
@@ -40,22 +40,16 @@ class RESTServer:
 
     async def delete_custom_handlers(self, model: MLModel):
         handlers = get_custom_handlers(model)
-        scopes = [to_scope(custom_handler) for custom_handler, _ in handlers]
+        if len(handlers) == 0:
+            return
 
         # NOTE: Loop in reverse, so that it's quicker to find all the recently
         # added routes and we can remove routes on-the-fly
         for i, route in reversed(list(enumerate(self._app.routes))):
-            if len(scopes) == 0:
-                return
-
-            for j, scope in enumerate(scopes):
-                match, _ = route.matches(scope)
-                if match == match.NONE:
-                    continue
-
-                # Remove route and scope
-                self._app.routes.pop(i)
-                scopes.pop(j)
+            for j, (custom_handler, handler_method) in enumerate(handlers):
+                if matches(route, custom_handler, handler_method):  # type: ignore
+                    self._app.routes.pop(i)
+                    handlers.pop(j)
 
     async def start(self):
         cfg = uvicorn.Config(

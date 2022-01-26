@@ -98,4 +98,5 @@ async def test_find(
 ):
     found_model_settings = await model_repository.find(sum_model_settings.name)
 
-    assert found_model_settings.name == sum_model_settings.name
+    assert len(found_model_settings) == 1
+    assert found_model_settings[0].name == sum_model_settings.name

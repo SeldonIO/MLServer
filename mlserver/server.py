@@ -4,7 +4,7 @@ import signal
 from typing import List
 
 from .model import MLModel
-from .settings import Settings
+from .settings import Settings, ModelSettings
 from .logging import configure_logger
 from .registry import MultiModelRegistry
 from .repository import ModelRepository
@@ -38,7 +38,7 @@ class MLServer:
 
         self._logger = configure_logger(settings)
 
-    async def start(self, models: List[MLModel] = []):
+    async def start(self, models_settings: List[ModelSettings] = []):
         self._add_signal_handlers()
 
         self._rest_server = RESTServer(
@@ -48,10 +48,12 @@ class MLServer:
             self._settings, self._data_plane, self._model_repository_handlers
         )
 
-        # TODO: Discover models from ModelRepository
-        # TODO: Add flag to disable autoload of models
-        load_tasks = [self._model_registry.load(model) for model in models]
-        await asyncio.gather(*load_tasks)
+        await asyncio.gather(
+            *[
+                self._model_registry.load(model_settings)
+                for model_settings in models_settings
+            ]
+        )
 
         await asyncio.gather(self._rest_server.start(), self._grpc_server.start())
 
