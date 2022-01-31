@@ -3,9 +3,7 @@
 An open source inference server for your machine learning models.
 
 
-https://user-images.githubusercontent.com/10466106/151796027-6ebe51a3-3266-4c9b-9579-ea0c8aab68e8.mp4
-
-
+![video_play_icon](https://user-images.githubusercontent.com/10466106/151803854-75d17c32-541c-4eee-b589-d45b07ea486d.png)
 
 
 ## Overview
