@@ -3,18 +3,17 @@ kind: SeldonDeployment
 metadata:
   name: numpyro-model
 spec:
+  protocol: kfserving
   predictors:
     - name: default
-      annotations:
-        seldon.io/no-engine: "true"
       graph:
-        name: mlflow-model
+        name: numpyro-divorce
         type: MODEL
       componentSpecs:
         - spec:
             containers:
-              - name: mlflow-model
-                image: my-custom-numpyro-server
+              - name: numpyro-divorce
+                image: my-custom-numpyro-server:0.1.0
                 ports:
                   - containerPort: 8080
                     name: http
