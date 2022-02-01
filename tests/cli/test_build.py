@@ -1,4 +1,5 @@
 import pytest
+import random
 
 from docker.client import DockerClient
 from pytest_cases import fixture, parametrize_with_cases
@@ -29,11 +30,17 @@ def custom_image(
 
 
 @pytest.fixture
+def random_user_id() -> int:
+    return random.randint(1000, 65536)
+
+
+@pytest.fixture
 def custom_runtime_server(
     docker_client: DockerClient,
     custom_image: str,
     settings: Settings,
     free_ports: Tuple[int, int],
+    random_user_id: int,
 ) -> str:
     host_http_port, host_grpc_port = free_ports
 
@@ -44,6 +51,7 @@ def custom_runtime_server(
             f"{settings.grpc_port}/tcp": str(host_grpc_port),
         },
         detach=True,
+        user=random_user_id,
     )
 
     yield f"127.0.0.1:{host_http_port}", f"127.0.0.1:{host_grpc_port}"
