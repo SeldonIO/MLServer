@@ -145,10 +145,6 @@ spec:
             containers:
               - name: classifier
                 image: my-custom-server:0.1.0
-                securityContext:
-                  # Workaround for multi-user bug in custom images in MLServer:
-                  # https://github.com/SeldonIO/MLServer/issues/388
-                  runAsUser: 1000
                 ports:
                   - containerPort: 8080
                     name: http
