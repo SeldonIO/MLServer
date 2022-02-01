@@ -83,7 +83,7 @@ class SKLearnModel(MLModel):
         for request_output in payload.outputs:  # type: ignore
             predict_fn = getattr(self._model, request_output.name)
             y = predict_fn(decoded_request)
-            payload = SKLearnPayload(requested_output=request_output, model_output=y)
-            outputs.append(payload)
+            output = SKLearnPayload(requested_output=request_output, model_output=y)
+            outputs.append(output)
 
         return outputs
