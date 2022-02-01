@@ -5,6 +5,7 @@ An open source inference server for your machine learning models.
 
 [![video_play_icon](https://user-images.githubusercontent.com/10466106/151803854-75d17c32-541c-4eee-b589-d45b07ea486d.png)](https://www.youtube.com/watch?v=aZHe3z-8C_w)
 
+<iframe width="1280" height="720" src="https://www.youtube.com/embed/aZHe3z-8C_w" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ## Overview
 
