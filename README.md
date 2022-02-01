@@ -11,7 +11,7 @@ An open source inference server for your machine learning models.
 MLServer aims to provide an easy way to start serving your machine learning
 models through a REST and gRPC interface, fully compliant with [KFServing's V2
 Dataplane](https://kserve.github.io/website/modelserving/inference_api/)
-spec.
+spec. Watch a quick video introducing the project [here](https://www.youtube.com/watch?v=aZHe3z-8C_w).
 
 - Multi-model serving, letting users run multiple models within the same
   process.
