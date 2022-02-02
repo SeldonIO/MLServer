@@ -61,7 +61,7 @@ lint: generate
 	for _runtime in ./runtimes/*; \
 	do \
 		mypy $$_runtime; \
-	done
+	done || exit 1 # Return error if mypy failed
 	mypy ./benchmarking
 	mypy ./docs/examples
 	# Check if something has changed after generation

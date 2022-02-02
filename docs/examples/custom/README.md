@@ -266,13 +266,13 @@ Note that this section expects that Docker is available and running in the backg
 
 ```bash
 %%bash
-mlserver build . -t 'my-custom-numpyro-server'
+mlserver build . -t 'my-custom-numpyro-server:0.1.0'
 ```
 
 To ensure that the image is fully functional, we can spin up a container and then send a test request. To start the container, you can run something along the following lines in a separate terminal:
 
 ```bash
-docker run -it --rm -p 8080:8080 my-custom-numpyro-server
+docker run -it --rm -p 8080:8080 my-custom-numpyro-server:0.1.0
 ```
 
 
@@ -294,7 +294,9 @@ inference_request = {
 endpoint = "http://localhost:8080/v2/models/numpyro-divorce/infer"
 response = requests.post(endpoint, json=inference_request)
 
-response.json()
+print(response)
+print(response.text)
+
 ```
 
 As we should be able to see, the server running within our Docker image responds as expected.
@@ -320,18 +322,17 @@ kind: SeldonDeployment
 metadata:
   name: numpyro-model
 spec:
+  protocol: kfserving
   predictors:
     - name: default
-      annotations:
-        seldon.io/no-engine: "true"
       graph:
-        name: mlflow-model
+        name: numpyro-divorce
         type: MODEL
       componentSpecs:
         - spec:
             containers:
-              - name: mlflow-model
-                image: my-custom-numpyro-server
+              - name: numpyro-divorce
+                image: my-custom-numpyro-server:0.1.0
                 ports:
                   - containerPort: 8080
                     name: http
@@ -339,4 +340,24 @@ spec:
                   - containerPort: 8081
                     name: grpc
                     protocol: TCP
+```
+
+
+```python
+
+```
+
+
+```python
+
+```
+
+
+```python
+
+```
+
+
+```python
+
 ```
