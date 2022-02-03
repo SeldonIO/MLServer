@@ -10,7 +10,7 @@ class SeldonPayload(Enum):
     TFTENSOR = 3
 
 
-def _extract_list(body: dict) -> np.array:
+def _extract_list(body: dict) -> np.ndarray:
     data_def = body["data"]
     if "tensor" in data_def:
         arr = np.array(data_def.get("tensor").get("values")).reshape(
@@ -52,5 +52,5 @@ class SeldonRequestHandler(RequestHandler):
 
         _get_request_ty(self.request)
 
-    def extract_request(self) -> np.array:
+    def extract_request(self) -> np.ndarray:
         return _extract_list(self.request)

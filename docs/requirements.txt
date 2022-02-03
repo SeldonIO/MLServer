@@ -1,9 +1,9 @@
-Sphinx==4.3.1
+Sphinx==4.4.0
 sphinx_material==0.0.35
 readthedocs-sphinx-search==0.1.1
-myst-parser==0.15.2
+myst-parser==0.16.1
 sphinxcontrib-bibtex==2.4.1
-autodoc_pydantic==1.5.1
-sphinx-click==3.0.2
+autodoc_pydantic==1.6.1
+sphinx-click==3.0.3
 sphinx-panels==0.6.0
 sphinx-autobuild==2021.3.14

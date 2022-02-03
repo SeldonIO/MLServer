@@ -28,28 +28,28 @@ _INTEGRATED_GRADIENTS_TAG = "integrated_gradients"
 #  update _TAG_TO_RT_IMPL
 #  update ExplainerEnum
 
-_BLACKBOX_MODULDE = "mlserver_alibi_explain.explainers.black_box_runtime"
+_BLACKBOX_MODULE = "mlserver_alibi_explain.explainers.black_box_runtime"
 _INTEGRATED_GRADIENTS_MODULE = "mlserver_alibi_explain.explainers.integrated_gradients"
 
 _TAG_TO_RT_IMPL: Dict[str, ExplainerDependencyReference] = {
     _ANCHOR_IMAGE_TAG: ExplainerDependencyReference(
         explainer_name=_ANCHOR_IMAGE_TAG,
-        runtime_class=f"{_BLACKBOX_MODULDE}.AlibiExplainBlackBoxRuntime",
+        runtime_class=f"{_BLACKBOX_MODULE}.AlibiExplainBlackBoxRuntime",
         alibi_class="alibi.explainers.AnchorImage",
     ),
     _ANCHOR_TABULAR_TAG: ExplainerDependencyReference(
         explainer_name=_ANCHOR_TABULAR_TAG,
-        runtime_class=f"{_BLACKBOX_MODULDE}.AlibiExplainBlackBoxRuntime",
+        runtime_class=f"{_BLACKBOX_MODULE}.AlibiExplainBlackBoxRuntime",
         alibi_class="alibi.explainers.AnchorTabular",
     ),
     _ANCHOR_TEXT_TAG: ExplainerDependencyReference(
         explainer_name=_ANCHOR_TEXT_TAG,
-        runtime_class=f"{_BLACKBOX_MODULDE}.AlibiExplainBlackBoxRuntime",
+        runtime_class=f"{_BLACKBOX_MODULE}.AlibiExplainBlackBoxRuntime",
         alibi_class="alibi.explainers.AnchorText",
     ),
     _KERNEL_SHAP_TAG: ExplainerDependencyReference(
         explainer_name=_KERNEL_SHAP_TAG,
-        runtime_class=f"{_BLACKBOX_MODULDE}.AlibiExplainBlackBoxRuntime",
+        runtime_class=f"{_BLACKBOX_MODULE}.AlibiExplainBlackBoxRuntime",
         alibi_class="alibi.explainers.KernelShap",
     ),
     _INTEGRATED_GRADIENTS_TAG: ExplainerDependencyReference(

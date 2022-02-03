@@ -263,6 +263,8 @@ components:
       properties:
         content_type:
           type: string
+        headers:
+          type: object
     request_input:
       title: request_input
       type: object

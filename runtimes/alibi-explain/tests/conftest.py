@@ -2,7 +2,7 @@ import asyncio
 import json
 import os
 from pathlib import Path
-from typing import AsyncIterable, Dict, Any
+from typing import AsyncIterable, Dict, Any, Iterable
 from unittest.mock import patch
 
 import nest_asyncio
@@ -13,7 +13,7 @@ from alibi.explainers import AnchorImage
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from helpers.tf_model import TFMNISTModel, get_tf_mnist_model_uri
+from helpers.tf_model import get_tf_mnist_model_uri
 from mlserver import MLModel
 from mlserver.handlers import DataPlane, ModelRepositoryHandlers
 from mlserver.registry import MultiModelRegistry
@@ -43,16 +43,16 @@ def pytest_collection_modifyitems(items):
 
 
 @pytest.fixture
-async def custom_runtime_tf() -> MLModel:
-    model = TFMNISTModel(
-        ModelSettings(
-            name="custom_tf_mnist_model",
-            implementation="helpers.tf_model.TFMNISTModel",
-        )
+def custom_runtime_tf_settings() -> ModelSettings:
+    return ModelSettings(
+        name="custom_tf_mnist_model",
+        implementation="helpers.tf_model.TFMNISTModel",
     )
-    await model.load()
 
-    return model
+
+@pytest.fixture
+async def custom_runtime_tf(model_registry, custom_runtime_tf_settings) -> MLModel:
+    return await model_registry.get_model(custom_runtime_tf_settings.name)
 
 
 @pytest.fixture
@@ -61,9 +61,9 @@ def settings() -> Settings:
 
 
 @pytest.fixture
-async def model_registry(custom_runtime_tf) -> MultiModelRegistry:
+async def model_registry(custom_runtime_tf_settings) -> MultiModelRegistry:
     model_registry = MultiModelRegistry()
-    await model_registry.load(custom_runtime_tf)
+    await model_registry.load(custom_runtime_tf_settings)
     return model_registry
 
 
@@ -108,11 +108,11 @@ async def rest_server(
         model_repository_handlers=model_repository_handlers,
     )
 
-    await asyncio.gather(server.add_custom_handlers(custom_runtime_tf))
+    await server.add_custom_handlers(custom_runtime_tf)
 
     yield server
 
-    await asyncio.gather(server.delete_custom_handlers(custom_runtime_tf))
+    await server.delete_custom_handlers(custom_runtime_tf)
 
 
 @pytest.fixture
@@ -203,70 +203,48 @@ async def integrated_gradients_runtime() -> AlibiExplainRuntime:
     return rt
 
 
-@pytest.yield_fixture
-async def dummy_alibi_explain_client(tmp_path, settings) -> AsyncIterable[TestClient]:
-    rt = AlibiExplainRuntime(
-        ModelSettings(
-            parallel_workers=0,
-            parameters=ModelParameters(
-                extra=AlibiExplainSettings(
-                    explainer_type="anchor_image", infer_uri="dummy_call"
-                ),
-            ),
-        )
-    )
-
-    # dummy inner runtime
+@pytest.fixture
+def dummy_explainer_settings() -> Iterable[ModelSettings]:
     class _DummyExplainer(AlibiExplainRuntimeBase):
         def _explain_impl(
             self, input_data: Any, explain_parameters: Dict
         ) -> Explanation:
             return Explanation(meta={}, data={})
 
-    _rt = _DummyExplainer(
-        settings=ModelSettings(name="dummy_name"),
-        explainer_settings=AlibiExplainSettings(
-            infer_uri="dummy_call",
-            explainer_type="anchor_image",
-            init_parameters=None,
-        ),
+    # Patch the explainer inner runtime that will be used by the `anchor_image`
+    # explainer type
+    blackbox_import_path = (
+        "mlserver_alibi_explain.explainers.black_box_runtime."
+        "AlibiExplainBlackBoxRuntime"
     )
+    with patch(
+        blackbox_import_path,
+        _DummyExplainer,
+    ):
+        yield ModelSettings(
+            parallel_workers=0,
+            implementation=AlibiExplainRuntime,
+            parameters=ModelParameters(
+                extra=AlibiExplainSettings(
+                    explainer_type="anchor_image", infer_uri="dummy_call"
+                ),
+            ),
+        )
 
-    # set the actual runtime inside wrapper to the dummy runtime we created
-    rt._rt = _rt
 
-    server = await _build_rest_server_with_dummy_explain_model(rt, settings, tmp_path)
+@pytest.fixture
+async def dummy_alibi_explain_client(
+    rest_server: RESTServer,
+    model_registry: MultiModelRegistry,
+    dummy_explainer_settings: ModelSettings,
+) -> AsyncIterable[TestClient]:
+    dummy_explainer = await model_registry.load(dummy_explainer_settings)
 
-    await asyncio.gather(server.add_custom_handlers(rt))
+    await rest_server.add_custom_handlers(dummy_explainer)
 
-    yield TestClient(server._app)
+    yield TestClient(rest_server._app)
 
-    await asyncio.gather(server.delete_custom_handlers(rt))
-
-
-async def _build_rest_server_with_dummy_explain_model(
-    rt: AlibiExplainRuntime, settings: Settings, tmp_path: Path
-) -> RESTServer:
-    model_registry = MultiModelRegistry()
-    await model_registry.load(rt)
-    data_plane = DataPlane(settings=settings, model_registry=model_registry)
-    model_settings_path = tmp_path.joinpath("model-settings.json")
-    model_settings_dict = {
-        "name": rt.settings.name,
-        "implementation": "mlserver_alibi_explain.AlibiExplainRuntime",
-        "parallel_workers": 0,
-    }
-    model_settings_path.write_text(json.dumps(model_settings_dict, indent=4))
-    model_repository = ModelRepository(str(tmp_path))
-    handlers = ModelRepositoryHandlers(
-        repository=model_repository, model_registry=model_registry
-    )
-    server = RESTServer(
-        settings=settings,
-        data_plane=data_plane,
-        model_repository_handlers=handlers,
-    )
-    return server
+    await rest_server.add_custom_handlers(dummy_explainer)
 
 
 def _train_anchor_image_explainer() -> None:

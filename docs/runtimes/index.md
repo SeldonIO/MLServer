@@ -38,7 +38,7 @@ class in your `model-settings.json` file.
 SKLearn <./sklearn>
 XGBoost <./xgboost>
 MLflow <./mlflow>
-Tempo <https://tempo.readthedocs.com>
+Tempo <https://tempo.readthedocs.io>
 Spark MLlib <./mllib>
 LightGBM <./lightgbm>
 Custom <./custom>

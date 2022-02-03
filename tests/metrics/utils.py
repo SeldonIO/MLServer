@@ -7,8 +7,12 @@ from ..utils import RESTClient
 
 
 class MetricsClient(RESTClient):
+    def __init__(self, *args, metrics_endpoint: str = "/metrics", **kwargs):
+        super().__init__(*args, **kwargs)
+        self._metrics_endpoint = metrics_endpoint
+
     async def metrics(self) -> List[Metric]:
-        endpoint = f"http://{self._http_server}/metrics"
+        endpoint = f"http://{self._http_server}{self._metrics_endpoint}"
         response = await self._session.get(endpoint)
 
         raw_metrics = await response.text()

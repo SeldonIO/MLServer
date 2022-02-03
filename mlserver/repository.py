@@ -46,16 +46,16 @@ class ModelRepository:
 
         # If name not present, default to folder name
         model_settings_folder = os.path.dirname(model_settings_path)
-        default_model_name = os.path.basename(model_settings_folder)
+        folder_name = os.path.basename(model_settings_folder)
         if model_settings.name:
-            if model_settings.name != default_model_name:
+            if not self._folder_matches(folder_name, model_settings):
                 # Raise warning if name is different than folder's name
                 logger.warning(
                     f"Model name '{model_settings.name}' is different than "
-                    f"model's folder name '{default_model_name}'."
+                    f"model's folder name '{folder_name}'."
                 )
         else:
-            model_settings.name = default_model_name
+            model_settings.name = folder_name
 
         if not model_settings.parameters:
             model_settings.parameters = ModelParameters()
@@ -67,11 +67,28 @@ class ModelRepository:
 
         return model_settings
 
-    async def find(self, name: str) -> ModelSettings:
-        all_settings = await self.list()
-        for model_settings in all_settings:
-            if model_settings.name == name:
-                # TODO: Implement version policy
-                return model_settings
+    def _folder_matches(self, folder_name: str, model_settings: ModelSettings) -> bool:
+        if model_settings.name == folder_name:
+            return True
 
-        raise ModelNotFound(name)
+        # To be compatible with Triton, check whether the folder name matches
+        # with the model's version
+        if model_settings.parameters and model_settings.parameters.version:
+            model_version = model_settings.parameters.version
+            if model_version == folder_name:
+                return True
+
+        return False
+
+    async def find(self, name: str) -> List[ModelSettings]:
+        all_settings = await self.list()
+        selected = []
+        for model_settings in all_settings:
+            # TODO: Implement other version policies (e.g. "Last N")
+            if model_settings.name == name:
+                selected.append(model_settings)
+
+        if len(selected) == 0:
+            raise ModelNotFound(name)
+
+        return selected

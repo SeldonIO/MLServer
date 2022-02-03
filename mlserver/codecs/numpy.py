@@ -1,6 +1,6 @@
 import numpy as np
 
-from typing import Any, Union
+from typing import Union
 
 from ..types import RequestInput, ResponseOutput, Parameters
 
@@ -59,16 +59,22 @@ def _to_ndarray(v2_data: Union[RequestInput, ResponseOutput]) -> np.ndarray:
     dtype = _to_dtype(v2_data)
 
     if v2_data.datatype == "BYTES":
-        return np.frombuffer(data, dtype)
+        # If the inputs is of type `BYTES`, there could be multiple "lists"
+        # serialised into multiple buffers.
+        # We will deserialise all of them and concatenate them together.
+        decoded = [np.frombuffer(buffer, dtype) for buffer in data]
+        return np.concatenate(decoded)
 
     return np.array(data, dtype)
 
 
-def _encode_data(data: np.ndarray, datatype: str) -> Any:
+def _encode_data(data: np.ndarray, datatype: str) -> list:
     if datatype == "BYTES":
-        # tobytes is way faster than tolist, although it's harder to serialise
-        # and only makes sense for actual bytes inputs (#253)
-        return data.tobytes()
+        # `tobytes` is way faster than tolist, although it's harder to serialise
+        # and only makes sense for actual bytes inputs (#253).
+        # Note that `.tobytes()` will return a single `bytes` payload, thus we
+        # need to encapsulate it into a list so that it's compatible.
+        return [data.tobytes()]
 
     return data.flatten().tolist()
 

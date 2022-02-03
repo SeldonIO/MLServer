@@ -76,6 +76,13 @@ class Settings(BaseSettings):
     # CORS settings
     cors_settings: Optional[CORSSettings] = None
 
+    # Metrics settings
+    """
+    Endpoint used to expose Prometheus metrics. Alternatively, can be set to
+    `None` to disable it
+    """
+    metrics_endpoint: Optional[str] = "/metrics"
+
 
 class ModelParameters(BaseSettings):
     """

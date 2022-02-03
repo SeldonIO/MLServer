@@ -8,7 +8,7 @@ An open source inference server for your machine learning models.
 
 MLServer aims to provide an easy way to start serving your machine learning
 models through a REST and gRPC interface, fully compliant with [KFServing's V2
-Dataplane](https://github.com/kubeflow/kfserving/blob/master/docs/predict-api/v2/required_api.md)
+Dataplane](https://kserve.github.io/website/modelserving/inference_api/)
 spec.
 
 - Multi-model serving, letting users run multiple models within the same
@@ -71,12 +71,12 @@ Out of the box, MLServer provides support for:
 
 | Framework    | Supported | Documentation                                                    |
 | ------------ | --------- | ---------------------------------------------------------------- |
-| Scikit-Learn | 👍        | [MLServer SKLearn](./runtimes/sklearn)                           |
-| XGBoost      | 👍        | [MLServer XGBoost](./runtimes/xgboost)                           |
-| Spark MLlib  | 👍        | [MLServer MLlib](./runtimes/mllib)                               |
-| LightGBM     | 👍        | [MLServer LightGBM](./runtimes/lightgbm)                         |
-| Tempo        | 👍        | [`github.com/SeldonIO/tempo`](https://github.com/SeldonIO/tempo) |
-| MLflow       | 👍        | [MLServer MLflow](./runtimes/mlflow)                             |
+| Scikit-Learn | ✅        | [MLServer SKLearn](./runtimes/sklearn)                           |
+| XGBoost      | ✅        | [MLServer XGBoost](./runtimes/xgboost)                           |
+| Spark MLlib  | ✅        | [MLServer MLlib](./runtimes/mllib)                               |
+| LightGBM     | ✅        | [MLServer LightGBM](./runtimes/lightgbm)                         |
+| Tempo        | ✅        | [`github.com/SeldonIO/tempo`](https://github.com/SeldonIO/tempo) |
+| MLflow       | ✅        | [MLServer MLflow](./runtimes/mlflow)                             |
 
 ## Examples
 

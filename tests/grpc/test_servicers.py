@@ -67,6 +67,23 @@ async def test_model_infer(
     assert prediction.outputs[0].contents == expected
 
 
+async def test_model_infer_headers(
+    inference_service_stub, model_infer_request, sum_model_settings
+):
+    model_infer_request.model_name = sum_model_settings.name
+    model_infer_request.ClearField("model_version")
+
+    request_metadata = (("x-foo", "bar"),)
+    inference_call = inference_service_stub.ModelInfer(
+        model_infer_request, metadata=request_metadata
+    )
+
+    trailing_metadata = await inference_call.trailing_metadata()
+    for key, value in request_metadata:
+        assert key in trailing_metadata
+        assert trailing_metadata[key] == value
+
+
 async def test_model_infer_error(inference_service_stub, model_infer_request):
     with pytest.raises(grpc.RpcError) as err:
         model_infer_request.model_name = "my-model"

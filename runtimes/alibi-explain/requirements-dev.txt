@@ -1,3 +1,2 @@
-numpy
-nest_asyncio==1.5.1
+nest_asyncio==1.5.4
 types-requests
