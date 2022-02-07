@@ -26,7 +26,7 @@ types-orjson==3.6.2
 black==21.7b0
 
 # Pushing to PyPi
-twine==3.7.1
+twine==3.8.0
 
 # Fetch licenses
 pip-licenses==3.5.3
