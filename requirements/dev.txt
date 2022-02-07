@@ -1,6 +1,6 @@
 # Code generation
 grpcio-tools==1.43.0
-datamodel-code-generator==0.11.17
+datamodel-code-generator==0.11.18
 ## Locking `prance` (a subdep of `datamodel-code-generator`) to an older
 ## version due to issues with the latest version of `pip`:
 ## https://github.com/pypa/pip/issues/9613 
@@ -21,7 +21,7 @@ flake8==4.0.1
 flake8-black==0.2.3
 mypy==0.910
 mypy-protobuf==3.1.0
-types-protobuf==3.19.7
+types-protobuf==3.19.10
 types-orjson==3.6.2
 black==21.7b0
 
