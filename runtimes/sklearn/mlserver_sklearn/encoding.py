@@ -6,7 +6,7 @@ import pandas as pd
 
 from mlserver.codecs import NumpyCodec, PandasCodec
 from mlserver.errors import InferenceError
-from mlserver.types import ResponseOutput
+from mlserver.types import RequestOutput, ResponseOutput
 
 # TODO: more support!
 SKLearnResponse = Union[np.ndarray, pd.DataFrame]
@@ -17,7 +17,7 @@ class SKLearnPayload:
     """Class for keeping track of requested outputs
     and corresponding model responses."""
 
-    requested_output: ResponseOutput
+    requested_output: RequestOutput
     model_output: SKLearnResponse
 
 

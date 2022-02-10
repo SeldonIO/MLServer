@@ -46,7 +46,13 @@ COPY \\
     ./requirements.tx[t] \\
     .
 
-RUN ./hack/build-env.sh . ./envs/base
+USER root
+# Install dependencies system-wide, to ensure that they are available for every
+# user
+RUN ./hack/build-env.sh . ./envs/base && \
+    chown -R 1000:0 ./envs/base && \\
+    chmod -R 776 ./envs/base
+USER 1000
 
 # Copy everything else
 COPY . .
