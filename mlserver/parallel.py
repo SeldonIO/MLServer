@@ -59,9 +59,14 @@ def _mp_predict(payload: InferenceRequest) -> InferenceResponse:
     return asyncio.run(_mp_model.predict(payload))
 
 def _mp_noop():
+    """
+    This method is called to "warm workers."
+    """
+    # This sleep is important. Without it, workers in
+    # the pool can finish the noop too quickly and run multiple operations.
+    # Thus not "warming" all the workers in the pool
     time.sleep(0.1)
     return None
-
 
 
 class InferencePool:
