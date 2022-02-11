@@ -58,6 +58,7 @@ def _mp_predict(payload: InferenceRequest) -> InferenceResponse:
     global _mp_model
     return asyncio.run(_mp_model.predict(payload))
 
+
 def _mp_noop():
     """
     This method is called to "warm workers."
@@ -159,7 +160,7 @@ async def load_inference_pool(model: MLModel):
     # Conditionally load models to all workers in thread pool executor
     # This will cut down on initial inference response times but
     # will increase the amount of RAM utilized
-    if model.settings.warm_workers == True:
+    if model.settings.warm_workers:
         await pool.warm_workers(model)
 
     return model
