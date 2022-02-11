@@ -24,7 +24,7 @@ RUN mkdir $(dirname $MLSERVER_ENV_TARBALL); \\
             conda env create \
                 --name $MLSERVER_ENV_NAME \\
                 --file $envFile; \\
-            conda-pack \
+            conda-pack --ignore-missing-files \
                 -n $MLSERVER_ENV_NAME \\
                 -o $MLSERVER_ENV_TARBALL; \\
         fi \\
