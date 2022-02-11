@@ -1,3 +1,4 @@
+import time
 import asyncio
 import multiprocessing as mp
 
@@ -10,6 +11,7 @@ from .settings import ModelSettings
 from .model import MLModel
 from .types import InferenceRequest, InferenceResponse
 from .utils import get_wrapped_method
+from .logging import logger
 
 _InferencePoolAttr = "__inference_pool__"
 
@@ -57,6 +59,17 @@ def _mp_predict(payload: InferenceRequest) -> InferenceResponse:
     return asyncio.run(_mp_model.predict(payload))
 
 
+def _mp_noop():
+    """
+    This method is called to "warm workers."
+    """
+    # This sleep is important. Without it, workers in
+    # the pool can finish the noop too quickly and run multiple operations.
+    # Thus not "warming" all the workers in the pool
+    time.sleep(0.1)
+    return None
+
+
 class InferencePool:
     """
     The InferencePool class represents a pool of workers where we can run
@@ -86,6 +99,20 @@ class InferencePool:
         # What if we serialise payload?
         loop = asyncio.get_running_loop()
         return await loop.run_in_executor(self._executor, _mp_predict, payload)
+
+    async def warm_workers(self, model: MLModel):
+        logger.info(
+            f"Warm workers enabled - loading {model.name} in inference pool workers"
+        )
+        loop = asyncio.get_event_loop()
+        # Submit tasks to trigger initializer
+        loading_tasks = [
+            loop.run_in_executor(self._executor, _mp_noop)
+            for _ in range(model.settings.parallel_workers)
+        ]
+        logger.info("Waiting for models to be loaded")
+        setattr(self, "_warmed", True)
+        return await asyncio.wait(loading_tasks)
 
     def __del__(self):
         self._executor.shutdown(wait=True)
@@ -129,6 +156,12 @@ async def load_inference_pool(model: MLModel):
 
     # Decorate predict method
     setattr(model, "predict", parallel(model.predict))
+
+    # Conditionally load models to all workers in thread pool executor
+    # This will cut down on initial inference response times but
+    # will increase the amount of RAM utilized
+    if model.settings.warm_workers:
+        await pool.warm_workers(model)
 
     return model
 

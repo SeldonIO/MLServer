@@ -139,6 +139,10 @@ class ModelSettings(BaseSettings):
     across."""
     parallel_workers: int = 4
 
+    """When parallel inference is enabled, optionally load model to all workers
+    on startup"""
+    warm_workers: bool = False
+
     # Adaptive Batching settings (disabled by default)
     """When adaptive batching is enabled, maximum number of requests to group
     together in a single batch."""
