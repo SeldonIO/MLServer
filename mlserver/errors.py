@@ -1,6 +1,10 @@
+from fastapi import status
+
+
 class MLServerError(Exception):
-    def __init__(self, msg: str):
+    def __init__(self, msg: str, status_code: int = status.HTTP_400_BAD_REQUEST):
         super().__init__(msg)
+        self.status_code = status_code
 
 
 class InvalidModelURI(MLServerError):
@@ -9,7 +13,7 @@ class InvalidModelURI(MLServerError):
         if model_uri:
             msg += f" ({model_uri})"
 
-        super().__init__(msg)
+        super().__init__(msg, status.HTTP_422_UNPROCESSABLE_ENTITY)
 
 
 class ModelNotFound(MLServerError):
@@ -18,14 +22,14 @@ class ModelNotFound(MLServerError):
         if version is not None:
             msg = f"Model {name} with version {version} not found"
 
-        super().__init__(msg)
+        super().__init__(msg, status.HTTP_404_NOT_FOUND)
 
 
 class InferenceError(MLServerError):
     def __init__(self, msg: str):
-        super().__init__(msg)
+        super().__init__(msg, status.HTTP_400_BAD_REQUEST)
 
 
 class ModelParametersMissing(MLServerError):
     def __init__(self, model_name: str):
-        super().__init__(f"Parameters missing for model {model_name}")
+        super().__init__(f"Parameters missing for model {model_name}", status.HTTP_400_BAD_REQUEST)

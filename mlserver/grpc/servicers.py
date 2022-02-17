@@ -1,6 +1,7 @@
 import grpc
 
 from typing import Callable
+from fastapi import status
 
 from . import dataplane_pb2 as pb
 from . import model_repository_pb2 as mr_pb
@@ -21,6 +22,17 @@ from ..utils import insert_headers, extract_headers
 from ..handlers import DataPlane, ModelRepositoryHandlers
 from ..errors import MLServerError
 
+STATUS_CODE_MAPPING = {
+    status.HTTP_400_BAD_REQUEST: grpc.StatusCode.INVALID_ARGUMENT,
+    status.HTTP_404_NOT_FOUND: grpc.StatusCode.NOT_FOUND,
+    status.HTTP_422_UNPROCESSABLE_ENTITY: grpc.StatusCode.FAILED_PRECONDITION,
+    status.HTTP_500_INTERNAL_SERVER_ERROR: grpc.StatusCode.INTERNAL,
+}
+
+
+def _grpc_status_code(err: MLServerError):
+    return STATUS_CODE_MAPPING.get(err.status_code, grpc.StatusCode.UNKNOWN)
+
 
 def _handle_mlserver_error(f: Callable):
     async def _inner(self, request, context):
@@ -28,7 +40,7 @@ def _handle_mlserver_error(f: Callable):
             return await f(self, request, context)
         except MLServerError as err:
             logger.error(err)
-            await context.abort(code=grpc.StatusCode.INVALID_ARGUMENT, details=str(err))
+            await context.abort(code=_grpc_status_code(err), details=str(err))
 
     return _inner
 
