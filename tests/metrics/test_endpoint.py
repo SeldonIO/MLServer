@@ -22,7 +22,7 @@ async def test_metrics(metrics_client: MetricsClient):
         metrics_client._metrics_endpoint = "/metrics"
         with pytest.raises(ClientResponseError) as err:
             await metrics_client.metrics()
-            assert err.status_code == 404
+        assert err.value.status == 404
     else:
         # Otherwise, assert all metrics are present
         metrics = await metrics_client.metrics()
