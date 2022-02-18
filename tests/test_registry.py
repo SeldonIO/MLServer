@@ -49,10 +49,10 @@ async def test_get_model_not_found(model_registry, name, version):
     with pytest.raises(ModelNotFound) as err:
         await model_registry.get_model(name, version)
 
-        if version is not None:
-            assert err.message == f"Model {name} with version {version} not found"
-        else:
-            assert err.message == f"Model {name} not found"
+    if version is not None:
+        assert str(err.value) == f"Model {name} with version {version} not found"
+    else:
+        assert str(err.value) == f"Model {name} not found"
 
 
 @pytest.mark.parametrize(
