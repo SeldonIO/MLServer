@@ -3,7 +3,7 @@ import { loadModel, infer, unloadModel } from "../common/rest.js";
 
 const TestData = {
   iris: readTestData("iris"),
-  sum_model: readRESTRequest("sum-model"),
+  sum_model: readTestData("sum-model"),
 };
 
 export function setup() {

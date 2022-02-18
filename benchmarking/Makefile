@@ -1,22 +1,24 @@
 start-testserver:
-	mlserver start ./testserver
+	mlserver start ${PWD}/testserver
 
 install-dev:
-	GO111MODULE=on go get github.com/bojand/ghz/cmd/ghz@v0.55.0
-	GO111MODULE=on go get github.com/rakyll/hey@v0.1.3
 	pip install -r requirements.txt
+	@if [[ ! -x "$$(command -v k6)" ]];\
+	then \
+		echo "k6 command not found!"; \
+		echo "To install k6, please check: "; \
+		echo "    https://k6.io/docs/getting-started/installation/"; \
+	fi
 
 generate:
 	python generator.py
 
 benchmark-rest:
-	hey \
-		-n 100000 \
-		-c 100 \
-		-m POST \
-		-T 'application/json' \
-		-D ./data/iris/rest-requests.json \
-		http://localhost:8080/v2/models/iris/infer
+	k6 run \
+		-e MLSERVER_HOST=0.0.0.0:8080 \
+		--vus 100 \
+		--duration 60s \
+		scenarios/inference.js
 
 benchmark-grpc:
 	ghz \
