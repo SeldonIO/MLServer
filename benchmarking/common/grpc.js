@@ -1,5 +1,8 @@
 import { check } from "k6";
+import { Counter } from "k6/metrics";
 import grpc from "k6/net/grpc";
+
+const grpcReqs = new Counter("grpc_reqs");
 
 function getClient(grpcHost) {
   const client = new grpc.Client();
@@ -35,6 +38,7 @@ export class GrpcClient {
       payload
     );
     checkResponse(res);
+    grpcReqs.add(1);
   }
 
   close() {

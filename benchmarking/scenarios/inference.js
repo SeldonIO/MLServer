@@ -12,7 +12,7 @@ const rest = new RestClient();
 const grpc = new GrpcClient();
 
 const ScenarioDuration = "60s";
-const ScenarioVUs = 100;
+const ScenarioVUs = 200;
 
 export const options = {
   scenarios: {
