@@ -13,20 +13,10 @@ install-dev:
 generate:
 	python generator.py
 
-benchmark-rest:
+benchmark:
 	k6 run \
-		-e MLSERVER_HOST=0.0.0.0:8080 \
-		--vus 100 \
-		--duration 60s \
+		-e MLSERVER_HOST=0.0.0.0 \
+		-e MLSERVER_HTTP_PORT=8080 \
+		-e MLSERVER_GRPC_PORT=8081 \
 		scenarios/inference.js
 
-benchmark-grpc:
-	ghz \
-		--insecure \
-		--proto ../proto/dataplane.proto \
-		--call inference.GRPCInferenceService/ModelInfer \
-		--binary-file ./data/iris/grpc-requests.pb \
-		--total 100000 \
-		--connections 100 \
-		--concurrency 100 \
-		localhost:8081
