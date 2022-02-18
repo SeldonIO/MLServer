@@ -27,6 +27,7 @@ export const options = {
       executor: "constant-vus",
       duration: ScenarioDuration,
       vus: ScenarioVUs,
+      startTime: ScenarioDuration,
       tags: { model_name: "iris", protocol: "grpc" },
       env: { MODEL_NAME: "iris", PROTOCOL: "grpc" },
     },
