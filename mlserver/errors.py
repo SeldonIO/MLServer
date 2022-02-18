@@ -32,4 +32,6 @@ class InferenceError(MLServerError):
 
 class ModelParametersMissing(MLServerError):
     def __init__(self, model_name: str):
-        super().__init__(f"Parameters missing for model {model_name}", status.HTTP_400_BAD_REQUEST)
+        super().__init__(
+            f"Parameters missing for model {model_name}", status.HTTP_400_BAD_REQUEST
+        )
