@@ -2,7 +2,6 @@ start-testserver:
 	mlserver start ${PWD}/testserver
 
 install-dev:
-	pip install -r requirements.txt
 	@if [[ ! -x "$$(command -v k6)" ]];\
 	then \
 		echo "k6 command not found!"; \

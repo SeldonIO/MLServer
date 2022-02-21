@@ -13,22 +13,20 @@ These load tests are run locally against a local server.
 
 ## Setup
 
-The gRPC benchmark uses [`ghz`](https://ghz.sh/) and the HTTP benchmark uses
-[`hey`](https://github.com/rakyll/hey).
-To install the pre-requisites, you can run:
+The benchmark scenarios in this folder leverage [`k6`](https://k6.io/).
+To install `k6`, please check their [installation docs
+page](https://k6.io/docs/getting-started/installation/):
 
-```shell
-make install-dev
-```
+https://k6.io/docs/getting-started/installation/
 
 ## Data
 
 You can find pre-generated requests under the [`/data`](./data) folder.
 These are formed by payloads with a single input tensor, which varies in length from `1024` to `65536`.
 
-> **NOTE**: To work around some limitations of
-> [`hey`](https://github.com/rakyll/hey), we will only be using the smallest
-> payload (i.e. with `1024` tensors) as the payload for both gRPC and HTTP.
+> **NOTE**: To work around some limitations of the previous benchmarking suite,
+> we will only be using the smallest payload (i.e. with `1024` tensors) as the
+> payload for both gRPC and HTTP.
 
 ### Generate
 
@@ -48,26 +46,16 @@ can do with:
 make start-testserver
 ```
 
-The test server will start both the REST and gRPC APIs and will pre-load a test
-model which sums over all the elements of the input and returns the total as a
-result.
+### Inference benchmark
 
-### HTTP
-
-To run the HTTP benchmark:
+You can kickstart the HTTP and gRPC inference benchmark by running:
 
 ```shell
-make benchmark-rest
+make benchmark
 ```
 
-This will run 100000 requests across 100 workers.
-
-### gRPC
-
-To run the gRPC benchmark:
-
-```shell
-make benchmark-grpc
-```
-
-This will run 100000 requests across 50 connections shared by 100 workers.
+This will first load a model trained on the Iris dataset, and perform an
+inference benchmark leveraging both the HTTP and gRPC interfaces (lasting 60s
+each).
+At the end of the benchmark, it will unload the used model from the MLServer
+instance.
