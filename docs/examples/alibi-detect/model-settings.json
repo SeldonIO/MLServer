@@ -7,9 +7,8 @@
     "extra":{
       "detector_type":"alibi_detect.cd.ChiSquareDrift",
       "init_detector": false,
-      "protocol": "seldon.http",
       "predict_parameters": {
-        "drift_type": "feature"
+          "drift_type":"feature"
       }
     }
   }

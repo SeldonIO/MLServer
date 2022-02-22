@@ -5,10 +5,6 @@ from mlserver.errors import InferenceError
 from mlserver.codecs import NumpyCodec, NumpyRequestCodec
 from fastapi import Request, Response
 from mlserver.handlers import custom_handler
-from .protocols.util import (
-    get_request_handler,
-    Protocol,
-)
 import numpy as np
 import orjson
 from typing import Optional, Any
@@ -27,7 +23,6 @@ class AlibiDetectSettings(BaseSettings):
 
     init_detector: bool = False
     detector_type: PyObject = ""  # type: ignore
-    protocol: Optional[str] = "seldon.http"
     init_parameters: Optional[dict] = {}
     predict_parameters: Optional[dict] = {}
 
@@ -52,30 +47,6 @@ class AlibiDetectRuntime(MLModel):
             extra = settings.parameters.extra
             self.alibi_detect_settings = AlibiDetectSettings(**extra)  # type: ignore
         super().__init__(settings)
-
-    @custom_handler(rest_path="/")
-    async def detect(self, request: Request) -> Response:
-        """
-        This custom handler is meant to mimic the behaviour prediction in alibi-detect
-        """
-        raw_data = await request.body()
-        as_str = raw_data.decode("utf-8")
-
-        try:
-            body = orjson.loads(as_str)
-        except orjson.JSONDecodeError as e:
-            raise InferenceError("Unrecognized request format: %s" % e)
-
-        request_handler = get_request_handler(
-            Protocol(self.alibi_detect_settings.protocol), body
-        )
-        request_handler.validate()
-        input_data = request_handler.extract_request()
-
-        y = await self.predict_fn(input_data)
-        output_data = orjson.dumps(y, option=orjson.OPT_SERIALIZE_NUMPY)
-
-        return Response(content=output_data, media_type="application/json")
 
     async def predict(self, payload: types.InferenceRequest) -> types.InferenceResponse:
         input_data = self.decode_request(payload, default_codec=NumpyRequestCodec)
