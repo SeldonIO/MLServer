@@ -1,5 +1,5 @@
 from typing import Optional
-from fastapi import Request, status
+from fastapi import Request
 from pydantic import BaseModel
 
 from .responses import Response
@@ -12,7 +12,7 @@ class APIErrorResponse(BaseModel):
 
 async def handle_mlserver_error(request: Request, exc: MLServerError) -> Response:
     err_res = APIErrorResponse(error=str(exc))
-    return Response(status_code=status.HTTP_400_BAD_REQUEST, content=err_res.dict())
+    return Response(status_code=exc.status_code, content=err_res.dict())
 
 
 _EXCEPTION_HANDLERS = {MLServerError: handle_mlserver_error}

@@ -89,7 +89,7 @@ async def test_model_infer_error(inference_service_stub, model_infer_request):
         model_infer_request.model_name = "my-model"
         await inference_service_stub.ModelInfer(model_infer_request)
 
-    assert err.value.code() == grpc.StatusCode.INVALID_ARGUMENT
+    assert err.value.code() == grpc.StatusCode.NOT_FOUND
     assert err.value.details() == "Model my-model with version v1.2.3 not found"
 
 
@@ -141,5 +141,5 @@ async def test_model_repository_load_error(
         load_request = mr_pb.RepositoryModelLoadRequest(model_name="my-model")
         await model_repository_service_stub.RepositoryModelLoad(load_request)
 
-    assert err.value.code() == grpc.StatusCode.INVALID_ARGUMENT
+    assert err.value.code() == grpc.StatusCode.NOT_FOUND
     assert err.value.details() == "Model my-model not found"

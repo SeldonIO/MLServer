@@ -78,7 +78,7 @@ def test_infer_error(rest_client, inference_request):
     endpoint = "/v2/models/my-model/versions/v0/infer"
     response = rest_client.post(endpoint, json=inference_request.dict())
 
-    assert response.status_code == 400
+    assert response.status_code == 404
     assert response.json()["error"] == "Model my-model with version v0 not found"
 
 
@@ -99,7 +99,7 @@ def test_model_repository_unload(rest_client, sum_model_settings):
     assert response.status_code == 200
 
     model_metadata = rest_client.get(f"/v2/models/{sum_model_settings.name}")
-    assert model_metadata.status_code == 400
+    assert model_metadata.status_code == 404
 
 
 def test_model_repository_load(rest_client, sum_model_settings):
@@ -118,5 +118,5 @@ def test_model_repository_load_error(rest_client, sum_model_settings):
     endpoint = "/v2/repository/models/my-model/load"
     response = rest_client.post(endpoint)
 
-    assert response.status_code == 400
+    assert response.status_code == 404
     assert response.json()["error"] == "Model my-model not found"
