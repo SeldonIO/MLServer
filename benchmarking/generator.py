@@ -62,9 +62,9 @@ def save_grpc_requests(requests: List[types.InferenceRequest]):
             requests_file.write(serialised)
 
     requests_file_path = os.path.join(DATA_PATH, "grpc-requests.json")
-    with open(requests_file_path, "w") as requests_file:
+    with open(requests_file_path, "w") as json_file:
         as_dict = json_format.MessageToDict(infer_requests[0])
-        json.dump(as_dict, requests_file)
+        json.dump(as_dict, json_file)
 
 
 def save_rest_requests(requests: List[types.InferenceRequest]):
