@@ -32,7 +32,7 @@ However, these benefits will usually scale only up to a certain point, which is
 usually determined by either the infrastructure, the machine learning
 framework used to train your model, or a combination of both.
 Therefore, to maximise the performance improvements brought in by adaptive
-batching it will be important to [configure it with the appropiate values for
+batching it will be important to [configure it with the appropriate values for
 your model](#usage).
 Since these values are usually found through experimentation, **MLServer won't
 enable by default adaptive batching on newly loaded models**.
@@ -46,10 +46,10 @@ through two main parameters:
 - **Maximum batch time**, that is how much time we should wait for new
   requests until we reach our maximum batch size.
 
-### `maximum_batch_size`
+### `max_batch_size`
 
-The `maximum_batch_size` field of the `model-settings.json` file (or
-alternatively, the `MLSERVER_MODEL_MAXIMUM_BATCH_SIZE` global environment
+The `max_batch_size` field of the `model-settings.json` file (or
+alternatively, the `MLSERVER_MODEL_MAX_BATCH_SIZE` global environment
 variable) controls the maximum number of requests that should be grouped
 together on each batch.
 The expected values are:
@@ -57,10 +57,10 @@ The expected values are:
 - `N`, where `N > 1`, will create batches of up to `N` elements.
 - `0` or `1`, will disable adaptive batching.
 
-### `maximum_batch_time`
+### `max_batch_time`
 
-The `maximum_batch_time` field of the `model-settings.json` file (or
-alternatively, the `MLSERVER_MODEL_MAXIMUM_BATCH_TIME` global environment
+The `max_batch_time` field of the `model-settings.json` file (or
+alternatively, the `MLSERVER_MODEL_MAX_BATCH_TIME` global environment
 variable) controls the time that MLServer should wait for new requests to come
 in until we reach our maximum batch size.
 
