@@ -6,13 +6,14 @@ import json
 import numpy as np
 
 from typing import List
+from google.protobuf import json_format
 from google.protobuf.internal.encoder import _VarintBytes  # type: ignore
 from mlserver import types
 from mlserver.grpc import converters
 
 MODEL_NAME = "sum-model"
 MODEL_VERSION = "v1.2.3"
-DATA_PATH = os.path.join(os.path.dirname(__file__), "data")
+DATA_PATH = os.path.join(os.path.dirname(__file__), "data", "sum-model")
 
 
 def generate_test_requests() -> List[types.InferenceRequest]:
@@ -59,6 +60,11 @@ def save_grpc_requests(requests: List[types.InferenceRequest]):
 
             serialised = req.SerializeToString()
             requests_file.write(serialised)
+
+    requests_file_path = os.path.join(DATA_PATH, "grpc-requests.json")
+    with open(requests_file_path, "w") as json_file:
+        as_dict = json_format.MessageToDict(infer_requests[0])
+        json.dump(as_dict, json_file)
 
 
 def save_rest_requests(requests: List[types.InferenceRequest]):
