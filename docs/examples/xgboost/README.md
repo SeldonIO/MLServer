@@ -113,6 +113,13 @@ mlserver start .
 
 Since this command will start the server and block the terminal, waiting for requests, this will need to be ran in the background on a separate terminal.
 
+---
+**NOTE**
+
+You may first need to install the XGBoost inference runtime for MLServer using `pip install mlserver-xgboost`
+
+---
+
 ### Send test inference request
 
 We now have our model being served by `mlserver`.
