@@ -1,12 +1,8 @@
 from mlserver import types
 from mlserver.settings import ModelSettings
 from mlserver.model import MLModel
-from mlserver.errors import InferenceError
 from mlserver.codecs import NumpyCodec, NumpyRequestCodec
-from fastapi import Request, Response
-from mlserver.handlers import custom_handler
 import numpy as np
-import orjson
 from typing import Optional, Any
 from pydantic import BaseSettings, PyObject
 
@@ -24,14 +20,6 @@ class AlibiDetectSettings(BaseSettings):
     init_detector: bool = False
     detector_type: PyObject = ""  # type: ignore
     init_parameters: Optional[dict] = {}
-    predict_parameters: Optional[dict] = {}
-
-
-class AlibiDetectParameters(BaseSettings):
-    """
-    Parameters that apply only to alibi detect models
-    """
-
     predict_parameters: Optional[dict] = {}
 
 
