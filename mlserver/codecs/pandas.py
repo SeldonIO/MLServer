@@ -1,6 +1,7 @@
-# TODO: Should we make Pandas optional?
 import pandas as pd
 import numpy as np
+
+from typing import Any
 
 from .base import RequestCodec, register_request_codec
 from .numpy import to_datatype, to_dtype
@@ -50,6 +51,10 @@ def _ensure_bytes(elem: PackElement) -> bytes:
 @register_request_codec
 class PandasCodec(RequestCodec):
     ContentType = "pd"
+
+    @classmethod
+    def can_encode(cls, payload: Any) -> bool:
+        return isinstance(payload, pd.DataFrame)
 
     @classmethod
     def encode(

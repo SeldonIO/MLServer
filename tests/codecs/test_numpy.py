@@ -1,12 +1,20 @@
 import pytest
 import numpy as np
 
+from typing import Any
+
 from mlserver.codecs.numpy import NumpyCodec, to_datatype
 from mlserver.types import RequestInput
 
-def test_can_encode():
-    payload = np.array([1, 2, 3])
-    assert NumpyCodec.can_encode(payload)
+@pytest.mark.parametrize(
+    'payload, expected',
+    [
+        (np.array([1, 2, 3]), True),
+        ([1, 2, 3], False)
+    ]
+)
+def test_can_encode(payload: Any, expected: bool):
+    assert NumpyCodec.can_encode(payload) == expected
 
 @pytest.mark.parametrize(
     "request_input, payload",

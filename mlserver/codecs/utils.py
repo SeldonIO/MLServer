@@ -1,4 +1,4 @@
-from typing import Any, Union, Dict, Optional, Type
+from typing import Any, Union, Dict, List, Optional, Type
 
 from ..types import (
     InferenceRequest,
@@ -24,6 +24,15 @@ Parametrised = Union[InferenceRequest, RequestInput]
 Tagged = Union[MetadataTensor, ModelSettings]
 DecodedParameterName = "_decoded_payload"
 
+def is_list_of(payload: Any, instance_type: Type):
+    # TODO: Does this support iterables?
+    if not isinstance(payload, list):
+        return False
+
+    def isinstance_of_type(payload: Any) -> bool:
+        return isinstance(payload, instance_type)
+
+    return all(map(isinstance_of_type, payload))
 
 def _get_content_type(
     request: Parametrised, metadata: Optional[Tagged] = None

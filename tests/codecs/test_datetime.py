@@ -1,6 +1,7 @@
 import pytest
 
 from datetime import datetime
+from typing import Any
 
 from mlserver.codecs import DatetimeCodec
 from mlserver.types import RequestInput, ResponseOutput
@@ -13,6 +14,16 @@ TestTzDatetimeIso = "2021-08-24T15:01:19-04:00"
 TestTzDatetimeIsoB = b"2021-08-24T15:01:19-04:00"
 TestTzDatetime = datetime.fromisoformat(TestTzDatetimeIso)
 
+@pytest.mark.parametrize(
+    'payload, expected',
+    [
+        ([TestDatetime, TestTzDatetime], True),
+        ([ TestDatetime, TestDatetimeIso ], False),
+        (TestDatetime, False),
+    ]
+)
+def test_can_encode(payload: Any, expected: bool):
+    assert DatetimeCodec.can_encode(payload) == expected
 
 @pytest.mark.parametrize(
     "decoded, expected",
