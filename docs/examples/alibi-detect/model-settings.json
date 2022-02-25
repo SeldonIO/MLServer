@@ -2,14 +2,7 @@
   "name": "income-classifier-cd",
   "implementation": "mlserver_alibi_detect.AlibiDriftDetectRuntime",
   "parameters": {
-    "uri": "./alibi-detector-artifacts/detector_data_cat",
-    "version": "v0.1.0",
-    "extra":{
-      "detector_type":"alibi_detect.cd.ChiSquareDrift",
-      "init_detector": false,
-      "predict_parameters": {
-          "drift_type":"feature"
-      }
-    }
+    "uri": "./alibi-detector-artifacts/detector_data_tabular",
+    "version": "v0.1.0"
   }
 }
