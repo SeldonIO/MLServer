@@ -1,3 +1,3 @@
-from .cd.runtime import AlibiDriftDetectRuntime
+from .runtime import AlibiDetectRuntime
 
-__all__ = ["AlibiDriftDetectRuntime"]
+__all__ = ["AlibiDetectRuntime"]
