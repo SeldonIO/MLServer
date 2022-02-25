@@ -4,6 +4,9 @@ import numpy as np
 from mlserver.codecs.numpy import NumpyCodec, to_datatype
 from mlserver.types import RequestInput
 
+def test_can_encode():
+    payload = np.array([1, 2, 3])
+    assert NumpyCodec.can_encode(payload)
 
 @pytest.mark.parametrize(
     "request_input, payload",

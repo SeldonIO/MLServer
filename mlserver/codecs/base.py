@@ -21,6 +21,10 @@ class InputCodec:
     ContentType: ClassVar[str] = ""
 
     @classmethod
+    def can_encode(cls, payload: Any) -> bool:
+        return False
+
+    @classmethod
     def encode(cls, name: str, payload: Any) -> ResponseOutput:
         raise NotImplementedError()
 
@@ -39,6 +43,10 @@ class RequestCodec:
     """
 
     ContentType: Optional[str] = None
+
+    @classmethod
+    def can_encode(cls, payload: Any) -> bool:
+        return False
 
     @classmethod
     def encode(

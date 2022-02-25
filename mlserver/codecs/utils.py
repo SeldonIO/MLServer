@@ -116,10 +116,14 @@ class FirstInputRequestCodec(RequestCodec):
     InputCodec: Optional[Type[InputCodec]] = None
 
     @classmethod
+    def can_encode(cls, payload: Any) -> bool:
+        return cls.InputCodec.can_encode(payload)
+
+    @classmethod
     def encode(
         cls, model_name: str, payload: Any, model_version: str = None
     ) -> InferenceResponse:
-        output = InputCodec.encode("output-1", payload)
+        output = cls.InputCodec.encode("output-1", payload)
         return InferenceResponse(
             model_name=model_name, model_version=model_version, outputs=[output]
         )
