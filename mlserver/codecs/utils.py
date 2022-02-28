@@ -21,6 +21,7 @@ from .base import (
     CodecError,
 )
 
+DefaultOutputPrefix = "output-"
 
 InputCodecLike = Union[Type[InputCodec], InputCodec]
 RequestCodecLike = Union[Type[RequestCodec], RequestCodec]
@@ -87,12 +88,8 @@ def encode_inference_response(
     payload: Any,
     model_settings: ModelSettings = None,
 ) -> Optional[InferenceResponse]:
-    content_type = _get_content_type(model_settings)
-    codec = (
-        find_request_codec(content_type)
-        if content_type
-        else find_request_codec_by_payload(payload)
-    )
+    # TODO: Allow users to override codec through model's metadata
+    codec = find_request_codec_by_payload(payload)
 
     if not codec:
         return None
@@ -182,7 +179,7 @@ class SingleInputRequestCodec(RequestCodec):
     def encode(
         cls, model_name: str, payload: Any, model_version: str = None
     ) -> InferenceResponse:
-        output = cls.InputCodec.encode("output-1", payload)
+        output = cls.InputCodec.encode(f"{DefaultOutputPrefix}1", payload)
         return InferenceResponse(
             model_name=model_name, model_version=model_version, outputs=[output]
         )

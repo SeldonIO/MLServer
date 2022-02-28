@@ -15,6 +15,8 @@ from .utils import (
     has_decoded,
     get_decoded,
     get_decoded_or_raw,
+    encode_inference_response,
+    encode_response_output,
     decode_request_input,
     decode_inference_request,
     InputCodecLike,
@@ -39,6 +41,8 @@ __all__ = [
     "has_decoded",
     "get_decoded",
     "get_decoded_or_raw",
+    "encode_inference_response",
+    "encode_response_output",
     "decode_request_input",
     "decode_inference_request",
 ]

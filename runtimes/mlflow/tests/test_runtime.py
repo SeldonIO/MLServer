@@ -21,7 +21,7 @@ async def test_predict(runtime: MLflowRuntime, inference_request: InferenceReque
 
     outputs = response.outputs
     assert len(outputs) == 1
-    assert outputs[0].name == DefaultOutputName
+    assert outputs[0].name == "output-1"
 
 
 async def test_predict_pytorch(runtime_pytorch: MLflowRuntime):
@@ -44,7 +44,7 @@ async def test_predict_pytorch(runtime_pytorch: MLflowRuntime):
 
     outputs = response.outputs
     assert len(outputs) == 1
-    assert outputs[0].name == DefaultOutputName
+    assert outputs[0].name == "output-1"
 
 
 async def test_metadata(runtime: MLflowRuntime, model_signature: ModelSignature):

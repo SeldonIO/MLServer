@@ -1,6 +1,7 @@
 from typing import Any, Dict, Optional, List
 
 from .codecs import (
+    encode_inference_response,
     decode_request_input,
     decode_inference_request,
     has_decoded,
@@ -112,6 +113,18 @@ class MLModel:
             return default_codec.decode(inference_request)
 
         return inference_request
+
+    def encode_response(
+        self,
+        payload: Any,
+        default_codec: Optional[RequestCodecLike] = None,
+    ) -> InferenceResponse:
+        inference_response = encode_inference_response(payload, self._settings)
+
+        if not inference_response:
+            inference_response = default_codec.encode(payload)
+
+        return inference_response
 
     async def metadata(self) -> MetadataModelResponse:
         model_metadata = MetadataModelResponse(
