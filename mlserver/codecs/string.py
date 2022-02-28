@@ -2,7 +2,7 @@ from typing import Any, List
 
 from ..types import RequestInput, ResponseOutput, Parameters
 
-from .utils import FirstInputRequestCodec, is_list_of
+from .utils import SingleInputRequestCodec, is_list_of
 from .base import InputCodec, register_input_codec, register_request_codec
 from .pack import unpack, PackElement
 
@@ -70,6 +70,6 @@ class StringCodec(InputCodec):
 
 
 @register_request_codec
-class StringRequestCodec(FirstInputRequestCodec):
+class StringRequestCodec(SingleInputRequestCodec):
     InputCodec = StringCodec
     ContentType = StringCodec.ContentType

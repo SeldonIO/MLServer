@@ -5,7 +5,7 @@ from typing import Any, Union
 from ..types import RequestInput, ResponseOutput, Parameters
 
 from .base import InputCodec, register_input_codec, register_request_codec
-from .utils import FirstInputRequestCodec
+from .utils import SingleInputRequestCodec
 
 _DatatypeToNumpy = {
     "BOOL": "bool",
@@ -129,6 +129,6 @@ class NumpyCodec(InputCodec):
 
 
 @register_request_codec
-class NumpyRequestCodec(FirstInputRequestCodec):
+class NumpyRequestCodec(SingleInputRequestCodec):
     InputCodec = NumpyCodec
     ContentType = NumpyCodec.ContentType

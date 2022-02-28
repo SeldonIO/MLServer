@@ -1,7 +1,7 @@
 from xgboost import DMatrix
 
 from mlserver.codecs import NumpyCodec, register_input_codec, register_request_codec
-from mlserver.codecs.utils import FirstInputRequestCodec
+from mlserver.codecs.utils import SingleInputRequestCodec
 from mlserver.types import RequestInput
 from mlserver.errors import InferenceError
 
@@ -22,6 +22,6 @@ class DMatrixCodec(NumpyCodec):
 
 
 @register_request_codec
-class DMatrixRequestCodec(FirstInputRequestCodec):
+class DMatrixRequestCodec(SingleInputRequestCodec):
     InputCodec = DMatrixCodec
     ContentType = DMatrixCodec.ContentType

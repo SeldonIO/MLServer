@@ -18,7 +18,7 @@ from mlserver.codecs.base import CodecError
 from mlserver.codecs.utils import (
     encode_response_output,
     encode_inference_response,
-    FirstInputRequestCodec,
+    SingleInputRequestCodec,
     DecodedParameterName,
 )
 from mlserver.codecs.numpy import NumpyRequestCodec
@@ -159,4 +159,4 @@ def test_first_input_error(inference_request: InferenceRequest):
         RequestInput(name="bar", shape=[1, 2], data=[1, 2], datatype="INT32")
     )
     with pytest.raises(CodecError):
-        FirstInputRequestCodec.decode(inference_request)
+        SingleInputRequestCodec.decode(inference_request)

@@ -164,9 +164,9 @@ def get_decoded_or_raw(parametrised_obj: Parametrised) -> Any:
     return get_decoded(parametrised_obj)
 
 
-class FirstInputRequestCodec(RequestCodec):
+class SingleInputRequestCodec(RequestCodec):
     """
-    The FirstInputRequestCodec can be used as a "meta-implementation" for other
+    The SingleInputRequestCodec can be used as a "meta-implementation" for other
     codecs. Its goal to decode the whole request simply as the first decoded
     element.
     """
