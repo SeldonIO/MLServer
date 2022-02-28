@@ -12,9 +12,9 @@ from ..types import (
 from ..settings import ModelSettings
 from .base import (
     find_input_codec,
-    find_input_codec_by_type,
+    find_input_codec_by_payload,
     find_request_codec,
-    find_request_codec_by_type,
+    find_request_codec_by_payload,
     InputCodec,
     RequestCodec,
     CodecError,
@@ -70,7 +70,7 @@ def encode_response_output(
     codec = (
         find_input_codec(content_type)
         if content_type
-        else find_input_codec_by_type(payload)
+        else find_input_codec_by_payload(payload)
     )
 
     if not codec:
