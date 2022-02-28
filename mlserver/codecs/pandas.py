@@ -26,7 +26,6 @@ def _to_response_output(series: pd.Series) -> ResponseOutput:
     datatype = to_datatype(series.dtype)
     data = series.tolist()
 
-    # TODO: Support content types from metadata when decoding series
     if datatype == "BYTES":
         # To ensure that "string" columns can be encoded in gRPC, we need to
         # encode them as bytes

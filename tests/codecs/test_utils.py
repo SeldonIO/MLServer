@@ -1,19 +1,23 @@
 import pytest
 import numpy as np
+import pandas as pd
 
 from typing import Any
 
 from mlserver.types import (
     InferenceRequest,
+    InferenceResponse,
     RequestInput,
     Parameters,
     RequestOutput,
     ResponseOutput,
     MetadataTensor,
 )
+from mlserver.settings import ModelSettings
 from mlserver.codecs.base import CodecError
 from mlserver.codecs.utils import (
     encode_response_output,
+    encode_inference_response,
     FirstInputRequestCodec,
     DecodedParameterName,
 )
@@ -56,6 +60,62 @@ def test_encode_response_output(
     }
     response_output = encode_response_output(payload, request_output, metadata_outputs)
     assert response_output == expected
+
+
+@pytest.mark.parametrize(
+    "payload, expected",
+    [
+        (
+            pd.DataFrame({"a": [1, 2, 3], "b": ["a", "b", "c"]}),
+            InferenceResponse(
+                model_name="sum-model",
+                model_version="v1.2.3",
+                outputs=[
+                    ResponseOutput(
+                        name="a", datatype="INT64", shape=[3], data=[1, 2, 3]
+                    ),
+                    ResponseOutput(
+                        name="b", datatype="BYTES", shape=[3], data=[b"a", b"b", b"c"]
+                    ),
+                ],
+            ),
+        ),
+        (
+            np.array([1, 2, 3]),
+            InferenceResponse(
+                model_name="sum-model",
+                model_version="v1.2.3",
+                outputs=[
+                    ResponseOutput(
+                        name="output-1", datatype="INT64", shape=[3], data=[1, 2, 3]
+                    ),
+                ],
+            ),
+        ),
+        (
+            ["foo", "bar"],
+            InferenceResponse(
+                model_name="sum-model",
+                model_version="v1.2.3",
+                outputs=[
+                    ResponseOutput(
+                        name="output-1",
+                        datatype="BYTES",
+                        shape=[2],
+                        data=[b"foo", b"bar"],
+                    ),
+                ],
+            ),
+        ),
+    ],
+)
+def test_encode_inference_response(
+    payload: Any,
+    expected: InferenceResponse,
+    sum_model_settings: ModelSettings,
+):
+    inference_response = encode_inference_response(payload, sum_model_settings)
+    assert inference_response == expected
 
 
 @pytest.mark.parametrize(

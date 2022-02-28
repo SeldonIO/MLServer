@@ -82,6 +82,27 @@ def encode_response_output(
     )
 
 
+def encode_inference_response(
+    payload: Any,
+    model_settings: ModelSettings = None,
+) -> Optional[InferenceResponse]:
+    content_type = _get_content_type(model_settings)
+    codec = (
+        find_request_codec(content_type)
+        if content_type
+        else find_request_codec_by_payload(payload)
+    )
+
+    if not codec:
+        return None
+
+    model_version = None
+    if model_settings.parameters:
+        model_version = model_settings.parameters.version
+
+    return codec.encode(model_settings.name, payload, model_version)
+
+
 def decode_request_input(
     request_input: RequestInput,
     metadata_inputs: Dict[str, MetadataTensor] = {},
