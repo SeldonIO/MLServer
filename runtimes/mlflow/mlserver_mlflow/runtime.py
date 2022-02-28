@@ -27,7 +27,6 @@ from mlserver.settings import ModelParameters
 from mlserver.logging import logger
 
 from .codecs import TensorDictCodec
-from .encoding import to_outputs
 from .metadata import (
     to_metadata_tensors,
     to_model_content_type,
