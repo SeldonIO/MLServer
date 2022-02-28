@@ -82,6 +82,13 @@ class _CodecRegistry:
         # TODO: Raise error if codec doesn't exist
         return self._input_codecs[content_type]
 
+    def find_input_codec_by_type(self, t: Type) -> Optional[Type[InputCodec]]:
+        for input_codec in self._input_codecs.values():
+            if input_codec.can_encode(t):
+                return input_codec
+
+        return None
+
     def register_request_codec(self, content_type: str, codec: Type[RequestCodec]):
         # TODO: Raise error if codec exists?
         self._request_codecs[content_type] = codec
@@ -90,11 +97,20 @@ class _CodecRegistry:
         # TODO: Raise error if codec doesn't exist
         return self._request_codecs[content_type]
 
+    def find_request_codec_by_type(self, t: Type) -> Optional[Type[RequestCodec]]:
+        for request_codec in self._request_codecs.values():
+            if request_codec.can_encode(t):
+                return request_codec
+
+        return None
+
 
 _codec_registry = _CodecRegistry()
 
 find_request_codec = _codec_registry.find_request_codec
+find_request_codec_by_type = _codec_registry.find_request_codec_by_type
 find_input_codec = _codec_registry.find_input_codec
+find_input_codec_by_type = _codec_registry.find_input_codec_by_type
 
 
 def register_request_codec(CodecKlass: Type[RequestCodec]):

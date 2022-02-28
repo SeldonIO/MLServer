@@ -4,13 +4,17 @@ from ..types import (
     InferenceRequest,
     InferenceResponse,
     RequestInput,
+    RequestOutput,
+    ResponseOutput,
     MetadataTensor,
     Parameters,
 )
 from ..settings import ModelSettings
 from .base import (
     find_input_codec,
+    find_input_codec_by_type,
     find_request_codec,
+    find_request_codec_by_type,
     InputCodec,
     RequestCodec,
     CodecError,
@@ -24,6 +28,7 @@ Parametrised = Union[InferenceRequest, RequestInput]
 Tagged = Union[MetadataTensor, ModelSettings]
 DecodedParameterName = "_decoded_payload"
 
+
 def is_list_of(payload: Any, instance_type: Type):
     # TODO: Does this support iterables?
     if not isinstance(payload, list):
@@ -33,6 +38,7 @@ def is_list_of(payload: Any, instance_type: Type):
         return isinstance(payload, instance_type)
 
     return all(map(isinstance_of_type, payload))
+
 
 def _get_content_type(
     request: Parametrised, metadata: Optional[Tagged] = None
@@ -52,6 +58,28 @@ def _save_decoded(parametrised_obj: Parametrised, decoded_payload: Any):
         parametrised_obj.parameters = Parameters()
 
     setattr(parametrised_obj.parameters, DecodedParameterName, decoded_payload)
+
+
+def encode_response_output(
+    payload: Any,
+    request_output: RequestOutput,
+    metadata_outputs: Dict[str, MetadataTensor] = {},
+) -> Optional[ResponseOutput]:
+    output_metadata = metadata_outputs.get(request_output.name)
+    content_type = _get_content_type(request_output, output_metadata)
+    codec = (
+        find_input_codec(content_type)
+        if content_type
+        else find_input_codec_by_type(payload)
+    )
+
+    if not codec:
+        return None
+
+    return codec.encode(
+        name=request_output.name,
+        payload=payload,
+    )
 
 
 def decode_request_input(
