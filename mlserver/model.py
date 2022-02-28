@@ -122,7 +122,7 @@ class MLModel:
         inference_response = encode_inference_response(payload, self._settings)
 
         if not inference_response:
-            inference_response = default_codec.encode(payload)
+            inference_response = default_codec.encode(self.name, payload, self.version)
 
         return inference_response
 

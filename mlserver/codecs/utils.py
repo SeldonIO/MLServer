@@ -32,8 +32,7 @@ DecodedParameterName = "_decoded_payload"
 
 
 def is_list_of(payload: Any, instance_type: Type):
-    # TODO: Does this support iterables?
-    if not isinstance(payload, Iterable):
+    if not isinstance(payload, list):
         return False
 
     def isinstance_of_type(payload: Any) -> bool:

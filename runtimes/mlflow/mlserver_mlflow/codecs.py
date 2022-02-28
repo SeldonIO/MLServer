@@ -1,5 +1,7 @@
 import numpy as np
 
+from typing import Dict
+
 from mlserver.types import InferenceRequest, InferenceResponse
 from mlserver.codecs import (
     NumpyCodec,
@@ -11,7 +13,8 @@ from mlserver.codecs.utils import is_list_of
 
 from typing import Any
 
-from .encoding import TensorDict
+
+TensorDict = Dict[str, np.ndarray]
 
 
 @register_request_codec
@@ -27,7 +30,7 @@ class TensorDictCodec(RequestCodec):
         if not isinstance(payload, dict):
             return False
 
-        return is_list_of(payload.values(), np.ndarray)
+        return is_list_of(list(payload.values()), np.ndarray)
 
     @classmethod
     def encode(
