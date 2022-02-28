@@ -1,4 +1,5 @@
 from typing import Any, Union, Dict, List, Optional, Type
+from collections.abc import Iterable
 
 from ..types import (
     InferenceRequest,
@@ -31,7 +32,7 @@ DecodedParameterName = "_decoded_payload"
 
 def is_list_of(payload: Any, instance_type: Type):
     # TODO: Does this support iterables?
-    if not isinstance(payload, list):
+    if not isinstance(payload, Iterable):
         return False
 
     def isinstance_of_type(payload: Any) -> bool:
