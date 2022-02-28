@@ -130,20 +130,19 @@ def test_encode(dataframe, expected):
             ),
         ),
         (
-                InferenceRequest(
-                    inputs=[
-                        RequestInput(
-                            name="a",
-                            data=[1],
-                            datatype="INT32",
-                            shape=[1],
-                            parameters=Parameters(_decoded_payload=np.array([1])),
-                        ),
-                    ]
-                ),
-                pd.DataFrame({"a": np.array([1], dtype=np.int32)}),
+            InferenceRequest(
+                inputs=[
+                    RequestInput(
+                        name="a",
+                        data=[1],
+                        datatype="INT32",
+                        shape=[1],
+                        parameters=Parameters(_decoded_payload=np.array([1])),
+                    ),
+                ]
+            ),
+            pd.DataFrame({"a": np.array([1], dtype=np.int32)}),
         ),
-
     ],
 )
 def test_decode(inference_request, expected):
