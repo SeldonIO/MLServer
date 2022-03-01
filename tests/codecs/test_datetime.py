@@ -14,16 +14,18 @@ TestTzDatetimeIso = "2021-08-24T15:01:19-04:00"
 TestTzDatetimeIsoB = b"2021-08-24T15:01:19-04:00"
 TestTzDatetime = datetime.fromisoformat(TestTzDatetimeIso)
 
+
 @pytest.mark.parametrize(
-    'payload, expected',
+    "payload, expected",
     [
         ([TestDatetime, TestTzDatetime], True),
-        ([ TestDatetime, TestDatetimeIso ], False),
+        ([TestDatetime, TestDatetimeIso], False),
         (TestDatetime, False),
-    ]
+    ],
 )
 def test_can_encode(payload: Any, expected: bool):
     assert DatetimeCodec.can_encode(payload) == expected
+
 
 @pytest.mark.parametrize(
     "decoded, expected",

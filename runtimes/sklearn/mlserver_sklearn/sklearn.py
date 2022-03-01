@@ -87,8 +87,8 @@ class SKLearnModel(MLModel):
 
             # If output is a Pandas DataFrame, encode it manually
             if PandasCodec.can_encode(y):
-                if len(payload.outputs) > 1:
-                    all_output_names = [o.name for o in payload.outputs]
+                if len(payload.outputs) > 1:  # type: ignore
+                    all_output_names = [o.name for o in payload.outputs]  # type: ignore
                     raise InferenceError(
                         f"{request_output.name} returned columnar data of type"
                         f" {type(y)} and {all_output_names} were"

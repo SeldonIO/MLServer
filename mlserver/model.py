@@ -10,6 +10,7 @@ from .codecs import (
     InputCodecLike,
     RequestCodecLike,
 )
+from .errors import CodecNotFound
 from .settings import ModelSettings
 from .types import (
     InferenceRequest,
@@ -124,10 +125,14 @@ class MLModel:
     ) -> InferenceResponse:
         inference_response = encode_inference_response(payload, self._settings)
 
-        if not inference_response:
-            inference_response = default_codec.encode(self.name, payload, self.version)
+        if inference_response:
+            return inference_response
 
-        return inference_response
+        if default_codec:
+            return default_codec.encode(self.name, payload, self.version)
+
+        payload_type = str(type(payload))
+        raise CodecNotFound(payload_type=payload_type)
 
     def encode(
         self,
@@ -139,10 +144,13 @@ class MLModel:
             payload, request_output, self._outputs_index
         )
 
-        if not response_output:
-            response_output = default_codec.encode(request_output.name, payload)
+        if response_output:
+            return response_output
 
-        return response_output
+        if default_codec:
+            return default_codec.encode(request_output.name, payload)
+
+        raise CodecNotFound(name=request_output.name)
 
     async def metadata(self) -> MetadataModelResponse:
         model_metadata = MetadataModelResponse(

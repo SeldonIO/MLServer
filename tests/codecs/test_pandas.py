@@ -13,15 +13,17 @@ from mlserver.types import (
     ResponseOutput,
 )
 
+
 @pytest.mark.parametrize(
-    'payload, expected',
+    "payload, expected",
     [
         (pd.DataFrame({"a": [1, 2, 3], "b": ["A", "B", "C"]}), True),
         ({"a": [1, 2, 3]}, False),
-    ]
+    ],
 )
 def test_can_encode(payload: Any, expected: bool):
     assert PandasCodec.can_encode(payload) == expected
+
 
 @pytest.mark.parametrize(
     "series, expected",

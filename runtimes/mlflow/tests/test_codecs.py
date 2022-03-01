@@ -3,7 +3,7 @@ import numpy as np
 
 from typing import Any
 
-from mlserver.types import InferenceRequest, InferenceResponse, ResponseOutput
+from mlserver.types import InferenceRequest, ResponseOutput
 from mlserver_mlflow.codecs import TensorDictCodec
 
 

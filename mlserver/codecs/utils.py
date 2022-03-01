@@ -1,5 +1,4 @@
-from typing import Any, Union, Dict, List, Optional, Type
-from collections.abc import Iterable
+from typing import Any, Union, Dict, Optional, Type
 
 from ..types import (
     InferenceRequest,
@@ -26,7 +25,7 @@ DefaultOutputPrefix = "output-"
 InputCodecLike = Union[Type[InputCodec], InputCodec]
 RequestCodecLike = Union[Type[RequestCodec], RequestCodec]
 
-Parametrised = Union[InferenceRequest, RequestInput]
+Parametrised = Union[InferenceRequest, RequestInput, RequestOutput]
 Tagged = Union[MetadataTensor, ModelSettings]
 DecodedParameterName = "_decoded_payload"
 
@@ -85,7 +84,7 @@ def encode_response_output(
 
 def encode_inference_response(
     payload: Any,
-    model_settings: ModelSettings = None,
+    model_settings: ModelSettings,
 ) -> Optional[InferenceResponse]:
     # TODO: Allow users to override codec through model's metadata
     codec = find_request_codec_by_payload(payload)
@@ -172,12 +171,20 @@ class SingleInputRequestCodec(RequestCodec):
 
     @classmethod
     def can_encode(cls, payload: Any) -> bool:
+        if cls.InputCodec is None:
+            return False
+
         return cls.InputCodec.can_encode(payload)
 
     @classmethod
     def encode(
         cls, model_name: str, payload: Any, model_version: str = None
     ) -> InferenceResponse:
+        if cls.InputCodec is None:
+            raise NotImplementedError(
+                f"No input codec found for {type(cls)} request codec"
+            )
+
         output = cls.InputCodec.encode(f"{DefaultOutputPrefix}1", payload)
         return InferenceResponse(
             model_name=model_name, model_version=model_version, outputs=[output]
@@ -192,7 +199,7 @@ class SingleInputRequestCodec(RequestCodec):
             )
 
         first_input = request.inputs[0]
-        if not has_decoded(first_input):
+        if not has_decoded(first_input) and cls.InputCodec is not None:
             decoded_payload = cls.InputCodec.decode(first_input)  # type: ignore
             _save_decoded(first_input, decoded_payload)
 
