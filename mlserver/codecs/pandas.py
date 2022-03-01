@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 
 from .base import RequestCodec, register_request_codec
-from .numpy import to_datatype
+from .numpy import to_datatype, to_dtype
 from .string import encode_str
 from .utils import get_decoded_or_raw
 from .pack import PackElement
@@ -15,6 +15,8 @@ def _to_series(request_input: RequestInput) -> pd.Series:
     if isinstance(payload, np.ndarray):
         # Necessary so that it's compatible with pd.Series
         payload = list(payload)
+        dtype = to_dtype(request_input)
+        return pd.Series(payload, dtype=dtype)
 
     return pd.Series(payload)
 

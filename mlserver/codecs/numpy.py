@@ -30,7 +30,7 @@ _NumpyToDatatype["object"] = "BYTES"
 _NumpyToDatatype["S"] = "BYTES"
 
 
-def _to_dtype(v2_data: Union[RequestInput, ResponseOutput]) -> "np.dtype":
+def to_dtype(v2_data: Union[RequestInput, ResponseOutput]) -> "np.dtype":
     dtype = _DatatypeToNumpy[v2_data.datatype]
 
     if v2_data.datatype == "BYTES":
@@ -56,7 +56,7 @@ def to_datatype(dtype: np.dtype) -> str:
 
 def _to_ndarray(v2_data: Union[RequestInput, ResponseOutput]) -> np.ndarray:
     data = getattr(v2_data.data, "__root__", v2_data.data)
-    dtype = _to_dtype(v2_data)
+    dtype = to_dtype(v2_data)
 
     if v2_data.datatype == "BYTES":
         # If the inputs is of type `BYTES`, there could be multiple "lists"
