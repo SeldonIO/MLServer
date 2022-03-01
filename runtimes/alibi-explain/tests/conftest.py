@@ -33,15 +33,6 @@ TESTS_PATH = Path(os.path.dirname(__file__))
 _ANCHOR_IMAGE_DIR = TESTS_PATH / ".data" / "mnist_anchor_image"
 
 
-# TODO: how to make this in utils?
-def pytest_collection_modifyitems(items):
-    """
-    Add pytest.mark.asyncio marker to every test.
-    """
-    for item in items:
-        item.add_marker("asyncio")
-
-
 @pytest.fixture
 def custom_runtime_tf_settings() -> ModelSettings:
     return ModelSettings(
