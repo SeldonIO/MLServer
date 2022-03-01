@@ -2,7 +2,7 @@
   "name": "income-tabular-drift",
   "implementation": "mlserver_alibi_detect.AlibiDetectRuntime",
   "parameters": {
-    "uri": "./detector_data",
+    "uri": "./alibi-detector-artifacts",
     "version": "v0.1.0"
   }
 }

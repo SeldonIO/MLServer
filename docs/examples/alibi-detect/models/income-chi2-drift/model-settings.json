@@ -1,8 +1,0 @@
-{
-  "name": "income-chi2-drift",
-  "implementation": "mlserver_alibi_detect.AlibiDetectRuntime",
-  "parameters": {
-    "uri": "./detector_data",
-    "version": "v0.1.0"
-  }
-}
