@@ -3,6 +3,11 @@
   "implementation": "mlserver_alibi_detect.AlibiDetectRuntime",
   "parameters": {
     "uri": "./alibi-detector-artifacts",
-    "version": "v0.1.0"
+    "version": "v0.1.0",
+    "extra": {
+      "predict_parameters":{
+        "drift_type": "feature"
+      }
+    }
   }
 }

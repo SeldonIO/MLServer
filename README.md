@@ -2,7 +2,6 @@
 
 An open source inference server for your machine learning models.
 
-
 [![video_play_icon](https://user-images.githubusercontent.com/10466106/151803854-75d17c32-541c-4eee-b589-d45b07ea486d.png)](https://www.youtube.com/watch?v=aZHe3z-8C_w)
 
 ## Overview
@@ -78,6 +77,7 @@ Out of the box, MLServer provides support for:
 | LightGBM     | ✅        | [MLServer LightGBM](./runtimes/lightgbm)                         |
 | Tempo        | ✅        | [`github.com/SeldonIO/tempo`](https://github.com/SeldonIO/tempo) |
 | MLflow       | ✅        | [MLServer MLflow](./runtimes/mlflow)                             |
+| Alibi-Detect | ✅        | [MLServer Alibi Detect](./runtimes/alibi-detect)                 |
 
 ## Examples
 
@@ -91,6 +91,7 @@ MLServer to start serving your machine learning models.
 - [Serving a `lightgbm` model](./docs/examples/lightgbm/README.md)
 - [Serving a `tempo` pipeline](./docs/examples/tempo/README.md)
 - [Serving a custom model](./docs/examples/custom/README.md)
+- [Serving an `alibi-detect` model](./docs/examples/alibi-detect/README.md)
 - [Multi-Model Serving with multiple frameworks](./docs/examples/mms/README.md)
 - [Loading / unloading models from a model repository](./docs/examples/model-repository/README.md)
 
