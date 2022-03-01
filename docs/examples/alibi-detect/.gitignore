@@ -1,2 +1,1 @@
-alibi-detector-artifacts/*
-!alibi-detector-artifacts/.gitkeep
+models/**/detector_data/*

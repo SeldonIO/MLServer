@@ -1,8 +1,8 @@
 {
-  "name": "income-classifier-cd",
+  "name": "income-tabular-drift",
   "implementation": "mlserver_alibi_detect.AlibiDetectRuntime",
   "parameters": {
-    "uri": "./alibi-detector-artifacts/detector_data_cat",
+    "uri": "./detector_data",
     "version": "v0.1.0"
   }
 }
