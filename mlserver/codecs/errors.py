@@ -31,7 +31,7 @@ class CodecNotFound(MLServerError):
                 field_category = "output field"
 
         msg = f"Codec not found for {field_category} {msg}"
-        super().__init__(msg, status.HTTP_400_BAD_REQUEST)
+        super().__init__(msg)
 
 
 class CodecError(MLServerError):

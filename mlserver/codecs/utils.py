@@ -17,8 +17,8 @@ from .base import (
     find_request_codec_by_payload,
     InputCodec,
     RequestCodec,
-    CodecError,
 )
+from .errors import CodecError
 
 DefaultOutputPrefix = "output-"
 

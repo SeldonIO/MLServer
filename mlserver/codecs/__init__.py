@@ -3,8 +3,8 @@ from .pandas import PandasCodec
 from .string import StringCodec
 from .base64 import Base64Codec
 from .datetime import DatetimeCodec
+from .errors import CodecError
 from .base import (
-    CodecError,
     InputCodec,
     RequestCodec,
     register_input_codec,

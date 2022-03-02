@@ -1,9 +1,8 @@
-from typing import Any, ClassVar, Dict, List, Optional, Type, Union
+from typing import Any, ClassVar, Dict, Optional, Type, Union
+from collections.abc import Iterable
 
 from ..types import InferenceRequest, InferenceResponse, RequestInput, ResponseOutput
 from ..logging import logger
-
-from .errors import CodecError
 
 
 class InputCodec:
@@ -57,8 +56,8 @@ class RequestCodec:
 
 
 def _find_codec_by_payload(
-    payload: Any, codecs: List[Union[RequestCodec, InputCodec]]
-) -> Union[RequestCodec, InputCodec]:
+    payload: Any, codecs: Iterable[Union[RequestCodec, InputCodec]]
+) -> Optional[Union[RequestCodec, InputCodec]]:
     matching_codecs = []
     for codec in codecs:
         if codec.can_encode(payload):
@@ -103,7 +102,9 @@ class _CodecRegistry:
         return self._input_codecs[content_type]
 
     def find_input_codec_by_payload(self, payload: Any) -> Optional[Type[InputCodec]]:
-        return _find_codec_by_payload(payload, self._input_codecs.values())
+        return _find_codec_by_payload(
+            payload, self._input_codecs.values()  # type: ignore
+        )
 
     def register_request_codec(self, content_type: str, codec: Type[RequestCodec]):
         # TODO: Raise error if codec exists?
@@ -116,7 +117,9 @@ class _CodecRegistry:
     def find_request_codec_by_payload(
         self, payload: Any
     ) -> Optional[Type[RequestCodec]]:
-        return _find_codec_by_payload(payload, self._request_codecs.values())
+        return _find_codec_by_payload(
+            payload, self._request_codecs.values()  # type: ignore
+        )
 
 
 _codec_registry = _CodecRegistry()
