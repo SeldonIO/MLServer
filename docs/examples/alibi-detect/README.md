@@ -1,20 +1,19 @@
 # Serving Alibi-Detect models
 
-Out of the box, `mlserver` supports the deployment and serving of [alibi-detect](https://docs.seldon.io/projects/alibi-detect/en/latest/index.html) models. Alibi Detect is an open source Python library focused on outlier, adversarial and drift detection. In this example, we will cover how we can create a detector configuration to then serve it using `mlserver`.
+Out of the box, `mlserver` supports the deployment and serving of [alibi_detect](https://docs.seldon.io/projects/alibi-detect/en/latest/index.html) models. Alibi Detect is an open source Python library focused on outlier, adversarial and drift detection. In this example, we will cover how we can create a detector configuration to then serve it using `mlserver`.
 
 ## Fetch reference data
 
-The first step will be to fetch a reference data and other relevant metadata for an `alibi-detect` model. 
+The first step will be to fetch a reference data and other relevant metadata for an `alibi-detect` model.
 
 For that, we will use the [alibi](https://github.com/SeldonIO/alibi) library to get the adult dataset with [demographic features from a 1996 US census](https://archive.ics.uci.edu/ml/datasets/census+income).
 
-**Note**: Install `alibi` dataset dependencies and `alibi-detect` for detector configuration
-
-
+````{note}
+Install `alibi` library for dataset dependencies and `alibi_detect` library for detector configuration from Pypi
 ```python
 !pip install alibi alibi_detect
 ```
-
+````
 
 ```python
 import alibi
@@ -22,14 +21,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 ```
 
-
 ```python
 adult = alibi.datasets.fetch_adult()
 X, y = adult.data, adult.target
 feature_names = adult.feature_names
 category_map = adult.category_map
 ```
-
 
 ```python
 n_ref = 10000
@@ -45,12 +42,10 @@ This example is based on the Categorical and mixed type data drift detection on 
 
 ### Creating detector and saving configuration
 
-
 ```python
 from alibi_detect.cd import TabularDrift
 cd_tabular = TabularDrift(X_ref, p_val=.05, categories_per_feature=categories_per_feature)
 ```
-
 
 ```python
 from alibi_detect.utils.saving import save_detector
@@ -59,7 +54,6 @@ save_detector(cd_tabular, filepath)
 ```
 
 ### Detecting data drift directly
-
 
 ```python
 preds = cd_tabular.predict(X_t0,drift_type="feature")
@@ -87,17 +81,15 @@ for f in range(cd_tabular.n_features):
     Hours per week -- Drift? No! -- Chi2 0.012 -- p-value 0.508
     Country -- Drift? No! -- Chi2 9.991 -- p-value 0.441
 
-
 ## Serving
 
-Now that we have the reference data and other configuration parameters, the next step will be to serve it using `mlserver`. 
-For that, we will need to create 2 configuration files: 
+Now that we have the reference data and other configuration parameters, the next step will be to serve it using `mlserver`.
+For that, we will need to create 2 configuration files:
 
 - `settings.json`: holds the configuration of our server (e.g. ports, log level, etc.).
 - `model-settings.json`: holds the configuration of our model (e.g. input type, runtime to use, etc.).
 
 ### `settings.json`
-
 
 ```python
 %%writefile settings.json
@@ -108,9 +100,7 @@ For that, we will need to create 2 configuration files:
 
     Overwriting settings.json
 
-
 ### `model-settings.json`
-
 
 ```python
 %%writefile model-settings.json
@@ -131,7 +121,6 @@ For that, we will need to create 2 configuration files:
 
     Overwriting model-settings.json
 
-
 ### Start serving our model
 
 Now that we have our config in-place, we can start the server by running mlserver start command. This needs to either be ran from the same directory where our config files are or pointing to the folder where they are.
@@ -147,7 +136,6 @@ Since this command will start the server and block the terminal, waiting for req
 We now have our alibi-detect model being served by `mlserver`. To make sure that everything is working as expected, let's send a request from our test set.
 
 For that, we can use the Python types that `mlserver` provides out of box, or we can build our request manually.
-
 
 ```python
 import requests
@@ -168,7 +156,6 @@ response = requests.post(endpoint, json=inference_request)
 ```
 
 ### View model response
-
 
 ```python
 import json
@@ -195,4 +182,3 @@ for f in range(cd_tabular.n_features):
     Capital Loss -- Drift? No! -- Chi2 0.002 -- p-value 1.000
     Hours per week -- Drift? No! -- Chi2 0.012 -- p-value 0.508
     Country -- Drift? No! -- Chi2 9.991 -- p-value 0.441
-

@@ -8,9 +8,9 @@ from alibi_detect.utils.saving import save_detector
 import os
 import numpy as np
 import tensorflow as tf
+from tensorflow.keras.layers import Dense, InputLayer
 
 tf.keras.backend.clear_session()
-from tensorflow.keras.layers import Dense, InputLayer
 
 X_REF_THRESHOLD = 0.05
 
