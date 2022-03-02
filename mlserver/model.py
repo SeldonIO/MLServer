@@ -10,7 +10,7 @@ from .codecs import (
     InputCodecLike,
     RequestCodecLike,
 )
-from .errors import CodecNotFound
+from .codecs.errors import CodecNotFound
 from .settings import ModelSettings
 from .types import (
     InferenceRequest,
