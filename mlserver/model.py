@@ -132,7 +132,7 @@ class MLModel:
             return default_codec.encode(self.name, payload, self.version)
 
         payload_type = str(type(payload))
-        raise CodecNotFound(payload_type=payload_type)
+        raise CodecNotFound(payload_type=payload_type, is_input=False, is_request=True)
 
     def encode(
         self,
@@ -150,7 +150,7 @@ class MLModel:
         if default_codec:
             return default_codec.encode(request_output.name, payload)
 
-        raise CodecNotFound(name=request_output.name)
+        raise CodecNotFound(name=request_output.name, is_input=False, is_request=False)
 
     async def metadata(self) -> MetadataModelResponse:
         model_metadata = MetadataModelResponse(
