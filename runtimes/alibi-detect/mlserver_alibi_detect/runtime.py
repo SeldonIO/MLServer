@@ -1,18 +1,14 @@
 from mlserver import types
 from mlserver.settings import ModelSettings
 from mlserver.model import MLModel
-from mlserver.errors import InferenceError
 from mlserver.codecs import NumpyCodec, NumpyRequestCodec
-from fastapi import Request, Response
-from mlserver.handlers import custom_handler
-from .protocols.util import (
-    get_request_handler,
-    Protocol,
-)
+from mlserver.utils import get_model_uri
+from alibi_detect.utils.saving import load_detector
+from mlserver.errors import MLServerError, InferenceError
+from pydantic.error_wrappers import ValidationError
+from typing import Optional
+from pydantic import BaseSettings
 import numpy as np
-import orjson
-from typing import Optional, Any
-from pydantic import BaseSettings, PyObject
 
 ENV_PREFIX_ALIBI_DETECT_SETTINGS = "MLSERVER_MODEL_ALIBI_DETECT_"
 
@@ -24,18 +20,6 @@ class AlibiDetectSettings(BaseSettings):
 
     class Config:
         env_prefix = ENV_PREFIX_ALIBI_DETECT_SETTINGS
-
-    init_detector: bool = False
-    detector_type: PyObject = ""  # type: ignore
-    protocol: Optional[str] = "seldon.http"
-    init_parameters: Optional[dict] = {}
-    predict_parameters: Optional[dict] = {}
-
-
-class AlibiDetectParameters(BaseSettings):
-    """
-    Parameters that apply only to alibi detect models
-    """
 
     predict_parameters: Optional[dict] = {}
 
@@ -53,33 +37,37 @@ class AlibiDetectRuntime(MLModel):
             self.alibi_detect_settings = AlibiDetectSettings(**extra)  # type: ignore
         super().__init__(settings)
 
-    @custom_handler(rest_path="/")
-    async def detect(self, request: Request) -> Response:
-        """
-        This custom handler is meant to mimic the behaviour prediction in alibi-detect
-        """
-        raw_data = await request.body()
-        as_str = raw_data.decode("utf-8")
+    async def load(self) -> bool:
 
+        model_uri = await get_model_uri(self._settings)
         try:
-            body = orjson.loads(as_str)
-        except orjson.JSONDecodeError as e:
-            raise InferenceError("Unrecognized request format: %s" % e)
+            self._model = load_detector(model_uri)
+        except (
+            ValueError,
+            FileNotFoundError,
+            EOFError,
+            NotImplementedError,
+            ValidationError,
+        ) as e:
+            raise MLServerError(
+                f"Invalid configuration for model {self._settings.name}: {e}"
+            ) from e
 
-        request_handler = get_request_handler(
-            Protocol(self.alibi_detect_settings.protocol), body
-        )
-        request_handler.validate()
-        input_data = request_handler.extract_request()
-
-        y = await self.predict_fn(input_data)
-        output_data = orjson.dumps(y, option=orjson.OPT_SERIALIZE_NUMPY)
-
-        return Response(content=output_data, media_type="application/json")
+        self.ready = True
+        return self.ready
 
     async def predict(self, payload: types.InferenceRequest) -> types.InferenceResponse:
         input_data = self.decode_request(payload, default_codec=NumpyRequestCodec)
-        y = await self.predict_fn(input_data)
+        predict_kwargs = {}
+        if self.alibi_detect_settings.predict_parameters is not None:
+            predict_kwargs = self.alibi_detect_settings.predict_parameters
+
+        try:
+            y = self._model.predict(input_data, **predict_kwargs)
+        except (ValueError, IndexError) as e:
+            raise InferenceError(
+                f"Invalid predict parameters for model {self._settings.name}: {e}"
+            ) from e
 
         outputs = []
         for key in y["data"]:
@@ -92,7 +80,3 @@ class AlibiDetectRuntime(MLModel):
             parameters=y["meta"],
             outputs=outputs,
         )
-
-    async def predict_fn(self, input_data: Any) -> dict:
-        parameters = self.alibi_detect_settings.predict_parameters
-        return self._model.predict(input_data, **parameters)  # type: ignore

@@ -1,14 +1,11 @@
 {
-  "name": "income-classifier-cd",
-  "implementation": "mlserver_alibi_detect.AlibiDriftDetectRuntime",
+  "name": "income-tabular-drift",
+  "implementation": "mlserver_alibi_detect.AlibiDetectRuntime",
   "parameters": {
-    "uri": "./alibi-detector-artifacts/detector_data_cat",
+    "uri": "./alibi-detector-artifacts",
     "version": "v0.1.0",
-    "extra":{
-      "detector_type":"alibi_detect.cd.ChiSquareDrift",
-      "init_detector": false,
-      "protocol": "seldon.http",
-      "predict_parameters": {
+    "extra": {
+      "predict_parameters":{
         "drift_type": "feature"
       }
     }

@@ -1,6 +1,6 @@
 # Alibi-Detect runtime for MLServer
 
-This package provides a MLServer runtime compatible with Alibi-Detect.
+This package provides a MLServer runtime compatible with [alibi-detect](https://docs.seldon.io/projects/alibi-detect/en/latest/index.html) models.
 
 ## Usage
 
