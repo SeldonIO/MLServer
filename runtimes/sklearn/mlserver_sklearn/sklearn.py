@@ -92,13 +92,12 @@ class SKLearnModel(MLModel):
                     raise InferenceError(
                         f"{request_output.name} returned columnar data of type"
                         f" {type(y)} and {all_output_names} were"
-                        f" requested. Cannot encode multiple columnar data responses"
+                        f" requested. Cannot encode multiple columnar data responses into"
                         f" one response."
                     )
 
                 # Use PandasCodec manually, to obtain the list of outputs
-                res = PandasCodec.encode("", y)
-                return res.outputs
+                return PandasCodec.encode_outputs(y)
 
             output = self.encode(y, request_output, default_codec=NumpyCodec)
             outputs.append(output)
