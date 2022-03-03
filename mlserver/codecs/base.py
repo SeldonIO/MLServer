@@ -1,5 +1,4 @@
-from typing import Any, ClassVar, Dict, Optional, Type, Union
-from collections.abc import Iterable
+from typing import Any, ClassVar, Dict, Iterable, Optional, Type, Union
 
 from ..types import InferenceRequest, InferenceResponse, RequestInput, ResponseOutput
 from ..logging import logger
