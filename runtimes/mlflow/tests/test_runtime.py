@@ -119,8 +119,8 @@ async def test_predict_outputs(
     expected: InferenceResponse,
     mocker,
 ):
-    with mocker.patch.object(runtime._model, "predict", return_value=output):
-        response = await runtime.predict(inference_request)
+    mocker.patch.object(runtime._model, "predict", return_value=output)
+    response = await runtime.predict(inference_request)
     assert response == expected
 
 

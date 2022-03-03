@@ -14,7 +14,7 @@ from mlserver.types import (
     MetadataTensor,
 )
 from mlserver.settings import ModelSettings
-from mlserver.codecs.base import CodecError
+from mlserver.codecs.errors import CodecError
 from mlserver.codecs.utils import (
     encode_response_output,
     encode_inference_response,
