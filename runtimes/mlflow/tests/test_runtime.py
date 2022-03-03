@@ -97,6 +97,23 @@ async def test_predict_pytorch(runtime_pytorch: MLflowRuntime):
             ),
         ),
         (
+            {"foo": np.array([1, 2, 3]), "bar": np.array(["hello", "world"])},
+            InferenceResponse(
+                model_name="mlflow-model",
+                outputs=[
+                    ResponseOutput(
+                        name="foo", datatype="INT64", shape=[3], data=[1, 2, 3]
+                    ),
+                    ResponseOutput(
+                        name="bar",
+                        datatype="BYTES",
+                        shape=[2],
+                        data=[b"hello", b"world"],
+                    ),
+                ],
+            ),
+        ),
+        (
             pd.DataFrame({"foo": np.array([1, 2, 3]), "bar": ["A", "B", "C"]}),
             InferenceResponse(
                 model_name="mlflow-model",
