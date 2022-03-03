@@ -80,7 +80,7 @@ async def test_predict_impl(
         expected_result.outputs[0]
     )
 
-    assert_allclose(actual_result, expected_result_numpy)
+    assert_allclose(actual_result, expected_result_numpy, rtol=1, atol=250)
 
 
 @pytest.fixture()
@@ -109,7 +109,10 @@ async def test_end_2_end(
     )
 
     assert_allclose(
-        np.array(decoded_runtime_results["data"]["anchor"]), alibi_result.data["anchor"]
+        np.array(decoded_runtime_results["data"]["anchor"]),
+        alibi_result.data["anchor"],
+        rtol=1,
+        atol=250,
     )
 
 
