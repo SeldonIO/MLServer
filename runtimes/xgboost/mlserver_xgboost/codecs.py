@@ -1,7 +1,9 @@
 from xgboost import DMatrix
 
+from typing import Any
+
 from mlserver.codecs import NumpyCodec, register_input_codec, register_request_codec
-from mlserver.codecs.utils import FirstInputRequestCodec
+from mlserver.codecs.utils import SingleInputRequestCodec
 from mlserver.types import RequestInput
 from mlserver.errors import InferenceError
 
@@ -9,6 +11,10 @@ from mlserver.errors import InferenceError
 @register_input_codec
 class DMatrixCodec(NumpyCodec):
     ContentType = "dmatrix"
+
+    @classmethod
+    def can_encode(cls, payload: Any) -> bool:
+        return isinstance(payload, DMatrix)
 
     @classmethod
     def decode(cls, request_input: RequestInput) -> DMatrix:  # type: ignore
@@ -22,6 +28,6 @@ class DMatrixCodec(NumpyCodec):
 
 
 @register_request_codec
-class DMatrixRequestCodec(FirstInputRequestCodec):
+class DMatrixRequestCodec(SingleInputRequestCodec):
     InputCodec = DMatrixCodec
     ContentType = DMatrixCodec.ContentType

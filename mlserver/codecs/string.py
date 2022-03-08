@@ -1,8 +1,8 @@
-from typing import List
+from typing import Any, List
 
 from ..types import RequestInput, ResponseOutput, Parameters
 
-from .utils import FirstInputRequestCodec
+from .utils import SingleInputRequestCodec, is_list_of
 from .base import InputCodec, register_input_codec, register_request_codec
 from .pack import unpack, PackElement
 
@@ -32,6 +32,10 @@ class StringCodec(InputCodec):
     """
 
     ContentType = "str"
+
+    @classmethod
+    def can_encode(cls, payload: Any) -> bool:
+        return is_list_of(payload, str)
 
     @classmethod
     def encode(cls, name: str, payload: List[str]) -> ResponseOutput:
@@ -66,6 +70,6 @@ class StringCodec(InputCodec):
 
 
 @register_request_codec
-class StringRequestCodec(FirstInputRequestCodec):
+class StringRequestCodec(SingleInputRequestCodec):
     InputCodec = StringCodec
     ContentType = StringCodec.ContentType

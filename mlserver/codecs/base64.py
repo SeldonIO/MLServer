@@ -1,9 +1,10 @@
 import base64
 import binascii
 
-from typing import List
+from typing import Any, List
 
 from ..types import RequestInput, ResponseOutput
+from .utils import is_list_of
 from .base import InputCodec, register_input_codec
 from .pack import unpack, PackElement
 
@@ -40,6 +41,10 @@ class Base64Codec(InputCodec):
     """
 
     ContentType = "base64"
+
+    @classmethod
+    def can_encode(cls, payload: Any) -> bool:
+        return is_list_of(payload, bytes)
 
     @classmethod
     def encode(cls, name: str, payload: List[bytes]) -> ResponseOutput:

@@ -1,7 +1,22 @@
 import pytest
 
+from typing import Any
+
 from mlserver.codecs import Base64Codec
 from mlserver.types import RequestInput, ResponseOutput
+
+
+@pytest.mark.parametrize(
+    "payload, expected",
+    [
+        ([b"Python is fun", b"foo"], True),
+        ([b"Python is fun", "foo"], False),
+        (b"Python is fun", False),
+        ("foo", False),
+    ],
+)
+def test_can_encode(payload: Any, expected: bool):
+    assert Base64Codec.can_encode(payload) == expected
 
 
 @pytest.mark.parametrize(

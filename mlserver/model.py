@@ -1,6 +1,8 @@
 from typing import Any, Dict, Optional, List
 
 from .codecs import (
+    encode_response_output,
+    encode_inference_response,
     decode_request_input,
     decode_inference_request,
     has_decoded,
@@ -8,11 +10,14 @@ from .codecs import (
     InputCodecLike,
     RequestCodecLike,
 )
+from .codecs.errors import CodecNotFound
 from .settings import ModelSettings
 from .types import (
     InferenceRequest,
     InferenceResponse,
     RequestInput,
+    RequestOutput,
+    ResponseOutput,
     MetadataModelResponse,
     MetadataTensor,
 )
@@ -112,6 +117,40 @@ class MLModel:
             return default_codec.decode(inference_request)
 
         return inference_request
+
+    def encode_response(
+        self,
+        payload: Any,
+        default_codec: Optional[RequestCodecLike] = None,
+    ) -> InferenceResponse:
+        inference_response = encode_inference_response(payload, self._settings)
+
+        if inference_response:
+            return inference_response
+
+        if default_codec:
+            return default_codec.encode(self.name, payload, self.version)
+
+        payload_type = str(type(payload))
+        raise CodecNotFound(payload_type=payload_type, is_input=False, is_request=True)
+
+    def encode(
+        self,
+        payload: Any,
+        request_output: RequestOutput,
+        default_codec: Optional[InputCodecLike] = None,
+    ) -> ResponseOutput:
+        response_output = encode_response_output(
+            payload, request_output, self._outputs_index
+        )
+
+        if response_output:
+            return response_output
+
+        if default_codec:
+            return default_codec.encode(request_output.name, payload)
+
+        raise CodecNotFound(name=request_output.name, is_input=False, is_request=False)
 
     async def metadata(self) -> MetadataModelResponse:
         model_metadata = MetadataModelResponse(

@@ -1,12 +1,21 @@
+import pytest
 import numpy as np
+import pandas as pd
+
+from typing import Any
 
 from mlserver.codecs import NumpyCodec
-from mlserver.types import InferenceRequest, Parameters, RequestInput
+from mlserver.types import (
+    InferenceRequest,
+    Parameters,
+    RequestInput,
+    InferenceResponse,
+    ResponseOutput,
+)
 from mlflow.pyfunc import PyFuncModel
 from mlflow.models.signature import ModelSignature
 
 from mlserver_mlflow import MLflowRuntime
-from mlserver_mlflow.encoding import DefaultOutputName
 from mlserver_mlflow.codecs import TensorDictCodec
 
 
@@ -21,7 +30,7 @@ async def test_predict(runtime: MLflowRuntime, inference_request: InferenceReque
 
     outputs = response.outputs
     assert len(outputs) == 1
-    assert outputs[0].name == DefaultOutputName
+    assert outputs[0].name == "output-1"
 
 
 async def test_predict_pytorch(runtime_pytorch: MLflowRuntime):
@@ -44,7 +53,92 @@ async def test_predict_pytorch(runtime_pytorch: MLflowRuntime):
 
     outputs = response.outputs
     assert len(outputs) == 1
-    assert outputs[0].name == DefaultOutputName
+    assert outputs[0].name == "output-1"
+
+
+@pytest.mark.parametrize(
+    "output, expected",
+    [
+        (
+            ["foo"],
+            InferenceResponse(
+                model_name="mlflow-model",
+                outputs=[
+                    ResponseOutput(
+                        name="output-1", datatype="BYTES", shape=[1], data=[b"foo"]
+                    )
+                ],
+            ),
+        ),
+        (
+            np.array([[1, 2], [3, 4]], dtype=np.float32),
+            InferenceResponse(
+                model_name="mlflow-model",
+                outputs=[
+                    ResponseOutput(
+                        name="output-1",
+                        datatype="FP32",
+                        shape=[2, 2],
+                        data=[1, 2, 3, 4],
+                    )
+                ],
+            ),
+        ),
+        (
+            {"foo": np.array([1, 2, 3]), "bar": np.array([1.2])},
+            InferenceResponse(
+                model_name="mlflow-model",
+                outputs=[
+                    ResponseOutput(
+                        name="foo", datatype="INT64", shape=[3], data=[1, 2, 3]
+                    ),
+                    ResponseOutput(name="bar", datatype="FP64", shape=[1], data=[1.2]),
+                ],
+            ),
+        ),
+        (
+            {"foo": np.array([1, 2, 3]), "bar": np.array(["hello", "world"])},
+            InferenceResponse(
+                model_name="mlflow-model",
+                outputs=[
+                    ResponseOutput(
+                        name="foo", datatype="INT64", shape=[3], data=[1, 2, 3]
+                    ),
+                    ResponseOutput(
+                        name="bar",
+                        datatype="BYTES",
+                        shape=[2],
+                        data=[b"hello", b"world"],
+                    ),
+                ],
+            ),
+        ),
+        (
+            pd.DataFrame({"foo": np.array([1, 2, 3]), "bar": ["A", "B", "C"]}),
+            InferenceResponse(
+                model_name="mlflow-model",
+                outputs=[
+                    ResponseOutput(
+                        name="foo", datatype="INT64", shape=[3], data=[1, 2, 3]
+                    ),
+                    ResponseOutput(
+                        name="bar", datatype="BYTES", shape=[3], data=[b"A", b"B", b"C"]
+                    ),
+                ],
+            ),
+        ),
+    ],
+)
+async def test_predict_outputs(
+    runtime: MLflowRuntime,
+    inference_request: InferenceRequest,
+    output: Any,
+    expected: InferenceResponse,
+    mocker,
+):
+    mocker.patch.object(runtime._model, "predict", return_value=output)
+    response = await runtime.predict(inference_request)
+    assert response == expected
 
 
 async def test_metadata(runtime: MLflowRuntime, model_signature: ModelSignature):
