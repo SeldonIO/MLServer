@@ -2,6 +2,8 @@ import pytest
 import pandas as pd
 import numpy as np
 
+from typing import Any
+
 from mlserver.codecs.pandas import PandasCodec, _to_response_output
 from mlserver.types import (
     InferenceRequest,
@@ -10,6 +12,17 @@ from mlserver.types import (
     Parameters,
     ResponseOutput,
 )
+
+
+@pytest.mark.parametrize(
+    "payload, expected",
+    [
+        (pd.DataFrame({"a": [1, 2, 3], "b": ["A", "B", "C"]}), True),
+        ({"a": [1, 2, 3]}, False),
+    ],
+)
+def test_can_encode(payload: Any, expected: bool):
+    assert PandasCodec.can_encode(payload) == expected
 
 
 @pytest.mark.parametrize(

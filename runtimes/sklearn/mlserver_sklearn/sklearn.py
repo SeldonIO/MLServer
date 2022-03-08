@@ -1,16 +1,19 @@
-from typing import List
-
 import joblib
-from mlserver_sklearn import encoding
-from mlserver_sklearn.encoding import SKLearnPayload
+
+from typing import List
 from sklearn.pipeline import Pipeline
 
-from mlserver import types
-from mlserver.codecs import NumpyRequestCodec
+from mlserver.codecs import NumpyCodec, NumpyRequestCodec, PandasCodec
 from mlserver.errors import InferenceError
 from mlserver.model import MLModel
-from mlserver.types import InferenceResponse
+from mlserver.types import (
+    InferenceRequest,
+    InferenceResponse,
+    ResponseOutput,
+    RequestOutput,
+)
 from mlserver.utils import get_model_uri
+
 
 PREDICT_OUTPUT = "predict"
 PREDICT_PROBA_OUTPUT = "predict_proba"
@@ -35,21 +38,21 @@ class SKLearnModel(MLModel):
         self.ready = True
         return self.ready
 
-    async def predict(self, payload: types.InferenceRequest) -> types.InferenceResponse:
+    async def predict(self, payload: InferenceRequest) -> InferenceResponse:
         payload = self._check_request(payload)
 
-        model_responses = self._get_model_outputs(payload)
+        outputs = self._get_model_outputs(payload)
 
         return InferenceResponse(
             model_name=self.name,
             model_version=self.version,
-            outputs=encoding.to_outputs(sklearn_payloads=model_responses),
+            outputs=outputs,
         )
 
-    def _check_request(self, payload: types.InferenceRequest) -> types.InferenceRequest:
+    def _check_request(self, payload: InferenceRequest) -> InferenceRequest:
         if not payload.outputs:
             # By default, only return the result of `predict()`
-            payload.outputs = [types.RequestOutput(name=PREDICT_OUTPUT)]
+            payload.outputs = [RequestOutput(name=PREDICT_OUTPUT)]
         else:
             for request_output in payload.outputs:
                 if request_output.name not in VALID_OUTPUTS:
@@ -74,16 +77,29 @@ class SKLearnModel(MLModel):
 
         return payload
 
-    def _get_model_outputs(
-        self, payload: types.InferenceRequest
-    ) -> List[SKLearnPayload]:
+    def _get_model_outputs(self, payload: InferenceRequest) -> List[ResponseOutput]:
         decoded_request = self.decode_request(payload, default_codec=NumpyRequestCodec)
 
         outputs = []
         for request_output in payload.outputs:  # type: ignore
             predict_fn = getattr(self._model, request_output.name)
             y = predict_fn(decoded_request)
-            output = SKLearnPayload(requested_output=request_output, model_output=y)
+
+            # If output is a Pandas DataFrame, encode it manually
+            if PandasCodec.can_encode(y):
+                if len(payload.outputs) > 1:  # type: ignore
+                    all_output_names = [o.name for o in payload.outputs]  # type: ignore
+                    raise InferenceError(
+                        f"{request_output.name} returned columnar data of type"
+                        f" {type(y)} and {all_output_names} were"
+                        f" requested. Cannot encode multiple columnar data responses"
+                        f" into one response."
+                    )
+
+                # Use PandasCodec manually, to obtain the list of outputs
+                return PandasCodec.encode_outputs(y)
+
+            output = self.encode(y, request_output, default_codec=NumpyCodec)
             outputs.append(output)
 
         return outputs

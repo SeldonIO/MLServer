@@ -1,7 +1,22 @@
 import pytest
 
+from typing import Any
+
 from mlserver.codecs import StringCodec
 from mlserver.types import RequestInput, ResponseOutput
+
+
+@pytest.mark.parametrize(
+    "payload, expected",
+    [
+        (["foo", "foo2"], True),
+        (["foo", b"foo2"], False),
+        ("foo", False),
+        (b"foo", False),
+    ],
+)
+def test_can_encode(payload: Any, expected: bool):
+    assert StringCodec.can_encode(payload) == expected
 
 
 @pytest.mark.parametrize(

@@ -1,7 +1,8 @@
-from typing import Union, List
+from typing import Any, Union, List
 from datetime import datetime
 
 from ..types import RequestInput, ResponseOutput
+from .utils import is_list_of
 from .base import InputCodec, register_input_codec
 from .pack import unpack, PackElement
 
@@ -43,8 +44,11 @@ class DatetimeCodec(InputCodec):
     ContentType = "datetime"
 
     @classmethod
+    def can_encode(cls, payload: Any) -> bool:
+        return is_list_of(payload, datetime)
+
+    @classmethod
     def encode(cls, name: str, payload: List[_Datetime]) -> ResponseOutput:
-        # Assume that payload is already in b64, so we only need to pack it
         packed = map(_encode_datetime, payload)
         shape = [len(payload)]
         return ResponseOutput(

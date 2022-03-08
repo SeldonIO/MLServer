@@ -3,8 +3,8 @@ from .pandas import PandasCodec
 from .string import StringCodec
 from .base64 import Base64Codec
 from .datetime import DatetimeCodec
+from .errors import CodecError
 from .base import (
-    CodecError,
     InputCodec,
     RequestCodec,
     register_input_codec,
@@ -15,6 +15,8 @@ from .utils import (
     has_decoded,
     get_decoded,
     get_decoded_or_raw,
+    encode_inference_response,
+    encode_response_output,
     decode_request_input,
     decode_inference_request,
     InputCodecLike,
@@ -39,6 +41,8 @@ __all__ = [
     "has_decoded",
     "get_decoded",
     "get_decoded_or_raw",
+    "encode_inference_response",
+    "encode_response_output",
     "decode_request_input",
     "decode_inference_request",
 ]

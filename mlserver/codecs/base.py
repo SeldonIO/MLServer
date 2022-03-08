@@ -1,12 +1,7 @@
-from typing import Any, ClassVar, Dict, Optional, Type
+from typing import Any, ClassVar, Dict, Iterable, Optional, Type, Union
 
-from ..errors import MLServerError
 from ..types import InferenceRequest, InferenceResponse, RequestInput, ResponseOutput
-
-
-class CodecError(MLServerError):
-    def __init__(self, msg: str):
-        super().__init__(f"There was an error encoding / decoding the payload: {msg}")
+from ..logging import logger
 
 
 class InputCodec:
@@ -19,6 +14,10 @@ class InputCodec:
     """
 
     ContentType: ClassVar[str] = ""
+
+    @classmethod
+    def can_encode(cls, payload: Any) -> bool:
+        return False
 
     @classmethod
     def encode(cls, name: str, payload: Any) -> ResponseOutput:
@@ -41,6 +40,10 @@ class RequestCodec:
     ContentType: Optional[str] = None
 
     @classmethod
+    def can_encode(cls, payload: Any) -> bool:
+        return False
+
+    @classmethod
     def encode(
         cls, model_name: str, payload: Any, model_version: str = None
     ) -> InferenceResponse:
@@ -49,6 +52,29 @@ class RequestCodec:
     @classmethod
     def decode(cls, request: InferenceRequest) -> Any:
         raise NotImplementedError()
+
+
+def _find_codec_by_payload(
+    payload: Any, codecs: Iterable[Union[RequestCodec, InputCodec]]
+) -> Optional[Union[RequestCodec, InputCodec]]:
+    matching_codecs = []
+    for codec in codecs:
+        if codec.can_encode(payload):
+            matching_codecs.append(codec)
+
+    if len(matching_codecs) == 0:
+        logger.warning(f"No codec was found for payload with type {type(payload)}.")
+        return None
+
+    first_codec = matching_codecs[0]
+    if len(matching_codecs) > 1:
+        logger.warning(
+            f"Multiple codecs ({len(matching_codecs)} were found for a "
+            f"payload with type {type(payload)}. "
+            f"The first one found will be used ({first_codec.ContentType})"
+        )
+
+    return first_codec
 
 
 class _CodecRegistry:
@@ -74,6 +100,11 @@ class _CodecRegistry:
         # TODO: Raise error if codec doesn't exist
         return self._input_codecs[content_type]
 
+    def find_input_codec_by_payload(self, payload: Any) -> Optional[Type[InputCodec]]:
+        return _find_codec_by_payload(
+            payload, self._input_codecs.values()  # type: ignore
+        )
+
     def register_request_codec(self, content_type: str, codec: Type[RequestCodec]):
         # TODO: Raise error if codec exists?
         self._request_codecs[content_type] = codec
@@ -82,11 +113,20 @@ class _CodecRegistry:
         # TODO: Raise error if codec doesn't exist
         return self._request_codecs[content_type]
 
+    def find_request_codec_by_payload(
+        self, payload: Any
+    ) -> Optional[Type[RequestCodec]]:
+        return _find_codec_by_payload(
+            payload, self._request_codecs.values()  # type: ignore
+        )
+
 
 _codec_registry = _CodecRegistry()
 
 find_request_codec = _codec_registry.find_request_codec
+find_request_codec_by_payload = _codec_registry.find_request_codec_by_payload
 find_input_codec = _codec_registry.find_input_codec
+find_input_codec_by_payload = _codec_registry.find_input_codec_by_payload
 
 
 def register_request_codec(CodecKlass: Type[RequestCodec]):

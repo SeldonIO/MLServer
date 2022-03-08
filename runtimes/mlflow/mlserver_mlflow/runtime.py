@@ -26,7 +26,7 @@ from mlserver.errors import InferenceError
 from mlserver.settings import ModelParameters
 from mlserver.logging import logger
 
-from .encoding import to_outputs
+from .codecs import TensorDictCodec
 from .metadata import (
     to_metadata_tensors,
     to_model_content_type,
@@ -156,12 +156,5 @@ class MLflowRuntime(MLModel):
 
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
         decoded_payload = self.decode_request(payload)
-
-        # TODO: Can `output` be a dictionary of tensors?
         model_output = self._model.predict(decoded_payload)
-
-        return InferenceResponse(
-            model_name=self.name,
-            model_version=self.version,
-            outputs=to_outputs(model_output),
-        )
+        return self.encode_response(model_output, default_codec=TensorDictCodec)

@@ -42,7 +42,6 @@ def model_signature(dataset: tuple) -> ModelSignature:
     signature = infer_signature(X, y)
 
     signature.inputs.inputs[0]._name = "foo"
-    signature.outputs.inputs[0]._name = "bar"
 
     return signature
 

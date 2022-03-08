@@ -1,12 +1,64 @@
 import pytest
 import numpy as np
 
+from typing import Any
+
 from mlserver.codecs.numpy import NumpyCodec, to_datatype
-from mlserver.types import RequestInput
+from mlserver.types import RequestInput, ResponseOutput
 
 
 @pytest.mark.parametrize(
-    "request_input, payload",
+    "payload, expected",
+    [(np.array([1, 2, 3]), True), (np.array(["foo", "bar"]), True), ([1, 2, 3], False)],
+)
+def test_can_encode(payload: Any, expected: bool):
+    assert NumpyCodec.can_encode(payload) == expected
+
+
+@pytest.mark.parametrize(
+    "payload, expected",
+    [
+        (
+            np.array([1, 2, 3]),
+            ResponseOutput(name="foo", shape=[3], data=[1, 2, 3], datatype="INT64"),
+        ),
+        (
+            np.array([[1, 2], [3, 4]]),
+            ResponseOutput(
+                name="foo", shape=[2, 2], data=[1, 2, 3, 4], datatype="INT64"
+            ),
+        ),
+        (
+            np.array([[1, 2], [3, 4]], dtype=np.int32),
+            ResponseOutput(
+                name="foo", shape=[2, 2], data=[1, 2, 3, 4], datatype="INT32"
+            ),
+        ),
+        (
+            np.array([1.0, 2.0]),
+            ResponseOutput(name="foo", shape=[2], data=[1, 2], datatype="FP64"),
+        ),
+        (
+            np.array([[b"\x01"], [b"\x02"]], dtype=bytes),
+            ResponseOutput(
+                name="foo", shape=[2, 1], data=[b"\x01\x02"], datatype="BYTES"
+            ),
+        ),
+        (
+            np.array(["foo", "bar"], dtype=str),
+            ResponseOutput(
+                name="foo", shape=[2], data=[b"foo", b"bar"], datatype="BYTES"
+            ),
+        ),
+    ],
+)
+def test_encode(payload: np.ndarray, expected: ResponseOutput):
+    response_output = NumpyCodec.encode(name="foo", payload=payload)
+    assert response_output == expected
+
+
+@pytest.mark.parametrize(
+    "request_input, expected",
     [
         (
             RequestInput(name="foo", shape=[3], data=[1, 2, 3], datatype="INT32"),
@@ -22,22 +74,19 @@ from mlserver.types import RequestInput
         ),
         (
             RequestInput(
-                name="foo", shape=[2, 1], data=[b"\x01\x02"], datatype="BYTES"
+                name="foo", shape=[2, 1], data=[b"\x01", b"\x02"], datatype="BYTES"
             ),
             np.array([[b"\x01"], [b"\x02"]], dtype=bytes),
         ),
+        (
+            RequestInput(name="foo", shape=[2], data=["foo", "bar"], datatype="BYTES"),
+            np.array(["foo", "bar"], dtype=str),
+        ),
     ],
 )
-def test_numpy_codec(request_input, payload):
+def test_decode(request_input: RequestInput, expected: np.ndarray):
     decoded = NumpyCodec.decode(request_input)
-
-    np.testing.assert_array_equal(decoded, payload)
-
-    response_output = NumpyCodec.encode(name="foo", payload=decoded)
-
-    assert response_output.datatype == request_input.datatype
-    assert response_output.shape == request_input.shape
-    assert response_output.data == request_input.data
+    np.testing.assert_array_equal(decoded, expected)
 
 
 @pytest.mark.parametrize(
@@ -47,6 +96,7 @@ def test_numpy_codec(request_input, payload):
         RequestInput(name="foo", shape=[2, 2], data=[1, 2, 3, 4], datatype="INT32"),
         RequestInput(name="foo", shape=[2], data=[1, 2], datatype="FP32"),
         RequestInput(name="foo", shape=[2, 1], data=[b"\x01\x02"], datatype="BYTES"),
+        RequestInput(name="foo", shape=[2], data=["foo", "bar"], datatype="BYTES"),
     ],
 )
 def test_encode_request_input(request_input):
@@ -92,6 +142,7 @@ def test_decode_response_output(payload):
         (np.float64, "FP64"),
         (np.byte, "INT8"),
         (bytes, "BYTES"),
+        (str, "BYTES"),
     ],
 )
 def test_to_datatype(dtype, datatype):

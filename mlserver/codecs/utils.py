@@ -4,25 +4,40 @@ from ..types import (
     InferenceRequest,
     InferenceResponse,
     RequestInput,
+    RequestOutput,
+    ResponseOutput,
     MetadataTensor,
     Parameters,
 )
 from ..settings import ModelSettings
 from .base import (
     find_input_codec,
+    find_input_codec_by_payload,
     find_request_codec,
+    find_request_codec_by_payload,
     InputCodec,
     RequestCodec,
-    CodecError,
 )
+from .errors import CodecError
 
+DefaultOutputPrefix = "output-"
 
 InputCodecLike = Union[Type[InputCodec], InputCodec]
 RequestCodecLike = Union[Type[RequestCodec], RequestCodec]
 
-Parametrised = Union[InferenceRequest, RequestInput]
+Parametrised = Union[InferenceRequest, RequestInput, RequestOutput]
 Tagged = Union[MetadataTensor, ModelSettings]
 DecodedParameterName = "_decoded_payload"
+
+
+def is_list_of(payload: Any, instance_type: Type):
+    if not isinstance(payload, list):
+        return False
+
+    def isinstance_of_type(payload: Any) -> bool:
+        return isinstance(payload, instance_type)
+
+    return all(map(isinstance_of_type, payload))
 
 
 def _get_content_type(
@@ -43,6 +58,45 @@ def _save_decoded(parametrised_obj: Parametrised, decoded_payload: Any):
         parametrised_obj.parameters = Parameters()
 
     setattr(parametrised_obj.parameters, DecodedParameterName, decoded_payload)
+
+
+def encode_response_output(
+    payload: Any,
+    request_output: RequestOutput,
+    metadata_outputs: Dict[str, MetadataTensor] = {},
+) -> Optional[ResponseOutput]:
+    output_metadata = metadata_outputs.get(request_output.name)
+    content_type = _get_content_type(request_output, output_metadata)
+    codec = (
+        find_input_codec(content_type)
+        if content_type
+        else find_input_codec_by_payload(payload)
+    )
+
+    if not codec:
+        return None
+
+    return codec.encode(
+        name=request_output.name,
+        payload=payload,
+    )
+
+
+def encode_inference_response(
+    payload: Any,
+    model_settings: ModelSettings,
+) -> Optional[InferenceResponse]:
+    # TODO: Allow users to override codec through model's metadata
+    codec = find_request_codec_by_payload(payload)
+
+    if not codec:
+        return None
+
+    model_version = None
+    if model_settings.parameters:
+        model_version = model_settings.parameters.version
+
+    return codec.encode(model_settings.name, payload, model_version)
 
 
 def decode_request_input(
@@ -106,9 +160,9 @@ def get_decoded_or_raw(parametrised_obj: Parametrised) -> Any:
     return get_decoded(parametrised_obj)
 
 
-class FirstInputRequestCodec(RequestCodec):
+class SingleInputRequestCodec(RequestCodec):
     """
-    The FirstInputRequestCodec can be used as a "meta-implementation" for other
+    The SingleInputRequestCodec can be used as a "meta-implementation" for other
     codecs. Its goal to decode the whole request simply as the first decoded
     element.
     """
@@ -116,10 +170,22 @@ class FirstInputRequestCodec(RequestCodec):
     InputCodec: Optional[Type[InputCodec]] = None
 
     @classmethod
+    def can_encode(cls, payload: Any) -> bool:
+        if cls.InputCodec is None:
+            return False
+
+        return cls.InputCodec.can_encode(payload)
+
+    @classmethod
     def encode(
         cls, model_name: str, payload: Any, model_version: str = None
     ) -> InferenceResponse:
-        output = InputCodec.encode("output-1", payload)
+        if cls.InputCodec is None:
+            raise NotImplementedError(
+                f"No input codec found for {type(cls)} request codec"
+            )
+
+        output = cls.InputCodec.encode(f"{DefaultOutputPrefix}1", payload)
         return InferenceResponse(
             model_name=model_name, model_version=model_version, outputs=[output]
         )
@@ -133,7 +199,7 @@ class FirstInputRequestCodec(RequestCodec):
             )
 
         first_input = request.inputs[0]
-        if not has_decoded(first_input):
+        if not has_decoded(first_input) and cls.InputCodec is not None:
             decoded_payload = cls.InputCodec.decode(first_input)  # type: ignore
             _save_decoded(first_input, decoded_payload)
 

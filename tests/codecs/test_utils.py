@@ -1,13 +1,121 @@
 import pytest
 import numpy as np
+import pandas as pd
 
-from mlserver.types import InferenceRequest, RequestInput, Parameters
-from mlserver.codecs.base import CodecError
+from typing import Any
+
+from mlserver.types import (
+    InferenceRequest,
+    InferenceResponse,
+    RequestInput,
+    Parameters,
+    RequestOutput,
+    ResponseOutput,
+    MetadataTensor,
+)
+from mlserver.settings import ModelSettings
+from mlserver.codecs.errors import CodecError
 from mlserver.codecs.utils import (
-    FirstInputRequestCodec,
+    encode_response_output,
+    encode_inference_response,
+    SingleInputRequestCodec,
     DecodedParameterName,
 )
 from mlserver.codecs.numpy import NumpyRequestCodec
+
+
+@pytest.mark.parametrize(
+    "payload, request_output, expected",
+    [
+        (
+            np.array([1, 2, 3, 4]),
+            RequestOutput(name="foo"),
+            ResponseOutput(name="foo", datatype="INT64", shape=[4], data=[1, 2, 3, 4]),
+        ),
+        (
+            ["asd"],
+            RequestOutput(name="bar"),
+            ResponseOutput(name="bar", datatype="BYTES", shape=[1], data=[b"asd"]),
+        ),
+        (
+            ["2021-02-25T12:00:00Z"],
+            RequestOutput(name="bar", parameters=Parameters(content_type="datetime")),
+            ResponseOutput(
+                name="bar", datatype="BYTES", shape=[1], data=[b"2021-02-25T12:00:00Z"]
+            ),
+        ),
+        ({1, 2, 3, 4}, RequestOutput(name="bar"), None),
+    ],
+)
+def test_encode_response_output(
+    payload: Any, request_output: RequestOutput, expected: ResponseOutput
+):
+    metadata_outputs = {
+        "foo": MetadataTensor(
+            name="foo",
+            datatype="INT32",
+            shape=[-1],
+            parameters=Parameters(content_type="np"),
+        )
+    }
+    response_output = encode_response_output(payload, request_output, metadata_outputs)
+    assert response_output == expected
+
+
+@pytest.mark.parametrize(
+    "payload, expected",
+    [
+        (
+            pd.DataFrame({"a": [1, 2, 3], "b": ["a", "b", "c"]}),
+            InferenceResponse(
+                model_name="sum-model",
+                model_version="v1.2.3",
+                outputs=[
+                    ResponseOutput(
+                        name="a", datatype="INT64", shape=[3], data=[1, 2, 3]
+                    ),
+                    ResponseOutput(
+                        name="b", datatype="BYTES", shape=[3], data=[b"a", b"b", b"c"]
+                    ),
+                ],
+            ),
+        ),
+        (
+            np.array([1, 2, 3]),
+            InferenceResponse(
+                model_name="sum-model",
+                model_version="v1.2.3",
+                outputs=[
+                    ResponseOutput(
+                        name="output-1", datatype="INT64", shape=[3], data=[1, 2, 3]
+                    ),
+                ],
+            ),
+        ),
+        (
+            ["foo", "bar"],
+            InferenceResponse(
+                model_name="sum-model",
+                model_version="v1.2.3",
+                outputs=[
+                    ResponseOutput(
+                        name="output-1",
+                        datatype="BYTES",
+                        shape=[2],
+                        data=[b"foo", b"bar"],
+                    ),
+                ],
+            ),
+        ),
+    ],
+)
+def test_encode_inference_response(
+    payload: Any,
+    expected: InferenceResponse,
+    sum_model_settings: ModelSettings,
+):
+    inference_response = encode_inference_response(payload, sum_model_settings)
+    assert inference_response == expected
 
 
 @pytest.mark.parametrize(
@@ -51,4 +159,4 @@ def test_first_input_error(inference_request: InferenceRequest):
         RequestInput(name="bar", shape=[1, 2], data=[1, 2], datatype="INT32")
     )
     with pytest.raises(CodecError):
-        FirstInputRequestCodec.decode(inference_request)
+        SingleInputRequestCodec.decode(inference_request)
