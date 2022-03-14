@@ -1,3 +1,6 @@
+# TODO: Remove this (only maintained temporarily while we migrate to the new
+# module)
+
 import time
 import asyncio
 import multiprocessing as mp
@@ -6,12 +9,12 @@ from functools import wraps
 from concurrent.futures import ProcessPoolExecutor
 from typing import Any, Coroutine, Callable, Optional
 
-from .errors import MLServerError
-from .settings import ModelSettings
-from .model import MLModel
-from .types import InferenceRequest, InferenceResponse
-from .utils import get_wrapped_method
-from .logging import logger
+from ..errors import MLServerError
+from ..settings import ModelSettings
+from ..model import MLModel
+from ..types import InferenceRequest, InferenceResponse
+from ..utils import get_wrapped_method
+from ..logging import logger
 
 _InferencePoolAttr = "__inference_pool__"
 
