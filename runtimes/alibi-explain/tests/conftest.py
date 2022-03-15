@@ -24,9 +24,9 @@ from mlserver.types import MetadataModelResponse
 from mlserver_alibi_explain.common import AlibiExplainSettings
 from mlserver_alibi_explain.runtime import AlibiExplainRuntime, AlibiExplainRuntimeBase
 
-# allow nesting loop
-# in our case this allows multiple runtimes to execute
-# in the same thread for testing reasons
+# Allow nesting loop.
+# In our case this allows multiple runtimes to execute in the
+# same thread for testing reasons.
 nest_asyncio.apply()
 
 TESTS_PATH = Path(os.path.dirname(__file__))
