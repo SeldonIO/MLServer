@@ -2,6 +2,7 @@ import json
 import pytest
 import os
 import shutil
+import nest_asyncio
 
 from mlserver.handlers import DataPlane, ModelRepositoryHandlers
 from mlserver.registry import MultiModelRegistry
@@ -10,6 +11,12 @@ from mlserver import types, Settings, ModelSettings
 
 from .fixtures import SumModel
 from .helpers import get_import_path
+
+
+# Allow nesting loop.
+# In our case this allows multiple runtimes to execute in the
+# same thread for testing reasons.
+nest_asyncio.apply()
 
 TESTS_PATH = os.path.dirname(__file__)
 TESTDATA_PATH = os.path.join(TESTS_PATH, "testdata")
