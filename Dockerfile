@@ -7,7 +7,7 @@ COPY ./runtimes ./runtimes
 COPY \
     setup.py \
     README.md \
-    .
+    ./
 
 # This will build the wheels and place will place them in the
 # /opt/mlserver/dist folder
@@ -45,8 +45,9 @@ RUN pip install --upgrade pip wheel setuptools && \
         pip install ./dist/mlserver_*.whl; \
     else \
         for _runtime in $RUNTIMES; do \
-            _wheelName=$(echo $_runtime | tr '-' '_'); \
-            pip install "./dist/$_wheelName-"*.whl; \
+            echo "---> Installing ${_runtime} runtime..."; \
+            _wheelName="mlserver_$(echo $_runtime | tr '-' '_')"; \
+            pip install "./dist/${_wheelName}-"*.whl; \
         done \
     fi
 
