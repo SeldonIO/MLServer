@@ -1,0 +1,15 @@
+{
+  "inputs": [
+    {
+      "name": "input-0",
+      "shape": [1, 3],
+      "datatype": "INT32",
+      "data": [1, 2, 3]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "requested-output-0"
+    }
+  ]
+}
