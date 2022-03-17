@@ -6,6 +6,7 @@ from ..types import (
     InferenceResponse,
     Parameters,
     RequestInput,
+    RequestOutput,
     ResponseOutput,
 )
 from .shape import Shape
@@ -16,7 +17,8 @@ def _get_data(payload: Union[RequestInput, ResponseOutput]):
 
 
 def _merge_parameters(
-    all_params: dict, parametrised_obj: Union[InferenceRequest, RequestInput]
+    all_params: dict,
+    parametrised_obj: Union[InferenceRequest, RequestInput, RequestOutput],
 ) -> dict:
     if not parametrised_obj.parameters:
         return all_params
@@ -62,7 +64,9 @@ class BatchedRequests:
 
     def _merge_requests(self) -> InferenceRequest:
         inputs_index: Dict[str, Dict[str, RequestInput]] = defaultdict(OrderedDict)
+        outputs_index: Dict[str, Dict[str, RequestOutput]] = defaultdict(OrderedDict)
         all_params: dict = {}
+        has_outputs = False  # if no outputs are defined, then outputs=None
 
         for internal_id, inference_request in self.inference_requests.items():
             self._ids_mapping[internal_id] = inference_request.id
@@ -70,15 +74,28 @@ class BatchedRequests:
             for request_input in inference_request.inputs:
                 inputs_index[request_input.name][internal_id] = request_input
 
+            if inference_request.outputs is not None:
+                has_outputs = True
+                for request_output in inference_request.outputs:
+                    outputs_index[request_output.name][internal_id] = request_output
+
         inputs = [
             self._merge_request_inputs(request_inputs)
             for request_inputs in inputs_index.values()
         ]
 
-        # TODO: Add outputs
+        outputs = (
+            [
+                self._merge_request_outputs(request_outputs)
+                for request_outputs in outputs_index.values()
+            ]
+            if has_outputs
+            else None
+        )
+
         # TODO: Should we add a 'fake' request ID?
         params = Parameters(**all_params) if all_params else None
-        return InferenceRequest(inputs=inputs, parameters=params)
+        return InferenceRequest(inputs=inputs, outputs=outputs, parameters=params)
 
     def _merge_request_inputs(
         self, request_inputs: Dict[str, RequestInput]
@@ -111,6 +128,20 @@ class BatchedRequests:
             data=data,
             parameters=parameters,
         )
+
+    def _merge_request_outputs(
+        self, request_outputs: Dict[str, RequestOutput]
+    ) -> RequestOutput:
+        all_params: dict = {}
+        for internal_id, request_output in request_outputs.items():
+            all_params = _merge_parameters(all_params, request_output)
+
+        parameters = Parameters(**all_params) if all_params else None
+
+        # TODO: What should we do if list is empty?
+        sampled = next(iter(request_outputs.values()))
+
+        return RequestOutput(name=sampled.name, parameters=parameters)
 
     def split_response(
         self, batched_response: InferenceResponse

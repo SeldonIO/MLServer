@@ -70,7 +70,7 @@ def test_modelinferresponse_from_types(inference_response):
         id="123",
         outputs=[
             pb.ModelInferResponse.InferOutputTensor(
-                name="output-0",
+                name=inference_response.outputs[0].name,
                 datatype="FP32",
                 shape=[1],
                 contents=pb.InferTensorContents(fp32_contents=[21.0]),
