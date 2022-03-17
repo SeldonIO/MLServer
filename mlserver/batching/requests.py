@@ -18,7 +18,7 @@ def _get_data(payload: Union[RequestInput, ResponseOutput]):
 
 def _merge_parameters(
     all_params: dict,
-    parametrised_obj: Union[InferenceRequest, RequestInput, RequestOutput]
+    parametrised_obj: Union[InferenceRequest, RequestInput, RequestOutput],
 ) -> dict:
     if not parametrised_obj.parameters:
         return all_params
@@ -84,10 +84,14 @@ class BatchedRequests:
             for request_inputs in inputs_index.values()
         ]
 
-        outputs = [
-            self._merge_request_outputs(request_outputs)
-            for request_outputs in outputs_index.values()
-        ] if has_outputs else None
+        outputs = (
+            [
+                self._merge_request_outputs(request_outputs)
+                for request_outputs in outputs_index.values()
+            ]
+            if has_outputs
+            else None
+        )
 
         # TODO: Should we add a 'fake' request ID?
         params = Parameters(**all_params) if all_params else None
