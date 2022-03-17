@@ -103,6 +103,7 @@ Both the main `mlserver` package and the [inference runtimes
 packages](./docs/runtimes/index.md) try to follow the same versioning schema.
 To bump the version across all of them, you can use the
 [`./hack/update-version.sh`](./hack/update-version.sh) script.
+
 For example:
 
 ```bash
