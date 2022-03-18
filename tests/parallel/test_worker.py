@@ -2,13 +2,26 @@ import asyncio
 
 from typing import Tuple
 
-from aioprocessing import AioJoinableQueue
+from aioprocessing import AioJoinableQueue, AioQueue
 from mlserver.parallel.worker import WorkerProcess
-from mlserver.parallel.messages import ModelUpdateMessage
+from mlserver.parallel.messages import ModelUpdateMessage, InferenceRequestMessage
+
+# TODO: Test out model not found
 
 
-def test_inference(worker_process: WorkerProcess):
-    pass
+async def test_inference(
+    worker_process: WorkerProcess,
+    requests: AioQueue,
+    inference_request_message: InferenceRequestMessage,
+    responses: AioQueue,
+):
+    await requests.coro_put(inference_request_message)
+    response = await responses.coro_get()
+
+    assert response is not None
+    assert response.model_name == inference_request_message.model_name
+    assert response.model_version == inference_request_message.model_version
+    assert len(response.outputs) == 1
 
 
 async def test_load_model(

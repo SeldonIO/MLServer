@@ -38,12 +38,12 @@ class WorkerProcess(Process):
                 # and stop loop
                 return
 
-            # TODO: Extract the inferencerequest and the model name + version
-            # from message
-            name, version, payload = request
+            model = await self._model_registry.get_model(
+                request.model_name, request.model_version
+            )
+            inference_response = await model.predict(request.inference_request)
 
-            model = await self._model_registry.get_model(name, version)
-            inference_response = await model.predict(payload)
+            await self._responses.coro_put(inference_response)
 
             await self._responses.coro_put(inference_response)
 

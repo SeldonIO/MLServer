@@ -15,7 +15,10 @@ class SumModel(MLModel):
 
         output = NumpyCodec.encode(name="total", payload=total)
         response = InferenceResponse(
-            id=payload.id, model_name=self.name, outputs=[output]
+            id=payload.id,
+            model_name=self.name,
+            model_version=self.version,
+            outputs=[output],
         )
 
         if payload.parameters and payload.parameters.headers:

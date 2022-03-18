@@ -4,11 +4,16 @@ import pytest
 from typing import Tuple
 
 from aioprocessing import AioQueue, AioJoinableQueue
-from mlserver.settings import ModelSettings
 
+from mlserver.settings import ModelSettings
+from mlserver.types import InferenceRequest
 from mlserver.parallel.worker import WorkerProcess
 from mlserver.parallel.utils import terminate_queue, cancel_task
-from mlserver.parallel.messages import ModelUpdateMessage, ModelUpdateType
+from mlserver.parallel.messages import (
+    ModelUpdateMessage,
+    ModelUpdateType,
+    InferenceRequestMessage,
+)
 
 
 @pytest.fixture
@@ -30,12 +35,20 @@ async def requests() -> AioQueue:
 
 
 @pytest.fixture
+async def responses() -> AioQueue:
+    q = AioQueue()
+    yield q
+
+    q.close()
+
+
+@pytest.fixture
 async def worker_process(
     requests: AioQueue,
+    responses: AioQueue,
     model_updates: AioJoinableQueue,
     load_message: ModelUpdateMessage,
 ) -> WorkerProcess:
-    responses = AioQueue()
     worker = WorkerProcess(requests, responses, model_updates)
 
     worker_task = asyncio.create_task(worker.run())
@@ -60,4 +73,15 @@ def load_message(sum_model_settings: ModelSettings) -> ModelUpdateMessage:
 def unload_message(sum_model_settings: ModelSettings) -> ModelUpdateMessage:
     return ModelUpdateMessage(
         update_type=ModelUpdateType.Unload, model_settings=sum_model_settings
+    )
+
+
+@pytest.fixture
+def inference_request_message(
+    sum_model_settings: ModelSettings, inference_request: InferenceRequest
+) -> InferenceRequestMessage:
+    return InferenceRequestMessage(
+        model_name=sum_model_settings.name,
+        model_version=sum_model_settings.parameters.version,
+        inference_request=inference_request,
     )

@@ -1,5 +1,6 @@
 from enum import IntEnum
 from pydantic import BaseModel
+from typing import Optional
 
 from ..types import InferenceRequest
 from ..settings import ModelSettings
@@ -12,7 +13,7 @@ class ModelUpdateType(IntEnum):
 
 class InferenceRequestMessage(BaseModel):
     model_name: str
-    model_version: str
+    model_version: Optional[str] = None
     inference_request: InferenceRequest
 
 
