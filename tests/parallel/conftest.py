@@ -1,24 +1,38 @@
 import asyncio
 import pytest
 
-from asyncio.exceptions import CancelledError
 from typing import Tuple
 
 from aioprocessing import AioQueue, AioJoinableQueue
 from mlserver.settings import ModelSettings
 
 from mlserver.parallel.worker import WorkerProcess
+from mlserver.parallel.utils import terminate_queue, cancel_task
 from mlserver.parallel.messages import ModelUpdateMessage, ModelUpdateType
 
 
 @pytest.fixture
-def model_updates() -> AioJoinableQueue:
-    return AioJoinableQueue()
+async def model_updates() -> AioJoinableQueue:
+    q = AioJoinableQueue()
+    yield q
+
+    await terminate_queue(q)
+    q.close()
 
 
 @pytest.fixture
-async def worker_process(model_updates: AioJoinableQueue) -> WorkerProcess:
-    requests = AioQueue()
+async def requests() -> AioQueue:
+    q = AioQueue()
+    yield q
+
+    await terminate_queue(q)
+    q.close()
+
+
+@pytest.fixture
+async def worker_process(
+    requests: AioQueue, model_updates: AioJoinableQueue
+) -> WorkerProcess:
     responses = AioQueue()
     worker = WorkerProcess(requests, responses, model_updates)
 
@@ -27,14 +41,7 @@ async def worker_process(model_updates: AioJoinableQueue) -> WorkerProcess:
     yield worker
 
     await worker.close()
-    requests.close()
-    worker_task.cancel()
-    try:
-        print("awaiting worker task")
-        await worker_task
-    except CancelledError:
-        pass
-    print("awaited worker task")
+    await cancel_task(worker_task)
 
 
 @pytest.fixture

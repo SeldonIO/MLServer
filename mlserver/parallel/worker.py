@@ -9,7 +9,7 @@ from typing import Awaitable
 from ..registry import MultiModelRegistry
 
 from .messages import ModelUpdateType, ModelUpdateMessage
-from .utils import syncify
+from .utils import syncify, END_OF_QUEUE, cancel_task
 
 
 class WorkerProcess(Process):
@@ -31,20 +31,21 @@ class WorkerProcess(Process):
         # always be running.
         await self._process_model_updates()
         while self._active:
-            print(f"active is {self._active}")
-            request = await self._requests.coro_get(timeout=1)
-            print(f"hello")
+            request = await self._requests.coro_get()
+            if request is END_OF_QUEUE:
+                # TODO: Log info message saying that we are exiting the loop
+                # If requests queue gets terminated, detect the sentinel value
+                # and stop loop
+                return
 
-            #  # TODO: Extract the inferencerequest and the model name + version
-            #  # from message
-            #  name, version, payload = request
+            # TODO: Extract the inferencerequest and the model name + version
+            # from message
+            name, version, payload = request
 
-            #  model = await self._model_registry.get_model(name, version)
-            #  inference_response = await model.predict(payload)
+            model = await self._model_registry.get_model(name, version)
+            inference_response = await model.predict(payload)
 
-            #  await self._responses.coro_put(inference_response)
-
-        print("out of run")
+            await self._responses.coro_put(inference_response)
 
     async def _process_model_updates(self):
         while not self._model_updates.empty():
@@ -53,8 +54,8 @@ class WorkerProcess(Process):
             self._model_updates.task_done()
 
         # Chain next (future) update once we're done processing the queue
-        #  self._wakeup_task = self._model_updates.coro_get()
-        #  self._wakeup_task.add_done_callback(self._wakeup_model_updates_loop)
+        self._wakeup_task = self._model_updates.coro_get()
+        self._wakeup_task.add_done_callback(self._wakeup_model_updates_loop)
 
         return self._wakeup_task
 
@@ -72,6 +73,10 @@ class WorkerProcess(Process):
         # new message is available.
         try:
             latest_update = await coro_get
+            # If the queue gets terminated, detect the "sentinel value" and
+            # stop reading
+            if latest_update is END_OF_QUEUE:
+                return
         except CancelledError:
             # In the case where the `_wakeup_task` gets canceled (e.g. when
             # closing the worker), the output of the `coro_get` task will be an
@@ -98,12 +103,5 @@ class WorkerProcess(Process):
         self._active = False
         if self._wakeup_task is not None:
             # Cancel task
-            self._wakeup_task.cancel()
-            try:
-                print("awaiting cancelled wakeup task - do we need to?")
-                await self._wakeup_task
-            except CancelledError:
-                pass
-
-            print("awaited cancelled wakeup task")
+            await cancel_task(self._wakeup_task)
             self._wakeup_task = None

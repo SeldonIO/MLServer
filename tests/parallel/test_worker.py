@@ -9,7 +9,6 @@ from mlserver.parallel.messages import ModelUpdateMessage
 
 def test_run(worker_process: WorkerProcess):
     pass
-    print("finalising test")
 
 
 async def test_load_model(
@@ -26,5 +25,3 @@ async def test_load_model(
     loaded_models = list(await worker_process._model_registry.get_models())
     assert len(loaded_models) == 1
     assert loaded_models[0].name == load_message.model_settings.name
-
-    print("finalising test")

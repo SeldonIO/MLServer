@@ -1,6 +1,24 @@
 import asyncio
 
+from asyncio import Task
+from asyncio.exceptions import CancelledError
+from aioprocessing import AioQueue
 from typing import Callable, Awaitable
+
+END_OF_QUEUE = None
+
+
+async def terminate_queue(queue: AioQueue):
+    # Send sentinel value to terminate queue
+    await queue.coro_put(END_OF_QUEUE)
+
+
+async def cancel_task(task: Task):
+    task.cancel()
+    try:
+        await task
+    except CancelledError:
+        pass
 
 
 def syncify(async_f: Callable[[], Awaitable[None]]):
