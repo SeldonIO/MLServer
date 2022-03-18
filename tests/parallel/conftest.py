@@ -31,12 +31,17 @@ async def requests() -> AioQueue:
 
 @pytest.fixture
 async def worker_process(
-    requests: AioQueue, model_updates: AioJoinableQueue
+    requests: AioQueue,
+    model_updates: AioJoinableQueue,
+    load_message: ModelUpdateMessage,
 ) -> WorkerProcess:
     responses = AioQueue()
     worker = WorkerProcess(requests, responses, model_updates)
 
     worker_task = asyncio.create_task(worker.run())
+
+    await model_updates.coro_put(load_message)
+    await model_updates.coro_join()
 
     yield worker
 
@@ -48,4 +53,11 @@ async def worker_process(
 def load_message(sum_model_settings: ModelSettings) -> ModelUpdateMessage:
     return ModelUpdateMessage(
         update_type=ModelUpdateType.Load, model_settings=sum_model_settings
+    )
+
+
+@pytest.fixture
+def unload_message(sum_model_settings: ModelSettings) -> ModelUpdateMessage:
+    return ModelUpdateMessage(
+        update_type=ModelUpdateType.Unload, model_settings=sum_model_settings
     )

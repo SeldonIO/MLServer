@@ -93,7 +93,7 @@ class WorkerProcess(Process):
         if update.update_type == ModelUpdateType.Load:
             await self._model_registry.load(model_settings)
         elif update.update_type == ModelUpdateType.Unload:
-            await self._model_updates.unload(model_settings.name)
+            await self._model_registry.unload(model_settings.name)
         else:
             # TODO: Raise warning about unknown model update
             pass
