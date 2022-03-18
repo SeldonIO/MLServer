@@ -74,7 +74,15 @@ def _get_env_prefix(settings_class: Type[BaseSettings]) -> str:
 def save_default_env(env: dict, output: str):
     with open(output, "w") as file:
         for name, value in env.items():
-            file.write(f'export {name}="{value}"\n')
+            file.write(_parse_dict_values(name, value))
+
+
+def _parse_dict_values(name: str, value: str) -> str:
+    if name == "MLSERVER_MODEL_EXTRA":
+        value = value.replace("'", '"')
+        return f"export {name}='{value}'\n"
+    else:
+        return f'export {name}="{value}"\n'
 
 
 @click.command()
