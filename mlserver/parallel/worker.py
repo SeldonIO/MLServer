@@ -38,6 +38,8 @@ class WorkerProcess(Process):
                 # and stop loop
                 return
 
+            # TODO: Where should we check if the model exists? Should that
+            # happen in the parent process?
             model = await self._model_registry.get_model(
                 request.model_name, request.model_version
             )

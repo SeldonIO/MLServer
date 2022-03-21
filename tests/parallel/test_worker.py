@@ -6,8 +6,6 @@ from aioprocessing import AioJoinableQueue, AioQueue
 from mlserver.parallel.worker import WorkerProcess
 from mlserver.parallel.messages import ModelUpdateMessage, InferenceRequestMessage
 
-# TODO: Test out model not found
-
 
 async def test_inference(
     worker_process: WorkerProcess,
