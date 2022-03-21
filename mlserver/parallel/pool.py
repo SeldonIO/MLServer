@@ -1,10 +1,11 @@
 from typing import Any, Coroutine, Callable, Optional
+from aioprocessing import AioQueue, AioJoinableQueue
 
 from ..types import InferenceRequest, InferenceResponse
 from ..settings import Settings, ModelSettings
 from ..utils import get_wrapped_method
 
-from .worker import WorkerProcess
+from .worker import Worker
 
 PredictMethod = Callable[[InferenceRequest], Coroutine[Any, Any, InferenceResponse]]
 
@@ -26,9 +27,14 @@ class InferencePool:
         # TODO: Read number of workers from settings
         parallel_workers = 4
         self._workers = {}
+        self._requests = AioQueue()
+        self._responses = AioQueue()
         for idx in range(parallel_workers):
-            # TODO: Set callback to restart worker if it goes down
-            worker = WorkerProcess()
+            # TODO: Set callback to restart worker if it goes down (would
+            # `worker.join` help with that?)
+            model_updates = AioJoinableQueue()
+            worker = Worker(self._requests, self._responses, model_updates)
+            worker.start()
             self._workers[worker.pid] = worker
 
     def predict(

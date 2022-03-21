@@ -1,19 +1,34 @@
 import asyncio
 import pytest
+import signal
 
 from typing import Tuple
 
 from aioprocessing import AioQueue, AioJoinableQueue
 
-from mlserver.settings import ModelSettings
+from mlserver.settings import ModelSettings, Settings
 from mlserver.types import InferenceRequest
-from mlserver.parallel.worker import WorkerProcess
+from mlserver.parallel.pool import InferencePool
+from mlserver.parallel.worker import Worker
 from mlserver.parallel.utils import terminate_queue, cancel_task
 from mlserver.parallel.messages import (
     ModelUpdateMessage,
     ModelUpdateType,
     InferenceRequestMessage,
 )
+
+
+def _child_died(*args, **kwargs):
+    breakpoint()
+    print(args, kwargs)
+
+
+signal.signal(signal.SIGCHLD, _child_died)
+
+
+@pytest.fixture
+async def pool(settings: Settings) -> InferencePool:
+    return InferencePool(settings)
 
 
 @pytest.fixture
@@ -43,13 +58,13 @@ async def responses() -> AioQueue:
 
 
 @pytest.fixture
-async def worker_process(
+async def worker(
     requests: AioQueue,
     responses: AioQueue,
     model_updates: AioJoinableQueue,
     load_message: ModelUpdateMessage,
-) -> WorkerProcess:
-    worker = WorkerProcess(requests, responses, model_updates)
+) -> Worker:
+    worker = Worker(requests, responses, model_updates)
 
     worker_task = asyncio.create_task(worker.run())
 

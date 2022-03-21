@@ -12,14 +12,14 @@ from .messages import ModelUpdateType, ModelUpdateMessage
 from .utils import syncify, END_OF_QUEUE, cancel_task
 
 
-class WorkerProcess(Process):
+class Worker(Process):
     def __init__(
         self, requests: AioQueue, responses: AioQueue, model_updates: AioJoinableQueue
     ):
         super().__init__()
         self._requests = requests
         self._responses = responses
-        self._model_updates = model_updates
+        self.model_updates = model_updates
 
         self._model_registry = MultiModelRegistry()
         self._active = True
@@ -50,13 +50,13 @@ class WorkerProcess(Process):
             await self._responses.coro_put(inference_response)
 
     async def _process_model_updates(self):
-        while not self._model_updates.empty():
-            update = await self._model_updates.coro_get()
+        while not self.model_updates.empty():
+            update = await self.model_updates.coro_get()
             await self._process_model_update(update)
-            self._model_updates.task_done()
+            self.model_updates.task_done()
 
         # Chain next (future) update once we're done processing the queue
-        self._wakeup_task = self._model_updates.coro_get()
+        self._wakeup_task = self.model_updates.coro_get()
         self._wakeup_task.add_done_callback(self._wakeup_model_updates_loop)
 
         return self._wakeup_task
@@ -86,7 +86,7 @@ class WorkerProcess(Process):
             return
 
         await self._process_model_update(latest_update)
-        self._model_updates.task_done()
+        self.model_updates.task_done()
 
         await self._process_model_updates()
 
