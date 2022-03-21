@@ -9,6 +9,7 @@ of settings that we want to source always (e.g. the default runtime to use).
 
 import click
 import json
+from json import JSONDecodeError
 import os
 
 from typing import List, Tuple, Type
@@ -78,10 +79,11 @@ def save_default_env(env: dict, output: str):
 
 
 def _parse_dict_values(name: str, value: str) -> str:
-    if "{" in value:
+    try:
         value = value.replace("'", '"')
+        json.loads(value)
         return f"export {name}='{value}'\n"
-    else:
+    except JSONDecodeError:
         return f'export {name}="{value}"\n'
 
 
