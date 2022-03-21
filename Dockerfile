@@ -1,4 +1,4 @@
-FROM python:3.8-slim AS wheel-builder
+FROM python:3.10.3-slim AS wheel-builder
 SHELL ["/bin/bash", "-c"]
 
 COPY ./hack/build-wheels.sh ./hack/build-wheels.sh
@@ -13,7 +13,7 @@ COPY \
 # /opt/mlserver/dist folder
 RUN ./hack/build-wheels.sh /opt/mlserver/dist
 
-FROM python:3.8-slim
+FROM python:3.10.3-slim
 SHELL ["/bin/bash", "-c"]
 
 ARG RUNTIMES="all"
