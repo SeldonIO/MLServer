@@ -78,7 +78,7 @@ def save_default_env(env: dict, output: str):
 
 
 def _parse_dict_values(name: str, value: str) -> str:
-    if name == "MLSERVER_MODEL_EXTRA":
+    if "{" in value:
         value = value.replace("'", '"')
         return f"export {name}='{value}'\n"
     else:
