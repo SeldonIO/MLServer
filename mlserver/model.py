@@ -81,7 +81,7 @@ class MLModel:
 
     @property
     def outputs(self) -> Optional[List[MetadataTensor]]:
-        return self._settings.inputs
+        return self._settings.outputs
 
     @outputs.setter
     def outputs(self, value: List[MetadataTensor]):
