@@ -89,6 +89,10 @@ class Settings(BaseSettings):
     `None` to disable it
     """
 
+    # Logging settings
+    uvicorn_logging_settings: Optional[str] = None
+    """Path to uvicorn logging config file"""
+
 
 class ModelParameters(BaseSettings):
     """
