@@ -23,11 +23,12 @@ class in your `model-settings.json` file.
 ## Included Inference Runtimes
 
 | Framework    | Package Name            | Implementation Class                       | Example                                                    | Documentation                                                    |
-| ------------ | ----------------------- | ------------------------------------------ | ---------------------------------------------------------- | ---------------------------------------------------------------- |
+|--------------|-------------------------| ------------------------------------------ |------------------------------------------------------------| ---------------------------------------------------------------- |
 | Scikit-Learn | `mlserver-sklearn`      | `mlserver_sklearn.SKLearnModel`            | [Scikit-Learn example](../examples/sklearn/README.md)      | [MLServer SKLearn](./sklearn)                                    |
 | XGBoost      | `mlserver-xgboost`      | `mlserver_xgboost.XGBoostModel`            | [XGBoost example](../examples/xgboost/README.md)           | [MLServer XGBoost](./xgboost)                                    |
 | Spark MLlib  | `mlserver-mllib`        | `mlserver_mllib.MLlibModel`                | Coming Soon                                                | [MLServer MLlib](./mllib)                                        |
 | LightGBM     | `mlserver-lightgbm`     | `mlserver_lightgbm.LightGBMModel`          | [LightGBM example](../examples/lightgbm/README.md)         | [MLServer LightGBM](./lightgbm)                                  |
+| CatBoost     | `mlserver-catboost`     | `mlserver_catboost.CatboostModel`          | [CatBoost example](../examples/catboost/README.md)         | [MLServer LightGBM](./lightgbm)                                  |
 | Tempo        | `tempo`                 | `tempo.mlserver.InferenceRuntime`          | [Tempo example](../examples/tempo/README.md)               | [`github.com/SeldonIO/tempo`](https://github.com/SeldonIO/tempo) |
 | MLflow       | `mlserver-mlflow`       | `mlserver_mlflow.MLflowRuntime`            | [MLflow example](../examples/mlflow/README.md)             | [MLServer MLflow](./mlflow)                                      |
 | Alibi-Detect | `mlserver-alibi-detect` | `mlserver_alibi_detect.AlibiDetectRuntime` | [Alibi-detect example](../examples/alibi-detect/README.md) | [MLServer Alibi-Detect](./alibi-detect)                          |
@@ -42,6 +43,7 @@ MLflow <./mlflow>
 Tempo <https://tempo.readthedocs.io>
 Spark MLlib <./mllib>
 LightGBM <./lightgbm>
+CatBoost <./catboost>
 Custom <./custom>
 Alibi-Detect <./alibi-detect>
 ```
