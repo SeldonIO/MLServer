@@ -1,6 +1,5 @@
 import asyncio
 import pytest
-import signal
 
 from typing import Tuple
 
@@ -18,17 +17,12 @@ from mlserver.parallel.messages import (
 )
 
 
-def _child_died(*args, **kwargs):
-    breakpoint()
-    print(args, kwargs)
-
-
-signal.signal(signal.SIGCHLD, _child_died)
-
-
 @pytest.fixture
 async def pool(settings: Settings) -> InferencePool:
-    return InferencePool(settings)
+    pool = InferencePool(settings)
+    yield pool
+
+    await pool.close()
 
 
 @pytest.fixture
@@ -66,7 +60,7 @@ async def worker(
 ) -> Worker:
     worker = Worker(requests, responses, model_updates)
 
-    worker_task = asyncio.create_task(worker.run())
+    worker_task = asyncio.create_task(worker.coro_run())
 
     await model_updates.coro_put(load_message)
     await model_updates.coro_join()

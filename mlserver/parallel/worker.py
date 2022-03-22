@@ -25,7 +25,10 @@ class Worker(Process):
         self._active = True
         self._wakeup_task = None
 
-    async def run(self):
+    def run(self):
+        return asyncio.run(self.coro_run())
+
+    async def coro_run(self):
         # NOTE: The `_process_model_updates` function will take care of
         # chaining itself to the next (future) model update. Therefore it will
         # always be running.
@@ -36,6 +39,7 @@ class Worker(Process):
                 # TODO: Log info message saying that we are exiting the loop
                 # If requests queue gets terminated, detect the sentinel value
                 # and stop loop
+                await self.close()
                 return
 
             # TODO: Where should we check if the model exists? Should that

@@ -1,3 +1,5 @@
+import asyncio
+
 from typing import Any, Coroutine, Callable, Optional
 from aioprocessing import AioQueue, AioJoinableQueue
 
@@ -6,6 +8,7 @@ from ..settings import Settings, ModelSettings
 from ..utils import get_wrapped_method
 
 from .worker import Worker
+from .utils import terminate_queue
 
 PredictMethod = Callable[[InferenceRequest], Coroutine[Any, Any, InferenceResponse]]
 
@@ -66,3 +69,23 @@ class InferencePool:
             return await self.predict(model.settings, payload)
 
         return _inner
+
+    async def close(self):
+        # First send N sentinel values (one per worker) to each of the input
+        # queues
+        await asyncio.gather(
+            *[
+                asyncio.gather(
+                    terminate_queue(worker.model_updates),
+                    terminate_queue(self._requests),
+                )
+                for worker in self._workers.values()
+            ]
+        )
+
+        # Afterwards, verify that all workers have stopped and remove them from
+        # the pool
+        for pid, worker in self._workers.items():
+            worker.join()
+
+        self._workers.clear()
