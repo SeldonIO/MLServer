@@ -1,3 +1,3 @@
-```{include} ../../runtimes/catbost/README.md
+```{include} ../../runtimes/catboost/README.md
 :relative-docs: ../../docs/
 ```
