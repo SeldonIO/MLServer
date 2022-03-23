@@ -1,7 +1,7 @@
 import pytest
 import os
 import numpy as np
-from catboost import CatBoostClassifier, Pool
+from catboost import CatBoostClassifier
 
 from mlserver.settings import ModelSettings, ModelParameters
 from mlserver.types import InferenceRequest
@@ -18,11 +18,9 @@ def model_uri(tmp_path) -> str:
     train_data = np.random.randint(0, 100, size=(100, 10))
     train_labels = np.random.randint(0, 2, size=(100))
 
-    model = CatBoostClassifier(iterations=2,
-                               depth=2,
-                               learning_rate=1,
-                               loss_function='Logloss',
-                               verbose=True)
+    model = CatBoostClassifier(
+        iterations=2, depth=2, learning_rate=1, loss_function="Logloss", verbose=True
+    )
     model.fit(train_data, train_labels)
 
     model_uri = os.path.join(tmp_path, "catboost-model.bst")
