@@ -33,3 +33,7 @@ async def test_close(pool: InferencePool):
     assert len(pool._workers) == 0
     for worker_pid in worker_pids:
         assert not check_pid(worker_pid)
+
+
+async def test_predict(pool: InferencePool):
+    pass

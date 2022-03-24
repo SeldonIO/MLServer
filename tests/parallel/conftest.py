@@ -8,6 +8,7 @@ from aioprocessing import AioQueue, AioJoinableQueue
 from mlserver.settings import ModelSettings, Settings
 from mlserver.types import InferenceRequest
 from mlserver.utils import generate_uuid
+from mlserver.model import MLModel
 from mlserver.parallel.pool import InferencePool
 from mlserver.parallel.worker import Worker
 from mlserver.parallel.utils import terminate_queue, cancel_task
@@ -19,8 +20,9 @@ from mlserver.parallel.messages import (
 
 
 @pytest.fixture
-async def pool(settings: Settings) -> InferencePool:
+async def pool(settings: Settings, sum_model: MLModel) -> InferencePool:
     pool = InferencePool(settings)
+    await pool.load_model(sum_model)
     yield pool
 
     await pool.close()
