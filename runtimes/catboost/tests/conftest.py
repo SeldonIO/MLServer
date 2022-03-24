@@ -1,7 +1,7 @@
 import pytest
 import os
 import numpy as np
-from catboost import CatBoostClassifier
+from catboost import CatBoostClassifier #, CatBoostRegressor, CatBoostRanker
 
 from mlserver.settings import ModelSettings, ModelParameters
 from mlserver.types import InferenceRequest
@@ -21,9 +21,16 @@ def model_uri(tmp_path) -> str:
     model = CatBoostClassifier(
         iterations=2, depth=2, learning_rate=1, loss_function="Logloss", verbose=True
     )
+    # TODO: add a selector for the regressor/ranker classes
+    # model = CatBoostRegressor(
+    #     iterations=2, depth=2, learning_rate=1, loss_function="RMSE", verbose=True
+    # )
+    # model = CatBoostRanker(
+    #     iterations=2, depth=2, learning_rate=1, loss_function="RMSE", verbose=True
+    # )
     model.fit(train_data, train_labels)
 
-    model_uri = os.path.join(tmp_path, "catboost-model.bst")
+    model_uri = os.path.join(tmp_path, "model.cbm")
     model.save_model(model_uri)
 
     return model_uri

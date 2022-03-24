@@ -36,7 +36,6 @@ setup(
     install_requires=[
         "mlserver",
         "catboost",
-        "pandas",
     ],
     long_description=_load_description(),
     long_description_content_type="text/markdown",
