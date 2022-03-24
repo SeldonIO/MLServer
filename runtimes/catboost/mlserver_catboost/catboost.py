@@ -6,7 +6,7 @@ from mlserver.utils import get_model_uri
 from mlserver.codecs import NumpyCodec, NumpyRequestCodec
 
 
-WELLKNOWN_MODEL_FILENAMES = ["model.bst"]
+WELLKNOWN_MODEL_FILENAMES = ["model.cbm", "model.bin"]
 
 
 class CatboostModel(MLModel):
