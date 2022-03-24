@@ -1,8 +1,9 @@
 import asyncio
 
 from asyncio import Future
-from typing import Awaitable, Any, Dict, Coroutine, Callable, Optional
 from aioprocessing import AioQueue, AioJoinableQueue
+from functools import wraps
+from typing import Awaitable, Any, Dict, Coroutine, Callable, Optional
 
 from ..model import MLModel
 from ..types import InferenceRequest, InferenceResponse
@@ -124,7 +125,7 @@ class InferencePool:
 
         return await async_response
 
-    async def parallel(self, f: PredictMethod):
+    def parallel(self, f: PredictMethod):
         """
         Decorator to attach to model's methods so that they run in parallel.
         By default, this will get attached to every model's "inference" method.
@@ -149,16 +150,31 @@ class InferencePool:
 
         return _inner
 
-    async def load_model(self, model: MLModel):
+    async def load_model(self, model: MLModel) -> MLModel:
         await asyncio.gather(
             *[self._load_model(model, worker) for worker in self._workers.values()]
         )
+
+        # Decorate predict method
+        setattr(model, "predict", self.parallel(model.predict))
 
     async def _load_model(self, model: MLModel, worker: Worker):
         load_message = ModelUpdateMessage(
             update_type=ModelUpdateType.Load, model_settings=model.settings
         )
         await worker.model_updates.coro_put(load_message)
+        await worker.model_updates.coro_join()
+
+    async def unload_model(self, model: MLModel) -> MLModel:
+        await asyncio.gather(
+            *[self._unload_model(model, worker) for worker in self._workers.values()]
+        )
+
+    async def _unload_model(self, model: MLModel, worker: Worker):
+        unload_message = ModelUpdateMessage(
+            update_type=ModelUpdateType.Unload, model_settings=model.settings
+        )
+        await worker.model_updates.coro_put(unload_message)
         await worker.model_updates.coro_join()
 
     async def close(self):

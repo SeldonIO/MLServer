@@ -25,6 +25,7 @@ async def pool(settings: Settings, sum_model: MLModel) -> InferencePool:
     await pool.load_model(sum_model)
     yield pool
 
+    await pool.unload_model(sum_model)
     await pool.close()
 
 
