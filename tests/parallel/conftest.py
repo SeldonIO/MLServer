@@ -7,6 +7,7 @@ from aioprocessing import AioQueue, AioJoinableQueue
 
 from mlserver.settings import ModelSettings, Settings
 from mlserver.types import InferenceRequest
+from mlserver.utils import generate_uuid
 from mlserver.parallel.pool import InferencePool
 from mlserver.parallel.worker import Worker
 from mlserver.parallel.utils import terminate_queue, cancel_task
@@ -90,6 +91,7 @@ def inference_request_message(
     sum_model_settings: ModelSettings, inference_request: InferenceRequest
 ) -> InferenceRequestMessage:
     return InferenceRequestMessage(
+        id=generate_uuid(),
         model_name=sum_model_settings.name,
         model_version=sum_model_settings.parameters.version,
         inference_request=inference_request,

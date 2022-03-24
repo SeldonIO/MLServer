@@ -8,7 +8,7 @@ from typing import Awaitable
 
 from ..registry import MultiModelRegistry
 
-from .messages import ModelUpdateType, ModelUpdateMessage
+from .messages import ModelUpdateType, ModelUpdateMessage, InferenceResponseMessage
 from .utils import syncify, END_OF_QUEUE, cancel_task
 
 
@@ -49,9 +49,10 @@ class Worker(Process):
             )
             inference_response = await model.predict(request.inference_request)
 
-            await self._responses.coro_put(inference_response)
-
-            await self._responses.coro_put(inference_response)
+            response = InferenceResponseMessage(
+                id=request.id, inference_response=inference_response
+            )
+            await self._responses.coro_put(response)
 
     async def _process_model_updates(self):
         while not self.model_updates.empty():

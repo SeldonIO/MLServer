@@ -17,9 +17,12 @@ async def test_inference(
     response = await responses.coro_get()
 
     assert response is not None
-    assert response.model_name == inference_request_message.model_name
-    assert response.model_version == inference_request_message.model_version
-    assert len(response.outputs) == 1
+    assert response.id == inference_request_message.id
+
+    inference_response = response.inference_response
+    assert inference_response.model_name == inference_request_message.model_name
+    assert inference_response.model_version == inference_request_message.model_version
+    assert len(inference_response.outputs) == 1
 
 
 async def test_load_model(
