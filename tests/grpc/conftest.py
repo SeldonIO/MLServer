@@ -6,7 +6,7 @@ from typing import AsyncGenerator, Dict
 from google.protobuf import json_format
 from prometheus_client.registry import CollectorRegistry
 
-from mlserver.parallel import load_inference_pool, unload_inference_pool
+from mlserver.parallel import InferencePool
 from mlserver.batching import load_batching
 from mlserver.handlers import DataPlane, ModelRepositoryHandlers
 from mlserver.settings import Settings
@@ -72,6 +72,7 @@ async def grpc_server(
     settings: Settings,
     data_plane: DataPlane,
     model_repository_handlers: ModelRepositoryHandlers,
+    inference_pool: InferencePool,
     sum_model: SumModel,
     prometheus_registry: CollectorRegistry,  # noqa: F811
 ):
@@ -83,11 +84,11 @@ async def grpc_server(
 
     server._create_server()
 
-    await load_inference_pool(sum_model)
+    await inference_pool.load_model(sum_model)
     await load_batching(sum_model)
     await server._server.start()
 
     yield server
 
-    await unload_inference_pool(sum_model)
+    await inference_pool.unload_model(sum_model)
     await server._server.stop(grace=None)

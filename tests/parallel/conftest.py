@@ -20,13 +20,14 @@ from mlserver.parallel.messages import (
 
 
 @pytest.fixture
-async def pool(settings: Settings, sum_model: MLModel) -> InferencePool:
-    pool = InferencePool(settings)
-    await pool.load_model(sum_model)
+async def inference_pool(
+    inference_pool: InferencePool, sum_model: MLModel
+) -> InferencePool:
+    await inference_pool.load_model(sum_model)
+
     yield pool
 
     await pool.unload_model(sum_model)
-    await pool.close()
 
 
 @pytest.fixture

@@ -7,6 +7,7 @@ import nest_asyncio
 from mlserver.handlers import DataPlane, ModelRepositoryHandlers
 from mlserver.registry import MultiModelRegistry
 from mlserver.repository import ModelRepository, DEFAULT_MODEL_SETTINGS_FILENAME
+from mlserver.parallel import InferencePool
 from mlserver import types, Settings, ModelSettings
 
 from .fixtures import SumModel
@@ -153,3 +154,11 @@ def repository_index_response(sum_model_settings) -> types.RepositoryIndexRespon
             ),
         ]
     )
+
+
+@pytest.fixture
+async def inference_pool(settings: Settings) -> InferencePool:
+    pool = InferencePool(settings)
+    yield pool
+
+    await pool.close()
