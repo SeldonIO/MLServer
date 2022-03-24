@@ -195,6 +195,7 @@ class InferencePool:
             *[
                 asyncio.gather(
                     terminate_queue(worker.model_updates),
+                    worker.model_updates.coro_join(),
                     terminate_queue(self._requests),
                 )
                 for worker in self._workers.values()

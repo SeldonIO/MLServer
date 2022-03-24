@@ -1,11 +1,19 @@
 import asyncio
+import multiprocessing
 
 from asyncio import Task
 from asyncio.exceptions import CancelledError
 from aioprocessing import AioQueue
 from typing import Callable, Awaitable
 
+from mlserver.settings import Settings
+
 END_OF_QUEUE = None
+
+
+def configure_inference_pool(settings: Settings):
+    # Set MP method
+    multiprocessing.set_start_method("spawn")
 
 
 async def terminate_queue(queue: AioQueue):

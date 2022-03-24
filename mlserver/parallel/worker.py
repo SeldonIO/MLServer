@@ -83,6 +83,7 @@ class Worker(Process):
             # If the queue gets terminated, detect the "sentinel value" and
             # stop reading
             if latest_update is END_OF_QUEUE:
+                self.model_updates.task_done()
                 return
         except CancelledError:
             # In the case where the `_wakeup_task` gets canceled (e.g. when

@@ -25,9 +25,9 @@ async def inference_pool(
 ) -> InferencePool:
     await inference_pool.load_model(sum_model)
 
-    yield pool
+    yield inference_pool
 
-    await pool.unload_model(sum_model)
+    await inference_pool.unload_model(sum_model)
 
 
 @pytest.fixture
