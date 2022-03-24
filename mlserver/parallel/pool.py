@@ -10,8 +10,13 @@ from ..settings import Settings, ModelSettings
 from ..utils import get_wrapped_method, generate_uuid
 
 from .worker import Worker
-from .utils import syncify, terminate_queue, cancel_task
-from .messages import InferenceResponseMessage, ModelUpdateMessage, ModelUpdateType
+from .utils import syncify, END_OF_QUEUE, terminate_queue, cancel_task
+from .messages import (
+    InferenceRequestMessage,
+    InferenceResponseMessage,
+    ModelUpdateMessage,
+    ModelUpdateType,
+)
 
 PredictMethod = Callable[[InferenceRequest], Coroutine[Any, Any, InferenceResponse]]
 
@@ -112,8 +117,8 @@ class InferencePool:
         async_response = self._async_responses[internal_id]
 
         try:
-            response = await async_response
-            return response.inference_response
+            inference_response = await async_response
+            return inference_response
         finally:
             del self._async_responses[internal_id]
 

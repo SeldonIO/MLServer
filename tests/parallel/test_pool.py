@@ -1,5 +1,7 @@
 import os
 
+from mlserver.settings import ModelSettings
+from mlserver.types import InferenceRequest
 from mlserver.parallel.pool import InferencePool
 
 
@@ -35,5 +37,13 @@ async def test_close(pool: InferencePool):
         assert not check_pid(worker_pid)
 
 
-async def test_predict(pool: InferencePool):
-    pass
+async def test_predict(
+    pool: InferencePool,
+    sum_model_settings: ModelSettings,
+    inference_request: InferenceRequest,
+):
+    inference_response = await pool.predict(sum_model_settings, inference_request)
+
+    assert inference_response.id == inference_request.id
+    assert inference_response.model_name == sum_model_settings.name
+    assert len(inference_response.outputs) == 1

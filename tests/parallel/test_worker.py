@@ -7,7 +7,7 @@ from mlserver.parallel.worker import Worker
 from mlserver.parallel.messages import ModelUpdateMessage, InferenceRequestMessage
 
 
-async def test_inference(
+async def test_predict(
     worker: Worker,
     requests: AioQueue,
     inference_request_message: InferenceRequestMessage,
