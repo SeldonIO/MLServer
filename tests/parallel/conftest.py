@@ -1,11 +1,9 @@
 import asyncio
 import pytest
 
-from typing import Tuple
-
 from aioprocessing import AioQueue, AioJoinableQueue
 
-from mlserver.settings import ModelSettings, Settings
+from mlserver.settings import ModelSettings
 from mlserver.types import InferenceRequest
 from mlserver.utils import generate_uuid
 from mlserver.model import MLModel

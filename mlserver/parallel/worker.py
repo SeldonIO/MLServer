@@ -1,6 +1,5 @@
 import asyncio
 
-from functools import partial
 from aioprocessing import AioQueue, AioJoinableQueue
 from aioprocessing.process import Process
 from typing import Awaitable

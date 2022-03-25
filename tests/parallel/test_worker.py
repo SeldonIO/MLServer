@@ -1,7 +1,3 @@
-import asyncio
-
-from typing import Tuple
-
 from aioprocessing import AioJoinableQueue, AioQueue
 from mlserver.parallel.worker import Worker
 from mlserver.parallel.messages import ModelUpdateMessage, InferenceRequestMessage

@@ -3,13 +3,14 @@ import asyncio
 from asyncio import Future
 from aioprocessing import AioQueue, AioJoinableQueue
 from functools import wraps
-from typing import Awaitable, Any, Dict, Coroutine, Callable, Optional
+from typing import Awaitable, Any, Dict, Coroutine, Callable
 
 from ..model import MLModel
 from ..types import InferenceRequest, InferenceResponse
 from ..settings import Settings, ModelSettings
 from ..utils import get_wrapped_method, generate_uuid
 
+from .errors import InvalidParallelMethod
 from .worker import Worker
 from .utils import syncify, END_OF_QUEUE, terminate_queue, cancel_task
 from .messages import (
