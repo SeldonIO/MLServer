@@ -82,7 +82,7 @@ class InferencePool:
 
         # Chain next (future) update once we're done processing the queue
         self._wakeup_task = self._responses.coro_get()
-        self._wakeup_task.add_done_callback(self._process_responses)
+        self._wakeup_task.add_done_callback(self._process_responses)  # type: ignore
 
     async def _process_response(self, response: InferenceResponseMessage):
         internal_id = response.id
@@ -151,7 +151,7 @@ class InferencePool:
 
         return _inner
 
-    async def load_model(self, model: MLModel) -> MLModel:
+    async def load_model(self, model: MLModel):
         await asyncio.gather(
             *[self._load_model(model, worker) for worker in self._workers.values()]
         )
@@ -166,7 +166,7 @@ class InferencePool:
         await worker.model_updates.coro_put(load_message)
         await worker.model_updates.coro_join()
 
-    async def unload_model(self, model: MLModel) -> MLModel:
+    async def unload_model(self, model: MLModel):
         await asyncio.gather(
             *[self._unload_model(model, worker) for worker in self._workers.values()]
         )

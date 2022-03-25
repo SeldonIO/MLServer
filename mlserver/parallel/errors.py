@@ -1,6 +1,6 @@
 from typing import Optional
 
-from .errors import MLServerError
+from ..errors import MLServerError
 
 
 class InvalidParallelMethod(MLServerError):
