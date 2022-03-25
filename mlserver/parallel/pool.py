@@ -67,7 +67,7 @@ class InferencePool:
                 # stop reading
                 if latest_response is END_OF_QUEUE:
                     return
-            except CancelledError:
+            except asyncio.CancelledError:
                 # In the case where the `_wakeup_task` gets canceled (e.g. when
                 # closing the worker), the output of the `coro_get` task will be an
                 # exception.

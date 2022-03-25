@@ -2,7 +2,6 @@ import asyncio
 import multiprocessing
 
 from asyncio import Task
-from asyncio.exceptions import CancelledError
 from aioprocessing import AioQueue
 from typing import Callable, Awaitable
 
@@ -25,7 +24,7 @@ async def cancel_task(task: Task):
     task.cancel()
     try:
         await task
-    except CancelledError:
+    except asyncio.CancelledError:
         pass
 
 

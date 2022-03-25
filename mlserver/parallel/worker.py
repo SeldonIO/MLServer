@@ -3,7 +3,6 @@ import asyncio
 from functools import partial
 from aioprocessing import AioQueue, AioJoinableQueue
 from aioprocessing.process import Process
-from asyncio.exceptions import CancelledError
 from typing import Awaitable
 
 from ..registry import MultiModelRegistry
@@ -85,7 +84,7 @@ class Worker(Process):
             if latest_update is END_OF_QUEUE:
                 self.model_updates.task_done()
                 return
-        except CancelledError:
+        except asyncio.CancelledError:
             # In the case where the `_wakeup_task` gets canceled (e.g. when
             # closing the worker), the output of the `coro_get` task will be an
             # exception.
