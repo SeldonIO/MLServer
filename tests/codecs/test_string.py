@@ -57,6 +57,10 @@ def test_can_encode(payload: Any, expected: bool):
             ),
             ["hey", "whats"],
         ),
+        (
+            RequestInput(name="foo", datatype="BYTES", shape=[2], data=[None]),
+            [None],
+        ),
     ],
 )
 def test_decode(request_input, expected):

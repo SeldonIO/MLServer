@@ -14,6 +14,9 @@ def encode_str(elem: str) -> bytes:
 
 
 def decode_str(encoded: PackElement, str_codec=_DefaultStrCodec) -> str:
+
+    if encoded is None:
+        return None
     if isinstance(encoded, bytes):
         return encoded.decode(str_codec)
 
