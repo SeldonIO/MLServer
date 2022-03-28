@@ -34,14 +34,14 @@ class MLServer:
                 inference_pool.load_model,
                 load_batching,
             ]
-            on_model_unload=[
+            on_model_unload = [
                 self.remove_custom_handlers,
                 inference_pool.unload_model,
             ]
 
         self._model_registry = MultiModelRegistry(
-            on_model_load=on_model_load,
-            on_model_unload=on_model_unload,
+            on_model_load=on_model_load,  # type: ignore
+            on_model_unload=on_model_unload,  # type: ignore
         )
         self._model_repository = ModelRepository(self._settings.model_repository_root)
         self._data_plane = DataPlane(

@@ -159,13 +159,15 @@ class ModelSettings(BaseSettings):
     parallel_workers: int = Field(
         DEFAULT_PARALLEL_WORKERS,
         deprecated=True,
-        description='Use the `parallel_workers` field the server wide settings instead.'
+        description=(
+            "Use the `parallel_workers` field the server wide settings instead."
+        ),
     )
 
     warm_workers: bool = Field(
         False,
         deprecated=True,
-        description='Inference workers will now always be `warmed up` at start time.'
+        description="Inference workers will now always be `warmed up` at start time.",
     )
 
     # Adaptive Batching settings (disabled by default)

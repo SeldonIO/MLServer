@@ -191,7 +191,6 @@ class InferencePool:
 
         return True
 
-
     async def _unload_model(self, model: MLModel, worker: Worker):
         unload_message = ModelUpdateMessage(
             update_type=ModelUpdateType.Unload, model_settings=model.settings
