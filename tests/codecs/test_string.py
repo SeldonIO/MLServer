@@ -58,9 +58,7 @@ def test_can_encode(payload: Any, expected: bool):
             ["hey", "whats"],
         ),
         (
-            RequestInput(
-                name="foo", datatype="BYTES", shape=[2], data=[None]
-            ),
+            RequestInput(name="foo", datatype="BYTES", shape=[2], data=[None]),
             [None],
         ),
     ],
