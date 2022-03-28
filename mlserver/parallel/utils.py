@@ -18,9 +18,6 @@ def configure_inference_pool(settings: Settings):
     multiprocessing.set_start_method("spawn")
 
 
-def default_parallel_workers() -> int:
-    return multiprocessing.cpu_count()
-
 
 async def terminate_queue(queue: AioQueue):
     # Send sentinel value to terminate queue

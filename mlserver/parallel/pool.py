@@ -150,6 +150,14 @@ class InferencePool:
         return _inner
 
     async def load_model(self, model: MLModel):
+        # NOTE: This is a remnant from the previous architecture for parallel
+        # workers, where each worker had its own pool.
+        # For backwards compatibility, we will respect when a model disables
+        # parallel inference.
+        if model.settings.parallel_workers == 0:
+            # Skip load if model has disabled parallel workers
+            return
+
         await asyncio.gather(
             *[self._load_model(model, worker) for worker in self._workers.values()]
         )
@@ -165,6 +173,10 @@ class InferencePool:
         await worker.model_updates.coro_join()
 
     async def unload_model(self, model: MLModel):
+        if model.settings.parallel_workers == 0:
+            # Skip unload if model has disabled parallel workers
+            return
+
         await asyncio.gather(
             *[self._unload_model(model, worker) for worker in self._workers.values()]
         )
