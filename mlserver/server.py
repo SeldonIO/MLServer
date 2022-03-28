@@ -24,10 +24,7 @@ class MLServer:
             self.add_custom_handlers,
             load_batching,
         ]
-        on_model_unload = [
-            self.remove_custom_handlers,
-            inference_pool.unload_model,
-        ]
+        on_model_unload = [self.remove_custom_handlers]
 
         if self._settings.parallel_workers:
             # Only load inference pool if parallel inference has been enabled
