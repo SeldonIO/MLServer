@@ -49,6 +49,10 @@ class Settings(BaseSettings):
 
     debug: bool = True
 
+    parallel_workers: int = 4
+    """When parallel inference is enabled, number of workers to run inference
+    across."""
+
     # Model repository settings
     model_repository_root: str = "."
     """Root of the model repository, where we will search for models."""

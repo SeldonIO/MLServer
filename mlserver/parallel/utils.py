@@ -11,8 +11,15 @@ END_OF_QUEUE = None
 
 
 def configure_inference_pool(settings: Settings):
+    if not settings.parallel_workers:
+        return
+
     # Set MP method
     multiprocessing.set_start_method("spawn")
+
+
+def default_parallel_workers() -> int:
+    return multiprocessing.cpu_count()
 
 
 async def terminate_queue(queue: AioQueue):

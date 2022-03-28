@@ -37,13 +37,11 @@ class InferencePool:
     """
 
     def __init__(self, settings: Settings):
-        # TODO: Read number of workers from settings
-        parallel_workers = 4
         self._workers = {}
         self._requests = AioQueue()
         self._responses = AioQueue()
         self._async_responses: Dict[str, Future[InferenceResponse]] = {}
-        for idx in range(parallel_workers):
+        for idx in range(settings.parallel_workers):
             # TODO: Set callback to restart worker if it goes down (would
             # `worker.join` help with that?)
             model_updates = AioJoinableQueue()

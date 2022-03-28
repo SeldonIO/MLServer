@@ -1,7 +1,7 @@
 import os
 
 from mlserver.model import MLModel
-from mlserver.settings import ModelSettings
+from mlserver.settings import Settings, ModelSettings
 from mlserver.types import InferenceRequest
 from mlserver.parallel.pool import InferencePool
 
@@ -20,9 +20,8 @@ def check_pid(pid):
         return True
 
 
-def test_workers_start(inference_pool: InferencePool):
-    # TODO: Read number of workers from settings
-    assert len(inference_pool._workers) == 4
+def test_workers_start(inference_pool: InferencePool, settings: Settings):
+    assert len(inference_pool._workers) == settings.parallel_workers
 
     for worker_pid in inference_pool._workers:
         assert check_pid(worker_pid)
