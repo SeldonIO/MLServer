@@ -20,17 +20,31 @@ HANDLED_SIGNALS = [signal.SIGINT, signal.SIGTERM]
 class MLServer:
     def __init__(self, settings: Settings):
         self._settings = settings
-        inference_pool = InferencePool(self._settings)
-        self._model_registry = MultiModelRegistry(
-            on_model_load=[
+        on_model_load = [
+            self.add_custom_handlers,
+            load_batching,
+        ]
+        on_model_unload = [
+            self.remove_custom_handlers,
+            inference_pool.unload_model,
+        ]
+
+        if self._settings.parallel_workers:
+            # Only load inference pool if parallel inference has been enabled
+            inference_pool = InferencePool(self._settings)
+            on_model_load = [
                 self.add_custom_handlers,
                 inference_pool.load_model,
                 load_batching,
-            ],
+            ]
             on_model_unload=[
                 self.remove_custom_handlers,
                 inference_pool.unload_model,
-            ],
+            ]
+
+        self._model_registry = MultiModelRegistry(
+            on_model_load=on_model_load,
+            on_model_unload=on_model_unload,
         )
         self._model_repository = ModelRepository(self._settings.model_repository_root)
         self._data_plane = DataPlane(

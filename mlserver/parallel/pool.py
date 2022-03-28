@@ -38,10 +38,11 @@ class InferencePool:
 
     def __init__(self, settings: Settings):
         self._workers = {}
+        self._settings = settings
         self._requests = AioQueue()
         self._responses = AioQueue()
         self._async_responses: Dict[str, Future[InferenceResponse]] = {}
-        for idx in range(settings.parallel_workers):
+        for idx in range(self._settings.parallel_workers):
             # TODO: Set callback to restart worker if it goes down (would
             # `worker.join` help with that?)
             model_updates = AioJoinableQueue()
@@ -150,11 +151,7 @@ class InferencePool:
         return _inner
 
     async def load_model(self, model: MLModel):
-        # NOTE: This is a remnant from the previous architecture for parallel
-        # workers, where each worker had its own pool.
-        # For backwards compatibility, we will respect when a model disables
-        # parallel inference.
-        if model.settings.parallel_workers == 0:
+        if not self._should_load_model(model):
             # Skip load if model has disabled parallel workers
             return
 
@@ -173,13 +170,27 @@ class InferencePool:
         await worker.model_updates.coro_join()
 
     async def unload_model(self, model: MLModel):
-        if model.settings.parallel_workers == 0:
+        if not self._should_load_model(model):
             # Skip unload if model has disabled parallel workers
             return
 
         await asyncio.gather(
             *[self._unload_model(model, worker) for worker in self._workers.values()]
         )
+
+    def _should_load_model(self, model: MLModel):
+        # NOTE: This is a remnant from the previous architecture for parallel
+        # workers, where each worker had its own pool.
+        # For backwards compatibility, we will respect when a model disables
+        # parallel inference.
+        if not model.settings.parallel_workers:
+            return False
+
+        if not self._settings.parallel_workers:
+            return False
+
+        return True
+
 
     async def _unload_model(self, model: MLModel, worker: Worker):
         unload_message = ModelUpdateMessage(

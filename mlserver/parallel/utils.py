@@ -18,7 +18,6 @@ def configure_inference_pool(settings: Settings):
     multiprocessing.set_start_method("spawn")
 
 
-
 async def terminate_queue(queue: AioQueue):
     # Send sentinel value to terminate queue
     await queue.coro_put(END_OF_QUEUE)
