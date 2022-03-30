@@ -9,6 +9,7 @@ of settings that we want to source always (e.g. the default runtime to use).
 
 import click
 import json
+from json import JSONDecodeError
 import os
 
 from typing import List, Tuple, Type
@@ -74,7 +75,16 @@ def _get_env_prefix(settings_class: Type[BaseSettings]) -> str:
 def save_default_env(env: dict, output: str):
     with open(output, "w") as file:
         for name, value in env.items():
-            file.write(f'export {name}="{value}"\n')
+            file.write(_parse_dict_values(name, value))
+
+
+def _parse_dict_values(name: str, value: str) -> str:
+    try:
+        value = value.replace("'", '"')
+        json.loads(value)
+        return f"export {name}='{value}'\n"
+    except JSONDecodeError:
+        return f'export {name}="{value}"\n'
 
 
 @click.command()
