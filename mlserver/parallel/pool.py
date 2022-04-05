@@ -155,28 +155,26 @@ class InferencePool:
             # Skip load if model has disabled parallel workers
             return
 
-        await asyncio.gather(
-            *[self._load_model(model, worker) for worker in self._workers.values()]
-        )
+        for worker in self._workers.values():
+            self._load_model(model, worker)
 
         # Decorate predict method
         setattr(model, "predict", self.parallel(model.predict))
 
-    async def _load_model(self, model: MLModel, worker: Worker):
+    def _load_model(self, model: MLModel, worker: Worker):
         load_message = ModelUpdateMessage(
             update_type=ModelUpdateType.Load, model_settings=model.settings
         )
-        await worker.model_updates.coro_put(load_message)
-        await worker.model_updates.coro_join()
+        worker.model_updates.put(load_message)
+        worker.model_updates.join()
 
     async def unload_model(self, model: MLModel):
         if not self._should_load_model(model):
             # Skip unload if model has disabled parallel workers
             return
 
-        await asyncio.gather(
-            *[self._unload_model(model, worker) for worker in self._workers.values()]
-        )
+        for worker in self._workers.values():
+            self._unload_model(model, worker)
 
     def _should_load_model(self, model: MLModel):
         # NOTE: This is a remnant from the previous architecture for parallel
@@ -191,12 +189,12 @@ class InferencePool:
 
         return True
 
-    async def _unload_model(self, model: MLModel, worker: Worker):
+    def _unload_model(self, model: MLModel, worker: Worker):
         unload_message = ModelUpdateMessage(
             update_type=ModelUpdateType.Unload, model_settings=model.settings
         )
-        await worker.model_updates.coro_put(unload_message)
-        await worker.model_updates.coro_join()
+        worker.model_updates.put(unload_message)
+        worker.model_updates.join()
 
     async def close(self):
         await self._close_workers()
@@ -210,16 +208,17 @@ class InferencePool:
             self._wakeup_task = None
 
     async def _close_workers(self):
-        # First send N sentinel values (one per worker) to each of the input
+        # First close down model updates loop
+        for pid, worker in self._workers.items():
+            await terminate_queue(worker.model_updates)
+            worker.model_updates.join()
+
+        # Then, send N sentinel values (one per worker) to each of the input
         # queues
         await asyncio.gather(
             *[
-                asyncio.gather(
-                    terminate_queue(worker.model_updates),
-                    worker.model_updates.coro_join(),
-                    terminate_queue(self._requests),
-                )
-                for worker in self._workers.values()
+                terminate_queue(self._requests)
+                for _ in range(self._settings.parallel_workers)
             ]
         )
 

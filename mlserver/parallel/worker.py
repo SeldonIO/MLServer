@@ -1,7 +1,8 @@
 import asyncio
+import nest_asyncio
 
+from multiprocessing import Process
 from aioprocessing import AioQueue, AioJoinableQueue
-from aioprocessing.process import Process
 from typing import Awaitable
 
 from ..registry import MultiModelRegistry
@@ -19,14 +20,21 @@ class Worker(Process):
         self._responses = responses
         self.model_updates = model_updates
 
+    def run(self):
+        nest_asyncio.apply()
+        asyncio.run(self.coro_run())
+
+    def __inner_init__(self):
+        """
+        Internal __init__ method that needs to run within the worker process.
+        """
         self._model_registry = MultiModelRegistry()
         self._active = True
         self._wakeup_task = None
 
-    def run(self):
-        return asyncio.run(self.coro_run())
-
     async def coro_run(self):
+        self.__inner_init__()
+
         # NOTE: The `_process_model_updates` function will take care of
         # chaining itself to the next (future) model update. Therefore it will
         # always be running.
@@ -37,7 +45,7 @@ class Worker(Process):
                 # TODO: Log info message saying that we are exiting the loop
                 # If requests queue gets terminated, detect the sentinel value
                 # and stop loop
-                await self.close()
+                await self._terminate_requests_loop()
                 return
 
             # TODO: Where should we check if the model exists? Should that
@@ -58,7 +66,6 @@ class Worker(Process):
             await self._process_model_update(update)
             self.model_updates.task_done()
 
-        # Chain next (future) update once we're done processing the queue
         self._wakeup_task = self.model_updates.coro_get()
         self._wakeup_task.add_done_callback(self._wakeup_model_updates_loop)
 
@@ -81,6 +88,7 @@ class Worker(Process):
             # If the queue gets terminated, detect the "sentinel value" and
             # stop reading
             if latest_update is END_OF_QUEUE:
+                await self._terminate_model_updates_loop()
                 self.model_updates.task_done()
                 return
         except asyncio.CancelledError:
@@ -104,9 +112,11 @@ class Worker(Process):
             # TODO: Raise warning about unknown model update
             pass
 
-    async def close(self):
-        # TODO: Unload all models
+    async def _terminate_requests_loop(self):
         self._active = False
+
+    async def _terminate_model_updates_loop(self):
+        # TODO: Unload all models
         if self._wakeup_task is not None:
             # Cancel task
             await cancel_task(self._wakeup_task)
