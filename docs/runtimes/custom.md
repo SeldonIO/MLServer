@@ -36,13 +36,13 @@ from mlserver.types import InferenceRequest, InferenceResponse
 
 class MyCustomRuntime(MLModel):
 
-  def load(self) -> bool:
+  async def load(self) -> bool:
     # TODO: Replace for custom logic to load a model artifact
     self._model = load_my_custom_model()
     self.ready = True
     return self.ready
 
-  def predict(self, payload: InferenceRequest) -> InferenceResponse:
+  async def predict(self, payload: InferenceRequest) -> InferenceResponse:
     # TODO: Replace for custom logic to run inference
     return self._model.predict(payload)
 ```
@@ -73,7 +73,7 @@ class CustomHeadersRuntime(MLModel):
 
   ...
 
-  def predict(self, payload: InferenceRequest) -> InferenceResponse:
+  async def predict(self, payload: InferenceRequest) -> InferenceResponse:
     if payload.parameters and payload.parametes.headers:
       # These are all the incoming HTTP headers / gRPC metadata
       print(payload.parameters.headers)
@@ -95,7 +95,7 @@ class CustomHeadersRuntime(MLModel):
 
   ...
 
-  def predict(self, payload: InferenceRequest) -> InferenceResponse:
+  async def predict(self, payload: InferenceRequest) -> InferenceResponse:
     ...
     return InferenceResponse(
       # Include any actual outputs from inference
