@@ -2,7 +2,7 @@ import asyncio
 import multiprocessing
 
 from asyncio import Task
-from aioprocessing import AioQueue
+from multiprocessing import Queue
 from typing import Any, Callable, Awaitable
 
 from mlserver.settings import Settings
@@ -18,14 +18,14 @@ def configure_inference_pool(settings: Settings):
     multiprocessing.set_start_method("spawn")
 
 
-async def terminate_queue(queue: AioQueue):
+async def terminate_queue(queue: Queue):
     # Send sentinel value to terminate queue
-    await queue.coro_put(END_OF_QUEUE)
+    queue.put(END_OF_QUEUE)
 
 
 async def cancel_task(task: Task):
-    task.cancel()
     try:
+        task.cancel()
         await task
     except asyncio.CancelledError:
         pass

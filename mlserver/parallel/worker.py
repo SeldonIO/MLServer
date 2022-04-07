@@ -1,27 +1,23 @@
 import asyncio
-import nest_asyncio
+import select
 
-from multiprocessing import Process
-from aioprocessing import AioQueue, AioJoinableQueue
-from typing import Awaitable
+from multiprocessing import Process, Queue, JoinableQueue
+from typing import Optional
 
 from ..registry import MultiModelRegistry
 
 from .messages import ModelUpdateType, ModelUpdateMessage, InferenceResponseMessage
-from .utils import syncify, END_OF_QUEUE, cancel_task
+from .utils import terminate_queue, END_OF_QUEUE
 
 
 class Worker(Process):
-    def __init__(
-        self, requests: AioQueue, responses: AioQueue, model_updates: AioJoinableQueue
-    ):
+    def __init__(self, requests: Queue, responses: Queue, model_updates: JoinableQueue):
         super().__init__()
         self._requests = requests
         self._responses = responses
         self.model_updates = model_updates
 
     def run(self):
-        nest_asyncio.apply()
         asyncio.run(self.coro_run())
 
     def __inner_init__(self):
@@ -35,74 +31,40 @@ class Worker(Process):
     async def coro_run(self):
         self.__inner_init__()
 
-        # NOTE: The `_process_model_updates` function will take care of
-        # chaining itself to the next (future) model update. Therefore it will
-        # always be running.
-        await self._process_model_updates()
         while self._active:
-            request = await self._requests.coro_get()
-            if request is END_OF_QUEUE:
-                # TODO: Log info message saying that we are exiting the loop
-                # If requests queue gets terminated, detect the sentinel value
-                # and stop loop
-                await self._terminate_requests_loop()
-                return
-
-            # TODO: Where should we check if the model exists? Should that
-            # happen in the parent process?
-            model = await self._model_registry.get_model(
-                request.model_name, request.model_version
+            readable, _, _ = select.select(
+                [self._requests._reader, self.model_updates._reader], [], []
             )
-            inference_response = await model.predict(request.inference_request)
+            for r in readable:
+                if r is self._requests._reader:
+                    request = self._requests.get()
+                    await self._process_request(request)
+                elif r is self.model_updates._reader:
+                    model_update = self.model_updates.get()
+                    # If the queue gets terminated, detect the "sentinel value"
+                    # and stop reading
+                    if model_update is END_OF_QUEUE:
+                        self._active = False
+                        self.model_updates.task_done()
+                        return
 
-            response = InferenceResponseMessage(
-                id=request.id, inference_response=inference_response
-            )
-            await self._responses.coro_put(response)
+                    await self._process_model_update(model_update)
+                    self.model_updates.task_done()
 
-    async def _process_model_updates(self):
-        while not self.model_updates.empty():
-            update = await self.model_updates.coro_get()
-            await self._process_model_update(update)
-            self.model_updates.task_done()
+    async def _process_request(self, request):
+        # TODO: Where should we check if the model exists? Should that
+        # happen in the parent process?
+        model = await self._model_registry.get_model(
+            request.model_name, request.model_version
+        )
+        inference_response = await model.predict(request.inference_request)
 
-        self._wakeup_task = self.model_updates.coro_get()
-        self._wakeup_task.add_done_callback(self._wakeup_model_updates_loop)
+        response = InferenceResponseMessage(
+            id=request.id, inference_response=inference_response
+        )
+        self._responses.put(response)
 
-        return self._wakeup_task
-
-    @syncify
-    async def _wakeup_model_updates_loop(self, coro_get: Awaitable[ModelUpdateMessage]):
-        """
-        Helper to 'wake up' the model updates processing loop.
-        This method will get called whenever there's a new update to be
-        processed, and will re-start the update process loop.
-
-        Note that, due to the limitations of `add_done_callback`, this method
-        must be synchronous (hence the `syncify` decorator).
-        """
-        # Process the `.coro_get()` task that was used to get pinged whenever a
-        # new message is available.
-        try:
-            latest_update = await coro_get
-            # If the queue gets terminated, detect the "sentinel value" and
-            # stop reading
-            if latest_update is END_OF_QUEUE:
-                await self._terminate_model_updates_loop()
-                self.model_updates.task_done()
-                return
-        except asyncio.CancelledError:
-            # In the case where the `_wakeup_task` gets canceled (e.g. when
-            # closing the worker), the output of the `coro_get` task will be an
-            # exception.
-            return
-
-        await self._process_model_update(latest_update)
-        self.model_updates.task_done()
-
-        await self._process_model_updates()
-
-    async def _process_model_update(self, update: ModelUpdateMessage):
+    async def _process_model_update(self, update: Optional[ModelUpdateMessage]):
         model_settings = update.model_settings
         if update.update_type == ModelUpdateType.Load:
             await self._model_registry.load(model_settings)
@@ -112,12 +74,20 @@ class Worker(Process):
             # TODO: Raise warning about unknown model update
             pass
 
-    async def _terminate_requests_loop(self):
-        self._active = False
+    async def send_update(self, model_update: ModelUpdateMessage):
+        """
+        Send a model update to the worker.
+        Note that this method should be both multiprocess- and thread-safe.
+        """
+        loop = asyncio.get_event_loop()
+        self.model_updates.put(model_update)
+        await loop.run_in_executor(None, self.model_updates.join)
 
-    async def _terminate_model_updates_loop(self):
-        # TODO: Unload all models
-        if self._wakeup_task is not None:
-            # Cancel task
-            await cancel_task(self._wakeup_task)
-            self._wakeup_task = None
+    async def stop(self):
+        """
+        Close the worker's main loop.
+        Note that this method should be both multiprocess- and thread-safe.
+        """
+        loop = asyncio.get_event_loop()
+        await terminate_queue(self.model_updates)
+        await loop.run_in_executor(None, self.model_updates.join)

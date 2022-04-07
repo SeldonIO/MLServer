@@ -1,16 +1,16 @@
-from aioprocessing import AioJoinableQueue, AioQueue
+from multiprocessing import Process, Queue, JoinableQueue
 from mlserver.parallel.worker import Worker
 from mlserver.parallel.messages import ModelUpdateMessage, InferenceRequestMessage
 
 
 async def test_predict(
     worker: Worker,
-    requests: AioQueue,
+    requests: Queue,
     inference_request_message: InferenceRequestMessage,
-    responses: AioQueue,
+    responses: Queue,
 ):
-    await requests.coro_put(inference_request_message)
-    response = await responses.coro_get()
+    requests.put(inference_request_message)
+    response = responses.get()
 
     assert response is not None
     assert response.id == inference_request_message.id
@@ -22,7 +22,7 @@ async def test_predict(
 
 
 async def test_load_model(
-    model_updates: AioJoinableQueue,
+    model_updates: JoinableQueue,
     worker: Worker,
     load_message: ModelUpdateMessage,
 ):
@@ -30,8 +30,8 @@ async def test_load_model(
     assert len(list(loaded_models)) == 1
 
     load_message.model_settings.name = "foo-model"
-    await model_updates.coro_put(load_message)
-    await model_updates.coro_join()
+    model_updates.put(load_message)
+    model_updates.join()
 
     loaded_models = list(await worker._model_registry.get_models())
     assert len(loaded_models) == 2
@@ -39,15 +39,15 @@ async def test_load_model(
 
 
 async def test_unload_model(
-    model_updates: AioJoinableQueue,
+    model_updates: JoinableQueue,
     worker: Worker,
     unload_message: ModelUpdateMessage,
 ):
     loaded_models = await worker._model_registry.get_models()
     assert len(list(loaded_models)) == 1
 
-    await model_updates.coro_put(unload_message)
-    await model_updates.coro_join()
+    model_updates.put(unload_message)
+    model_updates.join()
 
     loaded_models = list(await worker._model_registry.get_models())
     assert len(loaded_models) == 0

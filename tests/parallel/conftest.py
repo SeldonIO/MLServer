@@ -1,7 +1,8 @@
 import asyncio
 import pytest
 
-from aioprocessing import AioQueue, AioJoinableQueue
+from multiprocessing import Queue, JoinableQueue
+from concurrent.futures import ThreadPoolExecutor
 
 from mlserver.settings import ModelSettings
 from mlserver.types import InferenceRequest
@@ -9,7 +10,7 @@ from mlserver.utils import generate_uuid
 from mlserver.model import MLModel
 from mlserver.parallel.pool import InferencePool
 from mlserver.parallel.worker import Worker
-from mlserver.parallel.utils import terminate_queue, cancel_task
+from mlserver.parallel.utils import cancel_task
 from mlserver.parallel.messages import (
     ModelUpdateMessage,
     ModelUpdateType,
@@ -29,26 +30,24 @@ async def inference_pool(
 
 
 @pytest.fixture
-async def model_updates() -> AioJoinableQueue:
-    q = AioJoinableQueue()
+async def model_updates() -> JoinableQueue:
+    q = JoinableQueue()
     yield q
 
-    await terminate_queue(q)
     q.close()
 
 
 @pytest.fixture
-async def requests() -> AioQueue:
-    q = AioQueue()
+async def requests() -> Queue:
+    q = Queue()
     yield q
 
-    await terminate_queue(q)
     q.close()
 
 
 @pytest.fixture
-async def responses() -> AioQueue:
-    q = AioQueue()
+async def responses() -> Queue:
+    q = Queue()
     yield q
 
     q.close()
@@ -56,21 +55,24 @@ async def responses() -> AioQueue:
 
 @pytest.fixture
 async def worker(
-    requests: AioQueue,
-    responses: AioQueue,
-    model_updates: AioJoinableQueue,
+    requests: Queue,
+    responses: Queue,
+    model_updates: JoinableQueue,
     load_message: ModelUpdateMessage,
 ) -> Worker:
+    loop = asyncio.get_event_loop()
     worker = Worker(requests, responses, model_updates)
 
-    worker_task = asyncio.create_task(worker.coro_run())
+    # Simulate the worker running on a different process, but keep it to a
+    # thread to simplify debugging
+    #  breakpoint()
+    worker_task = loop.run_in_executor(None, worker.run)
 
-    await model_updates.coro_put(load_message)
-    await model_updates.coro_join()
+    await worker.send_update(load_message)
 
     yield worker
 
-    await worker.close()
+    await worker.stop()
     await cancel_task(worker_task)
 
 
