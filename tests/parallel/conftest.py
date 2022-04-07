@@ -26,7 +26,9 @@ async def inference_pool(
 
     yield inference_pool
 
+    print("unloading stuff")
     await inference_pool.unload_model(sum_model)
+    print("unloaded things")
 
 
 @pytest.fixture
@@ -65,7 +67,6 @@ async def worker(
 
     # Simulate the worker running on a different process, but keep it to a
     # thread to simplify debugging
-    #  breakpoint()
     worker_task = loop.run_in_executor(None, worker.run)
 
     await worker.send_update(load_message)

@@ -1,6 +1,7 @@
 import asyncio
 import select
 
+from queue import Empty
 from multiprocessing import Process, Queue, JoinableQueue
 from typing import Optional
 
@@ -37,7 +38,18 @@ class Worker(Process):
             )
             for r in readable:
                 if r is self._requests._reader:
-                    request = self._requests.get()
+                    try:
+                        # NOTE: `select.select` will notify all workers when a
+                        # new message is available. However, only one of them
+                        # will be able to read it. To save us from doing more
+                        # complex synchronisation, we just try to read and
+                        # we'll continue if there are no messages in the queue.
+                        request = self._requests.get(block=False)
+                    except Empty:
+                        # Some other worker got that request first, so ignore
+                        # and continue
+                        continue
+
                     await self._process_request(request)
                 elif r is self.model_updates._reader:
                     model_update = self.model_updates.get()

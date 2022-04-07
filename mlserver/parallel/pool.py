@@ -2,6 +2,7 @@ import asyncio
 
 from asyncio import Future
 from aioprocessing import AioQueue, AioJoinableQueue
+from multiprocessing import Queue, JoinableQueue
 from functools import wraps
 from typing import Awaitable, Any, Dict, Coroutine, Callable
 
@@ -39,49 +40,35 @@ class InferencePool:
     def __init__(self, settings: Settings):
         self._workers = {}
         self._settings = settings
-        self._requests = AioQueue()
-        self._responses = AioQueue()
+        self._requests = Queue()
+        self._responses = Queue()
         self._async_responses: Dict[str, Future[InferenceResponse]] = {}
         for idx in range(self._settings.parallel_workers):
             # TODO: Set callback to restart worker if it goes down (would
             # `worker.join` help with that?)
-            model_updates = AioJoinableQueue()
+            model_updates = JoinableQueue()
             worker = Worker(self._requests, self._responses, model_updates)
             worker.start()
             self._workers[worker.pid] = worker
 
         # Start processing responses
-        self._wakeup_task = None
-        self._process_responses()
+        self._start_processing_responses()
 
-    @syncify
-    async def _process_responses(
-        self, coro_get: Awaitable[InferenceResponseMessage] = None
-    ):
-        if coro_get is not None:
-            # Process the `.coro_get()` task that was used to get pinged whenever a
-            # new message is available.
-            try:
-                latest_response = await coro_get
-                # If the queue gets terminated, detect the "sentinel value" and
-                # stop reading
-                if latest_response is END_OF_QUEUE:
-                    return
-            except asyncio.CancelledError:
-                # In the case where the `_wakeup_task` gets canceled (e.g. when
-                # closing the worker), the output of the `coro_get` task will be an
-                # exception.
+    def _start_processing_responses(self):
+        # TODO: Set error callback to restart if it fails
+        self._active = True
+        self._process_responses_task = asyncio.create_task(self._process_responses())
+
+    async def _process_responses(self):
+        loop = asyncio.get_event_loop()
+        while self._active:
+            response = await loop.run_in_executor(None, self._responses.get)
+            # If the queue gets terminated, detect the "sentinel value" and
+            # stop reading
+            if response is END_OF_QUEUE:
                 return
 
-            await self._process_response(latest_response)
-
-        while not self._responses.empty():
-            response = await self._responses.coro_get()
             await self._process_response(response)
-
-        # Chain next (future) update once we're done processing the queue
-        self._wakeup_task = self._responses.coro_get()
-        self._wakeup_task.add_done_callback(self._process_responses)  # type: ignore
 
     async def _process_response(self, response: InferenceResponseMessage):
         internal_id = response.id
@@ -106,7 +93,7 @@ class InferencePool:
             model_version=model_version,
             inference_request=inference_request,
         )
-        await self._requests.coro_put(request_message)
+        self._requests.put(request_message)
 
         loop = asyncio.get_running_loop()
         async_response = loop.create_future()
@@ -155,26 +142,25 @@ class InferencePool:
             # Skip load if model has disabled parallel workers
             return
 
-        for worker in self._workers.values():
-            self._load_model(model, worker)
-
-        # Decorate predict method
-        setattr(model, "predict", self.parallel(model.predict))
-
-    def _load_model(self, model: MLModel, worker: Worker):
         load_message = ModelUpdateMessage(
             update_type=ModelUpdateType.Load, model_settings=model.settings
         )
-        worker.model_updates.put(load_message)
-        worker.model_updates.join()
+        for worker in self._workers.values():
+            await worker.send_update(load_message)
+
+        # Decorate predict method
+        setattr(model, "predict", self.parallel(model.predict))
 
     async def unload_model(self, model: MLModel):
         if not self._should_load_model(model):
             # Skip unload if model has disabled parallel workers
             return
 
+        unload_message = ModelUpdateMessage(
+            update_type=ModelUpdateType.Unload, model_settings=model.settings
+        )
         for worker in self._workers.values():
-            self._unload_model(model, worker)
+            await worker.send_update(unload_message)
 
     def _should_load_model(self, model: MLModel):
         # NOTE: This is a remnant from the previous architecture for parallel
@@ -189,42 +175,18 @@ class InferencePool:
 
         return True
 
-    def _unload_model(self, model: MLModel, worker: Worker):
-        unload_message = ModelUpdateMessage(
-            update_type=ModelUpdateType.Unload, model_settings=model.settings
-        )
-        worker.model_updates.put(unload_message)
-        worker.model_updates.join()
-
     async def close(self):
         await self._close_workers()
         await self._close_responses()
 
     async def _close_responses(self):
         await terminate_queue(self._responses)
-        if self._wakeup_task is not None:
-            # Cancel task awaiting for responses
-            await cancel_task(self._wakeup_task)
-            self._wakeup_task = None
+        await cancel_task(self._process_responses_task)
 
     async def _close_workers(self):
         # First close down model updates loop
         for pid, worker in self._workers.items():
-            await terminate_queue(worker.model_updates)
-            worker.model_updates.join()
-
-        # Then, send N sentinel values (one per worker) to each of the input
-        # queues
-        await asyncio.gather(
-            *[
-                terminate_queue(self._requests)
-                for _ in range(self._settings.parallel_workers)
-            ]
-        )
-
-        # Afterwards, verify that all workers have stopped and remove them from
-        # the pool
-        for pid, worker in self._workers.items():
+            await worker.stop()
             worker.join()
 
         self._workers.clear()
