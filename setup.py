@@ -44,7 +44,6 @@ setup(
         "uvicorn",
         "starlette_exporter",
         "py-grpc-prometheus",
-        "aioprocessing",
     ],
     extras_require={"all": ["orjson"]},
     entry_points={"console_scripts": ["mlserver=mlserver.cli:main"]},
