@@ -1,7 +1,6 @@
 from multiprocessing import Queue, JoinableQueue
 from mlserver.parallel.worker import Worker
 from mlserver.parallel.messages import ModelUpdateMessage, InferenceRequestMessage
-from unittest.mock import patch
 
 
 async def test_predict(
