@@ -19,7 +19,6 @@ class Worker(Process):
         self.model_updates = model_updates
 
     def run(self):
-        # TODO: Catch global exceptions
         asyncio.run(self.coro_run())
 
     def __inner_init__(self):
@@ -89,8 +88,9 @@ class Worker(Process):
         elif update.update_type == ModelUpdateType.Unload:
             await self._model_registry.unload(model_settings.name)
         else:
-            # TODO: Raise warning about unknown model update
-            pass
+            logger.warning(
+                "Unknown model update message with type ", update.update_type
+            )
 
     async def send_update(self, model_update: ModelUpdateMessage):
         """
