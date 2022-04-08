@@ -6,7 +6,7 @@ import shutil
 from mlserver.handlers import DataPlane, ModelRepositoryHandlers
 from mlserver.registry import MultiModelRegistry
 from mlserver.repository import ModelRepository, DEFAULT_MODEL_SETTINGS_FILENAME
-from mlserver.parallel import InferencePool
+from mlserver.parallel import InferencePool, configure_inference_pool
 from mlserver import types, Settings, ModelSettings
 
 from .fixtures import SumModel
@@ -151,6 +151,7 @@ def repository_index_response(sum_model_settings) -> types.RepositoryIndexRespon
 
 @pytest.fixture
 async def inference_pool(settings: Settings) -> InferencePool:
+    configure_inference_pool(settings)
     pool = InferencePool(settings)
     yield pool
 

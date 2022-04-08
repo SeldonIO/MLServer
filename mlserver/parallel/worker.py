@@ -19,7 +19,8 @@ class Worker(Process):
         self.model_updates = model_updates
 
     def run(self):
-        asyncio.run(self.coro_run())
+        # TODO: Catch global exceptions
+        asyncio.run(self.coro_run(), debug=True)
 
     def __inner_init__(self):
         """
@@ -27,14 +28,15 @@ class Worker(Process):
         """
         self._model_registry = MultiModelRegistry()
         self._active = True
-        self._wakeup_task = None
 
     async def coro_run(self):
         self.__inner_init__()
 
         while self._active:
             readable, _, _ = select.select(
-                [self._requests._reader, self.model_updates._reader], [], []
+                [self._requests._reader, self.model_updates._reader],
+                [],
+                [],
             )
             for r in readable:
                 if r is self._requests._reader:

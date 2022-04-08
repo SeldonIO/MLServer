@@ -15,7 +15,11 @@ def configure_inference_pool(settings: Settings):
         return
 
     # Set MP method
-    multiprocessing.set_start_method("spawn")
+    try:
+        multiprocessing.set_start_method("spawn")
+    except RuntimeError:
+        # TODO: Log warning saying that mp start method couldn't be set
+        pass
 
 
 async def terminate_queue(queue: Queue):

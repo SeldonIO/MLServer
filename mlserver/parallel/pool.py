@@ -21,6 +21,7 @@ from .messages import (
     ModelUpdateType,
 )
 
+
 PredictMethod = Callable[[InferenceRequest], Coroutine[Any, Any, InferenceResponse]]
 
 _InferencePoolAttr = "__inference_pool__"
@@ -145,8 +146,9 @@ class InferencePool:
         load_message = ModelUpdateMessage(
             update_type=ModelUpdateType.Load, model_settings=model.settings
         )
-        for worker in self._workers.values():
-            await worker.send_update(load_message)
+        await asyncio.gather(
+            *[worker.send_update(load_message) for worker in self._workers.values()]
+        )
 
         # Decorate predict method
         setattr(model, "predict", self.parallel(model.predict))
@@ -159,8 +161,9 @@ class InferencePool:
         unload_message = ModelUpdateMessage(
             update_type=ModelUpdateType.Unload, model_settings=model.settings
         )
-        for worker in self._workers.values():
-            await worker.send_update(unload_message)
+        await asyncio.gather(
+            *[worker.send_update(unload_message) for worker in self._workers.values()]
+        )
 
     def _should_load_model(self, model: MLModel):
         # NOTE: This is a remnant from the previous architecture for parallel
