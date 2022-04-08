@@ -9,7 +9,7 @@ from mlserver.repository import ModelRepository, DEFAULT_MODEL_SETTINGS_FILENAME
 from mlserver.parallel import InferencePool, configure_inference_pool
 from mlserver import types, Settings, ModelSettings
 
-from .fixtures import SumModel
+from .fixtures import SumModel, ErrorModel
 from .helpers import get_import_path
 
 TESTS_PATH = os.path.dirname(__file__)
@@ -20,6 +20,23 @@ TESTDATA_PATH = os.path.join(TESTS_PATH, "testdata")
 def sum_model_settings() -> ModelSettings:
     model_settings_path = os.path.join(TESTDATA_PATH, "model-settings.json")
     return ModelSettings.parse_file(model_settings_path)
+
+
+@pytest.fixture
+def error_model_settings() -> ModelSettings:
+    model_settings_path = os.path.join(TESTDATA_PATH, "model-settings.json")
+    model_settings = ModelSettings.parse_file(model_settings_path)
+    model_settings.name = "error-model"
+    model_settings.implementation = ErrorModel
+    return model_settings
+
+
+@pytest.fixture
+async def error_model(
+    model_registry: MultiModelRegistry, error_model_settings: ModelSettings
+) -> ErrorModel:
+    await model_registry.load(error_model_settings)
+    return await model_registry.get_model(error_model_settings.name)
 
 
 @pytest.fixture

@@ -19,8 +19,13 @@ class InferenceRequestMessage(BaseModel):
 
 
 class InferenceResponseMessage(BaseModel):
+    class Config:
+        # This is to allow having an Exception field
+        arbitrary_types_allowed = True
+
     id: str
-    inference_response: InferenceResponse
+    inference_response: Optional[InferenceResponse]
+    exception: Optional[Exception]
 
 
 class ModelUpdateMessage(BaseModel):

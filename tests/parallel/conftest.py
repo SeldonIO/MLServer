@@ -25,9 +25,7 @@ async def inference_pool(
 
     yield inference_pool
 
-    print("unloading stuff")
     await inference_pool.unload_model(sum_model)
-    print("unloaded things")
 
 
 @pytest.fixture

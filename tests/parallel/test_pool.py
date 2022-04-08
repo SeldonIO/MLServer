@@ -1,9 +1,12 @@
 import os
+import pytest
 
 from mlserver.model import MLModel
 from mlserver.settings import Settings, ModelSettings
 from mlserver.types import InferenceRequest
 from mlserver.parallel.pool import InferencePool
+
+from ..fixtures import ErrorModel
 
 
 def check_pid(pid):
@@ -65,3 +68,17 @@ async def test_predict(
     assert inference_response.id == inference_request.id
     assert inference_response.model_name == sum_model_settings.name
     assert len(inference_response.outputs) == 1
+
+
+async def test_predict_error(
+    inference_pool: InferencePool,
+    error_model: MLModel,
+    error_model_settings: ModelSettings,
+    inference_request: InferenceRequest,
+):
+    await inference_pool.load_model(error_model)
+
+    with pytest.raises(Exception) as excinfo:
+        await inference_pool.predict(error_model_settings, inference_request)
+
+    assert str(excinfo.value) == ErrorModel.error_message

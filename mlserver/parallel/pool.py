@@ -9,6 +9,7 @@ from ..model import MLModel
 from ..types import InferenceRequest, InferenceResponse
 from ..settings import Settings, ModelSettings
 from ..utils import get_wrapped_method, generate_uuid
+from ..errors import InferenceError
 
 from .errors import InvalidParallelMethod
 from .worker import Worker
@@ -19,6 +20,7 @@ from .messages import (
     ModelUpdateMessage,
     ModelUpdateType,
 )
+from .logging import logger
 
 
 PredictMethod = Callable[[InferenceRequest], Coroutine[Any, Any, InferenceResponse]]
@@ -55,11 +57,20 @@ class InferencePool:
         self._start_processing_responses()
 
     def _start_processing_responses(self):
-        # TODO: Set error callback to restart if it fails
         self._active = True
         self._process_responses_task = asyncio.create_task(self._process_responses())
+        self._process_responses_task.add_done_callback(self._process_responses_cb)
+
+    def _process_responses_cb(self, process_responses):
+        try:
+            process_responses.result()
+        except Exception:
+            logger.exception("Response processing loop crashed. Restarting the loop...")
+            # If process loop crashed, restart it
+            self._start_processing_responses()
 
     async def _process_responses(self):
+        logger.debug("Starting response processing loop...")
         loop = asyncio.get_event_loop()
         while self._active:
             response = await loop.run_in_executor(None, self._responses.get)
@@ -72,11 +83,16 @@ class InferencePool:
 
     async def _process_response(self, response: InferenceResponseMessage):
         internal_id = response.id
-        # TODO: Raise error if internal id not found
+
         async_response = self._async_responses[internal_id]
 
-        # TODO: How should inference errors be transmitted back?
-        async_response.set_result(response.inference_response)
+        if response.inference_response:
+            async_response.set_result(response.inference_response)
+        elif response.exception:
+            async_response.set_exception(response.exception)
+        else:
+            exc = InferenceError("Inference returned no value")
+            async_response.set_exception(exc)
 
     async def predict(
         self, model_settings: ModelSettings, inference_request: InferenceRequest
@@ -130,9 +146,6 @@ class InferencePool:
 
             model = getattr(wrapped_f, "__self__")
 
-            # TODO: Double check that the model has been loaded in the pool
-            # Any reason why not? Should we let the user disable parallel
-            # inference per model?
             return await self.predict(model.settings, payload)
 
         return _inner

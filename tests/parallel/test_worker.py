@@ -1,6 +1,7 @@
 from multiprocessing import Queue, JoinableQueue
 from mlserver.parallel.worker import Worker
 from mlserver.parallel.messages import ModelUpdateMessage, InferenceRequestMessage
+from unittest.mock import patch
 
 
 async def test_predict(
@@ -51,3 +52,28 @@ async def test_unload_model(
 
     loaded_models = list(await worker._model_registry.get_models())
     assert len(loaded_models) == 0
+
+
+async def test_exception(
+    worker: Worker,
+    requests: Queue,
+    inference_request_message: InferenceRequestMessage,
+    responses: Queue,
+    mocker,
+):
+    model = await worker._model_registry.get_model(inference_request_message.model_name)
+    error_msg = "my foo error"
+
+    async def _async_exception(*args, **kwargs):
+        raise Exception(error_msg)
+
+    mocker.patch.object(model, "predict", _async_exception)
+
+    requests.put(inference_request_message)
+    response = responses.get()
+
+    assert response is not None
+    assert response.id == inference_request_message.id
+    assert response.inference_response is None
+    assert response.exception is not None
+    assert str(response.exception) == error_msg

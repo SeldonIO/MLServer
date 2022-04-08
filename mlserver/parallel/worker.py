@@ -8,6 +8,7 @@ from ..registry import MultiModelRegistry
 
 from .messages import ModelUpdateType, ModelUpdateMessage, InferenceResponseMessage
 from .utils import terminate_queue, END_OF_QUEUE
+from .logging import logger
 
 
 class Worker(Process):
@@ -19,7 +20,7 @@ class Worker(Process):
 
     def run(self):
         # TODO: Catch global exceptions
-        asyncio.run(self.coro_run(), debug=True)
+        asyncio.run(self.coro_run())
 
     def __inner_init__(self):
         """
@@ -65,17 +66,21 @@ class Worker(Process):
                     self.model_updates.task_done()
 
     async def _process_request(self, request):
-        # TODO: Where should we check if the model exists? Should that
-        # happen in the parent process?
-        model = await self._model_registry.get_model(
-            request.model_name, request.model_version
-        )
-        inference_response = await model.predict(request.inference_request)
+        try:
+            model = await self._model_registry.get_model(
+                request.model_name, request.model_version
+            )
 
-        response = InferenceResponseMessage(
-            id=request.id, inference_response=inference_response
-        )
-        self._responses.put(response)
+            inference_response = await model.predict(request.inference_request)
+
+            response = InferenceResponseMessage(
+                id=request.id, inference_response=inference_response
+            )
+            self._responses.put(response)
+        except Exception as e:
+            logger.exception("An error occurred during inference in a parallel worker.")
+            exception = InferenceResponseMessage(id=request.id, exception=e)
+            self._responses.put(exception)
 
     async def _process_model_update(self, update: ModelUpdateMessage):
         model_settings = update.model_settings
