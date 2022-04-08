@@ -1,10 +1,9 @@
 import asyncio
 
 from asyncio import Future
-from aioprocessing import AioQueue, AioJoinableQueue
 from multiprocessing import Queue, JoinableQueue
 from functools import wraps
-from typing import Awaitable, Any, Dict, Coroutine, Callable
+from typing import Any, Dict, Coroutine, Callable
 
 from ..model import MLModel
 from ..types import InferenceRequest, InferenceResponse
@@ -13,7 +12,7 @@ from ..utils import get_wrapped_method, generate_uuid
 
 from .errors import InvalidParallelMethod
 from .worker import Worker
-from .utils import syncify, END_OF_QUEUE, terminate_queue, cancel_task
+from .utils import END_OF_QUEUE, terminate_queue, cancel_task
 from .messages import (
     InferenceRequestMessage,
     InferenceResponseMessage,
@@ -41,13 +40,13 @@ class InferencePool:
     def __init__(self, settings: Settings):
         self._workers = {}
         self._settings = settings
-        self._requests = Queue()
-        self._responses = Queue()
+        self._requests: Queue[InferenceRequestMessage] = Queue()
+        self._responses: Queue[InferenceResponseMessage] = Queue()
         self._async_responses: Dict[str, Future[InferenceResponse]] = {}
         for idx in range(self._settings.parallel_workers):
             # TODO: Set callback to restart worker if it goes down (would
             # `worker.join` help with that?)
-            model_updates = JoinableQueue()
+            model_updates: JoinableQueue[ModelUpdateMessage] = JoinableQueue()
             worker = Worker(self._requests, self._responses, model_updates)
             worker.start()
             self._workers[worker.pid] = worker

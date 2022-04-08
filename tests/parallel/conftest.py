@@ -2,7 +2,6 @@ import asyncio
 import pytest
 
 from multiprocessing import Queue, JoinableQueue
-from concurrent.futures import ThreadPoolExecutor
 
 from mlserver.settings import ModelSettings
 from mlserver.types import InferenceRequest

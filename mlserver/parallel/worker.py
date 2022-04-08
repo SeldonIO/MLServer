@@ -3,7 +3,6 @@ import select
 
 from queue import Empty
 from multiprocessing import Process, Queue, JoinableQueue
-from typing import Optional
 
 from ..registry import MultiModelRegistry
 
@@ -78,7 +77,7 @@ class Worker(Process):
         )
         self._responses.put(response)
 
-    async def _process_model_update(self, update: Optional[ModelUpdateMessage]):
+    async def _process_model_update(self, update: ModelUpdateMessage):
         model_settings = update.model_settings
         if update.update_type == ModelUpdateType.Load:
             await self._model_registry.load(model_settings)

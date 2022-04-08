@@ -3,7 +3,6 @@ import multiprocessing
 
 from asyncio import Task
 from multiprocessing import Queue
-from typing import Any, Callable, Awaitable
 
 from mlserver.settings import Settings
 
@@ -33,11 +32,3 @@ async def cancel_task(task: Task):
         await task
     except asyncio.CancelledError:
         pass
-
-
-def syncify(async_f: Callable[..., Awaitable[Any]]):
-    def sync_f(*args, **kwargs):
-        loop = asyncio.get_event_loop()
-        return loop.run_until_complete(async_f(*args, **kwargs))
-
-    return sync_f

@@ -23,10 +23,6 @@ class InferenceResponseMessage(BaseModel):
     inference_response: InferenceResponse
 
 
-# NOTE: InferenceResponses don't need a specific message, since the model name
-# and version is self-contained within the response payload.
-
-
 class ModelUpdateMessage(BaseModel):
     update_type: ModelUpdateType
     model_settings: ModelSettings
