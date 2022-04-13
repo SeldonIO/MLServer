@@ -28,7 +28,7 @@ async def test_metrics(metrics_client: MetricsClient):
         metrics = await metrics_client.metrics()
         assert metrics is not None
 
-        expected_prefixes = ("python_", "process_", "rest_server_", "grpc_server_")
+        expected_prefixes = ("python_", "process_", "rest_server_", "grpc_server_", "model_infer_")
         metrics_list = list(iter(metrics))
         assert len(metrics_list) > 0
         for metric in metrics_list:

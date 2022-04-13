@@ -8,6 +8,17 @@ from ..types import (
 )
 from ..middleware import inference_middlewares
 from ..utils import generate_uuid
+from ..middleware import inference_middlewares
+from ..utils import generate_uuid
+from prometheus_client import (
+    Counter, 
+    Summary,
+)
+
+
+_ModelInferRequestSuccess =  Counter('model_infer_request_success', 'Model infer request success count', ['model', 'version'])
+_ModelInferRequestFailure =  Counter('model_infer_request_failure', 'Model infer request failure count', ['model', 'version'])
+_ModelInferRequestDuration =  Summary('model_infer_request_duration', 'Model infer request duration', ['model', 'version'])
 
 
 class DataPlane:
@@ -48,18 +59,24 @@ class DataPlane:
     async def infer(
         self, payload: InferenceRequest, name: str, version: str = None
     ) -> InferenceResponse:
-        if payload.id is None:
-            payload.id = generate_uuid()
 
-        model = await self._model_registry.get_model(name, version)
+         with _ModelInferRequestDuration.labels(model=name, version=version).time(), \
+             _ModelInferRequestFailure.labels(model=name, version=version).count_exceptions():
+        
+            if payload.id is None:
+                payload.id = generate_uuid()
 
-        # Run middlewares
-        inference_middlewares(payload, model.settings)
+            model = await self._model_registry.get_model(name, version)
 
-        # TODO: Make await optional for sync methods
-        prediction = await model.predict(payload)
+                # Run middlewares
+            inference_middlewares(payload, model.settings)
 
-        # Ensure ID matches
-        prediction.id = payload.id
+            # TODO: Make await optional for sync methods
+            prediction = await model.predict(payload)
 
-        return prediction
+            # Ensure ID matches
+            prediction.id = payload.id
+
+            _ModelInferRequestSuccess.labels(model=name, version=version).inc()
+
+            return prediction
