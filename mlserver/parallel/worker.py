@@ -12,11 +12,11 @@ from .logging import logger
 
 
 class Worker(Process):
-    def __init__(self, requests: Queue, responses: Queue, model_updates: JoinableQueue):
+    def __init__(self, requests: Queue, responses: Queue):
         super().__init__()
         self._requests = requests
         self._responses = responses
-        self.model_updates = model_updates
+        self.model_updates = JoinableQueue()
 
     def run(self):
         asyncio.run(self.coro_run())
@@ -109,3 +109,4 @@ class Worker(Process):
         loop = asyncio.get_event_loop()
         await terminate_queue(self.model_updates)
         await loop.run_in_executor(None, self.model_updates.join)
+        self.model_updates.close()

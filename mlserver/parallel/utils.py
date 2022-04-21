@@ -22,8 +22,12 @@ def configure_inference_pool(settings: Settings):
 
 
 async def terminate_queue(queue: Queue):
-    # Send sentinel value to terminate queue
-    queue.put(END_OF_QUEUE)
+    try:
+        # Send sentinel value to terminate queue
+        queue.put(END_OF_QUEUE)
+    except ValueError:
+        # Most likely, queue is already closed
+        return
 
 
 async def cancel_task(task: Task):

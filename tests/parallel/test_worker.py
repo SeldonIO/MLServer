@@ -22,7 +22,6 @@ async def test_predict(
 
 
 async def test_load_model(
-    model_updates: JoinableQueue,
     worker: Worker,
     load_message: ModelUpdateMessage,
 ):
@@ -30,8 +29,7 @@ async def test_load_model(
     assert len(list(loaded_models)) == 1
 
     load_message.model_settings.name = "foo-model"
-    model_updates.put(load_message)
-    model_updates.join()
+    await worker.send_update(load_message)
 
     loaded_models = list(await worker._model_registry.get_models())
     assert len(loaded_models) == 2
@@ -39,15 +37,13 @@ async def test_load_model(
 
 
 async def test_unload_model(
-    model_updates: JoinableQueue,
     worker: Worker,
     unload_message: ModelUpdateMessage,
 ):
     loaded_models = await worker._model_registry.get_models()
     assert len(list(loaded_models)) == 1
 
-    model_updates.put(unload_message)
-    model_updates.join()
+    await worker.send_update(unload_message)
 
     loaded_models = list(await worker._model_registry.get_models())
     assert len(loaded_models) == 0

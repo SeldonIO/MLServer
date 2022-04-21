@@ -13,7 +13,7 @@ from ..errors import InferenceError
 
 from .errors import InvalidParallelMethod
 from .worker import Worker
-from .utils import END_OF_QUEUE, terminate_queue, cancel_task
+from .utils import END_OF_QUEUE, terminate_queue, cancel_task, configure_inference_pool
 from .messages import (
     InferenceRequestMessage,
     InferenceResponseMessage,
@@ -40,6 +40,8 @@ class InferencePool:
     """
 
     def __init__(self, settings: Settings):
+        configure_inference_pool(settings)
+
         self._workers = {}
         self._settings = settings
         self._requests: Queue[InferenceRequestMessage] = Queue()
@@ -48,8 +50,7 @@ class InferencePool:
         for idx in range(self._settings.parallel_workers):
             # TODO: Set callback to restart worker if it goes down (would
             # `worker.join` help with that?)
-            model_updates: JoinableQueue[ModelUpdateMessage] = JoinableQueue()
-            worker = Worker(self._requests, self._responses, model_updates)
+            worker = Worker(self._requests, self._responses)
             worker.start()
             self._workers[worker.pid] = worker
 
@@ -64,6 +65,10 @@ class InferencePool:
     def _process_responses_cb(self, process_responses):
         try:
             process_responses.result()
+        except asyncio.CancelledError:
+            # NOTE: The response loop was cancelled from the outside, so don't
+            # restart
+            return
         except Exception:
             logger.exception("Response processing loop crashed. Restarting the loop...")
             # If process loop crashed, restart it
@@ -74,6 +79,7 @@ class InferencePool:
         loop = asyncio.get_event_loop()
         while self._active:
             response = await loop.run_in_executor(None, self._responses.get)
+
             # If the queue gets terminated, detect the "sentinel value" and
             # stop reading
             if response is END_OF_QUEUE:
@@ -197,6 +203,8 @@ class InferencePool:
     async def _close_responses(self):
         await terminate_queue(self._responses)
         await cancel_task(self._process_responses_task)
+        self._responses.close()
+        self._requests.close()
 
     async def _close_workers(self):
         # First close down model updates loop
