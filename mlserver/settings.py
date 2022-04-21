@@ -90,8 +90,8 @@ class Settings(BaseSettings):
     """
 
     # Logging settings
-    uvicorn_logging_settings: Optional[str] = None
-    """Path to uvicorn logging config file"""
+    logging_settings: Optional[str] = None
+    """Path to logging config file"""
 
 
 class ModelParameters(BaseSettings):

@@ -14,6 +14,11 @@ logger = logging.getLogger(LoggerName)
 def get_logger():
     return logger
 
+def apply_logging_file(settings: Settings):
+    logging.config.fileConfig(
+        settings.logging_settings, disable_existing_loggers=False
+    )
+
 
 def configure_logger(settings: Settings = None):
     logger = get_logger()
@@ -29,5 +34,8 @@ def configure_logger(settings: Settings = None):
     logger.setLevel(logging.INFO)
     if settings and settings.debug:
         logger.setLevel(logging.DEBUG)
+
+    if settings and settings.logging_settings:
+        apply_logging_file(settings)
 
     return logger
