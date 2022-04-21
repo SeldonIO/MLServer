@@ -1,11 +1,17 @@
 import pytest
 
-from typing import Union
+from typing import Optional, Union
 
 
 @pytest.mark.parametrize("content_type", ["", None, "application/pdf"])
-def test_invocations_invalid_content_type(rest_client, content_type: str):
-    response = rest_client.post("/invocations", headers={"Content-Type": content_type})
+async def test_invocations_invalid_content_type(
+    rest_client, content_type: Optional[str]
+):
+    headers = {}
+    if content_type is not None:
+        headers = {"Content-Type": content_type}
+
+    response = await rest_client.post("/invocations", headers=headers)
 
     assert response.status_code == 400
 
@@ -22,8 +28,8 @@ def test_invocations_invalid_content_type(rest_client, content_type: str):
         ("application/json", {"inputs": [1, 2, 3]}),
     ],
 )
-def test_invocations(rest_client, content_type: str, payload: Union[list, dict]):
-    response = rest_client.post(
+async def test_invocations(rest_client, content_type: str, payload: Union[list, dict]):
+    response = await rest_client.post(
         "/invocations", headers={"Content-Type": content_type}, json=payload
     )
 

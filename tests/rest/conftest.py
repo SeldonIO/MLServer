@@ -2,7 +2,7 @@ import pytest
 import asyncio
 
 from fastapi import FastAPI
-from fastapi.testclient import TestClient
+from httpx import AsyncClient
 
 from mlserver.handlers import DataPlane, ModelRepositoryHandlers
 from mlserver.parallel import InferencePool
@@ -46,5 +46,6 @@ def rest_app(rest_server: RESTServer) -> FastAPI:
 
 
 @pytest.fixture
-def rest_client(rest_app: FastAPI) -> TestClient:
-    return TestClient(rest_app)
+async def rest_client(rest_app: FastAPI) -> AsyncClient:
+    async with AsyncClient(app=rest_app, base_url="http://test") as ac:
+        yield ac
