@@ -25,7 +25,7 @@ async def terminate_queue(queue: Queue):
     try:
         # Send sentinel value to terminate queue
         queue.put(END_OF_QUEUE)
-    except ValueError:
+    except (ValueError, AssertionError):
         # Most likely, queue is already closed
         return
 
