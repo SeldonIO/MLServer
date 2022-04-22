@@ -1,6 +1,7 @@
 import asyncio
 
 from asyncio import Future
+from concurrent.futures import ThreadPoolExecutor
 from multiprocessing import Queue, JoinableQueue
 from functools import wraps
 from typing import Any, Dict, Coroutine, Callable
@@ -47,6 +48,7 @@ class InferencePool:
         self._requests: Queue[InferenceRequestMessage] = Queue()
         self._responses: Queue[InferenceResponseMessage] = Queue()
         self._async_responses: Dict[str, Future[InferenceResponse]] = {}
+        self._executor = ThreadPoolExecutor()
         for idx in range(self._settings.parallel_workers):
             # TODO: Set callback to restart worker if it goes down (would
             # `worker.join` help with that?)
@@ -78,7 +80,7 @@ class InferencePool:
         logger.debug("Starting response processing loop...")
         loop = asyncio.get_event_loop()
         while self._active:
-            response = await loop.run_in_executor(None, self._responses.get)
+            response = await loop.run_in_executor(self._executor, self._responses.get)
 
             # If the queue gets terminated, detect the "sentinel value" and
             # stop reading
@@ -205,6 +207,7 @@ class InferencePool:
         await cancel_task(self._process_responses_task)
         self._responses.close()
         self._requests.close()
+        self._executor.shutdown()
 
     async def _close_workers(self):
         # First close down model updates loop

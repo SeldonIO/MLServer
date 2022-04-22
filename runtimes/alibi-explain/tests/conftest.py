@@ -11,7 +11,7 @@ import tensorflow as tf
 from alibi.api.interfaces import Explanation
 from alibi.explainers import AnchorImage
 from fastapi import FastAPI
-from fastapi.testclient import TestClient
+from httpx import AsyncClient
 
 from helpers.tf_model import get_tf_mnist_model_uri
 from mlserver import MLModel
@@ -112,8 +112,9 @@ def rest_app(rest_server: RESTServer) -> FastAPI:
 
 
 @pytest.fixture
-def rest_client(rest_app: FastAPI) -> TestClient:
-    return TestClient(rest_app)
+async def rest_client(rest_app: FastAPI) -> AsyncClient:
+    async with AsyncClient(app=rest_app, base_url="http://test") as ac:
+        yield ac
 
 
 @pytest.fixture
@@ -228,12 +229,13 @@ async def dummy_alibi_explain_client(
     rest_server: RESTServer,
     model_registry: MultiModelRegistry,
     dummy_explainer_settings: ModelSettings,
-) -> AsyncIterable[TestClient]:
+    rest_client: AsyncClient,
+) -> AsyncIterable[AsyncClient]:
     dummy_explainer = await model_registry.load(dummy_explainer_settings)
 
     await rest_server.add_custom_handlers(dummy_explainer)
 
-    yield TestClient(rest_server._app)
+    yield rest_client
 
     await rest_server.add_custom_handlers(dummy_explainer)
 

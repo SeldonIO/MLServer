@@ -1,5 +1,6 @@
 import json
 import pytest
+import asyncio
 from typing import Any, Dict
 from unittest.mock import patch
 
@@ -89,9 +90,14 @@ async def test_anchors__smoke(
     assert "data" in res_dict
 
 
-def test_remote_predict__smoke(custom_runtime_tf, rest_client):
+async def test_remote_predict__smoke(custom_runtime_tf, rest_client):
+    loop = asyncio.get_event_loop()
+
+    def _sync_request(*args, **kwargs):
+        return loop.run_until_complete(rest_client.post(*args, **kwargs))
+
     with patch("mlserver_alibi_explain.common.requests") as mock_requests:
-        mock_requests.post = rest_client.post
+        mock_requests.post = _sync_request
 
         data = np.random.randn(10, 28, 28, 1) * 255
         inference_request = InferenceRequest(
@@ -233,7 +239,7 @@ async def test_custom_explain_endpoint(dummy_alibi_explain_client):
         ],
     )
 
-    response = dummy_alibi_explain_client.post(
+    response = await dummy_alibi_explain_client.post(
         "/explain", json=inference_request.dict()
     )
     response_text = json.loads(response.text)

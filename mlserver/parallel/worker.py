@@ -3,6 +3,7 @@ import select
 
 from queue import Empty
 from multiprocessing import Process, Queue, JoinableQueue
+from concurrent.futures import ThreadPoolExecutor
 
 from ..registry import MultiModelRegistry
 
@@ -17,6 +18,20 @@ class Worker(Process):
         self._requests = requests
         self._responses = responses
         self.model_updates = JoinableQueue()
+
+        self.__executor = None
+
+    @property
+    def _executor(self):
+        """
+        Helper property to initialise a threadpool executor on demand.
+        This is required to avoid having to pickle the executor object into a
+        separate process.
+        """
+        if self.__executor is None:
+            self.__executor = ThreadPoolExecutor()
+
+        return self.__executor
 
     def run(self):
         asyncio.run(self.coro_run())
@@ -99,7 +114,7 @@ class Worker(Process):
         """
         loop = asyncio.get_event_loop()
         self.model_updates.put(model_update)
-        await loop.run_in_executor(None, self.model_updates.join)
+        await loop.run_in_executor(self._executor, self.model_updates.join)
 
     async def stop(self):
         """
@@ -108,5 +123,6 @@ class Worker(Process):
         """
         loop = asyncio.get_event_loop()
         await terminate_queue(self.model_updates)
-        await loop.run_in_executor(None, self.model_updates.join)
+        await loop.run_in_executor(self._executor, self.model_updates.join)
         self.model_updates.close()
+        self._executor.shutdown()
