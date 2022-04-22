@@ -17,7 +17,7 @@ class Worker(Process):
         super().__init__()
         self._requests = requests
         self._responses = responses
-        self.model_updates = JoinableQueue()
+        self.model_updates: JoinableQueue[ModelUpdateMessage] = JoinableQueue()
 
         self.__executor = None
 

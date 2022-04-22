@@ -2,7 +2,7 @@ import asyncio
 
 from asyncio import Future
 from concurrent.futures import ThreadPoolExecutor
-from multiprocessing import Queue, JoinableQueue
+from multiprocessing import Queue
 from functools import wraps
 from typing import Any, Dict, Coroutine, Callable
 

@@ -2,6 +2,7 @@ import pytest
 
 from fastapi import FastAPI
 from httpx import AsyncClient
+from typing import AsyncIterable
 
 from mlserver.handlers import DataPlane, ModelRepositoryHandlers
 from mlserver.registry import MultiModelRegistry
@@ -75,6 +76,6 @@ def rest_app(rest_server: RESTServer) -> FastAPI:
 
 
 @pytest.fixture
-async def rest_client(rest_app: FastAPI) -> AsyncClient:
+async def rest_client(rest_app: FastAPI) -> AsyncIterable[AsyncClient]:
     async with AsyncClient(app=rest_app, base_url="http://test") as ac:
         yield ac

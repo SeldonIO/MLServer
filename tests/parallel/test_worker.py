@@ -1,4 +1,4 @@
-from multiprocessing import Queue, JoinableQueue
+from multiprocessing import Queue
 from mlserver.parallel.worker import Worker
 from mlserver.parallel.messages import ModelUpdateMessage, InferenceRequestMessage
 

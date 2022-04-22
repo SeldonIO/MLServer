@@ -112,7 +112,7 @@ def rest_app(rest_server: RESTServer) -> FastAPI:
 
 
 @pytest.fixture
-async def rest_client(rest_app: FastAPI) -> AsyncClient:
+async def rest_client(rest_app: FastAPI) -> AsyncIterable[AsyncClient]:
     async with AsyncClient(app=rest_app, base_url="http://test") as ac:
         yield ac
 
