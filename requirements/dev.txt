@@ -11,7 +11,7 @@ pytest==7.1.1
 pytest-asyncio==0.18.3
 pytest-mock==3.7.0
 pytest-cases==3.6.11
-tox==3.24.5
+tox==3.25.0
 docker==5.0.3
 aiohttp==3.8.1
 aiohttp-retry==2.4.6
