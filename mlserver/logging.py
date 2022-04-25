@@ -2,6 +2,7 @@ import logging
 import sys
 
 from logging import Formatter, StreamHandler
+import logging.config
 
 from .settings import Settings
 
