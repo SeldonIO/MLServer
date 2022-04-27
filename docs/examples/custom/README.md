@@ -63,7 +63,7 @@ num_warmup, num_samples = 1000, 2000
 
 # Run NUTS.
 kernel = NUTS(model)
-mcmc = MCMC(kernel, num_warmup, num_samples)
+mcmc = MCMC(kernel, num_warmup=num_warmup, num_samples=num_samples)
 mcmc.run(rng_key_, marriage=dset.MarriageScaled.values, divorce=dset.DivorceScaled.values)
 mcmc.print_summary()
 ```
@@ -322,7 +322,7 @@ kind: SeldonDeployment
 metadata:
   name: numpyro-model
 spec:
-  protocol: kfserving
+  protocol: v2
   predictors:
     - name: default
       graph:
@@ -333,28 +333,6 @@ spec:
             containers:
               - name: numpyro-divorce
                 image: my-custom-numpyro-server:0.1.0
-                ports:
-                  - containerPort: 8080
-                    name: http
-                    protocol: TCP
-                  - containerPort: 8081
-                    name: grpc
-                    protocol: TCP
-```
-
-
-```python
-
-```
-
-
-```python
-
-```
-
-
-```python
-
 ```
 
 
