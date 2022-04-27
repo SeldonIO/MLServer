@@ -3,7 +3,7 @@ kind: SeldonDeployment
 metadata:
   name: numpyro-model
 spec:
-  protocol: kfserving
+  protocol: v2
   predictors:
     - name: default
       graph:
@@ -14,10 +14,3 @@ spec:
             containers:
               - name: numpyro-divorce
                 image: my-custom-numpyro-server:0.1.0
-                ports:
-                  - containerPort: 8080
-                    name: http
-                    protocol: TCP
-                  - containerPort: 8081
-                    name: grpc
-                    protocol: TCP
