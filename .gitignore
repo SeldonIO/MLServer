@@ -35,6 +35,8 @@ dist/
 
 # Benchmarking and profiling
 benchmarking/profiles/
+benchmarking/testserver/models/iris-*
+benchmarking/testserver/models/sum-model-*
 *.prof
 
 # Bundle folders
