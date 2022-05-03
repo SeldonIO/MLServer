@@ -33,5 +33,5 @@ click==8.0.4
 twine==4.0.0
 
 # Fetch licenses
-pip-licenses==3.5.3
+pip-licenses==3.5.4
 
