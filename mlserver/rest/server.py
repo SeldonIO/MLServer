@@ -53,7 +53,10 @@ class RESTServer:
 
     async def start(self):
         cfg = uvicorn.Config(
-            self._app, host=self._settings.host, port=self._settings.http_port, log_config=self._settings.logging_settings
+            self._app,
+            host=self._settings.host,
+            port=self._settings.http_port,
+            log_config=self._settings.logging_settings,
         )
         self._server = _NoSignalServer(cfg)
         await self._server.serve()

@@ -15,9 +15,10 @@ logger = logging.getLogger(LoggerName)
 def get_logger():
     return logger
 
+
 def apply_logging_file(settings: Settings):
     logging.config.fileConfig(
-        settings.logging_settings, disable_existing_loggers=False
+        fname=settings.logging_settings, disable_existing_loggers=False
     )
 
 
