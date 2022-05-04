@@ -2,6 +2,7 @@ import logging
 import sys
 
 from logging import Formatter, StreamHandler
+import logging.config
 
 from .settings import Settings
 
@@ -13,6 +14,10 @@ logger = logging.getLogger(LoggerName)
 
 def get_logger():
     return logger
+
+
+def apply_logging_file(logging_settings: str):
+    logging.config.fileConfig(fname=logging_settings, disable_existing_loggers=False)
 
 
 def configure_logger(settings: Settings = None):
@@ -29,5 +34,8 @@ def configure_logger(settings: Settings = None):
     logger.setLevel(logging.INFO)
     if settings and settings.debug:
         logger.setLevel(logging.DEBUG)
+
+    if settings and settings.logging_settings:
+        apply_logging_file(settings.logging_settings)
 
     return logger

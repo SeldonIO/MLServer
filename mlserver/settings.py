@@ -89,6 +89,10 @@ class Settings(BaseSettings):
     `None` to disable it
     """
 
+    # Logging settings
+    logging_settings: Optional[str] = None
+    """Path to logging config file"""
+
 
 class ModelParameters(BaseSettings):
     """
