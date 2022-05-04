@@ -25,6 +25,12 @@ def _load_description() -> str:
         return fp.read()
 
 
+env_marker_cpython = (
+    "sys_platform != 'win32'"
+    " and (sys_platform != 'cygwin'"
+    " and platform_python_implementation != 'PyPy')"
+)
+
 setup(
     name=PKG_NAME,
     version=_load_version(),
@@ -44,6 +50,7 @@ setup(
         "uvicorn",
         "starlette_exporter",
         "py-grpc-prometheus",
+        "uvloop;" + env_marker_cpython,
     ],
     extras_require={"all": ["orjson"]},
     entry_points={"console_scripts": ["mlserver=mlserver.cli:main"]},
