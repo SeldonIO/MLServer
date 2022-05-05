@@ -1,11 +1,11 @@
 import numpy as np
 
-from typing import Any, Union
+from typing import Any
 
 from ..types import RequestInput, ResponseOutput, Parameters
 
 from .base import InputCodec, register_input_codec, register_request_codec
-from .utils import SingleInputRequestCodec, is_list_of
+from .utils import SingleInputRequestCodec, is_list_of, InputOrOutput
 from .string import encode_str
 
 _DatatypeToNumpy = {
@@ -32,18 +32,18 @@ _NumpyToDatatype["S"] = "BYTES"
 _NumpyToDatatype["U"] = "BYTES"
 
 
-def to_dtype(v2_data: Union[RequestInput, ResponseOutput]) -> "np.dtype":
-    dtype = _DatatypeToNumpy[v2_data.datatype]
+def to_dtype(input_or_output: InputOrOutput) -> "np.dtype":
+    dtype = _DatatypeToNumpy[input_or_output.datatype]
 
-    if v2_data.datatype == "BYTES":
-        data = getattr(v2_data.data, "__root__", v2_data.data)
+    if input_or_output.datatype == "BYTES":
+        data = getattr(input_or_output.data, "__root__", input_or_output.data)
         if is_list_of(data, str):
             # Handle special case of strings being treated as Numpy arrays
             return np.dtype(str)
 
         # bytes have variable size, so need to specify as part of type
         # TODO: Make elem size variable (and not just the last dimension)
-        elem_size = v2_data.shape[-1]
+        elem_size = input_or_output.shape[-1]
         return np.dtype((dtype, elem_size))
 
     return np.dtype(dtype)
@@ -61,11 +61,11 @@ def to_datatype(dtype: np.dtype) -> str:
     return datatype
 
 
-def _to_ndarray(v2_data: Union[RequestInput, ResponseOutput]) -> np.ndarray:
-    data = getattr(v2_data.data, "__root__", v2_data.data)
-    dtype = to_dtype(v2_data)
+def _to_ndarray(input_or_output: InputOrOutput) -> np.ndarray:
+    data = getattr(input_or_output.data, "__root__", input_or_output.data)
+    dtype = to_dtype(input_or_output)
 
-    if v2_data.datatype == "BYTES":
+    if input_or_output.datatype == "BYTES":
         if is_list_of(data, bytes):
             # If the inputs is of type `BYTES`, there could be multiple "lists"
             # serialised into multiple buffers.

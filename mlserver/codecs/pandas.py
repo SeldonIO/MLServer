@@ -1,22 +1,22 @@
 import pandas as pd
 import numpy as np
 
-from typing import Any, List
+from typing import Any, List, Union
 
 from .base import RequestCodec, register_request_codec
 from .numpy import to_datatype, to_dtype
 from .string import encode_str
-from .utils import get_decoded_or_raw
+from .utils import get_decoded_or_raw, InputOrOutput
 from .pack import PackElement
 from ..types import InferenceRequest, InferenceResponse, RequestInput, ResponseOutput
 
 
-def _to_series(request_input: RequestInput) -> pd.Series:
-    payload = get_decoded_or_raw(request_input)
+def _to_series(input_or_output: InputOrOutput) -> pd.Series:
+    payload = get_decoded_or_raw(input_or_output)
     if isinstance(payload, np.ndarray):
         # Necessary so that it's compatible with pd.Series
         payload = list(payload)
-        dtype = to_dtype(request_input)
+        dtype = to_dtype(input_or_output)
         return pd.Series(payload, dtype=dtype)
 
     return pd.Series(payload)
@@ -56,7 +56,7 @@ class PandasCodec(RequestCodec):
         return isinstance(payload, pd.DataFrame)
 
     @classmethod
-    def encode(
+    def encode_response(
         cls, model_name: str, payload: pd.DataFrame, model_version: str = None
     ) -> InferenceResponse:
         outputs = cls.encode_outputs(payload)
@@ -66,11 +66,36 @@ class PandasCodec(RequestCodec):
         )
 
     @classmethod
+    def decode_response(cls, response: InferenceResponse) -> pd.DataFrame:
+        data = {
+            response_output.name: _to_series(response_output)
+            for response_output in response.outputs
+        }
+
+        return pd.DataFrame(data)
+
+    @classmethod
     def encode_outputs(cls, payload: pd.DataFrame) -> List[ResponseOutput]:
         return [_to_response_output(payload[col]) for col in payload]
 
     @classmethod
-    def decode(cls, request: InferenceRequest) -> pd.DataFrame:
+    def encode_request(cls, payload: pd.DataFrame) -> InferenceRequest:
+        outputs = cls.encode_outputs(payload)
+
+        return InferenceRequest(
+            inputs=[
+                RequestInput(
+                    name=output.name,
+                    datatype=output.datatype,
+                    shape=output.shape,
+                    data=output.data,
+                )
+                for output in outputs
+            ]
+        )
+
+    @classmethod
+    def decode_request(cls, request: InferenceRequest) -> pd.DataFrame:
         data = {
             request_input.name: _to_series(request_input)
             for request_input in request.inputs

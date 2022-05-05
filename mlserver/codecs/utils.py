@@ -23,6 +23,7 @@ from .errors import CodecError
 DefaultOutputPrefix = "output-"
 DefaultInputPrefix = "input-"
 
+InputOrOutput = Union[RequestInput, ResponseOutput]
 InputCodecLike = Union[Type[InputCodec], InputCodec]
 RequestCodecLike = Union[Type[RequestCodec], RequestCodec]
 
@@ -153,6 +154,10 @@ def get_decoded_or_raw(parametrised_obj: Parametrised) -> Any:
     if not has_decoded(parametrised_obj):
         if isinstance(parametrised_obj, RequestInput):
             # If this is a RequestInput, return its data
+            return parametrised_obj.data
+
+        if isinstance(parametrised_obj, ResponseOutput):
+            # If this is a ResponseOutput, return its data
             return parametrised_obj.data
 
         # Otherwise, return full object

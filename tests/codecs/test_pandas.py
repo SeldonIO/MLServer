@@ -82,13 +82,90 @@ def test_to_response_output(series, expected):
         )
     ],
 )
-def test_encode(dataframe, expected):
-    codec = PandasCodec()
-    inference_response = codec.encode(
+def test_encode_response(dataframe, expected):
+    inference_response = PandasCodec.encode_response(
         expected.model_name, dataframe, model_version=expected.model_version
     )
 
     assert inference_response == expected
+
+
+@pytest.mark.parametrize(
+    "response, expected",
+    [
+        (
+            InferenceResponse(
+                model_name="my-model",
+                outputs=[
+                    ResponseOutput(
+                        name="a", shape=[3], datatype="INT64", data=[1, 2, 3]
+                    ),
+                    ResponseOutput(
+                        name="b", shape=[3], datatype="BYTES", data=[b"A", b"B", b"C"]
+                    ),
+                ],
+            ),
+            pd.DataFrame(
+                {
+                    "a": [1, 2, 3],
+                    "b": [b"A", b"B", b"C"],
+                }
+            ),
+        ),
+        (
+            InferenceResponse(
+                model_name="my-model",
+                outputs=[
+                    ResponseOutput(
+                        name="a", shape=[3], datatype="INT64", data=[1, 2, 3]
+                    ),
+                    ResponseOutput(
+                        name="b",
+                        shape=[3],
+                        datatype="BYTES",
+                        data=[b"A", b"B", b"C"],
+                        parameters=Parameters(_decoded_payload=["A", "B", "C"]),
+                    ),
+                ],
+            ),
+            pd.DataFrame(
+                {
+                    "a": [1, 2, 3],
+                    "b": ["A", "B", "C"],
+                }
+            ),
+        ),
+    ],
+)
+def test_decode_response(response: InferenceResponse, expected: pd.DataFrame):
+    decoded = PandasCodec.decode_response(response)
+    pd.testing.assert_frame_equal(decoded, expected)
+
+
+@pytest.mark.parametrize(
+    "dataframe, expected",
+    [
+        (
+            pd.DataFrame(
+                {
+                    "a": [1, 2, 3],
+                    "b": ["A", "B", "C"],
+                }
+            ),
+            InferenceRequest(
+                inputs=[
+                    RequestInput(name="a", shape=[3], datatype="INT64", data=[1, 2, 3]),
+                    RequestInput(
+                        name="b", shape=[3], datatype="BYTES", data=[b"A", b"B", b"C"]
+                    ),
+                ],
+            ),
+        )
+    ],
+)
+def test_encode_request(dataframe: pd.DataFrame, expected: InferenceRequest):
+    inference_request = PandasCodec.encode_request(dataframe)
+    assert inference_request == expected
 
 
 @pytest.mark.parametrize(
@@ -158,8 +235,7 @@ def test_encode(dataframe, expected):
         ),
     ],
 )
-def test_decode(inference_request, expected):
-    codec = PandasCodec()
-    decoded = codec.decode(inference_request)
+def test_decode_request(inference_request, expected):
+    decoded = PandasCodec.decode_request(inference_request)
 
     pd.testing.assert_frame_equal(decoded, expected)
