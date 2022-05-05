@@ -77,7 +77,7 @@ def encode_response_output(
     if not codec:
         return None
 
-    return codec.encode(
+    return codec.encode_output(
         name=request_output.name,
         payload=payload,
     )
@@ -97,7 +97,7 @@ def encode_inference_response(
     if model_settings.parameters:
         model_version = model_settings.parameters.version
 
-    return codec.encode(model_settings.name, payload, model_version)
+    return codec.encode_response(model_settings.name, payload, model_version)
 
 
 def decode_request_input(
@@ -113,7 +113,7 @@ def decode_request_input(
     if codec is None:
         return None
 
-    decoded_payload = codec.decode(request_input)
+    decoded_payload = codec.decode_input(request_input)
     _save_decoded(request_input, decoded_payload)
     return decoded_payload
 
@@ -130,7 +130,7 @@ def decode_inference_request(
     if request_content_type is not None:
         codec = find_request_codec(request_content_type)
         if codec is not None:
-            decoded_payload = codec.decode(inference_request)
+            decoded_payload = codec.decode_request(inference_request)
             _save_decoded(inference_request, decoded_payload)
             return decoded_payload
 
