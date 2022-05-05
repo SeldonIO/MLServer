@@ -53,7 +53,7 @@ def test_can_encode(payload: Any, expected: bool):
     ],
 )
 def test_encode(payload: np.ndarray, expected: ResponseOutput):
-    response_output = NumpyCodec.encode(name="foo", payload=payload)
+    response_output = NumpyCodec.encode_output(name="foo", payload=payload)
     assert response_output == expected
 
 
@@ -85,7 +85,7 @@ def test_encode(payload: np.ndarray, expected: ResponseOutput):
     ],
 )
 def test_decode(request_input: RequestInput, expected: np.ndarray):
-    decoded = NumpyCodec.decode(request_input)
+    decoded = NumpyCodec.decode_input(request_input)
     np.testing.assert_array_equal(decoded, expected)
 
 
@@ -100,10 +100,10 @@ def test_decode(request_input: RequestInput, expected: np.ndarray):
     ],
 )
 def test_encode_request_input(request_input):
-    decoded = NumpyCodec.decode(request_input)
-    response_output = NumpyCodec.encode(name="foo", payload=decoded)
+    decoded = NumpyCodec.decode_input(request_input)
+    response_output = NumpyCodec.encode_output(name="foo", payload=decoded)
 
-    request_input_result = NumpyCodec.encode_request_input(name="foo", payload=decoded)
+    request_input_result = NumpyCodec.encode_input(name="foo", payload=decoded)
     assert response_output.datatype == request_input_result.datatype
     assert response_output.shape == request_input_result.shape
     assert response_output.data == request_input_result.data
@@ -120,8 +120,8 @@ def test_encode_request_input(request_input):
     ],
 )
 def test_decode_response_output(payload):
-    response_output = NumpyCodec.encode(name="foo", payload=payload)
-    output_response_decoded = NumpyCodec.decode_response_output(response_output)
+    response_output = NumpyCodec.encode_output(name="foo", payload=payload)
+    output_response_decoded = NumpyCodec.decode_output(response_output)
     np.testing.assert_array_equal(output_response_decoded, payload)
 
 

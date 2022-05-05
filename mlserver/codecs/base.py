@@ -20,11 +20,19 @@ class InputCodec:
         return False
 
     @classmethod
-    def encode(cls, name: str, payload: Any) -> ResponseOutput:
+    def encode_output(cls, name: str, payload: Any) -> ResponseOutput:
         raise NotImplementedError()
 
     @classmethod
-    def decode(cls, request_input: RequestInput) -> Any:
+    def decode_output(cls, response_output: ResponseOutput) -> Any:
+        raise NotImplementedError()
+
+    @classmethod
+    def encode_input(cls, payload: Any) -> RequestInput:
+        raise NotImplementedError()
+
+    @classmethod
+    def decode_input(cls, request_input: RequestInput) -> Any:
         raise NotImplementedError()
 
 
@@ -44,13 +52,21 @@ class RequestCodec:
         return False
 
     @classmethod
-    def encode(
+    def encode_response(
         cls, model_name: str, payload: Any, model_version: str = None
     ) -> InferenceResponse:
         raise NotImplementedError()
 
     @classmethod
-    def decode(cls, request: InferenceRequest) -> Any:
+    def decode_response(cls, response: InferenceResponse) -> Any:
+        raise NotImplementedError()
+
+    @classmethod
+    def encode_request(cls, payload: Any) -> InferenceRequest:
+        raise NotImplementedError()
+
+    @classmethod
+    def decode_request(cls, request: InferenceRequest) -> Any:
         raise NotImplementedError()
 
 

@@ -147,16 +147,16 @@ def test_encode_inference_response(
         ),
     ],
 )
-def test_first_input_decode(inference_request: InferenceRequest, expected: np.ndarray):
+def test_single_input_decode(inference_request: InferenceRequest, expected: np.ndarray):
     inference_request.inputs = [inference_request.inputs[0]]
-    first_input = NumpyRequestCodec.decode(inference_request)
+    first_input = NumpyRequestCodec.decode_request(inference_request)
 
     np.testing.assert_equal(first_input, expected)
 
 
-def test_first_input_error(inference_request: InferenceRequest):
+def test_single_input_error(inference_request: InferenceRequest):
     inference_request.inputs.append(
         RequestInput(name="bar", shape=[1, 2], data=[1, 2], datatype="INT32")
     )
     with pytest.raises(CodecError):
-        SingleInputRequestCodec.decode(inference_request)
+        SingleInputRequestCodec.decode_request(inference_request)

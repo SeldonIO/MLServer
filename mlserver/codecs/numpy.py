@@ -107,7 +107,7 @@ class NumpyCodec(InputCodec):
         return isinstance(payload, np.ndarray)
 
     @classmethod
-    def encode(cls, name: str, payload: np.ndarray) -> ResponseOutput:
+    def encode_output(cls, name: str, payload: np.ndarray) -> ResponseOutput:
         datatype = to_datatype(payload.dtype)
 
         return ResponseOutput(
@@ -118,29 +118,27 @@ class NumpyCodec(InputCodec):
         )
 
     @classmethod
-    def decode(cls, request_input: RequestInput) -> np.ndarray:
+    def decode_output(cls, response_output: ResponseOutput) -> np.ndarray:
+        return cls.decode_input(response_output)  # type: ignore
+
+    @classmethod
+    def encode_input(cls, name: str, payload: np.ndarray) -> RequestInput:
+        output = cls.encode_output(name=name, payload=payload)
+
+        return RequestInput(
+            name=output.name,
+            datatype=output.datatype,
+            shape=output.shape,
+            data=output.data,
+            parameters=Parameters(content_type=cls.ContentType),
+        )
+
+    @classmethod
+    def decode_input(cls, request_input: RequestInput) -> np.ndarray:
         model_data = _to_ndarray(request_input)
 
         # TODO: Check if reshape not valid
         return model_data.reshape(request_input.shape)
-
-    @classmethod
-    def decode_response_output(cls, response_output: ResponseOutput) -> np.ndarray:
-        # TODO: merge this logic with `decode`
-        return cls.decode(response_output)  # type: ignore
-
-    @classmethod
-    def encode_request_input(cls, name: str, payload: np.ndarray) -> RequestInput:
-        # TODO: merge this logic with `encode`
-        data = cls.encode(name=name, payload=payload)
-
-        return RequestInput(
-            name=data.name,
-            datatype=data.datatype,
-            shape=data.shape,
-            data=data.data,
-            parameters=Parameters(content_type=cls.ContentType),
-        )
 
 
 @register_request_codec
