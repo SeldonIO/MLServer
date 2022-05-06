@@ -27,15 +27,21 @@ class HuggingFaceRuntime(MLModel):
         # it might be dependent on type
         # although at the moment we only have one `HuggingFaceSettings`
         if not settings.parameters or not settings.parameters.extra:
-            raise InvalidTranformerInitialisation(500, "Settings parameters not provided")
+            raise InvalidTranformerInitialisation(
+                500, "Settings parameters not provided"
+            )
 
         extra = settings.parameters.extra
         self.hf_settings = HuggingFaceSettings(**extra)  # type: ignore
 
         if self.hf_settings.task not in SUPPORTED_TASKS:
-            raise InvalidTranformerInitialisation(500,
-                                                  (f"Invalid transformer task: {self.hf_settings.task}."
-                                                   f" Available tasks: {SUPPORTED_TASKS.keys()}"))
+            raise InvalidTranformerInitialisation(
+                500,
+                (
+                    f"Invalid transformer task: {self.hf_settings.task}."
+                    f" Available tasks: {SUPPORTED_TASKS.keys()}"
+                ),
+            )
         super().__init__(settings)
 
     async def load(self) -> bool:
@@ -61,7 +67,9 @@ class HuggingFaceRuntime(MLModel):
         prediction = self._model(input_data, **kwarg_params)
 
         # TODO: Convert hf output to v2 protocol, for now we use to_json
-        prediction_encoded = StringCodec.encode(payload=[json.dumps(prediction)], name="huggingface")
+        prediction_encoded = StringCodec.encode(
+            payload=[json.dumps(prediction)], name="huggingface"
+        )
 
         return InferenceResponse(
             model_name=self.name,
@@ -82,5 +90,3 @@ class HuggingFaceRuntime(MLModel):
             tokenizer=self.hf_settings.pretrained_tokenizer,
         )
         return pp
-
-

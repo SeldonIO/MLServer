@@ -73,13 +73,13 @@ response.json()
 
     {'model_name': 'gpt2-model',
      'model_version': None,
-     'id': '0751f80e-b846-4eb4-a098-a38b05eb3037',
+     'id': 'e07b488b-7730-4a52-a7a0-76bfeaeeffea',
      'parameters': None,
      'outputs': [{'name': 'huggingface',
        'shape': [1],
        'datatype': 'BYTES',
        'parameters': None,
-       'data': ['[[{"generated_text": "this is an input on the page, it can be turned on or off at will. When it is turned on the page is open in the browser and you may be able to see the current page\'s content. If not, you can either press"}]]']}]}
+       'data': ['[[{"generated_text": "this is an input device (i.e. a USB), it will be able to interpret messages sent to the USB through the Bluetooth protocol.\\n\\nWhen the input device is plugged in it will ask for data from your iPhone using the NFC,"}]]']}]}
 
 
 
