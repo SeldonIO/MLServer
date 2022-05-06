@@ -156,6 +156,7 @@ class BatchedRequests:
                     responses[internal_id] = InferenceResponse(
                         id=self._ids_mapping[internal_id],
                         model_name=batched_response.model_name,
+                        model_version=batched_response.model_version,
                         outputs=[],
                         parameters=batched_response.parameters,
                     )

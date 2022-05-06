@@ -2,10 +2,10 @@ import pytest
 import asyncio
 
 from fastapi import FastAPI
-from fastapi.testclient import TestClient
+from httpx import AsyncClient
 
 from mlserver.handlers import DataPlane, ModelRepositoryHandlers
-from mlserver.parallel import load_inference_pool, unload_inference_pool
+from mlserver.parallel import InferencePool
 from mlserver.batching import load_batching
 from mlserver.rest import RESTServer
 from mlserver import Settings
@@ -18,6 +18,7 @@ async def rest_server(
     settings: Settings,
     data_plane: DataPlane,
     model_repository_handlers: ModelRepositoryHandlers,
+    inference_pool: InferencePool,
     sum_model: SumModel,
 ) -> RESTServer:
     server = RESTServer(
@@ -28,14 +29,14 @@ async def rest_server(
 
     await asyncio.gather(
         server.add_custom_handlers(sum_model),
-        load_inference_pool(sum_model),
+        inference_pool.load_model(sum_model),
         load_batching(sum_model),
     )
 
     yield server
 
     await asyncio.gather(
-        server.delete_custom_handlers(sum_model), unload_inference_pool(sum_model)
+        server.delete_custom_handlers(sum_model), inference_pool.unload_model(sum_model)
     )
 
 
@@ -45,5 +46,6 @@ def rest_app(rest_server: RESTServer) -> FastAPI:
 
 
 @pytest.fixture
-def rest_client(rest_app: FastAPI) -> TestClient:
-    return TestClient(rest_app)
+async def rest_client(rest_app: FastAPI) -> AsyncClient:
+    async with AsyncClient(app=rest_app, base_url="http://test") as ac:
+        yield ac

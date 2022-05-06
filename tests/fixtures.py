@@ -2,6 +2,7 @@ from mlserver import MLModel
 from mlserver.types import InferenceRequest, InferenceResponse, Parameters
 from mlserver.codecs import NumpyCodec
 from mlserver.handlers.custom import custom_handler
+from mlserver.errors import MLServerError
 
 
 class SumModel(MLModel):
@@ -15,7 +16,10 @@ class SumModel(MLModel):
 
         output = NumpyCodec.encode(name="total", payload=total)
         response = InferenceResponse(
-            id=payload.id, model_name=self.name, outputs=[output]
+            id=payload.id,
+            model_name=self.name,
+            model_version=self.version,
+            outputs=[output],
         )
 
         if payload.parameters and payload.parameters.headers:
@@ -29,3 +33,10 @@ class SumModel(MLModel):
             response.parameters = Parameters(headers=response_headers)
 
         return response
+
+
+class ErrorModel(MLModel):
+    error_message = "something really bad happened"
+
+    async def predict(self, payload: InferenceRequest) -> InferenceResponse:
+        raise MLServerError(self.error_message)

@@ -1,11 +1,15 @@
+import multiprocessing
+
 from typing import List, Optional
-from pydantic import BaseSettings, PyObject
+from pydantic import BaseSettings, PyObject, Field
 
 from .version import __version__
 from .types import MetadataTensor
 
 ENV_PREFIX_SETTINGS = "MLSERVER_"
 ENV_PREFIX_MODEL_SETTINGS = "MLSERVER_MODEL_"
+
+DEFAULT_PARALLEL_WORKERS = multiprocessing.cpu_count()
 
 
 class CORSSettings(BaseSettings):
@@ -48,6 +52,10 @@ class Settings(BaseSettings):
         env_prefix = ENV_PREFIX_SETTINGS
 
     debug: bool = True
+
+    parallel_workers: int = DEFAULT_PARALLEL_WORKERS
+    """When parallel inference is enabled, number of workers to run inference
+    across."""
 
     # Model repository settings
     model_repository_root: str = "."
@@ -152,13 +160,19 @@ class ModelSettings(BaseSettings):
     """Metadata about the outputs returned by the model."""
 
     # Parallel settings
-    parallel_workers: int = 4
-    """When parallel inference is enabled, number of workers to run inference
-    across."""
+    parallel_workers: int = Field(
+        DEFAULT_PARALLEL_WORKERS,
+        deprecated=True,
+        description=(
+            "Use the `parallel_workers` field the server wide settings instead."
+        ),
+    )
 
-    warm_workers: bool = False
-    """When parallel inference is enabled, optionally load model to all workers
-    on startup"""
+    warm_workers: bool = Field(
+        False,
+        deprecated=True,
+        description="Inference workers will now always be `warmed up` at start time.",
+    )
 
     # Adaptive Batching settings (disabled by default)
     max_batch_size: int = 0

@@ -9,7 +9,7 @@ from .logging import configure_logger
 from .registry import MultiModelRegistry
 from .repository import ModelRepository
 from .handlers import DataPlane, ModelRepositoryHandlers
-from .parallel import load_inference_pool, unload_inference_pool
+from .parallel import InferencePool
 from .batching import load_batching
 from .rest import RESTServer
 from .grpc import GRPCServer
@@ -20,13 +20,29 @@ HANDLED_SIGNALS = [signal.SIGINT, signal.SIGTERM]
 class MLServer:
     def __init__(self, settings: Settings):
         self._settings = settings
-        self._model_registry = MultiModelRegistry(
-            on_model_load=[
+        self._inference_pool = None
+        on_model_load = [
+            self.add_custom_handlers,
+            load_batching,
+        ]
+        on_model_unload = [self.remove_custom_handlers]
+
+        if self._settings.parallel_workers:
+            # Only load inference pool if parallel inference has been enabled
+            self._inference_pool = InferencePool(self._settings)
+            on_model_load = [
                 self.add_custom_handlers,
-                load_inference_pool,
+                self._inference_pool.load_model,
                 load_batching,
-            ],
-            on_model_unload=[self.remove_custom_handlers, unload_inference_pool],
+            ]
+            on_model_unload = [
+                self.remove_custom_handlers,
+                self._inference_pool.unload_model,
+            ]
+
+        self._model_registry = MultiModelRegistry(
+            on_model_load=on_model_load,  # type: ignore
+            on_model_unload=on_model_unload,  # type: ignore
         )
         self._model_repository = ModelRepository(self._settings.model_repository_root)
         self._data_plane = DataPlane(
@@ -78,3 +94,5 @@ class MLServer:
     async def stop(self):
         await self._rest_server.stop()
         await self._grpc_server.stop()
+        if self._inference_pool:
+            await self._inference_pool.close()

@@ -5,3 +5,4 @@ pytorch-lightning==1.6.0
 # https://github.com/PyTorchLightning/pytorch-lightning/issues/10233
 torchmetrics==0.4.1
 torchvision==0.10.0
+httpx==0.22.0
