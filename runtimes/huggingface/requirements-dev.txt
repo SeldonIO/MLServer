@@ -1,0 +1,2 @@
+nest_asyncio==1.5.4
+types-requests
