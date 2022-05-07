@@ -6,6 +6,7 @@ from multiprocessing import Process, Queue, JoinableQueue
 from concurrent.futures import ThreadPoolExecutor
 
 from ..registry import MultiModelRegistry
+from ..utils import install_uvloop_event_loop
 
 from .messages import ModelUpdateType, ModelUpdateMessage, InferenceResponseMessage
 from .utils import terminate_queue, END_OF_QUEUE
@@ -34,6 +35,7 @@ class Worker(Process):
         return self.__executor
 
     def run(self):
+        install_uvloop_event_loop()
         asyncio.run(self.coro_run())
 
     def __inner_init__(self):

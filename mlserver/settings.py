@@ -101,17 +101,6 @@ class Settings(BaseSettings):
     logging_settings: Optional[str] = None
     """Path to logging config file"""
 
-    # Event loop settings
-    event_loop: str = "auto"
-    """
-    asyncio event loop selection. Possible values are auto, asyncio, uvloop
-    asyncio - pure python standard implementation of event loop available in
-              all interpreters
-    uvloop - optimized Cython implementation of event loop, available in
-              CPython non-Win32 interpreters
-    auto - install uvloop when possible, otherwise use asyncio
-    """
-
 
 class ModelParameters(BaseSettings):
     """

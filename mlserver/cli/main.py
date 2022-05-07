@@ -8,10 +8,10 @@ from functools import wraps
 
 from ..server import MLServer
 from ..logging import logger, configure_logger
-from ..settings import Settings
+from ..utils import install_uvloop_event_loop
 
 from .build import generate_dockerfile, build_image, write_dockerfile
-from .serve import load_settings, load_server_settings, install_configured_event_loop
+from .serve import load_settings
 
 
 def click_async(f):
@@ -33,22 +33,12 @@ def root():
 
 @root.command("start")
 @click.argument("folder", nargs=1)
-def start(folder: str):
-    """
-    Load server settings, initialize event loop and
-    start MLServer
-    """
-    settings = load_server_settings(folder)
-    install_configured_event_loop(settings)
-    start_server(folder, settings)
-
-
 @click_async
-async def start_server(folder: str, settings: Settings):
+async def start(folder: str):
     """
     Start serving a machine learning model with MLServer.
     """
-    settings, models_settings = await load_settings(folder, settings)
+    settings, models_settings = await load_settings(folder)
 
     server = MLServer(settings)
     await server.start(models_settings)
@@ -84,6 +74,7 @@ async def dockerfile(folder: str, include_dockerignore: bool):
 
 def main():
     configure_logger()
+    install_uvloop_event_loop()
     root()
 
 

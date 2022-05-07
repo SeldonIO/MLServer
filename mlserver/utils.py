@@ -1,5 +1,6 @@
 import os
 import uuid
+import asyncio
 
 from typing import Callable, Dict, Optional, List
 
@@ -94,3 +95,21 @@ def extract_headers(inference_response: InferenceResponse) -> Optional[Dict[str,
     headers = parameters.headers
     parameters.headers = None
     return headers
+
+
+def install_uvloop_event_loop():
+    try:
+        import uvloop
+
+        uvloop.install()
+    except ImportError:
+        # else keep the standard asyncio loop as a fallback
+        pass
+
+    policy = (
+        "uvloop"
+        if type(asyncio.get_event_loop_policy()).__module__.startswith("uvloop")
+        else "asyncio"
+    )
+
+    logger.info(f"Using asyncio event-loop policy: {policy}")
