@@ -9,10 +9,11 @@ from mlserver.types import (
     InferenceRequest,
     InferenceResponse,
 )
-from mlserver_huggingface.errors import InvalidTranformerInitialisation
 from mlserver_huggingface.common import (
     HuggingFaceSettings,
     HUGGINGFACE_PARAMETERS_TAG,
+    parse_parameters,
+    InvalidTranformerInitialisation,
 )
 from transformers.pipelines.base import Pipeline
 from transformers.pipelines import pipeline, SUPPORTED_TASKS
@@ -26,12 +27,13 @@ class HuggingFaceRuntime(MLModel):
         # we do not want to construct a specific alibi settings here because
         # it might be dependent on type
         # although at the moment we only have one `HuggingFaceSettings`
-        if not settings.parameters or not settings.parameters.extra:
+        env_params = parse_parameters()
+        if not env_params and (not settings.parameters or not settings.parameters.extra):
             raise InvalidTranformerInitialisation(
-                500, "Settings parameters not provided"
+                500, "Settings parameters not provided via config file nor env variables"
             )
 
-        extra = settings.parameters.extra
+        extra = env_params or settings.parameters.extra  # type: ignore
         self.hf_settings = HuggingFaceSettings(**extra)  # type: ignore
 
         if self.hf_settings.task not in SUPPORTED_TASKS:
