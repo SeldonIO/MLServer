@@ -26,6 +26,7 @@ class in your `model-settings.json` file.
 | ------------ | ----------------------- | ------------------------------------------ | ---------------------------------------------------------- | ---------------------------------------------------------------- |
 | Scikit-Learn | `mlserver-sklearn`      | `mlserver_sklearn.SKLearnModel`            | [Scikit-Learn example](../examples/sklearn/README.md)      | [MLServer SKLearn](./sklearn)                                    |
 | XGBoost      | `mlserver-xgboost`      | `mlserver_xgboost.XGBoostModel`            | [XGBoost example](../examples/xgboost/README.md)           | [MLServer XGBoost](./xgboost)                                    |
+| HuggingFace  | `mlserver-huggingface`  | `mlserver_huggingface.HuggingFaceRuntime`  | [HuggingFace example](../examples/huggingface/README.md)   | [MLServer HuggingFace](./huggingface)                                    |
 | Spark MLlib  | `mlserver-mllib`        | `mlserver_mllib.MLlibModel`                | Coming Soon                                                | [MLServer MLlib](./mllib)                                        |
 | LightGBM     | `mlserver-lightgbm`     | `mlserver_lightgbm.LightGBMModel`          | [LightGBM example](../examples/lightgbm/README.md)         | [MLServer LightGBM](./lightgbm)                                  |
 | Tempo        | `tempo`                 | `tempo.mlserver.InferenceRuntime`          | [Tempo example](../examples/tempo/README.md)               | [`github.com/SeldonIO/tempo`](https://github.com/SeldonIO/tempo) |
