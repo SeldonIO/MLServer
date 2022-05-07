@@ -11,12 +11,28 @@ from distutils.util import strtobool
 from pydantic import BaseSettings
 from mlserver.errors import MLServerError
 
+from optimum.onnxruntime import (
+    ORTModelForCausalLM,
+    ORTModelForFeatureExtraction,
+    ORTModelForQuestionAnswering,
+    ORTModelForSequenceClassification,
+    ORTModelForTokenClassification,
+)
+
 
 HUGGINGFACE_TASK_TAG = "task"
 
 ENV_PREFIX_HUGGINGFACE_SETTINGS = "MLSERVER_MODEL_HUGGINGFACE_"
 HUGGINGFACE_PARAMETERS_TAG = "huggingface_parameters"
 PARAMETERS_ENV_NAME = "PREDICTIVE_UNIT_PARAMETERS"
+
+SUPPORTED_OPTIMIZED_TASKS = {
+    "feature-extraction": ORTModelForFeatureExtraction,
+    "sentiment-analysis": ORTModelForSequenceClassification,
+    "ner": ORTModelForTokenClassification,
+    "question-answering": ORTModelForQuestionAnswering,
+    "text-generation": ORTModelForCausalLM,
+}
 
 
 class RemoteInferenceError(MLServerError):
@@ -34,18 +50,6 @@ class InvalidTranformerInitialisation(MLServerError):
         )
 
 
-# TODO: this is very similar to `asyncio.to_thread` (python 3.9+),
-# so lets use it at some point.
-def execute_async(
-    loop: Optional[AbstractEventLoop], fn: Callable, *args, **kwargs
-) -> Awaitable:
-    if loop is None:
-        loop = asyncio.get_running_loop()
-    ctx = contextvars.copy_context()
-    func_call = functools.partial(ctx.run, fn, *args, **kwargs)
-    return loop.run_in_executor(None, func_call)
-
-
 class HuggingFaceSettings(BaseSettings):
     """
     Parameters that apply only to alibi huggingface models
@@ -57,6 +61,7 @@ class HuggingFaceSettings(BaseSettings):
     task: str = ""
     pretrained_model: Optional[str] = None
     pretrained_tokenizer: Optional[str] = None
+    optimum_model: bool = False
 
 
 def import_and_get_class(class_path: str) -> type:
@@ -65,7 +70,7 @@ def import_and_get_class(class_path: str) -> type:
     return klass
 
 
-def parse_parameters() -> Dict:
+def parse_parameters_from_env() -> Dict:
     """
     TODO
     """

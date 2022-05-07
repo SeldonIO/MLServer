@@ -12,22 +12,20 @@ from mlserver.types import (
 from mlserver_huggingface.common import (
     HuggingFaceSettings,
     HUGGINGFACE_PARAMETERS_TAG,
-    parse_parameters,
+    parse_parameters_from_env,
     InvalidTranformerInitialisation,
+    SUPPORTED_OPTIMIZED_TASKS,
 )
 from transformers.pipelines.base import Pipeline
 from transformers.pipelines import pipeline, SUPPORTED_TASKS
+from transformers import AutoTokenizer
 
 
 class HuggingFaceRuntime(MLModel):
     """Runtime class for specific Huggingface models"""
 
     def __init__(self, settings: ModelSettings):
-        # TODO: we probably want to validate the enum more sanely here
-        # we do not want to construct a specific alibi settings here because
-        # it might be dependent on type
-        # although at the moment we only have one `HuggingFaceSettings`
-        env_params = parse_parameters()
+        env_params = parse_parameters_from_env()
         if not env_params and (not settings.parameters or not settings.parameters.extra):
             raise InvalidTranformerInitialisation(
                 500, "Settings parameters not provided via config file nor env variables"
@@ -44,6 +42,17 @@ class HuggingFaceRuntime(MLModel):
                     f" Available tasks: {SUPPORTED_TASKS.keys()}"
                 ),
             )
+
+        if self.hf_settings.optimum_model:
+            if self.hf_settings.task not in SUPPORTED_OPTIMIZED_TASKS:
+                raise InvalidTranformerInitialisation(
+                    500,
+                    (
+                        f"Invalid transformer task for OPTIMUM model: {self.hf_settings.task}."
+                        f" Supported Optimum tasks: {SUPPORTED_OPTIMIZED_TASKS.keys()}"
+                    ),
+                )
+
         super().__init__(settings)
 
     async def load(self) -> bool:
@@ -85,10 +94,23 @@ class HuggingFaceRuntime(MLModel):
         """
         # TODO: Support URI for locally downloaded artifacts
         # uri = model_parameters.uri
-        # TODO: Allow for optimum classes
+        model = self.hf_settings.pretrained_model
+        tokenizer = self.hf_settings.pretrained_tokenizer
+
+        if model and not tokenizer:
+            tokenizer = model
+
+        if self.hf_settings.optimum_model:
+            optimum_class = SUPPORTED_OPTIMIZED_TASKS[self.hf_settings.task]
+            model = optimum_class.from_pretrained(
+                self.hf_settings.pretrained_model,
+                from_transformers=True
+            )
+            tokenizer = AutoTokenizer.from_pretrained(tokenizer)
+
         pp = pipeline(
             self.hf_settings.task,
-            model=self.hf_settings.pretrained_model,
-            tokenizer=self.hf_settings.pretrained_tokenizer,
+            model=model,
+            tokenizer=tokenizer,
         )
         return pp
