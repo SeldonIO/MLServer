@@ -22,6 +22,7 @@ from mlserver.codecs.utils import (
     DecodedParameterName,
 )
 from mlserver.codecs.numpy import NumpyRequestCodec
+from mlserver.codecs.string import StringCodec
 
 
 @pytest.mark.parametrize(
@@ -35,7 +36,13 @@ from mlserver.codecs.numpy import NumpyRequestCodec
         (
             ["asd"],
             RequestOutput(name="bar"),
-            ResponseOutput(name="bar", datatype="BYTES", shape=[1], data=[b"asd"]),
+            ResponseOutput(
+                name="bar",
+                datatype="BYTES",
+                shape=[1],
+                data=[b"asd"],
+                parameters=Parameters(content_type=StringCodec.ContentType),
+            ),
         ),
         (
             ["2021-02-25T12:00:00Z"],
@@ -75,7 +82,10 @@ def test_encode_response_output(
                         name="a", datatype="INT64", shape=[3], data=[1, 2, 3]
                     ),
                     ResponseOutput(
-                        name="b", datatype="BYTES", shape=[3], data=[b"a", b"b", b"c"]
+                        name="b",
+                        datatype="BYTES",
+                        shape=[3],
+                        data=[b"a", b"b", b"c"],
                     ),
                 ],
             ),
@@ -103,6 +113,7 @@ def test_encode_response_output(
                         datatype="BYTES",
                         shape=[2],
                         data=[b"foo", b"bar"],
+                        parameters=Parameters(content_type=StringCodec.ContentType),
                     ),
                 ],
             ),

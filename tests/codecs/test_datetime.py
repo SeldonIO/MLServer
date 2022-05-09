@@ -72,9 +72,8 @@ def test_can_encode(payload: Any, expected: bool):
         ),
     ],
 )
-def test_encode(decoded, expected):
-    codec = DatetimeCodec()
-    response_output = codec.encode(name="foo", payload=decoded)
+def test_encode_output(decoded, expected):
+    response_output = DatetimeCodec.encode_output(name="foo", payload=decoded)
 
     assert expected == response_output
 
@@ -134,8 +133,119 @@ def test_encode(decoded, expected):
         ),
     ],
 )
-def test_decode(encoded, expected):
-    codec = DatetimeCodec()
-    decoded_input = codec.decode(encoded)
+def test_decode_input(encoded, expected):
+    decoded_input = DatetimeCodec.decode_input(encoded)
+
+    assert expected == decoded_input
+
+
+@pytest.mark.parametrize(
+    "decoded, expected",
+    [
+        (
+            # Single Python datetime object
+            [TestDatetime],
+            ResponseOutput(
+                name="foo",
+                shape=[1],
+                datatype="BYTES",
+                data=[TestDatetimeIsoB],
+            ),
+        ),
+        (
+            # Multiple Python datetime objects
+            [TestDatetime, TestDatetime],
+            ResponseOutput(
+                name="foo",
+                shape=[2],
+                datatype="BYTES",
+                data=[TestDatetimeIsoB, TestDatetimeIsoB],
+            ),
+        ),
+        (
+            # Single ISO-encoded string
+            [TestDatetimeIso],
+            ResponseOutput(
+                name="foo",
+                shape=[1],
+                datatype="BYTES",
+                data=[TestDatetimeIsoB],
+            ),
+        ),
+        (
+            # Single Python datetime object with timezone
+            [TestTzDatetime],
+            ResponseOutput(
+                name="foo",
+                shape=[1],
+                datatype="BYTES",
+                data=[TestTzDatetimeIsoB],
+            ),
+        ),
+    ],
+)
+def test_encode_output(decoded, expected):
+    response_output = DatetimeCodec.encode_output(name="foo", payload=decoded)
+
+    assert expected == response_output
+
+
+@pytest.mark.parametrize(
+    "encoded, expected",
+    [
+        (
+            # Single binary ISO-encoded datetime
+            RequestInput(
+                name="foo",
+                shape=[1],
+                datatype="BYTES",
+                data=TestDatetimeIsoB,
+            ),
+            [TestDatetime],
+        ),
+        (
+            # Single (non-binary) ISO-encoded datetime
+            RequestInput(
+                name="foo",
+                shape=[1],
+                datatype="BYTES",
+                data=[TestDatetimeIso],
+            ),
+            [TestDatetime],
+        ),
+        (
+            # Multiple binary ISO-encoded datetime
+            RequestInput(
+                name="foo",
+                shape=[2],
+                datatype="BYTES",
+                data=[TestDatetimeIsoB, TestDatetimeIsoB],
+            ),
+            [TestDatetime, TestDatetime],
+        ),
+        (
+            # Multiple (non-binary) ISO-encoded datetime
+            RequestInput(
+                name="foo",
+                shape=[2],
+                datatype="BYTES",
+                data=[TestDatetimeIso, TestDatetimeIso],
+            ),
+            [TestDatetime, TestDatetime],
+        ),
+        (
+            # Single (non-binary) ISO-encoded datetime with timezone
+            RequestInput(
+                name="foo",
+                shape=[1],
+                datatype="BYTES",
+                data=[TestTzDatetimeIso],
+            ),
+            [TestTzDatetime],
+        ),
+    ],
+)
+def test_decode_input(encoded, expected):
+    decoded_input = DatetimeCodec.decode_input(encoded)
 
     assert expected == decoded_input

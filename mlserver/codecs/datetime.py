@@ -48,7 +48,7 @@ class DatetimeCodec(InputCodec):
         return is_list_of(payload, datetime)
 
     @classmethod
-    def encode(cls, name: str, payload: List[_Datetime]) -> ResponseOutput:
+    def encode_output(cls, name: str, payload: List[_Datetime]) -> ResponseOutput:
         packed = map(_encode_datetime, payload)
         shape = [len(payload)]
         return ResponseOutput(
@@ -59,7 +59,7 @@ class DatetimeCodec(InputCodec):
         )
 
     @classmethod
-    def decode(cls, request_input: RequestInput) -> List[datetime]:
+    def decode_input(cls, request_input: RequestInput) -> List[datetime]:
         packed = request_input.data.__root__
 
         return list(map(_decode_datetime, unpack(packed)))
