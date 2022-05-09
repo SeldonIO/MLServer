@@ -112,4 +112,3 @@ def parse_parameters_from_env() -> Dict:
                     reason="MICROSERVICE_BAD_PARAMETER",
                 )
     return parsed_parameters
-

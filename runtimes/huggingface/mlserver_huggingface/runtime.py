@@ -26,9 +26,12 @@ class HuggingFaceRuntime(MLModel):
 
     def __init__(self, settings: ModelSettings):
         env_params = parse_parameters_from_env()
-        if not env_params and (not settings.parameters or not settings.parameters.extra):
+        if not env_params and (
+            not settings.parameters or not settings.parameters.extra
+        ):
             raise InvalidTranformerInitialisation(
-                500, "Settings parameters not provided via config file nor env variables"
+                500,
+                "Settings parameters not provided via config file nor env variables",
             )
 
         extra = env_params or settings.parameters.extra  # type: ignore
@@ -103,8 +106,7 @@ class HuggingFaceRuntime(MLModel):
         if self.hf_settings.optimum_model:
             optimum_class = SUPPORTED_OPTIMIZED_TASKS[self.hf_settings.task]
             model = optimum_class.from_pretrained(
-                self.hf_settings.pretrained_model,
-                from_transformers=True
+                self.hf_settings.pretrained_model, from_transformers=True
             )
             tokenizer = AutoTokenizer.from_pretrained(tokenizer)
 
