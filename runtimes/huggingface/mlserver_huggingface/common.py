@@ -31,17 +31,10 @@ SUPPORTED_OPTIMIZED_TASKS = {
 }
 
 
-class RemoteInferenceError(MLServerError):
-    def __init__(self, code: int, reason: str):
-        super().__init__(
-            f"Remote inference call failed with {code}, {reason}", status_code=code
-        )
-
-
 class InvalidTranformerInitialisation(MLServerError):
     def __init__(self, code: int, reason: str):
         super().__init__(
-            f"Remote inference call failed with {code}, {reason}",
+            f"Huggingface server failed with {code}, {reason}",
             status_code=code,
         )
 
@@ -58,12 +51,6 @@ class HuggingFaceSettings(BaseSettings):
     pretrained_model: Optional[str] = None
     pretrained_tokenizer: Optional[str] = None
     optimum_model: bool = False
-
-
-def import_and_get_class(class_path: str) -> type:
-    last_dot = class_path.rfind(".")
-    klass = getattr(import_module(class_path[:last_dot]), class_path[last_dot + 1 :])
-    return klass
 
 
 def parse_parameters_from_env() -> Dict:
