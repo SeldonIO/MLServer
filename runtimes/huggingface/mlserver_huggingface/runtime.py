@@ -51,8 +51,9 @@ class HuggingFaceRuntime(MLModel):
                 raise InvalidTranformerInitialisation(
                     500,
                     (
-                        f"Invalid transformer task for OPTIMUM model: {self.hf_settings.task}."
-                        f" Supported Optimum tasks: {SUPPORTED_OPTIMIZED_TASKS.keys()}"
+                        f"Invalid transformer task for "
+                        f"OPTIMUM model: {self.hf_settings.task}. "
+                        f"Supported Optimum tasks: {SUPPORTED_OPTIMIZED_TASKS.keys()}"
                     ),
                 )
 
