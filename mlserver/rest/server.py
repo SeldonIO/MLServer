@@ -52,14 +52,22 @@ class RESTServer:
                     handlers.pop(j)
 
     async def start(self):
-        cfg = uvicorn.Config(
-            self._app,
-            host=self._settings.host,
-            port=self._settings.http_port,
-            log_config=self._settings.logging_settings,
-        )
+        cfg = self._get_config()
         self._server = _NoSignalServer(cfg)
         await self._server.serve()
+
+    def _get_config(self):
+        kwargs = {
+            "host": self._settings.host,
+            "port": self._settings.http_port,
+        }
+
+        if self._settings.logging_settings:
+            # If not None, use ours. Otherwise, let Uvicorn fall back on its
+            # own config.
+            kwargs["log_config"] = self._settings.logging_settings
+
+        return uvicorn.Config(self._app, **kwargs)
 
     async def stop(self):
         self._server.handle_exit(sig=None, frame=None)
