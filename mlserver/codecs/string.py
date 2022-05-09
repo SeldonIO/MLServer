@@ -2,7 +2,7 @@ from typing import Any, List
 
 from ..types import RequestInput, ResponseOutput, Parameters
 
-from .utils import SingleInputRequestCodec, is_list_of
+from .utils import SingleInputRequestCodec, is_list_of, InputOrOutput
 from .base import InputCodec, register_input_codec, register_request_codec
 from .pack import unpack, PackElement
 
@@ -27,6 +27,12 @@ def decode_str(encoded: PackElement, str_codec=_DefaultStrCodec) -> str:
     return ""
 
 
+def _decode_input_or_output(input_or_output: InputOrOutput) -> List[str]:
+    packed = input_or_output.data.__root__
+    unpacked = map(decode_str, unpack(packed))
+    return list(unpacked)
+
+
 @register_input_codec
 class StringCodec(InputCodec):
     """
@@ -40,7 +46,7 @@ class StringCodec(InputCodec):
         return is_list_of(payload, str)
 
     @classmethod
-    def encode(cls, name: str, payload: List[str]) -> ResponseOutput:
+    def encode_output(cls, name: str, payload: List[str]) -> ResponseOutput:
         packed = map(encode_str, payload)
         shape = [len(payload)]
         return ResponseOutput(
@@ -48,25 +54,26 @@ class StringCodec(InputCodec):
             datatype="BYTES",
             shape=shape,
             data=list(packed),
+            parameters=Parameters(content_type=cls.ContentType),
         )
 
     @classmethod
-    def decode(cls, request_input: RequestInput) -> List[str]:
-        packed = request_input.data.__root__
-
-        unpacked = map(decode_str, unpack(packed))
-        return list(unpacked)
+    def decode_output(cls, response_output: ResponseOutput) -> List[str]:
+        return _decode_input_or_output(response_output)
 
     @classmethod
-    def encode_request_input(cls, name: str, payload: List[str]) -> RequestInput:
-        # TODO: merge this logic with `encode`
-        # note: this will only work with REST and not grpc as we might have
-        # variable length strings
+    def decode_input(cls, request_input: RequestInput) -> List[str]:
+        return _decode_input_or_output(request_input)
+
+    @classmethod
+    def encode_input(cls, name: str, payload: List[str]) -> RequestInput:
+        packed = map(encode_str, payload)
+        shape = [len(payload)]
         return RequestInput(
             name=name,
             datatype="BYTES",
-            shape=[len(payload)],  # this is discarded downstream?
-            data=payload,
+            shape=shape,
+            data=list(packed),
             parameters=Parameters(content_type=cls.ContentType),
         )
 

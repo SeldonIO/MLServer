@@ -3,7 +3,7 @@ import pytest
 from typing import Any
 
 from mlserver.codecs import StringCodec
-from mlserver.types import RequestInput, ResponseOutput
+from mlserver.types import RequestInput, ResponseOutput, Parameters
 
 
 @pytest.mark.parametrize(
@@ -63,9 +63,8 @@ def test_can_encode(payload: Any, expected: bool):
         ),
     ],
 )
-def test_decode(request_input, expected):
-    codec = StringCodec()
-    decoded = codec.decode(request_input)
+def test_decode_input(request_input, expected):
+    decoded = StringCodec.decode_input(request_input)
 
     assert decoded == expected
 
@@ -76,20 +75,27 @@ def test_decode(request_input, expected):
         (
             ["hello world"],
             ResponseOutput(
-                name="foo", shape=[1], datatype="BYTES", data=[b"hello world"]
+                name="foo",
+                shape=[1],
+                datatype="BYTES",
+                data=[b"hello world"],
+                parameters=Parameters(content_type=StringCodec.ContentType),
             ),
         ),
         (
             ["hey", "whats"],
             ResponseOutput(
-                name="foo", shape=[2], datatype="BYTES", data=[b"hey", b"whats"]
+                name="foo",
+                shape=[2],
+                datatype="BYTES",
+                data=[b"hey", b"whats"],
+                parameters=Parameters(content_type=StringCodec.ContentType),
             ),
         ),
     ],
 )
-def test_encode(decoded, expected):
-    codec = StringCodec()
-    response_output = codec.encode(name="foo", payload=decoded)
+def test_encode_output(decoded, expected):
+    response_output = StringCodec.encode_output(name="foo", payload=decoded)
 
     assert expected == response_output
 
@@ -111,12 +117,10 @@ def test_encode(decoded, expected):
         ),
     ],
 )
-def test_encode_request_input(decoded, expected):
-    # we only support variable length string to be transferred over REST
-    codec = StringCodec()
-    response_output = codec.encode(name="foo", payload=decoded)
+def test_encode_input(decoded, expected):
+    response_output = StringCodec.encode_output(name="foo", payload=decoded)
+    request_input = StringCodec.encode_input(name="foo", payload=decoded)
 
-    request_input = codec.encode_request_input(name="foo", payload=decoded)
-    assert request_input.data.__root__ == decoded
+    assert request_input.data.__root__ == response_output.data.__root__
     assert response_output.datatype == request_input.datatype
-    assert request_input.parameters.content_type == codec.ContentType
+    assert request_input.parameters.content_type == StringCodec.ContentType
