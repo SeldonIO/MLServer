@@ -43,6 +43,7 @@ MLflow <./mlflow>
 Tempo <https://tempo.readthedocs.io>
 Spark MLlib <./mllib>
 LightGBM <./lightgbm>
-Custom <./custom>
 Alibi-Detect <./alibi-detect>
+HuggingFace <./huggingface>
+Custom <./custom>
 ```
