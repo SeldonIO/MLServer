@@ -1,0 +1,11 @@
+{
+    "name": "gpt2-model",
+    "implementation": "mlserver_huggingface.HuggingFaceRuntime",
+    "parallel_workers": 0,
+    "parameters": {
+        "extra": {
+            "task": "text-generation",
+            "pretrained_model": "distilgpt2"
+        }
+    }
+}
