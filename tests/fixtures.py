@@ -1,3 +1,5 @@
+import asyncio
+
 from mlserver import MLModel
 from mlserver.types import InferenceRequest, InferenceResponse, Parameters
 from mlserver.codecs import NumpyCodec
@@ -40,3 +42,14 @@ class ErrorModel(MLModel):
 
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
         raise MLServerError(self.error_message)
+
+
+class SlowModel(MLModel):
+    async def load(self) -> bool:
+        await asyncio.sleep(10)
+        self.ready = True
+        return self.ready
+
+    async def infer(self, payload: InferenceRequest) -> InferenceResponse:
+        await asyncio.sleep(10)
+        return InferenceResponse(id=payload.id, model_name=self.name, outputs=[])
