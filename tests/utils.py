@@ -23,8 +23,7 @@ class RESTClient:
     async def close(self):
         await self._session.close()
 
-    async def wait_until_ready(self) -> None:
-        endpoint = f"http://{self._http_server}/v2/health/ready"
+    async def _retry_get(self, endpoint: str):
         retry_options = ExponentialRetry(
             attempts=10,
             start_timeout=0.5,
@@ -34,6 +33,28 @@ class RESTClient:
 
         async with retry_client:
             await retry_client.get(endpoint, raise_for_status=True)
+
+    async def wait_until_ready(self) -> None:
+        endpoint = f"http://{self._http_server}/v2/health/ready"
+        await self._retry_get(endpoint)
+
+    async def wait_until_model_ready(self, model_name: str) -> None:
+        endpoint = f"http://{self._http_server}/v2/models/{model_name}/ready"
+        await self._retry_get(endpoint)
+
+    async def wait_until_live(self) -> None:
+        endpoint = f"http://{self._http_server}/v2/health/live"
+        await self._retry_get(endpoint)
+
+    async def ready(self) -> bool:
+        endpoint = f"http://{self._http_server}/v2/health/ready"
+        res = await self._session.get(endpoint)
+        return res.status == 200
+
+    async def live(self) -> bool:
+        endpoint = f"http://{self._http_server}/v2/health/live"
+        res = await self._session.get(endpoint)
+        return res.status == 200
 
     async def list_models(self) -> RepositoryIndexResponse:
         endpoint = f"http://{self._http_server}/v2/repository/index"
