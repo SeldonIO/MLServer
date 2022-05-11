@@ -66,6 +66,10 @@ class MLServer:
             self._settings, self._data_plane, self._model_repository_handlers
         )
 
+        servers_task = asyncio.gather(
+            self._rest_server.start(), self._grpc_server.start()
+        )
+
         await asyncio.gather(
             *[
                 self._model_registry.load(model_settings)
@@ -73,7 +77,7 @@ class MLServer:
             ]
         )
 
-        await asyncio.gather(self._rest_server.start(), self._grpc_server.start())
+        await servers_task
 
     async def add_custom_handlers(self, model: MLModel):
         await self._rest_server.add_custom_handlers(model)
