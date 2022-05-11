@@ -1,3 +1,7 @@
+import pytest
+
+from aiohttp.client_exceptions import ClientResponseError
+
 from mlserver.settings import ModelSettings, Settings
 from mlserver.types import InferenceRequest
 
@@ -6,11 +10,11 @@ from ..utils import RESTClient
 
 async def test_live(rest_client: RESTClient):
     is_live = await rest_client.live()
-    is_ready = await rest_client.ready()
+    assert is_live
 
     # Assert that the server is live, but some models are still loading
-    assert is_live
-    assert not is_ready
+    with pytest.raises(ClientResponseError):
+        await rest_client.ready()
 
 
 async def test_infer(
