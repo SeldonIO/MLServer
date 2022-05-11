@@ -3,6 +3,7 @@ import pytest
 import os
 import shutil
 
+from unittest.mock import Mock
 from mlserver.handlers import DataPlane, ModelRepositoryHandlers
 from mlserver.registry import MultiModelRegistry
 from mlserver.repository import ModelRepository, DEFAULT_MODEL_SETTINGS_FILENAME
@@ -14,6 +15,23 @@ from .helpers import get_import_path
 
 TESTS_PATH = os.path.dirname(__file__)
 TESTDATA_PATH = os.path.join(TESTS_PATH, "testdata")
+
+
+def assert_not_called_with(self, *args, **kwargs):
+    """
+    From https://stackoverflow.com/a/54838760/5015573
+    """
+    try:
+        self.assert_called_with(*args, **kwargs)
+    except AssertionError:
+        return
+    raise AssertionError(
+        "Expected %s to not have been called."
+        % self._format_mock_call_signature(args, kwargs)
+    )
+
+
+Mock.assert_not_called_with = assert_not_called_with
 
 
 @pytest.fixture

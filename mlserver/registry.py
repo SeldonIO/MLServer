@@ -11,6 +11,7 @@ from .logging import logger
 from .settings import ModelSettings
 
 ModelRegistryHook = Callable[[MLModel], Coroutine[None, None, None]]
+ModelReloadHook = Callable[[MLModel, MLModel], Coroutine[None, None, None]]
 
 
 def _get_version(model_settings: ModelSettings) -> Optional[str]:
@@ -55,6 +56,7 @@ class SingleModelRegistry:
         self,
         model_settings: ModelSettings,
         on_model_load: List[ModelRegistryHook] = [],
+        on_model_reload: List[ModelReloadHook] = [],
         on_model_unload: List[ModelRegistryHook] = [],
     ):
         self._versions: Dict[str, MLModel] = {}
@@ -62,6 +64,7 @@ class SingleModelRegistry:
 
         self._name = model_settings.name
         self._on_model_load = on_model_load
+        self._on_model_reload = on_model_reload
         self._on_model_unload = on_model_unload
 
     @property
@@ -137,18 +140,28 @@ class SingleModelRegistry:
         await self._load_model(new_model)
 
         if previous_loaded_model:
-            await self._unload_model(previous_loaded_model)
+            await self._reload_model(previous_loaded_model, new_model)
+        else:
+            logger.info(f"Loaded model '{new_model.name}' succesfully.")
 
-        logger.info(f"Loaded model '{new_model.name}' succesfully.")
         return new_model
 
     async def _load_model(self, model: MLModel):
         await model.load()
         self._register(model)
 
-        if self._on_model_load:
-            # TODO: Expose custom handlers on ParallelRuntime
-            await asyncio.gather(*[callback(model) for callback in self._on_model_load])
+        # TODO: Expose custom handlers on ParallelRuntime
+        await asyncio.gather(*[callback(model) for callback in self._on_model_load])
+
+    async def _reload_model(self, old_model: MLModel, new_model: MLModel):
+        await asyncio.gather(
+            *[callback(old_model, new_model) for callback in self._on_model_reload]
+        )
+
+        if old_model == self.default:
+            self._clear_default()
+
+        logger.info(f"Reloaded model '{new_model.name}' succesfully.")
 
     async def unload(self):
         models = await self.get_models()
@@ -172,11 +185,8 @@ class SingleModelRegistry:
             await self._unload_model(self.default)
             self._clear_default()
 
-    async def _unload_model(self, model: MLModel):
-        if self._on_model_unload:
-            await asyncio.gather(
-                *[callback(model) for callback in self._on_model_unload]
-            )
+    async def _unload_model(self, model: MLModel, new_model: MLModel = None):
+        await asyncio.gather(*[callback(model) for callback in self._on_model_unload])
 
         if model == self.default:
             self._clear_default()
@@ -232,10 +242,12 @@ class MultiModelRegistry:
     def __init__(
         self,
         on_model_load: List[ModelRegistryHook] = [],
+        on_model_reload: List[ModelReloadHook] = [],
         on_model_unload: List[ModelRegistryHook] = [],
     ):
         self._models: Dict[str, SingleModelRegistry] = {}
         self._on_model_load = on_model_load
+        self._on_model_reload = on_model_reload
         self._on_model_unload = on_model_unload
 
     async def load(self, model_settings: ModelSettings) -> MLModel:
@@ -243,6 +255,7 @@ class MultiModelRegistry:
             self._models[model_settings.name] = SingleModelRegistry(
                 model_settings,
                 on_model_load=self._on_model_load,
+                on_model_reload=self._on_model_reload,
                 on_model_unload=self._on_model_unload,
             )
 
