@@ -25,6 +25,7 @@ class MLServer:
             self.add_custom_handlers,
             load_batching,
         ]
+        on_model_reload = [self.remove_custom_handlers]
         on_model_unload = [self.remove_custom_handlers]
 
         if self._settings.parallel_workers:
@@ -42,6 +43,7 @@ class MLServer:
 
         self._model_registry = MultiModelRegistry(
             on_model_load=on_model_load,  # type: ignore
+            on_model_reload=on_model_reload,  # type: ignore
             on_model_unload=on_model_unload,  # type: ignore
         )
         self._model_repository = ModelRepository(self._settings.model_repository_root)
@@ -79,7 +81,7 @@ class MLServer:
         # TODO: Add support for custom gRPC endpoints
         # self._grpc_server.add_custom_handlers(handlers)
 
-    async def remove_custom_handlers(self, model: MLModel):
+    async def remove_custom_handlers(self, model: MLModel, new_model: MLModel = None):
         await self._rest_server.delete_custom_handlers(model)
 
         # TODO: Add support for custom gRPC endpoints
