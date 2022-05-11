@@ -147,8 +147,8 @@ class SingleModelRegistry:
         return new_model
 
     async def _load_model(self, model: MLModel):
-        await model.load()
         self._register(model)
+        await model.load()
 
         # TODO: Expose custom handlers on ParallelRuntime
         await asyncio.gather(*[callback(model) for callback in self._on_model_load])

@@ -1,10 +1,14 @@
 import pytest
+import asyncio
 
+from asyncio import CancelledError
 from typing import List, Union
 
 from mlserver.errors import ModelNotFound
 from mlserver.registry import MultiModelRegistry, SingleModelRegistry
 from mlserver.settings import ModelSettings
+
+from .fixtures import SlowModel
 
 
 @pytest.fixture
@@ -201,3 +205,23 @@ async def test_find_default(
     foo_registry._clear_default()
     default_model = foo_registry._find_default()
     assert default_model.version == expected
+
+
+async def test_model_not_ready(model_registry: MultiModelRegistry):
+    slow_model_settings = ModelSettings(name="slow-model", implementation=SlowModel)
+
+    load_task = asyncio.create_task(model_registry.load(slow_model_settings))
+    # Use asyncio.sleep() to give control back to loop so that the load above
+    # gets executed
+    await asyncio.sleep(0.1)
+
+    models = list(await model_registry.get_models())
+    assert not all([m.ready for m in models])
+    assert len(models) == 2
+
+    # Cancel slow load task
+    load_task.cancel()
+    try:
+        await load_task
+    except CancelledError:
+        pass
