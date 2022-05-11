@@ -11,29 +11,27 @@ from mlserver.settings import ModelSettings
 async def model_registry(
     model_registry: MultiModelRegistry, mocker
 ) -> MultiModelRegistry:
-    async def _async_val():
+    async def _async_val(*args, **kwargs):
         return None
 
-    coros = []
+    load_stub = mocker.stub("_on_model_load")
+    load_stub.side_effect = _async_val
+    model_registry._on_model_load = [load_stub]
+
+    reload_stub = mocker.stub("_on_model_reload")
+    reload_stub.side_effect = _async_val
+    model_registry._on_model_reload = [reload_stub]
+
+    unload_stub = mocker.stub("_on_model_unload")
+    unload_stub.side_effect = _async_val
+    model_registry._on_model_unload = [unload_stub]
+
     for single_registry in model_registry._models.values():
-        load_coro = _async_val()
-        single_registry._on_model_load = [mocker.stub("_on_model_load")]
-        single_registry._on_model_load[0].return_value = load_coro
-        coros.append(load_coro)
+        single_registry._on_model_load = [load_stub]
+        single_registry._on_model_reload = [reload_stub]
+        single_registry._on_model_unload = [unload_stub]
 
-        unload_coro = _async_val()
-        single_registry._on_model_unload = [mocker.stub("_on_model_unload")]
-        single_registry._on_model_unload[0].return_value = unload_coro
-        coros.append(unload_coro)
-
-    yield model_registry
-
-    # Remove warning about "coroutine never awaited"
-    for coro in coros:
-        try:
-            await coro
-        except RuntimeError:
-            pass
+    return model_registry
 
 
 @pytest.mark.parametrize(
@@ -78,7 +76,7 @@ async def test_model_hooks(
         callback.assert_called_once_with(sum_model)
 
 
-async def test_load_refresh(
+async def test_reload_model(
     model_registry: MultiModelRegistry, sum_model_settings: ModelSettings
 ):
     existing_model = await model_registry.get_model(sum_model_settings.name)
@@ -91,8 +89,11 @@ async def test_load_refresh(
     for callback in model_registry._on_model_load:
         callback.assert_called_once_with(new_model)
 
+    for callback in model_registry._on_model_reload:
+        callback.assert_called_once_with(existing_model, new_model)
+
     for callback in model_registry._on_model_unload:
-        callback.assert_called_once_with(existing_model)
+        callback.assert_not_called()
 
 
 async def test_load_multi_version(

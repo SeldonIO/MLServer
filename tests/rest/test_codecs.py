@@ -60,7 +60,7 @@ from mlserver.rest.responses import Response
 def test_encode_output_tensor(decoded: Any, codec: InputCodec, expected: dict):
     # Serialise response into final output bytes
     payload = codec.encode(name="output-0", payload=decoded)
-    response = Response()
+    response = Response(content=None)
     rendered_as_bytes = response.render(payload.dict())
 
     # Decode response back into JSON and check if it matches the expected one
