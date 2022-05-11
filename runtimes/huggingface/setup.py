@@ -35,10 +35,7 @@ setup(
     packages=find_packages(exclude=["tests", "tests.*"]),
     install_requires=[
         "mlserver",
-        "optimum[onnxruntime]",
-    ],
-    dependency_links=[
-        "git+https://github.com/huggingface/optimum.git#egg=optimum[onnxruntime]"
+        "optimum[onnxruntime]==1.2.0",
     ],
     long_description=_load_description(),
     long_description_content_type="text/markdown",
