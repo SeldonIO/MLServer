@@ -60,6 +60,7 @@ class RESTServer:
         kwargs = {
             "host": self._settings.host,
             "port": self._settings.http_port,
+            "root_path": self._settings.root_path,
         }
 
         if self._settings.logging_settings:
