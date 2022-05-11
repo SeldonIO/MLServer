@@ -1,11 +1,8 @@
 import pytest
 import docker
-import os
 
 from typing import Tuple
 from docker.client import DockerClient
-
-from mlserver.settings import Settings, ModelSettings
 
 from ..utils import get_available_port
 

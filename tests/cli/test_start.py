@@ -69,7 +69,6 @@ def mlserver_folder(tmp_path: str, settings: Settings) -> str:
 
 @pytest.fixture
 def mlserver_start(mlserver_folder: str) -> Popen:
-    cmd = f"mlserver start {mlserver_folder}"
     p = Popen(["mlserver", "start", mlserver_folder], start_new_session=True)
 
     yield p
@@ -103,4 +102,6 @@ async def test_infer(
     inference_request: InferenceRequest,
 ):
     await rest_client.wait_until_model_ready(sum_model_settings.name)
-    await rest_client.infer(sum_model_settings.name, inference_request)
+    response = await rest_client.infer(sum_model_settings.name, inference_request)
+
+    assert len(response.outputs) == 1
