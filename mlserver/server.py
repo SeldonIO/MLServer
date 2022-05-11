@@ -38,7 +38,7 @@ class MLServer:
             ]
             on_model_unload = [
                 self.remove_custom_handlers,
-                self._inference_pool.unload_model,
+                self._inference_pool.unload_model,  # type: ignore
             ]
 
         self._model_registry = MultiModelRegistry(
