@@ -66,8 +66,8 @@ class MLServer:
             self._settings, self._data_plane, self._model_repository_handlers
         )
 
-        servers_task = asyncio.gather(
-            self._rest_server.start(), self._grpc_server.start()
+        servers_task = asyncio.create_task(
+            asyncio.gather(self._rest_server.start(), self._grpc_server.start())
         )
 
         await asyncio.gather(
