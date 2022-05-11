@@ -91,7 +91,7 @@ async def test_reload_model(
     assert new_model == reloaded_model
 
     for callback in model_registry._on_model_load:
-        callback.assert_called_once_with(new_model)
+        callback.assert_not_called()
 
     for callback in model_registry._on_model_reload:
         callback.assert_called_once_with(existing_model, new_model)
@@ -223,5 +223,27 @@ async def test_model_not_ready(model_registry: MultiModelRegistry):
     load_task.cancel()
     try:
         await load_task
+    except CancelledError:
+        pass
+
+
+async def test_rolling_reload(
+    model_registry: MultiModelRegistry, sum_model_settings: ModelSettings
+):
+    sum_model_settings.implementation = SlowModel
+    reload_task = asyncio.create_task(model_registry.load(sum_model_settings))
+    # Use asyncio.sleep() to give control back to loop so that the load above
+    # starts to get executed
+    await asyncio.sleep(0.1)
+
+    # Assert that the old model stays ready while the new version is getting loaded
+    models = list(await model_registry.get_models())
+    assert all([m.ready for m in models])
+    assert len(models) == 1
+
+    # Cancel slow reload task
+    reload_task.cancel()
+    try:
+        await reload_task
     except CancelledError:
         pass

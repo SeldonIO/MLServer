@@ -137,23 +137,30 @@ class SingleModelRegistry:
         model_class = model_settings.implementation
         new_model = model_class(model_settings)  # type: ignore
 
-        await self._load_model(new_model)
-
         if previous_loaded_model:
             await self._reload_model(previous_loaded_model, new_model)
         else:
-            logger.info(f"Loaded model '{new_model.name}' succesfully.")
+            await self._load_model(new_model)
 
         return new_model
 
     async def _load_model(self, model: MLModel):
+        # Register the model before loading it, to ensure that the model
+        # appears as a not-ready (i.e. loading) model
         self._register(model)
         await model.load()
 
         # TODO: Expose custom handlers on ParallelRuntime
         await asyncio.gather(*[callback(model) for callback in self._on_model_load])
+        logger.info(f"Loaded model '{model.name}' succesfully.")
 
     async def _reload_model(self, old_model: MLModel, new_model: MLModel):
+        # Loading the model before unloading the old one - this will ensure
+        # that at least one is available (sort of mimicking a rolling
+        # deployment)
+        await new_model.load()
+
+        self._register(new_model)
         await asyncio.gather(
             *[callback(old_model, new_model) for callback in self._on_model_reload]
         )
