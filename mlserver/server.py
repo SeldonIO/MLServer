@@ -73,6 +73,9 @@ class MLServer:
         servers_task = asyncio.gather(
             self._rest_server.start(), self._grpc_server.start()
         )
+        # Await for 100ms to ensure control goes back to the loop to executor
+        # the server start task immediately.
+        await asyncio.sleep(0.1)
 
         await asyncio.gather(
             *[
