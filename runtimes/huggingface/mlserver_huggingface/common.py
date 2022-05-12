@@ -10,15 +10,7 @@ from transformers.pipelines import pipeline
 from transformers.pipelines.base import Pipeline
 from transformers.models.auto.tokenization_auto import AutoTokenizer
 
-from optimum.pipelines import pipeline as pipeline_optimum
 from optimum.pipelines import SUPPORTED_TASKS as SUPPORTED_OPTIMUM_TASKS
-from optimum.onnxruntime import (
-    ORTModelForCausalLM,
-    ORTModelForFeatureExtraction,
-    ORTModelForQuestionAnswering,
-    ORTModelForSequenceClassification,
-    ORTModelForTokenClassification,
-)
 
 
 HUGGINGFACE_TASK_TAG = "task"
