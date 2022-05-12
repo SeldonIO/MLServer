@@ -53,8 +53,7 @@ async def mlserver(
     server = MLServer(settings)
 
     # Start server without blocking, and cancel afterwards
-    loop = asyncio.get_event_loop()
-    server_task = loop.create_task(server.start())
+    server_task = asyncio.create_task(server.start())
 
     # Load sample model
     await server._model_registry.load(sum_model_settings)

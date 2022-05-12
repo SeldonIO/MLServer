@@ -25,7 +25,7 @@ class MLServer:
             self.add_custom_handlers,
             load_batching,
         ]
-        on_model_reload = [self.remove_custom_handlers]
+        on_model_reload = [self.reload_custom_handlers]
         on_model_unload = [self.remove_custom_handlers]
 
         if self._settings.parallel_workers:
@@ -35,6 +35,10 @@ class MLServer:
                 self.add_custom_handlers,
                 self._inference_pool.load_model,
                 load_batching,
+            ]
+            on_model_reload = [
+                self.reload_custom_handlers,
+                self._inference_pool.reload_model,  # type: ignore
             ]
             on_model_unload = [
                 self.remove_custom_handlers,
@@ -66,6 +70,10 @@ class MLServer:
             self._settings, self._data_plane, self._model_repository_handlers
         )
 
+        servers_task = asyncio.gather(
+            self._rest_server.start(), self._grpc_server.start()
+        )
+
         await asyncio.gather(
             *[
                 self._model_registry.load(model_settings)
@@ -73,7 +81,7 @@ class MLServer:
             ]
         )
 
-        await asyncio.gather(self._rest_server.start(), self._grpc_server.start())
+        await servers_task
 
     async def add_custom_handlers(self, model: MLModel):
         await self._rest_server.add_custom_handlers(model)
@@ -81,7 +89,14 @@ class MLServer:
         # TODO: Add support for custom gRPC endpoints
         # self._grpc_server.add_custom_handlers(handlers)
 
-    async def remove_custom_handlers(self, model: MLModel, new_model: MLModel = None):
+    async def reload_custom_handlers(self, old_model: MLModel, new_model: MLModel):
+        await self.add_custom_handlers(new_model)
+        await self.remove_custom_handlers(old_model)
+
+        # TODO: Add support for custom gRPC endpoints
+        # self._grpc_server.delete_custom_handlers(handlers)
+
+    async def remove_custom_handlers(self, model: MLModel):
         await self._rest_server.delete_custom_handlers(model)
 
         # TODO: Add support for custom gRPC endpoints
