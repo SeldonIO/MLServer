@@ -15,10 +15,10 @@ from mlserver_huggingface.common import (
     HUGGINGFACE_PARAMETERS_TAG,
     parse_parameters_from_env,
     InvalidTranformerInitialisation,
-    SUPPORTED_OPTIMIZED_TASKS,
     load_pipeline_from_settings,
 )
 from transformers.pipelines import SUPPORTED_TASKS
+from optimum.pipelines import SUPPORTED_TASKS as SUPPORTED_OPTIMUM_TASKS
 
 
 class HuggingFaceRuntime(MLModel):
@@ -47,13 +47,13 @@ class HuggingFaceRuntime(MLModel):
             )
 
         if self.hf_settings.optimum_model:
-            if self.hf_settings.task not in SUPPORTED_OPTIMIZED_TASKS:
+            if self.hf_settings.task not in SUPPORTED_OPTIMUM_TASKS:
                 raise InvalidTranformerInitialisation(
                     500,
                     (
                         f"Invalid transformer task for "
                         f"OPTIMUM model: {self.hf_settings.task}. "
-                        f"Supported Optimum tasks: {SUPPORTED_OPTIMIZED_TASKS.keys()}"
+                        f"Supported Optimum tasks: {SUPPORTED_OPTIMUM_TASKS.keys()}"
                     ),
                 )
 

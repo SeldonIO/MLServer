@@ -10,6 +10,8 @@ from transformers.pipelines import pipeline
 from transformers.pipelines.base import Pipeline
 from transformers.models.auto.tokenization_auto import AutoTokenizer
 
+from optimum.pipelines import pipeline as pipeline_optimum
+from optimum.pipelines import SUPPORTED_TASKS as SUPPORTED_OPTIMUM_TASKS
 from optimum.onnxruntime import (
     ORTModelForCausalLM,
     ORTModelForFeatureExtraction,
@@ -24,14 +26,6 @@ HUGGINGFACE_TASK_TAG = "task"
 ENV_PREFIX_HUGGINGFACE_SETTINGS = "MLSERVER_MODEL_HUGGINGFACE_"
 HUGGINGFACE_PARAMETERS_TAG = "huggingface_parameters"
 PARAMETERS_ENV_NAME = "PREDICTIVE_UNIT_PARAMETERS"
-
-SUPPORTED_OPTIMIZED_TASKS = {
-    "feature-extraction": ORTModelForFeatureExtraction,
-    "sentiment-analysis": ORTModelForSequenceClassification,
-    "ner": ORTModelForTokenClassification,
-    "question-answering": ORTModelForQuestionAnswering,
-    "text-generation": ORTModelForCausalLM,
-}
 
 
 class InvalidTranformerInitialisation(MLServerError):
@@ -113,7 +107,7 @@ def load_pipeline_from_settings(hf_settings: HuggingFaceSettings) -> Pipeline:
         tokenizer = model
 
     if hf_settings.optimum_model:
-        optimum_class = SUPPORTED_OPTIMIZED_TASKS[hf_settings.task]
+        optimum_class = SUPPORTED_OPTIMUM_TASKS[hf_settings.task]["class"][0]
         model = optimum_class.from_pretrained(
             hf_settings.pretrained_model, from_transformers=True
         )
