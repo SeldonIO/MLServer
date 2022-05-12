@@ -1,4 +1,5 @@
 import json
+import asyncio
 from mlserver.codecs import (
     StringCodec,
 )
@@ -15,10 +16,9 @@ from mlserver_huggingface.common import (
     parse_parameters_from_env,
     InvalidTranformerInitialisation,
     SUPPORTED_OPTIMIZED_TASKS,
+    load_pipeline_from_settings,
 )
-from transformers.pipelines.base import Pipeline
-from transformers.pipelines import pipeline, SUPPORTED_TASKS
-from transformers import AutoTokenizer
+from transformers.pipelines import SUPPORTED_TASKS
 
 
 class HuggingFaceRuntime(MLModel):
@@ -60,7 +60,11 @@ class HuggingFaceRuntime(MLModel):
         super().__init__(settings)
 
     async def load(self) -> bool:
-        self._model = self._load_from_settings()
+        # Loading & caching pipeline in asyncio loop to avoid blocking
+        await asyncio.get_running_loop().run_in_executor(
+            None, load_pipeline_from_settings, self.hf_settings)
+        # Now we load the cached model which should not block asyncio
+        self._model = load_pipeline_from_settings(self.hf_settings)
         self.ready = True
         return self.ready
 
@@ -91,29 +95,3 @@ class HuggingFaceRuntime(MLModel):
             model_version=self.version,
             outputs=[prediction_encoded],
         )
-
-    def _load_from_settings(self) -> Pipeline:
-        """
-        TODO
-        """
-        # TODO: Support URI for locally downloaded artifacts
-        # uri = model_parameters.uri
-        model = self.hf_settings.pretrained_model
-        tokenizer = self.hf_settings.pretrained_tokenizer
-
-        if model and not tokenizer:
-            tokenizer = model
-
-        if self.hf_settings.optimum_model:
-            optimum_class = SUPPORTED_OPTIMIZED_TASKS[self.hf_settings.task]
-            model = optimum_class.from_pretrained(
-                self.hf_settings.pretrained_model, from_transformers=True
-            )
-            tokenizer = AutoTokenizer.from_pretrained(tokenizer)
-
-        pp = pipeline(
-            self.hf_settings.task,
-            model=model,
-            tokenizer=tokenizer,
-        )
-        return pp

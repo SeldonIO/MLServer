@@ -6,6 +6,10 @@ from distutils.util import strtobool
 from pydantic import BaseSettings
 from mlserver.errors import MLServerError
 
+from transformers.pipelines import pipeline
+from transformers.pipelines.base import Pipeline
+from transformers.models.auto.tokenization_auto import AutoTokenizer
+
 from optimum.onnxruntime import (
     ORTModelForCausalLM,
     ORTModelForFeatureExtraction,
@@ -94,3 +98,30 @@ def parse_parameters_from_env() -> Dict:
                     reason="MICROSERVICE_BAD_PARAMETER",
                 )
     return parsed_parameters
+
+
+def load_pipeline_from_settings(hf_settings: HuggingFaceSettings) -> Pipeline:
+    """
+    TODO
+    """
+    # TODO: Support URI for locally downloaded artifacts
+    # uri = model_parameters.uri
+    model = hf_settings.pretrained_model
+    tokenizer = hf_settings.pretrained_tokenizer
+
+    if model and not tokenizer:
+        tokenizer = model
+
+    if hf_settings.optimum_model:
+        optimum_class = SUPPORTED_OPTIMIZED_TASKS[hf_settings.task]
+        model = optimum_class.from_pretrained(
+            hf_settings.pretrained_model, from_transformers=True
+        )
+        tokenizer = AutoTokenizer.from_pretrained(tokenizer)
+
+    pp = pipeline(
+        hf_settings.task,
+        model=model,
+        tokenizer=tokenizer,
+    )
+    return pp
