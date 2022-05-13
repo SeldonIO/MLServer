@@ -102,7 +102,6 @@ def load_pipeline_from_settings(hf_settings: HuggingFaceSettings) -> Pipeline:
         tokenizer = model
 
     if hf_settings.optimum_model:
-        print(f"optimum cache {TRANSFORMER_CACHE_DIR}")
         optimum_class = SUPPORTED_OPTIMUM_TASKS[hf_settings.task]["class"][0]
         model = optimum_class.from_pretrained(
             hf_settings.pretrained_model,
