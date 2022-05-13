@@ -1,7 +1,21 @@
+import functools
+
 from typing import Any, ClassVar, Dict, Iterable, Optional, Type, Union
 
 from ..types import InferenceRequest, InferenceResponse, RequestInput, ResponseOutput
 from ..logging import logger
+
+
+def deprecated(reason: str):
+    def _deprecated(func):
+        @functools.wraps(func)
+        def _inner(*args, **kwargs):
+            logger.warning(f"DEPRECATED! {reason}")
+            return func(*args, **kwargs)
+
+        return _inner
+
+    return _deprecated
 
 
 class InputCodec:
@@ -20,6 +34,11 @@ class InputCodec:
         return False
 
     @classmethod
+    @deprecated("The encode() method is now deprecated. Use encode_output() instead.")
+    def encode(cls, name: str, payload: Any) -> ResponseOutput:
+        return cls.encode_output(name, payload)
+
+    @classmethod
     def encode_output(cls, name: str, payload: Any) -> ResponseOutput:
         raise NotImplementedError()
 
@@ -30,6 +49,11 @@ class InputCodec:
     @classmethod
     def encode_input(cls, payload: Any) -> RequestInput:
         raise NotImplementedError()
+
+    @classmethod
+    @deprecated("The decode() method is now deprecated. Use decode_input() instead.")
+    def decode(cls, request_input: RequestInput) -> Any:
+        return cls.decode_input(request_input)
 
     @classmethod
     def decode_input(cls, request_input: RequestInput) -> Any:
@@ -52,6 +76,13 @@ class RequestCodec:
         return False
 
     @classmethod
+    @deprecated("The encode() method is now deprecated. Use encode_response() instead.")
+    def encode(
+        cls, model_name: str, payload: Any, model_version: str = None
+    ) -> InferenceResponse:
+        return cls.encode(model_name, payload, model_version)
+
+    @classmethod
     def encode_response(
         cls, model_name: str, payload: Any, model_version: str = None
     ) -> InferenceResponse:
@@ -64,6 +95,11 @@ class RequestCodec:
     @classmethod
     def encode_request(cls, payload: Any) -> InferenceRequest:
         raise NotImplementedError()
+
+    @classmethod
+    @deprecated("The decode() method is now deprecated. Use decode_request() instead.")
+    def decode(cls, request: InferenceRequest) -> Any:
+        return cls.decode_request(request)
 
     @classmethod
     def decode_request(cls, request: InferenceRequest) -> Any:
