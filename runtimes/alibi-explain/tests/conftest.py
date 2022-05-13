@@ -5,7 +5,6 @@ from pathlib import Path
 from typing import AsyncIterable, Dict, Any, Iterable
 from unittest.mock import patch
 
-import nest_asyncio
 import pytest
 import tensorflow as tf
 from alibi.api.interfaces import Explanation
@@ -14,6 +13,7 @@ from fastapi import FastAPI
 from httpx import AsyncClient
 
 from helpers.tf_model import get_tf_mnist_model_uri
+from helpers.run_async import run_async_as_sync
 from mlserver import MLModel
 from mlserver.handlers import DataPlane, ModelRepositoryHandlers
 from mlserver.registry import MultiModelRegistry
@@ -21,16 +21,22 @@ from mlserver.repository import ModelRepository
 from mlserver.rest import RESTServer
 from mlserver.settings import ModelSettings, ModelParameters, Settings
 from mlserver.types import MetadataModelResponse
+from mlserver.utils import install_uvloop_event_loop
 from mlserver_alibi_explain.common import AlibiExplainSettings
 from mlserver_alibi_explain.runtime import AlibiExplainRuntime, AlibiExplainRuntimeBase
 
-# Allow nesting loop.
-# In our case this allows multiple runtimes to execute in the
-# same thread for testing reasons.
-nest_asyncio.apply()
 
 TESTS_PATH = Path(os.path.dirname(__file__))
 _ANCHOR_IMAGE_DIR = TESTS_PATH / ".data" / "mnist_anchor_image"
+
+
+@pytest.fixture
+def event_loop():
+    # By default use uvloop for tests
+    install_uvloop_event_loop()
+    loop = asyncio.get_event_loop()
+    yield loop
+    loop.close()
 
 
 @pytest.fixture
@@ -138,24 +144,11 @@ async def anchor_image_runtime_with_remote_predict_patch(
                 return MetadataModelResponse(name="dummy", platform="dummy")
 
             def mock_predict(*args, **kwargs):
-                # note: sometimes the event loop is not running and in this case
-                # we create a new one otherwise
-                # we use the existing one.
                 # mock implementation is required as we dont want to spin up a server,
                 # we just use MLModel.predict
-                try:
-                    loop = asyncio.get_event_loop()
-                    res = loop.run_until_complete(
-                        custom_runtime_tf.predict(kwargs["v2_payload"])
-                    )
-                    return res
-                except Exception:
-                    loop = asyncio.new_event_loop()
-                    asyncio.set_event_loop(loop)
-                    res = loop.run_until_complete(
-                        custom_runtime_tf.predict(kwargs["v2_payload"])
-                    )
-                    return res
+                return run_async_as_sync(
+                    custom_runtime_tf.predict, kwargs["v2_payload"]
+                )
 
             remote_predict.side_effect = mock_predict
             remote_metadata.side_effect = mock_metadata

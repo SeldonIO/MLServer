@@ -1,9 +1,16 @@
 import pytest
+import asyncio
+import platform
 
 from typing import Dict, Optional
 from unittest.mock import patch
 
-from mlserver.utils import get_model_uri, extract_headers, insert_headers
+from mlserver.utils import (
+    get_model_uri,
+    extract_headers,
+    insert_headers,
+    install_uvloop_event_loop,
+)
 from mlserver.types import InferenceRequest, InferenceResponse, Parameters
 from mlserver.settings import ModelSettings, ModelParameters
 
@@ -74,3 +81,26 @@ def test_extract_headers(parameters: Parameters, expected: Dict[str, str]):
     assert headers == expected
     if inference_response.parameters:
         assert inference_response.parameters.headers is None
+
+
+def _check_uvloop_availability():
+    avail = True
+    try:
+        import uvloop  # noqa: F401
+    except ImportError:  # pragma: no cover
+        avail = False
+    return avail
+
+
+def test_uvloop_auto_install():
+    uvloop_available = _check_uvloop_availability()
+    install_uvloop_event_loop()
+    policy = asyncio.get_event_loop_policy()
+
+    if uvloop_available:
+        assert type(policy).__module__.startswith("uvloop")
+    else:
+        if platform.system() == "Windows":
+            assert isinstance(policy, asyncio.WindowsProactorEventLoopPolicy)
+        elif platform.python_implementation() != "CPython":
+            assert isinstance(policy, asyncio.DefaultEventLoopPolicy)

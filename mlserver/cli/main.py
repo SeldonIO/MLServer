@@ -8,6 +8,7 @@ from functools import wraps
 
 from ..server import MLServer
 from ..logging import logger, configure_logger
+from ..utils import install_uvloop_event_loop
 
 from .build import generate_dockerfile, build_image, write_dockerfile
 from .serve import load_settings
@@ -73,6 +74,7 @@ async def dockerfile(folder: str, include_dockerignore: bool):
 
 def main():
     configure_logger()
+    install_uvloop_event_loop()
     root()
 
 

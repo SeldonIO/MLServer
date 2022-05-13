@@ -15,7 +15,8 @@ def configure_inference_pool(settings: Settings):
 
     # Set MP method
     try:
-        multiprocessing.set_start_method("spawn")
+        # force set to True to override the "fork" setting used in pytest
+        multiprocessing.set_start_method("spawn", force=True)
     except RuntimeError:
         # TODO: Log warning saying that mp start method couldn't be set
         pass

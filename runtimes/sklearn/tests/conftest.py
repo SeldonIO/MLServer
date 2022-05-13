@@ -1,6 +1,7 @@
 import joblib
 import pytest
 import os
+import asyncio
 import numpy as np
 import pandas as pd
 from sklearn.compose import ColumnTransformer
@@ -12,11 +13,21 @@ from sklearn.base import BaseEstimator
 
 from mlserver.settings import ModelSettings, ModelParameters
 from mlserver.types import InferenceRequest
+from mlserver.utils import install_uvloop_event_loop
 
 from mlserver_sklearn import SKLearnModel
 
 TESTS_PATH = os.path.dirname(__file__)
 TESTDATA_PATH = os.path.join(TESTS_PATH, "testdata")
+
+
+@pytest.fixture
+def event_loop():
+    # By default use uvloop for tests
+    install_uvloop_event_loop()
+    loop = asyncio.get_event_loop()
+    yield loop
+    loop.close()
 
 
 @pytest.fixture

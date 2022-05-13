@@ -1,6 +1,5 @@
 import json
 import pytest
-import asyncio
 from typing import Any, Dict
 from unittest.mock import patch
 
@@ -25,6 +24,8 @@ from mlserver_alibi_explain.common import (
 )
 from mlserver_alibi_explain.runtime import AlibiExplainRuntime, AlibiExplainRuntimeBase
 from mlserver_alibi_explain.errors import InvalidExplanationShape
+
+from helpers.run_async import run_async_as_sync
 
 """
 Smoke tests for runtimes
@@ -91,10 +92,8 @@ async def test_anchors__smoke(
 
 
 async def test_remote_predict__smoke(custom_runtime_tf, rest_client):
-    loop = asyncio.get_event_loop()
-
     def _sync_request(*args, **kwargs):
-        return loop.run_until_complete(rest_client.post(*args, **kwargs))
+        return run_async_as_sync(rest_client.post, *args, **kwargs)
 
     with patch("mlserver_alibi_explain.common.requests") as mock_requests:
         mock_requests.post = _sync_request

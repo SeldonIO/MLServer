@@ -1,6 +1,7 @@
 import os
 import mlflow
 import pytest
+import asyncio
 import numpy as np
 
 from sklearn.dummy import DummyClassifier
@@ -9,6 +10,7 @@ from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from mlflow.models.signature import ModelSignature, infer_signature
 from mlserver.settings import ModelSettings, ModelParameters
 from mlserver.types import InferenceRequest
+from mlserver.utils import install_uvloop_event_loop
 
 from mlserver_mlflow import MLflowRuntime
 
@@ -17,6 +19,15 @@ from torch_fixtures import MNISTDataModule, LightningMNISTClassifier
 TESTS_PATH = os.path.dirname(__file__)
 TESTDATA_PATH = os.path.join(TESTS_PATH, "testdata")
 TESTDATA_CACHE_PATH = os.path.join(TESTDATA_PATH, ".cache")
+
+
+@pytest.fixture
+def event_loop():
+    # By default use uvloop for tests
+    install_uvloop_event_loop()
+    loop = asyncio.get_event_loop()
+    yield loop
+    loop.close()
 
 
 @pytest.fixture
