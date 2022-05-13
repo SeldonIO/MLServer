@@ -80,7 +80,7 @@ class RequestCodec:
     def encode(
         cls, model_name: str, payload: Any, model_version: str = None
     ) -> InferenceResponse:
-        return cls.encode(model_name, payload, model_version)
+        return cls.encode_response(model_name, payload, model_version)
 
     @classmethod
     def encode_response(

@@ -25,11 +25,11 @@ class TFMNISTModel(MLModel):
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
         np_codec = NumpyCodec
         model_input = payload.inputs[0]
-        input_data = np_codec.decode(model_input)
+        input_data = np_codec.decode_input(model_input)
         output_data = self._model(input_data).numpy()
         return InferenceResponse(
             model_name=self.name,
-            outputs=[np_codec.encode("predict", output_data)],
+            outputs=[np_codec.encode_output("predict", output_data)],
         )
 
     async def load(self) -> bool:

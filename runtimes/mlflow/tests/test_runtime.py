@@ -65,7 +65,11 @@ async def test_predict_pytorch(runtime_pytorch: MLflowRuntime):
                 model_name="mlflow-model",
                 outputs=[
                     ResponseOutput(
-                        name="output-1", datatype="BYTES", shape=[1], data=[b"foo"]
+                        name="output-1",
+                        datatype="BYTES",
+                        shape=[1],
+                        data=[b"foo"],
+                        parameters=Parameters(content_type="str"),
                     )
                 ],
             ),

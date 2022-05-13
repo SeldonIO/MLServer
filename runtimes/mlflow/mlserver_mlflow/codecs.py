@@ -33,17 +33,34 @@ class TensorDictCodec(RequestCodec):
         return is_list_of(list(payload.values()), np.ndarray)
 
     @classmethod
-    def encode(
+    def encode_response(
         cls, model_name: str, payload: TensorDict, model_version: str = None
     ) -> InferenceResponse:
-        outputs = [NumpyCodec.encode(name, value) for name, value in payload.items()]
+        outputs = [
+            NumpyCodec.encode_output(name, value) for name, value in payload.items()
+        ]
 
         return InferenceResponse(
             model_name=model_name, model_version=model_version, outputs=outputs
         )
 
     @classmethod
-    def decode(cls, request: InferenceRequest) -> TensorDict:
+    def decode_response(cls, response: InferenceResponse) -> TensorDict:
+        return {
+            response_output.name: NumpyCodec.decode_output(response_output)
+            for response_output in response.outputs
+        }
+
+    @classmethod
+    def encode_request(cls, payload: TensorDict) -> InferenceRequest:
+        inputs = [
+            NumpyCodec.encode_input(name, value) for name, value in payload.items()
+        ]
+
+        return InferenceRequest(inputs=inputs)
+
+    @classmethod
+    def decode_request(cls, request: InferenceRequest) -> TensorDict:
         return {
             request_input.name: get_decoded_or_raw(request_input)
             for request_input in request.inputs

@@ -99,7 +99,7 @@ class MLModel:
             return get_decoded(request_input)
 
         if default_codec:
-            return default_codec.decode(request_input)
+            return default_codec.decode_input(request_input)
 
         return request_input.data
 
@@ -114,7 +114,7 @@ class MLModel:
             return get_decoded(inference_request)
 
         if default_codec:
-            return default_codec.decode(inference_request)
+            return default_codec.decode_request(inference_request)
 
         return inference_request
 
@@ -129,7 +129,7 @@ class MLModel:
             return inference_response
 
         if default_codec:
-            return default_codec.encode(self.name, payload, self.version)
+            return default_codec.encode_response(self.name, payload, self.version)
 
         payload_type = str(type(payload))
         raise CodecNotFound(payload_type=payload_type, is_input=False, is_request=True)
@@ -148,7 +148,7 @@ class MLModel:
             return response_output
 
         if default_codec:
-            return default_codec.encode(request_output.name, payload)
+            return default_codec.encode_output(request_output.name, payload)
 
         raise CodecNotFound(name=request_output.name, is_input=False, is_request=False)
 

@@ -4,6 +4,7 @@ import json
 
 from typing import Any
 
+from mlserver.types import Parameters
 from mlserver.codecs import NumpyCodec, StringCodec, InputCodec, Base64Codec
 from mlserver.rest.responses import Response
 
@@ -40,7 +41,7 @@ from mlserver.rest.responses import Response
                 "name": "output-0",
                 "datatype": "BYTES",
                 "shape": [3],
-                "parameters": None,
+                "parameters": Parameters(content_type=StringCodec.ContentType),
                 "data": ["hey", "what's", "up"],
             },
         ),
@@ -59,7 +60,7 @@ from mlserver.rest.responses import Response
 )
 def test_encode_output_tensor(decoded: Any, codec: InputCodec, expected: dict):
     # Serialise response into final output bytes
-    payload = codec.encode(name="output-0", payload=decoded)
+    payload = codec.encode_output(name="output-0", payload=decoded)
     response = Response(content=None)
     rendered_as_bytes = response.render(payload.dict())
 

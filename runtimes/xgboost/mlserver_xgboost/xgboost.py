@@ -32,5 +32,5 @@ class XGBoostModel(MLModel):
         return types.InferenceResponse(
             model_name=self.name,
             model_version=self.version,
-            outputs=[DMatrixCodec.encode("predict", prediction)],
+            outputs=[DMatrixCodec.encode_output("predict", prediction)],
         )

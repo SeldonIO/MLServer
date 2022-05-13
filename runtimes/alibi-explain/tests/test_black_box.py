@@ -104,7 +104,7 @@ async def test_end_2_end(
         convert_from_bytes(runtime_result.outputs[0], ty=str)
     )
     alibi_result = alibi_anchor_image_model.explain(
-        NumpyCodec.decode(payload.inputs[0])[0]  # payload has batch dimension,
+        NumpyCodec.decode_input(payload.inputs[0])[0]  # payload has batch dimension,
         # we remove it for alibi
     )
 

@@ -17,7 +17,7 @@ class DMatrixCodec(NumpyCodec):
         return isinstance(payload, DMatrix)
 
     @classmethod
-    def decode(cls, request_input: RequestInput) -> DMatrix:  # type: ignore
+    def decode_request(cls, request_input: RequestInput) -> DMatrix:  # type: ignore
         try:
             ndarray = super().decode(request_input)
             return DMatrix(ndarray)

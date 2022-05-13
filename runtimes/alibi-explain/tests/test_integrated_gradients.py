@@ -54,7 +54,7 @@ async def test_end_2_end(
 
     # get the data as numpy from the inference request payload
     infer_model, ig_model = alibi_integrated_gradients_model
-    input_data_np = NumpyCodec.decode(payload.inputs[0])
+    input_data_np = NumpyCodec.decode_input(payload.inputs[0])
     predictions = infer_model(input_data_np).numpy().argmax(axis=1)
     alibi_result = ig_model.explain(input_data_np, target=predictions)
 
