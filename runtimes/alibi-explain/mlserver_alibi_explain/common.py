@@ -143,7 +143,7 @@ def to_v2_inference_request(
         # TODO: we probably need to tell alibi about the expected types to use
         # or even whether it is a probability of classes or targets etc
         inputs=[
-            input_payload_codec.encode_request_input(  # type: ignore
+            input_payload_codec.encode_input(  # type: ignore
                 name=input_name, payload=input_data
             )
         ],

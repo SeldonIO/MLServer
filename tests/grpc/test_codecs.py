@@ -58,8 +58,8 @@ from mlserver.grpc.converters import (
 def test_encode_infer_response(
     decoded: Any, codec: RequestCodec, expected: pb.ModelInferResponse
 ):
-    response_output = codec.encode_output("my-model", decoded)
-    model_infer_response = ModelInferResponseConverter.from_types(response_output)
+    inference_response = codec.encode_response("my-model", decoded)
+    model_infer_response = ModelInferResponseConverter.from_types(inference_response)
     assert model_infer_response == expected
 
 
