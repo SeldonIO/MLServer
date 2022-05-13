@@ -6,13 +6,11 @@ from distutils.util import strtobool
 from pydantic import BaseSettings
 from mlserver.errors import MLServerError
 
-from optimum.onnxruntime import (
-    ORTModelForCausalLM,
-    ORTModelForFeatureExtraction,
-    ORTModelForQuestionAnswering,
-    ORTModelForSequenceClassification,
-    ORTModelForTokenClassification,
-)
+from transformers.pipelines import pipeline
+from transformers.pipelines.base import Pipeline
+from transformers.models.auto.tokenization_auto import AutoTokenizer
+
+from optimum.pipelines import SUPPORTED_TASKS as SUPPORTED_OPTIMUM_TASKS
 
 
 HUGGINGFACE_TASK_TAG = "task"
@@ -21,13 +19,8 @@ ENV_PREFIX_HUGGINGFACE_SETTINGS = "MLSERVER_MODEL_HUGGINGFACE_"
 HUGGINGFACE_PARAMETERS_TAG = "huggingface_parameters"
 PARAMETERS_ENV_NAME = "PREDICTIVE_UNIT_PARAMETERS"
 
-SUPPORTED_OPTIMIZED_TASKS = {
-    "feature-extraction": ORTModelForFeatureExtraction,
-    "sentiment-analysis": ORTModelForSequenceClassification,
-    "ner": ORTModelForTokenClassification,
-    "question-answering": ORTModelForQuestionAnswering,
-    "text-generation": ORTModelForCausalLM,
-}
+# Required as workaround until solved https://github.com/huggingface/optimum/issues/186
+TRANSFORMER_CACHE_DIR = os.environ.get("TRANSFORMERS_CACHE", None)
 
 
 class InvalidTranformerInitialisation(MLServerError):
@@ -94,3 +87,32 @@ def parse_parameters_from_env() -> Dict:
                     reason="MICROSERVICE_BAD_PARAMETER",
                 )
     return parsed_parameters
+
+
+def load_pipeline_from_settings(hf_settings: HuggingFaceSettings) -> Pipeline:
+    """
+    TODO
+    """
+    # TODO: Support URI for locally downloaded artifacts
+    # uri = model_parameters.uri
+    model = hf_settings.pretrained_model
+    tokenizer = hf_settings.pretrained_tokenizer
+
+    if model and not tokenizer:
+        tokenizer = model
+
+    if hf_settings.optimum_model:
+        optimum_class = SUPPORTED_OPTIMUM_TASKS[hf_settings.task]["class"][0]
+        model = optimum_class.from_pretrained(
+            hf_settings.pretrained_model,
+            from_transformers=True,
+            cache_dir=TRANSFORMER_CACHE_DIR,
+        )
+        tokenizer = AutoTokenizer.from_pretrained(tokenizer)
+
+    pp = pipeline(
+        hf_settings.task,
+        model=model,
+        tokenizer=tokenizer,
+    )
+    return pp
