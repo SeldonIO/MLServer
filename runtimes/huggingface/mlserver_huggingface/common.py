@@ -19,6 +19,9 @@ ENV_PREFIX_HUGGINGFACE_SETTINGS = "MLSERVER_MODEL_HUGGINGFACE_"
 HUGGINGFACE_PARAMETERS_TAG = "huggingface_parameters"
 PARAMETERS_ENV_NAME = "PREDICTIVE_UNIT_PARAMETERS"
 
+# Required as workaround until solved https://github.com/huggingface/optimum/issues/186
+TRANSFORMER_CACHE_DIR = os.environ.get("TRANSFORMERS_CACHE", None)
+
 
 class InvalidTranformerInitialisation(MLServerError):
     def __init__(self, code: int, reason: str):
@@ -99,9 +102,12 @@ def load_pipeline_from_settings(hf_settings: HuggingFaceSettings) -> Pipeline:
         tokenizer = model
 
     if hf_settings.optimum_model:
+        print(f"optimum cache {TRANSFORMER_CACHE_DIR}")
         optimum_class = SUPPORTED_OPTIMUM_TASKS[hf_settings.task]["class"][0]
         model = optimum_class.from_pretrained(
-            hf_settings.pretrained_model, from_transformers=True
+            hf_settings.pretrained_model,
+            from_transformers=True,
+            cache_dir=TRANSFORMER_CACHE_DIR,
         )
         tokenizer = AutoTokenizer.from_pretrained(tokenizer)
 
