@@ -2,13 +2,14 @@
 
 Out of the box, MLServer supports the deployment and serving of HuggingFace Transformer models with the following features:
 
-- Loading of Transformer Model artifacts from Hub.
-- Supports Optimized models using Optimum library
+- Loading of Transformer Model artifacts from the Hugging Face Hub.
+- Model quantization & optimization using the Hugging Face Optimum library
+- Request batching for GPU optimization (via adaptive batching and request batching)
 
 In this example, we will showcase some of this features using an example model.
 
 
-```
+```python
 # Import required dependencies
 import requests
 ```
@@ -18,8 +19,10 @@ import requests
 Now that we have trained and serialised our model, we are ready to start serving it.
 For that, the initial step will be to set up a `model-settings.json` that instructs MLServer to load our artifact using the HuggingFace Inference Runtime.
 
+We will show how to add share a task 
 
-```
+
+```python
 %%writefile ./model-settings.json
 {
     "name": "transformer",
@@ -49,7 +52,7 @@ Since this command will start the server and block the terminal, waiting for req
 
 
 
-```
+```python
 inference_request = {
     "inputs": [
         {
@@ -86,7 +89,7 @@ We can also leverage the Optimum library that allows us to access quantized and 
 We can download pretrained optimized models from the hub if available by enabling the `optimum_model` flag:
 
 
-```
+```python
 %%writefile ./model-settings.json
 {
     "name": "transformer",
@@ -116,7 +119,7 @@ mlserver start .
 The request can now be sent using the same request structure but using optimized models for better performance.
 
 
-```
+```python
 inference_request = {
     "inputs": [
         {
@@ -155,7 +158,7 @@ We can support multiple other transformers other than just text generation, belo
 ### Question Answering
 
 
-```
+```python
 %%writefile ./model-settings.json
 {
     "name": "transformer",
@@ -179,7 +182,7 @@ mlserver start .
 ```
 
 
-```
+```python
 inference_request = {
     "inputs": [
         {
@@ -218,7 +221,7 @@ requests.post("http://localhost:8080/v2/models/transformer/infer", json=inferenc
 ### Sentiment Analysis
 
 
-```
+```python
 %%writefile ./model-settings.json
 {
     "name": "transformer",
@@ -242,7 +245,7 @@ mlserver start .
 ```
 
 
-```
+```python
 inference_request = {
     "inputs": [
         {
@@ -272,7 +275,121 @@ requests.post("http://localhost:8080/v2/models/transformer/infer", json=inferenc
 
 
 
+## GPU Acceleration
 
+We can also evaluate GPU acceleration, we can test the speed on CPU vs GPU using the following parameters
+
+### Testing with CPU
+
+We first test the time taken with the device=-1 which configures CPU by default
+
+
+```python
+%%writefile ./model-settings.json
+{
+    "name": "transformer",
+    "implementation": "mlserver_huggingface.HuggingFaceRuntime",
+    "parallel_workers": 0,
+    "parameters": {
+        "extra": {
+            "task": "text-generation",
+            "device": -1,
+            "batch_size": 128
+        }
+    }
+}
 ```
+
+    Overwriting ./model-settings.json
+
+
+Once again, you are able to run the model using the MLServer CLI.
+
+```shell
+mlserver start .
+```
+
+
+```python
+inference_request = {
+    "inputs": [
+        {
+          "name": "text_inputs",
+          "shape": [1],
+          "datatype": "BYTES",
+          "data": ["This is a generation for the work" for i in range(512)],
+        }
+    ]
+}
+
+# Benchmark time
+import time
+start_time = time.monotonic()
+
+requests.post("http://localhost:8080/v2/models/transformer/infer", json=inference_request)
+
+print(f"Elapsed time: {time.monotonic() - start_time}")
+```
+
+    Elapsed time: 81.57849169999827
+
+
+We can see that it takes 81 seconds which is 8 times longer than the gpu example below.
+
+### Testing with GPU
+
+IMPORTANT: Running the code below requries having a machine with GPU configured correctly to work for Tensorflow/Pytorch.
+    
+Now we'll run the benchmark with GPU configured, which we can do by setting `device=0`
+
+
+```python
+%%writefile ./model-settings.json
+{
+    "name": "transformer",
+    "implementation": "mlserver_huggingface.HuggingFaceRuntime",
+    "parallel_workers": 0,
+    "parameters": {
+        "extra": {
+            "task": "text-generation",
+            "device": 0,
+            "batch_size": 128
+        }
+    }
+}
+```
+
+    Overwriting ./model-settings.json
+
+
+
+```python
+inference_request = {
+    "inputs": [
+        {
+          "name": "text_inputs",
+          "shape": [1],
+          "datatype": "BYTES",
+          "data": ["This is a generation for the work" for i in range(512)],
+        }
+    ]
+}
+
+# Benchmark time
+import time
+start_time = time.monotonic()
+
+requests.post("http://localhost:8080/v2/models/transformer/infer", json=inference_request)
+
+print(f"Elapsed time: {time.monotonic() - start_time}")
+```
+
+    Elapsed time: 11.27933280000434
+
+
+We can see that the elapsed time is 8 times less than the CPU version!
+
+
+```python
 
 ```
