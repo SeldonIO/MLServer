@@ -47,7 +47,7 @@ class InputCodec:
         raise NotImplementedError()
 
     @classmethod
-    def encode_input(cls, payload: Any) -> RequestInput:
+    def encode_input(cls, name: str, payload: Any) -> RequestInput:
         raise NotImplementedError()
 
     @classmethod

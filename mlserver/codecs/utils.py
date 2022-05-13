@@ -27,7 +27,9 @@ InputOrOutput = Union[RequestInput, ResponseOutput]
 InputCodecLike = Union[Type[InputCodec], InputCodec]
 RequestCodecLike = Union[Type[RequestCodec], RequestCodec]
 
-Parametrised = Union[InferenceRequest, RequestInput, RequestOutput]
+Parametrised = Union[
+    InferenceRequest, RequestInput, RequestOutput, ResponseOutput, InferenceResponse
+]
 Tagged = Union[MetadataTensor, ModelSettings]
 DecodedParameterName = "_decoded_payload"
 
@@ -205,7 +207,7 @@ class SingleInputRequestCodec(RequestCodec):
             )
 
         first_output = response.outputs[0]
-        if not has_decoded(first_outputs) and cls.InputCodec is not None:
+        if not has_decoded(first_output) and cls.InputCodec is not None:
             decoded_payload = cls.InputCodec.decode_output(first_output)  # type: ignore
             _save_decoded(first_output, decoded_payload)
 

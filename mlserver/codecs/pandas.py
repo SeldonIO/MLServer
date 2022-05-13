@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-from typing import Any, List, Union
+from typing import Any, List
 
 from .base import RequestCodec, register_request_codec
 from .numpy import to_datatype, to_dtype
