@@ -1,6 +1,10 @@
 from typing import Optional, Type, Any
 from mlserver.codecs.utils import has_decoded, _save_decoded, get_decoded_or_raw
-from mlserver.codecs.base import RequestCodec, register_request_codec, InputCodec as InputCodecTy
+from mlserver.codecs.base import (
+    RequestCodec,
+    register_request_codec,
+    InputCodec as InputCodecTy,
+)
 from mlserver.codecs import (
     StringCodec,
 )
