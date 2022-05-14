@@ -96,6 +96,7 @@ def load_pipeline_from_settings(hf_settings: HuggingFaceSettings) -> Pipeline:
     # uri = model_parameters.uri
     model = hf_settings.pretrained_model
     tokenizer = hf_settings.pretrained_tokenizer
+    device = hf_settings.device
 
     if model and not tokenizer:
         tokenizer = model
@@ -107,12 +108,14 @@ def load_pipeline_from_settings(hf_settings: HuggingFaceSettings) -> Pipeline:
             from_transformers=True,
         )
         tokenizer = AutoTokenizer.from_pretrained(tokenizer)
+        # Device needs to be set to -1 due to https://github.com/huggingface/optimum/issues/191
+        device = -1
 
     pp = pipeline(
         hf_settings.task,
         model=model,
         tokenizer=tokenizer,
-        device=hf_settings.device,
+        device=device,
         batch_size=hf_settings.batch_size,
     )
 
