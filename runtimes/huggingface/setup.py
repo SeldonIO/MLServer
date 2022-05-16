@@ -35,7 +35,7 @@ setup(
     packages=find_packages(exclude=["tests", "tests.*"]),
     install_requires=[
         "mlserver",
-        "optimum[onnxruntime]==1.2.0",
+        "optimum[onnxruntime-gpu]==1.2.1",
     ],
     long_description=_load_description(),
     long_description_content_type="text/markdown",

@@ -40,6 +40,8 @@ class HuggingFaceSettings(BaseSettings):
     pretrained_model: Optional[str] = None
     pretrained_tokenizer: Optional[str] = None
     optimum_model: bool = False
+    device: int = -1
+    batch_size: Optional[int] = None
 
 
 def parse_parameters_from_env() -> Dict:
@@ -94,6 +96,7 @@ def load_pipeline_from_settings(hf_settings: HuggingFaceSettings) -> Pipeline:
     # uri = model_parameters.uri
     model = hf_settings.pretrained_model
     tokenizer = hf_settings.pretrained_tokenizer
+    device = hf_settings.device
 
     if model and not tokenizer:
         tokenizer = model
@@ -105,10 +108,20 @@ def load_pipeline_from_settings(hf_settings: HuggingFaceSettings) -> Pipeline:
             from_transformers=True,
         )
         tokenizer = AutoTokenizer.from_pretrained(tokenizer)
+        # Device needs to be set to -1 due to known issue
+        # https://github.com/huggingface/optimum/issues/191
+        device = -1
 
     pp = pipeline(
         hf_settings.task,
         model=model,
         tokenizer=tokenizer,
+        device=device,
+        batch_size=hf_settings.batch_size,
     )
+
+    # If batch_size > 0 we need to ensure tokens are padded
+    if hf_settings.batch_size:
+        pp.tokenizer.pad_token_id = [str(pp.model.config.eos_token_id)]  # type: ignore
+
     return pp

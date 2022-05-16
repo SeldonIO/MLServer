@@ -1,22 +1,21 @@
 import json
 import asyncio
-from mlserver.codecs import (
-    StringCodec,
-)
-from mlserver.codecs.string import StringRequestCodec
 from mlserver.model import MLModel
 from mlserver.settings import ModelSettings
 from mlserver.types import (
     InferenceRequest,
     InferenceResponse,
 )
+from mlserver.codecs import (
+    StringCodec,
+)
 from mlserver_huggingface.common import (
     HuggingFaceSettings,
-    HUGGINGFACE_PARAMETERS_TAG,
     parse_parameters_from_env,
     InvalidTranformerInitialisation,
     load_pipeline_from_settings,
 )
+from mlserver_huggingface.codecs import MultiStringRequestCodec
 from transformers.pipelines import SUPPORTED_TASKS
 from optimum.pipelines import SUPPORTED_TASKS as SUPPORTED_OPTIMUM_TASKS
 
@@ -75,20 +74,17 @@ class HuggingFaceRuntime(MLModel):
         """
 
         # TODO: convert and validate?
-        input_data = self.decode_request(payload, default_codec=StringRequestCodec)
+        kwargs = self.decode_request(payload, default_codec=MultiStringRequestCodec)
 
-        params = payload.parameters
-        kwarg_params = dict()
-        if params is not None:
-            params_dict = params.dict()
-            if HUGGINGFACE_PARAMETERS_TAG in params_dict:
-                kwarg_params = params_dict[HUGGINGFACE_PARAMETERS_TAG]
-
-        prediction = self._model(input_data, **kwarg_params)
+        args = []
+        if "args" in kwargs:
+            args = kwargs["args"]
+            del kwargs["args"]
+        prediction = self._model(*args, **kwargs)
 
         # TODO: Convert hf output to v2 protocol, for now we use to_json
         prediction_encoded = StringCodec.encode(
-            payload=[json.dumps(prediction)], name="huggingface"
+            payload=[json.dumps(prediction)], name="output"
         )
 
         return InferenceResponse(
