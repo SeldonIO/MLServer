@@ -81,6 +81,9 @@ class Settings(BaseSettings):
     http_port: int = 8080
     """Port where to listen for HTTP / REST connections."""
 
+    root_path: str = ""
+    """Set the ASGI root_path for applications submounted below a given URL path."""
+
     grpc_port: int = 8081
     """Port where to listen for gRPC connections."""
 
