@@ -151,7 +151,10 @@ class SingleModelRegistry:
         await model.load()
 
         # TODO: Expose custom handlers on ParallelRuntime
-        await asyncio.gather(*[callback(model) for callback in self._on_model_load])
+        for callback in self._on_model_load:
+            # NOTE: Callbacks need to be executed sequentially to ensure that
+            # they go in the right order
+            await callback(model)
         logger.info(f"Loaded model '{model.name}' succesfully.")
 
     async def _reload_model(self, old_model: MLModel, new_model: MLModel):
@@ -161,9 +164,8 @@ class SingleModelRegistry:
         await new_model.load()
 
         self._register(new_model)
-        await asyncio.gather(
-            *[callback(old_model, new_model) for callback in self._on_model_reload]
-        )
+        for callback in self._on_model_reload:
+            await callback(old_model, new_model)
 
         if old_model == self.default:
             self._clear_default()
@@ -193,7 +195,8 @@ class SingleModelRegistry:
             self._clear_default()
 
     async def _unload_model(self, model: MLModel, new_model: MLModel = None):
-        await asyncio.gather(*[callback(model) for callback in self._on_model_unload])
+        for callback in self._on_model_unload:
+            await callback(model)
 
         if model == self.default:
             self._clear_default()
