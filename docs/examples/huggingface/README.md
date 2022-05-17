@@ -389,6 +389,65 @@ print(f"Elapsed time: {time.monotonic() - start_time}")
 
 We can see that the elapsed time is 8 times less than the CPU version!
 
+### Adaptive Batching with GPU
+
+We can also see how the adaptive batching capabilities can allow for GPU acceleration by grouping multiple incoming requests so they get processed in GPU batch.
+
+In our case we can enable adaptive batching with the `max_batch_size` which in our case we will set it ot 128.
+
+We will also configure `max_batch_time` which specifies` the maximum amount of time the MLServer orchestrator will wait before sending for inference.
+
+
+```python
+%%writefile ./model-settings.json
+{
+    "name": "transformer",
+    "implementation": "mlserver_huggingface.HuggingFaceRuntime",
+    "max_batch_size": 128,
+    "max_batch_time": 1,
+    "parameters": {
+        "extra": {
+            "task": "text-generation",
+            "pretrained_model": "distilgpt2",
+            "device": 0,
+            "batch_size": 128
+        }
+    }
+}
+```
+
+    Overwriting ./model-settings.json
+
+
+In order to achieve the throughput required of 50 requests per second, we will use the tool `vegeta` which performs load testing.
+
+We can now see that we are able to see that the requests are batched and we receive 100% success eventhough the requests are sent one-by-one.
+
+
+```bash
+%%bash
+jq -ncM '{"method": "POST", "header": {"Content-Type": ["application/json"] }, "url": "http://localhost:8080/v2/models/transformer/infer", "body": "{\"inputs\":[{\"name\":\"text_inputs\",\"shape\":[1],\"datatype\":\"BYTES\",\"data\":[\"test\"]}]}" | @base64 }' \
+          | vegeta \
+                -cpus="2" \
+                attack \
+                -duration="3s" \
+                -rate="50" \
+                -format=json \
+          | vegeta \
+                report \
+                -type=text
+```
+
+    Requests      [total, rate, throughput]         150, 50.34, 22.28
+    Duration      [total, attack, wait]             6.732s, 2.98s, 3.753s
+    Latencies     [min, mean, 50, 90, 95, 99, max]  1.975s, 3.168s, 3.22s, 4.065s, 4.183s, 4.299s, 4.318s
+    Bytes In      [total, mean]                     60978, 406.52
+    Bytes Out     [total, mean]                     12300, 82.00
+    Success       [ratio]                           100.00%
+    Status Codes  [code:count]                      200:150  
+    Error Set:
+
+
 
 ```python
 
