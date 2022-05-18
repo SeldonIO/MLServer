@@ -119,9 +119,8 @@ class AdaptiveBatcher:
 
             try:
                 while len(to_batch) < self._max_batch_size:
-                    read_op = self._requests.get()
-                    internal_id, inference_request = await wait_for(
-                        read_op, timeout=timeout
+                    internal_id, inference_request = await self._get_request(
+                        timeout=timeout
                     )
                     to_batch[internal_id] = inference_request
 
@@ -133,3 +132,10 @@ class AdaptiveBatcher:
                 pass
 
             yield BatchedRequests(to_batch)
+
+    async def _get_request(self, timeout: float) -> Tuple[str, InferenceRequest]:
+        if not self._requests.empty():
+            return await self._requests.get()
+
+        read_op = self._requests.get()
+        return await wait_for(read_op, timeout=timeout)
