@@ -13,7 +13,7 @@ from .messages import ModelUpdateType, ModelUpdateMessage, InferenceResponseMess
 from .utils import terminate_queue, END_OF_QUEUE
 from .logging import logger
 
-NON_HANDLED_SIGNALS = [signal.SIGINT, signal.SIGTERM, signal.SIGQUIT]
+IGNORED_SIGNALS = [signal.SIGINT, signal.SIGTERM, signal.SIGQUIT]
 
 
 def _noop():
@@ -56,7 +56,7 @@ class Worker(Process):
         """
         loop = asyncio.get_event_loop()
 
-        for sign in NON_HANDLED_SIGNALS:
+        for sign in IGNORED_SIGNALS:
             # Ensure that signal handlers are a no-op, to let the main process
             # take care of cleaning up workers
             loop.add_signal_handler(sign, _noop)
