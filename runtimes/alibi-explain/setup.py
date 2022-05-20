@@ -35,7 +35,7 @@ setup(
     packages=find_packages(exclude=["tests", "tests.*"]),
     install_requires=[
         "mlserver",
-        "alibi[shap]",
+        "alibi[shap, tensorflow]",
         "orjson",
         # numba 0.55.0 requires: numpy <1.22 (for Shap / alibi)
         "numpy<1.22",
