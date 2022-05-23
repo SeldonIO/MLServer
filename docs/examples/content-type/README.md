@@ -250,6 +250,10 @@ class PillowCodec(NumpyCodec):
     DefaultMode = "L"
     
     @classmethod
+    def can_encode(cls, payload: Image) -> bool:
+        return isinstance(payload, Image)
+    
+    @classmethod
     def _decode(cls, input_or_output: InputOrOutput) -> Image:
         if input_or_output.datatype != "BYTES":
             # If not bytes, assume it's an array
