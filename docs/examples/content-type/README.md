@@ -23,8 +23,8 @@ from mlserver.types import InferenceRequest, InferenceResponse, ResponseOutput
 from mlserver.codecs import DecodedParameterName
 
 _to_exclude = {
-    "parameters": {DecodedParameterName},
-    'inputs': {"__all__": {"parameters": {DecodedParameterName}}}
+    "parameters": {DecodedParameterName, "headers"},
+    'inputs': {"__all__": {"parameters": {DecodedParameterName, "headers"}}}
 }
 
 class EchoRuntime(MLModel):
@@ -97,7 +97,7 @@ payload = {
         {
             "name": "parameters-str",
             "datatype": "BYTES",
-            "shape": [11],
+            "shape": [1],
             "data": "hello world 😁",
             "parameters": {
                 "content_type": "str"
@@ -110,6 +110,40 @@ response = requests.post(
     "http://localhost:8080/v2/models/content-type-example/infer",
     json=payload
 )
+```
+
+### Codecs
+
+In order to prepare our V2 request payload, it's often better (and recommended) to use codecs.
+This lets you generate a request with the right structure, without the need to know much about what codecs expect.
+
+
+```python
+import requests
+import numpy as np
+
+from mlserver.types import InferenceRequest, InferenceResponse
+from mlserver.codecs import NumpyCodec, StringCodec
+
+parameters_np = np.array([[1, 2], [3, 4]])
+parameters_str = ["hello world 😁"]
+
+payload = InferenceRequest(
+    inputs=[
+        NumpyCodec.encode_input("parameters-np", parameters_np),
+        # The `use_bytes=False` flag will ensure that the encoded payload is JSON-compatible
+        StringCodec.encode_input("parameters-str", parameters_str, use_bytes=False),
+    ]
+)
+
+response = requests.post(
+    "http://localhost:8080/v2/models/content-type-example/infer",
+    json=payload.dict()
+)
+
+response_payload = InferenceResponse.parse_raw(response.text)
+print(NumpyCodec.decode_output(response_payload.outputs[0]))
+print(StringCodec.decode_output(response_payload.outputs[1]))
 ```
 
 ### Model Metadata
@@ -201,6 +235,7 @@ from mlserver.types import (
     ResponseOutput
 )
 from mlserver.codecs import NumpyCodec, register_input_codec, DecodedParameterName
+from mlserver.codecs.utils import InputOrOutput
 
 
 _to_exclude = {
@@ -208,14 +243,33 @@ _to_exclude = {
     'inputs': {"__all__": {"parameters": {DecodedParameterName}}}
 }
 
+
 @register_input_codec
 class PillowCodec(NumpyCodec):
     ContentType = "img"
     DefaultMode = "L"
     
-    def encode(self, name: str, payload: Image) -> ResponseOutput:
+    @classmethod
+    def _decode(cls, input_or_output: InputOrOutput) -> Image:
+        if input_or_output.datatype != "BYTES":
+            # If not bytes, assume it's an array
+            image_array = super().decode_input(input_or_output)
+            return Image.fromarray(image_array, mode=cls.DefaultMode)
+
+        encoded = input_or_output.data.__root__
+        if isinstance(encoded, str):
+            encoded = encoded.encode()
+
+        return Image.frombytes(
+            mode=cls.DefaultMode,
+            size=input_or_output.shape,
+            data=encoded
+        )
+    
+    @classmethod
+    def encode_output(cls, name: str, payload: Image) -> ResponseOutput:
         byte_array = io.BytesIO()
-        payload.save(byte_array, mode=self.DefaultMode)
+        payload.save(byte_array, mode=cls.DefaultMode)
         
         return ResponseOutput(
             name=name,
@@ -224,21 +278,23 @@ class PillowCodec(NumpyCodec):
             data=byte_array.getvalue()
         )
     
-    def decode(self, request_input: RequestInput) -> Image:
-        if request_input.datatype != "BYTES":
-            # If not bytes, assume it's an array
-            image_array = super().decode(request_input)
-            return Image.fromarray(image_array, mode=self.DefaultMode)
-        
-        encoded = request_input.data.__root__
-        if isinstance(encoded, str):
-            encoded = encoded.encode()
-
-        return Image.frombytes(
-            mode=self.DefaultMode,
-            size=request_input.shape,
-            data=encoded
+    @classmethod
+    def decode_output(cls, response_output: ResponseOutput) -> Image:
+        return cls._decode(response_output)
+    
+    @classmethod
+    def encode_input(cls, name: str, payload: Image) -> RequestInput:
+        output = cls.encode_output(name, payload)
+        return ResponseOutput(
+            name=output.name,
+            shape=output.shape,
+            datatype=output.datatype,
+            data=output.data
         )
+    
+    @classmethod
+    def decode_input(cls, request_input: RequestInput) -> Image:
+        return cls._decode(request_input)
 
 class EchoRuntime(MLModel):
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
