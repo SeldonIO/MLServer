@@ -39,7 +39,7 @@ class InputCodec:
         return cls.encode_output(name, payload)
 
     @classmethod
-    def encode_output(cls, name: str, payload: Any) -> ResponseOutput:
+    def encode_output(cls, name: str, payload: Any, **kwargs) -> ResponseOutput:
         raise NotImplementedError()
 
     @classmethod
@@ -47,7 +47,7 @@ class InputCodec:
         raise NotImplementedError()
 
     @classmethod
-    def encode_input(cls, name: str, payload: Any) -> RequestInput:
+    def encode_input(cls, name: str, payload: Any, **kwargs) -> RequestInput:
         raise NotImplementedError()
 
     @classmethod

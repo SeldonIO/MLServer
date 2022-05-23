@@ -70,10 +70,11 @@ def test_decode_input(request_input, expected):
 
 
 @pytest.mark.parametrize(
-    "decoded, expected",
+    "decoded, use_bytes, expected",
     [
         (
             ["hello world"],
+            True,
             ResponseOutput(
                 name="foo",
                 shape=[1],
@@ -84,6 +85,7 @@ def test_decode_input(request_input, expected):
         ),
         (
             ["hey", "whats"],
+            True,
             ResponseOutput(
                 name="foo",
                 shape=[2],
@@ -92,34 +94,54 @@ def test_decode_input(request_input, expected):
                 parameters=Parameters(content_type=StringCodec.ContentType),
             ),
         ),
+        (
+            ["hey", "whats"],
+            False,
+            ResponseOutput(
+                name="foo",
+                shape=[2],
+                datatype="BYTES",
+                data=["hey", "whats"],
+                parameters=Parameters(content_type=StringCodec.ContentType),
+            ),
+        ),
     ],
 )
-def test_encode_output(decoded, expected):
-    response_output = StringCodec.encode_output(name="foo", payload=decoded)
+def test_encode_output(decoded, use_bytes, expected):
+    response_output = StringCodec.encode_output(name="foo", payload=decoded, use_bytes=use_bytes)
 
     assert expected == response_output
 
 
 @pytest.mark.parametrize(
-    "decoded, expected",
+    "decoded, use_bytes, expected",
     [
         (
             ["hello world"],
+            True,
             ResponseOutput(
                 name="foo", shape=[1], datatype="BYTES", data=[b"hello world"]
             ),
         ),
         (
             ["hey", "whats"],
+            True,
             ResponseOutput(
                 name="foo", shape=[2], datatype="BYTES", data=[b"hey", b"whats"]
             ),
         ),
+        (
+            ["hey", "whats"],
+            False,
+            ResponseOutput(
+                name="foo", shape=[2], datatype="BYTES", data=["hey", "whats"]
+            ),
+        ),
     ],
 )
-def test_encode_input(decoded, expected):
-    response_output = StringCodec.encode_output(name="foo", payload=decoded)
-    request_input = StringCodec.encode_input(name="foo", payload=decoded)
+def test_encode_input(decoded, use_bytes, expected):
+    response_output = StringCodec.encode_output(name="foo", payload=decoded, use_bytes=use_bytes)
+    request_input = StringCodec.encode_input(name="foo", payload=decoded, use_bytes=use_bytes)
 
     assert request_input.data.__root__ == response_output.data.__root__
     assert response_output.datatype == request_input.datatype
