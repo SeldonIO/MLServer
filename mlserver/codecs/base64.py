@@ -1,7 +1,7 @@
 import base64
 import binascii
 
-from typing import Any, List
+from typing import Any, List, Union
 from functools import partial
 
 from ..types import RequestInput, ResponseOutput
@@ -19,7 +19,7 @@ def _ensure_bytes(elem: PackElement) -> bytes:
     return elem
 
 
-def _encode_base64(elem: PackElement, use_bytes: bool) -> bytes:
+def _encode_base64(elem: PackElement, use_bytes: bool) -> Union[bytes, str]:
     as_bytes = _ensure_bytes(elem)
     b64_encoded = base64.b64encode(as_bytes)
     if use_bytes:
