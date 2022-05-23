@@ -46,10 +46,12 @@ class StringCodec(InputCodec):
         return is_list_of(payload, str)
 
     @classmethod
-    def encode_output(cls, name: str, payload: List[str], use_bytes: bool = True) -> ResponseOutput:
+    def encode_output(
+        cls, name: str, payload: List[str], use_bytes: bool = True, **kwargs
+    ) -> ResponseOutput:
         packed = payload
         if use_bytes:
-            packed = map(encode_str, payload)
+            packed = list(map(encode_str, payload))  # type: ignore
 
         shape = [len(payload)]
         return ResponseOutput(
@@ -69,7 +71,9 @@ class StringCodec(InputCodec):
         return _decode_input_or_output(request_input)
 
     @classmethod
-    def encode_input(cls, name: str, payload: List[str], use_bytes: bool = True) -> RequestInput:
+    def encode_input(
+        cls, name: str, payload: List[str], use_bytes: bool = True, **kwargs
+    ) -> RequestInput:
         output = cls.encode_output(name, payload, use_bytes)
 
         return RequestInput(

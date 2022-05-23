@@ -88,7 +88,9 @@ def test_can_encode(payload: Any, expected: bool):
     ],
 )
 def test_encode_output(decoded, use_bytes, expected):
-    response_output = DatetimeCodec.encode_output(name="foo", payload=decoded, use_bytes=use_bytes)
+    response_output = DatetimeCodec.encode_output(
+        name="foo", payload=decoded, use_bytes=use_bytes
+    )
 
     assert expected == response_output
 
@@ -215,7 +217,9 @@ def test_decode_output(encoded, expected):
     ],
 )
 def test_encode_input(decoded, use_bytes, expected):
-    request_input = DatetimeCodec.encode_input(name="foo", payload=decoded, use_bytes=use_bytes)
+    request_input = DatetimeCodec.encode_input(
+        name="foo", payload=decoded, use_bytes=use_bytes
+    )
 
     assert expected == request_input
 

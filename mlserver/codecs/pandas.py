@@ -57,7 +57,12 @@ class PandasCodec(RequestCodec):
 
     @classmethod
     def encode_response(
-        cls, model_name: str, payload: pd.DataFrame, model_version: str = None, use_bytes: bool = True
+        cls,
+        model_name: str,
+        payload: pd.DataFrame,
+        model_version: str = None,
+        use_bytes: bool = True,
+        **kwargs
     ) -> InferenceResponse:
         outputs = cls.encode_outputs(payload, use_bytes=use_bytes)
 
@@ -75,11 +80,17 @@ class PandasCodec(RequestCodec):
         return pd.DataFrame(data)
 
     @classmethod
-    def encode_outputs(cls, payload: pd.DataFrame, use_bytes: bool = True) -> List[ResponseOutput]:
-        return [_to_response_output(payload[col], use_bytes=use_bytes) for col in payload]
+    def encode_outputs(
+        cls, payload: pd.DataFrame, use_bytes: bool = True
+    ) -> List[ResponseOutput]:
+        return [
+            _to_response_output(payload[col], use_bytes=use_bytes) for col in payload
+        ]
 
     @classmethod
-    def encode_request(cls, payload: pd.DataFrame, use_bytes: bool = True) -> InferenceRequest:
+    def encode_request(
+        cls, payload: pd.DataFrame, use_bytes: bool = True, **kwargs
+    ) -> InferenceRequest:
         outputs = cls.encode_outputs(payload, use_bytes=use_bytes)
 
         return InferenceRequest(

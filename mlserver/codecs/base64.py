@@ -52,7 +52,9 @@ class Base64Codec(InputCodec):
         return is_list_of(payload, bytes)
 
     @classmethod
-    def encode_output(cls, name: str, payload: List[bytes], use_bytes: bool =True) -> ResponseOutput:
+    def encode_output(
+        cls, name: str, payload: List[bytes], use_bytes: bool = True, **kwargs
+    ) -> ResponseOutput:
         # Assume that payload is already in b64, so we only need to pack it
         packed = map(partial(_encode_base64, use_bytes=use_bytes), payload)
         shape = [len(payload)]
@@ -69,7 +71,9 @@ class Base64Codec(InputCodec):
         return list(map(_decode_base64, unpack(packed)))
 
     @classmethod
-    def encode_input(cls, name: str, payload: List[bytes], use_bytes: bool = True) -> RequestInput:
+    def encode_input(
+        cls, name: str, payload: List[bytes], use_bytes: bool = True, **kwargs
+    ) -> RequestInput:
         # Assume that payload is already in b64, so we only need to pack it
         output = cls.encode_output(name, payload, use_bytes)
         return RequestInput(

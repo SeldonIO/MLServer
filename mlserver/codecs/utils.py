@@ -186,7 +186,7 @@ class SingleInputRequestCodec(RequestCodec):
 
     @classmethod
     def encode_response(
-        cls, model_name: str, payload: Any, model_version: str = None
+        cls, model_name: str, payload: Any, model_version: str = None, **kwargs
     ) -> InferenceResponse:
         if cls.InputCodec is None:
             raise NotImplementedError(
@@ -214,7 +214,7 @@ class SingleInputRequestCodec(RequestCodec):
         return get_decoded_or_raw(first_output)
 
     @classmethod
-    def encode_request(cls, payload: Any) -> InferenceRequest:
+    def encode_request(cls, payload: Any, **kwargs) -> InferenceRequest:
         if cls.InputCodec is None:
             raise NotImplementedError(
                 f"No input codec found for {type(cls)} request codec"

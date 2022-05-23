@@ -108,7 +108,9 @@ def test_decode_input(request_input, expected):
     ],
 )
 def test_encode_output(decoded, use_bytes, expected):
-    response_output = StringCodec.encode_output(name="foo", payload=decoded, use_bytes=use_bytes)
+    response_output = StringCodec.encode_output(
+        name="foo", payload=decoded, use_bytes=use_bytes
+    )
 
     assert expected == response_output
 
@@ -140,8 +142,12 @@ def test_encode_output(decoded, use_bytes, expected):
     ],
 )
 def test_encode_input(decoded, use_bytes, expected):
-    response_output = StringCodec.encode_output(name="foo", payload=decoded, use_bytes=use_bytes)
-    request_input = StringCodec.encode_input(name="foo", payload=decoded, use_bytes=use_bytes)
+    response_output = StringCodec.encode_output(
+        name="foo", payload=decoded, use_bytes=use_bytes
+    )
+    request_input = StringCodec.encode_input(
+        name="foo", payload=decoded, use_bytes=use_bytes
+    )
 
     assert request_input.data.__root__ == response_output.data.__root__
     assert response_output.datatype == request_input.datatype

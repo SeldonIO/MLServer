@@ -107,7 +107,7 @@ class NumpyCodec(InputCodec):
         return isinstance(payload, np.ndarray)
 
     @classmethod
-    def encode_output(cls, name: str, payload: np.ndarray) -> ResponseOutput:
+    def encode_output(cls, name: str, payload: np.ndarray, **kwargs) -> ResponseOutput:
         datatype = to_datatype(payload.dtype)
 
         return ResponseOutput(
@@ -122,7 +122,7 @@ class NumpyCodec(InputCodec):
         return cls.decode_input(response_output)  # type: ignore
 
     @classmethod
-    def encode_input(cls, name: str, payload: np.ndarray) -> RequestInput:
+    def encode_input(cls, name: str, payload: np.ndarray, **kwargs) -> RequestInput:
         output = cls.encode_output(name=name, payload=payload)
 
         return RequestInput(

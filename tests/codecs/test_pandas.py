@@ -111,12 +111,15 @@ def test_to_response_output(series, use_bytes, expected):
                     ),
                 ],
             ),
-        )
+        ),
     ],
 )
 def test_encode_response(dataframe, use_bytes, expected):
     inference_response = PandasCodec.encode_response(
-        expected.model_name, dataframe, model_version=expected.model_version, use_bytes=use_bytes
+        expected.model_name,
+        dataframe,
+        model_version=expected.model_version,
+        use_bytes=use_bytes,
     )
 
     assert inference_response == expected
@@ -210,10 +213,12 @@ def test_decode_response(response: InferenceResponse, expected: pd.DataFrame):
                     ),
                 ],
             ),
-        )
+        ),
     ],
 )
-def test_encode_request(dataframe: pd.DataFrame, use_bytes: bool, expected: InferenceRequest):
+def test_encode_request(
+    dataframe: pd.DataFrame, use_bytes: bool, expected: InferenceRequest
+):
     inference_request = PandasCodec.encode_request(dataframe, use_bytes=use_bytes)
     assert inference_request == expected
 
