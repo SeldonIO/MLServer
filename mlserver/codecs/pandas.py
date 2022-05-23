@@ -22,11 +22,11 @@ def _to_series(input_or_output: InputOrOutput) -> pd.Series:
     return pd.Series(payload)
 
 
-def _to_response_output(series: pd.Series) -> ResponseOutput:
+def _to_response_output(series: pd.Series, use_bytes: bool = True) -> ResponseOutput:
     datatype = to_datatype(series.dtype)
     data = series.tolist()
 
-    if datatype == "BYTES":
+    if datatype == "BYTES" and use_bytes:
         # To ensure that "string" columns can be encoded in gRPC, we need to
         # encode them as bytes
         data = list(map(_ensure_bytes, data))
@@ -57,9 +57,9 @@ class PandasCodec(RequestCodec):
 
     @classmethod
     def encode_response(
-        cls, model_name: str, payload: pd.DataFrame, model_version: str = None
+        cls, model_name: str, payload: pd.DataFrame, model_version: str = None, use_bytes: bool = True
     ) -> InferenceResponse:
-        outputs = cls.encode_outputs(payload)
+        outputs = cls.encode_outputs(payload, use_bytes=use_bytes)
 
         return InferenceResponse(
             model_name=model_name, model_version=model_version, outputs=outputs
@@ -75,12 +75,12 @@ class PandasCodec(RequestCodec):
         return pd.DataFrame(data)
 
     @classmethod
-    def encode_outputs(cls, payload: pd.DataFrame) -> List[ResponseOutput]:
-        return [_to_response_output(payload[col]) for col in payload]
+    def encode_outputs(cls, payload: pd.DataFrame, use_bytes: bool = True) -> List[ResponseOutput]:
+        return [_to_response_output(payload[col], use_bytes=use_bytes) for col in payload]
 
     @classmethod
-    def encode_request(cls, payload: pd.DataFrame) -> InferenceRequest:
-        outputs = cls.encode_outputs(payload)
+    def encode_request(cls, payload: pd.DataFrame, use_bytes: bool = True) -> InferenceRequest:
+        outputs = cls.encode_outputs(payload, use_bytes=use_bytes)
 
         return InferenceRequest(
             inputs=[

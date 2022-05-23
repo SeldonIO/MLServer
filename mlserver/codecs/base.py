@@ -84,7 +84,7 @@ class RequestCodec:
 
     @classmethod
     def encode_response(
-        cls, model_name: str, payload: Any, model_version: str = None
+        cls, model_name: str, payload: Any, model_version: str = None, **kwargs
     ) -> InferenceResponse:
         raise NotImplementedError()
 
@@ -93,7 +93,7 @@ class RequestCodec:
         raise NotImplementedError()
 
     @classmethod
-    def encode_request(cls, payload: Any) -> InferenceRequest:
+    def encode_request(cls, payload: Any, **kwargs) -> InferenceRequest:
         raise NotImplementedError()
 
     @classmethod

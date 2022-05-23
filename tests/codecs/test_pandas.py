@@ -26,40 +26,51 @@ def test_can_encode(payload: Any, expected: bool):
 
 
 @pytest.mark.parametrize(
-    "series, expected",
+    "series, use_bytes, expected",
     [
         (
             pd.Series(data=["hey", "abc"], name="foo"),
+            True,
             ResponseOutput(
                 name="foo", shape=[2], data=[b"hey", b"abc"], datatype="BYTES"
             ),
         ),
         (
+            pd.Series(data=["hey", "abc"], name="foo"),
+            False,
+            ResponseOutput(
+                name="foo", shape=[2], data=["hey", "abc"], datatype="BYTES"
+            ),
+        ),
+        (
             pd.Series(data=[1, 2, 3], name="bar"),
+            True,
             ResponseOutput(name="bar", shape=[3], data=[1, 2, 3], datatype="INT64"),
         ),
         (
             pd.Series(data=[1, 2.5, 3], name="bar"),
+            True,
             ResponseOutput(
                 name="bar", shape=[3], data=[1.0, 2.5, 3.0], datatype="FP64"
             ),
         ),
         (
             pd.Series(data=[[1, 2, 3], [4, 5, 6]], name="bar"),
+            True,
             ResponseOutput(
                 name="bar", shape=[2], data=[[1, 2, 3], [4, 5, 6]], datatype="BYTES"
             ),
         ),
     ],
 )
-def test_to_response_output(series, expected):
-    response_output = _to_response_output(series)
+def test_to_response_output(series, use_bytes, expected):
+    response_output = _to_response_output(series, use_bytes=use_bytes)
 
     assert response_output == expected
 
 
 @pytest.mark.parametrize(
-    "dataframe, expected",
+    "dataframe, use_bytes, expected",
     [
         (
             pd.DataFrame(
@@ -68,6 +79,7 @@ def test_to_response_output(series, expected):
                     "b": ["A", "B", "C"],
                 }
             ),
+            True,
             InferenceResponse(
                 model_name="my-model",
                 outputs=[
@@ -79,12 +91,32 @@ def test_to_response_output(series, expected):
                     ),
                 ],
             ),
+        ),
+        (
+            pd.DataFrame(
+                {
+                    "a": [1, 2, 3],
+                    "b": ["A", "B", "C"],
+                }
+            ),
+            False,
+            InferenceResponse(
+                model_name="my-model",
+                outputs=[
+                    ResponseOutput(
+                        name="a", shape=[3], datatype="INT64", data=[1, 2, 3]
+                    ),
+                    ResponseOutput(
+                        name="b", shape=[3], datatype="BYTES", data=["A", "B", "C"]
+                    ),
+                ],
+            ),
         )
     ],
 )
-def test_encode_response(dataframe, expected):
+def test_encode_response(dataframe, use_bytes, expected):
     inference_response = PandasCodec.encode_response(
-        expected.model_name, dataframe, model_version=expected.model_version
+        expected.model_name, dataframe, model_version=expected.model_version, use_bytes=use_bytes
     )
 
     assert inference_response == expected
@@ -143,7 +175,7 @@ def test_decode_response(response: InferenceResponse, expected: pd.DataFrame):
 
 
 @pytest.mark.parametrize(
-    "dataframe, expected",
+    "dataframe, use_bytes, expected",
     [
         (
             pd.DataFrame(
@@ -152,6 +184,7 @@ def test_decode_response(response: InferenceResponse, expected: pd.DataFrame):
                     "b": ["A", "B", "C"],
                 }
             ),
+            True,
             InferenceRequest(
                 inputs=[
                     RequestInput(name="a", shape=[3], datatype="INT64", data=[1, 2, 3]),
@@ -160,11 +193,28 @@ def test_decode_response(response: InferenceResponse, expected: pd.DataFrame):
                     ),
                 ],
             ),
+        ),
+        (
+            pd.DataFrame(
+                {
+                    "a": [1, 2, 3],
+                    "b": ["A", "B", "C"],
+                }
+            ),
+            False,
+            InferenceRequest(
+                inputs=[
+                    RequestInput(name="a", shape=[3], datatype="INT64", data=[1, 2, 3]),
+                    RequestInput(
+                        name="b", shape=[3], datatype="BYTES", data=["A", "B", "C"]
+                    ),
+                ],
+            ),
         )
     ],
 )
-def test_encode_request(dataframe: pd.DataFrame, expected: InferenceRequest):
-    inference_request = PandasCodec.encode_request(dataframe)
+def test_encode_request(dataframe: pd.DataFrame, use_bytes: bool, expected: InferenceRequest):
+    inference_request = PandasCodec.encode_request(dataframe, use_bytes=use_bytes)
     assert inference_request == expected
 
 
