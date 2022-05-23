@@ -2,6 +2,7 @@ import base64
 import binascii
 
 from typing import Any, List
+from functools import partial
 
 from ..types import RequestInput, ResponseOutput
 from .utils import is_list_of
@@ -18,9 +19,13 @@ def _ensure_bytes(elem: PackElement) -> bytes:
     return elem
 
 
-def _encode_base64(elem: PackElement) -> bytes:
+def _encode_base64(elem: PackElement, use_bytes: bool) -> bytes:
     as_bytes = _ensure_bytes(elem)
-    return base64.b64encode(as_bytes)
+    b64_encoded = base64.b64encode(as_bytes)
+    if use_bytes:
+        return b64_encoded
+
+    return b64_encoded.decode(_Base64StrCodec)
 
 
 def _decode_base64(elem: PackElement) -> bytes:
@@ -47,9 +52,9 @@ class Base64Codec(InputCodec):
         return is_list_of(payload, bytes)
 
     @classmethod
-    def encode_output(cls, name: str, payload: List[bytes]) -> ResponseOutput:
+    def encode_output(cls, name: str, payload: List[bytes], use_bytes: bool =True) -> ResponseOutput:
         # Assume that payload is already in b64, so we only need to pack it
-        packed = map(_encode_base64, payload)
+        packed = map(partial(_encode_base64, use_bytes=use_bytes), payload)
         shape = [len(payload)]
         return ResponseOutput(
             name=name,
@@ -64,15 +69,14 @@ class Base64Codec(InputCodec):
         return list(map(_decode_base64, unpack(packed)))
 
     @classmethod
-    def encode_input(cls, name: str, payload: List[bytes]) -> RequestInput:
+    def encode_input(cls, name: str, payload: List[bytes], use_bytes: bool = True) -> RequestInput:
         # Assume that payload is already in b64, so we only need to pack it
-        packed = map(_encode_base64, payload)
-        shape = [len(payload)]
+        output = cls.encode_output(name, payload, use_bytes)
         return RequestInput(
-            name=name,
-            datatype="BYTES",
-            shape=shape,
-            data=list(packed),
+            name=output.name,
+            datatype=output.datatype,
+            shape=output.shape,
+            data=output.data,
         )
 
     @classmethod
