@@ -46,16 +46,20 @@ async def responses() -> Queue:
 
 @pytest.fixture
 async def worker(
+    event_loop,
     requests: Queue,
     responses: Queue,
     load_message: ModelUpdateMessage,
 ) -> Worker:
-    loop = asyncio.get_event_loop()
     worker = Worker(requests, responses)
 
     # Simulate the worker running on a different process, but keep it to a
-    # thread to simplify debugging
-    worker_task = loop.run_in_executor(None, worker.run)
+    # thread to simplify debugging.
+    # Note that we call `worker.coro_run` instead of `worker.run` to avoid also
+    # triggering the other set up methods of `worker.run`.
+    worker_task = event_loop.run_in_executor(
+        None, lambda: asyncio.run(worker.coro_run())
+    )
 
     await worker.send_update(load_message)
 
