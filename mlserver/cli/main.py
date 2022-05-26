@@ -49,7 +49,7 @@ async def start(folder: str):
 @click.option("-t", "--tag", type=str)
 @click.option("-n", "--no-cache", type=bool)
 @click_async
-async def build(folder: str, tag: str):
+async def build(folder: str, tag: str, no_cache: bool):
     """
     Build a Docker image for a custom MLServer runtime.
     """
