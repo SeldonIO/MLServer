@@ -37,7 +37,9 @@ def write_dockerfile(
     return dockerfile_path
 
 
-def build_image(folder: str, dockerfile: str, image_tag: str, no_cache: bool = False) -> str:  # noqa: E501
+def build_image(
+        folder: str, dockerfile: str, image_tag: str, no_cache: bool = False
+) -> str:
     logger.info(f"Building Docker image with tag {image_tag}")
     _docker_command_prefix = "docker build --rm "
     with TemporaryDirectory() as tmp_dir:
