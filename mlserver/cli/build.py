@@ -37,12 +37,14 @@ def write_dockerfile(
     return dockerfile_path
 
 
-def build_image(folder: str, dockerfile: str, image_tag: str) -> str:
+def build_image(folder: str, dockerfile: str, image_tag: str, no_cache: bool = False) -> str:
     logger.info(f"Building Docker image with tag {image_tag}")
     with TemporaryDirectory() as tmp_dir:
         dockerfile_path = write_dockerfile(tmp_dir, dockerfile)
-
-        build_cmd = f"docker build {folder} -f {dockerfile_path} -t {image_tag}"
+        if no_cache:
+            build_cmd = f"docker build --rm --no-cache {folder} -f {dockerfile_path} -t {image_tag}"
+        else:
+            build_cmd = f"docker build --rm {folder} -f {dockerfile_path} -t {image_tag}"
         build_env = os.environ.copy()
         build_env["DOCKER_BUILDKIT"] = "1"
         subprocess.run(build_cmd, check=True, shell=True, env=build_env)
