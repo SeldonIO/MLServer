@@ -89,9 +89,6 @@ emphasize-lines: 2-4, 9-11
 To learn more about the available content types and how to use them, you can
 see all the available ones in the [Available Content
 Types](#available-content-types) section below.
-For a full end-to-end example on how content types work under the hood, you can
-also check out this [Content Type Decoding
-example](../examples/content-type/README.md).
 
 ```{note}
 It's important to keep in mind that content types can be specified at both the
@@ -99,6 +96,57 @@ It's important to keep in mind that content types can be specified at both the
 The former will apply to the **entire set of inputs**, whereas the latter will
 only apply to a **particular input** of the payload.
 ```
+
+### Codecs
+
+Under the hood, the conversion between content types is implemented using
+_codecs_.
+In the MLServer architecture, codecs are an abstraction which know how to
+_encode_ and _decode_ high-level Python types to and from the V2 Inference
+Protocol.
+
+Depending on the high-level Python type, encoding / decoding operations may
+require access to multiple input or output heads.
+For example, a Pandas Dataframe would need to aggregate all of the
+input-/output-heads present in a V2 Inference Protocol response.
+To account for this, codecs can work at either the request- / response-level
+(known as _"request codecs"_), or the input- / output-level (known as _"input
+codecs"_).
+
+Each of these, expose the following **public interface**, where `Any`
+represents a high-level Python datatype (e.g. a Pandas Dataframe, a Numpy
+Array, etc.):
+
+- Request Codecs:
+  - `encode_request(payload: Any) -> InferenceRequest`
+  - `decode_request(request: InferenceRequest) -> Any`
+  - `encode_response(model_name: str, payload: Any, model_version: str) -> InferenceResponse`
+  - `decode_response(response: InferenceResponse) -> Any`
+- Input Codecs:
+  - `encode_input(name: str, payload: Any) -> RequestInput`
+  - `decode_input(request_input: RequestInput) -> Any`
+  - `encode_output(name: str, payload: Any) -> ResponseOutput`
+  - `decode_output(response_output: ResponseOutput) -> Any`
+
+Note that, these methods can also be used as helpers to **encode requests** and
+**decode responses** on the client side.
+For example, in the example above, we could use codecs to encode the DataFrame
+into a V2-compatible request simply as:
+
+```python
+import pandas as pd
+
+from mlserver.codecs import PandasCodec
+
+dataframe = pd.DataFrame({'First Name': ["Joanne", "Michael"], 'Age': [34, 22]})
+
+v2_request = PandasCodec.encode_request(dataframe)
+print(v2_request)
+```
+
+For a full end-to-end example on how content types and codecs work under the
+hood, feel free to check out this [Content Type Decoding
+example](../examples/content-type/README.md).
 
 ### Model Metadata
 
@@ -148,13 +196,13 @@ Therefore, we can leverage this to override the model's metadata when needed.
 Out of the box, MLServer supports the following list of content types.
 However, this can be extended through the use of 3rd-party or custom runtimes.
 
-| Python Type                           | Content Type | Request Level | Input Level |
-| ------------------------------------- | ------------ | ------------- | ----------- |
-| [NumPy Array](#numpy-array)           | `np`         | ✅            | ✅          |
-| [Pandas DataFrame](#pandas-dataframe) | `pd`         | ✅            | ❌          |
-| [UTF-8 String](#utf-8-string)         | `str`        | ✅            | ✅          |
-| [Base64](#base64)                     | `base64`     | ✅            | ❌          |
-| [Datetime](#datetime)                 | `datetime`   | ✅            | ❌          |
+| Python Type                           | Content Type | Request Level | Request Codec                        | Input Level | Input Codec                     |
+| ------------------------------------- | ------------ | ------------- | ------------------------------------ | ----------- | ------------------------------- |
+| [NumPy Array](#numpy-array)           | `np`         | ✅            | `mlserver.codecs.NumpyRequestCodec`  | ✅          | `mlserver.codecs.NumpyCodec`    |
+| [Pandas DataFrame](#pandas-dataframe) | `pd`         | ✅            | `mlserver.codecs.PandasCodec`        | ❌          |                                 |
+| [UTF-8 String](#utf-8-string)         | `str`        | ✅            | `mlserver.codecs.StringRequestCodec` | ✅          | `mlserver.codecs.StringCodec`   |
+| [Base64](#base64)                     | `base64`     | ❌            |                                      | ✅          | `mlserver.codecs.Base64Codec`   |
+| [Datetime](#datetime)                 | `datetime`   | ❌            |                                      | ✅          | `mlserver.codecs.DatetimeCodec` |
 
 ```{note}
 MLServer allows you extend the supported content types by **adding custom
@@ -194,6 +242,8 @@ foo = np.array([[1, 2], [3, 4]])
 
 We could encode it as the input `foo` in a V2 protocol request as:
 
+`````{tab-set}
+````{tab-item} JSON payload
 ```{code-block} json
 ---
 emphasize-lines: 8-10
@@ -212,6 +262,39 @@ emphasize-lines: 8-10
   ]
 }
 ```
+````
+
+````{tab-item} NumPy Request Codec
+```{code-block} python
+---
+emphasize-lines: 1,4
+---
+from mlserver.codecs import NumpyRequestCodec
+
+# Encode an entire V2 request
+v2_request = NumpyRequestCodec.encode_request(foo)
+```
+````
+
+````{tab-item} NumPy Input Codec
+```{code-block} python
+---
+emphasize-lines: 2,8
+---
+from mlserver.types import InferenceRequest
+from mlserver.codecs import NumpyCodec
+
+# We can use the `NumpyCodec` to encode a single input head with name `foo`
+# within a larger request
+v2_request = InferenceRequest(
+  inputs=[
+    NumpyCodec.encode_input("foo", foo)
+  ]
+)
+```
+````
+
+`````
 
 When using the NumPy Array content type at the **request-level**, it will decode
 the entire request by considering only the first `input` element.
@@ -246,8 +329,10 @@ For example, if we consider the following dataframe:
 | a3  | b3  | c3  |
 | a4  | b4  | c4  |
 
-We could encode it to the V2 Inference Protocol as the following payload:
+We could encode it to the V2 Inference Protocol as:
 
+`````{tab-set}
+````{tab-item} JSON Payload
 ```{code-block} json
 ---
 emphasize-lines: 3, 7-8, 13-14, 19-20
@@ -278,6 +363,27 @@ emphasize-lines: 3, 7-8, 13-14, 19-20
   ]
 }
 ```
+````
+
+````{tab-item} Pandas Request Codec
+```{code-block} python
+---
+emphasize-lines: 3,11
+---
+import pandas as pd
+
+from mlserver.codecs import PandasCodec
+
+foo = pd.DataFrame({
+  "A": ["a1", "a2", "a3", "a4"],
+  "B": ["b1", "b2", "b3", "b4"],
+  "C": ["c1", "c2", "c3", "c4"]
+})
+
+v2_request = PandasCodec.encode_request(foo)
+```
+````
+`````
 
 ### UTF-8 String
 
@@ -288,6 +394,67 @@ Python string, taking into account the following:
 - The `shape` field represents the number of "strings" that are encoded in
   the payload (e.g. the `["hello world", "one more time"]` payload will have a
   shape of 2 elements).
+
+For example, when if we consider the following list of strings:
+
+```python
+foo = ["bar", "bar2"]
+```
+
+We could encode it to the V2 Inference Protocol as:
+
+`````{tab-set}
+````{tab-item} JSON Payload
+```{code-block} json
+---
+emphasize-lines: 3, 7-8, 13-14, 19-20
+---
+{
+  "parameters": {
+    "content_type": "str"
+  },
+  "inputs": [
+    {
+      "name": "foo",
+      "data": ["bar", "bar2"]
+      "datatype": "BYTES",
+      "shape": [2],
+    }
+  ]
+}
+```
+````
+
+````{tab-item} String Request Codec
+```{code-block} python
+---
+emphasize-lines: 1,4
+---
+from mlserver.codecs import StringRequestCodec
+
+# Encode an entire V2 request
+v2_request = StringRequestCodec.encode_request(foo, use_bytes=False)
+```
+````
+
+````{tab-item} String Input Codec
+```{code-block} python
+---
+emphasize-lines: 2,8
+---
+from mlserver.types import InferenceRequest
+from mlserver.codecs import StringCodec
+
+# We can use the `StringCodec` to encode a single input head with name `foo`
+# within a larger request
+v2_request = InferenceRequest(
+  inputs=[
+    StringCodec.encode_input("foo", foo, use_bytes=False)
+  ]
+)
+```
+````
+`````
 
 When using the `str` content type at the request-level, it will decode the
 entire request by considering only the first `input` element.
@@ -312,6 +479,9 @@ foo = b"Python is fun"
 
 We could encode it as the input `foo` of a V2 request as:
 
+`````{tab-set}
+
+````{tab-item} JSON Payload
 ```{code-block} json
 ---
 emphasize-lines: 8-10
@@ -330,6 +500,26 @@ emphasize-lines: 8-10
   ]
 }
 ```
+````
+
+````{tab-item} Base64 Input Codec
+```{code-block} python
+---
+emphasize-lines: 2,8
+---
+from mlserver.types import InferenceRequest
+from mlserver.codecs import Base64Codec
+
+# We can use the `Base64Codec` to encode a single input head with name `foo`
+# within a larger request
+v2_request = InferenceRequest(
+  inputs=[
+    Base64Codec.encode_input("foo", foo, use_bytes=False)
+  ]
+)
+```
+````
+`````
 
 ### Datetime
 
@@ -354,6 +544,9 @@ foo = datetime.datetime(2022, 1, 11, 11, 0, 0)
 
 We could encode it as the input `foo` of a V2 request as:
 
+`````{tab-set}
+
+````{tab-item} JSON Payload
 ```{code-block} json
 ---
 emphasize-lines: 8-10
@@ -372,3 +565,23 @@ emphasize-lines: 8-10
   ]
 }
 ```
+````
+
+````{tab-item} Datetime Input Codec
+```{code-block} python
+---
+emphasize-lines: 2,8
+---
+from mlserver.types import InferenceRequest
+from mlserver.codecs import DatetimeCodec
+
+# We can use the `DatetimeCodec` to encode a single input head with name `foo`
+# within a larger request
+v2_request = InferenceRequest(
+  inputs=[
+    DatetimeCodec.encode_input("foo", foo, use_bytes=False)
+  ]
+)
+```
+````
+`````

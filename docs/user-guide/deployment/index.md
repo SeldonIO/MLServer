@@ -18,31 +18,41 @@ However, this may be more involved and highly dependant on the deployment
 infrastructure.
 ```
 
-````{panels}
-:img-top-cls: pl-5 pr-5 pt-5
-:footer: text-center
-:column: col-md-6
-
+`````{grid} 2
+````{grid-item-card}
+:class-card: sd-px-5 sd-pt-2
+:link: ./seldon-core
+:link-type: doc
 :img-top: ../../assets/seldon-core-logo.png
 
 +++
 
-```{link-button} ./seldon-core
-:type: ref
-:text: Deploy with Seldon Core
-:classes: stretched-link
+```{button-ref} ./seldon-core
+:ref-type: doc
+:align: center
+:class: stretched-link
+
+Deploy with Seldon Core
 ```
----
+````
+
+````{grid-item-card}
+:class-card: sd-px-5 sd-pt-2
+:link: ./seldon-core
+:link-type: doc
 :img-top: ../../assets/kserve-logo.png
 
 +++
 
-```{link-button} ./kserve
-:type: ref
-:text: Deploy with KServe
-:classes: stretched-link
+```{button-ref} ./kserve
+:ref-type: doc
+:align: center
+:class: stretched-link
+
+Deploy with KServe
 ```
 ````
+`````
 
 ```{toctree}
 :hidden:
