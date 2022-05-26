@@ -37,17 +37,15 @@ def write_dockerfile(
     return dockerfile_path
 
 
-def build_image(folder: str,
-                dockerfile: str,
-                image_tag: str,
-                no_cache: bool = False) -> str:
+def build_image(folder: str, dockerfile: str, image_tag: str, no_cache: bool = False) \
+        -> str:
     logger.info(f"Building Docker image with tag {image_tag}")
     _docker_command_prefix = "docker build --rm "
     with TemporaryDirectory() as tmp_dir:
         dockerfile_path = write_dockerfile(tmp_dir, dockerfile)
         _docker_command_suffix = f"{folder} -f {dockerfile_path} -t {image_tag}"
         if no_cache:
-            build_cmd = _docker_command_prefix + "--no-cache" + _docker_command_suffix
+            build_cmd = _docker_command_prefix + "--no-cache " + _docker_command_suffix
         else:
             build_cmd = _docker_command_prefix + _docker_command_suffix
         build_env = os.environ.copy()
