@@ -10,7 +10,7 @@ prance==0.20.0
 pytest==7.1.2
 pytest-asyncio==0.18.3
 pytest-mock==3.7.0
-pytest-cases==3.6.12
+pytest-cases==3.6.13
 tox==3.25.0
 docker==5.0.3
 aiohttp==3.8.1
