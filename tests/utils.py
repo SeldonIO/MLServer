@@ -1,7 +1,11 @@
 import aiohttp
 import socket
 
-from aiohttp.client_exceptions import ClientOSError, ServerDisconnectedError
+from aiohttp.client_exceptions import (
+    ClientConnectorError,
+    ClientOSError,
+    ServerDisconnectedError,
+)
 from aiohttp_retry import RetryClient, ExponentialRetry
 
 from mlserver.types import RepositoryIndexResponse, InferenceRequest, InferenceResponse
@@ -27,7 +31,7 @@ class RESTClient:
         retry_options = ExponentialRetry(
             attempts=10,
             start_timeout=0.5,
-            exceptions={ClientOSError, ServerDisconnectedError},
+            exceptions={ClientConnectorError, ClientOSError, ServerDisconnectedError},
         )
         retry_client = RetryClient(raise_for_status=True, retry_options=retry_options)
 
