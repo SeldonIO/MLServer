@@ -114,8 +114,16 @@ response = requests.post(
 
 ### Codecs
 
-In order to prepare our V2 request payload, it's often better (and recommended) to use codecs.
-This lets you generate a request with the right structure, without the need to know much about what codecs expect.
+As you've probably already noticed, writing request payloads compliant with both the V2 Inference Protocol requires a certain knowledge about both the V2 spec and the structure expected by each content type.
+To account for this and simplify usage, the MLServer package exposes a set of utilities which will help you interact with your models via the V2 protocol.
+
+These helpers are mainly shaped as _"codecs"_.
+That is, abstractions which know how to _"encode"_ and _"decode"_ arbitrary Python datatypes to and from the V2 Inference Protocol.
+
+Generally, we recommend using the existing set of codecs to generate your V2 payloads.
+This will ensure that requests and responses follow the right structure, and should provide a more seamless experience.
+
+Following with our previous example, the same code could be rewritten using codecs as:
 
 
 ```python
@@ -145,6 +153,9 @@ response_payload = InferenceResponse.parse_raw(response.text)
 print(NumpyCodec.decode_output(response_payload.outputs[0]))
 print(StringCodec.decode_output(response_payload.outputs[1]))
 ```
+
+Note that the rewritten snippet now makes use of the built-in `InferenceRequest` class, which represents a V2 inference request.
+On top of that, it also uses the `NumpyCodec` and `StringCodec` implementations, which know how to encode a Numpy array and a list of strings into V2-compatible request inputs.
 
 ### Model Metadata
 
