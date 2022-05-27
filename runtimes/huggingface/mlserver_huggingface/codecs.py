@@ -3,7 +3,6 @@ from mlserver.codecs.utils import (
     has_decoded,
     _save_decoded,
     get_decoded_or_raw,
-    InputOrOutput,
 )
 from mlserver.codecs.base import (
     RequestCodec,
@@ -45,7 +44,7 @@ class MultiInputRequestCodec(RequestCodec):
             model_name=model_name,
             model_version=model_version,
             outputs=[
-                cls.InputCodec.encode_output(key, value, **kwargs)
+                cls.InputCodec.encode_output(key, value, **kwargs)  # type: ignore
                 for key, value in payload.items()
             ],
         )
@@ -66,7 +65,7 @@ class MultiInputRequestCodec(RequestCodec):
     def encode_request(cls, payload: Dict[str, Any], **kwargs) -> InferenceRequest:
         return InferenceRequest(
             inputs=[
-                cls.InputCodec.encode_input(key, value, **kwargs)
+                cls.InputCodec.encode_input(key, value, **kwargs)  # type: ignore
                 for key, value in payload.items()
             ],
         )

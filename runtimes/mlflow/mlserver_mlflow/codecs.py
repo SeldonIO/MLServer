@@ -34,10 +34,11 @@ class TensorDictCodec(RequestCodec):
 
     @classmethod
     def encode_response(
-        cls, model_name: str, payload: TensorDict, model_version: str = None
+        cls, model_name: str, payload: TensorDict, model_version: str = None, **kwargs
     ) -> InferenceResponse:
         outputs = [
-            NumpyCodec.encode_output(name, value) for name, value in payload.items()
+            NumpyCodec.encode_output(name, value, **kwargs)
+            for name, value in payload.items()
         ]
 
         return InferenceResponse(
@@ -52,9 +53,10 @@ class TensorDictCodec(RequestCodec):
         }
 
     @classmethod
-    def encode_request(cls, payload: TensorDict) -> InferenceRequest:
+    def encode_request(cls, payload: TensorDict, **kwargs) -> InferenceRequest:
         inputs = [
-            NumpyCodec.encode_input(name, value) for name, value in payload.items()
+            NumpyCodec.encode_input(name, value, **kwargs)
+            for name, value in payload.items()
         ]
 
         return InferenceRequest(inputs=inputs)
