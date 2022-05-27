@@ -193,7 +193,9 @@ class SingleInputRequestCodec(RequestCodec):
                 f"No input codec found for {type(cls)} request codec"
             )
 
-        output = cls.InputCodec.encode_output(f"{DefaultOutputPrefix}1", payload)
+        output = cls.InputCodec.encode_output(
+            f"{DefaultOutputPrefix}1", payload, **kwargs
+        )
         return InferenceResponse(
             model_name=model_name, model_version=model_version, outputs=[output]
         )
@@ -220,7 +222,7 @@ class SingleInputRequestCodec(RequestCodec):
                 f"No input codec found for {type(cls)} request codec"
             )
 
-        inp = cls.InputCodec.encode_input(f"{DefaultInputPrefix}1", payload)
+        inp = cls.InputCodec.encode_input(f"{DefaultInputPrefix}1", payload, **kwargs)
         return InferenceRequest(inputs=[inp])
 
     @classmethod
