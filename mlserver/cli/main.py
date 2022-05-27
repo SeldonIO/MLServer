@@ -47,17 +47,14 @@ async def start(folder: str):
 @root.command("build")
 @click.argument("folder", nargs=1)
 @click.option("-t", "--tag", type=str)
-@click.option("--cache/--no-cache", default=False)
+@click.option("--no-cache", default=False, is_flag=True)
 @click_async
-async def build(folder: str, tag: str, cache: bool):
+async def build(folder: str, tag: str, no_cache: bool = False):
     """
     Build a Docker image for a custom MLServer runtime.
     """
     dockerfile = generate_dockerfile()
-    if cache:
-        build_image(folder, dockerfile, tag)
-    else:
-        build_image(folder, dockerfile, tag, no_cache=True)
+    build_image(folder, dockerfile, tag, no_cache=no_cache)
     logger.info(f"Successfully built custom Docker image with tag {tag}")
 
 
