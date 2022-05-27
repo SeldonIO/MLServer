@@ -109,27 +109,37 @@ Depending on the high-level Python type, encoding / decoding operations may
 require access to multiple input or output heads.
 For example, a Pandas Dataframe would need to aggregate all of the
 input-/output-heads present in a V2 Inference Protocol response.
-To account for this, codecs can work at either the request- / response-level
-(known as _"request codecs"_), or the input- / output-level (known as _"input
-codecs"_).
 
-Each of these, expose the following **public interface**, where `Any`
+![Request Codecs](../assets/request-codecs.svg)
+
+However, a Numpy array or a list of strings, could be encoded directly as an
+input head within a larger request.
+
+![Input Codecs](../assets/input-codecs.svg)
+
+To account for this, codecs can work at either the request- / response-level
+(known as **request codecs**), or the input- / output-level (known as **input
+codecs**).
+Each of these codecs, expose the following **public interface**, where `Any`
 represents a high-level Python datatype (e.g. a Pandas Dataframe, a Numpy
 Array, etc.):
 
-- Request Codecs:
+- **Request Codecs**
   - `encode_request(payload: Any) -> InferenceRequest`
   - `decode_request(request: InferenceRequest) -> Any`
   - `encode_response(model_name: str, payload: Any, model_version: str) -> InferenceResponse`
   - `decode_response(response: InferenceResponse) -> Any`
-- Input Codecs:
+- **Input Codecs**
   - `encode_input(name: str, payload: Any) -> RequestInput`
   - `decode_input(request_input: RequestInput) -> Any`
   - `encode_output(name: str, payload: Any) -> ResponseOutput`
   - `decode_output(response_output: ResponseOutput) -> Any`
 
-Note that, these methods can also be used as helpers to **encode requests** and
-**decode responses** on the client side.
+Note that, these methods can also be used as helpers to **encode requests and
+decode responses on the client side**.
+This can help to abstract away from the user most of the details about the
+underlying structure of V2-compatible payloads.
+
 For example, in the example above, we could use codecs to encode the DataFrame
 into a V2-compatible request simply as:
 
@@ -407,7 +417,7 @@ We could encode it to the V2 Inference Protocol as:
 ````{tab-item} JSON Payload
 ```{code-block} json
 ---
-emphasize-lines: 3, 7-8, 13-14, 19-20
+emphasize-lines: 3,7-8
 ---
 {
   "parameters": {
