@@ -6,8 +6,9 @@ from starlette_exporter import PrometheusMiddleware
 
 from mlserver.server import MLServer
 from mlserver.settings import Settings, ModelSettings
+from mlserver.metrics.server import MetricsServer
 
-from ..utils import get_available_port
+from ..utils import RESTClient, get_available_port
 from .utils import MetricsClient
 
 
@@ -40,9 +41,9 @@ def prometheus_registry() -> CollectorRegistry:
 def settings(settings: Settings) -> Settings:
     settings.http_port = get_available_port()
     settings.grpc_port = get_available_port()
+    settings.metrics_port = get_available_port()
 
     return settings
-
 
 @pytest.fixture
 async def mlserver(
@@ -66,8 +67,17 @@ async def mlserver(
 
 @pytest.fixture
 async def metrics_client(mlserver: MLServer, settings: Settings):
-    http_server = f"{settings.host}:{settings.http_port}"
+    http_server = f"{settings.host}:{settings.metrics_port}"
     client = MetricsClient(http_server, metrics_endpoint=settings.metrics_endpoint)
+
+    yield client
+
+    await client.close()
+
+@pytest.fixture
+async def rest_client(mlserver: MLServer, settings: Settings):
+    http_server = f"{settings.host}:{settings.http_port}"
+    client = RESTClient(http_server)
 
     yield client
 

@@ -13,6 +13,7 @@ from .parallel import InferencePool
 from .batching import load_batching
 from .rest import RESTServer
 from .grpc import GRPCServer
+from .metrics import MetricsServer
 
 HANDLED_SIGNALS = [signal.SIGINT, signal.SIGTERM, signal.SIGQUIT]
 
@@ -67,12 +68,18 @@ class MLServer:
             self._settings, self._data_plane, self._model_repository_handlers
         )
 
+        self._metrics_server = None
+        if self._settings.metrics_endpoint:
+            self._metrics_server = MetricsServer(self._settings)
+
     async def start(self, models_settings: List[ModelSettings] = []):
         self._add_signal_handlers()
 
-        servers_task = asyncio.gather(
-            self._rest_server.start(), self._grpc_server.start()
-        )
+        servers = [self._rest_server.start(), self._grpc_server.start()]
+        if self._metrics_server:
+            servers.append(self._metrics_server.start())
+
+        servers_task = asyncio.gather(*servers)
 
         await asyncio.gather(
             *[
@@ -111,5 +118,9 @@ class MLServer:
     async def stop(self):
         await self._rest_server.stop()
         await self._grpc_server.stop()
+
+        if self._metrics_server:
+            await self._metrics_server.stop()
+
         if self._inference_pool:
             await self._inference_pool.close()

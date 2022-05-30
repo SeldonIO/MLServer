@@ -2,8 +2,9 @@ import pytest
 
 from pytest_cases import parametrize_with_cases, fixture
 from mlserver import Settings
-from aiohttp.client_exceptions import ClientResponseError
+from aiohttp.client_exceptions import ClientConnectorError
 
+from ..utils import RESTClient
 from .utils import MetricsClient
 
 
@@ -14,15 +15,14 @@ def settings(settings: Settings, metrics_endpoint: str) -> Settings:
     return settings
 
 
-async def test_metrics(metrics_client: MetricsClient):
-    await metrics_client.wait_until_ready()
+async def test_metrics(rest_client: RESTClient, metrics_client: MetricsClient):
+    await rest_client.wait_until_ready()
 
     if metrics_client._metrics_endpoint is None:
         # Assert metrics are disabled
         metrics_client._metrics_endpoint = "/metrics"
-        with pytest.raises(ClientResponseError) as err:
+        with pytest.raises(ClientConnectorError) as err:
             await metrics_client.metrics()
-        assert err.value.status == 404
     else:
         # Otherwise, assert all metrics are present
         metrics = await metrics_client.metrics()
