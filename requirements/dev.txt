@@ -1,6 +1,6 @@
 # Code generation
 grpcio-tools==1.46.1
-datamodel-code-generator==0.11.20
+datamodel-code-generator==0.13.0
 ## Locking `prance` (a subdep of `datamodel-code-generator`) to an older
 ## version due to issues with the latest version of `pip`:
 ## https://github.com/pypa/pip/issues/9613 
@@ -16,7 +16,7 @@ docker==5.0.3
 aiohttp==3.8.1
 aiohttp-retry==2.4.6
 ## Used for FastAPI Async testing
-httpx==0.22.0
+httpx==0.23.0
 
 # Linting and formatting
 flake8==4.0.1
