@@ -21,7 +21,7 @@ httpx==0.22.0
 # Linting and formatting
 flake8==4.0.1
 flake8-black==0.2.4
-mypy==0.910
+mypy==0.960
 mypy-protobuf==3.1.0
 types-protobuf==3.19.12
 types-orjson==3.6.2
