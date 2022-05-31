@@ -199,15 +199,15 @@ class InferencePool:
                 "`settings.json` file, or update the `MLSERVER_PARALLEL_WORKERS` "
                 "environment variable. "
                 f"The current value of the server's `parallel_workers` field is "
-                "{self._settings.parallel_workers}."
+                f"'{self._settings.parallel_workers}'."
             )
 
-        # NOTE: This is a remnant from the previous architecture for parallel
-        # workers, where each worker had its own pool.
-        # For backwards compatibility, we will respect when a model disables
-        # parallel inference.
-        if model.settings.parallel_workers <= 0:
-            return False
+            # NOTE: This is a remnant from the previous architecture for parallel
+            # workers, where each worker had its own pool.
+            # For backwards compatibility, we will respect when a model disables
+            # parallel inference.
+            if model.settings.parallel_workers <= 0:
+                return False
 
         if not self._settings.parallel_workers:
             return False
