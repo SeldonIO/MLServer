@@ -168,8 +168,8 @@ class ModelSettings(BaseSettings):
     """Metadata about the outputs returned by the model."""
 
     # Parallel settings
-    parallel_workers: int = Field(
-        DEFAULT_PARALLEL_WORKERS,
+    parallel_workers: Optional[int] = Field(
+        None,
         deprecated=True,
         description=(
             "Use the `parallel_workers` field the server wide settings instead."
