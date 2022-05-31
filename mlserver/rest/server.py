@@ -70,5 +70,5 @@ class RESTServer:
 
         return uvicorn.Config(self._app, **kwargs)
 
-    async def stop(self):
-        self._server.handle_exit(sig=None, frame=None)
+    async def stop(self, sig: int):
+        self._server.handle_exit(sig=sig, frame=None)

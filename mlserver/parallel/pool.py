@@ -204,8 +204,10 @@ class InferencePool:
         return True
 
     async def close(self):
+        logger.info("Waiting for inference pool shutdown")
         await self._close_workers()
         await self._close_responses()
+        logger.info("Inference pool shutdown complete")
 
     async def _close_responses(self):
         await terminate_queue(self._responses)

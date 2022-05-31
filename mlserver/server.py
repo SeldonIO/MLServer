@@ -112,15 +112,19 @@ class MLServer:
     def _add_signal_handlers(self):
         loop = asyncio.get_event_loop()
 
-        for sign in HANDLED_SIGNALS:
-            loop.add_signal_handler(sign, lambda: asyncio.create_task(self.stop()))
+        for sig in HANDLED_SIGNALS:
+            loop.add_signal_handler(
+                sig, lambda s=sig: asyncio.create_task(self.stop(sig=s))
+            )
 
-    async def stop(self):
-        await self._rest_server.stop()
-        await self._grpc_server.stop()
-
-        if self._metrics_server:
-            await self._metrics_server.stop()
+    async def stop(self, sig: int):
+        stop_tasks = []
 
         if self._inference_pool:
             await self._inference_pool.close()
+
+        await self._grpc_server.stop(sig)
+        await self._rest_server.stop(sig)
+
+        if self._metrics_server:
+            await self._metrics_server.stop(sig)
