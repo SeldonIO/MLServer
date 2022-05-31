@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from fastapi.responses import Response as FastAPIResponse
 from fastapi.routing import APIRoute as FastAPIRoute
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from starlette_exporter import PrometheusMiddleware
 
 from .endpoints import Endpoints, ModelRepositoryEndpoints
@@ -103,6 +104,7 @@ def create_app(
         exception_handlers=_EXCEPTION_HANDLERS,  # type: ignore
     )
 
+    app.add_middleware(GZipMiddleware)
     if settings.cors_settings is not None:
         app.add_middleware(
             CORSMiddleware,
