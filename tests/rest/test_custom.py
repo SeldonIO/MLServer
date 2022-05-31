@@ -6,3 +6,15 @@ async def test_custom_handler(rest_client, inference_request: InferenceRequest):
 
     assert response.status_code == 200
     assert response.json() == 10
+
+
+async def test_gzip_compression(rest_client, inference_request, sum_model_settings):
+    endpoint = f"/custom-endpoint-with-long-response"
+    response = await rest_client.post(
+        endpoint, params={"length": 1000}, headers={"accept-encoding": "gzip"}
+    )
+
+    assert response.status_code == 200
+    assert "content-encoding" in response.headers
+    assert response.headers["content-encoding"] == "gzip"
+    assert "foo" in response.json()
