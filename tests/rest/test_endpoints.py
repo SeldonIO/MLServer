@@ -1,7 +1,11 @@
 import pytest
 
 from mlserver import __version__
-from mlserver.types import InferenceResponse, MetadataServerResponse
+from mlserver.types import (
+    InferenceResponse,
+    MetadataServerResponse,
+    MetadataModelResponse,
+)
 
 
 async def test_live(rest_client):

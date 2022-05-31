@@ -17,7 +17,7 @@ class SumModel(MLModel):
         return sum(payload)
 
     @custom_handler(rest_path="/custom-endpoint-with-long-response")
-    async def my_payload(self, length: int) -> Dict[str, str]:
+    async def long_response_endpoint(self, length: int) -> Dict[str, str]:
         alphabet = string.ascii_lowercase
         response = "".join(random.choice(alphabet) for i in range(length))
         return {"foo": response}

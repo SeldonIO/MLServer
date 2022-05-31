@@ -9,7 +9,7 @@ async def test_custom_handler(rest_client, inference_request: InferenceRequest):
 
 
 async def test_gzip_compression(rest_client, inference_request, sum_model_settings):
-    endpoint = f"/custom-endpoint-with-long-response"
+    endpoint = "/custom-endpoint-with-long-response"
     response = await rest_client.post(
         endpoint, params={"length": 1000}, headers={"accept-encoding": "gzip"}
     )
