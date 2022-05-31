@@ -1,3 +1,3 @@
 from .server import MetricsServer
 
-__all__ = [MetricsServer]
+__all__ = ["MetricsServer"]

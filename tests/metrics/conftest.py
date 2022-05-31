@@ -6,7 +6,6 @@ from starlette_exporter import PrometheusMiddleware
 
 from mlserver.server import MLServer
 from mlserver.settings import Settings, ModelSettings
-from mlserver.metrics.server import MetricsServer
 
 from ..utils import RESTClient, get_available_port
 from .utils import MetricsClient
@@ -45,6 +44,7 @@ def settings(settings: Settings) -> Settings:
 
     return settings
 
+
 @pytest.fixture
 async def mlserver(
     settings: Settings,
@@ -73,6 +73,7 @@ async def metrics_client(mlserver: MLServer, settings: Settings):
     yield client
 
     await client.close()
+
 
 @pytest.fixture
 async def rest_client(mlserver: MLServer, settings: Settings):

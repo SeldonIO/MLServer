@@ -21,7 +21,7 @@ async def test_metrics(rest_client: RESTClient, metrics_client: MetricsClient):
     if metrics_client._metrics_endpoint is None:
         # Assert metrics are disabled
         metrics_client._metrics_endpoint = "/metrics"
-        with pytest.raises(ClientConnectorError) as err:
+        with pytest.raises(ClientConnectorError):
             await metrics_client.metrics()
     else:
         # Otherwise, assert all metrics are present

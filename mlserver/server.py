@@ -118,8 +118,6 @@ class MLServer:
             )
 
     async def stop(self, sig: int):
-        stop_tasks = []
-
         if self._inference_pool:
             await self._inference_pool.close()
 
