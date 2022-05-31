@@ -12,7 +12,7 @@ class MetricsClient(RESTClient):
         self._metrics_endpoint = metrics_endpoint
 
     async def wait_until_ready(self) -> None:
-        endpoint = f"http://{self._http_server}/{self._metrics_endpoint}"
+        endpoint = f"http://{self._http_server}{self._metrics_endpoint}"
         await self._retry_get(endpoint)
 
     async def metrics(self) -> List[Metric]:

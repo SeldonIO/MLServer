@@ -47,5 +47,5 @@ class MetricsServer:
         # prom reqs can be spammy)
         return uvicorn.Config(self._app, **kwargs)
 
-    async def stop(self, sig: int):
+    async def stop(self, sig: int = None):
         self._server.handle_exit(sig=sig, frame=None)

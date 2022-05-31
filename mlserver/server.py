@@ -117,7 +117,7 @@ class MLServer:
                 sig, lambda s=sig: asyncio.create_task(self.stop(sig=s))
             )
 
-    async def stop(self, sig: int):
+    async def stop(self, sig: int = None):
         if self._inference_pool:
             await self._inference_pool.close()
 
