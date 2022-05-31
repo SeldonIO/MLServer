@@ -9,7 +9,8 @@ section](#concurrency-in-python) below.
 
 ![](../assets/parallel-inference.svg)
 
-By default, MLServer will spin up a pool of 4 workers for each loaded model.
+By default, MLServer will spin up a pool of `N` worker processes to run
+inference, where `N` equals the numbers of CPU cores available.
 To read more about advanced settings, please see the [usage section
 below](#usage).
 
@@ -32,8 +33,8 @@ Similarly, even if we don’t take MMS into account, the **GIL also makes it har
 to scale inference for a single model**.
 
 To work around this limitation, MLServer offloads the model inference to a pool
-of workers, where each worker is a separate process (and thus has its own
-separate GIL).
+of workers, where each worker is a separate Python process (and thus has its
+own separate GIL).
 This means that we can get full access to the underlying hardware.
 
 ### Overhead
@@ -61,16 +62,17 @@ usually offset by the benefit of having multiple cores to compute inference on.
 
 ## Usage
 
-By default, MLServer will always create an inference pool with 4 workers for
-each loaded model.
-This behaviour can be tweaked for eacn independent model through the settings
-below.
+By default, MLServer will always create an inference pool with `N` workers,
+where `N` stands for the number of CPU cores available.
+All models will get loaded across these `N` worker processes.
+The number of workers `N` can be adjusted globally through the server-level
+`parallel_workers` setting.
 
 ### `parallel_workers`
 
-The `parallel_workers` field of the `model-settings.json` file (or
-alternatively, the `MLSERVER_MODEL_PARALLEL_WORKERS` global environment
-variable) controls the size of each inference pool.
+The `parallel_workers` field of the `settings.json` file (or alternatively, the
+`MLSERVER_PARALLEL_WORKERS` global environment variable) controls the size of
+MLServer's inference pool.
 The expected values are:
 
 - `N`, where `N > 0`, will create a pool of `N` workers.
