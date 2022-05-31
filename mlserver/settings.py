@@ -95,15 +95,19 @@ class Settings(BaseSettings):
 
     # Metrics settings
     metrics_endpoint: Optional[str] = "/metrics"
-    metrics_port: int = 8082
     """
     Endpoint used to expose Prometheus metrics. Alternatively, can be set to
-    `None` to disable it
+    `None` to disable it.
+    """
+
+    metrics_port: int = 8082
+    """
+    Port used to expose metrics endpoint.
     """
 
     # Logging settings
     logging_settings: Optional[str] = None
-    """Path to logging config file"""
+    """Path to logging config file."""
 
 
 class ModelParameters(BaseSettings):
