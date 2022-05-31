@@ -42,13 +42,14 @@ def custom_runtime_server(
     free_ports: Tuple[int, int],
     random_user_id: int,
 ) -> str:
-    host_http_port, host_grpc_port = free_ports
+    host_http_port, host_grpc_port, host_metrics_port = free_ports
 
     container = docker_client.containers.run(
         custom_image,
         ports={
             f"{settings.http_port}/tcp": str(host_http_port),
             f"{settings.grpc_port}/tcp": str(host_grpc_port),
+            f"{settings.metrics_port}/tcp": str(host_metrics_port),
         },
         detach=True,
         user=random_user_id,
