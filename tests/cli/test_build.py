@@ -79,8 +79,12 @@ async def test_infer_custom_runtime(
     try:
         await rest_client.wait_until_ready()
     except:
+        print("Starting log output from failed container")
+        print("-------------------------------------------")
         for log_line in container.logs().splitlines():
             print(log_line)
+        print("-------------------------------------------")
+        print("Finalised log output from failed container")
         raise
 
     loaded_models = await rest_client.list_models()
