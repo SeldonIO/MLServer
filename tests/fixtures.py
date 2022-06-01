@@ -16,7 +16,7 @@ class SumModel(MLModel):
         decoded = self.decode(payload.inputs[0])
         total = decoded.sum(axis=1, keepdims=True)
 
-        output = NumpyCodec.encode(name="total", payload=total)
+        output = NumpyCodec.encode_output(name="total", payload=total)
         response = InferenceResponse(
             id=payload.id,
             model_name=self.name,

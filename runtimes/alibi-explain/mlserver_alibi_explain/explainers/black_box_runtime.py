@@ -74,4 +74,4 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
         )
 
         # TODO: do we care about more than one output?
-        return NumpyCodec.decode_response_output(v2_response.outputs[0])
+        return NumpyCodec.decode_output(v2_response.outputs[0])

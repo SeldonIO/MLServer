@@ -1,5 +1,6 @@
 from typing import Any, Union, List
 from datetime import datetime
+from functools import partial
 
 from ..types import RequestInput, ResponseOutput
 from .utils import is_list_of
@@ -18,8 +19,11 @@ def _to_iso(elem: _Datetime) -> str:
     return elem.isoformat()
 
 
-def _encode_datetime(elem: _Datetime) -> bytes:
+def _encode_datetime(elem: _Datetime, use_bytes: bool) -> Union[bytes, str]:
     iso_date = _to_iso(elem)
+    if not use_bytes:
+        return iso_date
+
     return iso_date.encode(_DatetimeStrCodec)
 
 
@@ -48,8 +52,10 @@ class DatetimeCodec(InputCodec):
         return is_list_of(payload, datetime)
 
     @classmethod
-    def encode(cls, name: str, payload: List[_Datetime]) -> ResponseOutput:
-        packed = map(_encode_datetime, payload)
+    def encode_output(
+        cls, name: str, payload: List[_Datetime], use_bytes: bool = True, **kwargs
+    ) -> ResponseOutput:
+        packed = map(partial(_encode_datetime, use_bytes=use_bytes), payload)
         shape = [len(payload)]
         return ResponseOutput(
             name=name,
@@ -59,7 +65,25 @@ class DatetimeCodec(InputCodec):
         )
 
     @classmethod
-    def decode(cls, request_input: RequestInput) -> List[datetime]:
+    def decode_output(cls, response_output: ResponseOutput) -> List[datetime]:
+        packed = response_output.data.__root__
+
+        return list(map(_decode_datetime, unpack(packed)))
+
+    @classmethod
+    def encode_input(
+        cls, name: str, payload: List[_Datetime], use_bytes: bool = True, **kwargs
+    ) -> RequestInput:
+        output = cls.encode_output(name, payload, use_bytes=use_bytes)
+        return RequestInput(
+            name=output.name,
+            datatype=output.datatype,
+            shape=output.shape,
+            data=output.data,
+        )
+
+    @classmethod
+    def decode_input(cls, request_input: RequestInput) -> List[datetime]:
         packed = request_input.data.__root__
 
         return list(map(_decode_datetime, unpack(packed)))

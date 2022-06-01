@@ -3,4 +3,4 @@ dependencies:
   - python == 3.7
   - scikit-learn
   - pip:
-      - mlserver
+      - mlserver == 1.1.0.dev6

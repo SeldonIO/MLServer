@@ -72,7 +72,7 @@ class AlibiDetectRuntime(MLModel):
         outputs = []
         for key in y["data"]:
             outputs.append(
-                NumpyCodec.encode(name=key, payload=np.array([y["data"][key]]))
+                NumpyCodec.encode_output(name=key, payload=np.array([y["data"][key]]))
             )
         return types.InferenceResponse(
             model_name=self.name,

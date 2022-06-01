@@ -1,13 +1,15 @@
-from typing import Optional, Type, Any
-from mlserver.codecs.utils import has_decoded, _save_decoded, get_decoded_or_raw
+from typing import Optional, Type, Any, Dict
+from mlserver.codecs.utils import (
+    has_decoded,
+    _save_decoded,
+    get_decoded_or_raw,
+)
 from mlserver.codecs.base import (
     RequestCodec,
     register_request_codec,
     InputCodec as InputCodecTy,
 )
-from mlserver.codecs import (
-    StringCodec,
-)
+from mlserver.codecs import StringCodec
 from mlserver.types import (
     InferenceRequest,
     InferenceResponse,
@@ -31,17 +33,49 @@ class MultiInputRequestCodec(RequestCodec):
         return cls.InputCodec.can_encode(payload)
 
     @classmethod
-    def encode(
-        cls, model_name: str, payload: Any, model_version: Optional[str] = None
+    def encode_response(
+        cls,
+        model_name: str,
+        payload: Dict[str, Any],
+        model_version: Optional[str] = None,
+        **kwargs
     ) -> InferenceResponse:
-        raise NotImplementedError()
+        return InferenceResponse(
+            model_name=model_name,
+            model_version=model_version,
+            outputs=[
+                cls.InputCodec.encode_output(key, value, **kwargs)  # type: ignore
+                for key, value in payload.items()
+            ],
+        )
 
     @classmethod
-    def decode(cls, request: InferenceRequest) -> Any:
+    def decode_response(cls, response: InferenceResponse) -> Dict[str, Any]:
+        values = {}
+        for item in response.outputs:
+            if not has_decoded(item) and cls.InputCodec is not None:
+                decoded_payload = cls.InputCodec.decode_output(item)  # type: ignore
+                _save_decoded(item, decoded_payload)
+
+            value = get_decoded_or_raw(item)
+            values[item.name] = value
+        return values
+
+    @classmethod
+    def encode_request(cls, payload: Dict[str, Any], **kwargs) -> InferenceRequest:
+        return InferenceRequest(
+            inputs=[
+                cls.InputCodec.encode_input(key, value, **kwargs)  # type: ignore
+                for key, value in payload.items()
+            ],
+        )
+
+    @classmethod
+    def decode_request(cls, request: InferenceRequest) -> Dict[str, Any]:
         values = {}
         for item in request.inputs:
             if not has_decoded(item) and cls.InputCodec is not None:
-                decoded_payload = cls.InputCodec.decode(item)  # type: ignore
+                decoded_payload = cls.InputCodec.decode_input(item)  # type: ignore
                 _save_decoded(item, decoded_payload)
 
             value = get_decoded_or_raw(item)

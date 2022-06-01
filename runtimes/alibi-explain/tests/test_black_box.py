@@ -76,9 +76,7 @@ async def test_predict_impl(
         ],
     )
     expected_result = await custom_runtime_tf.predict(inference_request)
-    expected_result_numpy = NumpyCodec.decode_response_output(
-        expected_result.outputs[0]
-    )
+    expected_result_numpy = NumpyCodec.decode_output(expected_result.outputs[0])
 
     assert_allclose(actual_result, expected_result_numpy, rtol=1, atol=250)
 
@@ -104,7 +102,7 @@ async def test_end_2_end(
         convert_from_bytes(runtime_result.outputs[0], ty=str)
     )
     alibi_result = alibi_anchor_image_model.explain(
-        NumpyCodec.decode(payload.inputs[0])[0]  # payload has batch dimension,
+        NumpyCodec.decode_input(payload.inputs[0])[0]  # payload has batch dimension,
         # we remove it for alibi
     )
 
@@ -195,7 +193,7 @@ async def test_end_2_end_explain_v1_output(
                     RequestInput(
                         parameters=Parameters(content_type=StringCodec.ContentType),
                         name=_DEFAULT_INPUT_NAME,
-                        data=["dummy", "dummy text"],
+                        data=[b"dummy", b"dummy text"],
                         shape=[2],
                         datatype="BYTES",
                     )

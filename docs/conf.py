@@ -38,7 +38,7 @@ extensions = [
     "sphinxcontrib.bibtex",
     "sphinxcontrib.autodoc_pydantic",
     "sphinx_click",
-    "sphinx_panels",
+    "sphinx_design",
 ]
 
 # Add any paths that contain templates here, relative to this directory.

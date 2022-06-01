@@ -31,5 +31,5 @@ class LightGBMModel(MLModel):
         return types.InferenceResponse(
             model_name=self.name,
             model_version=self.version,
-            outputs=[NumpyCodec.encode(name="predict", payload=prediction)],
+            outputs=[NumpyCodec.encode_output(name="predict", payload=prediction)],
         )

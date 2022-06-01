@@ -58,8 +58,8 @@ from mlserver.grpc.converters import (
 def test_encode_infer_response(
     decoded: Any, codec: RequestCodec, expected: pb.ModelInferResponse
 ):
-    response_output = codec.encode("my-model", decoded)
-    model_infer_response = ModelInferResponseConverter.from_types(response_output)
+    inference_response = codec.encode_response("my-model", decoded)
+    model_infer_response = ModelInferResponseConverter.from_types(inference_response)
     assert model_infer_response == expected
 
 
@@ -134,6 +134,11 @@ def test_decode_infer_request(encoded: pb.ModelInferRequest, expected: Any):
                 name="output-0",
                 datatype="BYTES",
                 shape=[3],
+                parameters={
+                    "content_type": pb.InferParameter(
+                        string_param=StringCodec.ContentType
+                    )
+                },
                 contents=pb.InferTensorContents(
                     bytes_contents=[b"hey", b"what's", b"up"]
                 ),
@@ -156,7 +161,7 @@ def test_decode_infer_request(encoded: pb.ModelInferRequest, expected: Any):
 def test_encode_output_tensor(
     decoded: Any, codec: InputCodec, expected: pb.ModelInferResponse.InferOutputTensor
 ):
-    response_output = codec.encode(name="output-0", payload=decoded)
+    response_output = codec.encode_output(name="output-0", payload=decoded)
     infer_output_tensor = InferOutputTensorConverter.from_types(response_output)
     assert infer_output_tensor == expected
 
@@ -192,5 +197,5 @@ def test_decode_input_tensor(
     encoded: pb.ModelInferRequest.InferInputTensor, codec: InputCodec, expected: Any
 ):
     request_input = InferInputTensorConverter.to_types(encoded)
-    decoded = codec.decode(request_input)
+    decoded = codec.decode_input(request_input)
     assert decoded == expected

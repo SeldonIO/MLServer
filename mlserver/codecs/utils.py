@@ -21,11 +21,15 @@ from .base import (
 from .errors import CodecError
 
 DefaultOutputPrefix = "output-"
+DefaultInputPrefix = "input-"
 
+InputOrOutput = Union[RequestInput, ResponseOutput]
 InputCodecLike = Union[Type[InputCodec], InputCodec]
 RequestCodecLike = Union[Type[RequestCodec], RequestCodec]
 
-Parametrised = Union[InferenceRequest, RequestInput, RequestOutput]
+Parametrised = Union[
+    InferenceRequest, RequestInput, RequestOutput, ResponseOutput, InferenceResponse
+]
 Tagged = Union[MetadataTensor, ModelSettings]
 DecodedParameterName = "_decoded_payload"
 
@@ -76,7 +80,7 @@ def encode_response_output(
     if not codec:
         return None
 
-    return codec.encode(
+    return codec.encode_output(
         name=request_output.name,
         payload=payload,
     )
@@ -96,7 +100,7 @@ def encode_inference_response(
     if model_settings.parameters:
         model_version = model_settings.parameters.version
 
-    return codec.encode(model_settings.name, payload, model_version)
+    return codec.encode_response(model_settings.name, payload, model_version)
 
 
 def decode_request_input(
@@ -112,7 +116,7 @@ def decode_request_input(
     if codec is None:
         return None
 
-    decoded_payload = codec.decode(request_input)
+    decoded_payload = codec.decode_input(request_input)
     _save_decoded(request_input, decoded_payload)
     return decoded_payload
 
@@ -129,7 +133,7 @@ def decode_inference_request(
     if request_content_type is not None:
         codec = find_request_codec(request_content_type)
         if codec is not None:
-            decoded_payload = codec.decode(inference_request)
+            decoded_payload = codec.decode_request(inference_request)
             _save_decoded(inference_request, decoded_payload)
             return decoded_payload
 
@@ -152,6 +156,10 @@ def get_decoded_or_raw(parametrised_obj: Parametrised) -> Any:
     if not has_decoded(parametrised_obj):
         if isinstance(parametrised_obj, RequestInput):
             # If this is a RequestInput, return its data
+            return parametrised_obj.data
+
+        if isinstance(parametrised_obj, ResponseOutput):
+            # If this is a ResponseOutput, return its data
             return parametrised_obj.data
 
         # Otherwise, return full object
@@ -177,21 +185,48 @@ class SingleInputRequestCodec(RequestCodec):
         return cls.InputCodec.can_encode(payload)
 
     @classmethod
-    def encode(
-        cls, model_name: str, payload: Any, model_version: str = None
+    def encode_response(
+        cls, model_name: str, payload: Any, model_version: str = None, **kwargs
     ) -> InferenceResponse:
         if cls.InputCodec is None:
             raise NotImplementedError(
                 f"No input codec found for {type(cls)} request codec"
             )
 
-        output = cls.InputCodec.encode(f"{DefaultOutputPrefix}1", payload)
+        output = cls.InputCodec.encode_output(
+            f"{DefaultOutputPrefix}1", payload, **kwargs
+        )
         return InferenceResponse(
             model_name=model_name, model_version=model_version, outputs=[output]
         )
 
     @classmethod
-    def decode(cls, request: InferenceRequest) -> Any:
+    def decode_response(cls, response: InferenceResponse) -> Any:
+        if len(response.outputs) != 1:
+            raise CodecError(
+                f"The '{cls.ContentType}' codec only supports a single output tensor "
+                f"({len(response.outputs)} were received)"
+            )
+
+        first_output = response.outputs[0]
+        if not has_decoded(first_output) and cls.InputCodec is not None:
+            decoded_payload = cls.InputCodec.decode_output(first_output)  # type: ignore
+            _save_decoded(first_output, decoded_payload)
+
+        return get_decoded_or_raw(first_output)
+
+    @classmethod
+    def encode_request(cls, payload: Any, **kwargs) -> InferenceRequest:
+        if cls.InputCodec is None:
+            raise NotImplementedError(
+                f"No input codec found for {type(cls)} request codec"
+            )
+
+        inp = cls.InputCodec.encode_input(f"{DefaultInputPrefix}1", payload, **kwargs)
+        return InferenceRequest(inputs=[inp])
+
+    @classmethod
+    def decode_request(cls, request: InferenceRequest) -> Any:
         if len(request.inputs) != 1:
             raise CodecError(
                 f"The '{cls.ContentType}' codec only supports a single input tensor "
@@ -200,7 +235,7 @@ class SingleInputRequestCodec(RequestCodec):
 
         first_input = request.inputs[0]
         if not has_decoded(first_input) and cls.InputCodec is not None:
-            decoded_payload = cls.InputCodec.decode(first_input)  # type: ignore
+            decoded_payload = cls.InputCodec.decode_input(first_input)  # type: ignore
             _save_decoded(first_input, decoded_payload)
 
         return get_decoded_or_raw(first_input)
