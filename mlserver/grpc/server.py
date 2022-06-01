@@ -5,7 +5,8 @@ from typing import Any, List, Tuple
 from ..handlers import DataPlane, ModelRepositoryHandlers
 from ..settings import Settings
 
-from .servicers import InferenceServicer, ModelRepositoryServicer
+from .servicers import InferenceServicer
+from .model_repository import ModelRepositoryServicer
 from .dataplane_pb2_grpc import add_GRPCInferenceServiceServicer_to_server
 from .model_repository_pb2_grpc import add_ModelRepositoryServiceServicer_to_server
 from .interceptors import LoggingInterceptor, PromServerInterceptor
