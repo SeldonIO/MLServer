@@ -45,10 +45,13 @@ def _handle_mlserver_error(f: Callable):
     return _inner
 
 
-class InferenceServicer(GRPCInferenceServiceServicer):
-    def __init__(self, data_plane: DataPlane):
+class GRPCInferenceServicer(GRPCInferenceServiceServicer):
+    def __init__(
+        self, data_plane: DataPlane, model_repository_handlers: ModelRepositoryHandlers
+    ):
         super().__init__()
         self._data_plane = data_plane
+        self._model_repository_handlers = model_repository_handlers
 
     async def ServerLive(
         self, request: pb.ServerLiveRequest, context
@@ -106,11 +109,33 @@ class InferenceServicer(GRPCInferenceServiceServicer):
         response = ModelInferResponseConverter.from_types(result)
         return response
 
+    async def RepositoryIndex(
+        self, request: pb.RepositoryIndexRequest, context
+    ) -> pb.RepositoryIndexResponse:
+        payload = RepositoryIndexRequestConverter.to_types(request)
+        index = await self._model_repository_handlers.index(payload)
+        return RepositoryIndexResponseConverter.from_types(index)
+
+    @_handle_mlserver_error
+    async def RepositoryModelLoad(
+        self, request: pb.RepositoryModelLoadRequest, context
+    ) -> pb.RepositoryModelLoadResponse:
+        await self._model_repository_handlers.load(request.model_name)
+        return pb.RepositoryModelLoadResponse()
+
+    @_handle_mlserver_error
+    async def RepositoryModelUnload(
+        self, request: pb.RepositoryModelUnloadRequest, context
+    ) -> pb.RepositoryModelUnloadResponse:
+        await self._model_repository_handlers.unload(request.model_name)
+        return pb.RepositoryModelUnloadResponse()
+
 
 class ModelRepositoryServicer(ModelRepositoryServiceServicer):
     def __init__(self, handlers: ModelRepositoryHandlers):
         self._handlers = handlers
 
+    # TODO: Add deprecation note
     async def RepositoryIndex(
         self, request: mr_pb.RepositoryIndexRequest, context
     ) -> mr_pb.RepositoryIndexResponse:

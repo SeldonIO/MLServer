@@ -956,3 +956,167 @@ class InferTensorContents(google.protobuf.message.Message):
     ) -> None: ...
 
 global___InferTensorContents = InferTensorContents
+
+class RepositoryIndexRequest(google.protobuf.message.Message):
+    """Messages for the Repository API
+    NOTE: These messages used to exist previously on a different protobuf
+    definition. However, they have now been merged with the main
+    GRPCInferenceService.
+    """
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    REPOSITORY_NAME_FIELD_NUMBER: builtins.int
+    READY_FIELD_NUMBER: builtins.int
+    repository_name: typing.Text = ...
+    """The name of the repository. If empty the index is returned
+    for all repositories.
+    """
+
+    ready: builtins.bool = ...
+    """If true return only models currently ready for inferencing."""
+    def __init__(
+        self,
+        *,
+        repository_name: typing.Text = ...,
+        ready: builtins.bool = ...,
+    ) -> None: ...
+    def ClearField(
+        self,
+        field_name: typing_extensions.Literal[
+            "ready", b"ready", "repository_name", b"repository_name"
+        ],
+    ) -> None: ...
+
+global___RepositoryIndexRequest = RepositoryIndexRequest
+
+class RepositoryIndexResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    class ModelIndex(google.protobuf.message.Message):
+        """Index entry for a model."""
+
+        DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+        NAME_FIELD_NUMBER: builtins.int
+        VERSION_FIELD_NUMBER: builtins.int
+        STATE_FIELD_NUMBER: builtins.int
+        REASON_FIELD_NUMBER: builtins.int
+        name: typing.Text = ...
+        """The name of the model."""
+
+        version: typing.Text = ...
+        """The version of the model."""
+
+        state: typing.Text = ...
+        """The state of the model."""
+
+        reason: typing.Text = ...
+        """The reason, if any, that the model is in the given state."""
+        def __init__(
+            self,
+            *,
+            name: typing.Text = ...,
+            version: typing.Text = ...,
+            state: typing.Text = ...,
+            reason: typing.Text = ...,
+        ) -> None: ...
+        def ClearField(
+            self,
+            field_name: typing_extensions.Literal[
+                "name",
+                b"name",
+                "reason",
+                b"reason",
+                "state",
+                b"state",
+                "version",
+                b"version",
+            ],
+        ) -> None: ...
+    MODELS_FIELD_NUMBER: builtins.int
+    @property
+    def models(
+        self,
+    ) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[
+        global___RepositoryIndexResponse.ModelIndex
+    ]:
+        """An index entry for each model."""
+        pass
+    def __init__(
+        self,
+        *,
+        models: typing.Optional[
+            typing.Iterable[global___RepositoryIndexResponse.ModelIndex]
+        ] = ...,
+    ) -> None: ...
+    def ClearField(
+        self, field_name: typing_extensions.Literal["models", b"models"]
+    ) -> None: ...
+
+global___RepositoryIndexResponse = RepositoryIndexResponse
+
+class RepositoryModelLoadRequest(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    REPOSITORY_NAME_FIELD_NUMBER: builtins.int
+    MODEL_NAME_FIELD_NUMBER: builtins.int
+    repository_name: typing.Text = ...
+    """The name of the repository to load from. If empty the model
+    is loaded from any repository.
+    """
+
+    model_name: typing.Text = ...
+    """The name of the model to load, or reload."""
+    def __init__(
+        self,
+        *,
+        repository_name: typing.Text = ...,
+        model_name: typing.Text = ...,
+    ) -> None: ...
+    def ClearField(
+        self,
+        field_name: typing_extensions.Literal[
+            "model_name", b"model_name", "repository_name", b"repository_name"
+        ],
+    ) -> None: ...
+
+global___RepositoryModelLoadRequest = RepositoryModelLoadRequest
+
+class RepositoryModelLoadResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    def __init__(
+        self,
+    ) -> None: ...
+
+global___RepositoryModelLoadResponse = RepositoryModelLoadResponse
+
+class RepositoryModelUnloadRequest(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    REPOSITORY_NAME_FIELD_NUMBER: builtins.int
+    MODEL_NAME_FIELD_NUMBER: builtins.int
+    repository_name: typing.Text = ...
+    """The name of the repository from which the model was originally
+    loaded. If empty the repository is not considered.
+    """
+
+    model_name: typing.Text = ...
+    """The name of the model to unload."""
+    def __init__(
+        self,
+        *,
+        repository_name: typing.Text = ...,
+        model_name: typing.Text = ...,
+    ) -> None: ...
+    def ClearField(
+        self,
+        field_name: typing_extensions.Literal[
+            "model_name", b"model_name", "repository_name", b"repository_name"
+        ],
+    ) -> None: ...
+
+global___RepositoryModelUnloadRequest = RepositoryModelUnloadRequest
+
+class RepositoryModelUnloadResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    def __init__(
+        self,
+    ) -> None: ...
+
+global___RepositoryModelUnloadResponse = RepositoryModelUnloadResponse
