@@ -40,4 +40,4 @@ jobs:
           make install-dev
       - name: Test
         run: |
-          pytest tests/cli/test_build.py::test_infer_custom_runtime -s
+          make test

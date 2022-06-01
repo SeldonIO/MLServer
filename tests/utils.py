@@ -29,7 +29,7 @@ class RESTClient:
 
     async def _retry_get(self, endpoint: str):
         retry_options = ExponentialRetry(
-            attempts=20,
+            attempts=10,
             start_timeout=0.5,
             exceptions={ClientConnectorError, ClientOSError, ServerDisconnectedError},
         )
