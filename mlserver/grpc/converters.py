@@ -390,9 +390,9 @@ class RepositoryIndexResponseConverter:
             for model in type_object
         ]
         if use_model_repository:
-            return mr_pb.RepositoryIndexResponse(models=models)
+            return mr_pb.RepositoryIndexResponse(models=models)  # type: ignore
 
-        return pb.RepositoryIndexResponse(models=models)
+        return pb.RepositoryIndexResponse(models=models)  # type: ignore
 
 
 class RepositoryIndexResponseItemConverter:
@@ -421,7 +421,7 @@ class RepositoryIndexResponseItemConverter:
         )
 
         if use_model_repository:
-            model_index = mr_pb.RepositoryIndexResponse.ModelIndex(
+            model_index = mr_pb.RepositoryIndexResponse.ModelIndex(  # type: ignore
                 name=type_object.name,
                 state=type_object.state.value,
                 reason=type_object.reason,

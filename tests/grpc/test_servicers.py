@@ -2,7 +2,6 @@ import pytest
 import grpc
 
 from mlserver.grpc import dataplane_pb2 as pb
-from mlserver.grpc import model_repository_pb2 as mr_pb
 from mlserver import __version__
 
 
