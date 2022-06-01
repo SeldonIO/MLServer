@@ -11,9 +11,7 @@ from mlserver.batching import load_batching
 from mlserver.handlers import DataPlane, ModelRepositoryHandlers
 from mlserver.settings import Settings
 from mlserver.grpc import dataplane_pb2 as pb
-from mlserver.grpc import model_repository_pb2 as mr_pb
 from mlserver.grpc.dataplane_pb2_grpc import GRPCInferenceServiceStub
-from mlserver.grpc.model_repository_pb2_grpc import ModelRepositoryServiceStub
 from mlserver.grpc import GRPCServer
 
 from ..conftest import TESTDATA_PATH
@@ -38,11 +36,6 @@ def model_infer_request() -> pb.ModelInferRequest:
 
 
 @pytest.fixture
-def grpc_repository_index_request() -> mr_pb.RepositoryIndexRequest:
-    return mr_pb.RepositoryIndexRequest(ready=None)
-
-
-@pytest.fixture
 def grpc_parameters() -> Dict[str, pb.InferParameter]:
     return {
         "content_type": pb.InferParameter(string_param="np"),
@@ -52,19 +45,16 @@ def grpc_parameters() -> Dict[str, pb.InferParameter]:
 
 
 @pytest.fixture
+def grpc_repository_index_request() -> pb.RepositoryIndexRequest:
+    return pb.RepositoryIndexRequest(ready=None)
+
+
+@pytest.fixture
 async def inference_service_stub(
     grpc_server, settings: Settings
 ) -> AsyncGenerator[GRPCInferenceServiceStub, None]:
     async with aio.insecure_channel(f"{settings.host}:{settings.grpc_port}") as channel:
         yield GRPCInferenceServiceStub(channel)
-
-
-@pytest.fixture
-async def model_repository_service_stub(
-    grpc_server, settings: Settings
-) -> AsyncGenerator[ModelRepositoryServiceStub, None]:
-    async with aio.insecure_channel(f"{settings.host}:{settings.grpc_port}") as channel:
-        yield ModelRepositoryServiceStub(channel)
 
 
 @pytest.fixture

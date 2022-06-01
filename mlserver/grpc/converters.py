@@ -357,7 +357,7 @@ class InferOutputTensorConverter:
 class RepositoryIndexRequestConverter:
     @classmethod
     def to_types(
-        cls, pb_object: mr_pb.RepositoryIndexRequest
+        cls, pb_object: Union[pb.RepositoryIndexRequest, mr_pb.RepositoryIndexRequest]
     ) -> types.RepositoryIndexRequest:
         return types.RepositoryIndexRequest(
             ready=pb_object.ready,
@@ -366,45 +366,66 @@ class RepositoryIndexRequestConverter:
     @classmethod
     def from_types(
         cls, type_object: types.RepositoryIndexRequest
-    ) -> mr_pb.RepositoryIndexRequest:
+    ) -> Union[pb.RepositoryIndexRequest, mr_pb.RepositoryIndexRequest]:
         raise NotImplementedError("Implement me")
 
 
 class RepositoryIndexResponseConverter:
     @classmethod
     def to_types(
-        cls, pb_object: mr_pb.RepositoryIndexResponse
+        cls, pb_object: Union[pb.RepositoryIndexResponse, mr_pb.RepositoryIndexResponse]
     ) -> types.RepositoryIndexResponse:
         raise NotImplementedError("Implement me")
 
     @classmethod
     def from_types(
-        cls, type_object: types.RepositoryIndexResponse
-    ) -> mr_pb.RepositoryIndexResponse:
-        return mr_pb.RepositoryIndexResponse(
-            models=[
-                RepositoryIndexResponseItemConverter.from_types(model)
-                for model in type_object
-            ]
-        )
+        cls,
+        type_object: types.RepositoryIndexResponse,
+        use_model_repository: bool = False,
+    ) -> Union[pb.RepositoryIndexResponse, mr_pb.RepositoryIndexResponse]:
+        models = [
+            RepositoryIndexResponseItemConverter.from_types(
+                model, use_model_repository=use_model_repository
+            )
+            for model in type_object
+        ]
+        if use_model_repository:
+            return mr_pb.RepositoryIndexResponse(models=models)
+
+        return pb.RepositoryIndexResponse(models=models)
 
 
 class RepositoryIndexResponseItemConverter:
     @classmethod
     def to_types(
-        cls, pb_object: mr_pb.RepositoryIndexResponse.ModelIndex
+        cls,
+        pb_object: Union[
+            pb.RepositoryIndexResponse.ModelIndex,
+            mr_pb.RepositoryIndexResponse.ModelIndex,
+        ],
     ) -> types.RepositoryIndexResponseItem:
         raise NotImplementedError("Implement me")
 
     @classmethod
     def from_types(
-        cls, type_object: types.RepositoryIndexResponseItem
-    ) -> mr_pb.RepositoryIndexResponse.ModelIndex:
-        model_index = mr_pb.RepositoryIndexResponse.ModelIndex(
+        cls,
+        type_object: types.RepositoryIndexResponseItem,
+        use_model_repository: bool = False,
+    ) -> Union[
+        pb.RepositoryIndexResponse.ModelIndex, mr_pb.RepositoryIndexResponse.ModelIndex
+    ]:
+        model_index = pb.RepositoryIndexResponse.ModelIndex(
             name=type_object.name,
             state=type_object.state.value,
             reason=type_object.reason,
         )
+
+        if use_model_repository:
+            model_index = mr_pb.RepositoryIndexResponse.ModelIndex(
+                name=type_object.name,
+                state=type_object.state.value,
+                reason=type_object.reason,
+            )
 
         if type_object.version is not None:
             model_index.version = type_object.version

@@ -27,7 +27,9 @@ class GRPCServer:
         self._model_repository_handlers = model_repository_handlers
 
     def _create_server(self):
-        self._inference_servicer = InferenceServicer(self._data_plane)
+        self._inference_servicer = InferenceServicer(
+            self._data_plane, self._model_repository_handlers
+        )
         self._model_repository_servicer = ModelRepositoryServicer(
             self._model_repository_handlers
         )

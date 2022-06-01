@@ -45,7 +45,7 @@ def _handle_mlserver_error(f: Callable):
     return _inner
 
 
-class GRPCInferenceServicer(GRPCInferenceServiceServicer):
+class InferenceServicer(GRPCInferenceServiceServicer):
     def __init__(
         self, data_plane: DataPlane, model_repository_handlers: ModelRepositoryHandlers
     ):
@@ -141,7 +141,9 @@ class ModelRepositoryServicer(ModelRepositoryServiceServicer):
     ) -> mr_pb.RepositoryIndexResponse:
         payload = RepositoryIndexRequestConverter.to_types(request)
         index = await self._handlers.index(payload)
-        return RepositoryIndexResponseConverter.from_types(index)
+        return RepositoryIndexResponseConverter.from_types(
+            index, use_model_repository=True
+        )
 
     @_handle_mlserver_error
     async def RepositoryModelLoad(

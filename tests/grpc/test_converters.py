@@ -84,30 +84,6 @@ def test_modelinferresponse_from_types(inference_response):
     )
 
 
-def test_repositoryindexrequest_to_types(grpc_repository_index_request):
-    repository_index_request = RepositoryIndexRequestConverter.to_types(
-        grpc_repository_index_request
-    )
-
-    assert repository_index_request.ready == grpc_repository_index_request.ready
-
-
-def test_repositoryindexresponse_from_types(repository_index_response):
-    grpc_repository_index_request = RepositoryIndexResponseConverter.from_types(
-        repository_index_response
-    )
-
-    assert len(grpc_repository_index_request.models) == len(repository_index_response)
-
-    for expected, grpc_model in zip(
-        repository_index_response, grpc_repository_index_request.models
-    ):
-        assert expected.name == grpc_model.name
-        assert expected.version == grpc_model.version
-        assert expected.state.value == grpc_model.state
-        assert expected.reason == grpc_model.reason
-
-
 def test_parameters_to_types(grpc_parameters):
     parameters = ParametersConverter.to_types(grpc_parameters)
 
@@ -161,3 +137,29 @@ def test_inferoutputtensor_from_types(
 ):
     infer_output_tensor = InferOutputTensorConverter.from_types(response_output)
     assert infer_output_tensor == expected
+
+
+def test_repositoryindexrequest_to_types(grpc_repository_index_request):
+    repository_index_request = RepositoryIndexRequestConverter.to_types(
+        grpc_repository_index_request
+    )
+
+    assert repository_index_request.ready == grpc_repository_index_request.ready
+
+
+def test_repositoryindexresponse_from_types(repository_index_response):
+    grpc_repository_index_response = RepositoryIndexResponseConverter.from_types(
+        repository_index_response
+    )
+
+    assert isinstance(grpc_repository_index_response, pb.RepositoryIndexResponse)
+    assert len(grpc_repository_index_response.models) == len(repository_index_response)
+
+    for expected, grpc_model in zip(
+        repository_index_response, grpc_repository_index_response.models
+    ):
+        assert isinstance(grpc_model, pb.RepositoryIndexResponse.ModelIndex)
+        assert expected.name == grpc_model.name
+        assert expected.version == grpc_model.version
+        assert expected.state.value == grpc_model.state
+        assert expected.reason == grpc_model.reason
