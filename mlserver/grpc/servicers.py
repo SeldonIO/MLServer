@@ -10,7 +10,6 @@ from .converters import (
     RepositoryIndexRequestConverter,
     RepositoryIndexResponseConverter,
 )
-from .logging import logger
 from .utils import to_headers, to_metadata, handle_mlserver_error
 
 from ..utils import insert_headers, extract_headers
