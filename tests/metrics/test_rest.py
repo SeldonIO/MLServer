@@ -22,7 +22,7 @@ async def test_rest_metrics(
     inference_request: InferenceRequest,
     sum_model: MLModel,
 ):
-    await metrics_client.wait_until_ready()
+    await rest_client.wait_until_ready()
     metric_name = "rest_server_requests"
 
     # Get metrics for gRPC server before sending any requests

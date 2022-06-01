@@ -11,6 +11,10 @@ class MetricsClient(RESTClient):
         super().__init__(*args, **kwargs)
         self._metrics_endpoint = metrics_endpoint
 
+    async def wait_until_ready(self) -> None:
+        endpoint = f"http://{self._http_server}{self._metrics_endpoint}"
+        await self._retry_get(endpoint)
+
     async def metrics(self) -> List[Metric]:
         endpoint = f"http://{self._http_server}{self._metrics_endpoint}"
         response = await self._session.get(endpoint)

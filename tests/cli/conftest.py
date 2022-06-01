@@ -16,4 +16,5 @@ def docker_client() -> DockerClient:
 def free_ports() -> Tuple[int, int]:
     http_port = get_available_port()
     grpc_port = get_available_port()
-    return http_port, grpc_port
+    metrics_port = get_available_port()
+    return http_port, grpc_port, metrics_port

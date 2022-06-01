@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.responses import Response as FastAPIResponse
 from fastapi.routing import APIRoute as FastAPIRoute
 from fastapi.middleware.cors import CORSMiddleware
-from starlette_exporter import PrometheusMiddleware, handle_metrics
+from starlette_exporter import PrometheusMiddleware
 
 from .endpoints import Endpoints, ModelRepositoryEndpoints
 from .requests import Request
@@ -126,6 +126,5 @@ def create_app(
                 "/v2/health/ready",
             ],
         )
-        app.add_route(settings.metrics_endpoint, handle_metrics)
 
     return app

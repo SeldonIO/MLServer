@@ -19,10 +19,11 @@ from ..utils import RESTClient
 
 @pytest.fixture
 def settings(settings: Settings, free_ports: Tuple[int, int]) -> Settings:
-    http_port, grpc_port = free_ports
+    http_port, grpc_port, metrics_port = free_ports
 
     settings.http_port = http_port
     settings.grpc_port = grpc_port
+    settings.metrics_port = metrics_port
 
     return settings
 
