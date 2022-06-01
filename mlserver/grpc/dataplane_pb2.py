@@ -14,7 +14,7 @@ _sym_db = _symbol_database.Default()
 
 
 DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(
-    b'\n\x0f\x64\x61taplane.proto\x12\tinference"\x13\n\x11ServerLiveRequest""\n\x12ServerLiveResponse\x12\x0c\n\x04live\x18\x01 \x01(\x08"\x14\n\x12ServerReadyRequest"$\n\x13ServerReadyResponse\x12\r\n\x05ready\x18\x01 \x01(\x08"2\n\x11ModelReadyRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t"#\n\x12ModelReadyResponse\x12\r\n\x05ready\x18\x01 \x01(\x08"\x17\n\x15ServerMetadataRequest"K\n\x16ServerMetadataResponse\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\x12\x12\n\nextensions\x18\x03 \x03(\t"5\n\x14ModelMetadataRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t"\xc5\x04\n\x15ModelMetadataResponse\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08versions\x18\x02 \x03(\t\x12\x10\n\x08platform\x18\x03 \x01(\t\x12?\n\x06inputs\x18\x04 \x03(\x0b\x32/.inference.ModelMetadataResponse.TensorMetadata\x12@\n\x07outputs\x18\x05 \x03(\x0b\x32/.inference.ModelMetadataResponse.TensorMetadata\x12\x44\n\nparameters\x18\x06 \x03(\x0b\x32\x30.inference.ModelMetadataResponse.ParametersEntry\x1a\xe2\x01\n\x0eTensorMetadata\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08\x64\x61tatype\x18\x02 \x01(\t\x12\r\n\x05shape\x18\x03 \x03(\x03\x12S\n\nparameters\x18\x04 \x03(\x0b\x32?.inference.ModelMetadataResponse.TensorMetadata.ParametersEntry\x1aL\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12(\n\x05value\x18\x02 \x01(\x0b\x32\x19.inference.InferParameter:\x02\x38\x01\x1aL\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12(\n\x05value\x18\x02 \x01(\x0b\x32\x19.inference.InferParameter:\x02\x38\x01"\xd2\x06\n\x11ModelInferRequest\x12\x12\n\nmodel_name\x18\x01 \x01(\t\x12\x15\n\rmodel_version\x18\x02 \x01(\t\x12\n\n\x02id\x18\x03 \x01(\t\x12@\n\nparameters\x18\x04 \x03(\x0b\x32,.inference.ModelInferRequest.ParametersEntry\x12=\n\x06inputs\x18\x05 \x03(\x0b\x32-.inference.ModelInferRequest.InferInputTensor\x12H\n\x07outputs\x18\x06 \x03(\x0b\x32\x37.inference.ModelInferRequest.InferRequestedOutputTensor\x1a\x94\x02\n\x10InferInputTensor\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08\x64\x61tatype\x18\x02 \x01(\t\x12\r\n\x05shape\x18\x03 \x03(\x03\x12Q\n\nparameters\x18\x04 \x03(\x0b\x32=.inference.ModelInferRequest.InferInputTensor.ParametersEntry\x12\x30\n\x08\x63ontents\x18\x05 \x01(\x0b\x32\x1e.inference.InferTensorContents\x1aL\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12(\n\x05value\x18\x02 \x01(\x0b\x32\x19.inference.InferParameter:\x02\x38\x01\x1a\xd5\x01\n\x1aInferRequestedOutputTensor\x12\x0c\n\x04name\x18\x01 \x01(\t\x12[\n\nparameters\x18\x02 \x03(\x0b\x32G.inference.ModelInferRequest.InferRequestedOutputTensor.ParametersEntry\x1aL\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12(\n\x05value\x18\x02 \x01(\x0b\x32\x19.inference.InferParameter:\x02\x38\x01\x1aL\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12(\n\x05value\x18\x02 \x01(\x0b\x32\x19.inference.InferParameter:\x02\x38\x01"\xb8\x04\n\x12ModelInferResponse\x12\x12\n\nmodel_name\x18\x01 \x01(\t\x12\x15\n\rmodel_version\x18\x02 \x01(\t\x12\n\n\x02id\x18\x03 \x01(\t\x12\x41\n\nparameters\x18\x04 \x03(\x0b\x32-.inference.ModelInferResponse.ParametersEntry\x12@\n\x07outputs\x18\x05 \x03(\x0b\x32/.inference.ModelInferResponse.InferOutputTensor\x1a\x97\x02\n\x11InferOutputTensor\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08\x64\x61tatype\x18\x02 \x01(\t\x12\r\n\x05shape\x18\x03 \x03(\x03\x12S\n\nparameters\x18\x04 \x03(\x0b\x32?.inference.ModelInferResponse.InferOutputTensor.ParametersEntry\x12\x30\n\x08\x63ontents\x18\x05 \x01(\x0b\x32\x1e.inference.InferTensorContents\x1aL\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12(\n\x05value\x18\x02 \x01(\x0b\x32\x19.inference.InferParameter:\x02\x38\x01\x1aL\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12(\n\x05value\x18\x02 \x01(\x0b\x32\x19.inference.InferParameter:\x02\x38\x01"i\n\x0eInferParameter\x12\x14\n\nbool_param\x18\x01 \x01(\x08H\x00\x12\x15\n\x0bint64_param\x18\x02 \x01(\x03H\x00\x12\x16\n\x0cstring_param\x18\x03 \x01(\tH\x00\x42\x12\n\x10parameter_choice"\xd0\x01\n\x13InferTensorContents\x12\x15\n\rbool_contents\x18\x01 \x03(\x08\x12\x14\n\x0cint_contents\x18\x02 \x03(\x05\x12\x16\n\x0eint64_contents\x18\x03 \x03(\x03\x12\x15\n\ruint_contents\x18\x04 \x03(\r\x12\x17\n\x0fuint64_contents\x18\x05 \x03(\x04\x12\x15\n\rfp32_contents\x18\x06 \x03(\x02\x12\x15\n\rfp64_contents\x18\x07 \x03(\x01\x12\x16\n\x0e\x62ytes_contents\x18\x08 \x03(\x0c"@\n\x16RepositoryIndexRequest\x12\x17\n\x0frepository_name\x18\x01 \x01(\t\x12\r\n\x05ready\x18\x02 \x01(\x08"\xa4\x01\n\x17RepositoryIndexResponse\x12=\n\x06models\x18\x01 \x03(\x0b\x32-.inference.RepositoryIndexResponse.ModelIndex\x1aJ\n\nModelIndex\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\x12\r\n\x05state\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t"I\n\x1aRepositoryModelLoadRequest\x12\x17\n\x0frepository_name\x18\x01 \x01(\t\x12\x12\n\nmodel_name\x18\x02 \x01(\t"\x1d\n\x1bRepositoryModelLoadResponse"K\n\x1cRepositoryModelUnloadRequest\x12\x17\n\x0frepository_name\x18\x01 \x01(\t\x12\x12\n\nmodel_name\x18\x02 \x01(\t"\x1f\n\x1dRepositoryModelUnloadResponse2\xae\x06\n\x14GRPCInferenceService\x12K\n\nServerLive\x12\x1c.inference.ServerLiveRequest\x1a\x1d.inference.ServerLiveResponse"\x00\x12N\n\x0bServerReady\x12\x1d.inference.ServerReadyRequest\x1a\x1e.inference.ServerReadyResponse"\x00\x12K\n\nModelReady\x12\x1c.inference.ModelReadyRequest\x1a\x1d.inference.ModelReadyResponse"\x00\x12W\n\x0eServerMetadata\x12 .inference.ServerMetadataRequest\x1a!.inference.ServerMetadataResponse"\x00\x12T\n\rModelMetadata\x12\x1f.inference.ModelMetadataRequest\x1a .inference.ModelMetadataResponse"\x00\x12K\n\nModelInfer\x12\x1c.inference.ModelInferRequest\x1a\x1d.inference.ModelInferResponse"\x00\x12Z\n\x0fRepositoryIndex\x12!.inference.RepositoryIndexRequest\x1a".inference.RepositoryIndexResponse"\x00\x12\x66\n\x13RepositoryModelLoad\x12%.inference.RepositoryModelLoadRequest\x1a&.inference.RepositoryModelLoadResponse"\x00\x12l\n\x15RepositoryModelUnload\x12\'.inference.RepositoryModelUnloadRequest\x1a(.inference.RepositoryModelUnloadResponse"\x00\x62\x06proto3'
+    b'\n\x0f\x64\x61taplane.proto\x12\tinference"\x13\n\x11ServerLiveRequest""\n\x12ServerLiveResponse\x12\x0c\n\x04live\x18\x01 \x01(\x08"\x14\n\x12ServerReadyRequest"$\n\x13ServerReadyResponse\x12\r\n\x05ready\x18\x01 \x01(\x08"2\n\x11ModelReadyRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t"#\n\x12ModelReadyResponse\x12\r\n\x05ready\x18\x01 \x01(\x08"\x17\n\x15ServerMetadataRequest"K\n\x16ServerMetadataResponse\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\x12\x12\n\nextensions\x18\x03 \x03(\t"5\n\x14ModelMetadataRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t"\xc5\x04\n\x15ModelMetadataResponse\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08versions\x18\x02 \x03(\t\x12\x10\n\x08platform\x18\x03 \x01(\t\x12?\n\x06inputs\x18\x04 \x03(\x0b\x32/.inference.ModelMetadataResponse.TensorMetadata\x12@\n\x07outputs\x18\x05 \x03(\x0b\x32/.inference.ModelMetadataResponse.TensorMetadata\x12\x44\n\nparameters\x18\x06 \x03(\x0b\x32\x30.inference.ModelMetadataResponse.ParametersEntry\x1a\xe2\x01\n\x0eTensorMetadata\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08\x64\x61tatype\x18\x02 \x01(\t\x12\r\n\x05shape\x18\x03 \x03(\x03\x12S\n\nparameters\x18\x04 \x03(\x0b\x32?.inference.ModelMetadataResponse.TensorMetadata.ParametersEntry\x1aL\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12(\n\x05value\x18\x02 \x01(\x0b\x32\x19.inference.InferParameter:\x02\x38\x01\x1aL\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12(\n\x05value\x18\x02 \x01(\x0b\x32\x19.inference.InferParameter:\x02\x38\x01"\xd2\x06\n\x11ModelInferRequest\x12\x12\n\nmodel_name\x18\x01 \x01(\t\x12\x15\n\rmodel_version\x18\x02 \x01(\t\x12\n\n\x02id\x18\x03 \x01(\t\x12@\n\nparameters\x18\x04 \x03(\x0b\x32,.inference.ModelInferRequest.ParametersEntry\x12=\n\x06inputs\x18\x05 \x03(\x0b\x32-.inference.ModelInferRequest.InferInputTensor\x12H\n\x07outputs\x18\x06 \x03(\x0b\x32\x37.inference.ModelInferRequest.InferRequestedOutputTensor\x1a\x94\x02\n\x10InferInputTensor\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08\x64\x61tatype\x18\x02 \x01(\t\x12\r\n\x05shape\x18\x03 \x03(\x03\x12Q\n\nparameters\x18\x04 \x03(\x0b\x32=.inference.ModelInferRequest.InferInputTensor.ParametersEntry\x12\x30\n\x08\x63ontents\x18\x05 \x01(\x0b\x32\x1e.inference.InferTensorContents\x1aL\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12(\n\x05value\x18\x02 \x01(\x0b\x32\x19.inference.InferParameter:\x02\x38\x01\x1a\xd5\x01\n\x1aInferRequestedOutputTensor\x12\x0c\n\x04name\x18\x01 \x01(\t\x12[\n\nparameters\x18\x02 \x03(\x0b\x32G.inference.ModelInferRequest.InferRequestedOutputTensor.ParametersEntry\x1aL\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12(\n\x05value\x18\x02 \x01(\x0b\x32\x19.inference.InferParameter:\x02\x38\x01\x1aL\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12(\n\x05value\x18\x02 \x01(\x0b\x32\x19.inference.InferParameter:\x02\x38\x01"\xb8\x04\n\x12ModelInferResponse\x12\x12\n\nmodel_name\x18\x01 \x01(\t\x12\x15\n\rmodel_version\x18\x02 \x01(\t\x12\n\n\x02id\x18\x03 \x01(\t\x12\x41\n\nparameters\x18\x04 \x03(\x0b\x32-.inference.ModelInferResponse.ParametersEntry\x12@\n\x07outputs\x18\x05 \x03(\x0b\x32/.inference.ModelInferResponse.InferOutputTensor\x1a\x97\x02\n\x11InferOutputTensor\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08\x64\x61tatype\x18\x02 \x01(\t\x12\r\n\x05shape\x18\x03 \x03(\x03\x12S\n\nparameters\x18\x04 \x03(\x0b\x32?.inference.ModelInferResponse.InferOutputTensor.ParametersEntry\x12\x30\n\x08\x63ontents\x18\x05 \x01(\x0b\x32\x1e.inference.InferTensorContents\x1aL\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12(\n\x05value\x18\x02 \x01(\x0b\x32\x19.inference.InferParameter:\x02\x38\x01\x1aL\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12(\n\x05value\x18\x02 \x01(\x0b\x32\x19.inference.InferParameter:\x02\x38\x01"i\n\x0eInferParameter\x12\x14\n\nbool_param\x18\x01 \x01(\x08H\x00\x12\x15\n\x0bint64_param\x18\x02 \x01(\x03H\x00\x12\x16\n\x0cstring_param\x18\x03 \x01(\tH\x00\x42\x12\n\x10parameter_choice"\xd0\x01\n\x13InferTensorContents\x12\x15\n\rbool_contents\x18\x01 \x03(\x08\x12\x14\n\x0cint_contents\x18\x02 \x03(\x05\x12\x16\n\x0eint64_contents\x18\x03 \x03(\x03\x12\x15\n\ruint_contents\x18\x04 \x03(\r\x12\x17\n\x0fuint64_contents\x18\x05 \x03(\x04\x12\x15\n\rfp32_contents\x18\x06 \x03(\x02\x12\x15\n\rfp64_contents\x18\x07 \x03(\x01\x12\x16\n\x0e\x62ytes_contents\x18\x08 \x03(\x0c"\x8a\x01\n\x18ModelRepositoryParameter\x12\x14\n\nbool_param\x18\x01 \x01(\x08H\x00\x12\x15\n\x0bint64_param\x18\x02 \x01(\x03H\x00\x12\x16\n\x0cstring_param\x18\x03 \x01(\tH\x00\x12\x15\n\x0b\x62ytes_param\x18\x04 \x01(\x0cH\x00\x42\x12\n\x10parameter_choice"@\n\x16RepositoryIndexRequest\x12\x17\n\x0frepository_name\x18\x01 \x01(\t\x12\r\n\x05ready\x18\x02 \x01(\x08"\xa4\x01\n\x17RepositoryIndexResponse\x12=\n\x06models\x18\x01 \x03(\x0b\x32-.inference.RepositoryIndexResponse.ModelIndex\x1aJ\n\nModelIndex\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\x12\r\n\x05state\x18\x03 \x01(\t\x12\x0e\n\x06reason\x18\x04 \x01(\t"\xec\x01\n\x1aRepositoryModelLoadRequest\x12\x17\n\x0frepository_name\x18\x01 \x01(\t\x12\x12\n\nmodel_name\x18\x02 \x01(\t\x12I\n\nparameters\x18\x03 \x03(\x0b\x32\x35.inference.RepositoryModelLoadRequest.ParametersEntry\x1aV\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\x32\n\x05value\x18\x02 \x01(\x0b\x32#.inference.ModelRepositoryParameter:\x02\x38\x01"\x1d\n\x1bRepositoryModelLoadResponse"\xf0\x01\n\x1cRepositoryModelUnloadRequest\x12\x17\n\x0frepository_name\x18\x01 \x01(\t\x12\x12\n\nmodel_name\x18\x02 \x01(\t\x12K\n\nparameters\x18\x03 \x03(\x0b\x32\x37.inference.RepositoryModelUnloadRequest.ParametersEntry\x1aV\n\x0fParametersEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\x32\n\x05value\x18\x02 \x01(\x0b\x32#.inference.ModelRepositoryParameter:\x02\x38\x01"\x1f\n\x1dRepositoryModelUnloadResponse2\xae\x06\n\x14GRPCInferenceService\x12K\n\nServerLive\x12\x1c.inference.ServerLiveRequest\x1a\x1d.inference.ServerLiveResponse"\x00\x12N\n\x0bServerReady\x12\x1d.inference.ServerReadyRequest\x1a\x1e.inference.ServerReadyResponse"\x00\x12K\n\nModelReady\x12\x1c.inference.ModelReadyRequest\x1a\x1d.inference.ModelReadyResponse"\x00\x12W\n\x0eServerMetadata\x12 .inference.ServerMetadataRequest\x1a!.inference.ServerMetadataResponse"\x00\x12T\n\rModelMetadata\x12\x1f.inference.ModelMetadataRequest\x1a .inference.ModelMetadataResponse"\x00\x12K\n\nModelInfer\x12\x1c.inference.ModelInferRequest\x1a\x1d.inference.ModelInferResponse"\x00\x12Z\n\x0fRepositoryIndex\x12!.inference.RepositoryIndexRequest\x1a".inference.RepositoryIndexResponse"\x00\x12\x66\n\x13RepositoryModelLoad\x12%.inference.RepositoryModelLoadRequest\x1a&.inference.RepositoryModelLoadResponse"\x00\x12l\n\x15RepositoryModelUnload\x12\'.inference.RepositoryModelUnloadRequest\x1a(.inference.RepositoryModelUnloadResponse"\x00\x62\x06proto3'
 )
 
 
@@ -67,6 +67,7 @@ _MODELINFERRESPONSE_PARAMETERSENTRY = _MODELINFERRESPONSE.nested_types_by_name[
 ]
 _INFERPARAMETER = DESCRIPTOR.message_types_by_name["InferParameter"]
 _INFERTENSORCONTENTS = DESCRIPTOR.message_types_by_name["InferTensorContents"]
+_MODELREPOSITORYPARAMETER = DESCRIPTOR.message_types_by_name["ModelRepositoryParameter"]
 _REPOSITORYINDEXREQUEST = DESCRIPTOR.message_types_by_name["RepositoryIndexRequest"]
 _REPOSITORYINDEXRESPONSE = DESCRIPTOR.message_types_by_name["RepositoryIndexResponse"]
 _REPOSITORYINDEXRESPONSE_MODELINDEX = _REPOSITORYINDEXRESPONSE.nested_types_by_name[
@@ -75,12 +76,18 @@ _REPOSITORYINDEXRESPONSE_MODELINDEX = _REPOSITORYINDEXRESPONSE.nested_types_by_n
 _REPOSITORYMODELLOADREQUEST = DESCRIPTOR.message_types_by_name[
     "RepositoryModelLoadRequest"
 ]
+_REPOSITORYMODELLOADREQUEST_PARAMETERSENTRY = (
+    _REPOSITORYMODELLOADREQUEST.nested_types_by_name["ParametersEntry"]
+)
 _REPOSITORYMODELLOADRESPONSE = DESCRIPTOR.message_types_by_name[
     "RepositoryModelLoadResponse"
 ]
 _REPOSITORYMODELUNLOADREQUEST = DESCRIPTOR.message_types_by_name[
     "RepositoryModelUnloadRequest"
 ]
+_REPOSITORYMODELUNLOADREQUEST_PARAMETERSENTRY = (
+    _REPOSITORYMODELUNLOADREQUEST.nested_types_by_name["ParametersEntry"]
+)
 _REPOSITORYMODELUNLOADRESPONSE = DESCRIPTOR.message_types_by_name[
     "RepositoryModelUnloadResponse"
 ]
@@ -348,6 +355,17 @@ InferTensorContents = _reflection.GeneratedProtocolMessageType(
 )
 _sym_db.RegisterMessage(InferTensorContents)
 
+ModelRepositoryParameter = _reflection.GeneratedProtocolMessageType(
+    "ModelRepositoryParameter",
+    (_message.Message,),
+    {
+        "DESCRIPTOR": _MODELREPOSITORYPARAMETER,
+        "__module__": "dataplane_pb2"
+        # @@protoc_insertion_point(class_scope:inference.ModelRepositoryParameter)
+    },
+)
+_sym_db.RegisterMessage(ModelRepositoryParameter)
+
 RepositoryIndexRequest = _reflection.GeneratedProtocolMessageType(
     "RepositoryIndexRequest",
     (_message.Message,),
@@ -384,12 +402,22 @@ RepositoryModelLoadRequest = _reflection.GeneratedProtocolMessageType(
     "RepositoryModelLoadRequest",
     (_message.Message,),
     {
+        "ParametersEntry": _reflection.GeneratedProtocolMessageType(
+            "ParametersEntry",
+            (_message.Message,),
+            {
+                "DESCRIPTOR": _REPOSITORYMODELLOADREQUEST_PARAMETERSENTRY,
+                "__module__": "dataplane_pb2"
+                # @@protoc_insertion_point(class_scope:inference.RepositoryModelLoadRequest.ParametersEntry)
+            },
+        ),
         "DESCRIPTOR": _REPOSITORYMODELLOADREQUEST,
         "__module__": "dataplane_pb2"
         # @@protoc_insertion_point(class_scope:inference.RepositoryModelLoadRequest)
     },
 )
 _sym_db.RegisterMessage(RepositoryModelLoadRequest)
+_sym_db.RegisterMessage(RepositoryModelLoadRequest.ParametersEntry)
 
 RepositoryModelLoadResponse = _reflection.GeneratedProtocolMessageType(
     "RepositoryModelLoadResponse",
@@ -406,12 +434,22 @@ RepositoryModelUnloadRequest = _reflection.GeneratedProtocolMessageType(
     "RepositoryModelUnloadRequest",
     (_message.Message,),
     {
+        "ParametersEntry": _reflection.GeneratedProtocolMessageType(
+            "ParametersEntry",
+            (_message.Message,),
+            {
+                "DESCRIPTOR": _REPOSITORYMODELUNLOADREQUEST_PARAMETERSENTRY,
+                "__module__": "dataplane_pb2"
+                # @@protoc_insertion_point(class_scope:inference.RepositoryModelUnloadRequest.ParametersEntry)
+            },
+        ),
         "DESCRIPTOR": _REPOSITORYMODELUNLOADREQUEST,
         "__module__": "dataplane_pb2"
         # @@protoc_insertion_point(class_scope:inference.RepositoryModelUnloadRequest)
     },
 )
 _sym_db.RegisterMessage(RepositoryModelUnloadRequest)
+_sym_db.RegisterMessage(RepositoryModelUnloadRequest.ParametersEntry)
 
 RepositoryModelUnloadResponse = _reflection.GeneratedProtocolMessageType(
     "RepositoryModelUnloadResponse",
@@ -444,6 +482,10 @@ if _descriptor._USE_C_DESCRIPTORS == False:
     _MODELINFERRESPONSE_INFEROUTPUTTENSOR_PARAMETERSENTRY._serialized_options = b"8\001"
     _MODELINFERRESPONSE_PARAMETERSENTRY._options = None
     _MODELINFERRESPONSE_PARAMETERSENTRY._serialized_options = b"8\001"
+    _REPOSITORYMODELLOADREQUEST_PARAMETERSENTRY._options = None
+    _REPOSITORYMODELLOADREQUEST_PARAMETERSENTRY._serialized_options = b"8\001"
+    _REPOSITORYMODELUNLOADREQUEST_PARAMETERSENTRY._options = None
+    _REPOSITORYMODELUNLOADREQUEST_PARAMETERSENTRY._serialized_options = b"8\001"
     _SERVERLIVEREQUEST._serialized_start = 30
     _SERVERLIVEREQUEST._serialized_end = 49
     _SERVERLIVERESPONSE._serialized_start = 51
@@ -496,20 +538,26 @@ if _descriptor._USE_C_DESCRIPTORS == False:
     _INFERPARAMETER._serialized_end = 2506
     _INFERTENSORCONTENTS._serialized_start = 2509
     _INFERTENSORCONTENTS._serialized_end = 2717
-    _REPOSITORYINDEXREQUEST._serialized_start = 2719
-    _REPOSITORYINDEXREQUEST._serialized_end = 2783
-    _REPOSITORYINDEXRESPONSE._serialized_start = 2786
-    _REPOSITORYINDEXRESPONSE._serialized_end = 2950
-    _REPOSITORYINDEXRESPONSE_MODELINDEX._serialized_start = 2876
-    _REPOSITORYINDEXRESPONSE_MODELINDEX._serialized_end = 2950
-    _REPOSITORYMODELLOADREQUEST._serialized_start = 2952
-    _REPOSITORYMODELLOADREQUEST._serialized_end = 3025
-    _REPOSITORYMODELLOADRESPONSE._serialized_start = 3027
-    _REPOSITORYMODELLOADRESPONSE._serialized_end = 3056
-    _REPOSITORYMODELUNLOADREQUEST._serialized_start = 3058
-    _REPOSITORYMODELUNLOADREQUEST._serialized_end = 3133
-    _REPOSITORYMODELUNLOADRESPONSE._serialized_start = 3135
-    _REPOSITORYMODELUNLOADRESPONSE._serialized_end = 3166
-    _GRPCINFERENCESERVICE._serialized_start = 3169
-    _GRPCINFERENCESERVICE._serialized_end = 3983
+    _MODELREPOSITORYPARAMETER._serialized_start = 2720
+    _MODELREPOSITORYPARAMETER._serialized_end = 2858
+    _REPOSITORYINDEXREQUEST._serialized_start = 2860
+    _REPOSITORYINDEXREQUEST._serialized_end = 2924
+    _REPOSITORYINDEXRESPONSE._serialized_start = 2927
+    _REPOSITORYINDEXRESPONSE._serialized_end = 3091
+    _REPOSITORYINDEXRESPONSE_MODELINDEX._serialized_start = 3017
+    _REPOSITORYINDEXRESPONSE_MODELINDEX._serialized_end = 3091
+    _REPOSITORYMODELLOADREQUEST._serialized_start = 3094
+    _REPOSITORYMODELLOADREQUEST._serialized_end = 3330
+    _REPOSITORYMODELLOADREQUEST_PARAMETERSENTRY._serialized_start = 3244
+    _REPOSITORYMODELLOADREQUEST_PARAMETERSENTRY._serialized_end = 3330
+    _REPOSITORYMODELLOADRESPONSE._serialized_start = 3332
+    _REPOSITORYMODELLOADRESPONSE._serialized_end = 3361
+    _REPOSITORYMODELUNLOADREQUEST._serialized_start = 3364
+    _REPOSITORYMODELUNLOADREQUEST._serialized_end = 3604
+    _REPOSITORYMODELUNLOADREQUEST_PARAMETERSENTRY._serialized_start = 3244
+    _REPOSITORYMODELUNLOADREQUEST_PARAMETERSENTRY._serialized_end = 3330
+    _REPOSITORYMODELUNLOADRESPONSE._serialized_start = 3606
+    _REPOSITORYMODELUNLOADRESPONSE._serialized_end = 3637
+    _GRPCINFERENCESERVICE._serialized_start = 3640
+    _GRPCINFERENCESERVICE._serialized_end = 4454
 # @@protoc_insertion_point(module_scope)
