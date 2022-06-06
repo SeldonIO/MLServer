@@ -66,6 +66,9 @@ class PromServerInterceptor(ServerInterceptor):
             if servicer_context._state.client == "cancelled":
                 return StatusCode.CANCELLED
 
+        if not hasattr(servicer_context, "code"):
+            return StatusCode.OK
+
         code = servicer_context.code()
         if code is None:
             return StatusCode.OK
