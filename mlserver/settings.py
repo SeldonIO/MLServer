@@ -1,5 +1,3 @@
-import multiprocessing
-
 from typing import List, Optional
 from pydantic import BaseSettings, PyObject, Field
 
@@ -10,7 +8,7 @@ ENV_FILE_SETTINGS = ".env"
 ENV_PREFIX_SETTINGS = "MLSERVER_"
 ENV_PREFIX_MODEL_SETTINGS = "MLSERVER_MODEL_"
 
-DEFAULT_PARALLEL_WORKERS = multiprocessing.cpu_count()
+DEFAULT_PARALLEL_WORKERS = 1
 
 
 class CORSSettings(BaseSettings):
@@ -173,8 +171,8 @@ class ModelSettings(BaseSettings):
     """Metadata about the outputs returned by the model."""
 
     # Parallel settings
-    parallel_workers: int = Field(
-        DEFAULT_PARALLEL_WORKERS,
+    parallel_workers: Optional[int] = Field(
+        None,
         deprecated=True,
         description=(
             "Use the `parallel_workers` field the server wide settings instead."

@@ -191,12 +191,26 @@ class InferencePool:
         )
 
     def _should_load_model(self, model: MLModel):
-        # NOTE: This is a remnant from the previous architecture for parallel
-        # workers, where each worker had its own pool.
-        # For backwards compatibility, we will respect when a model disables
-        # parallel inference.
-        if not model.settings.parallel_workers:
-            return False
+        if model.settings.parallel_workers is not None:
+            logger.warning(
+                "DEPRECATED!! The `parallel_workers` setting at the model-level "
+                "has now been deprecated and moved "
+                "to the top-level server "
+                "settings. "
+                "This field will be removed in MLServer 1.2.0. "
+                "To access the new field, you can either update the "
+                "`settings.json` file, or update the `MLSERVER_PARALLEL_WORKERS` "
+                "environment variable. "
+                f"The current value of the server-level's `parallel_workers` field is "
+                f"'{self._settings.parallel_workers}'."
+            )
+
+            # NOTE: This is a remnant from the previous architecture for parallel
+            # workers, where each worker had its own pool.
+            # For backwards compatibility, we will respect when a model disables
+            # parallel inference.
+            if model.settings.parallel_workers <= 0:
+                return False
 
         if not self._settings.parallel_workers:
             return False
