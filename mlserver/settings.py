@@ -6,6 +6,7 @@ from pydantic import BaseSettings, PyObject, Field
 from .version import __version__
 from .types import MetadataTensor
 
+ENV_FILE_SETTINGS = ".env"
 ENV_PREFIX_SETTINGS = "MLSERVER_"
 ENV_PREFIX_MODEL_SETTINGS = "MLSERVER_MODEL_"
 
@@ -14,6 +15,7 @@ DEFAULT_PARALLEL_WORKERS = multiprocessing.cpu_count()
 
 class CORSSettings(BaseSettings):
     class Config:
+        env_file = ENV_FILE_SETTINGS
         env_prefix = ENV_PREFIX_SETTINGS
 
     allow_origins: Optional[List[str]] = []
@@ -49,6 +51,7 @@ class CORSSettings(BaseSettings):
 
 class Settings(BaseSettings):
     class Config:
+        env_file = ENV_FILE_SETTINGS
         env_prefix = ENV_PREFIX_SETTINGS
 
     debug: bool = True
@@ -120,6 +123,7 @@ class ModelParameters(BaseSettings):
     """
 
     class Config:
+        env_file = ENV_FILE_SETTINGS
         env_prefix = ENV_PREFIX_MODEL_SETTINGS
 
     uri: Optional[str] = None
@@ -144,6 +148,7 @@ class ModelParameters(BaseSettings):
 
 class ModelSettings(BaseSettings):
     class Config:
+        env_file = ENV_FILE_SETTINGS
         env_prefix = ENV_PREFIX_MODEL_SETTINGS
         underscore_attrs_are_private = True
 

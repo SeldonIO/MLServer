@@ -42,6 +42,7 @@ setup(
     install_requires=[
         "click",
         "fastapi",
+        "python-dotenv",
         "grpcio",
         "importlib-metadata;python_version<'3.8'",
         "numpy",
