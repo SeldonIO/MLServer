@@ -1,5 +1,3 @@
-import multiprocessing
-
 from typing import List, Optional
 from pydantic import BaseSettings, PyObject, Field
 
@@ -9,7 +7,7 @@ from .types import MetadataTensor
 ENV_PREFIX_SETTINGS = "MLSERVER_"
 ENV_PREFIX_MODEL_SETTINGS = "MLSERVER_MODEL_"
 
-DEFAULT_PARALLEL_WORKERS = multiprocessing.cpu_count()
+DEFAULT_PARALLEL_WORKERS = 1
 
 
 class CORSSettings(BaseSettings):

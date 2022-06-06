@@ -9,8 +9,9 @@ section](#concurrency-in-python) below.
 
 ![](../assets/parallel-inference.svg)
 
-By default, MLServer will spin up a pool of `N` worker processes to run
-inference, where `N` equals the numbers of CPU cores available.
+By default, MLServer will spin up a pool with only one worker process to run
+inference.
+All models will be loaded uniformly across the inference pool workers.
 To read more about advanced settings, please see the [usage section
 below](#usage).
 
@@ -62,11 +63,10 @@ usually offset by the benefit of having multiple cores to compute inference on.
 
 ## Usage
 
-By default, MLServer will always create an inference pool with `N` workers,
-where `N` stands for the number of CPU cores available.
-All models will get loaded across these `N` worker processes.
-The number of workers `N` can be adjusted globally through the server-level
-`parallel_workers` setting.
+By default, MLServer will always create an inference pool with one single
+worker.
+The number of workers (i.e. the size of the inference pool) can be adjusted
+globally through the server-level `parallel_workers` setting.
 
 ### `parallel_workers`
 
