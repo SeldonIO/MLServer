@@ -2,7 +2,6 @@ import pytest
 import grpc
 
 from mlserver.grpc import dataplane_pb2 as pb
-from mlserver.grpc import model_repository_pb2 as mr_pb
 from mlserver import __version__
 
 
@@ -94,22 +93,16 @@ async def test_model_infer_error(inference_service_stub, model_infer_request):
 
 
 async def test_model_repository_index(
-    model_repository_service_stub, grpc_repository_index_request
+    inference_service_stub, grpc_repository_index_request
 ):
-    index = await model_repository_service_stub.RepositoryIndex(
-        grpc_repository_index_request
-    )
+    index = await inference_service_stub.RepositoryIndex(grpc_repository_index_request)
 
     assert len(index.models) == 1
 
 
-async def test_model_repository_unload(
-    inference_service_stub, model_repository_service_stub, sum_model_settings
-):
-    unload_request = mr_pb.RepositoryModelUnloadRequest(
-        model_name=sum_model_settings.name
-    )
-    await model_repository_service_stub.RepositoryModelUnload(unload_request)
+async def test_model_repository_unload(inference_service_stub, sum_model_settings):
+    unload_request = pb.RepositoryModelUnloadRequest(model_name=sum_model_settings.name)
+    await inference_service_stub.RepositoryModelUnload(unload_request)
 
     with pytest.raises(grpc.RpcError):
         await inference_service_stub.ModelMetadata(
@@ -117,15 +110,13 @@ async def test_model_repository_unload(
         )
 
 
-async def test_model_repository_load(
-    inference_service_stub, model_repository_service_stub, sum_model_settings
-):
-    await model_repository_service_stub.RepositoryModelUnload(
-        mr_pb.RepositoryModelLoadRequest(model_name=sum_model_settings.name)
+async def test_model_repository_load(inference_service_stub, sum_model_settings):
+    await inference_service_stub.RepositoryModelUnload(
+        pb.RepositoryModelLoadRequest(model_name=sum_model_settings.name)
     )
 
-    load_request = mr_pb.RepositoryModelLoadRequest(model_name=sum_model_settings.name)
-    await model_repository_service_stub.RepositoryModelLoad(load_request)
+    load_request = pb.RepositoryModelLoadRequest(model_name=sum_model_settings.name)
+    await inference_service_stub.RepositoryModelLoad(load_request)
 
     response = await inference_service_stub.ModelMetadata(
         pb.ModelMetadataRequest(name=sum_model_settings.name)
@@ -134,12 +125,10 @@ async def test_model_repository_load(
     assert response.name == sum_model_settings.name
 
 
-async def test_model_repository_load_error(
-    inference_service_stub, model_repository_service_stub, sum_model_settings
-):
+async def test_model_repository_load_error(inference_service_stub, sum_model_settings):
     with pytest.raises(grpc.RpcError) as err:
-        load_request = mr_pb.RepositoryModelLoadRequest(model_name="my-model")
-        await model_repository_service_stub.RepositoryModelLoad(load_request)
+        load_request = pb.RepositoryModelLoadRequest(model_name="my-model")
+        await inference_service_stub.RepositoryModelLoad(load_request)
 
     assert err.value.code() == grpc.StatusCode.NOT_FOUND
     assert err.value.details() == "Model my-model not found"

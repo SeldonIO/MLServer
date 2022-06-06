@@ -1,12 +1,7 @@
 import grpc
 
-from typing import Callable
-from fastapi import status
-
 from . import dataplane_pb2 as pb
-from . import model_repository_pb2 as mr_pb
 from .dataplane_pb2_grpc import GRPCInferenceServiceServicer
-from .model_repository_pb2_grpc import ModelRepositoryServiceServicer
 from .converters import (
     ModelInferRequestConverter,
     ModelInferResponseConverter,
@@ -15,40 +10,19 @@ from .converters import (
     RepositoryIndexRequestConverter,
     RepositoryIndexResponseConverter,
 )
-from .logging import logger
-from .utils import to_headers, to_metadata
+from .utils import to_headers, to_metadata, handle_mlserver_error
 
 from ..utils import insert_headers, extract_headers
 from ..handlers import DataPlane, ModelRepositoryHandlers
-from ..errors import MLServerError
-
-STATUS_CODE_MAPPING = {
-    status.HTTP_400_BAD_REQUEST: grpc.StatusCode.INVALID_ARGUMENT,
-    status.HTTP_404_NOT_FOUND: grpc.StatusCode.NOT_FOUND,
-    status.HTTP_422_UNPROCESSABLE_ENTITY: grpc.StatusCode.FAILED_PRECONDITION,
-    status.HTTP_500_INTERNAL_SERVER_ERROR: grpc.StatusCode.INTERNAL,
-}
-
-
-def _grpc_status_code(err: MLServerError):
-    return STATUS_CODE_MAPPING.get(err.status_code, grpc.StatusCode.UNKNOWN)
-
-
-def _handle_mlserver_error(f: Callable):
-    async def _inner(self, request, context):
-        try:
-            return await f(self, request, context)
-        except MLServerError as err:
-            logger.error(err)
-            await context.abort(code=_grpc_status_code(err), details=str(err))
-
-    return _inner
 
 
 class InferenceServicer(GRPCInferenceServiceServicer):
-    def __init__(self, data_plane: DataPlane):
+    def __init__(
+        self, data_plane: DataPlane, model_repository_handlers: ModelRepositoryHandlers
+    ):
         super().__init__()
         self._data_plane = data_plane
+        self._model_repository_handlers = model_repository_handlers
 
     async def ServerLive(
         self, request: pb.ServerLiveRequest, context
@@ -76,7 +50,7 @@ class InferenceServicer(GRPCInferenceServiceServicer):
         metadata = await self._data_plane.metadata()
         return ServerMetadataResponseConverter.from_types(metadata)
 
-    @_handle_mlserver_error
+    @handle_mlserver_error
     async def ModelMetadata(
         self, request: pb.ModelMetadataRequest, context
     ) -> pb.ModelMetadataResponse:
@@ -85,7 +59,7 @@ class InferenceServicer(GRPCInferenceServiceServicer):
         )
         return ModelMetadataResponseConverter.from_types(metadata)
 
-    @_handle_mlserver_error
+    @handle_mlserver_error
     async def ModelInfer(
         self, request: pb.ModelInferRequest, context: grpc.ServicerContext
     ) -> pb.ModelInferResponse:
@@ -106,28 +80,23 @@ class InferenceServicer(GRPCInferenceServiceServicer):
         response = ModelInferResponseConverter.from_types(result)
         return response
 
-
-class ModelRepositoryServicer(ModelRepositoryServiceServicer):
-    def __init__(self, handlers: ModelRepositoryHandlers):
-        self._handlers = handlers
-
     async def RepositoryIndex(
-        self, request: mr_pb.RepositoryIndexRequest, context
-    ) -> mr_pb.RepositoryIndexResponse:
+        self, request: pb.RepositoryIndexRequest, context
+    ) -> pb.RepositoryIndexResponse:
         payload = RepositoryIndexRequestConverter.to_types(request)
-        index = await self._handlers.index(payload)
-        return RepositoryIndexResponseConverter.from_types(index)
+        index = await self._model_repository_handlers.index(payload)
+        return RepositoryIndexResponseConverter.from_types(index)  # type: ignore
 
-    @_handle_mlserver_error
+    @handle_mlserver_error
     async def RepositoryModelLoad(
-        self, request: mr_pb.RepositoryModelLoadRequest, context
-    ) -> mr_pb.RepositoryModelLoadResponse:
-        await self._handlers.load(request.model_name)
-        return mr_pb.RepositoryModelLoadResponse()
+        self, request: pb.RepositoryModelLoadRequest, context
+    ) -> pb.RepositoryModelLoadResponse:
+        await self._model_repository_handlers.load(request.model_name)
+        return pb.RepositoryModelLoadResponse()
 
-    @_handle_mlserver_error
+    @handle_mlserver_error
     async def RepositoryModelUnload(
-        self, request: mr_pb.RepositoryModelUnloadRequest, context
-    ) -> mr_pb.RepositoryModelUnloadResponse:
-        await self._handlers.unload(request.model_name)
-        return mr_pb.RepositoryModelUnloadResponse()
+        self, request: pb.RepositoryModelUnloadRequest, context
+    ) -> pb.RepositoryModelUnloadResponse:
+        await self._model_repository_handlers.unload(request.model_name)
+        return pb.RepositoryModelUnloadResponse()

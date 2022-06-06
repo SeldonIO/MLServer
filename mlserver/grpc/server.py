@@ -5,7 +5,8 @@ from typing import Any, List, Tuple
 from ..handlers import DataPlane, ModelRepositoryHandlers
 from ..settings import Settings
 
-from .servicers import InferenceServicer, ModelRepositoryServicer
+from .servicers import InferenceServicer
+from .model_repository import ModelRepositoryServicer
 from .dataplane_pb2_grpc import add_GRPCInferenceServiceServicer_to_server
 from .model_repository_pb2_grpc import add_ModelRepositoryServiceServicer_to_server
 from .interceptors import LoggingInterceptor, PromServerInterceptor
@@ -27,7 +28,9 @@ class GRPCServer:
         self._model_repository_handlers = model_repository_handlers
 
     def _create_server(self):
-        self._inference_servicer = InferenceServicer(self._data_plane)
+        self._inference_servicer = InferenceServicer(
+            self._data_plane, self._model_repository_handlers
+        )
         self._model_repository_servicer = ModelRepositoryServicer(
             self._model_repository_handlers
         )

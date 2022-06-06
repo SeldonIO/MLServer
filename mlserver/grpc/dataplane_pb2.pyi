@@ -956,3 +956,311 @@ class InferTensorContents(google.protobuf.message.Message):
     ) -> None: ...
 
 global___InferTensorContents = InferTensorContents
+
+class ModelRepositoryParameter(google.protobuf.message.Message):
+    """
+    Messages for the Repository API
+
+    NOTE: These messages used to exist previously on a different protobuf
+    definition. However, they have now been merged with the main
+    GRPCInferenceService.
+
+    An model repository parameter value.
+    """
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    BOOL_PARAM_FIELD_NUMBER: builtins.int
+    INT64_PARAM_FIELD_NUMBER: builtins.int
+    STRING_PARAM_FIELD_NUMBER: builtins.int
+    BYTES_PARAM_FIELD_NUMBER: builtins.int
+    bool_param: builtins.bool = ...
+    """A boolean parameter value."""
+
+    int64_param: builtins.int = ...
+    """An int64 parameter value."""
+
+    string_param: typing.Text = ...
+    """A string parameter value."""
+
+    bytes_param: builtins.bytes = ...
+    """A bytes parameter value."""
+    def __init__(
+        self,
+        *,
+        bool_param: builtins.bool = ...,
+        int64_param: builtins.int = ...,
+        string_param: typing.Text = ...,
+        bytes_param: builtins.bytes = ...,
+    ) -> None: ...
+    def HasField(
+        self,
+        field_name: typing_extensions.Literal[
+            "bool_param",
+            b"bool_param",
+            "bytes_param",
+            b"bytes_param",
+            "int64_param",
+            b"int64_param",
+            "parameter_choice",
+            b"parameter_choice",
+            "string_param",
+            b"string_param",
+        ],
+    ) -> builtins.bool: ...
+    def ClearField(
+        self,
+        field_name: typing_extensions.Literal[
+            "bool_param",
+            b"bool_param",
+            "bytes_param",
+            b"bytes_param",
+            "int64_param",
+            b"int64_param",
+            "parameter_choice",
+            b"parameter_choice",
+            "string_param",
+            b"string_param",
+        ],
+    ) -> None: ...
+    def WhichOneof(
+        self,
+        oneof_group: typing_extensions.Literal["parameter_choice", b"parameter_choice"],
+    ) -> typing.Optional[
+        typing_extensions.Literal[
+            "bool_param", "int64_param", "string_param", "bytes_param"
+        ]
+    ]: ...
+
+global___ModelRepositoryParameter = ModelRepositoryParameter
+
+class RepositoryIndexRequest(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    REPOSITORY_NAME_FIELD_NUMBER: builtins.int
+    READY_FIELD_NUMBER: builtins.int
+    repository_name: typing.Text = ...
+    """The name of the repository. If empty the index is returned
+    for all repositories.
+    """
+
+    ready: builtins.bool = ...
+    """If true return only models currently ready for inferencing."""
+    def __init__(
+        self,
+        *,
+        repository_name: typing.Text = ...,
+        ready: builtins.bool = ...,
+    ) -> None: ...
+    def ClearField(
+        self,
+        field_name: typing_extensions.Literal[
+            "ready", b"ready", "repository_name", b"repository_name"
+        ],
+    ) -> None: ...
+
+global___RepositoryIndexRequest = RepositoryIndexRequest
+
+class RepositoryIndexResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    class ModelIndex(google.protobuf.message.Message):
+        """Index entry for a model."""
+
+        DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+        NAME_FIELD_NUMBER: builtins.int
+        VERSION_FIELD_NUMBER: builtins.int
+        STATE_FIELD_NUMBER: builtins.int
+        REASON_FIELD_NUMBER: builtins.int
+        name: typing.Text = ...
+        """The name of the model."""
+
+        version: typing.Text = ...
+        """The version of the model."""
+
+        state: typing.Text = ...
+        """The state of the model."""
+
+        reason: typing.Text = ...
+        """The reason, if any, that the model is in the given state."""
+        def __init__(
+            self,
+            *,
+            name: typing.Text = ...,
+            version: typing.Text = ...,
+            state: typing.Text = ...,
+            reason: typing.Text = ...,
+        ) -> None: ...
+        def ClearField(
+            self,
+            field_name: typing_extensions.Literal[
+                "name",
+                b"name",
+                "reason",
+                b"reason",
+                "state",
+                b"state",
+                "version",
+                b"version",
+            ],
+        ) -> None: ...
+    MODELS_FIELD_NUMBER: builtins.int
+    @property
+    def models(
+        self,
+    ) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[
+        global___RepositoryIndexResponse.ModelIndex
+    ]:
+        """An index entry for each model."""
+        pass
+    def __init__(
+        self,
+        *,
+        models: typing.Optional[
+            typing.Iterable[global___RepositoryIndexResponse.ModelIndex]
+        ] = ...,
+    ) -> None: ...
+    def ClearField(
+        self, field_name: typing_extensions.Literal["models", b"models"]
+    ) -> None: ...
+
+global___RepositoryIndexResponse = RepositoryIndexResponse
+
+class RepositoryModelLoadRequest(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    class ParametersEntry(google.protobuf.message.Message):
+        DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+        KEY_FIELD_NUMBER: builtins.int
+        VALUE_FIELD_NUMBER: builtins.int
+        key: typing.Text = ...
+        @property
+        def value(self) -> global___ModelRepositoryParameter: ...
+        def __init__(
+            self,
+            *,
+            key: typing.Text = ...,
+            value: typing.Optional[global___ModelRepositoryParameter] = ...,
+        ) -> None: ...
+        def HasField(
+            self, field_name: typing_extensions.Literal["value", b"value"]
+        ) -> builtins.bool: ...
+        def ClearField(
+            self,
+            field_name: typing_extensions.Literal["key", b"key", "value", b"value"],
+        ) -> None: ...
+    REPOSITORY_NAME_FIELD_NUMBER: builtins.int
+    MODEL_NAME_FIELD_NUMBER: builtins.int
+    PARAMETERS_FIELD_NUMBER: builtins.int
+    repository_name: typing.Text = ...
+    """The name of the repository to load from. If empty the model
+    is loaded from any repository.
+    """
+
+    model_name: typing.Text = ...
+    """The name of the model to load, or reload."""
+    @property
+    def parameters(
+        self,
+    ) -> google.protobuf.internal.containers.MessageMap[
+        typing.Text, global___ModelRepositoryParameter
+    ]:
+        """Optional model repository request parameters."""
+        pass
+    def __init__(
+        self,
+        *,
+        repository_name: typing.Text = ...,
+        model_name: typing.Text = ...,
+        parameters: typing.Optional[
+            typing.Mapping[typing.Text, global___ModelRepositoryParameter]
+        ] = ...,
+    ) -> None: ...
+    def ClearField(
+        self,
+        field_name: typing_extensions.Literal[
+            "model_name",
+            b"model_name",
+            "parameters",
+            b"parameters",
+            "repository_name",
+            b"repository_name",
+        ],
+    ) -> None: ...
+
+global___RepositoryModelLoadRequest = RepositoryModelLoadRequest
+
+class RepositoryModelLoadResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    def __init__(
+        self,
+    ) -> None: ...
+
+global___RepositoryModelLoadResponse = RepositoryModelLoadResponse
+
+class RepositoryModelUnloadRequest(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    class ParametersEntry(google.protobuf.message.Message):
+        DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+        KEY_FIELD_NUMBER: builtins.int
+        VALUE_FIELD_NUMBER: builtins.int
+        key: typing.Text = ...
+        @property
+        def value(self) -> global___ModelRepositoryParameter: ...
+        def __init__(
+            self,
+            *,
+            key: typing.Text = ...,
+            value: typing.Optional[global___ModelRepositoryParameter] = ...,
+        ) -> None: ...
+        def HasField(
+            self, field_name: typing_extensions.Literal["value", b"value"]
+        ) -> builtins.bool: ...
+        def ClearField(
+            self,
+            field_name: typing_extensions.Literal["key", b"key", "value", b"value"],
+        ) -> None: ...
+    REPOSITORY_NAME_FIELD_NUMBER: builtins.int
+    MODEL_NAME_FIELD_NUMBER: builtins.int
+    PARAMETERS_FIELD_NUMBER: builtins.int
+    repository_name: typing.Text = ...
+    """The name of the repository from which the model was originally
+    loaded. If empty the repository is not considered.
+    """
+
+    model_name: typing.Text = ...
+    """The name of the model to unload."""
+    @property
+    def parameters(
+        self,
+    ) -> google.protobuf.internal.containers.MessageMap[
+        typing.Text, global___ModelRepositoryParameter
+    ]:
+        """Optional model repository request parameters."""
+        pass
+    def __init__(
+        self,
+        *,
+        repository_name: typing.Text = ...,
+        model_name: typing.Text = ...,
+        parameters: typing.Optional[
+            typing.Mapping[typing.Text, global___ModelRepositoryParameter]
+        ] = ...,
+    ) -> None: ...
+    def ClearField(
+        self,
+        field_name: typing_extensions.Literal[
+            "model_name",
+            b"model_name",
+            "parameters",
+            b"parameters",
+            "repository_name",
+            b"repository_name",
+        ],
+    ) -> None: ...
+
+global___RepositoryModelUnloadRequest = RepositoryModelUnloadRequest
+
+class RepositoryModelUnloadResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    def __init__(
+        self,
+    ) -> None: ...
+
+global___RepositoryModelUnloadResponse = RepositoryModelUnloadResponse
