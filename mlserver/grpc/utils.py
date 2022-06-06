@@ -18,7 +18,11 @@ STATUS_CODE_MAPPING = {
 
 
 def to_headers(context: ServicerContext) -> Dict[str, str]:
-    metadata = context.invocation_metadata() + context.trailing_metadata()
+    metadata = context.invocation_metadata()
+    if hasattr(context, "trailing_metadata"):
+        # NOTE: Older versions of `grpcio` (e.g. `grpcio==1.34.0`) don't expose
+        # access to the trailing metadata on the service side
+        metadata += context.trailing_metadata()
     headers = {}
     for metadatum in metadata:
         headers[metadatum.key] = metadatum.value
