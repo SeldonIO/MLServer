@@ -1,4 +1,8 @@
 import asyncio
+import random
+import string
+
+from typing import Dict
 
 from mlserver import MLModel
 from mlserver.types import InferenceRequest, InferenceResponse, Parameters
@@ -11,6 +15,12 @@ class SumModel(MLModel):
     @custom_handler(rest_path="/my-custom-endpoint")
     async def my_payload(self, payload: list) -> int:
         return sum(payload)
+
+    @custom_handler(rest_path="/custom-endpoint-with-long-response")
+    async def long_response_endpoint(self, length: int) -> Dict[str, str]:
+        alphabet = string.ascii_lowercase
+        response = "".join(random.choice(alphabet) for i in range(length))
+        return {"foo": response}
 
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
         decoded = self.decode(payload.inputs[0])

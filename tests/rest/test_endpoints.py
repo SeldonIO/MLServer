@@ -1,6 +1,11 @@
 import pytest
 
-from mlserver import types, __version__
+from mlserver import __version__
+from mlserver.types import (
+    InferenceResponse,
+    MetadataServerResponse,
+    MetadataModelResponse,
+)
 
 
 async def test_live(rest_client):
@@ -28,7 +33,7 @@ async def test_metadata(rest_client):
     endpoint = "/v2"
     response = await rest_client.get(endpoint)
 
-    metadata = types.MetadataServerResponse.parse_obj(response.json())
+    metadata = MetadataServerResponse.parse_obj(response.json())
 
     assert metadata.name == "mlserver"
     assert metadata.version == __version__
@@ -39,7 +44,7 @@ async def test_model_metadata(rest_client, sum_model_settings):
     endpoint = f"v2/models/{sum_model_settings.name}"
     response = await rest_client.get(endpoint)
 
-    metadata = types.MetadataModelResponse.parse_obj(response.json())
+    metadata = MetadataModelResponse.parse_obj(response.json())
 
     assert metadata.name == sum_model_settings.name
     assert metadata.platform == sum_model_settings.platform
@@ -58,7 +63,7 @@ async def test_infer(rest_client, inference_request, model_name, model_version):
 
     assert response.status_code == 200
 
-    prediction = types.InferenceResponse.parse_obj(response.json())
+    prediction = InferenceResponse.parse_obj(response.json())
     assert len(prediction.outputs) == 1
     assert prediction.outputs[0].data.__root__ == [6]
 
