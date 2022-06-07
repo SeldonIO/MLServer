@@ -120,7 +120,7 @@ For that, we will need to create 2 configuration files:
 %%writefile settings.json
 {
     "debug": "true",
-    "kafka_enable": "true"
+    "kafka_enabled": "true"
 }
 ```
 

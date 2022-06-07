@@ -1,4 +1,4 @@
 {
     "debug": "true",
-    "kafka_enable": "true"
+    "kafka_enabled": "true"
 }
