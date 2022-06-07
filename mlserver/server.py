@@ -108,7 +108,7 @@ class MLServer:
 
     async def add_custom_handlers(self, model: MLModel):
         await self._rest_server.add_custom_handlers(model)
-        if self._settings.kafka_enabled:
+        if self._kafka_server:
             await self._kafka_server.add_custom_handlers(model)
 
         # TODO: Add support for custom gRPC endpoints
@@ -123,7 +123,7 @@ class MLServer:
 
     async def remove_custom_handlers(self, model: MLModel):
         await self._rest_server.delete_custom_handlers(model)
-        if self._settings.kafka_enabled:
+        if self._kafka_server:
             await self._kafka_server.delete_custom_handlers(model)
 
         # TODO: Add support for custom gRPC endpoints
@@ -142,7 +142,7 @@ class MLServer:
             await self._inference_pool.close()
 
         if self._kafka_server:
-            await self._kafka_server.stop(sig)
+            await self._kafka_server.stop()
 
         await self._grpc_server.stop(sig)
         await self._rest_server.stop(sig)

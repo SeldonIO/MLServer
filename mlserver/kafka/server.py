@@ -105,6 +105,6 @@ class KafkaServer:
             else:
                 logger.info("Kafka Processed Request - 200 OK")
 
-    async def stop(self):
+    async def stop(self, sig: int = None):
         await self._consumer.stop()
         await self._producer.stop()

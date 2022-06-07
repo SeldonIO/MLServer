@@ -1,5 +1,3 @@
-import uuid
-
 from ..settings import Settings
 from ..registry import MultiModelRegistry
 from ..types import (
