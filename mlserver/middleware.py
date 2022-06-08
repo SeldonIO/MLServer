@@ -1,8 +1,7 @@
 from typing import Callable, List
 
-#  from .codecs.middleware import codec_middleware
 from .settings import ModelSettings
-from .types import InferenceRequest
+from .types import InferenceRequest, InferenceResponse
 
 
 class InferenceMiddleware:
@@ -26,21 +25,27 @@ class InferenceMiddlewares(InferenceMiddleware):
     Meta-middleware which applies a list of middlewares.
     """
 
-    def __init__(self, inference_middlewares: List[InferenceMiddleware]):
+    def __init__(self, *inference_middlewares):
         self._middlewares = inference_middlewares
 
     def request_middleware(
         self, request: InferenceRequest, model_settings: ModelSettings
     ) -> InferenceRequest:
-        for middleware in InferenceMiddlewares:
-            request = middleware.request_middleware(request, model_settings)
+        processed_request = request
+        for middleware in self._middlewares:
+            processed_request = middleware.request_middleware(
+                processed_request, model_settings
+            )
 
-        return request
+        return processed_request
 
     def response_middleware(
         self, response: InferenceResponse, model_settings: ModelSettings
     ) -> InferenceResponse:
-        for middleware in InferenceMiddlewares:
-            request = middleware.response_middleware(request, model_settings)
+        processed_response = response
+        for middleware in self._middlewares:
+            processed_response = middleware.response_middleware(
+                processed_response, model_settings
+            )
 
-        return request
+        return processed_response

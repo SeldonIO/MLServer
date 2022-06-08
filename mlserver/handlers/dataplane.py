@@ -6,7 +6,8 @@ from ..types import (
     InferenceRequest,
     InferenceResponse,
 )
-from ..middleware import inference_middlewares
+from ..middleware import InferenceMiddlewares
+from ..cloudevents import CloudEventsMiddleware
 from ..utils import generate_uuid
 from prometheus_client import (
     Counter,
@@ -38,6 +39,10 @@ class DataPlane:
     def __init__(self, settings: Settings, model_registry: MultiModelRegistry):
         self._settings = settings
         self._model_registry = model_registry
+
+        self._inference_middleware = InferenceMiddlewares(
+            CloudEventsMiddleware(settings)
+        )
 
     async def live(self) -> bool:
         return True
@@ -82,14 +87,15 @@ class DataPlane:
 
             model = await self._model_registry.get_model(name, version)
 
-            # Run middlewares
-            inference_middlewares(payload, model.settings)
+            self._inference_middleware.request_middleware(payload, model.settings)
 
             # TODO: Make await optional for sync methods
             prediction = await model.predict(payload)
 
             # Ensure ID matches
             prediction.id = payload.id
+
+            self._inference_middleware.response_middleware(prediction, model.settings)
 
             _ModelInferRequestSuccess.labels(model=name, version=version).inc()
 
