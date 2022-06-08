@@ -1,5 +1,11 @@
 import os
-from typing import Dict
+
+from enum import Enum
+from typing import Dict, Optional, Union
+
+from .settings import Settings, ModelSettings
+from .types import InferenceRequest, InferenceResponse, Parameters
+from .middleware import InferenceMiddleware
 
 CLOUDEVENTS_HEADER_ID = "Ce-Id"
 CLOUDEVENTS_HEADER_SPECVERSION = "Ce-Specversion"
@@ -13,49 +19,87 @@ CLOUDEVENTS_HEADER_INFERENCE_SERVICE = "Ce-Inferenceservicename"
 CLOUDEVENTS_HEADER_NAMESPACE = "Ce-Namespace"
 CLOUDEVENTS_HEADER_ENDPOINT = "Ce-Endpoint"
 
-ENV_SDEP_NAME = "SELDON_DEPLOYMENT_ID"
-ENV_PREDICTOR_NAME = "PREDICTOR_ID"
-ENV_MODEL_NAME = "PREDICTIVE_UNIT_ID"
 
-NOT_IMPLEMENTED_STR = "NOTIMPLEMENTED"
-
-env_sdep_name = os.getenv(ENV_SDEP_NAME, NOT_IMPLEMENTED_STR)
-env_predictor_name = os.getenv(ENV_PREDICTOR_NAME, NOT_IMPLEMENTED_STR)
-env_model_name = os.getenv(ENV_MODEL_NAME, NOT_IMPLEMENTED_STR)
-
-# Namespace can be fetched from loaded file vars from k8s 1.15.3+
-try:
-    with open("/var/run/secrets/kubernetes.io/serviceaccount/namespace", "r") as f:
-        env_namespace = f.read()
-except Exception:
-    env_namespace = "NOTIMPLEMENTED"
+class CloudEventsTypes(Enum):
+    Request = "io.seldon.serving.inference.request"
+    Response = "io.seldon.serving.inference.response"
 
 
-def get_cloudevent_headers(request_id: str, ce_type: str) -> Dict:
-    """Retrieve the cloud events as dictionary
+def get_namespace() -> Optional[str]:
+    try:
+        # Namespace can be fetched from loaded file vars from k8s 1.15.3+
+        with open("/var/run/secrets/kubernetes.io/serviceaccount/namespace", "r") as f:
+            return f.read()
+    except Exception:
+        return None
 
-    Parameters
-    ----------
-    request_id
-     String containing the ID of the request to send as part of the header.
-    ce_type
-     String containing the value from the InsightsTypes class value.
+    return None
 
-    Returns
-    -------
-    Dictionary containing the headers names as keys and respective values accordingly
-    """
 
-    source = f"io.seldon.serving.deployment.{env_sdep_name}.{env_namespace}"
-    ce = {
-        CLOUDEVENTS_HEADER_ID: request_id,
-        CLOUDEVENTS_HEADER_SPECVERSION: CLOUDEVENTS_HEADER_SPECVERSION_DEFAULT,
-        CLOUDEVENTS_HEADER_SOURCE: source,
-        CLOUDEVENTS_HEADER_TYPE: ce_type,
-        CLOUDEVENTS_HEADER_REQUEST_ID: request_id,
-        CLOUDEVENTS_HEADER_MODEL_ID: env_model_name,
-        CLOUDEVENTS_HEADER_INFERENCE_SERVICE: env_sdep_name,
-        CLOUDEVENTS_HEADER_NAMESPACE: env_namespace,
-        CLOUDEVENTS_HEADER_ENDPOINT: env_predictor_name,
-    }
-    return ce
+def _update_headers(
+    payload: Union[InferenceRequest, InferenceResponse], headers: Dict[str, str]
+):
+    if payload.parameters is None:
+        payload.parameters = Parameters(headers=headers)
+        return
+
+    if payload.parameters.headers is None:
+        payload.parameters.headers = headers
+        return
+
+    payload.parameters.headers.update(headers)
+
+
+class CloudEventsMiddleware(InferenceMiddleware):
+    def __init__(self, settings: Settings):
+        self._settings = settings
+        self._namespace = get_namespace()
+
+    def _get_headers(
+        self, ce_type: str, model_settings: ModelSettings, ce_id: Optional[str]
+    ) -> Dict[str, str]:
+        source = f"io.seldon.serving.deployment.{self._settings.server_name}"
+        if self._namespace:
+            source = f"{source}.{self._namespace}"
+
+        ce_headers = {
+            CLOUDEVENTS_HEADER_SPECVERSION: CLOUDEVENTS_HEADER_SPECVERSION_DEFAULT,
+            CLOUDEVENTS_HEADER_SOURCE: source,
+            CLOUDEVENTS_HEADER_TYPE: ce_type,
+            CLOUDEVENTS_HEADER_MODEL_ID: model_settings.name,
+            CLOUDEVENTS_HEADER_INFERENCE_SERVICE: self._settings.server_name,
+            CLOUDEVENTS_HEADER_ENDPOINT: model_settings.name,
+        }
+
+        if ce_id is not None:
+            ce_headers[CLOUDEVENTS_HEADER_ID] = ce_id
+            ce_headers[CLOUDEVENTS_HEADER_REQUEST_ID] = ce_id
+
+        if self._namespace is not None:
+            ce_headers[CLOUDEVENTS_HEADER_NAMESPACE] = self._namespace
+
+        return ce_headers
+
+    def request_middleware(
+        self,
+        request: InferenceRequest,
+        model_settings: ModelSettings,
+    ) -> InferenceRequest:
+        ce_headers = self._get_headers(
+            CloudEventsTypes.Request, model_settings, request.id
+        )
+
+        _update_headers(request, ce_headers)
+        return request
+
+    def response_middleware(
+        self,
+        response: InferenceResponse,
+        model_settings: ModelSettings,
+    ) -> InferenceResponse:
+        ce_headers = self._get_headers(
+            CloudEventsTypes.Response, model_settings, response.id
+        )
+
+        _update_headers(response, ce_headers)
+        return response
