@@ -5,7 +5,11 @@ from mlserver.types import InferenceRequest
 from mlserver.utils import generate_uuid
 from mlserver.settings import ModelSettings
 from mlserver.handlers import DataPlane
-from mlserver.kafka.handlers import KafkaMessage, KafkaHandlers
+from mlserver.kafka.handlers import (
+    KafkaMessage,
+    KafkaHandlers,
+    MLSERVER_MODEL_NAME_HEADER,
+)
 
 
 @pytest.fixture
@@ -15,7 +19,7 @@ def kafka_request(
     return KafkaMessage(
         key=generate_uuid(),
         value=orjson.dumps(inference_request.dict()),
-        headers={"mlserver-model": sum_model_settings.name},
+        headers={MLSERVER_MODEL_NAME_HEADER: sum_model_settings.name},
     )
 
 

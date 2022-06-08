@@ -1,4 +1,5 @@
 import orjson
+import pytest
 
 from mlserver.cloudevents import (
     CloudEventsTypes,
@@ -6,7 +7,12 @@ from mlserver.cloudevents import (
     CLOUDEVENTS_HEADER_ID,
 )
 from mlserver.types import InferenceResponse
-from mlserver.kafka.handlers import KafkaHandlers, KafkaMessage
+from mlserver.kafka.handlers import (
+    KafkaHandlers,
+    KafkaMessage,
+    MLSERVER_MODEL_NAME_HEADER,
+)
+from mlserver.kafka.errors import InvalidMessageHeaders
 
 
 async def test_infer(kafka_handlers: KafkaHandlers, kafka_request: KafkaMessage):
@@ -24,3 +30,10 @@ async def test_infer(kafka_handlers: KafkaHandlers, kafka_request: KafkaMessage)
     parsed = orjson.loads(kafka_response.value)
     inference_response = InferenceResponse(**parsed)
     assert len(inference_response.outputs) == 1
+
+
+async def test_infer_error(kafka_handlers: KafkaHandlers, kafka_request: KafkaMessage):
+    del kafka_request.headers[MLSERVER_MODEL_NAME_HEADER]
+
+    with pytest.raises(InvalidMessageHeaders):
+        kafka_response = await kafka_handlers.infer(kafka_request)
