@@ -56,7 +56,10 @@ class CloudEventsMiddleware(InferenceMiddleware):
         self._namespace = get_namespace()
 
     def _get_headers(
-        self, ce_type: str, model_settings: ModelSettings, ce_id: Optional[str]
+        self,
+        ce_type: CloudEventsTypes,
+        model_settings: ModelSettings,
+        ce_id: Optional[str],
     ) -> Dict[str, str]:
         source = f"io.seldon.serving.deployment.{self._settings.server_name}"
         if self._namespace:
@@ -65,7 +68,7 @@ class CloudEventsMiddleware(InferenceMiddleware):
         ce_headers = {
             CLOUDEVENTS_HEADER_SPECVERSION: CLOUDEVENTS_HEADER_SPECVERSION_DEFAULT,
             CLOUDEVENTS_HEADER_SOURCE: source,
-            CLOUDEVENTS_HEADER_TYPE: ce_type,
+            CLOUDEVENTS_HEADER_TYPE: ce_type.value,
             CLOUDEVENTS_HEADER_MODEL_ID: model_settings.name,
             CLOUDEVENTS_HEADER_INFERENCE_SERVICE: self._settings.server_name,
             CLOUDEVENTS_HEADER_ENDPOINT: model_settings.name,

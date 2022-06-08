@@ -2,7 +2,12 @@ import pytest
 
 from mlserver.settings import Settings, ModelSettings
 from mlserver.types import InferenceRequest, InferenceResponse
-from mlserver.cloudevents import CloudEventsMiddleware, CloudEventsTypes
+from mlserver.cloudevents import (
+    CloudEventsMiddleware,
+    CloudEventsTypes,
+    CLOUDEVENTS_HEADER_MODEL_ID,
+    CLOUDEVENTS_HEADER_TYPE,
+)
 
 
 @pytest.fixture
@@ -23,10 +28,10 @@ def test_request_headers(
     assert request_with_headers.parameters.headers is not None
 
     headers = request_with_headers.parameters.headers
-    assert "Ce-Modelid" in headers
-    assert headers["Ce-Modelid"] == sum_model_settings.name
-    assert "Ce-Type" in headers
-    assert headers["Ce-Type"] == CloudEventsTypes.Request
+    assert CLOUDEVENTS_HEADER_MODEL_ID in headers
+    assert headers[CLOUDEVENTS_HEADER_MODEL_ID] == sum_model_settings.name
+    assert CLOUDEVENTS_HEADER_TYPE in headers
+    assert headers[CLOUDEVENTS_HEADER_TYPE] == CloudEventsTypes.Request.value
 
 
 def test_response_headers(
@@ -42,7 +47,7 @@ def test_response_headers(
     assert response_with_headers.parameters.headers is not None
 
     headers = response_with_headers.parameters.headers
-    assert "Ce-Modelid" in headers
-    assert headers["Ce-Modelid"] == sum_model_settings.name
-    assert "Ce-Type" in headers
-    assert headers["Ce-Type"] == CloudEventsTypes.Response
+    assert CLOUDEVENTS_HEADER_MODEL_ID in headers
+    assert headers[CLOUDEVENTS_HEADER_MODEL_ID] == sum_model_settings.name
+    assert CLOUDEVENTS_HEADER_TYPE in headers
+    assert headers[CLOUDEVENTS_HEADER_TYPE] == CloudEventsTypes.Response.value

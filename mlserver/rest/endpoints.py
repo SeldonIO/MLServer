@@ -9,7 +9,6 @@ from ..types import (
     RepositoryIndexRequest,
     RepositoryIndexResponse,
 )
-from ..cloudevents import get_cloudevent_headers
 from ..handlers import DataPlane, ModelRepositoryHandlers
 from ..utils import insert_headers, extract_headers
 
@@ -54,8 +53,8 @@ class Endpoints:
         model_name: str,
         model_version: str = None,
     ) -> InferenceResponse:
-        request_headers = raw_request.headers
-        insert_headers(payload, request_headers)  # type: ignore
+        request_headers = dict(raw_request.headers)
+        insert_headers(payload, request_headers)
 
         inference_response = await self._data_plane.infer(
             payload, model_name, model_version
@@ -65,10 +64,6 @@ class Endpoints:
         if response_headers:
             raw_response.headers.update(response_headers)
 
-        headers = get_cloudevent_headers(
-            inference_response.id, "io.seldon.inference.response"  # type: ignore
-        )
-        raw_response.headers.update(headers)
         return inference_response
 
 
