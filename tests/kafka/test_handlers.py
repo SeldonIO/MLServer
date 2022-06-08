@@ -36,4 +36,4 @@ async def test_infer_error(kafka_handlers: KafkaHandlers, kafka_request: KafkaMe
     del kafka_request.headers[MLSERVER_MODEL_NAME_HEADER]
 
     with pytest.raises(InvalidMessageHeaders):
-        kafka_response = await kafka_handlers.infer(kafka_request)
+        await kafka_handlers.infer(kafka_request)

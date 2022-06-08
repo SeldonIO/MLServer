@@ -1,5 +1,3 @@
-from typing import Callable, List
-
 from .settings import ModelSettings
 from .types import InferenceRequest, InferenceResponse
 

@@ -1,17 +1,15 @@
 from mlserver.errors import MLServerError
-from typing import Dict
-import orjson
 from enum import Enum
 from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
 
 from ..handlers import DataPlane, ModelRepositoryHandlers
 from ..settings import Settings
-from ..types import InferenceRequest
 from ..model import MLModel
 
 from .logging import logger
 from .utils import encode_headers, decode_headers
 from .handlers import KafkaHandlers, KafkaMessage
+
 
 # TODO: Explore implementing custom handler
 class KafkaMethodTypes(Enum):

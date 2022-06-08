@@ -1,7 +1,6 @@
 import orjson
 
-from typing import Dict, Tuple
-from aiokafka.record.default_records import DefaultRecord
+from typing import Dict, Optional, Tuple
 from pydantic import BaseModel
 
 from ..utils import insert_headers, extract_headers
@@ -49,7 +48,7 @@ class KafkaHandlers:
             key=inference_response.id, value=response_value, headers=response_headers
         )
 
-    def _get_model_details(self, request: KafkaMessage) -> Tuple[str, str]:
+    def _get_model_details(self, request: KafkaMessage) -> Tuple[str, Optional[str]]:
         headers = request.headers
 
         if MLSERVER_MODEL_NAME_HEADER not in headers:
