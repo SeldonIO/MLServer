@@ -4,13 +4,14 @@ import orjson
 from enum import Enum
 from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
 
-from .logging import logger
-
-from ..cloudevents import get_cloudevent_headers
 from ..handlers import DataPlane, ModelRepositoryHandlers
 from ..settings import Settings
 from ..types import InferenceRequest
 from ..model import MLModel
+
+from .logging import logger
+from .utils import encode_headers, decode_headers
+from .handlers import KafkaHandlers, KafkaMessage
 
 # TODO: Explore implementing custom handler
 class KafkaMethodTypes(Enum):
@@ -25,7 +26,7 @@ class KafkaServer:
         model_repository_handlers: ModelRepositoryHandlers,
     ):
         self._settings = settings
-        self._data_plane = data_plane
+        self._handlers = KafkaHandlers(data_plane)
         self._model_repository_handlers = model_repository_handlers
 
     def _create_server(self):
@@ -66,13 +67,8 @@ class KafkaServer:
                 logger.info("Kafka Processed Request - 200 OK")
 
     async def _process_request(self, request):
-        # Logging without converting to string for efficiency if no DEBUG
-        logger.debug(request.value)
-        request_key = request.key
-        request_json = orjson.loads(request.value)
-        request_headers: Dict[str, str] = {
-            k: v.decode("utf-8") for k, v in request.headers
-        }
+        request_headers = decode_headers(request.headers)
+
         # TODO: Define headers as cloudevent headers
         # TODO: DEfine standard "method header" and decide values
         request_method = request_headers.get("mlserver-method")
@@ -81,37 +77,18 @@ class KafkaServer:
         if request_method is not None and request_method != KafkaMethodTypes.infer:
             raise MLServerError(f"Invalid request method: {request_method}")
 
-        # Kafka KEY takes prescedence over body ID
-        if request_key:
-            request_json["id"] = request_key
-        infer_request = InferenceRequest(**request_json)
-        # TODO: Update header with consistency with other headeres
-        # TODO: Check and fail if headers are not set (or handle defaults)
-        infer_model = request_headers["mlserver-model"]
-        infer_version = request_headers["mlserver-version"]
-        infer_response = await self._data_plane.infer(
-            infer_request, infer_model, infer_version
+        kafka_request = KafkaMessage(
+            key=request.key, value=request.value, headers=request_headers
         )
-        response_key = infer_response.id
-        response_value = orjson.dumps(infer_response.dict())
+        kafka_response = await self._handlers.infer(kafka_request)
 
-        # TODO: Add cloudevent headers
-        response_headers = get_cloudevent_headers(
-            response_key, "io.seldon.serving.inference.response"
-        )
-        response_headers_kafka = [
-            (
-                k,
-                v.encode("utf-8"),
-            )
-            for k, v in response_headers.items()
-        ]
+        response_headers = encode_headers(request_headers)
 
         await self._producer.send_and_wait(
             self._settings.kafka_topic_output,
-            key=response_key.encode("utf-8"),  # type: ignore
-            value=response_value,
-            headers=response_headers_kafka,
+            key=kafka_response.key.encode("utf-8"),  # type: ignore
+            value=kafka_response.value,
+            headers=response_headers,
         )
 
     async def stop(self, sig: int = None):

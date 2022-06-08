@@ -1,5 +1,10 @@
 import orjson
 
+from mlserver.cloudevents import (
+    CloudEventsTypes,
+    CLOUDEVENTS_HEADER_TYPE,
+    CLOUDEVENTS_HEADER_ID,
+)
 from mlserver.types import InferenceResponse
 from mlserver.kafka.handlers import KafkaHandlers, KafkaMessage
 
@@ -8,10 +13,13 @@ async def test_infer(kafka_handlers: KafkaHandlers, kafka_request: KafkaMessage)
     kafka_response = await kafka_handlers.infer(kafka_request)
 
     assert kafka_response.key == kafka_request.key
-    assert "Ce-Id" in kafka_response.headers
-    assert kafka_response.headers["Ce-Id"] == kafka_response.key
-    assert "Ce-Type" in kafka_response.headers
-    assert kafka_response.headers["Ce-Type"] == "io.seldon.serving.inference.response"
+    assert CLOUDEVENTS_HEADER_ID in kafka_response.headers
+    assert kafka_response.headers[CLOUDEVENTS_HEADER_ID] == kafka_response.key
+    assert CLOUDEVENTS_HEADER_TYPE in kafka_response.headers
+    assert (
+        kafka_response.headers[CLOUDEVENTS_HEADER_TYPE]
+        == CloudEventsTypes.Response.value
+    )
 
     parsed = orjson.loads(kafka_response.value)
     inference_response = InferenceResponse(**parsed)
