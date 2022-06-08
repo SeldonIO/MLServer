@@ -1,6 +1,10 @@
 import pytest
 import grpc
 
+from mlserver.cloudevents import (
+    CLOUDEVENTS_HEADER_SPECVERSION_DEFAULT,
+    CLOUDEVENTS_HEADER_SPECVERSION,
+)
 from mlserver.grpc import dataplane_pb2 as pb
 from mlserver import __version__
 
@@ -77,8 +81,14 @@ async def test_model_infer_headers(
         model_infer_request, metadata=request_metadata
     )
 
+    expected_ce_headers = (
+        (
+            CLOUDEVENTS_HEADER_SPECVERSION.lower(),
+            CLOUDEVENTS_HEADER_SPECVERSION_DEFAULT,
+        ),
+    )
     trailing_metadata = await inference_call.trailing_metadata()
-    for key, value in request_metadata:
+    for key, value in request_metadata + expected_ce_headers:
         assert key in trailing_metadata
         assert trailing_metadata[key] == value
 

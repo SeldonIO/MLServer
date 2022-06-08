@@ -74,11 +74,11 @@ class CloudEventsMiddleware(InferenceMiddleware):
             CLOUDEVENTS_HEADER_ENDPOINT: model_settings.name,
         }
 
-        if ce_id is not None:
+        if ce_id:
             ce_headers[CLOUDEVENTS_HEADER_ID] = ce_id
             ce_headers[CLOUDEVENTS_HEADER_REQUEST_ID] = ce_id
 
-        if self._namespace is not None:
+        if self._namespace:
             ce_headers[CLOUDEVENTS_HEADER_NAMESPACE] = self._namespace
 
         return ce_headers
