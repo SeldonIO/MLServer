@@ -17,7 +17,6 @@ from mlserver.kafka.handlers import (
     MLSERVER_MODEL_NAME_HEADER,
 )
 from mlserver.kafka.message import KafkaMessage
-from mlserver.kafka.utils import encode_value
 
 from ..utils import get_available_port
 
@@ -179,9 +178,9 @@ async def kafka_consumer(
 def kafka_request(
     sum_model_settings: ModelSettings, inference_request: InferenceRequest
 ) -> KafkaMessage:
-    return KafkaMessage(
+    return KafkaMessage.from_types(
         key=generate_uuid(),
-        value=encode_value(inference_request),
+        value=inference_request,
         headers={MLSERVER_MODEL_NAME_HEADER: sum_model_settings.name},
     )
 

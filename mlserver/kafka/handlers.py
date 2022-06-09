@@ -4,7 +4,6 @@ from ..utils import insert_headers, extract_headers
 from ..types import InferenceRequest
 from ..handlers import DataPlane
 
-from .utils import encode_value, decode_value
 from .message import KafkaMessage
 from .errors import InvalidMessageHeaders
 
@@ -17,8 +16,7 @@ class KafkaHandlers:
         self._data_plane = data_plane
 
     async def infer(self, request: KafkaMessage) -> KafkaMessage:
-        request_json = decode_value(request.value)
-        inference_request = InferenceRequest(**request_json)
+        inference_request = InferenceRequest(**request.value)
 
         # Kafka KEY takes precedence over body ID
         if request.key:
@@ -26,24 +24,20 @@ class KafkaHandlers:
 
         insert_headers(inference_request, request.headers)
 
-        # TODO: Update header with consistency with other headeres
         model_name, model_version = self._get_model_details(request)
         inference_response = await self._data_plane.infer(
             inference_request, model_name, model_version
         )
 
-        response_value = encode_value(inference_response)
-        response_headers = extract_headers(inference_response)
-        if response_headers is None:
-            response_headers = {}
-
-        return KafkaMessage(
-            key=inference_response.id, value=response_value, headers=response_headers
+        response_headers = extract_headers(inference_response) or {}
+        return KafkaMessage.from_types(
+            inference_response.id, inference_response, response_headers
         )
 
     def _get_model_details(self, request: KafkaMessage) -> Tuple[str, Optional[str]]:
         headers = request.headers
 
+        # TODO: Update header with consistency with other headeres
         if MLSERVER_MODEL_NAME_HEADER not in headers:
             raise InvalidMessageHeaders(MLSERVER_MODEL_NAME_HEADER)
 

@@ -12,7 +12,6 @@ from mlserver.kafka.handlers import (
 )
 from mlserver.kafka.errors import InvalidMessageHeaders
 from mlserver.kafka.message import KafkaMessage
-from mlserver.kafka.utils import decode_value
 
 
 async def test_infer(kafka_handlers: KafkaHandlers, kafka_request: KafkaMessage):
@@ -27,8 +26,7 @@ async def test_infer(kafka_handlers: KafkaHandlers, kafka_request: KafkaMessage)
         == CloudEventsTypes.Response.value
     )
 
-    parsed = decode_value(kafka_response.value)
-    inference_response = InferenceResponse(**parsed)
+    inference_response = InferenceResponse(**kafka_response.value)
     assert len(inference_response.outputs) == 1
 
 
