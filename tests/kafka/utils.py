@@ -1,6 +1,7 @@
 import asyncio
 import logging
 
+from typing import List
 from aiokafka import AIOKafkaClient
 from kafka.admin import KafkaAdminClient, NewTopic
 from kafka.errors import TopicAlreadyExistsError
@@ -36,14 +37,12 @@ async def wait_until_ready(kafka_server: str):
             await asyncio.sleep(2)
 
 
-async def _wait_for_topics(admin_client: KafkaAdminClient, settings: Settings) -> bool:
-    topic_names = [settings.kafka_topic_input, settings.kafka_topic_output]
-
+async def _wait_for_topics(admin_client: KafkaAdminClient, topics: List[str]) -> bool:
     topics_exist = False
     attempts_left = 5
     while not topics_exist and attempts_left > 0:
-        topics = admin_client.list_topics()
-        topics_exist = all([topic_name in topics for topic_name in topic_names])
+        existing_topics = admin_client.list_topics()
+        topics_exist = all([topic in existing_topics for topic in topics])
         if topics_exist:
             return True
 
@@ -53,31 +52,22 @@ async def _wait_for_topics(admin_client: KafkaAdminClient, settings: Settings) -
     return False
 
 
-async def create_test_topics(settings: Settings):
-    admin_client = KafkaAdminClient(bootstrap_servers=settings.kafka_servers)
+async def create_test_topics(admin_client: KafkaAdminClient, topics: List[str]):
+    logger.debug(f"Creating topics {topics} ...")
 
-    logger.debug(
-        f"Creating topics '{settings.kafka_topic_input}' and "
-        f"'{settings.kafka_topic_output}'..."
-    )
-
-    topic_names = [settings.kafka_topic_input, settings.kafka_topic_output]
     new_topics = [
         NewTopic(
-            name=topic_name,
+            name=topic,
             num_partitions=1,
             replication_factor=1,
         )
-        for topic_name in topic_names
+        for topic in topics
     ]
     try:
         admin_client.create_topics(new_topics=new_topics)
         # Wait for topics to get created
-        await _wait_for_topics(admin_client, settings)
-        logger.debug(
-            f"Topics '{settings.kafka_topic_input}' and "
-            f"'{settings.kafka_topic_output}' have been created"
-        )
+        await _wait_for_topics(admin_client, topics)
+        logger.debug(f"Topics {topics} have been created")
     except TopicAlreadyExistsError:
         pass
     finally:

@@ -4,7 +4,9 @@ import docker
 import asyncio
 
 from aiokafka import AIOKafkaProducer, AIOKafkaConsumer
+from kafka.admin import KafkaAdminClient
 from docker.client import DockerClient
+from typing import Tuple
 
 from mlserver.types import InferenceRequest
 from mlserver.utils import generate_uuid, install_uvloop_event_loop
@@ -22,10 +24,10 @@ from ..utils import get_available_port
 from .utils import create_test_topics, wait_until_ready
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def event_loop():
     # NOTE: We need to override the `event_loop` fixture to change its scope to
-    # `session`, so that it can be used downstream on other `session`-scoped
+    # `module`, so that it can be used downstream on other `module`-scoped
     # fixtures
     install_uvloop_event_loop()
     loop = asyncio.get_event_loop()
@@ -33,12 +35,12 @@ def event_loop():
     loop.close()
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def docker_client() -> DockerClient:
     return docker.from_env()
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def kafka_network(docker_client: DockerClient) -> str:
     kafka_network = "kafka"
     network = docker_client.networks.create(name=kafka_network)
@@ -48,7 +50,7 @@ def kafka_network(docker_client: DockerClient) -> str:
     network.remove()
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def zookeeper(docker_client: DockerClient, kafka_network: str) -> str:
     zookeeper_port = get_available_port()
     container = docker_client.containers.run(
@@ -70,7 +72,7 @@ def zookeeper(docker_client: DockerClient, kafka_network: str) -> str:
     container.remove(force=True)
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 async def kafka(docker_client: DockerClient, zookeeper: str, kafka_network: str) -> str:
     kafka_port = get_available_port()
     container = docker_client.containers.run(
@@ -102,19 +104,38 @@ async def kafka(docker_client: DockerClient, zookeeper: str, kafka_network: str)
         container.remove(force=True)
 
 
+@pytest.fixture(scope="module")
+async def kafka_topics(kafka: str) -> Tuple[str, str]:
+    input_topic = "mlserver-input-topic"
+    output_topic = "mlserver-output-topic"
+    topics = [input_topic, output_topic]
+
+    admin_client = KafkaAdminClient(bootstrap_servers=kafka)
+    await create_test_topics(admin_client, topics)
+
+    yield tuple(topics)
+
+    # NOTE: Deleting topics seems to hang for some reason
+    #  admin_client.delete_topics(topics=topics, timeout_ms=1000)
+
+
 @pytest.fixture
-async def settings(settings: Settings, kafka: str) -> Settings:
+def kafka_settings(
+    settings: Settings, kafka: str, kafka_topics: Tuple[str, str]
+) -> Settings:
+    input_topic, output_topic = kafka_topics
+
     settings.kafka_enabled = True
     settings.kafka_servers = kafka
-
-    await create_test_topics(settings)
+    settings.kafka_topic_input = input_topic
+    settings.kafka_topic_output = output_topic
 
     return settings
 
 
 @pytest.fixture
-async def kafka_server(settings: Settings, data_plane: DataPlane) -> KafkaServer:
-    server = KafkaServer(settings, data_plane)
+async def kafka_server(kafka_settings: Settings, data_plane: DataPlane) -> KafkaServer:
+    server = KafkaServer(kafka_settings, data_plane)
 
     server_task = asyncio.create_task(server.start())
     yield server
@@ -125,9 +146,9 @@ async def kafka_server(settings: Settings, data_plane: DataPlane) -> KafkaServer
 
 @pytest.fixture
 async def kafka_producer(
-    kafka_server: KafkaServer, settings: Settings
+    kafka_server: KafkaServer, kafka_settings: Settings
 ) -> AIOKafkaProducer:
-    producer = AIOKafkaProducer(bootstrap_servers=settings.kafka_servers)
+    producer = AIOKafkaProducer(bootstrap_servers=kafka_settings.kafka_servers)
     await producer.start()
 
     yield producer
@@ -137,10 +158,11 @@ async def kafka_producer(
 
 @pytest.fixture
 async def kafka_consumer(
-    kafka_server: KafkaServer, settings: Settings
+    kafka_server: KafkaServer, kafka_settings: Settings
 ) -> AIOKafkaConsumer:
     consumer = AIOKafkaConsumer(
-        settings.kafka_topic_output, bootstrap_servers=settings.kafka_servers
+        kafka_settings.kafka_topic_output,
+        bootstrap_servers=kafka_settings.kafka_servers,
     )
     await consumer.start()
 
