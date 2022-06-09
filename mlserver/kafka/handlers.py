@@ -1,6 +1,6 @@
 import orjson
 
-from typing import Dict, Optional, Tuple
+from typing import Optional, Tuple
 
 from ..utils import insert_headers, extract_headers
 from ..types import InferenceRequest

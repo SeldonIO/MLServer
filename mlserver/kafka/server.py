@@ -3,7 +3,7 @@ from enum import Enum
 from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
 from aiokafka.errors import ConsumerStoppedError
 
-from ..handlers import DataPlane, ModelRepositoryHandlers
+from ..handlers import DataPlane
 from ..settings import Settings
 from ..model import MLModel
 
@@ -53,7 +53,8 @@ class KafkaServer:
             await self._consumer_loop()
         except ConsumerStoppedError:
             logger.info(
-                f"Stopped consuming messages from topic {self._settings.kafka_topic_input}"
+                "Stopped consuming messages from topic "
+                f"{self._settings.kafka_topic_input}"
             )
 
     async def _consumer_loop(self):

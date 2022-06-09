@@ -83,8 +83,12 @@ async def kafka(docker_client: DockerClient, zookeeper: str, kafka_network: str)
         },
         environment={
             "KAFKA_ZOOKEEPER_CONNECT": zookeeper,
-            "KAFKA_ADVERTISED_LISTENERS": f"PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:{kafka_port}",
-            "KAFKA_LISTENER_SECURITY_PROTOCOL_MAP": "PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT",
+            "KAFKA_ADVERTISED_LISTENERS": (
+                f"PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:{kafka_port}"
+            ),
+            "KAFKA_LISTENER_SECURITY_PROTOCOL_MAP": (
+                "PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT"
+            ),
             "KAFKA_INTER_BROKER_LISTENER_NAME": "PLAINTEXT",
         },
         network=kafka_network,
@@ -97,7 +101,7 @@ async def kafka(docker_client: DockerClient, zookeeper: str, kafka_network: str)
         # Wait until Kafka server is healthy
         await wait_until_ready(kafka_server)
         yield kafka_server
-    except:
+    except Exception:
         raise
     finally:
         # Ensure we always remove the container

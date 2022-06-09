@@ -6,7 +6,6 @@ from aiokafka import AIOKafkaClient
 from kafka.admin import KafkaAdminClient, NewTopic
 from kafka.errors import TopicAlreadyExistsError
 
-from mlserver.settings import Settings
 from mlserver.kafka.logging import loggerName
 
 logger = logging.getLogger(f"{loggerName}.test")

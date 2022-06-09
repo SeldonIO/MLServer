@@ -4,10 +4,9 @@ import pytest
 
 from aiokafka import AIOKafkaProducer, AIOKafkaConsumer
 
-from mlserver.types import InferenceRequest, InferenceResponse
-from mlserver.settings import Settings, ModelSettings
+from mlserver.types import InferenceResponse
+from mlserver.settings import Settings
 from mlserver.cloudevents import CLOUDEVENTS_HEADER_ID
-from mlserver.kafka.server import KafkaServer
 from mlserver.kafka.utils import encode_headers, decode_headers
 from mlserver.kafka.handlers import KafkaMessage, MLSERVER_MODEL_NAME_HEADER
 
@@ -18,7 +17,7 @@ async def test_infer(
     kafka_settings: Settings,
     kafka_request: KafkaMessage,
 ):
-    res = await kafka_producer.send_and_wait(
+    await kafka_producer.send_and_wait(
         kafka_settings.kafka_topic_input,
         kafka_request.value.encode("utf-8"),
         headers=encode_headers(kafka_request.headers),
@@ -40,7 +39,7 @@ async def test_infer_error(
     kafka_request: KafkaMessage,
 ):
     kafka_request.headers[MLSERVER_MODEL_NAME_HEADER] = "non-existing-model"
-    res = await kafka_producer.send_and_wait(
+    await kafka_producer.send_and_wait(
         kafka_settings.kafka_topic_input,
         kafka_request.value.encode("utf-8"),
         headers=encode_headers(kafka_request.headers),
