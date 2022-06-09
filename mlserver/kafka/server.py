@@ -9,7 +9,8 @@ from ..model import MLModel
 
 from .logging import logger
 from .utils import encode_headers, decode_headers
-from .handlers import KafkaHandlers, KafkaMessage
+from .handlers import KafkaHandlers
+from .message import KafkaMessage
 
 
 # TODO: Explore implementing custom handler
@@ -58,7 +59,7 @@ class KafkaServer:
     async def _consumer_loop(self):
         async for request in self._consumer:
             try:
-                self._process_request(request)
+                await self._process_request(request)
             except MLServerError as err:
                 logger.exception(f"ERROR {err.status_code} - {str(err)}")
             except Exception as err:
@@ -81,15 +82,15 @@ class KafkaServer:
         )
         kafka_response = await self._handlers.infer(kafka_request)
 
-        response_headers = encode_headers(request_headers)
+        response_headers = encode_headers(kafka_response.headers)
 
-        logger.info("Processed message of type '{request_method}#")
         await self._producer.send_and_wait(
             self._settings.kafka_topic_output,
             key=kafka_response.key.encode("utf-8"),  # type: ignore
-            value=kafka_response.value,
+            value=kafka_response.value.encode("utf-8"),
             headers=response_headers,
         )
+        logger.info(f"Processed message of type '{request_method}'")
 
     async def stop(self, sig: int = None):
         logger.info("Waiting for Kafka server shutdown")

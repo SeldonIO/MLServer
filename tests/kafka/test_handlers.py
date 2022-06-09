@@ -9,10 +9,10 @@ from mlserver.cloudevents import (
 from mlserver.types import InferenceResponse
 from mlserver.kafka.handlers import (
     KafkaHandlers,
-    KafkaMessage,
     MLSERVER_MODEL_NAME_HEADER,
 )
 from mlserver.kafka.errors import InvalidMessageHeaders
+from mlserver.kafka.message import KafkaMessage
 
 
 async def test_infer(kafka_handlers: KafkaHandlers, kafka_request: KafkaMessage):

@@ -12,10 +12,10 @@ from mlserver.settings import Settings, ModelSettings
 from mlserver.handlers import DataPlane
 from mlserver.kafka.server import KafkaServer
 from mlserver.kafka.handlers import (
-    KafkaMessage,
     KafkaHandlers,
     MLSERVER_MODEL_NAME_HEADER,
 )
+from mlserver.kafka.message import KafkaMessage
 
 from ..utils import get_available_port
 
@@ -103,16 +103,6 @@ async def kafka(docker_client: DockerClient, zookeeper: str, kafka_network: str)
 
 
 @pytest.fixture
-async def kafka_producer(settings: Settings) -> AIOKafkaProducer:
-    producer = AIOKafkaProducer(bootstrap_servers=settings.kafka_servers)
-    await producer.start()
-
-    yield producer
-
-    await producer.stop()
-
-
-@pytest.fixture
 async def settings(settings: Settings, kafka: str) -> Settings:
     settings.kafka_enabled = True
     settings.kafka_servers = kafka
@@ -120,18 +110,6 @@ async def settings(settings: Settings, kafka: str) -> Settings:
     await create_test_topics(settings)
 
     return settings
-
-
-@pytest.fixture
-async def kafka_consumer(settings: Settings) -> AIOKafkaConsumer:
-    consumer = AIOKafkaConsumer(
-        settings.kafka_topic_output, bootstrap_servers=settings.kafka_servers
-    )
-    await consumer.start()
-
-    yield consumer
-
-    await consumer.stop()
 
 
 @pytest.fixture
@@ -143,6 +121,32 @@ async def kafka_server(settings: Settings, data_plane: DataPlane) -> KafkaServer
 
     await server.stop()
     await server_task
+
+
+@pytest.fixture
+async def kafka_producer(
+    kafka_server: KafkaServer, settings: Settings
+) -> AIOKafkaProducer:
+    producer = AIOKafkaProducer(bootstrap_servers=settings.kafka_servers)
+    await producer.start()
+
+    yield producer
+
+    await producer.stop()
+
+
+@pytest.fixture
+async def kafka_consumer(
+    kafka_server: KafkaServer, settings: Settings
+) -> AIOKafkaConsumer:
+    consumer = AIOKafkaConsumer(
+        settings.kafka_topic_output, bootstrap_servers=settings.kafka_servers
+    )
+    await consumer.start()
+
+    yield consumer
+
+    await consumer.stop()
 
 
 @pytest.fixture

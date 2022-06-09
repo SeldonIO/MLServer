@@ -1,22 +1,16 @@
 import orjson
 
 from typing import Dict, Optional, Tuple
-from pydantic import BaseModel
 
 from ..utils import insert_headers, extract_headers
 from ..types import InferenceRequest
 from ..handlers import DataPlane
 
+from .message import KafkaMessage
 from .errors import InvalidMessageHeaders
 
 MLSERVER_MODEL_NAME_HEADER = "mlserver-model"
 MLSERVER_MODEL_VERSION_HEADER = "mlserver-version"
-
-
-class KafkaMessage(BaseModel):
-    key: str
-    value: str
-    headers: Dict[str, str]
 
 
 class KafkaHandlers:
