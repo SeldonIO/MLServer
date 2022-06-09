@@ -1,6 +1,7 @@
 from mlserver.errors import MLServerError
 from enum import Enum
 from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
+from aiokafka.errors import ConsumerStoppedError
 
 from ..handlers import DataPlane, ModelRepositoryHandlers
 from ..settings import Settings
@@ -17,15 +18,9 @@ class KafkaMethodTypes(Enum):
 
 
 class KafkaServer:
-    def __init__(
-        self,
-        settings: Settings,
-        data_plane: DataPlane,
-        model_repository_handlers: ModelRepositoryHandlers,
-    ):
+    def __init__(self, settings: Settings, data_plane: DataPlane):
         self._settings = settings
         self._handlers = KafkaHandlers(data_plane)
-        self._model_repository_handlers = model_repository_handlers
 
     def _create_server(self):
         self._consumer = AIOKafkaConsumer(
@@ -47,32 +42,38 @@ class KafkaServer:
     async def start(self):
         self._create_server()
 
-        # TODO: Move logic to KafkaRouter (Also to implement cutom handlers modularly)
         await self._consumer.start()
         await self._producer.start()
 
-        logger.info(f"Kafka server consuming from {self._settings.kafka_servers}.")
-        await self._consumer_loop()
+        logger.info(
+            f"Kafka server consuming messages from {self._settings.kafka_servers}."
+        )
+        try:
+            await self._consumer_loop()
+        except ConsumerStoppedError:
+            logger.info(
+                f"Stopped consuming messages from topic {self._settings.kafka_topic_input}"
+            )
 
     async def _consumer_loop(self):
-        # TODO: Catch or ensure parent function catches and stops server
         async for request in self._consumer:
             try:
                 self._process_request(request)
-            except Exception:
-                logger.exception("Kafka Processed Request - 500 ERROR")
-            else:
-                logger.info("Kafka Processed Request - 200 OK")
+            except MLServerError as err:
+                logger.exception(f"ERROR {err.status_code} - {str(err)}")
+            except Exception as err:
+                logger.exception(f"ERROR 500 - {str(err)}")
 
     async def _process_request(self, request):
         request_headers = decode_headers(request.headers)
 
         # TODO: Define headers as cloudevent headers
         # TODO: DEfine standard "method header" and decide values
-        request_method = request_headers.get("mlserver-method")
-
         # Default if not set is assume inference request
-        if request_method is not None and request_method != KafkaMethodTypes.infer:
+        request_method = request_headers.get("mlserver-method", KafkaMethodTypes.infer)
+
+        # TODO: Move logic to KafkaRouter (Also to implement cutom handlers modularly)
+        if request_method != KafkaMethodTypes.infer:
             raise MLServerError(f"Invalid request method: {request_method}")
 
         kafka_request = KafkaMessage(
@@ -82,6 +83,7 @@ class KafkaServer:
 
         response_headers = encode_headers(request_headers)
 
+        logger.info("Processed message of type '{request_method}#")
         await self._producer.send_and_wait(
             self._settings.kafka_topic_output,
             key=kafka_response.key.encode("utf-8"),  # type: ignore

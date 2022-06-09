@@ -77,9 +77,7 @@ class MLServer:
 
         self._kafka_server = None
         if self._settings.kafka_enabled:
-            self._kafka_server = KafkaServer(
-                self._settings, self._data_plane, self._model_repository_handlers
-            )
+            self._kafka_server = KafkaServer(self._settings, self._data_plane)
 
         self._metrics_server = None
         if self._settings.metrics_endpoint:
