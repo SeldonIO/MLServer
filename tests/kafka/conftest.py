@@ -2,10 +2,8 @@ import pytest
 import orjson
 import docker
 import asyncio
-import logging
 
-from aiokafka import AIOKafkaClient, AIOKafkaProducer, AIOKafkaConsumer
-from kafka.admin import KafkaAdminClient, NewTopic
+from aiokafka import AIOKafkaProducer, AIOKafkaConsumer
 from docker.client import DockerClient
 
 from mlserver.types import InferenceRequest
@@ -13,7 +11,6 @@ from mlserver.utils import generate_uuid, install_uvloop_event_loop
 from mlserver.settings import Settings, ModelSettings
 from mlserver.handlers import DataPlane
 from mlserver.kafka.server import KafkaServer
-from mlserver.kafka.logging import loggerName
 from mlserver.kafka.handlers import (
     KafkaMessage,
     KafkaHandlers,
@@ -22,44 +19,7 @@ from mlserver.kafka.handlers import (
 
 from ..utils import get_available_port
 
-logger = logging.getLogger(f"{loggerName}.test")
-
-
-async def _wait_until_ready(kafka_server: str):
-    has_started = False
-    attempts_left = 5
-    while not has_started and attempts_left > 0:
-        try:
-            kafka_client = AIOKafkaClient(bootstrap_servers=kafka_server)
-            await kafka_client.bootstrap()
-            await kafka_client.close()
-            logger.debug(
-                f"Kafka Cluster has now started and can be accessed at {kafka_server}"
-            )
-            has_started = True
-        except Exception:
-            attempts_left -= 1
-            if attempts_left == 0:
-                logger.exception(f"There was an error starting the Kafka cluster")
-                raise
-
-            await asyncio.sleep(2)
-
-
-def _create_test_topics(settings: Settings):
-    admin_client = KafkaAdminClient(bootstrap_servers=settings.kafka_servers)
-
-    input_topic = NewTopic(
-        name=settings.kafka_topic_input,
-        num_partitions=1,
-        replication_factor=1,
-    )
-    output_topic = NewTopic(
-        name=settings.kafka_topic_output,
-        num_partitions=1,
-        replication_factor=1,
-    )
-    admin_client.create_topics(new_topics=[input_topic, output_topic])
+from .utils import create_test_topics, wait_until_ready
 
 
 @pytest.fixture(scope="session")
@@ -133,10 +93,10 @@ async def kafka(docker_client: DockerClient, zookeeper: str, kafka_network: str)
 
     try:
         # Wait until Kafka server is healthy
-        await _wait_until_ready(kafka_server)
+        await wait_until_ready(kafka_server)
         yield kafka_server
     except:
-        raise e
+        raise
     finally:
         # Ensure we always remove the container
         container.remove(force=True)
@@ -153,6 +113,16 @@ async def kafka_producer(settings: Settings) -> AIOKafkaProducer:
 
 
 @pytest.fixture
+async def settings(settings: Settings, kafka: str) -> Settings:
+    settings.kafka_enabled = True
+    settings.kafka_servers = kafka
+
+    await create_test_topics(settings)
+
+    return settings
+
+
+@pytest.fixture
 async def kafka_consumer(settings: Settings) -> AIOKafkaConsumer:
     consumer = AIOKafkaConsumer(
         settings.kafka_topic_output, bootstrap_servers=settings.kafka_servers
@@ -165,15 +135,7 @@ async def kafka_consumer(settings: Settings) -> AIOKafkaConsumer:
 
 
 @pytest.fixture
-def settings(settings: Settings, kafka: str) -> Settings:
-    settings.kafka_enabled = True
-    settings.kafka_servers = kafka
-    return settings
-
-
-@pytest.fixture
 async def kafka_server(settings: Settings, data_plane: DataPlane) -> KafkaServer:
-    _create_test_topics(settings)
     server = KafkaServer(settings, data_plane)
 
     server_task = asyncio.create_task(server.start())
