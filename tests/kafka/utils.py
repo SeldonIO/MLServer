@@ -13,7 +13,7 @@ logger = logging.getLogger(f"{loggerName}.test")
 
 async def wait_until_ready(kafka_server: str):
     has_started = False
-    attempts_left = 5
+    attempts_left = 10
     while not has_started and attempts_left > 0:
         try:
             logger.debug(f"Starting Kafka cluster at {kafka_server}...")
