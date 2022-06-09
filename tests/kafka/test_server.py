@@ -1,4 +1,3 @@
-import orjson
 import asyncio
 import pytest
 
@@ -7,7 +6,7 @@ from aiokafka import AIOKafkaProducer, AIOKafkaConsumer
 from mlserver.types import InferenceResponse
 from mlserver.settings import Settings
 from mlserver.cloudevents import CLOUDEVENTS_HEADER_ID
-from mlserver.kafka.utils import encode_headers, decode_headers
+from mlserver.kafka.utils import encode_headers, decode_headers, decode_value
 from mlserver.kafka.handlers import KafkaMessage, MLSERVER_MODEL_NAME_HEADER
 
 
@@ -26,7 +25,7 @@ async def test_infer(
     msg = await asyncio.wait_for(kafka_consumer.getone(), 0.5)
 
     response_headers = decode_headers(msg.headers)
-    inference_response = InferenceResponse(**orjson.loads(msg.value))
+    inference_response = InferenceResponse(**decode_value(msg.value))
 
     assert CLOUDEVENTS_HEADER_ID in response_headers
     assert len(inference_response.outputs) > 0

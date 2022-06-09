@@ -1,5 +1,4 @@
 import pytest
-import orjson
 import docker
 import asyncio
 
@@ -18,6 +17,7 @@ from mlserver.kafka.handlers import (
     MLSERVER_MODEL_NAME_HEADER,
 )
 from mlserver.kafka.message import KafkaMessage
+from mlserver.kafka.utils import encode_value
 
 from ..utils import get_available_port
 
@@ -181,7 +181,7 @@ def kafka_request(
 ) -> KafkaMessage:
     return KafkaMessage(
         key=generate_uuid(),
-        value=orjson.dumps(inference_request.dict()),
+        value=encode_value(inference_request),
         headers={MLSERVER_MODEL_NAME_HEADER: sum_model_settings.name},
     )
 

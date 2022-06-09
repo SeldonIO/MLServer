@@ -1,11 +1,10 @@
-import orjson
-
 from typing import Optional, Tuple
 
 from ..utils import insert_headers, extract_headers
 from ..types import InferenceRequest
 from ..handlers import DataPlane
 
+from .utils import encode_value, decode_value
 from .message import KafkaMessage
 from .errors import InvalidMessageHeaders
 
@@ -18,7 +17,7 @@ class KafkaHandlers:
         self._data_plane = data_plane
 
     async def infer(self, request: KafkaMessage) -> KafkaMessage:
-        request_json = orjson.loads(request.value)
+        request_json = decode_value(request.value)
         inference_request = InferenceRequest(**request_json)
 
         # Kafka KEY takes precedence over body ID
@@ -33,7 +32,7 @@ class KafkaHandlers:
             inference_request, model_name, model_version
         )
 
-        response_value = orjson.dumps(inference_response.dict())
+        response_value = encode_value(inference_response)
         response_headers = extract_headers(inference_response)
         if response_headers is None:
             response_headers = {}
