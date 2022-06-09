@@ -1,4 +1,4 @@
 import logging
 
-gRPCLoggerName = "mlserver.kafka"
-logger = logging.getLogger(gRPCLoggerName)
+loggerName = "mlserver.kafka"
+logger = logging.getLogger(loggerName)

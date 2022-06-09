@@ -2,9 +2,10 @@ import pytest
 import orjson
 import docker
 import asyncio
+import logging
 
-from kafka import KafkaClient, KafkaAdminClient
-from kafka.admin import NewTopic
+from aiokafka import AIOKafkaClient, AIOKafkaProducer, AIOKafkaConsumer
+from kafka.admin import KafkaAdminClient, NewTopic
 from docker.client import DockerClient
 
 from mlserver.types import InferenceRequest
@@ -12,6 +13,7 @@ from mlserver.utils import generate_uuid, install_uvloop_event_loop
 from mlserver.settings import Settings, ModelSettings
 from mlserver.handlers import DataPlane
 from mlserver.kafka.server import KafkaServer
+from mlserver.kafka.logging import loggerName
 from mlserver.kafka.handlers import (
     KafkaMessage,
     KafkaHandlers,
@@ -20,18 +22,27 @@ from mlserver.kafka.handlers import (
 
 from ..utils import get_available_port
 
+logger = logging.getLogger(f"{loggerName}.test")
+
 
 async def _wait_until_ready(kafka_server: str):
     has_started = False
     attempts_left = 5
     while not has_started and attempts_left > 0:
         try:
-            kafka_client = KafkaClient(bootstrap_servers=kafka_server)
-            kafka_client.bootstrap_connected()
-            kafka_client.close()
+            kafka_client = AIOKafkaClient(bootstrap_servers=kafka_server)
+            await kafka_client.bootstrap()
+            await kafka_client.close()
+            logger.debug(
+                f"Kafka Cluster has now started and can be accessed at {kafka_server}"
+            )
             has_started = True
         except Exception:
             attempts_left -= 1
+            if attempts_left == 0:
+                logger.exception(f"There was an error starting the Kafka cluster")
+                raise
+
             await asyncio.sleep(2)
 
 
@@ -120,17 +131,37 @@ async def kafka(docker_client: DockerClient, zookeeper: str, kafka_network: str)
 
     kafka_server = f"localhost:{kafka_port}"
 
-    # Wait until Kafka server is healthy
-    await _wait_until_ready(kafka_server)
-
-    yield kafka_server
-
-    container.remove(force=True)
+    try:
+        # Wait until Kafka server is healthy
+        await _wait_until_ready(kafka_server)
+        yield kafka_server
+    except:
+        raise e
+    finally:
+        # Ensure we always remove the container
+        container.remove(force=True)
 
 
 @pytest.fixture
-def kafka_client(settings: Settings):
-    return Kafkaclient(bootstrap_servers=settings.kafka_servers)
+async def kafka_producer(settings: Settings) -> AIOKafkaProducer:
+    producer = AIOKafkaProducer(bootstrap_servers=settings.kafka_servers)
+    await producer.start()
+
+    yield producer
+
+    await producer.stop()
+
+
+@pytest.fixture
+async def kafka_consumer(settings: Settings) -> AIOKafkaConsumer:
+    consumer = AIOKafkaConsumer(
+        settings.kafka_topic_output, bootstrap_servers=settings.kafka_servers
+    )
+    await consumer.start()
+
+    yield consumer
+
+    await consumer.stop()
 
 
 @pytest.fixture
