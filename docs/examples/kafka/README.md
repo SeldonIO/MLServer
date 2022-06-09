@@ -1,9 +1,10 @@
-# Serving Scikit-Learn models using Kafka Protocol
+# Serving models through Kafka
 
-Out of the box, `mlserver` supports the deployment and serving of `scikit-learn` models.
-By default, it will assume that these models have been [serialised using `joblib`](https://scikit-learn.org/stable/modules/model_persistence.html).
+Out of the box, MLServer provides support to receive inference requests from Kafka.
+The Kafka server can run side-by-side with the REST and gRPC ones, and adds a new interface to interact with your model.
+The inference responses coming back from your model, will also get written back to their own output topic.
 
-In this example, we will cover how we can train and serialise a simple model, to then serve it using `mlserver`.
+In this example, we will showcase the integration with Kafka by serving a [Scikit-Learn](../sklearn/README) model thorugh Kafka.
 
 ## Run Kafka
 
@@ -34,14 +35,6 @@ Now we can create the input and output topics required
 !./kafka_2.12-2.8.0/bin/kafka-topics.sh --create --topic mlserver-input --partitions 1 --replication-factor 1 --bootstrap-server localhost:9092
 !./kafka_2.12-2.8.0/bin/kafka-topics.sh --create --topic mlserver-output --partitions 1 --replication-factor 1 --bootstrap-server localhost:9092
 ```
-
-    Error while executing topic command : Topic with this name already exists.
-    [2021-08-05 04:32:32,710] ERROR org.apache.kafka.common.errors.TopicExistsException: Topic with this name already exists.
-     (kafka.admin.TopicCommand$)
-    Error while executing topic command : Topic with this name already exists.
-    [2021-08-05 04:32:34,590] ERROR org.apache.kafka.common.errors.TopicExistsException: Topic with this name already exists.
-     (kafka.admin.TopicCommand$)
-
 
 ## Training
 
@@ -76,13 +69,6 @@ X_train, X_test, y_train, y_test = train_test_split(
 classifier.fit(X_train, y_train)
 ```
 
-
-
-
-    SVC(gamma=0.001)
-
-
-
 ### Saving our trained model
 
 To save our trained model, we will serialise it using `joblib`.
@@ -98,13 +84,6 @@ model_file_name = "mnist-svm.joblib"
 joblib.dump(classifier, model_file_name)
 ```
 
-
-
-
-    ['mnist-svm.joblib']
-
-
-
 ## Serving
 
 Now that we have trained and saved our model, the next step will be to serve it using `mlserver`. 
@@ -112,6 +91,8 @@ For that, we will need to create 2 configuration files:
 
 - `settings.json`: holds the configuration of our server (e.g. ports, log level, etc.).
 - `model-settings.json`: holds the configuration of our model (e.g. input type, runtime to use, etc.).
+
+Note that, the `settings.json` file will contain our Kafka configuration, including the address of the Kafka broker and the input / output topics that will be used for inference.
 
 ### `settings.json`
 
@@ -123,9 +104,6 @@ For that, we will need to create 2 configuration files:
     "kafka_enabled": "true"
 }
 ```
-
-    Overwriting settings.json
-
 
 ### `model-settings.json`
 
@@ -141,9 +119,6 @@ For that, we will need to create 2 configuration files:
     }
 }
 ```
-
-    Overwriting model-settings.json
-
 
 ### Start serving our model
 
@@ -184,20 +159,10 @@ response = requests.post(endpoint, json=inference_request)
 response.json()
 ```
 
+### Send inference request through Kafka
 
-
-
-    {'model_name': 'mnist-svm',
-     'model_version': 'v0.1.0',
-     'id': '53e3c2d5-456c-41a6-9e7f-6ba0ef717c3c',
-     'parameters': None,
-     'outputs': [{'name': 'predict',
-       'shape': [1],
-       'datatype': 'INT64',
-       'parameters': None,
-       'data': [8]}]}
-
-
+Now that we have verified that our server is accepting REST requests, we will try to send a new inference request through Kafka.
+For this, we just need to send a request to the `mlserver-input` topic (which is the default input topic):
 
 
 ```python
@@ -217,12 +182,8 @@ producer.send(
     headers=list(headers.items()))
 ```
 
-
-
-
-    <kafka.producer.future.FutureRecordMetadata at 0x7f8da94d1250>
-
-
+Once the message has gone into the queue, the Kafka server running within MLServer should receive this message and run inference.
+The prediction output should then get posted into an output queue, which will be named `mlserver-output` by default.
 
 
 ```python
@@ -239,10 +200,9 @@ for msg in consumer:
     break
 ```
 
-    WARNING:kafka.coordinator.consumer:group_id is None: disabling auto-commit.
+As we should now be able to see above, the results of our inference request should now be visible in the output Kafka queue.
 
 
-    key: None
-    value: b'{"model_name":"mnist-svm","model_version":"v0.1.0","id":"f2a22555-43bc-40c2-9695-41602285a068","parameters":null,"outputs":[{"name":"predict","shape":[1],"datatype":"INT64","parameters":null,"data":[8]}]}'
-    
+```python
 
+```
