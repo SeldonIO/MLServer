@@ -24,7 +24,8 @@ class ModelRepository:
 
         # TODO: Use an async alternative for filesys ops
         if self._root:
-            pattern = os.path.join(self._root, "**", DEFAULT_MODEL_SETTINGS_FILENAME)
+            abs_root = os.path.abspath(self._root)
+            pattern = os.path.join(abs_root, "**", DEFAULT_MODEL_SETTINGS_FILENAME)
             matches = glob.glob(pattern, recursive=True)
 
             for model_settings_path in matches:
