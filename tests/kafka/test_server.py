@@ -45,5 +45,5 @@ async def test_infer_error(
 
     # NOTE: Errors are not sent back to the client. Instead, the server won't
     # return any response.
-    with pytest.raises(asyncio.exceptions.TimeoutError):
+    with pytest.raises(asyncio.TimeoutError):
         await asyncio.wait_for(kafka_consumer.getone(), 0.5)
