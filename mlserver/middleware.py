@@ -1,20 +1,49 @@
-from typing import Callable, List
-
-#  from .codecs.middleware import codec_middleware
 from .settings import ModelSettings
-from .types import InferenceRequest
-
-MiddlewareFunc = Callable[[InferenceRequest, ModelSettings], InferenceRequest]
-#  InferenceMiddlewares: List[MiddlewareFunc] = [codec_middleware]
-# NOTE: Remove codecs temporarily from middleware to reduce serialisation
-# overhead when sending payload to inference workers.
-InferenceMiddlewares: List[MiddlewareFunc] = []
+from .types import InferenceRequest, InferenceResponse
 
 
-def inference_middlewares(
-    request: InferenceRequest, model_settings: ModelSettings
-) -> InferenceRequest:
-    for middleware in InferenceMiddlewares:
-        request = middleware(request, model_settings)
+class InferenceMiddleware:
+    """
+    Base class to implement middlewares.
+    """
 
-    return request
+    def request_middleware(
+        self, request: InferenceRequest, model_settings: ModelSettings
+    ) -> InferenceRequest:
+        raise NotImplementedError()
+
+    def response_middleware(
+        self, response: InferenceResponse, model_settings: ModelSettings
+    ) -> InferenceResponse:
+        raise NotImplementedError()
+
+
+class InferenceMiddlewares(InferenceMiddleware):
+    """
+    Meta-middleware which applies a list of middlewares.
+    """
+
+    def __init__(self, *inference_middlewares):
+        self._middlewares = inference_middlewares
+
+    def request_middleware(
+        self, request: InferenceRequest, model_settings: ModelSettings
+    ) -> InferenceRequest:
+        processed_request = request
+        for middleware in self._middlewares:
+            processed_request = middleware.request_middleware(
+                processed_request, model_settings
+            )
+
+        return processed_request
+
+    def response_middleware(
+        self, response: InferenceResponse, model_settings: ModelSettings
+    ) -> InferenceResponse:
+        processed_response = response
+        for middleware in self._middlewares:
+            processed_response = middleware.response_middleware(
+                processed_response, model_settings
+            )
+
+        return processed_response

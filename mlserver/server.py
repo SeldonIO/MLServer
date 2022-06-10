@@ -1,5 +1,6 @@
 import asyncio
 import signal
+import logging
 
 from typing import List
 
@@ -14,6 +15,8 @@ from .batching import load_batching
 from .rest import RESTServer
 from .grpc import GRPCServer
 from .metrics import MetricsServer
+from .kafka import KafkaServer
+from .utils import logger
 
 HANDLED_SIGNALS = [signal.SIGINT, signal.SIGTERM, signal.SIGQUIT]
 
@@ -58,6 +61,10 @@ class MLServer:
         self._model_repository_handlers = ModelRepositoryHandlers(
             repository=self._model_repository, model_registry=self._model_registry
         )
+        if self._settings.debug:
+            logger.setLevel(logging.DEBUG)
+        else:
+            logger.setLevel(logging.INFO)
 
         self._logger = configure_logger(settings)
 
@@ -67,6 +74,10 @@ class MLServer:
         self._grpc_server = GRPCServer(
             self._settings, self._data_plane, self._model_repository_handlers
         )
+
+        self._kafka_server = None
+        if self._settings.kafka_enabled:
+            self._kafka_server = KafkaServer(self._settings, self._data_plane)
 
         self._metrics_server = None
         if self._settings.metrics_endpoint:
@@ -78,6 +89,9 @@ class MLServer:
         servers = [self._rest_server.start(), self._grpc_server.start()]
         if self._metrics_server:
             servers.append(self._metrics_server.start())
+
+        if self._kafka_server:
+            servers.append(self._kafka_server.start())
 
         servers_task = asyncio.gather(*servers)
 
@@ -92,6 +106,8 @@ class MLServer:
 
     async def add_custom_handlers(self, model: MLModel):
         await self._rest_server.add_custom_handlers(model)
+        if self._kafka_server:
+            await self._kafka_server.add_custom_handlers(model)
 
         # TODO: Add support for custom gRPC endpoints
         # self._grpc_server.add_custom_handlers(handlers)
@@ -105,6 +121,8 @@ class MLServer:
 
     async def remove_custom_handlers(self, model: MLModel):
         await self._rest_server.delete_custom_handlers(model)
+        if self._kafka_server:
+            await self._kafka_server.delete_custom_handlers(model)
 
         # TODO: Add support for custom gRPC endpoints
         # self._grpc_server.delete_custom_handlers(handlers)
@@ -120,6 +138,9 @@ class MLServer:
     async def stop(self, sig: int = None):
         if self._inference_pool:
             await self._inference_pool.close()
+
+        if self._kafka_server:
+            await self._kafka_server.stop()
 
         await self._grpc_server.stop(sig)
         await self._rest_server.stop(sig)

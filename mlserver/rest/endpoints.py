@@ -53,8 +53,8 @@ class Endpoints:
         model_name: str,
         model_version: str = None,
     ) -> InferenceResponse:
-        request_headers = raw_request.headers
-        insert_headers(payload, request_headers)  # type: ignore
+        request_headers = dict(raw_request.headers)
+        insert_headers(payload, request_headers)
 
         inference_response = await self._data_plane.infer(
             payload, model_name, model_version

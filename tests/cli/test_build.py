@@ -39,7 +39,7 @@ def custom_runtime_server(
     docker_client: DockerClient,
     custom_image: str,
     settings: Settings,
-    free_ports: Tuple[int, int],
+    free_ports: Tuple[int, int, int],
     random_user_id: int,
 ) -> str:
     host_http_port, host_grpc_port, host_metrics_port = free_ports

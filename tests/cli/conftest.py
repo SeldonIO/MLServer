@@ -13,7 +13,7 @@ def docker_client() -> DockerClient:
 
 
 @pytest.fixture
-def free_ports() -> Tuple[int, int]:
+def free_ports() -> Tuple[int, int, int]:
     http_port = get_available_port()
     grpc_port = get_available_port()
     metrics_port = get_available_port()

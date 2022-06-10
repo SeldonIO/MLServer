@@ -31,7 +31,7 @@ def to_headers(context: ServicerContext) -> Dict[str, str]:
 
 
 def to_metadata(headers: Dict[str, str]) -> Tuple[Tuple[str, str], ...]:
-    return tuple(headers.items())
+    return tuple((key.lower(), value) for key, value in headers.items())
 
 
 def _grpc_status_code(err: MLServerError):

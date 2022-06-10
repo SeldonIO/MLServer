@@ -76,8 +76,8 @@ def insert_headers(
             "`headers` field of the request `parameters` object."
             "The `headers` field of the `parameters` object "
             "SHOULDN'T BE USED directly."
-            "These entries will be replaced by the actual headers (REST) or"
-            "metadata (gRPC) of the incoming request."
+            "These entries will be replaced by the actual headers (REST, Kafka) "
+            "or metadata (gRPC) of the incoming request."
         )
 
     parameters.headers = headers

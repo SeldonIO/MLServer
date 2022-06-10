@@ -6,6 +6,10 @@ from mlserver.types import (
     MetadataServerResponse,
     MetadataModelResponse,
 )
+from mlserver.cloudevents import (
+    CLOUDEVENTS_HEADER_SPECVERSION_DEFAULT,
+    CLOUDEVENTS_HEADER_SPECVERSION,
+)
 
 
 async def test_live(rest_client):
@@ -77,6 +81,12 @@ async def test_infer_headers(rest_client, inference_request, sum_model_settings)
     assert response.status_code == 200
     assert "x-foo" in response.headers
     assert response.headers["x-foo"] == "bar"
+
+    assert CLOUDEVENTS_HEADER_SPECVERSION in response.headers
+    assert (
+        response.headers[CLOUDEVENTS_HEADER_SPECVERSION]
+        == CLOUDEVENTS_HEADER_SPECVERSION_DEFAULT
+    )
 
 
 async def test_infer_error(rest_client, inference_request):

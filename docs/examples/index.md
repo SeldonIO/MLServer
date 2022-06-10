@@ -45,6 +45,7 @@ serving), check out the examples below.
 - [Content-Type Decoding](./content-type/README.md)
 - [Custom Conda environment](./conda/README.md)
 - [Serving custom models requiring JSON inputs or outputs](./custom-json/README.md)
+- [Serving models through Kafka](./kafka/README.md)
 
 ```{toctree}
 :caption: MLServer Features
@@ -56,4 +57,5 @@ serving), check out the examples below.
 ./content-type/README.md
 ./conda/README.md
 ./custom-json/README.md
+./kafka/README.md
 ```

@@ -3,6 +3,7 @@ import pytest
 import os
 import shutil
 import asyncio
+import logging
 
 from unittest.mock import Mock
 from mlserver.handlers import DataPlane, ModelRepositoryHandlers
@@ -10,6 +11,7 @@ from mlserver.registry import MultiModelRegistry
 from mlserver.repository import ModelRepository, DEFAULT_MODEL_SETTINGS_FILENAME
 from mlserver.parallel import InferencePool
 from mlserver.utils import install_uvloop_event_loop
+from mlserver.logging import get_logger
 from mlserver import types, Settings, ModelSettings
 
 from .fixtures import SumModel, ErrorModel
@@ -34,6 +36,13 @@ def assert_not_called_with(self, *args, **kwargs):
 
 
 Mock.assert_not_called_with = assert_not_called_with
+
+
+@pytest.fixture(autouse=True)
+def logger():
+    logger = get_logger()
+    logger.setLevel(logging.DEBUG)
+    return logger
 
 
 @pytest.fixture

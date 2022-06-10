@@ -75,7 +75,7 @@ class Settings(BaseSettings):
     extensions: List[str] = []
     """Server extensions loaded."""
 
-    # Server settings
+    # HTTP Server settings
     host: str = "0.0.0.0"
     """Host where to listen for connections."""
 
@@ -109,6 +109,12 @@ class Settings(BaseSettings):
     # Logging settings
     logging_settings: Optional[str] = None
     """Path to logging config file."""
+
+    # Kakfa Server settings
+    kafka_enabled: bool = False
+    kafka_servers: str = "localhost:9092"
+    kafka_topic_input: str = "mlserver-input"
+    kafka_topic_output: str = "mlserver-output"
 
 
 class ModelParameters(BaseSettings):
