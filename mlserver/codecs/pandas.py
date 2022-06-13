@@ -13,13 +13,17 @@ from ..types import InferenceRequest, InferenceResponse, RequestInput, ResponseO
 
 def _to_series(input_or_output: InputOrOutput) -> pd.Series:
     payload = get_decoded_or_raw(input_or_output)
+
+    if input_or_output.datatype == "BYTES":
+        # Don't convert the dtype of BYTES
+        return pd.Series(payload)
+
     if isinstance(payload, np.ndarray):
         # Necessary so that it's compatible with pd.Series
         payload = list(payload)
-        dtype = to_dtype(input_or_output)
-        return pd.Series(payload, dtype=dtype)
 
-    return pd.Series(payload)
+    dtype = to_dtype(input_or_output)
+    return pd.Series(payload, dtype=dtype)
 
 
 def _to_response_output(series: pd.Series, use_bytes: bool = True) -> ResponseOutput:
