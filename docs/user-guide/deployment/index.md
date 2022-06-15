@@ -38,7 +38,7 @@ Deploy with Seldon Core
 
 ````{grid-item-card}
 :class-card: sd-px-5 sd-pt-2
-:link: ./seldon-core
+:link: ./kserve
 :link-type: doc
 :img-top: ../../assets/kserve-logo.png
 
