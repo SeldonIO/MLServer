@@ -170,6 +170,25 @@ def test_encode_response(dataframe, use_bytes, expected):
                 }
             ),
         ),
+        (
+            InferenceResponse(
+                model_name="my-model",
+                outputs=[
+                    ResponseOutput(
+                        name="a", shape=[3], datatype="INT32", data=[1, 2, 3]
+                    ),
+                    ResponseOutput(
+                        name="b", shape=[3], datatype="FP32", data=[5, 6, 7]
+                    ),
+                ],
+            ),
+            pd.DataFrame({"a": [1, 2, 3], "b": [5, 6, 7]}).astype(
+                {
+                    "a": "int32",
+                    "b": "float32",
+                }
+            ),
+        ),
     ],
 )
 def test_decode_response(response: InferenceResponse, expected: pd.DataFrame):
@@ -287,6 +306,65 @@ def test_encode_request(
                 ]
             ),
             pd.DataFrame({"a": np.array([1], dtype=np.int32)}),
+        ),
+        (
+            InferenceRequest(
+                inputs=[
+                    RequestInput(
+                        name="a",
+                        data=[None, None],
+                        datatype="FP64",
+                        shape=[1],
+                    ),
+                    RequestInput(
+                        name="b",
+                        data=[1, 2],
+                        datatype="FP32",
+                        shape=[2],
+                    ),
+                    RequestInput(
+                        name="c",
+                        data=[3, 4],
+                        datatype="INT32",
+                        shape=[2],
+                    ),
+                    RequestInput(
+                        name="d",
+                        data=[5, 6],
+                        datatype="UINT8",
+                        shape=[2],
+                    ),
+                    RequestInput(
+                        name="e",
+                        data=[True, False],
+                        datatype="BOOL",
+                        shape=[2],
+                    ),
+                    RequestInput(
+                        name="f",
+                        data=[0, 1],
+                        datatype="BOOL",
+                        shape=[2],
+                    ),
+                ]
+            ),
+            pd.DataFrame(
+                {
+                    "a": [np.NaN, np.NaN],
+                    "b": [1.0, 2.0],
+                    "c": [3, 4],
+                    "d": [5, 6],
+                    "e": [True, False],
+                    "f": [False, True],
+                }
+            ).astype(
+                {
+                    "b": "float32",
+                    "c": "int32",
+                    "d": "uint8",
+                    "f": "bool",
+                }
+            ),
         ),
     ],
 )
