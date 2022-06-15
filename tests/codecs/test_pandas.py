@@ -182,7 +182,7 @@ def test_encode_response(dataframe, use_bytes, expected):
                     ),
                 ],
             ),
-            pd.DataFrame({"a": [1, 2, 3], "b": [5, 6, 7],}).astype(
+            pd.DataFrame({"a": [1, 2, 3], "b": [5, 6, 7]}).astype(
                 {
                     "a": "int32",
                     "b": "float32",
