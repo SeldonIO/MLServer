@@ -24,6 +24,8 @@ from mlserver.types import (
     MetadataTensor,
     ResponseOutput,
 )
+from mlserver.utils import get_model_uri
+
 from mlserver_alibi_explain.alibi_dependency_reference import (
     get_mlmodel_class_as_str,
     get_alibi_class_as_str,
@@ -109,7 +111,7 @@ class AlibiExplainRuntimeBase(MLModel):
             payload=[explanation.to_json()], name="explanation"
         )
 
-    def _load_from_uri(self, predictor: Any) -> Explainer:
+    async def _load_from_uri(self, predictor: Any) -> Explainer:
         # load the model from disk
         # full model is passed as `predictor`
         # load the model from disk
@@ -119,7 +121,8 @@ class AlibiExplainRuntimeBase(MLModel):
         uri = model_parameters.uri
         if uri is None:
             raise InvalidModelURI(self.name)
-        return load_explainer(uri, predictor=predictor)
+        absolute_uri = await get_model_uri(self.settings)
+        return load_explainer(absolute_uri, predictor=predictor)
 
     def _explain_impl(self, input_data: Any, explain_parameters: Dict) -> Explanation:
         """Actual explain to be implemented by subclasses"""

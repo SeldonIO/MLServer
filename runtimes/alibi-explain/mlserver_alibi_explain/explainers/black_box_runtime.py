@@ -38,8 +38,7 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
         super().__init__(settings, explainer_settings)
 
     async def load(self) -> bool:
-        # get the metadata of the underlying inference model via v2 metadata endpoint
-        self.infer_metadata = remote_metadata(construct_metadata_url(self.infer_uri))
+        self.infer_metadata = None
 
         # TODO: use init explainer field instead?
         if self.alibi_explain_settings.init_parameters is not None:
@@ -47,7 +46,7 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
             init_parameters["predictor"] = self._infer_impl
             self._model = self._explainer_class(**init_parameters)  # type: ignore
         else:
-            self._model = self._load_from_uri(self._infer_impl)
+            self._model = await self._load_from_uri(self._infer_impl)
 
         self.ready = True
         return self.ready
@@ -67,6 +66,10 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
         # The contract is that alibi-explain would input/output ndarray
         # in the case of AnchorText, we have a list of strings instead though.
         # TODO: for now we only support v2 protocol, do we need more support?
+
+        if self.infer_metadata is None:
+            # get the metadata of the underlying inference model via v2 metadata endpoint
+            self.infer_metadata = remote_metadata(construct_metadata_url(self.infer_uri))
 
         v2_request = to_v2_inference_request(input_data, self.infer_metadata)
         v2_response = remote_predict(
