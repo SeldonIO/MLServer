@@ -1,6 +1,6 @@
 import json
 from typing import Any, Optional, List, Dict
-
+import asyncio
 from alibi.api.interfaces import Explanation, Explainer
 from alibi.saving import load_explainer
 
@@ -122,7 +122,8 @@ class AlibiExplainRuntimeBase(MLModel):
         if uri is None:
             raise InvalidModelURI(self.name)
         absolute_uri = await get_model_uri(self.settings)
-        return load_explainer(absolute_uri, predictor=predictor)
+        evtLoop = asyncio.get_event_loop()
+        return await evtLoop.run_in_executor(None, load_explainer, absolute_uri, predictor)
 
     def _explain_impl(self, input_data: Any, explain_parameters: Dict) -> Explanation:
         """Actual explain to be implemented by subclasses"""

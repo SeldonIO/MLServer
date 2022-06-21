@@ -14,7 +14,7 @@ from mlserver_alibi_explain.common import (
     construct_metadata_url,
 )
 from mlserver_alibi_explain.runtime import AlibiExplainRuntimeBase
-
+import traceback
 
 class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
     """
@@ -34,6 +34,7 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
         self.infer_uri = explainer_settings.infer_uri
         self.infer_metadata: Optional[MetadataModelResponse] = None
 
+
         # TODO: validate the settings are ok with this specific explainer
         super().__init__(settings, explainer_settings)
 
@@ -51,7 +52,7 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
         self.ready = True
         return self.ready
 
-    def _explain_impl(self, input_data: Any, explain_parameters: Dict) -> Explanation:
+    async def _explain_impl(self, input_data: Any, explain_parameters: Dict) -> Explanation:
 
         # if we get a list of strings, we can only explain the first elem and there
         # is no way of just sending a plain string in v2, it has to be in a list
@@ -68,13 +69,16 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
         # TODO: for now we only support v2 protocol, do we need more support?
 
         if self.infer_metadata is None:
+            meta_url = construct_metadata_url(self.infer_uri)
             # get the metadata of the underlying inference model via v2 metadata endpoint
-            self.infer_metadata = remote_metadata(construct_metadata_url(self.infer_uri))
+            self.infer_metadata = remote_metadata(meta_url)
+
 
         v2_request = to_v2_inference_request(input_data, self.infer_metadata)
         v2_response = remote_predict(
-            v2_payload=v2_request, predictor_url=self.infer_uri
+           v2_payload=v2_request, predictor_url=self.infer_uri
         )
 
         # TODO: do we care about more than one output?
         return NumpyCodec.decode_output(v2_response.outputs[0])
+
