@@ -118,9 +118,6 @@ class AlibiExplainRuntimeBase(MLModel):
         model_parameters: Optional[ModelParameters] = self.settings.parameters
         if model_parameters is None:
             raise ModelParametersMissing(self.name)
-        uri = model_parameters.uri
-        if uri is None:
-            raise InvalidModelURI(self.name)
         absolute_uri = await get_model_uri(self.settings)
         evtLoop = asyncio.get_event_loop()
         return await evtLoop.run_in_executor(
