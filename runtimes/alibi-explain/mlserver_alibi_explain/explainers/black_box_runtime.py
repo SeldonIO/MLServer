@@ -16,6 +16,7 @@ from mlserver_alibi_explain.common import (
 from mlserver_alibi_explain.runtime import AlibiExplainRuntimeBase
 import traceback
 
+
 class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
     """
     Runtime for black box explainer runtime, i.e. explainer that would just need access
@@ -34,12 +35,10 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
         self.infer_uri = explainer_settings.infer_uri
         self.infer_metadata: Optional[MetadataModelResponse] = None
 
-
         # TODO: validate the settings are ok with this specific explainer
         super().__init__(settings, explainer_settings)
 
     async def load(self) -> bool:
-        self.infer_metadata = None
 
         # TODO: use init explainer field instead?
         if self.alibi_explain_settings.init_parameters is not None:
@@ -73,12 +72,10 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
             # get the metadata of the underlying inference model via v2 metadata endpoint
             self.infer_metadata = remote_metadata(meta_url)
 
-
         v2_request = to_v2_inference_request(input_data, self.infer_metadata)
         v2_response = remote_predict(
-           v2_payload=v2_request, predictor_url=self.infer_uri
+            v2_payload=v2_request, predictor_url=self.infer_uri
         )
 
         # TODO: do we care about more than one output?
         return NumpyCodec.decode_output(v2_response.outputs[0])
-
