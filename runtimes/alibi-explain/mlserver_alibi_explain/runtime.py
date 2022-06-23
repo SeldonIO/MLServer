@@ -119,9 +119,11 @@ class AlibiExplainRuntimeBase(MLModel):
         if model_parameters is None:
             raise ModelParametersMissing(self.name)
         absolute_uri = await get_model_uri(self.settings)
-        evtLoop = asyncio.get_event_loop()
-        return await evtLoop.run_in_executor(
-            None, load_explainer, absolute_uri, predictor
+        return await execute_async(
+            loop=None,
+            fn=load_explainer,
+            path=absolute_uri,
+            predictor=predictor
         )
 
     def _explain_impl(self, input_data: Any, explain_parameters: Dict) -> Explanation:
