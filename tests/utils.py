@@ -1,6 +1,8 @@
 import aiohttp
 import socket
 
+from typing import List
+
 from aiohttp.client_exceptions import (
     ClientConnectorError,
     ClientOSError,
