@@ -2,6 +2,7 @@ import asyncio
 import select
 import signal
 
+from asyncio import Task
 from queue import Empty
 from multiprocessing import Process, Queue, JoinableQueue
 from concurrent.futures import ThreadPoolExecutor
@@ -75,13 +76,10 @@ class Worker(Process):
 
     async def coro_run(self):
         self.__inner_init__()
+        loop = asyncio.get_event_loop()
 
         while self._active:
-            readable, _, _ = select.select(
-                [self._requests._reader, self._model_updates._reader],
-                [],
-                [],
-            )
+            readable = await loop.run_in_executor(self._executor, self._select)
             for r in readable:
                 if r is self._requests._reader:
                     try:
@@ -96,7 +94,8 @@ class Worker(Process):
                         # and continue
                         continue
 
-                    await self._process_request(request)
+                    request_task = asyncio.create_task(self._process_request(request))
+                    request_task.add_done_callback(self._request_cb)
                 elif r is self._model_updates._reader:
                     model_update = self._model_updates.get()
                     # If the queue gets terminated, detect the "sentinel value"
@@ -106,10 +105,21 @@ class Worker(Process):
                         self._model_updates.task_done()
                         return
 
-                    await self._process_model_update(model_update)
-                    self._model_updates.task_done()
+                    update_task = asyncio.create_task(
+                        self._process_model_update(model_update)
+                    )
+                    update_task.add_done_callback(self._update_cb)
 
-    async def _process_request(self, request):
+    def _select(self):
+        readable, _, _ = select.select(
+            [self._requests._reader, self._model_updates._reader],
+            [],
+            [],
+        )
+
+        return readable
+
+    async def _process_request(self, request) -> InferenceResponseMessage:
         try:
             model = await self._model_registry.get_model(
                 request.model_name, request.model_version
@@ -117,14 +127,17 @@ class Worker(Process):
 
             inference_response = await model.predict(request.inference_request)
 
-            response = InferenceResponseMessage(
+            return InferenceResponseMessage(
                 id=request.id, inference_response=inference_response
             )
             self._responses.put(response)
         except Exception as e:
             logger.exception("An error occurred during inference in a parallel worker.")
-            exception = InferenceResponseMessage(id=request.id, exception=e)
-            self._responses.put(exception)
+            return InferenceResponseMessage(id=request.id, exception=e)
+
+    def _request_cb(self, request_task: Task):
+        response_message = request_task.result()
+        self._responses.put(response_message)
 
     async def _process_model_update(self, update: ModelUpdateMessage):
         model_settings = update.model_settings
@@ -136,6 +149,13 @@ class Worker(Process):
             logger.warning(
                 "Unknown model update message with type ", update.update_type
             )
+
+    def _update_cb(self, update_task: Task):
+        err = update_task.exception()
+        if err:
+            logger.error(e)
+
+        self._model_updates.task_done()
 
     def send_request(self, request_message: InferenceRequestMessage):
         """
