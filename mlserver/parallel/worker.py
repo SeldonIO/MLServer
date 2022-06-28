@@ -183,4 +183,5 @@ class Worker(Process):
         await terminate_queue(self._model_updates)
         await loop.run_in_executor(self._executor, self._model_updates.join)
         self._model_updates.close()
+        self._requests.close()
         self._executor.shutdown()

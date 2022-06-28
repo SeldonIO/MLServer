@@ -1,5 +1,6 @@
 import asyncio
 
+from itertools import cycle
 from asyncio import Future
 from concurrent.futures import ThreadPoolExecutor
 from multiprocessing import Queue
@@ -45,16 +46,17 @@ class InferencePool:
 
         self._workers = {}
         self._settings = settings
-        self._requests: Queue[InferenceRequestMessage] = Queue()
         self._responses: Queue[InferenceResponseMessage] = Queue()
         self._async_responses: Dict[str, Future[InferenceResponse]] = {}
         self._executor = ThreadPoolExecutor()
         for idx in range(self._settings.parallel_workers):
             # TODO: Set callback to restart worker if it goes down (would
             # `worker.join` help with that?)
-            worker = Worker(self._requests, self._responses)
+            worker = Worker(self._responses)
             worker.start()
             self._workers[worker.pid] = worker
+
+        self._workers_round_robin = cycle(self._workers.keys())
 
         # Start processing responses
         self._start_processing_responses()
@@ -117,7 +119,10 @@ class InferencePool:
             model_version=model_version,
             inference_request=inference_request,
         )
-        self._requests.put(request_message)
+
+        worker_pid = next(self._workers_round_robin)
+        worker = self._workers[worker_pid]
+        worker.send_request(request_message)
 
         loop = asyncio.get_running_loop()
         async_response = loop.create_future()
@@ -227,7 +232,6 @@ class InferencePool:
         await terminate_queue(self._responses)
         await cancel_task(self._process_responses_task)
         self._responses.close()
-        self._requests.close()
         self._executor.shutdown()
 
     async def _close_workers(self):
