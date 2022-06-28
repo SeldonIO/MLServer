@@ -9,7 +9,12 @@ from concurrent.futures import ThreadPoolExecutor
 from ..registry import MultiModelRegistry
 from ..utils import install_uvloop_event_loop
 
-from .messages import ModelUpdateType, ModelUpdateMessage, InferenceResponseMessage
+from .messages import (
+    InferenceRequestMessage,
+    ModelUpdateType,
+    ModelUpdateMessage,
+    InferenceResponseMessage,
+)
 from .utils import terminate_queue, END_OF_QUEUE
 from .logging import logger
 
@@ -21,11 +26,11 @@ def _noop():
 
 
 class Worker(Process):
-    def __init__(self, requests: Queue, responses: Queue):
+    def __init__(self, responses: Queue):
         super().__init__()
-        self._requests = requests
         self._responses = responses
-        self.model_updates: JoinableQueue[ModelUpdateMessage] = JoinableQueue()
+        self._requests: Queue[InferenceRequestMessage] = Queue()
+        self._model_updates: JoinableQueue[ModelUpdateMessage] = JoinableQueue()
 
         self.__executor = None
 
@@ -73,7 +78,7 @@ class Worker(Process):
 
         while self._active:
             readable, _, _ = select.select(
-                [self._requests._reader, self.model_updates._reader],
+                [self._requests._reader, self._model_updates._reader],
                 [],
                 [],
             )
@@ -92,17 +97,17 @@ class Worker(Process):
                         continue
 
                     await self._process_request(request)
-                elif r is self.model_updates._reader:
-                    model_update = self.model_updates.get()
+                elif r is self._model_updates._reader:
+                    model_update = self._model_updates.get()
                     # If the queue gets terminated, detect the "sentinel value"
                     # and stop reading
                     if model_update is END_OF_QUEUE:
                         self._active = False
-                        self.model_updates.task_done()
+                        self._model_updates.task_done()
                         return
 
                     await self._process_model_update(model_update)
-                    self.model_updates.task_done()
+                    self._model_updates.task_done()
 
     async def _process_request(self, request):
         try:
@@ -132,14 +137,22 @@ class Worker(Process):
                 "Unknown model update message with type ", update.update_type
             )
 
+    def send_request(self, request_message: InferenceRequestMessage):
+        """
+        Send an inference request message to the worker.
+        Note that this method should be both multiprocess- and thread-safe.
+        """
+        loop = asyncio.get_event_loop()
+        self._requests.put(request_message)
+
     async def send_update(self, model_update: ModelUpdateMessage):
         """
         Send a model update to the worker.
         Note that this method should be both multiprocess- and thread-safe.
         """
         loop = asyncio.get_event_loop()
-        self.model_updates.put(model_update)
-        await loop.run_in_executor(self._executor, self.model_updates.join)
+        self._model_updates.put(model_update)
+        await loop.run_in_executor(self._executor, self._model_updates.join)
 
     async def stop(self):
         """
@@ -147,7 +160,7 @@ class Worker(Process):
         Note that this method should be both multiprocess- and thread-safe.
         """
         loop = asyncio.get_event_loop()
-        await terminate_queue(self.model_updates)
-        await loop.run_in_executor(self._executor, self.model_updates.join)
-        self.model_updates.close()
+        await terminate_queue(self._model_updates)
+        await loop.run_in_executor(self._executor, self._model_updates.join)
+        self._model_updates.close()
         self._executor.shutdown()

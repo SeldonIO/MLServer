@@ -5,11 +5,10 @@ from mlserver.parallel.messages import ModelUpdateMessage, InferenceRequestMessa
 
 async def test_predict(
     worker: Worker,
-    requests: Queue,
     inference_request_message: InferenceRequestMessage,
     responses: Queue,
 ):
-    requests.put(inference_request_message)
+    worker.send_request(inference_request_message)
     response = responses.get()
 
     assert response is not None
@@ -51,7 +50,6 @@ async def test_unload_model(
 
 async def test_exception(
     worker: Worker,
-    requests: Queue,
     inference_request_message: InferenceRequestMessage,
     responses: Queue,
     mocker,
@@ -64,7 +62,7 @@ async def test_exception(
 
     mocker.patch.object(model, "predict", _async_exception)
 
-    requests.put(inference_request_message)
+    worker.send_request(inference_request_message)
     response = responses.get()
 
     assert response is not None
