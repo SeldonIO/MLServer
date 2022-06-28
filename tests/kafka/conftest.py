@@ -18,7 +18,7 @@ from mlserver.kafka.handlers import (
 )
 from mlserver.kafka.message import KafkaMessage
 
-from ..utils import get_available_port
+from ..utils import get_available_ports
 
 from .utils import create_test_topics, wait_until_ready
 
@@ -51,7 +51,7 @@ def kafka_network(docker_client: DockerClient) -> str:
 
 @pytest.fixture(scope="module")
 def zookeeper(docker_client: DockerClient, kafka_network: str) -> str:
-    zookeeper_port = get_available_port()
+    [zookeeper_port] = get_available_ports()
     container = docker_client.containers.run(
         name="zookeeper",
         image="confluentinc/cp-zookeeper:latest",
@@ -73,7 +73,7 @@ def zookeeper(docker_client: DockerClient, kafka_network: str) -> str:
 
 @pytest.fixture(scope="module")
 async def kafka(docker_client: DockerClient, zookeeper: str, kafka_network: str) -> str:
-    kafka_port = get_available_port()
+    [kafka_port] = get_available_ports()
     container = docker_client.containers.run(
         name="kafka",
         image="confluentinc/cp-kafka:latest",
