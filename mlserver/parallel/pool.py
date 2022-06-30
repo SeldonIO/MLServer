@@ -10,7 +10,7 @@ from typing import Any, Dict, Coroutine, Callable
 from ..model import MLModel
 from ..types import InferenceRequest, InferenceResponse
 from ..settings import Settings, ModelSettings
-from ..utils import get_wrapped_method, generate_uuid
+from ..utils import get_wrapped_method, generate_uuid, schedule_with_callback
 from ..errors import InferenceError
 
 from .errors import InvalidParallelMethod
@@ -63,8 +63,9 @@ class InferencePool:
 
     def _start_processing_responses(self):
         self._active = True
-        self._process_responses_task = asyncio.create_task(self._process_responses())
-        self._process_responses_task.add_done_callback(self._process_responses_cb)
+        self._process_responses_task = schedule_with_callback(
+            self._process_responses(), self._process_responses_cb
+        )
 
     def _process_responses_cb(self, process_responses):
         try:

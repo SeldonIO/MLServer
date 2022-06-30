@@ -14,7 +14,7 @@ from ..types import (
     InferenceRequest,
     InferenceResponse,
 )
-from ..utils import generate_uuid
+from ..utils import generate_uuid, schedule_with_callback
 
 from .requests import BatchedRequests
 
@@ -75,8 +75,9 @@ class AdaptiveBatcher:
                 # If task hasn't finished yet, let it keep running
                 return
 
-        self._batching_task = asyncio.create_task(self._batcher())
-        self._batching_task.add_done_callback(self._batching_task_callback)
+        self._batching_task = schedule_with_callback(
+            self._batcher(), self._batching_task_callback
+        )
 
     def _batching_task_callback(self, batching_task: Task):
         err = batching_task.exception()
@@ -98,8 +99,10 @@ class AdaptiveBatcher:
             # We run prediction as a Task to ensure it gets scheduled
             # immediately.
             # That way, we can process multiple batches concurrently.
-            predict_task = asyncio.create_task(self._predict_fn(batched.merged_request))
-            predict_task.add_done_callback(partial(self._predict_callback, batched))
+            schedule_with_callback(
+                self._predict_fn(batched.merged_request),
+                partial(self._predict_callback, batched),
+            )
 
     def _predict_callback(self, batched: BatchedRequests, predict_task: Task):
         try:

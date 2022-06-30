@@ -8,7 +8,7 @@ from multiprocessing import Process, Queue, JoinableQueue
 from concurrent.futures import ThreadPoolExecutor
 
 from ..registry import MultiModelRegistry
-from ..utils import install_uvloop_event_loop
+from ..utils import install_uvloop_event_loop, schedule_with_callback
 
 from .messages import (
     InferenceRequestMessage,
@@ -94,8 +94,9 @@ class Worker(Process):
                         # and continue
                         continue
 
-                    request_task = asyncio.create_task(self._process_request(request))
-                    request_task.add_done_callback(self._request_cb)
+                    schedule_with_callback(
+                        self._process_request(request), self._request_cb
+                    )
                 elif r is self._model_updates._reader:
                     model_update = self._model_updates.get()
                     # If the queue gets terminated, detect the "sentinel value"
@@ -105,10 +106,9 @@ class Worker(Process):
                         self._model_updates.task_done()
                         return
 
-                    update_task = asyncio.create_task(
-                        self._process_model_update(model_update)
+                    schedule_with_callback(
+                        self._process_model_update(model_update), self._update_cb
                     )
-                    update_task.add_done_callback(self._update_cb)
 
     def _select(self):
         readable, _, _ = select.select(

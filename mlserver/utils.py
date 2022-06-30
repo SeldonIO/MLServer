@@ -2,6 +2,7 @@ import os
 import uuid
 import asyncio
 
+from asyncio import Task
 from typing import Callable, Dict, Optional, List
 
 from .logging import logger
@@ -121,3 +122,9 @@ def install_uvloop_event_loop():
     policy = _check_current_event_loop_policy()
 
     logger.info(f"Using asyncio event-loop policy: {policy}")
+
+
+def schedule_with_callback(coro, cb) -> Task:
+    task = asyncio.create_task(coro)
+    task.add_done_callback(cb)
+    return task
