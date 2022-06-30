@@ -3,7 +3,6 @@ import select
 import signal
 
 from asyncio import Task
-from queue import Empty
 from multiprocessing import Process, Queue, JoinableQueue
 from concurrent.futures import ThreadPoolExecutor
 
@@ -81,6 +80,8 @@ class Worker(Process):
         while self._active:
             await loop.run_in_executor(self._executor, self._wait_for_messages)
 
+            # If there're messages available, try to read all of them at once,
+            # starting with the model updates queue
             while not self._model_updates.empty():
                 model_update = self._model_updates.get()
                 # If the queue gets terminated, detect the "sentinel value"
