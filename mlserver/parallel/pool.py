@@ -121,8 +121,7 @@ class InferencePool:
             inference_request=inference_request,
         )
 
-        worker_pid = next(self._workers_round_robin)
-        worker = self._workers[worker_pid]
+        worker = self._get_worker()
         worker.send_request(request_message)
 
         loop = asyncio.get_running_loop()
@@ -130,6 +129,14 @@ class InferencePool:
         self._async_responses[internal_id] = async_response
 
         return await self._wait_response(internal_id)
+
+    def _get_worker(self) -> Worker:
+        """
+        Get next available worker.
+        By default, this is just a round-robin through all the workers.
+        """
+        worker_pid = next(self._workers_round_robin)
+        return self._workers[worker_pid]
 
     async def _wait_response(self, internal_id: str) -> InferenceResponse:
         async_response = self._async_responses[internal_id]

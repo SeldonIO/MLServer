@@ -79,45 +79,31 @@ class Worker(Process):
         loop = asyncio.get_event_loop()
 
         while self._active:
-            readable = await loop.run_in_executor(self._executor, self._select)
-            for r in readable:
-                if r is self._requests._reader:
-                    try:
-                        # NOTE: `select.select` will notify all workers when a
-                        # new message is available. However, only one of them
-                        # will be able to read it. To save us from doing more
-                        # complex synchronisation, we just try to read and
-                        # we'll continue if there are no messages in the queue.
-                        request = self._requests.get(block=False)
-                    except Empty:
-                        # Some other worker got that request first, so ignore
-                        # and continue
-                        continue
+            await loop.run_in_executor(self._executor, self._wait_for_messages)
 
-                    schedule_with_callback(
-                        self._process_request(request), self._request_cb
-                    )
-                elif r is self._model_updates._reader:
-                    model_update = self._model_updates.get()
-                    # If the queue gets terminated, detect the "sentinel value"
-                    # and stop reading
-                    if model_update is END_OF_QUEUE:
-                        self._active = False
-                        self._model_updates.task_done()
-                        return
+            while not self._model_updates.empty():
+                model_update = self._model_updates.get()
+                # If the queue gets terminated, detect the "sentinel value"
+                # and stop reading
+                if model_update is END_OF_QUEUE:
+                    self._active = False
+                    self._model_updates.task_done()
+                    return
 
-                    schedule_with_callback(
-                        self._process_model_update(model_update), self._update_cb
-                    )
+                schedule_with_callback(
+                    self._process_model_update(model_update), self._update_cb
+                )
 
-    def _select(self):
-        readable, _, _ = select.select(
+            while not self._requests.empty():
+                request = self._requests.get()
+                schedule_with_callback(self._process_request(request), self._request_cb)
+
+    def _wait_for_messages(self):
+        select.select(
             [self._requests._reader, self._model_updates._reader],
             [],
             [],
         )
-
-        return readable
 
     async def _process_request(self, request) -> InferenceResponseMessage:
         try:
