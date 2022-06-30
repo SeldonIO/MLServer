@@ -130,7 +130,6 @@ class Worker(Process):
             return InferenceResponseMessage(
                 id=request.id, inference_response=inference_response
             )
-            self._responses.put(response)
         except Exception as e:
             logger.exception("An error occurred during inference in a parallel worker.")
             return InferenceResponseMessage(id=request.id, exception=e)
@@ -153,7 +152,7 @@ class Worker(Process):
     def _update_cb(self, update_task: Task):
         err = update_task.exception()
         if err:
-            logger.error(e)
+            logger.error(err)
 
         self._model_updates.task_done()
 
@@ -162,7 +161,6 @@ class Worker(Process):
         Send an inference request message to the worker.
         Note that this method should be both multiprocess- and thread-safe.
         """
-        loop = asyncio.get_event_loop()
         self._requests.put(request_message)
 
     async def send_update(self, model_update: ModelUpdateMessage):
