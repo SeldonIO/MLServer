@@ -21,7 +21,7 @@ async def test_infer(
         headers=kafka_request.encoded_headers,
     )
 
-    res = await asyncio.wait_for(kafka_consumer.getone(), 1)
+    res = await asyncio.wait_for(kafka_consumer.getone(), 2)
     kafka_msg = KafkaMessage.from_kafka_record(res)
 
     inference_response = InferenceResponse(**kafka_msg.value)
