@@ -78,33 +78,35 @@ class Worker(Process):
         loop = asyncio.get_event_loop()
 
         while self._active:
-            await loop.run_in_executor(self._executor, self._wait_for_messages)
+            readable = await loop.run_in_executor(self._executor, self._select)
+            for r in readable:
+                if r is self._requests._reader:
+                    request = self._requests.get()
 
-            # If there're messages available, try to read all of them at once,
-            # starting with the model updates queue
-            while not self._model_updates.empty():
-                model_update = self._model_updates.get()
-                # If the queue gets terminated, detect the "sentinel value"
-                # and stop reading
-                if model_update is END_OF_QUEUE:
-                    self._active = False
-                    self._model_updates.task_done()
-                    return
+                    schedule_with_callback(
+                        self._process_request(request), self._request_cb
+                    )
+                elif r is self._model_updates._reader:
+                    model_update = self._model_updates.get()
+                    # If the queue gets terminated, detect the "sentinel value"
+                    # and stop reading
+                    if model_update is END_OF_QUEUE:
+                        self._active = False
+                        self._model_updates.task_done()
+                        return
 
-                schedule_with_callback(
-                    self._process_model_update(model_update), self._update_cb
-                )
+                    schedule_with_callback(
+                        self._process_model_update(model_update), self._update_cb
+                    )
 
-            while not self._requests.empty():
-                request = self._requests.get()
-                schedule_with_callback(self._process_request(request), self._request_cb)
-
-    def _wait_for_messages(self):
-        select.select(
+    def _select(self):
+        readable, _, _ = select.select(
             [self._requests._reader, self._model_updates._reader],
             [],
             [],
         )
+
+        return readable
 
     async def _process_request(self, request) -> InferenceResponseMessage:
         try:
