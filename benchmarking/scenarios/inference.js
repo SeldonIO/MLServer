@@ -17,22 +17,16 @@ const ScenarioVUs = 200;
 export const options = {
   scenarios: {
     iris_rest: {
-      executor: "constant-arrival-rate",
-      rate: 1000,
-      timeUnit: "1s",
+      executor: "constant-vus",
       duration: ScenarioDuration,
-      preAllocatedVUs: 100,
-      maxVUs: ScenarioVUs,
+      vus: ScenarioVUs,
       tags: { model_name: "iris", protocol: "rest" },
       env: { MODEL_NAME: "iris", PROTOCOL: "rest" },
     },
     iris_grpc: {
-      executor: "constant-arrival-rate",
-      rate: 1000,
-      timeUnit: "1s",
+      executor: "constant-vus",
       duration: ScenarioDuration,
-      preAllocatedVUs: 100,
-      maxVUs: ScenarioVUs,
+      vus: ScenarioVUs,
       startTime: ScenarioDuration,
       tags: { model_name: "iris", protocol: "grpc" },
       env: { MODEL_NAME: "iris", PROTOCOL: "grpc" },
