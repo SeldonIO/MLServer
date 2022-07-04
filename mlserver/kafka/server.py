@@ -57,7 +57,10 @@ class KafkaServer:
             )
 
     async def _consumer_loop(self):
+        logger.info("Reading messages from consumer")
+        print("Reading messages from consumer")
         async for request in self._consumer:
+            print("Read new message from consumer")
             try:
                 await self._process_request(request)
             except MLServerError as err:
@@ -79,12 +82,18 @@ class KafkaServer:
         if request_method != KafkaMethodTypes.infer:
             raise MLServerError(f"Invalid request method: {request_method}")
 
-        logger.debug(
+        logger.info(
+            f"Processing Kafka message '{kafka_request.key}' with method '{request_method}'"
+        )
+        print(
             f"Processing Kafka message '{kafka_request.key}' with method '{request_method}'"
         )
         kafka_response = await self._handlers.infer(kafka_request)
 
-        logger.debug(
+        logger.info(
+            f"Sending response for Kafka message '{kafka_request.key}' with method '{request_method}'"
+        )
+        print(
             f"Sending response for Kafka message '{kafka_request.key}' with method '{request_method}'"
         )
         await self._producer.send_and_wait(
