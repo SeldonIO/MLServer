@@ -16,29 +16,59 @@ function checkResponse(res) {
   check(res, {
     "status is OK": (r) => r && r.status === grpc.StatusOK,
   });
+  grpcReqs.add(1);
 }
 
 export class GrpcClient {
   constructor() {
     this.grpcHost = `${__ENV.MLSERVER_HOST}:${__ENV.MLSERVER_GRPC_PORT}`;
     this.client = getClient(this.grpcHost);
-
-    // Client can't connect on the init context
     this.connected = false;
   }
 
-  infer(payload) {
+  connect() {
     if (!this.connected) {
       this.client.connect(this.grpcHost, { plaintext: true });
       this.connected = true;
     }
+  }
+
+  loadModel(name) {
+    this.connect();
+
+    const payload = {
+      model_name: name,
+    };
+
+    const res = this.client.invoke(
+      "inference.GRPCInferenceService/RepositoryModelLoad",
+      payload
+    );
+    checkResponse(res);
+  }
+
+  unloadModel(name) {
+    this.connect();
+
+    const payload = {
+      model_name: name,
+    };
+
+    const res = this.client.invoke(
+      "inference.GRPCInferenceService/RepositoryModelUnload",
+      payload
+    );
+    checkResponse(res);
+  }
+
+  infer(payload) {
+    this.connect();
 
     const res = this.client.invoke(
       "inference.GRPCInferenceService/ModelInfer",
       payload
     );
     checkResponse(res);
-    grpcReqs.add(1);
   }
 
   close() {
