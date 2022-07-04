@@ -11,7 +11,7 @@ const rest = new RestClient();
 const grpc = new GrpcClient();
 
 const ScenarioDuration = "60s";
-const ScenarioVUs = 200;
+const ScenarioVUs = 300;
 
 export const options = {
   scenarios: {
@@ -22,6 +22,9 @@ export const options = {
       tags: { model_name: "iris", protocol: "grpc" },
       env: { MODEL_NAME: "iris", PROTOCOL: "grpc" },
     },
+  },
+  thresholds: {
+    grpc_reqs: ["rate > 2000"],
   },
 };
 

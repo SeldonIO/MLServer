@@ -9,7 +9,7 @@ const TestData = {
 const rest = new RestClient();
 
 const ScenarioDuration = "60s";
-const ScenarioVUs = 200;
+const ScenarioVUs = 300;
 
 export const options = {
   scenarios: {
@@ -20,6 +20,9 @@ export const options = {
       tags: { model_name: "iris", protocol: "rest" },
       env: { MODEL_NAME: "iris", PROTOCOL: "rest" },
     },
+  },
+  thresholds: {
+    http_reqs: ["rate > 1100"],
   },
 };
 
