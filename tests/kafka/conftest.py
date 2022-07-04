@@ -20,7 +20,7 @@ from mlserver.kafka.message import KafkaMessage
 
 from ..utils import get_available_ports
 
-from .utils import create_test_topics, wait_until_ready
+from .utils import create_test_topics, bootstrap
 
 
 @pytest.fixture(scope="module")
@@ -98,7 +98,7 @@ async def kafka(docker_client: DockerClient, zookeeper: str, kafka_network: str)
 
     try:
         # Wait until Kafka server is healthy
-        await wait_until_ready(kafka_server)
+        await bootstrap(kafka_server)
         yield kafka_server
     except Exception:
         raise
