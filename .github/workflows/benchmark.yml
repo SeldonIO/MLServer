@@ -20,12 +20,13 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.8
-      - name: Install k6
-        run: |
-          curl https://github.com/grafana/k6/releases/download/v0.38.3/k6-v0.38.3-linux-amd64.tar.gz -L | tar xvz --strip-components 1
       - name: Install Dependencies
         run: |
           make install-dev
+      - name: Install k6
+        working-directory: ./benchmarking
+        run: |
+          curl https://github.com/grafana/k6/releases/download/v0.38.3/k6-v0.38.3-linux-amd64.tar.gz -L | tar xvz --strip-components 1
       - name: Start Test Server & Run Benchmark
         working-directory: ./benchmarking
         run: |
