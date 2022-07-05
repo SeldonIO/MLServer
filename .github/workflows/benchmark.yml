@@ -31,7 +31,7 @@ jobs:
         working-directory: ./benchmarking
         run: |
           make start-testserver &
-          sleep 2 # Wait for test server to come up
+          sleep 10 # Wait for test server to come up
       - name: Benchmark
         uses: grafana/k6-action@v0.2.0
         with:
