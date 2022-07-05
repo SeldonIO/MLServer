@@ -11,10 +11,6 @@ on:
 jobs:
   benchmark:
     runs-on: ubuntu-latest
-    env:
-      MLSERVER_HOST: localhost
-      MLSERVER_HTTP_PORT: 8080
-      MLSERVER_GRPC_PORT: 8081
     strategy:
       matrix:
         scenario: ["inference-rest.js", "inference-grpc.js"]
@@ -24,15 +20,19 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.8
-      - name: Install dependencies
+      - name: Install k6
+        run: |
+          curl https://github.com/grafana/k6/releases/download/v0.38.3/k6-v0.38.3-linux-amd64.tar.gz -L | tar xvz --strip-components 1
+      - name: Install Dependencies
         run: |
           make install-dev
-      - name: Start Test Server
+      - name: Start Test Server & Run Benchmark
         working-directory: ./benchmarking
         run: |
           make start-testserver &
-          sleep 10 # Wait for test server to come up
-      - name: Benchmark
-        uses: grafana/k6-action@v0.2.0
-        with:
-          filename: ./benchmarking/scenarios/${{ matrix.scenario }}
+          sleep 5 && # Wait for test server to come up
+          ./k6 run ./scenarios/${{ matrix.scenario }}
+        env:
+          MLSERVER_HOST: localhost
+          MLSERVER_HTTP_PORT: 8080
+          MLSERVER_GRPC_PORT: 8081
