@@ -25,6 +25,7 @@ jobs:
         run: |
           make start-testserver &
       - name: Benchmark REST
+        uses: grafana/k6-action@v0.2.0
         working-directory: ./benchmarking
         run: |
           make benchmark-rest
@@ -45,6 +46,7 @@ jobs:
         run: |
           make start-testserver &
       - name: Benchmark gRPC
+        uses: grafana/k6-action@v0.2.0
         working-directory: ./benchmarking
         run: |
           make benchmark-grpc
