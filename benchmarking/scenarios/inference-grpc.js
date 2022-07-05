@@ -24,7 +24,8 @@ export const options = {
     },
   },
   thresholds: {
-    grpc_reqs: ["rate > 2000"],
+    // Adjust so that it fits within the resources available in GH Actions
+    grpc_reqs: ["rate > 1500"],
   },
 };
 
