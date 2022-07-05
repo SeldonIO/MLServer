@@ -82,20 +82,8 @@ class KafkaServer:
         if request_method != KafkaMethodTypes.infer:
             raise MLServerError(f"Invalid request method: {request_method}")
 
-        logger.info(
-            f"Processing Kafka message '{kafka_request.key}' with method '{request_method}'"
-        )
-        print(
-            f"Processing Kafka message '{kafka_request.key}' with method '{request_method}'"
-        )
         kafka_response = await self._handlers.infer(kafka_request)
 
-        logger.info(
-            f"Sending response for Kafka message '{kafka_request.key}' with method '{request_method}'"
-        )
-        print(
-            f"Sending response for Kafka message '{kafka_request.key}' with method '{request_method}'"
-        )
         await self._producer.send_and_wait(
             self._settings.kafka_topic_output,
             key=kafka_response.encoded_key,

@@ -1,4 +1,3 @@
-import asyncio
 import logging
 
 from tenacity import (
