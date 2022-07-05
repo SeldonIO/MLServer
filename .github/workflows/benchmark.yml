@@ -9,8 +9,15 @@ on:
     branches: [master]
 
 jobs:
-  benchmark-rest:
+  benchmark:
     runs-on: ubuntu-latest
+    env:
+      MLSERVER_HOST: 0.0.0.0
+      MLSERVER_HTTP_PORT: 8080
+      MLSERVER_GRPC_PORT: 8081
+    strategy:
+      matrix:
+        scenario: ["inference-rest.js", "inference-grpc.js"]
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python 3.8
@@ -24,37 +31,8 @@ jobs:
         working-directory: ./benchmarking
         run: |
           make start-testserver &
-        env:
-          MLSERVER_HTTP_PORT: 8080
-      - name: Benchmark REST
+          sleep 2 # Wait for test server to come up
+      - name: Benchmark
         uses: grafana/k6-action@v0.2.0
         with:
-          filename: ./benchmarking/scenarios/inference-rest.js
-        env:
-          MLSERVER_HOST: 0.0.0.0
-          MLSERVER_HTTP_PORT: 8080
-
-  benchmark-grpc:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.8
-      - name: Install dependencies
-        run: |
-          make install-dev
-      - name: Start Test Server
-        working-directory: ./benchmarking
-        run: |
-          make start-testserver &
-        env:
-          MLSERVER_GRPC_PORT: 8081
-      - name: Benchmark gRPC
-        uses: grafana/k6-action@v0.2.0
-        with:
-          filename: ./benchmarking/scenarios/inference-grpc.js
-        env:
-          MLSERVER_HOST: 0.0.0.0
-          MLSERVER_GRPC_PORT: 8080
+          filename: ./benchmarking/scenarios/${{ matrix.scenario }}
