@@ -29,14 +29,6 @@ async def inference_pool(
 
 
 @pytest.fixture
-async def requests() -> Queue:
-    q = Queue()
-    yield q
-
-    q.close()
-
-
-@pytest.fixture
 async def responses() -> Queue:
     q = Queue()
     yield q
@@ -47,11 +39,10 @@ async def responses() -> Queue:
 @pytest.fixture
 async def worker(
     event_loop,
-    requests: Queue,
     responses: Queue,
     load_message: ModelUpdateMessage,
 ) -> Worker:
-    worker = Worker(requests, responses)
+    worker = Worker(responses)
 
     # Simulate the worker running on a different process, but keep it to a
     # thread to simplify debugging.

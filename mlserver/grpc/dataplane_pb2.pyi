@@ -28,6 +28,7 @@ class ServerLiveResponse(google.protobuf.message.Message):
     LIVE_FIELD_NUMBER: builtins.int
     live: builtins.bool = ...
     """True if the inference server is live, false if not live."""
+
     def __init__(
         self,
         *,
@@ -56,6 +57,7 @@ class ServerReadyResponse(google.protobuf.message.Message):
     READY_FIELD_NUMBER: builtins.int
     ready: builtins.bool = ...
     """True if the inference server is ready, false if not ready."""
+
     def __init__(
         self,
         *,
@@ -82,6 +84,7 @@ class ModelReadyRequest(google.protobuf.message.Message):
     """The version of the model to check for readiness. If not given the
     server will choose a version based on the model and internal policy.
     """
+
     def __init__(
         self,
         *,
@@ -100,6 +103,7 @@ class ModelReadyResponse(google.protobuf.message.Message):
     READY_FIELD_NUMBER: builtins.int
     ready: builtins.bool = ...
     """True if the model is ready, false if not ready."""
+
     def __init__(
         self,
         *,
@@ -133,6 +137,7 @@ class ServerMetadataResponse(google.protobuf.message.Message):
 
     version: typing.Text = ...
     """The server version."""
+
     @property
     def extensions(
         self,
@@ -170,6 +175,7 @@ class ModelMetadataRequest(google.protobuf.message.Message):
     """The version of the model to check for readiness. If not given the
     server will choose a version based on the model and internal policy.
     """
+
     def __init__(
         self,
         *,
@@ -185,10 +191,12 @@ global___ModelMetadataRequest = ModelMetadataRequest
 
 class ModelMetadataResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+
     class TensorMetadata(google.protobuf.message.Message):
         """Metadata for a tensor."""
 
         DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+
         class ParametersEntry(google.protobuf.message.Message):
             DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
             KEY_FIELD_NUMBER: builtins.int
@@ -209,6 +217,7 @@ class ModelMetadataResponse(google.protobuf.message.Message):
                 self,
                 field_name: typing_extensions.Literal["key", b"key", "value", b"value"],
             ) -> None: ...
+
         NAME_FIELD_NUMBER: builtins.int
         DATATYPE_FIELD_NUMBER: builtins.int
         SHAPE_FIELD_NUMBER: builtins.int
@@ -218,6 +227,7 @@ class ModelMetadataResponse(google.protobuf.message.Message):
 
         datatype: typing.Text = ...
         """The tensor data type."""
+
         @property
         def shape(
             self,
@@ -261,6 +271,7 @@ class ModelMetadataResponse(google.protobuf.message.Message):
                 b"shape",
             ],
         ) -> None: ...
+
     class ParametersEntry(google.protobuf.message.Message):
         DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
         KEY_FIELD_NUMBER: builtins.int
@@ -281,6 +292,7 @@ class ModelMetadataResponse(google.protobuf.message.Message):
             self,
             field_name: typing_extensions.Literal["key", b"key", "value", b"value"],
         ) -> None: ...
+
     NAME_FIELD_NUMBER: builtins.int
     VERSIONS_FIELD_NUMBER: builtins.int
     PLATFORM_FIELD_NUMBER: builtins.int
@@ -289,6 +301,7 @@ class ModelMetadataResponse(google.protobuf.message.Message):
     PARAMETERS_FIELD_NUMBER: builtins.int
     name: typing.Text = ...
     """The model name."""
+
     @property
     def versions(
         self,
@@ -297,6 +310,7 @@ class ModelMetadataResponse(google.protobuf.message.Message):
         pass
     platform: typing.Text = ...
     """The model's platform. See Platforms."""
+
     @property
     def inputs(
         self,
@@ -365,10 +379,12 @@ class ModelInferRequest(google.protobuf.message.Message):
     """
 
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+
     class InferInputTensor(google.protobuf.message.Message):
         """An input tensor for an inference request."""
 
         DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+
         class ParametersEntry(google.protobuf.message.Message):
             DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
             KEY_FIELD_NUMBER: builtins.int
@@ -389,6 +405,7 @@ class ModelInferRequest(google.protobuf.message.Message):
                 self,
                 field_name: typing_extensions.Literal["key", b"key", "value", b"value"],
             ) -> None: ...
+
         NAME_FIELD_NUMBER: builtins.int
         DATATYPE_FIELD_NUMBER: builtins.int
         SHAPE_FIELD_NUMBER: builtins.int
@@ -399,6 +416,7 @@ class ModelInferRequest(google.protobuf.message.Message):
 
         datatype: typing.Text = ...
         """The tensor data type."""
+
         @property
         def shape(
             self,
@@ -448,10 +466,12 @@ class ModelInferRequest(google.protobuf.message.Message):
                 b"shape",
             ],
         ) -> None: ...
+
     class InferRequestedOutputTensor(google.protobuf.message.Message):
         """An output tensor requested for an inference request."""
 
         DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+
         class ParametersEntry(google.protobuf.message.Message):
             DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
             KEY_FIELD_NUMBER: builtins.int
@@ -472,10 +492,12 @@ class ModelInferRequest(google.protobuf.message.Message):
                 self,
                 field_name: typing_extensions.Literal["key", b"key", "value", b"value"],
             ) -> None: ...
+
         NAME_FIELD_NUMBER: builtins.int
         PARAMETERS_FIELD_NUMBER: builtins.int
         name: typing.Text = ...
         """The tensor name."""
+
         @property
         def parameters(
             self,
@@ -498,6 +520,7 @@ class ModelInferRequest(google.protobuf.message.Message):
                 "name", b"name", "parameters", b"parameters"
             ],
         ) -> None: ...
+
     class ParametersEntry(google.protobuf.message.Message):
         DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
         KEY_FIELD_NUMBER: builtins.int
@@ -518,6 +541,7 @@ class ModelInferRequest(google.protobuf.message.Message):
             self,
             field_name: typing_extensions.Literal["key", b"key", "value", b"value"],
         ) -> None: ...
+
     MODEL_NAME_FIELD_NUMBER: builtins.int
     MODEL_VERSION_FIELD_NUMBER: builtins.int
     ID_FIELD_NUMBER: builtins.int
@@ -536,6 +560,7 @@ class ModelInferRequest(google.protobuf.message.Message):
     """Optional identifier for the request. If specified will be
     returned in the response.
     """
+
     @property
     def parameters(
         self,
@@ -600,10 +625,12 @@ global___ModelInferRequest = ModelInferRequest
 
 class ModelInferResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+
     class InferOutputTensor(google.protobuf.message.Message):
         """An output tensor returned for an inference request."""
 
         DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+
         class ParametersEntry(google.protobuf.message.Message):
             DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
             KEY_FIELD_NUMBER: builtins.int
@@ -624,6 +651,7 @@ class ModelInferResponse(google.protobuf.message.Message):
                 self,
                 field_name: typing_extensions.Literal["key", b"key", "value", b"value"],
             ) -> None: ...
+
         NAME_FIELD_NUMBER: builtins.int
         DATATYPE_FIELD_NUMBER: builtins.int
         SHAPE_FIELD_NUMBER: builtins.int
@@ -634,6 +662,7 @@ class ModelInferResponse(google.protobuf.message.Message):
 
         datatype: typing.Text = ...
         """The tensor data type."""
+
         @property
         def shape(
             self,
@@ -683,6 +712,7 @@ class ModelInferResponse(google.protobuf.message.Message):
                 b"shape",
             ],
         ) -> None: ...
+
     class ParametersEntry(google.protobuf.message.Message):
         DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
         KEY_FIELD_NUMBER: builtins.int
@@ -703,6 +733,7 @@ class ModelInferResponse(google.protobuf.message.Message):
             self,
             field_name: typing_extensions.Literal["key", b"key", "value", b"value"],
         ) -> None: ...
+
     MODEL_NAME_FIELD_NUMBER: builtins.int
     MODEL_VERSION_FIELD_NUMBER: builtins.int
     ID_FIELD_NUMBER: builtins.int
@@ -716,6 +747,7 @@ class ModelInferResponse(google.protobuf.message.Message):
 
     id: typing.Text = ...
     """The id of the inference request if one was specified."""
+
     @property
     def parameters(
         self,
@@ -780,6 +812,7 @@ class InferParameter(google.protobuf.message.Message):
 
     string_param: typing.Text = ...
     """A string parameter value."""
+
     def __init__(
         self,
         *,
@@ -984,6 +1017,7 @@ class ModelRepositoryParameter(google.protobuf.message.Message):
 
     bytes_param: builtins.bytes = ...
     """A bytes parameter value."""
+
     def __init__(
         self,
         *,
@@ -1044,6 +1078,7 @@ class RepositoryIndexRequest(google.protobuf.message.Message):
 
     ready: builtins.bool = ...
     """If true return only models currently ready for inferencing."""
+
     def __init__(
         self,
         *,
@@ -1061,6 +1096,7 @@ global___RepositoryIndexRequest = RepositoryIndexRequest
 
 class RepositoryIndexResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+
     class ModelIndex(google.protobuf.message.Message):
         """Index entry for a model."""
 
@@ -1080,6 +1116,7 @@ class RepositoryIndexResponse(google.protobuf.message.Message):
 
         reason: typing.Text = ...
         """The reason, if any, that the model is in the given state."""
+
         def __init__(
             self,
             *,
@@ -1101,6 +1138,7 @@ class RepositoryIndexResponse(google.protobuf.message.Message):
                 b"version",
             ],
         ) -> None: ...
+
     MODELS_FIELD_NUMBER: builtins.int
     @property
     def models(
@@ -1125,6 +1163,7 @@ global___RepositoryIndexResponse = RepositoryIndexResponse
 
 class RepositoryModelLoadRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+
     class ParametersEntry(google.protobuf.message.Message):
         DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
         KEY_FIELD_NUMBER: builtins.int
@@ -1145,6 +1184,7 @@ class RepositoryModelLoadRequest(google.protobuf.message.Message):
             self,
             field_name: typing_extensions.Literal["key", b"key", "value", b"value"],
         ) -> None: ...
+
     REPOSITORY_NAME_FIELD_NUMBER: builtins.int
     MODEL_NAME_FIELD_NUMBER: builtins.int
     PARAMETERS_FIELD_NUMBER: builtins.int
@@ -1155,6 +1195,7 @@ class RepositoryModelLoadRequest(google.protobuf.message.Message):
 
     model_name: typing.Text = ...
     """The name of the model to load, or reload."""
+
     @property
     def parameters(
         self,
@@ -1196,6 +1237,7 @@ global___RepositoryModelLoadResponse = RepositoryModelLoadResponse
 
 class RepositoryModelUnloadRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+
     class ParametersEntry(google.protobuf.message.Message):
         DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
         KEY_FIELD_NUMBER: builtins.int
@@ -1216,6 +1258,7 @@ class RepositoryModelUnloadRequest(google.protobuf.message.Message):
             self,
             field_name: typing_extensions.Literal["key", b"key", "value", b"value"],
         ) -> None: ...
+
     REPOSITORY_NAME_FIELD_NUMBER: builtins.int
     MODEL_NAME_FIELD_NUMBER: builtins.int
     PARAMETERS_FIELD_NUMBER: builtins.int
@@ -1226,6 +1269,7 @@ class RepositoryModelUnloadRequest(google.protobuf.message.Message):
 
     model_name: typing.Text = ...
     """The name of the model to unload."""
+
     @property
     def parameters(
         self,

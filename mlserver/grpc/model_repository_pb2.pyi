@@ -22,6 +22,7 @@ class RepositoryIndexRequest(google.protobuf.message.Message):
 
     ready: builtins.bool = ...
     """If true return only models currently ready for inferencing."""
+
     def __init__(
         self,
         *,
@@ -39,6 +40,7 @@ global___RepositoryIndexRequest = RepositoryIndexRequest
 
 class RepositoryIndexResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+
     class ModelIndex(google.protobuf.message.Message):
         """Index entry for a model."""
 
@@ -58,6 +60,7 @@ class RepositoryIndexResponse(google.protobuf.message.Message):
 
         reason: typing.Text = ...
         """The reason, if any, that the model is in the given state."""
+
         def __init__(
             self,
             *,
@@ -79,6 +82,7 @@ class RepositoryIndexResponse(google.protobuf.message.Message):
                 b"version",
             ],
         ) -> None: ...
+
     MODELS_FIELD_NUMBER: builtins.int
     @property
     def models(
@@ -112,6 +116,7 @@ class RepositoryModelLoadRequest(google.protobuf.message.Message):
 
     model_name: typing.Text = ...
     """The name of the model to load, or reload."""
+
     def __init__(
         self,
         *,
@@ -146,6 +151,7 @@ class RepositoryModelUnloadRequest(google.protobuf.message.Message):
 
     model_name: typing.Text = ...
     """The name of the model to unload."""
+
     def __init__(
         self,
         *,

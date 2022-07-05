@@ -1,5 +1,6 @@
 import asyncio
 
+from itertools import cycle
 from asyncio import Future
 from concurrent.futures import ThreadPoolExecutor
 from multiprocessing import Queue
@@ -9,7 +10,7 @@ from typing import Any, Dict, Coroutine, Callable
 from ..model import MLModel
 from ..types import InferenceRequest, InferenceResponse
 from ..settings import Settings, ModelSettings
-from ..utils import get_wrapped_method, generate_uuid
+from ..utils import get_wrapped_method, generate_uuid, schedule_with_callback
 from ..errors import InferenceError
 
 from .errors import InvalidParallelMethod
@@ -45,24 +46,26 @@ class InferencePool:
 
         self._workers = {}
         self._settings = settings
-        self._requests: Queue[InferenceRequestMessage] = Queue()
         self._responses: Queue[InferenceResponseMessage] = Queue()
         self._async_responses: Dict[str, Future[InferenceResponse]] = {}
         self._executor = ThreadPoolExecutor()
         for idx in range(self._settings.parallel_workers):
             # TODO: Set callback to restart worker if it goes down (would
             # `worker.join` help with that?)
-            worker = Worker(self._requests, self._responses)
+            worker = Worker(self._responses)
             worker.start()
             self._workers[worker.pid] = worker
+
+        self._workers_round_robin = cycle(self._workers.keys())
 
         # Start processing responses
         self._start_processing_responses()
 
     def _start_processing_responses(self):
         self._active = True
-        self._process_responses_task = asyncio.create_task(self._process_responses())
-        self._process_responses_task.add_done_callback(self._process_responses_cb)
+        self._process_responses_task = schedule_with_callback(
+            self._process_responses(), self._process_responses_cb
+        )
 
     def _process_responses_cb(self, process_responses):
         try:
@@ -117,13 +120,23 @@ class InferencePool:
             model_version=model_version,
             inference_request=inference_request,
         )
-        self._requests.put(request_message)
+
+        worker = self._get_worker()
+        worker.send_request(request_message)
 
         loop = asyncio.get_running_loop()
         async_response = loop.create_future()
         self._async_responses[internal_id] = async_response
 
         return await self._wait_response(internal_id)
+
+    def _get_worker(self) -> Worker:
+        """
+        Get next available worker.
+        By default, this is just a round-robin through all the workers.
+        """
+        worker_pid = next(self._workers_round_robin)
+        return self._workers[worker_pid]
 
     async def _wait_response(self, internal_id: str) -> InferenceResponse:
         async_response = self._async_responses[internal_id]
@@ -227,7 +240,6 @@ class InferencePool:
         await terminate_queue(self._responses)
         await cancel_task(self._process_responses_task)
         self._responses.close()
-        self._requests.close()
         self._executor.shutdown()
 
     async def _close_workers(self):
