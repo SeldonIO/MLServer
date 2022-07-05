@@ -120,10 +120,7 @@ class AlibiExplainRuntimeBase(MLModel):
             raise ModelParametersMissing(self.name)
         absolute_uri = await get_model_uri(self.settings)
         return await execute_async(
-            loop=None,
-            fn=load_explainer,
-            path=absolute_uri,
-            predictor=predictor
+            loop=None, fn=load_explainer, path=absolute_uri, predictor=predictor
         )
 
     def _explain_impl(self, input_data: Any, explain_parameters: Dict) -> Explanation:
