@@ -24,11 +24,15 @@ jobs:
         working-directory: ./benchmarking
         run: |
           make start-testserver &
+        env:
+          MLSERVER_HTTP_PORT: 8080
       - name: Benchmark REST
         uses: grafana/k6-action@v0.2.0
-        working-directory: ./benchmarking
-        run: |
-          make benchmark-rest
+        with:
+          filename: ./benchmarking/scenarios/inference-rest.js
+        env:
+          MLSERVER_HOST: 0.0.0.0
+          MLSERVER_HTTP_PORT: 8080
 
   benchmark-grpc:
     runs-on: ubuntu-latest
@@ -45,8 +49,12 @@ jobs:
         working-directory: ./benchmarking
         run: |
           make start-testserver &
+        env:
+          MLSERVER_GRPC_PORT: 8081
       - name: Benchmark gRPC
         uses: grafana/k6-action@v0.2.0
-        working-directory: ./benchmarking
-        run: |
-          make benchmark-grpc
+        with:
+          filename: ./benchmarking/scenarios/inference-grpc.js
+        env:
+          MLSERVER_HOST: 0.0.0.0
+          MLSERVER_GRPC_PORT: 8080
