@@ -29,8 +29,11 @@ class ModelRepository:
             matches = glob.glob(pattern, recursive=True)
 
             for model_settings_path in matches:
-                model_settings = self._load_model_settings(model_settings_path)
-                all_model_settings.append(model_settings)
+                try:
+                    model_settings = self._load_model_settings(model_settings_path)
+                    all_model_settings.append(model_settings)
+                except:
+                    continue
 
         # If there were no matches, try to load model from environment
         if not all_model_settings:
