@@ -141,6 +141,10 @@ async def kafka_server(kafka_settings: Settings, data_plane: DataPlane) -> Kafka
     server = KafkaServer(kafka_settings, data_plane)
 
     server_task = asyncio.create_task(server.start())
+    # NOTE: The Kafka server doesn't have any health checks, therefore we need
+    # to give it some time until it's ready
+    await asyncio.sleep(1)
+
     yield server
 
     await server.stop()
