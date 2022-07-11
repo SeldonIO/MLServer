@@ -1,6 +1,5 @@
 import json
 from typing import Any, Optional, List, Dict
-import asyncio
 from alibi.api.interfaces import Explanation, Explainer
 from alibi.saving import load_explainer
 
@@ -10,7 +9,7 @@ from mlserver.codecs import (
     StringCodec,
     RequestCodecLike,
 )
-from mlserver.errors import ModelParametersMissing, InvalidModelURI
+from mlserver.errors import ModelParametersMissing
 from mlserver.handlers import custom_handler
 from mlserver.model import MLModel
 from mlserver.rest.responses import Response

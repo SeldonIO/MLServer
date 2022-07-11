@@ -14,7 +14,6 @@ from mlserver_alibi_explain.common import (
     construct_metadata_url,
 )
 from mlserver_alibi_explain.runtime import AlibiExplainRuntimeBase
-import traceback
 
 
 class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
