@@ -14,7 +14,7 @@ pytest-cases==3.6.13
 tox==3.25.1
 docker==5.0.3
 aiohttp==3.8.1
-aiohttp-retry==2.4.6
+aiohttp-retry==2.5.1
 ## Used for FastAPI Async testing
 httpx==0.22.0
 kafka-python==2.0.2
