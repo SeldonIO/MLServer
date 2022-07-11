@@ -1,12 +1,9 @@
 name: MLServer Benchmarks
 
 on:
-  push:
-    branches:
-      - master
-      - release/*
-  pull_request:
-    branches: [master]
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron: "23 18 * * *"
 
 jobs:
   benchmark:
