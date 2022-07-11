@@ -32,7 +32,7 @@ class ModelRepository:
                 try:
                     model_settings = self._load_model_settings(model_settings_path)
                     all_model_settings.append(model_settings)
-                except:
+                except Exception:
                     logger.exception(f"Failed load model settings at {model_settings_path}")
                     continue
 
