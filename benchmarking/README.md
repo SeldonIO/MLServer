@@ -8,8 +8,8 @@ These load tests are run locally against a local server.
 
 |      | Requests/sec | Average (ms) | Slowest (ms) | Fastest (ms) |
 | ---- | ------------ | ------------ | ------------ | ------------ |
-| gRPC | 3031.56      | 32.93        | 78.90        | 0.92         |
-| REST | 1849.48      | 54.0         | 168.4        | 16.4         |
+| gRPC | 2259         | 128.46       | 703.84       | 3.09         |
+| REST | 1300         | 226.93       | 304.98       | 2.06         |
 
 ## Setup
 
@@ -22,11 +22,6 @@ https://k6.io/docs/getting-started/installation/
 ## Data
 
 You can find pre-generated requests under the [`/data`](./data) folder.
-These are formed by payloads with a single input tensor, which varies in length from `1024` to `65536`.
-
-> **NOTE**: To work around some limitations of the previous benchmarking suite,
-> we will only be using the smallest payload (i.e. with `1024` tensors) as the
-> payload for both gRPC and HTTP.
 
 ### Generate
 
@@ -48,14 +43,18 @@ make start-testserver
 
 ### Inference benchmark
 
-You can kickstart the HTTP and gRPC inference benchmark by running:
+You can kickstart the HTTP and gRPC inference benchmark by running either:
 
 ```shell
-make benchmark
+make benchmark-rest
+make benchmark-grpc
 ```
 
-This will first load a model trained on the Iris dataset, and perform an
-inference benchmark leveraging both the HTTP and gRPC interfaces (lasting 60s
-each).
-At the end of the benchmark, it will unload the used model from the MLServer
-instance.
+These will first load a **Scikit-Learn model trained on the Iris dataset**, and
+perform an inference benchmark leveraging both the HTTP and gRPC interfaces
+(lasting 60s each).
+The model has been set up so as to leverage adaptive batching (i.e. grouping
+several requests together on the fly).
+
+At the end of the benchmark, the benchmark scenarios will unload the used model
+from the MLServer instance.

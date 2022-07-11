@@ -12,10 +12,16 @@ install-dev:
 generate:
 	python generator.py
 
-benchmark:
+benchmark-rest:
 	k6 run \
 		-e MLSERVER_HOST=0.0.0.0 \
 		-e MLSERVER_HTTP_PORT=8080 \
 		-e MLSERVER_GRPC_PORT=8081 \
-		scenarios/inference.js
+		scenarios/inference-rest.js
 
+benchmark-grpc:
+	k6 run \
+		-e MLSERVER_HOST=localhost \
+		-e MLSERVER_HTTP_PORT=8080 \
+		-e MLSERVER_GRPC_PORT=8081 \
+		scenarios/inference-grpc.js

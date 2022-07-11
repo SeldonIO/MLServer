@@ -61,6 +61,7 @@ class RESTServer:
             "host": self._settings.host,
             "port": self._settings.http_port,
             "root_path": self._settings.root_path,
+            "access_log": self._settings.debug,
         }
 
         if self._settings.logging_settings:

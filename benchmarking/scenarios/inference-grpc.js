@@ -5,54 +5,41 @@ import { GrpcClient } from "../common/grpc.js";
 
 const TestData = {
   iris: readTestData("iris"),
-  sum_model: readTestData("sum-model"),
 };
 
 const rest = new RestClient();
 const grpc = new GrpcClient();
 
 const ScenarioDuration = "60s";
-const ScenarioVUs = 200;
+const ScenarioVUs = 300;
 
 export const options = {
   scenarios: {
-    iris_rest: {
-      executor: "constant-vus",
-      duration: ScenarioDuration,
-      vus: ScenarioVUs,
-      tags: { model_name: "iris", protocol: "rest" },
-      env: { MODEL_NAME: "iris", PROTOCOL: "rest" },
-    },
     iris_grpc: {
       executor: "constant-vus",
       duration: ScenarioDuration,
       vus: ScenarioVUs,
-      startTime: ScenarioDuration,
       tags: { model_name: "iris", protocol: "grpc" },
       env: { MODEL_NAME: "iris", PROTOCOL: "grpc" },
     },
   },
+  thresholds: {
+    // Adjust so that it fits within the resources available in GH Actions
+    grpc_reqs: ["rate > 1500"],
+  },
 };
 
 export function setup() {
-  rest.loadModel("iris");
+  grpc.loadModel("iris");
 
   return TestData;
 }
 
 export default function (data) {
   const modelName = __ENV.MODEL_NAME;
-
-  switch (__ENV.PROTOCOL) {
-    case "rest":
-      rest.infer(modelName, data[modelName].rest);
-      break;
-    case "grpc":
-      grpc.infer(data[modelName].grpc);
-      break;
-  }
+  grpc.infer(data[modelName].grpc);
 }
 
 export function teardown(data) {
-  rest.unloadModel("iris");
+  grpc.unloadModel("iris");
 }

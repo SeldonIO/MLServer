@@ -61,10 +61,10 @@ class MLServer:
         self._model_repository_handlers = ModelRepositoryHandlers(
             repository=self._model_repository, model_registry=self._model_registry
         )
+
+        logger.setLevel(logging.INFO)
         if self._settings.debug:
             logger.setLevel(logging.DEBUG)
-        else:
-            logger.setLevel(logging.INFO)
 
         self._logger = configure_logger(settings)
 
