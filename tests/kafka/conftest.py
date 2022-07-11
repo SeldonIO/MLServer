@@ -18,9 +18,9 @@ from mlserver.kafka.handlers import (
 )
 from mlserver.kafka.message import KafkaMessage
 
-from ..utils import get_available_port
+from ..utils import get_available_ports
 
-from .utils import create_test_topics, wait_until_ready
+from .utils import create_test_topics, bootstrap
 
 
 @pytest.fixture(scope="module")
@@ -51,7 +51,7 @@ def kafka_network(docker_client: DockerClient) -> str:
 
 @pytest.fixture(scope="module")
 def zookeeper(docker_client: DockerClient, kafka_network: str) -> str:
-    zookeeper_port = get_available_port()
+    [zookeeper_port] = get_available_ports()
     container = docker_client.containers.run(
         name="zookeeper",
         image="confluentinc/cp-zookeeper:latest",
@@ -73,7 +73,7 @@ def zookeeper(docker_client: DockerClient, kafka_network: str) -> str:
 
 @pytest.fixture(scope="module")
 async def kafka(docker_client: DockerClient, zookeeper: str, kafka_network: str) -> str:
-    kafka_port = get_available_port()
+    [kafka_port] = get_available_ports()
     container = docker_client.containers.run(
         name="kafka",
         image="confluentinc/cp-kafka:latest",
@@ -98,7 +98,7 @@ async def kafka(docker_client: DockerClient, zookeeper: str, kafka_network: str)
 
     try:
         # Wait until Kafka server is healthy
-        await wait_until_ready(kafka_server)
+        await bootstrap(kafka_server)
         yield kafka_server
     except Exception:
         raise
@@ -141,6 +141,10 @@ async def kafka_server(kafka_settings: Settings, data_plane: DataPlane) -> Kafka
     server = KafkaServer(kafka_settings, data_plane)
 
     server_task = asyncio.create_task(server.start())
+    # NOTE: The Kafka server doesn't have any health checks, therefore we need
+    # to give it some time until it's ready
+    await asyncio.sleep(1)
+
     yield server
 
     await server.stop()

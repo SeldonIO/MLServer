@@ -7,7 +7,7 @@ from starlette_exporter import PrometheusMiddleware
 from mlserver.server import MLServer
 from mlserver.settings import Settings, ModelSettings
 
-from ..utils import RESTClient, get_available_port
+from ..utils import RESTClient, get_available_ports
 from .utils import MetricsClient
 
 
@@ -38,9 +38,10 @@ def prometheus_registry() -> CollectorRegistry:
 
 @pytest.fixture
 def settings(settings: Settings) -> Settings:
-    settings.http_port = get_available_port()
-    settings.grpc_port = get_available_port()
-    settings.metrics_port = get_available_port()
+    http_port, grpc_port, metrics_port = get_available_ports(3)
+    settings.http_port = http_port
+    settings.grpc_port = grpc_port
+    settings.metrics_port = metrics_port
 
     return settings
 

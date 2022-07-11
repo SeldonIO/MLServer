@@ -57,7 +57,10 @@ class KafkaServer:
             )
 
     async def _consumer_loop(self):
+        logger.info("Reading messages from consumer")
+        print("Reading messages from consumer")
         async for request in self._consumer:
+            print("Read new message from consumer")
             try:
                 await self._process_request(request)
             except MLServerError as err:

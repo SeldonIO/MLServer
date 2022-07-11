@@ -1,6 +1,8 @@
 import aiohttp
 import socket
 
+from typing import List
+
 from aiohttp.client_exceptions import (
     ClientConnectorError,
     ClientOSError,
@@ -11,12 +13,19 @@ from aiohttp_retry import RetryClient, ExponentialRetry
 from mlserver.types import RepositoryIndexResponse, InferenceRequest, InferenceResponse
 
 
-def get_available_port() -> int:
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.bind(("", 0))
-    port = s.getsockname()[1]
-    s.close()
-    return port
+def get_available_ports(n: int = 1) -> List[int]:
+    ports = set()
+
+    while len(ports) < n:
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.bind(("", 0))
+        port = s.getsockname()[1]
+        s.close()
+
+        # The ports set will ensure there are no duplicates
+        ports.add(port)
+
+    return list(ports)
 
 
 class RESTClient:
