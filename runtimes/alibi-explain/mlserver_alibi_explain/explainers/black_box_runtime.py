@@ -68,7 +68,8 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
 
         if self.infer_metadata is None:
             meta_url = construct_metadata_url(self.infer_uri)
-            # get the metadata of the underlying inference model via v2 metadata endpoint
+            # get the metadata of the underlying inference model via v2
+            # metadata endpoint
             self.infer_metadata = remote_metadata(meta_url)
 
         v2_request = to_v2_inference_request(input_data, self.infer_metadata)
