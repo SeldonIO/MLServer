@@ -2,6 +2,7 @@ import pytest
 import os
 import xgboost as xgb
 
+
 from mlserver.settings import ModelSettings
 from mlserver.codecs import CodecError
 from mlserver.types import RequestInput, InferenceRequest
@@ -12,7 +13,7 @@ from mlserver_xgboost.xgboost import WELLKNOWN_MODEL_FILENAMES
 
 def test_load(model: XGBoostModel):
     assert model.ready
-    assert type(model._model) == xgb.Booster
+    assert type(model._model) == xgb.XGBRegressor
 
 
 @pytest.mark.parametrize("fname", WELLKNOWN_MODEL_FILENAMES)
@@ -27,7 +28,7 @@ async def test_load_folder(fname, model_uri: str, model_settings: ModelSettings)
     await model.load()
 
     assert model.ready
-    assert type(model._model) == xgb.Booster
+    assert type(model._model) == xgb.XGBRegressor
 
 
 async def test_predict(model: XGBoostModel, inference_request: InferenceRequest):
