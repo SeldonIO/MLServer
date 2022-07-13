@@ -1,12 +1,22 @@
 import xgboost as xgb
 
+from typing import List
 from xgboost.sklearn import XGBModel
 
+from mlserver.errors import InferenceError
 from mlserver.model import MLModel
 from mlserver.utils import get_model_uri
 from mlserver.codecs import NumpyRequestCodec, NumpyCodec
-from mlserver.types import InferenceRequest, InferenceResponse, RequestOutput
+from mlserver.types import (
+    InferenceRequest,
+    InferenceResponse,
+    RequestOutput,
+    ResponseOutput,
+)
 
+PREDICT_OUTPUT = "predict"
+PREDICT_PROBA_OUTPUT = "predict_proba"
+VALID_OUTPUTS = [PREDICT_OUTPUT, PREDICT_PROBA_OUTPUT]
 
 WELLKNOWN_MODEL_FILENAMES = ["model.bst", "model.json"]
 
@@ -39,18 +49,47 @@ class XGBoostModel(MLModel):
         self.ready = True
         return self.ready
 
-    async def predict(self, payload: InferenceRequest) -> InferenceResponse:
-        decoded = self.decode_request(payload, default_codec=NumpyRequestCodec)
-        # TODO: Do something similar to SKLearn runtime to support either
-        # predict or predict_proba
-        prediction = self._model.predict(decoded)
+    def _check_request(self, payload: InferenceRequest) -> InferenceRequest:
+        if not payload.outputs:
+            # By default, only return the result of `predict()`
+            payload.outputs = [RequestOutput(name=PREDICT_OUTPUT)]
+        else:
+            for request_output in payload.outputs:
+                if request_output.name not in VALID_OUTPUTS:
+                    raise InferenceError(
+                        f"XGBoostModel only supports '{PREDICT_OUTPUT}' and "
+                        f"'{PREDICT_PROBA_OUTPUT}' as outputs "
+                        f"({request_output.name} was received)"
+                    )
 
-        request_output = RequestOutput(name="predict")
-        output = self.encode(
-            prediction, request_output=request_output, default_codec=NumpyCodec
-        )
+        # Regression models do not support `predict_proba`
+        if PREDICT_PROBA_OUTPUT in [o.name for o in payload.outputs]:
+            if isinstance(self._model, xgb.XGBRegressor):
+                raise InferenceError(
+                    f"XGBRegressor models do not support '{PREDICT_PROBA_OUTPUT}"
+                )
+
+        return payload
+
+    def _get_model_outputs(self, payload: InferenceRequest) -> List[ResponseOutput]:
+        decoded_request = self.decode_request(payload, default_codec=NumpyRequestCodec)
+
+        outputs = []
+        for request_output in payload.outputs:  # type: ignore
+            predict_fn = getattr(self._model, request_output.name)
+            y = predict_fn(decoded_request)
+
+            output = self.encode(y, request_output, default_codec=NumpyCodec)
+            outputs.append(output)
+
+        return outputs
+
+    async def predict(self, payload: InferenceRequest) -> InferenceResponse:
+        payload = self._check_request(payload)
+        outputs = self._get_model_outputs(payload)
+
         return InferenceResponse(
             model_name=self.name,
             model_version=self.version,
-            outputs=[output],
+            outputs=outputs,
         )
