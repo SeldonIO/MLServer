@@ -19,7 +19,7 @@ def _load_sklearn_interface(model_uri: str) -> XGBModel:
     except TypeError:
         # If there was an error, it's likely due to the model being a
         # classifier
-        classifier = xgb.XGBRegressor()
+        classifier = xgb.XGBClassifier()
         classifier.load_model(model_uri)
         return classifier
 

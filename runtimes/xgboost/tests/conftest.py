@@ -38,6 +38,25 @@ def model_uri(tmp_path) -> str:
 
 
 @pytest.fixture
+def classifier_uri(tmp_path) -> str:
+    n = 5
+    d = 3
+    c = 5
+
+    X_train = np.random.rand(n, d)
+    y_train = [l for l in range(0, c)]
+    clf = xgb.XGBClassifier(
+        num_class=c, use_label_encoder=False, objective="multi:softprob"
+    )
+    clf.fit(X_train, y_train, eval_metric="mlogloss")
+
+    model_uri = os.path.join(tmp_path, "xgboost-model.json")
+    clf.save_model(model_uri)
+
+    return model_uri
+
+
+@pytest.fixture
 def model_settings(model_uri: str) -> ModelSettings:
     return ModelSettings(
         name="xgboost-model",
@@ -47,6 +66,18 @@ def model_settings(model_uri: str) -> ModelSettings:
 
 @pytest.fixture
 async def model(model_settings: ModelSettings) -> XGBoostModel:
+    model = XGBoostModel(model_settings)
+    await model.load()
+
+    return model
+
+
+@pytest.fixture
+async def classifier(classifier_uri: str) -> XGBoostModel:
+    model_settings = ModelSettings(
+        name="xgboost-model",
+        parameters=ModelParameters(uri=classifier_uri, version="v1.2.3"),
+    )
     model = XGBoostModel(model_settings)
     await model.load()
 

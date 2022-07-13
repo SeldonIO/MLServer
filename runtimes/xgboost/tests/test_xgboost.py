@@ -16,6 +16,11 @@ def test_load(model: XGBoostModel):
     assert type(model._model) == xgb.XGBRegressor
 
 
+def test_load_classifier(classifier: XGBoostModel):
+    assert classifier.ready
+    assert type(classifier._model) == xgb.XGBClassifier
+
+
 @pytest.mark.parametrize("fname", WELLKNOWN_MODEL_FILENAMES)
 async def test_load_folder(fname, model_uri: str, model_settings: ModelSettings):
     model_folder = os.path.dirname(model_uri)
@@ -36,6 +41,15 @@ async def test_predict(model: XGBoostModel, inference_request: InferenceRequest)
 
     assert len(response.outputs) == 1
     assert 0 <= response.outputs[0].data[0] <= 1
+
+
+async def test_predict_classifier(
+    classifier: XGBoostModel, inference_request: InferenceRequest
+):
+    response = await classifier.predict(inference_request)
+
+    assert len(response.outputs) == 1
+    assert response.outputs[0].data[0] in range(0, 5)
 
 
 async def test_multiple_inputs_error(
