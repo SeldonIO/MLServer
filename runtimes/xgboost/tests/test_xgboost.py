@@ -2,17 +2,29 @@ import pytest
 import os
 import xgboost as xgb
 
+from typing import List
+
+from mlserver.errors import InferenceError
 from mlserver.settings import ModelSettings
 from mlserver.codecs import CodecError
-from mlserver.types import RequestInput, InferenceRequest
+from mlserver.types import RequestOutput, RequestInput, InferenceRequest
 
 from mlserver_xgboost import XGBoostModel
-from mlserver_xgboost.xgboost import WELLKNOWN_MODEL_FILENAMES
+from mlserver_xgboost.xgboost import (
+    WELLKNOWN_MODEL_FILENAMES,
+    PREDICT_OUTPUT,
+    PREDICT_PROBA_OUTPUT,
+)
 
 
 def test_load(model: XGBoostModel):
     assert model.ready
-    assert type(model._model) == xgb.Booster
+    assert type(model._model) == xgb.XGBRegressor
+
+
+def test_load_classifier(classifier: XGBoostModel):
+    assert classifier.ready
+    assert type(classifier._model) == xgb.XGBClassifier
 
 
 @pytest.mark.parametrize("fname", WELLKNOWN_MODEL_FILENAMES)
@@ -27,7 +39,7 @@ async def test_load_folder(fname, model_uri: str, model_settings: ModelSettings)
     await model.load()
 
     assert model.ready
-    assert type(model._model) == xgb.Booster
+    assert type(model._model) == xgb.XGBRegressor
 
 
 async def test_predict(model: XGBoostModel, inference_request: InferenceRequest):
@@ -35,6 +47,46 @@ async def test_predict(model: XGBoostModel, inference_request: InferenceRequest)
 
     assert len(response.outputs) == 1
     assert 0 <= response.outputs[0].data[0] <= 1
+
+
+@pytest.mark.parametrize(
+    "req_outputs",
+    [
+        [],
+        [PREDICT_OUTPUT],
+        [PREDICT_PROBA_OUTPUT],
+        [PREDICT_OUTPUT, PREDICT_PROBA_OUTPUT],
+    ],
+)
+async def test_predict_classifier(
+    classifier: XGBoostModel,
+    inference_request: InferenceRequest,
+    req_outputs: List[str],
+):
+    inference_request.outputs = [
+        RequestOutput(name=req_output) for req_output in req_outputs
+    ]
+    response = await classifier.predict(inference_request)
+
+    input_data = inference_request.inputs[0].data
+    if len(req_outputs) == 0:
+        # Assert that PREDICT_OUTPUT is added by default
+        req_outputs = [PREDICT_OUTPUT]
+
+    assert len(response.outputs) == len(req_outputs)
+    for req_output, output in zip(req_outputs, response.outputs):
+        assert output.name == req_output
+        assert output.shape[0] == len(input_data)  # type: ignore
+
+
+@pytest.mark.parametrize("invalid_output", ["something_else", PREDICT_PROBA_OUTPUT])
+async def test_invalid_output_error(
+    model: XGBoostModel, inference_request: InferenceRequest, invalid_output: str
+):
+    inference_request.outputs = [RequestOutput(name=invalid_output)]
+
+    with pytest.raises(InferenceError):
+        await model.predict(inference_request)
 
 
 async def test_multiple_inputs_error(

@@ -33,7 +33,7 @@ setup(
     author_email="hello@seldon.io",
     description="XGBoost runtime for MLServer",
     packages=find_packages(exclude=["tests", "tests.*"]),
-    install_requires=["mlserver", "xgboost"],
+    install_requires=["mlserver", "xgboost[scikit-learn]"],
     long_description=_load_description(),
     long_description_content_type="text/markdown",
     license="Apache 2.0",
