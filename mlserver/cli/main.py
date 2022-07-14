@@ -61,6 +61,7 @@ async def build(folder: str, tag: str, no_cache: bool = False):
 
 
 @root.command("init")
+# TODO: Update to have template(s) in the SeldonIO org
 @click.option("-t", "--template", default="https://github.com/EthicalML/sml-security/")
 @click_async
 async def init_project(template: str):
