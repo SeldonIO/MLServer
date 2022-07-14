@@ -8,6 +8,7 @@ def init_cookiecutter_project(template: str):
         cmd = f"cookiecutter {template}"
         subprocess.run(cmd, check=True, shell=True)
     else:
-        logger.error("The cookiecutter command is not found. \n\n"
-                     "Please install with 'pip install cookiecutter' and retry")
-
+        logger.error(
+            "The cookiecutter command is not found. \n\n"
+            "Please install with 'pip install cookiecutter' and retry"
+        )
