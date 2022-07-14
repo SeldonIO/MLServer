@@ -3,6 +3,7 @@ import json
 from typing import Optional, Dict
 from distutils.util import strtobool
 
+import numpy as np
 from pydantic import BaseSettings
 from mlserver.errors import MLServerError
 
@@ -125,3 +126,10 @@ def load_pipeline_from_settings(hf_settings: HuggingFaceSettings) -> Pipeline:
         pp.tokenizer.pad_token_id = [str(pp.model.config.eos_token_id)]  # type: ignore
 
     return pp
+
+
+class NumpyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return json.JSONEncoder.default(self, obj)
