@@ -6,6 +6,8 @@ import asyncio
 
 from functools import wraps
 
+from .init_project import init_cookiecutter_project
+
 from ..server import MLServer
 from ..logging import logger, configure_logger
 from ..utils import install_uvloop_event_loop
@@ -56,6 +58,17 @@ async def build(folder: str, tag: str, no_cache: bool = False):
     dockerfile = generate_dockerfile()
     build_image(folder, dockerfile, tag, no_cache=no_cache)
     logger.info(f"Successfully built custom Docker image with tag {tag}")
+
+
+@root.command("init")
+# TODO: Update to have template(s) in the SeldonIO org
+@click.option("-t", "--template", default="https://github.com/EthicalML/sml-security/")
+@click_async
+async def init_project(template: str):
+    """
+    Generate a base project template
+    """
+    init_cookiecutter_project(template)
 
 
 @root.command("dockerfile")
