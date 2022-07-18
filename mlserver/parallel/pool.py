@@ -80,10 +80,10 @@ class InferencePool:
 
         return _inner
 
-    async def load_model(self, model: MLModel):
+    async def load_model(self, model: MLModel) -> MLModel:
         if not self._should_load_model(model):
             # Skip load if model has disabled parallel workers
-            return
+            return model
 
         load_message = ModelUpdateMessage(
             update_type=ModelUpdateType.Load, model_settings=model.settings
@@ -95,15 +95,19 @@ class InferencePool:
         # Decorate predict method
         setattr(model, "predict", self.parallel(model.predict))
 
-    async def reload_model(self, old_model: MLModel, new_model: MLModel):
+        return model
+
+    async def reload_model(self, old_model: MLModel, new_model: MLModel) -> MLModel:
         # The model registries within each worker will take care of reloading
         # the model internally
         await self.load_model(new_model)
 
-    async def unload_model(self, model: MLModel):
+        return new_model
+
+    async def unload_model(self, model: MLModel) -> MLModel:
         if not self._should_load_model(model):
             # Skip unload if model has disabled parallel workers
-            return
+            return model
 
         unload_message = ModelUpdateMessage(
             update_type=ModelUpdateType.Unload, model_settings=model.settings
@@ -111,6 +115,8 @@ class InferencePool:
         await asyncio.gather(
             *[worker.send_update(unload_message) for worker in self._workers.values()]
         )
+
+        return model
 
     def _should_load_model(self, model: MLModel):
         if model.settings.parallel_workers is not None:
