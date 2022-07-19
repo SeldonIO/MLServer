@@ -21,6 +21,7 @@ async def test_predict(
     assert inference_response.model_version == inference_request_message.model_version
     assert len(inference_response.outputs) == 1
 
+
 async def test_metadata(
     worker: Worker,
     metadata_request_message: ModelRequestMessage,

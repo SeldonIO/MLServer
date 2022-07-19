@@ -18,19 +18,16 @@ from mlserver.parallel.messages import (
 
 
 @pytest.fixture
-async def sum_model(
-    inference_pool: InferencePool, sum_model: MLModel
-) -> MLModel:
+async def sum_model(inference_pool: InferencePool, sum_model: MLModel) -> MLModel:
     parallel_model = await inference_pool.load_model(sum_model)
 
     yield parallel_model
 
     await inference_pool.unload_model(sum_model)
 
+
 @pytest.fixture
-async def error_model(
-    inference_pool: InferencePool, error_model: MLModel
-) -> MLModel:
+async def error_model(inference_pool: InferencePool, error_model: MLModel) -> MLModel:
     model = await inference_pool.load_model(error_model)
 
     yield model
@@ -95,10 +92,9 @@ def inference_request_message(
         inference_request=inference_request,
     )
 
+
 @pytest.fixture
-def metadata_request_message(
-    sum_model_settings: ModelSettings
-) -> ModelRequestMessage:
+def metadata_request_message(sum_model_settings: ModelSettings) -> ModelRequestMessage:
     return ModelRequestMessage(
         id=generate_uuid(),
         model_name=sum_model_settings.name,

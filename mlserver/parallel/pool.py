@@ -1,16 +1,13 @@
 import asyncio
 
 from multiprocessing import Queue
-from functools import wraps
 from typing import Any, Coroutine, Callable, Dict
 
 from ..model import MLModel
 from ..types import InferenceRequest, InferenceResponse
-from ..settings import Settings, ModelSettings
-from ..utils import get_wrapped_method
+from ..settings import Settings
 
 from .model import ParallelModel
-from .errors import InvalidParallelMethod
 from .worker import Worker
 from .utils import configure_inference_pool
 from .messages import (

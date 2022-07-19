@@ -118,14 +118,12 @@ class Worker(Process):
                 # Assume metadata request
                 metadata_response = await model.metadata()
                 return ModelResponseMessage(
-                    id=request.id,
-                    metadata_response=metadata_response
+                    id=request.id, metadata_response=metadata_response
                 )
 
             inference_response = await model.predict(request.inference_request)
             return ModelResponseMessage(
-                id=request.id,
-                inference_response=inference_response
+                id=request.id, inference_response=inference_response
             )
         except Exception as e:
             logger.exception("An error occurred during inference in a parallel worker.")

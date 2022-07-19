@@ -6,10 +6,7 @@ from multiprocessing import Queue
 from concurrent.futures import ThreadPoolExecutor
 from asyncio import Future
 
-from ..types import InferenceRequest, InferenceResponse
-from ..utils import generate_uuid, schedule_with_callback
-from ..settings import ModelSettings
-from ..errors import InferenceError
+from ..utils import schedule_with_callback
 
 from .worker import Worker
 from .logging import logger
@@ -28,7 +25,7 @@ class Dispatcher:
         self._active = False
         self._process_responses_task = None
         self._executor = ThreadPoolExecutor()
-        self._async_responses: Dict[str, Future[InferenceResponse]] = {}
+        self._async_responses: Dict[str, Future[ModelResponseMessage]] = {}
 
     def start(self):
         self._active = True
@@ -71,7 +68,9 @@ class Dispatcher:
         else:
             async_response.set_result(response)
 
-    async def dispatch(self, request_message: ModelRequestMessage) -> ModelResponseMessage:
+    async def dispatch(
+        self, request_message: ModelRequestMessage
+    ) -> ModelResponseMessage:
         worker = self._get_worker()
         worker.send_request(request_message)
 
@@ -81,7 +80,6 @@ class Dispatcher:
         self._async_responses[internal_id] = async_response
 
         return await self._wait_response(internal_id)
-
 
     def _get_worker(self) -> Worker:
         """

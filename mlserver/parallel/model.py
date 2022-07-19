@@ -3,7 +3,7 @@ from ..types import MetadataModelResponse, InferenceRequest, InferenceResponse
 from ..errors import InferenceError
 from ..utils import generate_uuid
 
-from .messages import ModelRequestMessage, ModelResponseMessage
+from .messages import ModelRequestMessage
 from .dispatcher import Dispatcher
 
 
@@ -14,7 +14,20 @@ class ParallelModel(MLModel):
         self._dispatcher = dispatcher
 
     async def metadata(self) -> MetadataModelResponse:
-        pass
+        internal_id = generate_uuid()
+        request_message = ModelRequestMessage(
+            id=internal_id,
+            model_name=self.name,
+            model_version=self.version,
+        )
+        response_message = await self._dispatcher.dispatch(request_message)
+
+        if response_message.metadata_response is None:
+            raise InferenceError(
+                "Metadata request with internal ID " f"{internal_id} returned no value"
+            )
+
+        return response_message.metadata_response
 
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
         internal_id = generate_uuid()
@@ -28,8 +41,7 @@ class ParallelModel(MLModel):
 
         if response_message.inference_response is None:
             raise InferenceError(
-                "Inference request with internal ID "
-                f"{internal_id} returned no value"
+                "Inference request with internal ID " f"{internal_id} returned no value"
             )
 
         return response_message.inference_response
