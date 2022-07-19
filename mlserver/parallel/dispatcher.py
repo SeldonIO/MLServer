@@ -66,38 +66,22 @@ class Dispatcher:
 
         async_response = self._async_responses[internal_id]
 
-        if response.inference_response:
-            async_response.set_result(response.inference_response)
-        elif response.exception:
+        if response.exception:
             async_response.set_exception(response.exception)
         else:
-            exc = InferenceError("Inference returned no value")
-            async_response.set_exception(exc)
+            async_response.set_result(response)
 
-    async def predict(
-        self, model_settings: ModelSettings, inference_request: InferenceRequest
-    ) -> InferenceResponse:
-        internal_id = generate_uuid()
-
-        model_version = None
-        if model_settings.parameters:
-            model_version = model_settings.parameters.version
-
-        request_message = ModelRequestMessage(
-            id=internal_id,
-            model_name=model_settings.name,
-            model_version=model_version,
-            inference_request=inference_request,
-        )
-
+    async def dispatch(self, request_message: ModelRequestMessage) -> ModelResponseMessage:
         worker = self._get_worker()
         worker.send_request(request_message)
 
         loop = asyncio.get_running_loop()
         async_response = loop.create_future()
+        internal_id = request_message.id
         self._async_responses[internal_id] = async_response
 
         return await self._wait_response(internal_id)
+
 
     def _get_worker(self) -> Worker:
         """
@@ -107,7 +91,7 @@ class Dispatcher:
         worker_pid = next(self._workers_round_robin)
         return self._workers[worker_pid]
 
-    async def _wait_response(self, internal_id: str) -> InferenceResponse:
+    async def _wait_response(self, internal_id: str) -> ModelResponseMessage:
         async_response = self._async_responses[internal_id]
 
         try:
