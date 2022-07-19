@@ -145,17 +145,20 @@ class SingleModelRegistry:
         return new_model
 
     async def _load_model(self, model: MLModel):
+        # Register the model before loading it, to ensure that the model
+        # appears as a not-ready (i.e. loading) model
+        self._register(model)
+
         # TODO: Expose custom handlers on ParallelRuntime
         for callback in self._on_model_load:
             # NOTE: Callbacks need to be executed sequentially to ensure that
             # they go in the right order
             model = await callback(model)
 
-        # Register the model before loading it, to ensure that the model
-        # appears as a not-ready (i.e. loading) model
+        # Register model again to ensure we save version modified by hooks
         self._register(model)
-
         await model.load()
+
         logger.info(f"Loaded model '{model.name}' succesfully.")
 
     async def _reload_model(self, old_model: MLModel, new_model: MLModel):

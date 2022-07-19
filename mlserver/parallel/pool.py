@@ -9,6 +9,7 @@ from ..types import InferenceRequest, InferenceResponse
 from ..settings import Settings, ModelSettings
 from ..utils import get_wrapped_method
 
+from .model import ParallelModel
 from .errors import InvalidParallelMethod
 from .worker import Worker
 from .utils import configure_inference_pool
@@ -53,33 +54,6 @@ class InferencePool:
         self._dispatcher = Dispatcher(self._workers, responses)
         self._dispatcher.start()
 
-    async def predict(
-        self, model_settings: ModelSettings, inference_request: InferenceRequest
-    ) -> InferenceResponse:
-        return await self._dispatcher.predict(model_settings, inference_request)
-
-    def parallel(self, f: PredictMethod):
-        """
-        Decorator to attach to model's methods so that they run in parallel.
-        By default, this will get attached to every model's "inference" method.
-
-        NOTE: At the moment, this method only works with `predict()`.
-        """
-        # TODO: Extend to multiple methods
-        @wraps(f)
-        async def _inner(payload: InferenceRequest) -> InferenceResponse:
-            wrapped_f = get_wrapped_method(f)
-            if not hasattr(wrapped_f, "__self__"):
-                raise InvalidParallelMethod(
-                    wrapped_f.__name__, reason="method is not bound"
-                )
-
-            model = getattr(wrapped_f, "__self__")
-
-            return await self.predict(model.settings, payload)
-
-        return _inner
-
     async def load_model(self, model: MLModel) -> MLModel:
         if not self._should_load_model(model):
             # Skip load if model has disabled parallel workers
@@ -92,17 +66,12 @@ class InferencePool:
             *[worker.send_update(load_message) for worker in self._workers.values()]
         )
 
-        # Decorate predict method
-        setattr(model, "predict", self.parallel(model.predict))
-
-        return model
+        return ParallelModel(model, self._dispatcher)
 
     async def reload_model(self, old_model: MLModel, new_model: MLModel) -> MLModel:
         # The model registries within each worker will take care of reloading
         # the model internally
-        await self.load_model(new_model)
-
-        return new_model
+        return await self.load_model(new_model)
 
     async def unload_model(self, model: MLModel) -> MLModel:
         if not self._should_load_model(model):
@@ -116,7 +85,7 @@ class InferencePool:
             *[worker.send_update(unload_message) for worker in self._workers.values()]
         )
 
-        return model
+        return ParallelModel(model, self._dispatcher)
 
     def _should_load_model(self, model: MLModel):
         if model.settings.parallel_workers is not None:

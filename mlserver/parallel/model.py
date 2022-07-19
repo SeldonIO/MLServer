@@ -8,11 +8,7 @@ class ParallelModel(MLModel):
     def __init__(self, model: MLModel, dispatcher: Dispatcher):
         super().__init__(model.settings)
         self._model = model
-
-    async def load(self) -> bool:
-        # TODO: Do we need anything else here? Should we remove this method?
-        self.ready = True
-        return self.ready
+        self._dispatcher = dispatcher
 
     async def metadata(self) -> MetadataModelResponse:
         pass
