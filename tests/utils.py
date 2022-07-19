@@ -40,12 +40,13 @@ class RESTClient:
         retry_options = ExponentialRetry(
             attempts=10,
             start_timeout=0.5,
+            statuses=[ 400 ],
             exceptions={ClientConnectorError, ClientOSError, ServerDisconnectedError},
         )
         retry_client = RetryClient(raise_for_status=True, retry_options=retry_options)
 
         async with retry_client:
-            await retry_client.get(endpoint, raise_for_status=True)
+            await retry_client.get(endpoint)
 
     async def wait_until_ready(self) -> None:
         endpoint = f"http://{self._http_server}/v2/health/ready"
