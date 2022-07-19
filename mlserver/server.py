@@ -104,13 +104,15 @@ class MLServer:
 
         await servers_task
 
-    async def add_custom_handlers(self, model: MLModel):
+    async def add_custom_handlers(self, model: MLModel) -> MLModel:
         await self._rest_server.add_custom_handlers(model)
         if self._kafka_server:
             await self._kafka_server.add_custom_handlers(model)
 
         # TODO: Add support for custom gRPC endpoints
         # self._grpc_server.add_custom_handlers(handlers)
+
+        return model
 
     async def reload_custom_handlers(self, old_model: MLModel, new_model: MLModel):
         await self.add_custom_handlers(new_model)
@@ -119,6 +121,8 @@ class MLServer:
         # TODO: Add support for custom gRPC endpoints
         # self._grpc_server.delete_custom_handlers(handlers)
 
+        return new_model
+
     async def remove_custom_handlers(self, model: MLModel):
         await self._rest_server.delete_custom_handlers(model)
         if self._kafka_server:
@@ -126,6 +130,8 @@ class MLServer:
 
         # TODO: Add support for custom gRPC endpoints
         # self._grpc_server.delete_custom_handlers(handlers)
+
+        return model
 
     def _add_signal_handlers(self):
         loop = asyncio.get_event_loop()
