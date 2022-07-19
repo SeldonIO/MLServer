@@ -14,7 +14,7 @@ from .errors import InvalidParallelMethod
 from .worker import Worker
 from .utils import configure_inference_pool
 from .messages import (
-    InferenceResponseMessage,
+    ModelResponseMessage,
     ModelUpdateMessage,
     ModelUpdateType,
 )
@@ -43,7 +43,7 @@ class InferencePool:
 
         self._workers: Dict[int, Worker] = {}
         self._settings = settings
-        responses: Queue[InferenceResponseMessage] = Queue()
+        responses: Queue[ModelResponseMessage] = Queue()
         for idx in range(self._settings.parallel_workers):
             # TODO: Set callback to restart worker if it goes down (would
             # `worker.join` help with that?)

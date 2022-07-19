@@ -15,8 +15,8 @@ from .worker import Worker
 from .logging import logger
 from .utils import END_OF_QUEUE, cancel_task, terminate_queue
 from .messages import (
-    InferenceRequestMessage,
-    InferenceResponseMessage,
+    ModelRequestMessage,
+    ModelResponseMessage,
 )
 
 
@@ -61,7 +61,7 @@ class Dispatcher:
 
             await self._process_response(response)
 
-    async def _process_response(self, response: InferenceResponseMessage):
+    async def _process_response(self, response: ModelResponseMessage):
         internal_id = response.id
 
         async_response = self._async_responses[internal_id]
@@ -83,7 +83,7 @@ class Dispatcher:
         if model_settings.parameters:
             model_version = model_settings.parameters.version
 
-        request_message = InferenceRequestMessage(
+        request_message = ModelRequestMessage(
             id=internal_id,
             model_name=model_settings.name,
             model_version=model_version,
