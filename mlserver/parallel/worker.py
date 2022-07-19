@@ -10,10 +10,10 @@ from ..registry import MultiModelRegistry
 from ..utils import install_uvloop_event_loop, schedule_with_callback
 
 from .messages import (
-    InferenceRequestMessage,
+    ModelRequestMessage,
     ModelUpdateType,
     ModelUpdateMessage,
-    InferenceResponseMessage,
+    ModelResponseMessage,
 )
 from .utils import terminate_queue, END_OF_QUEUE
 from .logging import logger
@@ -29,7 +29,7 @@ class Worker(Process):
     def __init__(self, responses: Queue):
         super().__init__()
         self._responses = responses
-        self._requests: Queue[InferenceRequestMessage] = Queue()
+        self._requests: Queue[ModelRequestMessage] = Queue()
         self._model_updates: JoinableQueue[ModelUpdateMessage] = JoinableQueue()
 
         self.__executor = None
@@ -108,20 +108,28 @@ class Worker(Process):
 
         return readable
 
-    async def _process_request(self, request) -> InferenceResponseMessage:
+    async def _process_request(self, request) -> ModelResponseMessage:
         try:
             model = await self._model_registry.get_model(
                 request.model_name, request.model_version
             )
 
-            inference_response = await model.predict(request.inference_request)
+            if request.inference_request is None:
+                # Assume metadata request
+                metadata_response = await model.metadata()
+                return ModelResponseMessage(
+                    id=request.id,
+                    metadata_response=metadata_response
+                )
 
-            return InferenceResponseMessage(
-                id=request.id, inference_response=inference_response
+            inference_response = await model.predict(request.inference_request)
+            return ModelResponseMessage(
+                id=request.id,
+                inference_response=inference_response
             )
         except Exception as e:
             logger.exception("An error occurred during inference in a parallel worker.")
-            return InferenceResponseMessage(id=request.id, exception=e)
+            return ModelResponseMessage(id=request.id, exception=e)
 
     def _request_cb(self, request_task: Task):
         response_message = request_task.result()
@@ -145,7 +153,7 @@ class Worker(Process):
 
         self._model_updates.task_done()
 
-    def send_request(self, request_message: InferenceRequestMessage):
+    def send_request(self, request_message: ModelRequestMessage):
         """
         Send an inference request message to the worker.
         Note that this method should be both multiprocess- and thread-safe.

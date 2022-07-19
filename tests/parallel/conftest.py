@@ -13,7 +13,7 @@ from mlserver.parallel.utils import cancel_task
 from mlserver.parallel.messages import (
     ModelUpdateMessage,
     ModelUpdateType,
-    InferenceRequestMessage,
+    ModelRequestMessage,
 )
 
 
@@ -87,10 +87,20 @@ def unload_message(sum_model_settings: ModelSettings) -> ModelUpdateMessage:
 @pytest.fixture
 def inference_request_message(
     sum_model_settings: ModelSettings, inference_request: InferenceRequest
-) -> InferenceRequestMessage:
-    return InferenceRequestMessage(
+) -> ModelRequestMessage:
+    return ModelRequestMessage(
         id=generate_uuid(),
         model_name=sum_model_settings.name,
         model_version=sum_model_settings.parameters.version,
         inference_request=inference_request,
+    )
+
+@pytest.fixture
+def metadata_request_message(
+    sum_model_settings: ModelSettings
+) -> ModelRequestMessage:
+    return ModelRequestMessage(
+        id=generate_uuid(),
+        model_name=sum_model_settings.name,
+        model_version=sum_model_settings.parameters.version,
     )

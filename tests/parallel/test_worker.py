@@ -1,11 +1,13 @@
 from multiprocessing import Queue
+
+from mlserver.settings import ModelSettings
 from mlserver.parallel.worker import Worker
-from mlserver.parallel.messages import ModelUpdateMessage, InferenceRequestMessage
+from mlserver.parallel.messages import ModelUpdateMessage, ModelRequestMessage
 
 
 async def test_predict(
     worker: Worker,
-    inference_request_message: InferenceRequestMessage,
+    inference_request_message: ModelRequestMessage,
     responses: Queue,
 ):
     worker.send_request(inference_request_message)
@@ -18,6 +20,22 @@ async def test_predict(
     assert inference_response.model_name == inference_request_message.model_name
     assert inference_response.model_version == inference_request_message.model_version
     assert len(inference_response.outputs) == 1
+
+async def test_metadata(
+    worker: Worker,
+    metadata_request_message: ModelRequestMessage,
+    sum_model_settings: ModelSettings,
+    responses: Queue,
+):
+    worker.send_request(metadata_request_message)
+    response = responses.get()
+
+    assert response is not None
+    assert response.id == metadata_request_message.id
+
+    assert response.inference_response is None
+    assert response.metadata_response is not None
+    assert response.metadata_response.name == sum_model_settings.name
 
 
 async def test_load_model(
@@ -50,7 +68,7 @@ async def test_unload_model(
 
 async def test_exception(
     worker: Worker,
-    inference_request_message: InferenceRequestMessage,
+    inference_request_message: ModelRequestMessage,
     responses: Queue,
     mocker,
 ):
