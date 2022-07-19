@@ -7,6 +7,7 @@ from mlserver.settings import ModelSettings, ModelParameters
 
 from mlserver_huggingface import HuggingFaceRuntime
 
+
 @pytest.fixture(scope="module")
 def event_loop():
     # NOTE: We need to override the `event_loop` fixture to change its scope to
@@ -17,7 +18,8 @@ def event_loop():
     yield loop
     loop.close()
 
-@pytest.fixture(scope='module')
+
+@pytest.fixture(scope="module")
 def model_settings() -> ModelSettings:
     return ModelSettings(
         name="foo",
@@ -25,14 +27,16 @@ def model_settings() -> ModelSettings:
             extra={
                 "task": "question-answering",
             }
-        )
+        ),
     )
 
-@pytest.fixture(scope='module')
+
+@pytest.fixture(scope="module")
 async def runtime(model_settings: ModelSettings) -> HuggingFaceRuntime:
     runtime = HuggingFaceRuntime(model_settings)
     await runtime.load()
     return runtime
+
 
 @pytest.fixture
 def inference_request() -> InferenceRequest:
@@ -42,13 +46,13 @@ def inference_request() -> InferenceRequest:
                 name="question",
                 shape=[1],
                 datatype="BYTES",
-                data=["what is your name?"]
+                data=["what is your name?"],
             ),
             RequestInput(
                 name="context",
                 shape=[1],
                 datatype="BYTES",
-                data=["Hello, I am Seldon, how is it going"]
+                data=["Hello, I am Seldon, how is it going"],
             ),
         ]
     )
