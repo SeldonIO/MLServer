@@ -1,5 +1,6 @@
 import pytest
 
+from mlserver.handlers.custom import get_custom_handlers
 from mlserver.types import InferenceRequest, MetadataModelResponse
 from mlserver.model import MLModel
 from mlserver.settings import ModelSettings
@@ -37,3 +38,10 @@ async def test_metadata(
 
     assert isinstance(metadata, MetadataModelResponse)
     assert metadata.name == sum_model_settings.name
+
+async def test_custom_handlers(sum_model: MLModel):
+    handlers = get_custom_handlers(sum_model)
+    assert len(handlers) == 2
+
+    response = await sum_model.my_payload([1, 2, 3])
+    assert response == 6
