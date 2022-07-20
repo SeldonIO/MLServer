@@ -114,19 +114,16 @@ class Worker(Process):
                 request.model_name, request.model_version
             )
 
-            if request.inference_request is None:
-                # Assume metadata request
-                metadata_response = await model.metadata()
-                return ModelResponseMessage(
-                    id=request.id, metadata_response=metadata_response
-                )
-
-            inference_response = await model.predict(request.inference_request)
+            method = getattr(model, request.method_name)
+            response = await method(*request.method_args, **request.method_kwargs)
             return ModelResponseMessage(
-                id=request.id, inference_response=inference_response
+                id=request.id, response=response
             )
         except Exception as e:
-            logger.exception("An error occurred during inference in a parallel worker.")
+            logger.exception(
+                f"An error occurred calling method '{request.method_name}' "
+                f"from model '{request.model_name}'."
+            )
             return ModelResponseMessage(id=request.id, exception=e)
 
     def _request_cb(self, request_task: Task):

@@ -1,6 +1,6 @@
 from enum import IntEnum
 from pydantic import BaseModel
-from typing import Optional
+from typing import Any, Dict, List, Optional
 
 from ..types import InferenceRequest, InferenceResponse, MetadataModelResponse
 from ..settings import ModelSettings
@@ -10,12 +10,13 @@ class ModelUpdateType(IntEnum):
     Load = 1
     Unload = 2
 
-
 class ModelRequestMessage(BaseModel):
     id: str
     model_name: str
     model_version: Optional[str] = None
-    inference_request: Optional[InferenceRequest]
+    method_name: str
+    method_args: List[Any] = []
+    method_kwargs: Dict[str, Any] = {}
 
 
 class ModelResponseMessage(BaseModel):
@@ -24,8 +25,7 @@ class ModelResponseMessage(BaseModel):
         arbitrary_types_allowed = True
 
     id: str
-    inference_response: Optional[InferenceResponse]
-    metadata_response: Optional[MetadataModelResponse]
+    response: Any
     exception: Optional[Exception]
 
 
