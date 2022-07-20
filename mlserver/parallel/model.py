@@ -4,11 +4,11 @@ from enum import Enum
 from ..handlers.custom import get_custom_handlers, register_custom_handler
 from ..model import MLModel
 from ..types import MetadataModelResponse, InferenceRequest, InferenceResponse
-from ..errors import InferenceError
 from ..utils import generate_uuid
 
 from .messages import ModelRequestMessage
 from .dispatcher import Dispatcher
+
 
 class ModelMethods(Enum):
     Predict = "predict"
@@ -50,9 +50,8 @@ class ParallelModel(MLModel):
             model_version=self.version,
             method_name=method_name,
             method_args=args,
-            method_kwargs=kwargs
+            method_kwargs=kwargs,
         )
 
         response_message = await self._dispatcher.dispatch(req_message)
-        return response_message.response
-
+        return response_message.return_value

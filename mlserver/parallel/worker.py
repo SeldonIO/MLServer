@@ -115,10 +115,8 @@ class Worker(Process):
             )
 
             method = getattr(model, request.method_name)
-            response = await method(*request.method_args, **request.method_kwargs)
-            return ModelResponseMessage(
-                id=request.id, response=response
-            )
+            return_value = await method(*request.method_args, **request.method_kwargs)
+            return ModelResponseMessage(id=request.id, return_value=return_value)
         except Exception as e:
             logger.exception(
                 f"An error occurred calling method '{request.method_name}' "

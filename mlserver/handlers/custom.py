@@ -22,6 +22,7 @@ def custom_handler(rest_path: str, rest_method: str = "POST"):
 
     return _wraps
 
+
 def register_custom_handler(handler: CustomHandler, method: _HandlerMethod):
     setattr(method, _CustomHandlerAttr, handler)
 

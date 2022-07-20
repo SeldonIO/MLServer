@@ -39,6 +39,7 @@ async def test_metadata(
     assert isinstance(metadata, MetadataModelResponse)
     assert metadata.name == sum_model_settings.name
 
+
 async def test_custom_handlers(sum_model: MLModel):
     handlers = get_custom_handlers(sum_model)
     assert len(handlers) == 2

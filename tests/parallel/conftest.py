@@ -104,6 +104,7 @@ def metadata_request_message(sum_model_settings: ModelSettings) -> ModelRequestM
         method_name=ModelMethods.Metadata.value,
     )
 
+
 @pytest.fixture
 def custom_request_message(sum_model_settings: ModelSettings) -> ModelRequestMessage:
     return ModelRequestMessage(
@@ -112,5 +113,5 @@ def custom_request_message(sum_model_settings: ModelSettings) -> ModelRequestMes
         model_version=sum_model_settings.parameters.version,
         # From `SumModel` class in tests/fixtures.py
         method_name="my_payload",
-        method_kwargs={"payload": [1, 2 ,3]}
+        method_kwargs={"payload": [1, 2, 3]},
     )

@@ -2,13 +2,13 @@ from enum import IntEnum
 from pydantic import BaseModel
 from typing import Any, Dict, List, Optional
 
-from ..types import InferenceRequest, InferenceResponse, MetadataModelResponse
 from ..settings import ModelSettings
 
 
 class ModelUpdateType(IntEnum):
     Load = 1
     Unload = 2
+
 
 class ModelRequestMessage(BaseModel):
     id: str
@@ -25,7 +25,7 @@ class ModelResponseMessage(BaseModel):
         arbitrary_types_allowed = True
 
     id: str
-    response: Any
+    return_value: Any
     exception: Optional[Exception]
 
 

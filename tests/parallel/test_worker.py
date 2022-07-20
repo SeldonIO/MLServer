@@ -16,7 +16,7 @@ async def test_predict(
     assert response is not None
     assert response.id == inference_request_message.id
 
-    inference_response = response.response
+    inference_response = response.return_value
     assert inference_response.model_name == inference_request_message.model_name
     assert inference_response.model_version == inference_request_message.model_version
     assert len(inference_response.outputs) == 1
@@ -34,8 +34,9 @@ async def test_metadata(
     assert response is not None
     assert response.id == metadata_request_message.id
 
-    metadata_response = response.response
+    metadata_response = response.return_value
     assert metadata_response.name == sum_model_settings.name
+
 
 async def test_custom_handler(
     worker: Worker,
@@ -49,7 +50,7 @@ async def test_custom_handler(
     assert response is not None
     assert response.id == custom_request_message.id
 
-    custom_response = response.response
+    custom_response = response.return_value
     assert custom_response == 6
 
 
@@ -100,6 +101,6 @@ async def test_exception(
 
     assert response is not None
     assert response.id == inference_request_message.id
-    assert response.response is None
+    assert response.return_value is None
     assert response.exception is not None
     assert str(response.exception) == error_msg
