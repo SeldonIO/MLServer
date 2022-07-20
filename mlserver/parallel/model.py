@@ -21,6 +21,7 @@ class ParallelModel(MLModel):
         super().__init__(model.settings)
         self._model = model
         self._dispatcher = dispatcher
+        self._metadata: Optional[MetadataModelResponse] = None
         self._add_custom_handlers()
 
     def _add_custom_handlers(self):
@@ -37,12 +38,18 @@ class ParallelModel(MLModel):
         return _inner
 
     async def metadata(self) -> MetadataModelResponse:
-        # TODO: Cache metadata
-        metadata_response = await self._send(ModelMethods.Metadata.value)
-        if not isinstance(metadata_response, MetadataModelResponse):
-            raise InferenceError(f"Model '{self.name}' returned no metadata")
+        # NOTE: We cache metadata to avoid expensive worker calls for static
+        # data
+        if self._metadata is None:
+            metadata_response = await self._send(ModelMethods.Metadata.value)
+            if not isinstance(metadata_response, MetadataModelResponse):
+                raise InferenceError(
+                    f"Model '{self.name}' returned no metadata"
+                )
 
-        return metadata_response
+            self._metadata = metadata_response
+
+        return self._metadata
 
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
         inference_response = await self._send(ModelMethods.Predict.value, payload)

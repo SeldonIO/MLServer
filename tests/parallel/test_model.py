@@ -40,6 +40,26 @@ async def test_metadata(
     assert metadata.name == sum_model_settings.name
 
 
+async def test_metadata_cached(
+    sum_model: MLModel,
+    sum_model_settings: ModelSettings,
+    mocker
+):
+    expected_metadata = MetadataModelResponse(name="foo", platform="bar")
+    async def _send(*args, **kwargs) -> MetadataModelResponse:
+        return expected_metadata
+
+    send_stub = mocker.stub("_send")
+    send_stub.side_effect = _send
+    sum_model._send = send_stub
+
+    metadata_1 = await sum_model.metadata()
+    metadata_2 = await sum_model.metadata()
+
+    assert metadata_1 == expected_metadata
+    assert metadata_2 == expected_metadata
+    send_stub.assert_called_once()
+
 async def test_custom_handlers(sum_model: MLModel):
     handlers = get_custom_handlers(sum_model)
     assert len(handlers) == 2
