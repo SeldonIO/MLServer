@@ -1,6 +1,7 @@
-from typing import Callable
+from typing import Any, Callable, Optional
 from enum import Enum
 
+from ..errors import InferenceError
 from ..handlers.custom import get_custom_handlers, register_custom_handler
 from ..model import MLModel
 from ..types import MetadataModelResponse, InferenceRequest, InferenceResponse
@@ -37,12 +38,22 @@ class ParallelModel(MLModel):
 
     async def metadata(self) -> MetadataModelResponse:
         # TODO: Cache metadata
-        return await self._send(ModelMethods.Metadata.value)
+        metadata_response = await self._send(ModelMethods.Metadata.value)
+        if not isinstance(metadata_response, MetadataModelResponse):
+            raise InferenceError(f"Model '{self.name}' returned no metadata")
+
+        return metadata_response
 
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
-        return await self._send(ModelMethods.Predict.value, payload)
+        inference_response = await self._send(ModelMethods.Predict.value, payload)
+        if not isinstance(inference_response, InferenceResponse):
+            raise InferenceError(
+                f"Model '{self.name}' returned no predictions after inference"
+            )
 
-    async def _send(self, method_name: str, *args, **kwargs):
+        return inference_response
+
+    async def _send(self, method_name: str, *args, **kwargs) -> Optional[Any]:
         internal_id = generate_uuid()
         req_message = ModelRequestMessage(
             id=internal_id,

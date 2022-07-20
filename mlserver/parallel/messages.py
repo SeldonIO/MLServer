@@ -25,7 +25,7 @@ class ModelResponseMessage(BaseModel):
         arbitrary_types_allowed = True
 
     id: str
-    return_value: Any
+    return_value: Optional[Any]
     exception: Optional[Exception]
 
 
