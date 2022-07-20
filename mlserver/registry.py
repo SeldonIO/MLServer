@@ -149,7 +149,6 @@ class SingleModelRegistry:
         # appears as a not-ready (i.e. loading) model
         self._register(model)
 
-        # TODO: Expose custom handlers on ParallelRuntime
         for callback in self._on_model_load:
             # NOTE: Callbacks need to be executed sequentially to ensure that
             # they go in the right order
