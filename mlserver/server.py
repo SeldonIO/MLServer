@@ -36,17 +36,17 @@ class MLServer:
             # Only load inference pool if parallel inference has been enabled
             self._inference_pool = InferencePool(self._settings)
             on_model_load = [
-                self.add_custom_handlers,
                 self._inference_pool.load_model,
+                self.add_custom_handlers,
                 load_batching,
             ]
             on_model_reload = [
-                self.reload_custom_handlers,
                 self._inference_pool.reload_model,  # type: ignore
+                self.reload_custom_handlers,
             ]
             on_model_unload = [
-                self.remove_custom_handlers,
                 self._inference_pool.unload_model,  # type: ignore
+                self.remove_custom_handlers,
             ]
 
         self._model_registry = MultiModelRegistry(

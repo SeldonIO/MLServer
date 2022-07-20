@@ -7,6 +7,7 @@ from mlserver.settings import ModelSettings
 from mlserver.types import InferenceRequest
 from mlserver.utils import generate_uuid
 from mlserver.model import MLModel
+from mlserver.parallel.model import ModelMethods
 from mlserver.parallel.pool import InferencePool
 from mlserver.parallel.worker import Worker
 from mlserver.parallel.utils import cancel_task
@@ -89,7 +90,8 @@ def inference_request_message(
         id=generate_uuid(),
         model_name=sum_model_settings.name,
         model_version=sum_model_settings.parameters.version,
-        inference_request=inference_request,
+        method_name=ModelMethods.Predict.value,
+        method_args=[inference_request],
     )
 
 
@@ -99,4 +101,16 @@ def metadata_request_message(sum_model_settings: ModelSettings) -> ModelRequestM
         id=generate_uuid(),
         model_name=sum_model_settings.name,
         model_version=sum_model_settings.parameters.version,
+        method_name=ModelMethods.Metadata.value,
+    )
+
+@pytest.fixture
+def custom_request_message(sum_model_settings: ModelSettings) -> ModelRequestMessage:
+    return ModelRequestMessage(
+        id=generate_uuid(),
+        model_name=sum_model_settings.name,
+        model_version=sum_model_settings.parameters.version,
+        # From `SumModel` class in tests/fixtures.py
+        method_name="my_payload",
+        method_kwargs={"payload": [1, 2 ,3]}
     )

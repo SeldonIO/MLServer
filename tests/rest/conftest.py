@@ -28,15 +28,15 @@ async def rest_server(
     )
 
     await asyncio.gather(
-        server.add_custom_handlers(sum_model),
         inference_pool.load_model(sum_model),
+        server.add_custom_handlers(sum_model),
         load_batching(sum_model),
     )
 
     yield server
 
     await asyncio.gather(
-        server.delete_custom_handlers(sum_model), inference_pool.unload_model(sum_model)
+        inference_pool.unload_model(sum_model), server.delete_custom_handlers(sum_model)
     )
 
 
