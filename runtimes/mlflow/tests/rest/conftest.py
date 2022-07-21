@@ -12,14 +12,14 @@ from mlserver.model import MLModel
 from mlserver.parallel import InferencePool
 from mlserver import Settings, ModelSettings
 
-from mlserver_mlflow import MLflowRuntime
 
 @pytest.fixture
-async def inference_pool(settings: Settings) -> InferencePool:
+async def inference_pool(settings: Settings) -> AsyncIterable[InferencePool]:
     pool = InferencePool(settings)
     yield pool
 
     await pool.close()
+
 
 @pytest.fixture
 def model_repository(model_uri: str) -> ModelRepository:
@@ -65,8 +65,8 @@ async def rest_server(
     data_plane: DataPlane,
     model_repository_handlers: ModelRepositoryHandlers,
     inference_pool: InferencePool,
-    runtime: MLflowRuntime,
-) -> RESTServer:
+    runtime: MLModel,
+) -> AsyncIterable[RESTServer]:
     server = RESTServer(
         settings,
         data_plane=data_plane,

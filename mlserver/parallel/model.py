@@ -45,9 +45,7 @@ class ParallelModel(MLModel):
         if self._metadata is None:
             metadata_response = await self._send(ModelMethods.Metadata.value)
             if not isinstance(metadata_response, MetadataModelResponse):
-                raise InferenceError(
-                    f"Model '{self.name}' returned no metadata"
-                )
+                raise InferenceError(f"Model '{self.name}' returned no metadata")
 
             self._metadata = metadata_response
 

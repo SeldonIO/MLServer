@@ -65,7 +65,7 @@ class MLflowRuntime(MLModel):
     async def invocations(
         self,
         raw_body: str = Depends(_get_raw_body),
-        content_type: Optional[str] = Header(default=None)
+        content_type: Optional[str] = Header(default=None),
     ) -> Response:
         """
         This custom handler is meant to mimic the behaviour of the existing

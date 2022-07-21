@@ -41,11 +41,10 @@ async def test_metadata(
 
 
 async def test_metadata_cached(
-    sum_model: MLModel,
-    sum_model_settings: ModelSettings,
-    mocker
+    sum_model: MLModel, sum_model_settings: ModelSettings, mocker
 ):
     expected_metadata = MetadataModelResponse(name="foo", platform="bar")
+
     async def _send(*args, **kwargs) -> MetadataModelResponse:
         return expected_metadata
 
@@ -59,6 +58,7 @@ async def test_metadata_cached(
     assert metadata_1 == expected_metadata
     assert metadata_2 == expected_metadata
     send_stub.assert_called_once()
+
 
 async def test_custom_handlers(sum_model: MLModel):
     handlers = get_custom_handlers(sum_model)

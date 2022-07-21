@@ -31,12 +31,14 @@ from mlserver_alibi_explain.runtime import AlibiExplainRuntime, AlibiExplainRunt
 TESTS_PATH = Path(os.path.dirname(__file__))
 _ANCHOR_IMAGE_DIR = TESTS_PATH / ".data" / "mnist_anchor_image"
 
+
 @pytest.fixture
 async def inference_pool(settings: Settings) -> InferencePool:
     pool = InferencePool(settings)
     yield pool
 
     await pool.close()
+
 
 @pytest.fixture
 def event_loop():
