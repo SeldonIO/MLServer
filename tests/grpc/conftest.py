@@ -74,11 +74,11 @@ async def grpc_server(
 
     server._create_server()
 
-    await inference_pool.load_model(sum_model)
-    await load_batching(sum_model)
+    sum_model = await inference_pool.load_model(sum_model)
+    sum_model = await load_batching(sum_model)
     await server._server.start()
 
     yield server
 
-    await inference_pool.unload_model(sum_model)
+    sum_model = await inference_pool.unload_model(sum_model)
     await server._server.stop(grace=None)

@@ -17,6 +17,7 @@ from helpers.tf_model import get_tf_mnist_model_uri
 from helpers.run_async import run_async_as_sync
 from mlserver import MLModel
 from mlserver.handlers import DataPlane, ModelRepositoryHandlers
+from mlserver.parallel import InferencePool
 from mlserver.registry import MultiModelRegistry
 from mlserver.repository import ModelRepository
 from mlserver.rest import RESTServer
@@ -30,6 +31,12 @@ from mlserver_alibi_explain.runtime import AlibiExplainRuntime, AlibiExplainRunt
 TESTS_PATH = Path(os.path.dirname(__file__))
 _ANCHOR_IMAGE_DIR = TESTS_PATH / ".data" / "mnist_anchor_image"
 
+@pytest.fixture
+async def inference_pool(settings: Settings) -> InferencePool:
+    pool = InferencePool(settings)
+    yield pool
+
+    await pool.close()
 
 @pytest.fixture
 def event_loop():
@@ -98,6 +105,7 @@ async def rest_server(
     settings: Settings,
     data_plane: DataPlane,
     model_repository_handlers: ModelRepositoryHandlers,
+    inference_pool: InferencePool,
     custom_runtime_tf: MLModel,
 ) -> AsyncIterable[RESTServer]:
     server = RESTServer(
@@ -106,10 +114,12 @@ async def rest_server(
         model_repository_handlers=model_repository_handlers,
     )
 
+    custom_runtime_tf = await inference_pool.load_model(custom_runtime_tf)
     await server.add_custom_handlers(custom_runtime_tf)
 
     yield server
 
+    custom_runtime_tf = await inference_pool.unload_model(custom_runtime_tf)
     await server.delete_custom_handlers(custom_runtime_tf)
 
 

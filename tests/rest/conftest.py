@@ -27,17 +27,14 @@ async def rest_server(
         model_repository_handlers=model_repository_handlers,
     )
 
-    await asyncio.gather(
-        inference_pool.load_model(sum_model),
-        server.add_custom_handlers(sum_model),
-        load_batching(sum_model),
-    )
+    sum_model = await inference_pool.load_model(sum_model)
+    sum_model = await server.add_custom_handlers(sum_model)
+    sum_model = await load_batching(sum_model)
 
     yield server
 
-    await asyncio.gather(
-        inference_pool.unload_model(sum_model), server.delete_custom_handlers(sum_model)
-    )
+    sum_model = await inference_pool.unload_model(sum_model)
+    sum_model = await server.delete_custom_handlers(sum_model)
 
 
 @pytest.fixture
