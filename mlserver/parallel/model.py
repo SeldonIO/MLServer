@@ -1,5 +1,6 @@
 from typing import Any, Callable, Optional
 from enum import Enum
+from functools import wraps
 
 from ..errors import InferenceError
 from ..handlers.custom import get_custom_handlers, register_custom_handler
@@ -32,6 +33,7 @@ class ParallelModel(MLModel):
             setattr(self, method.__name__, parallelised)
 
     def _parallelise(self, method: Callable):
+        @wraps(method)
         async def _inner(*args, **kwargs):
             return await self._send(method.__name__, *args, **kwargs)
 
