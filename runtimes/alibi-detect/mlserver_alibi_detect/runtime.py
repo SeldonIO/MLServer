@@ -74,9 +74,30 @@ class AlibiDetectRuntime(MLModel):
             outputs.append(
                 NumpyCodec.encode_output(name=key, payload=np.array([y["data"][key]]))
             )
+        # Add headers
+        y["meta"]["headers"] = {
+            "x-seldon-alibi-type":self.getAlibiType(),
+            "x-seldon-alibi-method": self.getAlibiMethod()
+        }
         return types.InferenceResponse(
             model_name=self.name,
             model_version=self.version,
             parameters=y["meta"],
             outputs=outputs,
         )
+
+    def getAlibiMethod(self) -> str:
+        module: str = type(self._model).__module__
+        return module.split(".")[-1]
+
+    def getAlibiType(self) -> str:
+        module: str = type(self._model).__module__
+        method = module.split(".")[-2]
+        if method == "cd":
+            return "drift"
+        elif method == "od":
+            return "outlier"
+        elif method == "ad":
+            return "adversarial"
+        else:
+            return "unknown"
