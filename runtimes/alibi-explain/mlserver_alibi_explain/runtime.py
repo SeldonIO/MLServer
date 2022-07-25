@@ -87,13 +87,15 @@ class AlibiExplainRuntimeBase(MLModel):
             model_name=self.name,
             model_version=self.version,
             outputs=[output_data],
-            parameters=Parameters(headers={
-                "x-seldon-alibi-type":"explanation",
-                "x-seldon-alibi-method": self.getAlibiMethod()
-            }),
+            parameters=Parameters(
+                headers={
+                    "x-seldon-alibi-type": "explanation",
+                    "x-seldon-alibi-method": self.get_alibi_method(),
+                }
+            ),
         )
 
-    def getAlibiMethod(self) -> str:
+    def get_alibi_method(self) -> str:
         module: str = type(self._model).__module__
         return module.split(".")[-1]
 

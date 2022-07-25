@@ -12,6 +12,8 @@ import numpy as np
 
 ENV_PREFIX_ALIBI_DETECT_SETTINGS = "MLSERVER_MODEL_ALIBI_DETECT_"
 
+ALIBI_MODULE_NAMES = {"cd": "drift", "od": "outlier", "ad": "adversarial"}
+
 
 class AlibiDetectSettings(BaseSettings):
     """
@@ -76,8 +78,8 @@ class AlibiDetectRuntime(MLModel):
             )
         # Add headers
         y["meta"]["headers"] = {
-            "x-seldon-alibi-type":self.getAlibiType(),
-            "x-seldon-alibi-method": self.getAlibiMethod()
+            "x-seldon-alibi-type": self.get_alibi_type(),
+            "x-seldon-alibi-method": self.get_alibi_method(),
         }
         return types.InferenceResponse(
             model_name=self.name,
@@ -86,18 +88,14 @@ class AlibiDetectRuntime(MLModel):
             outputs=outputs,
         )
 
-    def getAlibiMethod(self) -> str:
+    def get_alibi_method(self) -> str:
         module: str = type(self._model).__module__
         return module.split(".")[-1]
 
-    def getAlibiType(self) -> str:
+    def get_alibi_type(self) -> str:
         module: str = type(self._model).__module__
         method = module.split(".")[-2]
-        if method == "cd":
-            return "drift"
-        elif method == "od":
-            return "outlier"
-        elif method == "ad":
-            return "adversarial"
+        if method in ALIBI_MODULE_NAMES:
+            return ALIBI_MODULE_NAMES[method]
         else:
             return "unknown"
