@@ -199,7 +199,7 @@ class SingleModelRegistry:
 
     async def _unload_model(self, model: MLModel, new_model: MLModel = None):
         for callback in self._on_model_unload:
-            model = await callback(model)
+            await callback(model)
 
         if model == self.default:
             self._clear_default()

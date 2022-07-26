@@ -63,10 +63,16 @@ class Dispatcher:
 
         async_response = self._async_responses[internal_id]
 
+        # NOTE: Use call_soon_threadsafe to cover cases where `model.predict()`
+        # (or other methods) get called from a separate thread (and a separate
+        # AsyncIO loop)
+        response_loop = async_response.get_loop()
         if response.exception:
-            async_response.set_exception(response.exception)
+            response_loop.call_soon_threadsafe(
+                async_response.set_exception, response.exception
+            )
         else:
-            async_response.set_result(response)
+            response_loop.call_soon_threadsafe(async_response.set_result, response)
 
     async def dispatch(
         self, request_message: ModelRequestMessage

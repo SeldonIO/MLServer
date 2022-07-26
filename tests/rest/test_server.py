@@ -1,5 +1,7 @@
 from mlserver.rest.server import RESTServer
 from mlserver.rest.utils import to_scope
+from mlserver.settings import ModelSettings
+from mlserver.registry import MultiModelRegistry
 
 from ..fixtures import SumModel
 
@@ -16,7 +18,10 @@ def test_add_custom_handlers(rest_server: RESTServer, sum_model: SumModel):
     assert found_route is not None
 
 
-async def test_delete_custom_handlers(rest_server: RESTServer, sum_model: SumModel):
+async def test_delete_custom_handlers(
+    rest_server: RESTServer,
+    sum_model: SumModel
+):
     await rest_server.delete_custom_handlers(sum_model)
 
     scope = to_scope(sum_model.my_payload.__custom_handler__)
