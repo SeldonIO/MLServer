@@ -22,6 +22,7 @@ from mlserver.types import (
 )
 from mlserver_alibi_explain import AlibiExplainRuntime
 from mlserver_alibi_explain.common import (
+    execute_async,
     convert_from_bytes,
     to_v2_inference_request,
     _DEFAULT_INPUT_NAME,
@@ -61,7 +62,9 @@ async def test_predict_impl(
 
     # [batch, image_x, image_y, channel]
     data = np.random.randn(10, 28, 28, 1) * 255
-    actual_result = anchor_image_runtime_with_remote_predict_patch._rt._infer_impl(data)
+    actual_result = await execute_async(
+        None, anchor_image_runtime_with_remote_predict_patch._rt._infer_impl, data
+    )
 
     # now we go via the inference model and see if we get the same results
     inference_request = InferenceRequest(
