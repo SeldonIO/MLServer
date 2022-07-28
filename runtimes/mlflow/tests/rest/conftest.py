@@ -29,7 +29,7 @@ def model_repository(model_uri: str) -> ModelRepository:
 @pytest.fixture
 async def model_registry(
     inference_pool: InferencePool, model_settings: ModelSettings
-) -> MultiModelRegistry:
+) -> AsyncIterable[MultiModelRegistry]:
     model_registry = MultiModelRegistry(
         on_model_load=[inference_pool.load_model],
         on_model_reload=[inference_pool.reload_model],

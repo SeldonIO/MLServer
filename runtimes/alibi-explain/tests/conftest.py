@@ -3,7 +3,6 @@ import json
 import os
 import pytest
 import tensorflow as tf
-import threading
 import functools
 
 from pathlib import Path

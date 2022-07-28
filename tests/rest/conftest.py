@@ -12,10 +12,10 @@ from mlserver import Settings, ModelSettings
 
 from ..fixtures import SumModel
 
+
 @pytest.fixture
 async def model_registry(
-    sum_model_settings: ModelSettings,
-    inference_pool: InferencePool
+    sum_model_settings: ModelSettings, inference_pool: InferencePool
 ) -> MultiModelRegistry:
     model_registry = MultiModelRegistry(
         on_model_load=[inference_pool.load_model, load_batching],
@@ -31,8 +31,9 @@ async def model_registry(
     try:
         # It could be that the model is not present anymore
         await model_registry.unload(model_name)
-    except:
+    except Exception:
         pass
+
 
 @pytest.fixture
 async def rest_server(
