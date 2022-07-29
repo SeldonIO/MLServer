@@ -96,7 +96,7 @@ class AlibiExplainRuntimeBase(MLModel):
         )
 
     def get_alibi_method(self) -> str:
-        module: str = type(self._model).__module__
+        module: str = type(self._model).__module__  # type: ignore
         return module.split(".")[-1]
 
     async def _async_explain_impl(
