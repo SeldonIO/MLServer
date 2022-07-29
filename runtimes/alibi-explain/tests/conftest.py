@@ -4,14 +4,15 @@ import os
 from pathlib import Path
 from typing import AsyncIterable, Dict, Any, Iterable
 from unittest.mock import patch
+from typing import Type
 
 import pytest
 import tensorflow as tf
-from alibi.api.interfaces import Explanation
 from alibi.explainers import AnchorImage
 from fastapi import FastAPI
 from httpx import AsyncClient
 
+from alibi.api.interfaces import Explanation, Explainer
 from helpers.tf_model import get_tf_mnist_model_uri
 from helpers.run_async import run_async_as_sync
 from mlserver import MLModel
@@ -191,6 +192,16 @@ async def integrated_gradients_runtime() -> AlibiExplainRuntime:
 @pytest.fixture
 def dummy_explainer_settings() -> Iterable[ModelSettings]:
     class _DummyExplainer(AlibiExplainRuntimeBase):
+        def __init__(self, settings: ModelSettings, explainer_class: Type[Explainer]):
+            self._explainer_class = explainer_class
+            self._model = None
+            # if we are here we are sure that settings.parameters is set,
+            # just helping mypy
+            assert settings.parameters is not None
+            extra = settings.parameters.extra
+            explainer_settings = AlibiExplainSettings(**extra)  # type: ignore
+            super().__init__(settings, explainer_settings)
+
         def _explain_impl(
             self, input_data: Any, explain_parameters: Dict
         ) -> Explanation:
