@@ -87,7 +87,17 @@ class AlibiExplainRuntimeBase(MLModel):
             model_name=self.name,
             model_version=self.version,
             outputs=[output_data],
+            parameters=Parameters(
+                headers={
+                    "x-seldon-alibi-type": "explanation",
+                    "x-seldon-alibi-method": self.get_alibi_method(),
+                }
+            ),
         )
+
+    def get_alibi_method(self) -> str:
+        module: str = type(self._model).__module__  # type: ignore
+        return module.split(".")[-1]
 
     async def _async_explain_impl(
         self, input_data: Any, settings: Optional[Parameters]
