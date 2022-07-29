@@ -180,6 +180,10 @@ async def test_alibi_runtime_wrapper(custom_runtime_tf: MLModel):
     assert wrapper_public_funcs == expected_public_funcs
 
 
+def fake_predictor(x):
+    return x
+
+
 async def test_explain_parameters_pass_through():
     # test that the explain parameters are wired properly, if it runs ok then
     # the assertion is fine
@@ -197,7 +201,6 @@ async def test_explain_parameters_pass_through():
             assert_array_equal(input_data, data_np)
             return Explanation(meta={}, data={})
 
-    predict_fn = lambda x: x
     rt = _DummyExplainer(
         settings=ModelSettings(),
         explainer_settings=AlibiExplainSettings(
@@ -206,7 +209,9 @@ async def test_explain_parameters_pass_through():
             init_parameters=None,
         ),
     )
-    rt._model = alibi.explainers.anchors.anchor_tabular.AnchorTabular(predict_fn, ["a"])
+    rt._model = alibi.explainers.anchors.anchor_tabular.AnchorTabular(
+        fake_predictor, ["a"]
+    )
 
     inference_request = InferenceRequest(
         parameters=Parameters(
