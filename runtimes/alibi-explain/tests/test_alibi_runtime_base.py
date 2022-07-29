@@ -1,4 +1,6 @@
 import json
+
+import alibi.explainers.anchors.anchor_tabular
 import pytest
 from typing import Any, Dict
 from unittest.mock import patch
@@ -195,6 +197,7 @@ async def test_explain_parameters_pass_through():
             assert_array_equal(input_data, data_np)
             return Explanation(meta={}, data={})
 
+    predict_fn = lambda x: x
     rt = _DummyExplainer(
         settings=ModelSettings(),
         explainer_settings=AlibiExplainSettings(
@@ -203,6 +206,7 @@ async def test_explain_parameters_pass_through():
             init_parameters=None,
         ),
     )
+    rt._model = alibi.explainers.anchors.anchor_tabular.AnchorTabular(predict_fn, ["a"])
 
     inference_request = InferenceRequest(
         parameters=Parameters(
