@@ -63,7 +63,7 @@ class AlibiDetectRuntime(MLModel):
             predict_kwargs = self.alibi_detect_settings.predict_parameters
 
         try:
-            y = self._model.predict(input_data, **predict_kwargs)
+            y = self._model.predict(np.array(input_data), **predict_kwargs)
         except (ValueError, IndexError) as e:
             raise InferenceError(
                 f"Invalid predict parameters for model {self._settings.name}: {e}"
