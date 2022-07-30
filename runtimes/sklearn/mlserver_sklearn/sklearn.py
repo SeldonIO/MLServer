@@ -14,7 +14,7 @@ from mlserver.types import (
 )
 from mlserver.utils import get_model_uri
 
-
+PREDICT_FN_KEY = "predict_fn"
 PREDICT_OUTPUT = "predict"
 PREDICT_PROBA_OUTPUT = "predict_proba"
 VALID_OUTPUTS = [PREDICT_OUTPUT, PREDICT_PROBA_OUTPUT]
@@ -51,8 +51,19 @@ class SKLearnModel(MLModel):
 
     def _check_request(self, payload: InferenceRequest) -> InferenceRequest:
         if not payload.outputs:
+            found_predict_fn = False
+            if self.settings.parameters:
+                print("found settings.parameters")
+                print(self.settings)
+                if self.settings.parameters.extra:
+                    print("found settings.parameters.extra")
+                    if PREDICT_FN_KEY in self.settings.parameters.extra:
+                        print("found settings predict_fn")
+                        payload.outputs = [RequestOutput(name=self.settings.parameters.extra[PREDICT_FN_KEY])]
+                        found_predict_fn = True
             # By default, only return the result of `predict()`
-            payload.outputs = [RequestOutput(name=PREDICT_OUTPUT)]
+            if not found_predict_fn:
+                payload.outputs = [RequestOutput(name=PREDICT_OUTPUT)]
         else:
             for request_output in payload.outputs:
                 if request_output.name not in VALID_OUTPUTS:
