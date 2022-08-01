@@ -1,0 +1,102 @@
+name: MLServer Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "MLServer Version to Release"
+        required: true
+jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Update Version
+        run: |
+          ./hack/update-version.sh ${{ github.event.inputs.version }}
+
+  mlserver:
+    needs: bump-version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Install dependencies
+        run: |
+          pip install -r ./requirements/dev.txt
+      - name: Build Python wheel
+        run: |
+          python setup.py \
+            sdist -d ./dist \
+            bdist_wheel -d ./dist
+          # twine upload dist/*
+      - name: Build Docker image
+        run: |
+          DOCKER_BUILDKIT=1 docker build $ROOT_FOLDER \
+            --build-arg RUNTIMES="" \
+            -t $RUNTIME_IMAGE-slim
+          # docker push $RUNTIME_IMAGE-slim
+          DOCKER_BUILDKIT=1 docker build $ROOT_FOLDER \
+            --build-arg RUNTIMES=all \
+            -t $RUNTIME_IMAGE
+          # docker push $RUNTIME_IMAGE
+        env:
+          RUNTIME_IMAGE: seldonio/mlserver:${{ github.event.inputs.version }}
+
+  runtimes:
+    needs: bump-version
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        runtime:
+          - alibi-detect
+          - alibi-explain
+          - huggingface
+          - lightgbm
+          - mlflow
+          - mllib
+          - sklearn
+          - xgboost
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Install dependencies
+        run: |
+          pip install -r ./requirements/dev.txt
+      - name: Build Python wheel
+        workdir: ./runtimes/${{ matrix.runtime }}
+        run: |
+          python setup.py \
+            sdist -d ./dist \
+            bdist_wheel -d ./dist
+          # twine upload ./dist/*
+      - name: Build Docker image
+        run: |
+          DOCKER_BUILDKIT=1 docker build . \
+            --build-arg RUNTIMES=mlserver-${{ matrix.runtime }} \
+            -t $RUNTIME_IMAGE
+          # docker push $RUNTIME_IMAGE
+        env:
+          RUNTIME_IMAGE: seldonio/mlserver:${{ github.event.inputs.version }}-${{ matrix.runtime }}
+
+  push-version:
+    runs-on: ubuntu-latest
+    needs:
+      - mlserver
+      - runtimes
+    steps:
+      - name: Print Status
+        run: |
+          echo 'Build finished'
+      # - uses: actions/checkout@v2
+      # - name: Commiting & Pushing Updated Version Tag
+      # uses: stefanzweifel/git-auto-commit-action@v4
+      # with:
+      # commit_message: Bump version to ${{ github.event.inputs.version }}
+      # tagging_message: ${{ github.event.inputs.version }}

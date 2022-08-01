@@ -30,6 +30,7 @@ types-orjson==3.6.2
 black==22.6.0
 
 # Pushing to PyPi
+wheel==0.37.1
 twine==4.0.1
 
 # Fetch licenses
