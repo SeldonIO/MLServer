@@ -24,6 +24,7 @@ jobs:
         with:
           generate_release_notes: true
           draft: true
+          tag_name: ${{ github.event.inputs.version }}
 
   mlserver:
     needs: draft-release
