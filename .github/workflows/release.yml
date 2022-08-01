@@ -35,11 +35,11 @@ jobs:
           # twine upload dist/*
       - name: Build Docker image
         run: |
-          DOCKER_BUILDKIT=1 docker build $ROOT_FOLDER \
+          DOCKER_BUILDKIT=1 docker build . \
             --build-arg RUNTIMES="" \
             -t $RUNTIME_IMAGE-slim
           # docker push $RUNTIME_IMAGE-slim
-          DOCKER_BUILDKIT=1 docker build $ROOT_FOLDER \
+          DOCKER_BUILDKIT=1 docker build . \
             --build-arg RUNTIMES=all \
             -t $RUNTIME_IMAGE
           # docker push $RUNTIME_IMAGE
