@@ -26,7 +26,7 @@ jobs:
           draft: true
 
   mlserver:
-    needs: bump-version
+    needs: draft-release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -63,7 +63,7 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
   runtimes:
-    needs: bump-version
+    needs: draft-release
     runs-on: ubuntu-latest
     strategy:
       matrix:
