@@ -70,7 +70,7 @@ jobs:
         run: |
           pip install -r ./requirements/dev.txt
       - name: Build Python wheel
-        workdir: ./runtimes/${{ matrix.runtime }}
+        working-directory: ./runtimes/${{ matrix.runtime }}
         run: |
           python setup.py \
             sdist -d ./dist \
