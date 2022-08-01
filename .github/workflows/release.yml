@@ -32,19 +32,24 @@ jobs:
           python setup.py \
             sdist -d ./dist \
             bdist_wheel -d ./dist
-          # twine upload dist/*
+          twine upload dist/*
+        env:
+          TWINE_NON_INTERACTIVE: 1
+          TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
+          TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
       - name: Build Docker image
         run: |
           DOCKER_BUILDKIT=1 docker build . \
             --build-arg RUNTIMES="" \
             -t $RUNTIME_IMAGE-slim
-          # docker push $RUNTIME_IMAGE-slim
+          docker push $MLSERVER_IMAGE-slim
           DOCKER_BUILDKIT=1 docker build . \
             --build-arg RUNTIMES=all \
             -t $RUNTIME_IMAGE
-          # docker push $RUNTIME_IMAGE
+          docker push $MLSERVER_IMAGE
         env:
-          RUNTIME_IMAGE: seldonio/mlserver:${{ github.event.inputs.version }}
+          MLSERVER_IMAGE: seldonio/mlserver:${{ github.event.inputs.version }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   runtimes:
     needs: bump-version
@@ -75,15 +80,20 @@ jobs:
           python setup.py \
             sdist -d ./dist \
             bdist_wheel -d ./dist
-          # twine upload ./dist/*
+          twine upload ./dist/*
+        env:
+          TWINE_NON_INTERACTIVE: 1
+          TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
+          TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
       - name: Build Docker image
         run: |
           DOCKER_BUILDKIT=1 docker build . \
             --build-arg RUNTIMES=mlserver-${{ matrix.runtime }} \
             -t $RUNTIME_IMAGE
-          # docker push $RUNTIME_IMAGE
+          docker push $RUNTIME_IMAGE
         env:
           RUNTIME_IMAGE: seldonio/mlserver:${{ github.event.inputs.version }}-${{ matrix.runtime }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   push-version:
     runs-on: ubuntu-latest
@@ -91,12 +101,9 @@ jobs:
       - mlserver
       - runtimes
     steps:
-      - name: Print Status
-        run: |
-          echo 'Build finished'
-      # - uses: actions/checkout@v2
-      # - name: Commiting & Pushing Updated Version Tag
-      # uses: stefanzweifel/git-auto-commit-action@v4
-      # with:
-      # commit_message: Bump version to ${{ github.event.inputs.version }}
-      # tagging_message: ${{ github.event.inputs.version }}
+      - uses: actions/checkout@v2
+      - name: Commiting & Pushing Updated Version Tag
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Bump version to ${{ github.event.inputs.version }}
+          tagging_message: ${{ github.event.inputs.version }}
