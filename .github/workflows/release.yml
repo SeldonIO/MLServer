@@ -78,8 +78,8 @@ jobs:
           # twine upload ./dist/*
       - name: Build Docker image
         run: |
-          DOCKER_BUILDKIT=1 docker build $ROOT_FOLDER \
-            --build-arg RUNTIMES=${{ matrix.runtime }} \
+          DOCKER_BUILDKIT=1 docker build . \
+            --build-arg RUNTIMES=mlserver-${{ matrix.runtime }} \
             -t $RUNTIME_IMAGE
           # docker push $RUNTIME_IMAGE
         env:
