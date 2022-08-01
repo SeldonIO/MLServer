@@ -7,13 +7,23 @@ on:
         description: "MLServer Version to Release"
         required: true
 jobs:
-  bump-version:
+  draft-release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Update Version
         run: |
           ./hack/update-version.sh ${{ github.event.inputs.version }}
+      - name: Commiting & Pushing Updated Version Tag
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Bump version to ${{ github.event.inputs.version }}
+          tagging_message: ${{ github.event.inputs.version }}
+      - name: Draft Release
+        uses: softprops/action-gh-release@v1
+        with:
+          generate_release_notes: true
+          draft: true
 
   mlserver:
     needs: bump-version
@@ -95,17 +105,4 @@ jobs:
         env:
           RUNTIME_IMAGE: seldonio/mlserver:${{ github.event.inputs.version }}-${{ matrix.runtime }}
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-
-  push-version:
-    runs-on: ubuntu-latest
-    needs:
-      - mlserver
-      - runtimes
-    steps:
-      - uses: actions/checkout@v2
-      - name: Commiting & Pushing Updated Version Tag
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: Bump version to ${{ github.event.inputs.version }}
-          tagging_message: ${{ github.event.inputs.version }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORDt  }}
