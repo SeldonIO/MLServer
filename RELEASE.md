@@ -10,13 +10,16 @@ This document discusses the release process for MLServer.
 ## Process Summary
 
 1. Trigger a `MLServer Release` from Github Actions.
-   1.1. Provide the [version tag](versioning-scheme) that you want to release.
-   ![MLServer Release](./docs/assets/mlserver-release.png)
+
+   1. Provide the [version tag](versioning-scheme) that you want to release.
+      ![MLServer Release](./docs/assets/mlserver-release.png)
+
 2. Monitor the triggered workflow, until it's finished.
-   2.1. Once it's done, all the [release artifacts](release-artifacts) will be
-   pushed to Docker Hub and PyPI.
-   2.2. Additionally, a release draft will get created in the repository
-   [Releases section](https://github.com/SeldonIO/MLServer/releases).
+
+   1. Once it's done, all the [release artifacts](release-artifacts) will be
+      pushed to Docker Hub and PyPI.
+   2. Additionally, a release draft will get created in the repository
+      [Releases section](https://github.com/SeldonIO/MLServer/releases).
 
 ## Versioning Scheme
 
