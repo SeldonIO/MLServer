@@ -21,15 +21,16 @@ kafka-python==2.0.2
 tenacity==8.0.1
 
 # Linting and formatting
-flake8==4.0.1
+flake8==5.0.1
 flake8-black==0.2.4
-mypy==0.910
+mypy==0.971
 mypy-protobuf==3.1.0
 types-protobuf==3.19.12
 types-orjson==3.6.2
 black==22.6.0
 
 # Pushing to PyPi
+wheel==0.37.1
 twine==4.0.1
 
 # Fetch licenses
