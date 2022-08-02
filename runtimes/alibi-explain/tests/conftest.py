@@ -3,7 +3,6 @@ import json
 import os
 import pytest
 import tensorflow as tf
-import threading
 import functools
 
 from pathlib import Path
@@ -11,8 +10,6 @@ from typing import AsyncIterable, Dict, Any, Iterable
 from unittest.mock import patch
 from typing import Type
 
-import pytest
-import tensorflow as tf
 from httpx import AsyncClient
 from fastapi import FastAPI
 from alibi.api.interfaces import Explanation, Explainer
