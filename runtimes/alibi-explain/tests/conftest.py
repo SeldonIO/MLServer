@@ -3,29 +3,21 @@ import json
 import os
 import pytest
 import tensorflow as tf
+import threading
 import functools
 
 from pathlib import Path
 from typing import AsyncIterable, Dict, Any, Iterable
 from unittest.mock import patch
-<<<<<<< HEAD
 from typing import Type
 
 import pytest
 import tensorflow as tf
-=======
 from httpx import AsyncClient
 from fastapi import FastAPI
-from alibi.api.interfaces import Explanation
->>>>>>> 032c8f2 (Fix Alibi tests)
+from alibi.api.interfaces import Explanation, Explainer
 from alibi.explainers import AnchorImage
 
-<<<<<<< HEAD
-from alibi.api.interfaces import Explanation, Explainer
-from helpers.tf_model import get_tf_mnist_model_uri
-from helpers.run_async import run_async_as_sync
-=======
->>>>>>> 032c8f2 (Fix Alibi tests)
 from mlserver import MLModel
 from mlserver.handlers import DataPlane, ModelRepositoryHandlers
 from mlserver.parallel import InferencePool
