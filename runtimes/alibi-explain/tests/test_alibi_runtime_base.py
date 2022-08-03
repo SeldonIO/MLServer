@@ -2,10 +2,10 @@ import json
 
 import alibi.explainers.anchors.anchor_tabular
 import pytest
+import numpy as np
+
 from typing import Any, Dict
 from unittest.mock import patch
-
-import numpy as np
 from alibi.api.interfaces import Explanation
 from numpy.testing import assert_array_equal
 
@@ -20,6 +20,7 @@ from mlserver.types import (
     MetadataTensor,
 )
 from mlserver_alibi_explain.common import (
+    execute_async,
     convert_from_bytes,
     remote_predict,
     AlibiExplainSettings,
@@ -115,7 +116,12 @@ async def test_remote_predict__smoke(custom_runtime_tf, rest_client):
 
         endpoint = f"v2/models/{custom_runtime_tf.settings.name}/infer"
 
-        res = remote_predict(inference_request, predictor_url=endpoint)
+        res = await execute_async(
+            None,
+            remote_predict,
+            inference_request,
+            predictor_url=endpoint,
+        )
         assert isinstance(res, InferenceResponse)
 
 

@@ -9,7 +9,8 @@ from prometheus_client.registry import CollectorRegistry
 from mlserver.parallel import InferencePool
 from mlserver.batching import load_batching
 from mlserver.handlers import DataPlane, ModelRepositoryHandlers
-from mlserver.settings import Settings
+from mlserver.settings import Settings, ModelSettings
+from mlserver.registry import MultiModelRegistry
 from mlserver.grpc import dataplane_pb2 as pb
 from mlserver.grpc.dataplane_pb2_grpc import GRPCInferenceServiceStub
 from mlserver.grpc import GRPCServer
@@ -27,6 +28,28 @@ def _read_testdata_pb(payload_path: str, pb_klass):
         json_format.Parse(payload.read(), model_infer_request)
 
     return model_infer_request
+
+
+@pytest.fixture
+async def model_registry(
+    sum_model_settings: ModelSettings, inference_pool: InferencePool
+) -> MultiModelRegistry:
+    model_registry = MultiModelRegistry(
+        on_model_load=[inference_pool.load_model, load_batching],
+        on_model_reload=[inference_pool.reload_model],
+        on_model_unload=[inference_pool.unload_model],
+    )
+
+    model_name = sum_model_settings.name
+    await model_registry.load(sum_model_settings)
+
+    yield model_registry
+
+    try:
+        # It could be that the model is not present anymore
+        await model_registry.unload(model_name)
+    except Exception:
+        pass
 
 
 @pytest.fixture
@@ -62,7 +85,6 @@ async def grpc_server(
     settings: Settings,
     data_plane: DataPlane,
     model_repository_handlers: ModelRepositoryHandlers,
-    inference_pool: InferencePool,
     sum_model: SumModel,
     prometheus_registry: CollectorRegistry,  # noqa: F811
 ):
@@ -74,11 +96,8 @@ async def grpc_server(
 
     server._create_server()
 
-    await inference_pool.load_model(sum_model)
-    await load_batching(sum_model)
     await server._server.start()
 
     yield server
 
-    await inference_pool.unload_model(sum_model)
     await server._server.stop(grace=None)

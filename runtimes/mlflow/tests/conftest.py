@@ -50,7 +50,7 @@ def model_signature(dataset: tuple) -> ModelSignature:
 
 
 @pytest.fixture
-def model_uri(tmp_path, dataset: tuple, model_signature: ModelSignature) -> str:
+def model_uri(tmp_path: str, dataset: tuple, model_signature: ModelSignature) -> str:
     X, y = dataset
 
     clf = DummyClassifier(strategy="prior")

@@ -17,10 +17,14 @@ class CustomHandler(BaseModel):
 def custom_handler(rest_path: str, rest_method: str = "POST"):
     def _wraps(f):
         handler = CustomHandler(rest_path=rest_path, rest_method=rest_method)
-        setattr(f, _CustomHandlerAttr, handler)
+        register_custom_handler(handler, f)
         return f
 
     return _wraps
+
+
+def register_custom_handler(handler: CustomHandler, method: _HandlerMethod):
+    setattr(method, _CustomHandlerAttr, handler)
 
 
 def get_custom_handlers(model: MLModel) -> List[Tuple[CustomHandler, _HandlerMethod]]:

@@ -9,9 +9,16 @@ from mlserver.registry import MultiModelRegistry
 from mlserver.rest import RESTServer
 from mlserver.repository import ModelRepository
 from mlserver.model import MLModel
+from mlserver.parallel import InferencePool
 from mlserver import Settings, ModelSettings
 
-from mlserver_mlflow import MLflowRuntime
+
+@pytest.fixture
+async def inference_pool(settings: Settings) -> AsyncIterable[InferencePool]:
+    pool = InferencePool(settings)
+    yield pool
+
+    await pool.close()
 
 
 @pytest.fixture
@@ -20,10 +27,20 @@ def model_repository(model_uri: str) -> ModelRepository:
 
 
 @pytest.fixture
-async def model_registry(model_settings: ModelSettings) -> MultiModelRegistry:
-    model_registry = MultiModelRegistry()
+async def model_registry(
+    inference_pool: InferencePool, model_settings: ModelSettings
+) -> AsyncIterable[MultiModelRegistry]:
+    model_registry = MultiModelRegistry(
+        on_model_load=[inference_pool.load_model],
+        on_model_reload=[inference_pool.reload_model],
+        on_model_unload=[inference_pool.unload_model],
+    )
+
     await model_registry.load(model_settings)
-    return model_registry
+
+    yield model_registry
+
+    await model_registry.unload(model_settings.name)
 
 
 @pytest.fixture
@@ -57,8 +74,8 @@ async def rest_server(
     settings: Settings,
     data_plane: DataPlane,
     model_repository_handlers: ModelRepositoryHandlers,
-    runtime: MLflowRuntime,
-) -> RESTServer:
+    runtime: MLModel,
+) -> AsyncIterable[RESTServer]:
     server = RESTServer(
         settings,
         data_plane=data_plane,
@@ -67,7 +84,9 @@ async def rest_server(
 
     await server.add_custom_handlers(runtime)
 
-    return server
+    yield server
+
+    await server.delete_custom_handlers(runtime)
 
 
 @pytest.fixture

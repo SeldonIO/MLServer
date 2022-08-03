@@ -1,6 +1,6 @@
 import asyncio
 
-from typing import Callable, Coroutine, List, Dict, Optional
+from typing import Callable, Awaitable, List, Dict, Optional
 from itertools import chain
 from functools import cmp_to_key
 
@@ -10,8 +10,8 @@ from .types import RepositoryIndexResponse
 from .logging import logger
 from .settings import ModelSettings
 
-ModelRegistryHook = Callable[[MLModel], Coroutine[None, None, None]]
-ModelReloadHook = Callable[[MLModel, MLModel], Coroutine[None, None, None]]
+ModelRegistryHook = Callable[[MLModel], Awaitable[MLModel]]
+ModelReloadHook = Callable[[MLModel, MLModel], Awaitable[MLModel]]
 
 
 def _get_version(model_settings: ModelSettings) -> Optional[str]:
@@ -148,24 +148,27 @@ class SingleModelRegistry:
         # Register the model before loading it, to ensure that the model
         # appears as a not-ready (i.e. loading) model
         self._register(model)
-        await model.load()
 
-        # TODO: Expose custom handlers on ParallelRuntime
         for callback in self._on_model_load:
             # NOTE: Callbacks need to be executed sequentially to ensure that
             # they go in the right order
-            await callback(model)
+            model = await callback(model)
+
+        # Register model again to ensure we save version modified by hooks
+        self._register(model)
+        await model.load()
+
         logger.info(f"Loaded model '{model.name}' succesfully.")
 
     async def _reload_model(self, old_model: MLModel, new_model: MLModel):
+        for callback in self._on_model_reload:
+            new_model = await callback(old_model, new_model)
+
         # Loading the model before unloading the old one - this will ensure
         # that at least one is available (sort of mimicking a rolling
         # deployment)
         await new_model.load()
-
         self._register(new_model)
-        for callback in self._on_model_reload:
-            await callback(old_model, new_model)
 
         if old_model == self.default:
             self._clear_default()
