@@ -164,7 +164,7 @@ class ModelSettings(BaseSettings):
     # Source points to the file where model settings were loaded from
     _source: Optional[str] = None
 
-    name: str = ""
+    name: str
     """Name of the model."""
 
     # Model metadata
@@ -206,7 +206,7 @@ class ModelSettings(BaseSettings):
     to wait for enough requests to build a full batch."""
 
     # Custom model class implementation
-    implementation: PyObject = "mlserver.model.MLModel"  # type: ignore
+    implementation: PyObject
     """*Python path* to the inference runtime to use to serve this model (e.g.
     ``mlserver_sklearn.SKLearnModel``)."""
 

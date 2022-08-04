@@ -1,6 +1,7 @@
 import os
 import glob
 
+from pydantic.error_wrappers import ValidationError
 from typing import List
 
 from .settings import ModelParameters, ModelSettings
@@ -34,16 +35,19 @@ class ModelRepository:
                     all_model_settings.append(model_settings)
                 except Exception:
                     logger.exception(
-                        f"Failed load model settings at {model_settings_path}"
+                        f"Failed load model settings at {model_settings_path}."
                     )
-                    continue
 
         # If there were no matches, try to load model from environment
         if not all_model_settings:
-            # return default
-            model_settings = ModelSettings()
-            model_settings.parameters = ModelParameters()
-            all_model_settings.append(model_settings)
+            logger.debug(f"No models were found in repository at {self._root}.")
+            try:
+                # return default
+                model_settings = ModelSettings()
+                model_settings.parameters = ModelParameters()
+                all_model_settings.append(model_settings)
+            except ValidationError:
+                logger.debug("No default model found in environment settings.")
 
         return all_model_settings
 
