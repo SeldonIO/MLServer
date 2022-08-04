@@ -1,10 +1,61 @@
 import os
 import json
+import pytest
+import shutil
 
 from mlserver.repository import ModelRepository, DEFAULT_MODEL_SETTINGS_FILENAME
 from mlserver.settings import ModelSettings, ENV_PREFIX_MODEL_SETTINGS
 
 from .helpers import get_import_path
+from .conftest import TESTDATA_PATH
+
+
+@pytest.fixture
+def multi_model_folder(model_folder: str, sum_model_settings: ModelSettings) -> str:
+    # Remove original
+    model_settings_path = os.path.join(model_folder, DEFAULT_MODEL_SETTINGS_FILENAME)
+    os.remove(model_settings_path)
+
+    num_models = 5
+    for idx in range(num_models):
+        sum_model_settings.parameters.version = f"v{idx}"
+
+        model_version_folder = os.path.join(
+            model_folder,
+            "sum-model",
+            sum_model_settings.parameters.version,
+        )
+        os.makedirs(model_version_folder)
+
+        model_settings_path = os.path.join(
+            model_version_folder, DEFAULT_MODEL_SETTINGS_FILENAME
+        )
+        with open(model_settings_path, "w") as f:
+            settings_dict = sum_model_settings.dict()
+            settings_dict["implementation"] = get_import_path(
+                sum_model_settings.implementation
+            )
+            f.write(json.dumps(settings_dict))
+
+    return model_folder
+
+
+@pytest.fixture
+def custom_module_folder(model_settings: ModelSettings, tmp_path: str) -> str:
+    # Copy models.py, which acts as custom module
+    src = os.path.join(TESTDATA_PATH, "models.py")
+    dst = os.path.join(tmp_path, "models.py")
+    shutil.copyfile(src, dst)
+
+    # Add modified settings, pointing to local module
+    model_settings_path = os.path.join(tmp_path, DEFAULT_MODEL_SETTINGS_FILENAME)
+    with open(model_settings_path, "w") as f:
+        settings_dict = sum_model_settings.dict()
+        # Point to local module
+        settings_dict["implementation"] = "models.SumModel"
+        f.write(json.dumps(settings_dict))
+
+    return str(tmp_path)
 
 
 async def test_list(
@@ -26,6 +77,19 @@ async def test_list(
     assert loaded_model_settings._source == os.path.join(
         model_repository._root, DEFAULT_MODEL_SETTINGS_FILENAME
     )
+
+
+#  async def test_list_custom_module(
+#  custom_module_folder: str, sum_model_settings: ModelSettings
+#  ):
+#  multi_model_repository = ModelRepository(custom_module_folder)
+
+#  settings_list = await multi_model_repository.list()
+
+#  assert len(settings_list) == 1
+#  model_settings = settings_list[0]
+#  assert model_settings.name == sum_model_settings.name
+#  assert get_import_path(model_settings.implementation) == "models.SumModel"
 
 
 async def test_list_multi_model(multi_model_folder: str):
@@ -79,12 +143,15 @@ async def test_list_fallback(
     assert default_model_settings._source is None
 
 
-async def test_name_fallback(model_folder: str, model_repository: ModelRepository):
+async def test_name_fallback(
+    sum_model_settings: ModelSettings,
+    model_folder: str,
+    model_repository: ModelRepository,
+):
     # Create empty model-settings.json file
-    model_settings = ModelSettings()
     model_settings_path = os.path.join(model_folder, DEFAULT_MODEL_SETTINGS_FILENAME)
     with open(model_settings_path, "w") as model_settings_file:
-        d = model_settings.dict()
+        d = sum_model_settings.dict()
         del d["name"]
         d["implementation"] = get_import_path(d["implementation"])
         json.dump(d, model_settings_file)

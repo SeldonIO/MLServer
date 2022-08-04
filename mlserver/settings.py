@@ -164,7 +164,7 @@ class ModelSettings(BaseSettings):
     # Source points to the file where model settings were loaded from
     _source: Optional[str] = None
 
-    name: str
+    name: str = ""
     """Name of the model."""
 
     # Model metadata

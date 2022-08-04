@@ -1,4 +1,3 @@
-import json
 import pytest
 import os
 import shutil
@@ -8,14 +7,13 @@ import logging
 from unittest.mock import Mock
 from mlserver.handlers import DataPlane, ModelRepositoryHandlers
 from mlserver.registry import MultiModelRegistry
-from mlserver.repository import ModelRepository, DEFAULT_MODEL_SETTINGS_FILENAME
+from mlserver.repository import ModelRepository
 from mlserver.parallel import InferencePool
 from mlserver.utils import install_uvloop_event_loop
 from mlserver.logging import get_logger
 from mlserver import types, Settings, ModelSettings
 
 from .fixtures import SumModel, ErrorModel
-from .helpers import get_import_path
 
 TESTS_PATH = os.path.dirname(__file__)
 TESTDATA_PATH = os.path.join(TESTS_PATH, "testdata")
@@ -147,36 +145,6 @@ def model_folder(tmp_path: str) -> str:
         shutil.copyfile(src, dst)
 
     return str(tmp_path)
-
-
-@pytest.fixture
-def multi_model_folder(model_folder, sum_model_settings):
-    # Remove original
-    model_settings_path = os.path.join(model_folder, DEFAULT_MODEL_SETTINGS_FILENAME)
-    os.remove(model_settings_path)
-
-    num_models = 5
-    for idx in range(num_models):
-        sum_model_settings.parameters.version = f"v{idx}"
-
-        model_version_folder = os.path.join(
-            model_folder,
-            "sum-model",
-            sum_model_settings.parameters.version,
-        )
-        os.makedirs(model_version_folder)
-
-        model_settings_path = os.path.join(
-            model_version_folder, DEFAULT_MODEL_SETTINGS_FILENAME
-        )
-        with open(model_settings_path, "w") as f:
-            settings_dict = sum_model_settings.dict()
-            settings_dict["implementation"] = get_import_path(
-                sum_model_settings.implementation
-            )
-            f.write(json.dumps(settings_dict))
-
-    return model_folder
 
 
 @pytest.fixture

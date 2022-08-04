@@ -37,6 +37,7 @@ def test_model_settings_from_env(monkeypatch):
     monkeypatch.setenv("mlserver_model_name", model_name)
     monkeypatch.setenv("mlserver_model_version", model_version)
     monkeypatch.setenv("mlserver_model_uri", model_uri)
+    monkeypatch.setenv("mlserver_model_implementation", "mlserver.MLModel")
 
     model_settings = ModelSettings()
     model_settings.parameters = ModelParameters()
