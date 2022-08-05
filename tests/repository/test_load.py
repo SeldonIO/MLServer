@@ -2,6 +2,7 @@ import os
 import json
 import pytest
 import shutil
+import sys
 
 from mlserver.model import MLModel
 from mlserver.repository.repository import DEFAULT_MODEL_SETTINGS_FILENAME
@@ -62,10 +63,13 @@ async def test_name_fallback(
     assert model_settings.name == os.path.basename(model_folder)
 
 
-async def test_list_custom_module(
+async def test_load_custom_module(
     custom_module_settings_path: str, sum_model_settings: ModelSettings
 ):
+    pre_sys_path = sys.path[:]
     model_settings = load_model_settings(custom_module_settings_path)
+    post_sys_path = sys.path[:]
 
+    assert pre_sys_path == post_sys_path
     assert model_settings.name == sum_model_settings.name
     assert get_import_path(model_settings.implementation) == "models.SumModel"
