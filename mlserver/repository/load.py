@@ -1,7 +1,5 @@
 import os
 
-from pydantic.error_wrappers import ValidationError
-
 from ..settings import ModelParameters, ModelSettings
 from ..logging import logger
 

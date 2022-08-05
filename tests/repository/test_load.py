@@ -3,10 +3,8 @@ import json
 import pytest
 import shutil
 
-from mlserver.repository.repository import (
-    ModelRepository,
-    DEFAULT_MODEL_SETTINGS_FILENAME,
-)
+from mlserver.model import MLModel
+from mlserver.repository.repository import DEFAULT_MODEL_SETTINGS_FILENAME
 from mlserver.repository.load import load_model_settings
 from mlserver.settings import ModelSettings
 
@@ -32,6 +30,20 @@ def custom_module_settings_path(
         f.write(json.dumps(settings_dict))
 
     return model_settings_path
+
+
+async def test_load_model_settings(
+    sum_model_settings: MLModel, model_folder: ModelSettings
+):
+    model_settings_path = os.path.join(model_folder, DEFAULT_MODEL_SETTINGS_FILENAME)
+    model_settings = load_model_settings(model_settings_path)
+
+    assert model_settings.name == sum_model_settings.name
+    assert (
+        model_settings.parameters.version  # type: ignore
+        == sum_model_settings.parameters.version  # type: ignore
+    )
+    assert model_settings._source == model_settings_path
 
 
 async def test_name_fallback(
