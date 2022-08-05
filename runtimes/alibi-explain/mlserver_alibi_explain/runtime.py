@@ -1,4 +1,5 @@
 import json
+import numpy as np
 from typing import Any, Optional, List, Dict
 from alibi.api.interfaces import Explanation, Explainer
 from alibi.saving import load_explainer
@@ -81,7 +82,9 @@ class AlibiExplainRuntimeBase(MLModel):
 
         # TODO: convert and validate?
         input_data = self.decode_request(payload, default_codec=NumpyRequestCodec)
-        output_data = await self._async_explain_impl(input_data, payload.parameters)
+        output_data = await self._async_explain_impl(
+            np.array(input_data), payload.parameters
+        )
 
         return InferenceResponse(
             model_name=self.name,

@@ -55,7 +55,7 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
         # if we get a list of strings, we can only explain the first elem and there
         # is no way of just sending a plain string in v2, it has to be in a list
         # as the encoding is List[str] with content_type "BYTES"
-        # we also assume that the explain data will contain a batch dimession, and in
+        # we also assume that the explain data will contain a batch dimension, and in
         # current implementation we will only explain the first data element.
         input_data = input_data[0]
 

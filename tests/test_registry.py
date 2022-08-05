@@ -4,6 +4,7 @@ import asyncio
 from asyncio import CancelledError
 from typing import List, Union
 
+from mlserver.model import MLModel
 from mlserver.errors import ModelNotFound
 from mlserver.registry import MultiModelRegistry, SingleModelRegistry
 from mlserver.settings import ModelSettings
@@ -15,8 +16,11 @@ from .fixtures import SlowModel
 async def model_registry(
     model_registry: MultiModelRegistry, mocker
 ) -> MultiModelRegistry:
-    async def _async_val(*args, **kwargs):
-        return None
+    async def _async_val(model: MLModel, new_model: MLModel = None) -> MLModel:
+        if new_model:
+            return new_model
+
+        return model
 
     load_stub = mocker.stub("_on_model_load")
     load_stub.side_effect = _async_val

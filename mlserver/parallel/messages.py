@@ -1,8 +1,7 @@
 from enum import IntEnum
 from pydantic import BaseModel
-from typing import Optional
+from typing import Any, Dict, List, Optional
 
-from ..types import InferenceRequest, InferenceResponse
 from ..settings import ModelSettings
 
 
@@ -11,20 +10,22 @@ class ModelUpdateType(IntEnum):
     Unload = 2
 
 
-class InferenceRequestMessage(BaseModel):
+class ModelRequestMessage(BaseModel):
     id: str
     model_name: str
     model_version: Optional[str] = None
-    inference_request: InferenceRequest
+    method_name: str
+    method_args: List[Any] = []
+    method_kwargs: Dict[str, Any] = {}
 
 
-class InferenceResponseMessage(BaseModel):
+class ModelResponseMessage(BaseModel):
     class Config:
         # This is to allow having an Exception field
         arbitrary_types_allowed = True
 
     id: str
-    inference_response: Optional[InferenceResponse]
+    return_value: Optional[Any]
     exception: Optional[Exception]
 
 

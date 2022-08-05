@@ -29,7 +29,7 @@ class RESTServer:
             model_repository_handlers=self._model_repository_handlers,
         )
 
-    async def add_custom_handlers(self, model: MLModel):
+    async def add_custom_handlers(self, model: MLModel) -> MLModel:
         handlers = get_custom_handlers(model)
         for custom_handler, handler_method in handlers:
             self._app.add_api_route(
@@ -38,10 +38,12 @@ class RESTServer:
                 methods=[custom_handler.rest_method],
             )
 
-    async def delete_custom_handlers(self, model: MLModel):
+        return model
+
+    async def delete_custom_handlers(self, model: MLModel) -> MLModel:
         handlers = get_custom_handlers(model)
         if len(handlers) == 0:
-            return
+            return model
 
         # NOTE: Loop in reverse, so that it's quicker to find all the recently
         # added routes and we can remove routes on-the-fly
@@ -50,6 +52,8 @@ class RESTServer:
                 if matches(route, custom_handler, handler_method):  # type: ignore
                     self._app.routes.pop(i)
                     handlers.pop(j)
+
+        return model
 
     async def start(self):
         cfg = self._get_config()

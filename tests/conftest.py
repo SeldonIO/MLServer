@@ -138,15 +138,15 @@ def model_repository_handlers(
 
 
 @pytest.fixture
-def model_folder(tmp_path):
+def model_folder(tmp_path: str) -> str:
     to_copy = ["model-settings.json"]
 
     for file_name in to_copy:
         src = os.path.join(TESTDATA_PATH, file_name)
-        dst = tmp_path.joinpath(file_name)
+        dst = os.path.join(tmp_path, file_name)
         shutil.copyfile(src, dst)
 
-    return tmp_path
+    return str(tmp_path)
 
 
 @pytest.fixture
