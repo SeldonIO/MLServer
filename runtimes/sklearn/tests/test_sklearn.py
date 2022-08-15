@@ -165,9 +165,10 @@ async def test_dataframe_model_output(dataframe_model: SKLearnModel, inference_r
     output_names = [o.name for o in response.outputs]
     assert str(output_names) == str(expected_output_names)
 
+
 @pytest.mark.parametrize(
     "req_outputs",
-    [[],[PREDICT_TRANSFORM]],
+    [[], [PREDICT_TRANSFORM]],
 )
 async def test_preprocessor(
     pandas_preprocessor: SKLearnModel, pandas_inference_request, req_outputs

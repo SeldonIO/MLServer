@@ -4,7 +4,6 @@ import os
 import asyncio
 import numpy as np
 import pandas as pd
-import sklearn.preprocessing
 from sklearn.compose import ColumnTransformer
 
 from sklearn.dummy import DummyClassifier, DummyRegressor
@@ -17,10 +16,7 @@ from mlserver.types import InferenceRequest
 from mlserver.utils import install_uvloop_event_loop
 
 from mlserver_sklearn import SKLearnModel
-from mlserver_sklearn.sklearn import (
-    PREDICT_FN_KEY,
-    PREDICT_TRANSFORM
-)
+from mlserver_sklearn.sklearn import PREDICT_FN_KEY, PREDICT_TRANSFORM
 
 TESTS_PATH = os.path.dirname(__file__)
 TESTDATA_PATH = os.path.join(TESTS_PATH, "testdata")
@@ -193,6 +189,7 @@ async def dataframe_model(model_settings: ModelSettings) -> SKLearnModel:
     model._model = dummy
     return model
 
+
 @pytest.fixture
 def pandas_preprocessor_uri(tmp_path) -> str:
     data: pd.DataFrame = pd.DataFrame(
@@ -222,15 +219,23 @@ def pandas_preprocessor_uri(tmp_path) -> str:
 
     return model_uri
 
+
 @pytest.fixture
 def pandas_preprocessor_settings(pandas_preprocessor_uri: str) -> ModelSettings:
     return ModelSettings(
         name="sklearn-preprocessor-model",
-        parameters=ModelParameters(uri=pandas_preprocessor_uri, version="v1.2.3", extra={PREDICT_FN_KEY:PREDICT_TRANSFORM}),
+        parameters=ModelParameters(
+            uri=pandas_preprocessor_uri,
+            version="v1.2.3",
+            extra={PREDICT_FN_KEY: PREDICT_TRANSFORM},
+        ),
     )
 
+
 @pytest.fixture
-async def pandas_preprocessor(pandas_preprocessor_settings: ModelSettings) -> SKLearnModel:
+async def pandas_preprocessor(
+    pandas_preprocessor_settings: ModelSettings,
+) -> SKLearnModel:
     model = SKLearnModel(pandas_preprocessor_settings)
     await model.load()
 
