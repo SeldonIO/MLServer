@@ -66,7 +66,7 @@ class SKLearnModel(MLModel):
             if not found_predict_fn:
                 payload.outputs = [RequestOutput(name=PREDICT_OUTPUT)]
         else:
-            for request_output in payload.outputs:  # type: ignore
+            for request_output in payload.outputs:
                 if request_output.name not in VALID_OUTPUTS:
                     raise InferenceError(
                         f"SKLearnModel only supports '{PREDICT_OUTPUT}', "
