@@ -16,6 +16,7 @@ from mlserver.types import InferenceRequest
 from mlserver.utils import install_uvloop_event_loop
 
 from mlserver_sklearn import SKLearnModel
+from mlserver_sklearn.sklearn import PREDICT_FN_KEY, PREDICT_TRANSFORM
 
 TESTS_PATH = os.path.dirname(__file__)
 TESTDATA_PATH = os.path.join(TESTS_PATH, "testdata")
@@ -186,4 +187,56 @@ async def dataframe_model(model_settings: ModelSettings) -> SKLearnModel:
 
     # Replace internal model with dummy model
     model._model = dummy
+    return model
+
+
+@pytest.fixture
+def pandas_preprocessor_uri(tmp_path) -> str:
+    data: pd.DataFrame = pd.DataFrame(
+        {"a": [1, 2, 3], "op": ["+", "+", "-"], "y": [11, 22, -33]}
+    )
+
+    X: pd.DataFrame = data.drop("y", axis=1)
+    y: pd.DataFrame = data["y"]
+
+    numeric_features = ["a"]
+    numeric_transformer = StandardScaler()
+
+    categorical_features = ["op"]
+    categorical_transformer = OneHotEncoder(handle_unknown="ignore")
+
+    preprocessor = ColumnTransformer(
+        transformers=[
+            ("num", numeric_transformer, numeric_features),
+            ("cat", categorical_transformer, categorical_features),
+        ]
+    )
+
+    preprocessor.fit(X, y)
+
+    model_uri = os.path.join(tmp_path, "sklearn-preprocessor-model.joblib")
+    joblib.dump(preprocessor, model_uri)
+
+    return model_uri
+
+
+@pytest.fixture
+def pandas_preprocessor_settings(pandas_preprocessor_uri: str) -> ModelSettings:
+    return ModelSettings(
+        name="sklearn-preprocessor-model",
+        parameters=ModelParameters(
+            uri=pandas_preprocessor_uri,
+            version="v1.2.3",
+            extra={PREDICT_FN_KEY: PREDICT_TRANSFORM},
+        ),
+    )
+
+
+@pytest.fixture
+async def pandas_preprocessor(
+    pandas_preprocessor_settings: ModelSettings,
+) -> SKLearnModel:
+    model = SKLearnModel(pandas_preprocessor_settings)
+    await model.load()
+
     return model
