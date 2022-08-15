@@ -7,6 +7,7 @@ from mlserver_sklearn.sklearn import (
     PREDICT_OUTPUT,
     PREDICT_PROBA_OUTPUT,
     WELLKNOWN_MODEL_FILENAMES,
+    PREDICT_TRANSFORM,
 )
 from sklearn.dummy import DummyClassifier, DummyRegressor
 from sklearn.pipeline import Pipeline
@@ -163,3 +164,27 @@ async def test_dataframe_model_output(dataframe_model: SKLearnModel, inference_r
 
     output_names = [o.name for o in response.outputs]
     assert str(output_names) == str(expected_output_names)
+
+@pytest.mark.parametrize(
+    "req_outputs",
+    [[],[PREDICT_TRANSFORM]],
+)
+async def test_preprocessor(
+    pandas_preprocessor: SKLearnModel, pandas_inference_request, req_outputs
+):
+    # The `pandas_model` is a regression model that does not support `predict_proba`
+    pandas_inference_request.outputs = [
+        RequestOutput(name=req_output) for req_output in req_outputs
+    ]
+
+    response = await pandas_preprocessor.predict(pandas_inference_request)
+
+    input_data = pandas_inference_request.inputs[0].data
+    if len(req_outputs) == 0:
+        # Assert that PREDICT_OUTPUT is added by default
+        req_outputs = [PREDICT_TRANSFORM]
+
+    assert len(response.outputs) == len(req_outputs)
+    for req_output, output in zip(req_outputs, response.outputs):
+        assert output.name == req_output
+        assert output.shape[0] == len(input_data)  # type: ignore

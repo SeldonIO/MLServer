@@ -54,7 +54,6 @@ class SKLearnModel(MLModel):
         if not payload.outputs:
             found_predict_fn = False
             if self.settings.parameters:
-                print(self.settings)
                 if self.settings.parameters.extra:
                     if PREDICT_FN_KEY in self.settings.parameters.extra:
                         payload.outputs = [
