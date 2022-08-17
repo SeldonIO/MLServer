@@ -40,6 +40,10 @@ class ModelUpdateMessage(BaseModel):
         model_settings = kwargs.pop("model_settings", None)
         if model_settings:
             as_dict = model_settings.dict()
+            # Ensure the private `_source` attr also gets serialised
+            if model_settings._source:
+                as_dict["_source"] = model_settings._source
+
             import_path = get_import_path(model_settings.implementation)
             as_dict["implementation"] = import_path
             kwargs["serialised_model_settings"] = json.dumps(as_dict)

@@ -15,8 +15,12 @@ class SumModel(MLModel):
         return InferenceResponse(id=payload.id, model_name=self.name, outputs=[output])
 
 
-class SlowModel(SumModel):
+class SlowModel(MLModel):
     async def load(self) -> bool:
-        await asyncio.sleep(2)
+        await asyncio.sleep(10)
         self.ready = True
         return self.ready
+
+    async def infer(self, payload: InferenceRequest) -> InferenceResponse:
+        await asyncio.sleep(10)
+        return InferenceResponse(id=payload.id, model_name=self.name, outputs=[])
