@@ -21,14 +21,16 @@ def _init_model_folder(tmp_path: str, settings: Settings):
     shutil.copy(src_path, dst_path)
 
 
-def case_sum_model(tmp_path: str, settings: Settings) -> str:
+def case_sum_model(
+    tmp_path: str, settings: Settings, sum_model_settings: ModelSettings
+) -> str:
     _init_model_folder(tmp_path, settings)
 
     # Copy SumModel's model-settings.json
-    sum_model_folder = os.path.join(tmp_path, "sum-model")
-    os.makedirs(sum_model_folder)
+    model_folder = os.path.join(tmp_path, sum_model_settings.name)
+    os.makedirs(model_folder)
     old_path = os.path.join(TESTDATA_PATH, DEFAULT_MODEL_SETTINGS_FILENAME)
-    new_path = os.path.join(sum_model_folder, DEFAULT_MODEL_SETTINGS_FILENAME)
+    new_path = os.path.join(model_folder, DEFAULT_MODEL_SETTINGS_FILENAME)
     shutil.copy(old_path, new_path)
 
     return tmp_path
@@ -40,14 +42,35 @@ def case_slow_model(
     _init_model_folder(tmp_path, settings)
 
     # Write SlowModel's model-settings.json
-    slow_model_folder = os.path.join(tmp_path, "sum-model")
-    os.makedirs(slow_model_folder)
-    slow_model_settings_path = os.path.join(
-        slow_model_folder, DEFAULT_MODEL_SETTINGS_FILENAME
-    )
-    with open(slow_model_settings_path, "w") as slow_model_file:
+    model_folder = os.path.join(tmp_path, sum_model_settings.name)
+    os.makedirs(model_folder)
+    model_settings_path = os.path.join(model_folder, DEFAULT_MODEL_SETTINGS_FILENAME)
+    with open(model_settings_path, "w") as model_file:
         as_dict = sum_model_settings.dict()
         as_dict["implementation"] = "models.SlowModel"
-        slow_model_file.write(json.dumps(as_dict))
+        model_file.write(json.dumps(as_dict))
+
+    return tmp_path
+
+
+def case_custom_module(
+    tmp_path: str, settings: Settings, sum_model_settings: ModelSettings
+) -> str:
+    _init_model_folder(tmp_path, settings)
+
+    model_folder = os.path.join(tmp_path, sum_model_settings.name)
+    os.makedirs(model_folder)
+
+    # Copy models.py module
+    src_path = os.path.join(TESTDATA_PATH, "models.py")
+    dst_path = os.path.join(model_folder, "custom.py")
+    shutil.copy(src_path, dst_path)
+
+    # Write model settings pointing to local module
+    model_settings_path = os.path.join(model_folder, DEFAULT_MODEL_SETTINGS_FILENAME)
+    with open(model_settings_path, "w") as model_settings_file:
+        as_dict = sum_model_settings.dict()
+        as_dict["implementation"] = "custom.SlowModel"
+        model_settings_file.write(json.dumps(as_dict))
 
     return tmp_path
