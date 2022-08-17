@@ -3,7 +3,7 @@ import uuid
 import asyncio
 
 from asyncio import Task
-from typing import Callable, Dict, Optional, List
+from typing import Callable, Dict, Optional, List, Type
 
 from .logging import logger
 from .types import InferenceRequest, InferenceResponse, Parameters
@@ -128,3 +128,7 @@ def schedule_with_callback(coro, cb) -> Task:
     task = asyncio.create_task(coro)
     task.add_done_callback(cb)
     return task
+
+
+def get_import_path(klass: Type):
+    return f"{klass.__module__}.{klass.__name__}"

@@ -10,6 +10,7 @@ from mlserver.utils import (
     extract_headers,
     insert_headers,
     install_uvloop_event_loop,
+    get_import_path,
 )
 from mlserver.model import MLModel
 from mlserver.types import InferenceRequest, InferenceResponse, Parameters
@@ -107,3 +108,8 @@ def test_uvloop_auto_install():
             assert isinstance(policy, asyncio.WindowsProactorEventLoopPolicy)
         elif platform.python_implementation() != "CPython":
             assert isinstance(policy, asyncio.DefaultEventLoopPolicy)
+
+
+def test_get_import_path(sum_model: MLModel):
+    import_path = get_import_path(sum_model.__class__)
+    assert import_path == "tests.fixtures.SumModel"

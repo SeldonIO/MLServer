@@ -4,8 +4,7 @@ import pytest
 
 from mlserver.repository import ModelRepository, DEFAULT_MODEL_SETTINGS_FILENAME
 from mlserver.settings import ModelSettings, ENV_PREFIX_MODEL_SETTINGS
-
-from .utils import get_import_path
+from mlserver.utils import get_import_path
 
 
 @pytest.fixture

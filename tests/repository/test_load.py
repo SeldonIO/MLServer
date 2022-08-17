@@ -8,9 +8,9 @@ from mlserver.model import MLModel
 from mlserver.repository.repository import DEFAULT_MODEL_SETTINGS_FILENAME
 from mlserver.repository.load import load_model_settings
 from mlserver.settings import ModelSettings
+from mlserver.utils import get_import_path
 
 from ..conftest import TESTDATA_PATH
-from .utils import get_import_path
 
 
 @pytest.fixture
