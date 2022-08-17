@@ -39,7 +39,7 @@ You can install the `mlserver` package running:
 pip install mlserver
 ```
 
-Note that to use any of the optional [inference runtimes](#Inference-Runtimes),
+Note that to use any of the optional [inference runtimes](#inference-runtimes),
 you'll need to install the relevant package.
 For example, to serve a `scikit-learn` model, you would need to install the
 `mlserver-sklearn` package:

@@ -104,6 +104,40 @@ class CustomHeadersRuntime(MLModel):
     )
 ```
 
+## Loading a custom MLServer runtime
+
+```{note}
+When following this approach, custom runtimes will get loaded into a "vanilla"
+MLServer instance, which may be missing some of the dependencies of your custom
+environment.
+If you need to load a custom set of dependencies, we recommend to either build
+a [custom MLServer image](#building-a-custom-mlserver-image) or to prepare a
+[custom environment tarball](../examples/conda/README).
+```
+
+MLServer lets you load custom runtimes dynamically into a running instance of
+MLServer.
+Once you have your custom runtime ready, all you need to is to move it to your
+model folder, next to your `model-settings.json` configuration file.
+
+For example, if we assume a flat model repository where each folder represents
+a model, you would end up with a folder structure like the one below:
+
+```bash
+.
+└── models
+    └── sum-model
+        ├── model-settings.json
+        ├── models.py
+```
+
+Note that, from the example above, we are assuming that:
+
+- Your custom runtime code lives in the `models.py` file.
+- The `implementation` field of your `model-settings.json` configuration file
+  contains the import path of your custom runtime (e.g.
+  `models.MyCustomRuntime`).
+
 ## Building a custom MLServer image
 
 ```{note}
