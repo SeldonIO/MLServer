@@ -1,14 +1,11 @@
 import os
-import sys
-
-from contextlib import contextmanager
 
 from ..settings import ModelParameters, ModelSettings
 from ..logging import logger
 
 
 def load_model_settings(model_settings_path: str) -> ModelSettings:
-    model_settings = _parse_model_settings(model_settings_path)
+    model_settings = ModelSettings.parse_file(model_settings_path)
 
     # If name not present, default to folder name
     model_settings_folder = os.path.dirname(model_settings_path)
@@ -32,24 +29,6 @@ def load_model_settings(model_settings_path: str) -> ModelSettings:
         model_settings.parameters.uri = default_model_uri
 
     return model_settings
-
-
-def _parse_model_settings(model_settings_path: str) -> ModelSettings:
-    with _extra_sys_path(model_settings_path):
-        model_settings = ModelSettings.parse_file(model_settings_path)
-        model_settings._source = model_settings_path
-
-        return model_settings
-
-
-@contextmanager
-def _extra_sys_path(model_settings_path: str):
-    model_settings_folder = os.path.dirname(model_settings_path)
-    sys.path.insert(0, model_settings_folder)
-
-    yield
-
-    sys.path.remove(model_settings_folder)
 
 
 def _folder_matches(folder_name: str, model_settings: ModelSettings) -> bool:
