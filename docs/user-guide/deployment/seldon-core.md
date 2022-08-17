@@ -43,7 +43,7 @@ kind: SeldonDeployment
 metadata:
   name: my-model
 spec:
-  protocol: kfserving
+  protocol: v2
   predictors:
     - name: default
       graph:
@@ -153,7 +153,7 @@ custom MLServer image is:
 - Letting Seldon Core know that the model deployment will be served through the
   [V2 inference
   protocol](https://kserve.github.io/website/modelserving/inference_api/)) by
-  setting the `protocol` field to `kserving`.
+  setting the `protocol` field to `v2`.
 - Pointing our model container to use our **custom MLServer image**, by
   specifying it on the `image` field of the `componentSpecs` section of the
   manifest.
