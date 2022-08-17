@@ -4,11 +4,15 @@ import uuid
 from mlserver.settings import ModelSettings, ModelParameters
 from mlserver.types import MetadataTensor
 
+from ..fixtures import SumModel
+
 
 @pytest.mark.parametrize("ready", [True, False])
 async def test_ready(data_plane, model_registry, ready):
     model_settings = ModelSettings(
-        name="sum-model-2", parameters=ModelParameters(version="v1.2.3")
+        name="sum-model-2",
+        parameters=ModelParameters(version="v1.2.3"),
+        implementation=SumModel,
     )
     new_model = await model_registry.load(model_settings)
 
