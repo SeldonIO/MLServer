@@ -3,7 +3,6 @@ import json
 
 from mlserver.settings import ModelSettings
 from mlserver.parallel.messages import (
-    ModelResponseMessage,
     ModelUpdateMessage,
     ModelUpdateType,
 )

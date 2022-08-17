@@ -57,7 +57,8 @@ class InferencePool:
             return model
 
         load_message = ModelUpdateMessage(
-            update_type=ModelUpdateType.Load, model_settings=model.settings
+            update_type=ModelUpdateType.Load,
+            model_settings=model.settings,  # type: ignore
         )
         await asyncio.gather(
             *[worker.send_update(load_message) for worker in self._workers.values()]
@@ -76,7 +77,8 @@ class InferencePool:
             return model
 
         unload_message = ModelUpdateMessage(
-            update_type=ModelUpdateType.Unload, model_settings=model.settings
+            update_type=ModelUpdateType.Unload,
+            model_settings=model.settings,  # type: ignore
         )
         await asyncio.gather(
             *[worker.send_update(unload_message) for worker in self._workers.values()]
