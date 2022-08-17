@@ -25,22 +25,6 @@ def _extra_sys_path(extra_path: str):
     sys.path.remove(extra_path)
 
 
-# NOTE: Pydantic does some magic to change the imports during type checking
-# with `mypy`, therefore we need to skip the class definition from `mypy`.
-class LocalPyObject(PyObject):  # type: ignore
-    """
-    Custom Pydantic field which will ensure the path relative to the
-    `model-settings.json` file is added to `sys.path` before loading the
-    model's runtime.
-    This will allow the user to load custom runtimes present on their model
-    repository and outside of the main `sys.path`.
-    """
-
-    @classmethod
-    def validate(cls, value: Any, values: Dict[str, Any]) -> Any:
-        return super().validate(value)
-
-
 class CORSSettings(BaseSettings):
     class Config:
         env_file = ENV_FILE_SETTINGS
@@ -255,7 +239,7 @@ class ModelSettings(BaseSettings):
     to wait for enough requests to build a full batch."""
 
     # Custom model class implementation
-    implementation: LocalPyObject
+    implementation: PyObject
     """*Python path* to the inference runtime to use to serve this model (e.g.
     ``mlserver_sklearn.SKLearnModel``)."""
 

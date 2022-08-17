@@ -7,7 +7,7 @@ import logging
 from unittest.mock import Mock
 from mlserver.handlers import DataPlane, ModelRepositoryHandlers
 from mlserver.registry import MultiModelRegistry
-from mlserver.repository import ModelRepository
+from mlserver.repository import ModelRepository, DEFAULT_MODEL_SETTINGS_FILENAME
 from mlserver.parallel import InferencePool
 from mlserver.utils import install_uvloop_event_loop
 from mlserver.logging import get_logger
@@ -54,13 +54,13 @@ def event_loop():
 
 @pytest.fixture
 def sum_model_settings() -> ModelSettings:
-    model_settings_path = os.path.join(TESTDATA_PATH, "model-settings.json")
+    model_settings_path = os.path.join(TESTDATA_PATH, DEFAULT_MODEL_SETTINGS_FILENAME)
     return ModelSettings.parse_file(model_settings_path)
 
 
 @pytest.fixture
 def error_model_settings() -> ModelSettings:
-    model_settings_path = os.path.join(TESTDATA_PATH, "model-settings.json")
+    model_settings_path = os.path.join(TESTDATA_PATH, DEFAULT_MODEL_SETTINGS_FILENAME)
     model_settings = ModelSettings.parse_file(model_settings_path)
     model_settings.name = "error-model"
     model_settings.implementation = ErrorModel
@@ -137,7 +137,7 @@ def model_repository_handlers(
 
 @pytest.fixture
 def model_folder(tmp_path: str) -> str:
-    to_copy = ["model-settings.json"]
+    to_copy = [DEFAULT_MODEL_SETTINGS_FILENAME]
 
     for file_name in to_copy:
         src = os.path.join(TESTDATA_PATH, file_name)
