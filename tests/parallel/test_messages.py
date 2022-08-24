@@ -24,10 +24,12 @@ _dummy_model_settings = ModelSettings(name="foo", implementation=SumModel).dict(
             ModelUpdateMessage(
                 update_type=ModelUpdateType.Load,
                 serialised_model_settings=json.dumps(
-                    _dummy_model_settings
-                    | {
-                        "name": "foo",
-                        "implementation": "tests.fixtures.SumModel",
+                    {
+                        **_dummy_model_settings,
+                        **{
+                            "name": "foo",
+                            "implementation": "tests.fixtures.SumModel",
+                        },
                     }
                 ),
             ),
