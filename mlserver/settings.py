@@ -106,6 +106,11 @@ class Settings(BaseSettings):
     Port used to expose metrics endpoint.
     """
 
+    metrics_rest_server_prefix: str = "rest_server"
+    """
+    Metrics rest server string prefix to be exported.
+    """
+
     # Logging settings
     logging_settings: Optional[str] = None
     """Path to logging config file."""
