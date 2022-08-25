@@ -179,6 +179,7 @@ async def anchor_image_runtime_with_remote_predict_patch(
     rt = AlibiExplainRuntime(
         ModelSettings(
             parallel_workers=0,
+            implementation=AlibiExplainRuntime,
             parameters=ModelParameters(
                 uri=str(anchor_image_directory),
                 extra=AlibiExplainSettings(
@@ -197,6 +198,7 @@ async def integrated_gradients_runtime() -> AlibiExplainRuntime:
     rt = AlibiExplainRuntime(
         ModelSettings(
             parallel_workers=1,
+            implementation=AlibiExplainRuntime,
             parameters=ModelParameters(
                 extra=AlibiExplainSettings(
                     init_parameters={"n_steps": 50, "method": "gausslegendre"},

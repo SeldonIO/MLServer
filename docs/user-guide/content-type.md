@@ -1,4 +1,4 @@
-# Content Types
+# Content Types (and Codecs)
 
 Machine learning models generally expect their inputs to be passed down as a
 particular Python type.

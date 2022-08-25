@@ -9,5 +9,6 @@ how to use them.
 ./content-type
 ./parallel-inference
 ./adaptive-batching
+./custom
 ./deployment/index
 ```

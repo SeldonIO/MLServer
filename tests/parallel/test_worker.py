@@ -61,12 +61,17 @@ async def test_load_model(
     loaded_models = await worker._model_registry.get_models()
     assert len(list(loaded_models)) == 1
 
-    load_message.model_settings.name = "foo-model"
-    await worker.send_update(load_message)
+    new_model_settings = load_message.model_settings.copy()
+    new_model_settings.name = "foo-model"
+    new_load_message = ModelUpdateMessage(
+        update_type=load_message.update_type, model_settings=new_model_settings
+    )
+    await worker.send_update(new_load_message)
 
     loaded_models = list(await worker._model_registry.get_models())
     assert len(loaded_models) == 2
-    assert loaded_models[1].name == load_message.model_settings.name
+    assert loaded_models[0].name == load_message.model_settings.name
+    assert loaded_models[1].name == new_load_message.model_settings.name
 
 
 async def test_unload_model(

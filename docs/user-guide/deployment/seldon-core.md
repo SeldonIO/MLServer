@@ -43,7 +43,7 @@ kind: SeldonDeployment
 metadata:
   name: my-model
 spec:
-  protocol: kfserving
+  protocol: v2
   predictors:
     - name: default
       graph:
@@ -128,14 +128,14 @@ follows:
 
 ```{code-block} yaml
 ---
-emphasize-lines: 6, 15, 16-19, 20-26
+emphasize-lines: 6, 15
 ---
 apiVersion: machinelearning.seldon.io/v1
 kind: SeldonDeployment
 metadata:
   name: my-model
 spec:
-  protocol: kfserving
+  protocol: v2
   predictors:
     - name: default
       graph:
@@ -145,13 +145,6 @@ spec:
             containers:
               - name: classifier
                 image: my-custom-server:0.1.0
-                ports:
-                  - containerPort: 8080
-                    name: http
-                    protocol: TCP
-                  - containerPort: 8081
-                    name: grpc
-                    protocol: TCP
 ```
 
 As we can see highlighted on the snippet above, all that's needed to deploy a
@@ -160,12 +153,10 @@ custom MLServer image is:
 - Letting Seldon Core know that the model deployment will be served through the
   [V2 inference
   protocol](https://kserve.github.io/website/modelserving/inference_api/)) by
-  setting the `protocol` field to `kserving`.
+  setting the `protocol` field to `v2`.
 - Pointing our model container to use our **custom MLServer image**, by
   specifying it on the `image` field of the `componentSpecs` section of the
   manifest.
-- Adding a couple workarounds to ensure that the serving environment used by
-  Seldon Core is compatible with the custom MLServer images.
 
 Once you have your `SeldonDeployment` manifest ready, then the next step is to
 apply it to your cluster.

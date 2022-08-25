@@ -23,6 +23,7 @@ def event_loop():
 def model_settings() -> ModelSettings:
     return ModelSettings(
         name="foo",
+        implementation=HuggingFaceRuntime,
         parameters=ModelParameters(
             extra={
                 "task": "question-answering",

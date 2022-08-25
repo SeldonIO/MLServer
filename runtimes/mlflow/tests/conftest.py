@@ -101,6 +101,7 @@ def model_settings(model_uri: str) -> ModelSettings:
 def model_settings_pytorch_fixed(pytorch_model_uri) -> ModelSettings:
     return ModelSettings(
         name="mlflow-model",
+        implementation=MLflowRuntime,
         parameters=ModelParameters(uri=pytorch_model_uri),
     )
 

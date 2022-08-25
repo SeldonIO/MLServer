@@ -1,5 +1,10 @@
-from typing import List, Optional
+import sys
+import os
+import json
+
+from typing import Any, List, Optional
 from pydantic import BaseSettings, PyObject, Field
+from contextlib import contextmanager
 
 from .version import __version__
 from .types import MetadataTensor
@@ -9,6 +14,15 @@ ENV_PREFIX_SETTINGS = "MLSERVER_"
 ENV_PREFIX_MODEL_SETTINGS = "MLSERVER_MODEL_"
 
 DEFAULT_PARALLEL_WORKERS = 1
+
+
+@contextmanager
+def _extra_sys_path(extra_path: str):
+    sys.path.insert(0, extra_path)
+
+    yield
+
+    sys.path.remove(extra_path)
 
 
 class CORSSettings(BaseSettings):
@@ -164,6 +178,25 @@ class ModelSettings(BaseSettings):
     # Source points to the file where model settings were loaded from
     _source: Optional[str] = None
 
+    @classmethod
+    def parse_file(cls, path: str) -> "ModelSettings":  # type: ignore
+        with open(path, "r") as f:
+            obj = json.load(f)
+            obj["_source"] = path
+            return cls.parse_obj(obj)
+
+    @classmethod
+    def parse_obj(cls, obj: Any) -> "ModelSettings":
+        source = obj.pop("_source", None)
+        if not source:
+            return super().parse_obj(obj)
+
+        model_folder = os.path.dirname(source)
+        with _extra_sys_path(model_folder):
+            model_settings = super().parse_obj(obj)
+            model_settings._source = source
+            return model_settings
+
     name: str = ""
     """Name of the model."""
 
@@ -206,7 +239,7 @@ class ModelSettings(BaseSettings):
     to wait for enough requests to build a full batch."""
 
     # Custom model class implementation
-    implementation: PyObject = "mlserver.model.MLModel"  # type: ignore
+    implementation: PyObject
     """*Python path* to the inference runtime to use to serve this model (e.g.
     ``mlserver_sklearn.SKLearnModel``)."""
 

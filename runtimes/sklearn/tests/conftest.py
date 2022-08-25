@@ -50,6 +50,7 @@ def model_uri(tmp_path) -> str:
 def model_settings(model_uri: str) -> ModelSettings:
     return ModelSettings(
         name="sklearn-model",
+        implementation=SKLearnModel,
         parameters=ModelParameters(uri=model_uri, version="v1.2.3"),
     )
 
@@ -83,6 +84,7 @@ async def regression_model(tmp_path) -> SKLearnModel:
 
     settings = ModelSettings(
         name="sklearn-regression-model",
+        implementation=SKLearnModel,
         parameters=ModelParameters(uri=model_uri, version="v1.2.3"),
     )
 
@@ -130,6 +132,7 @@ def pandas_model_uri(tmp_path) -> str:
 def pandas_model_settings(pandas_model_uri: str) -> ModelSettings:
     return ModelSettings(
         name="sklearn-pandas-model",
+        implementation=SKLearnModel,
         parameters=ModelParameters(uri=pandas_model_uri, version="v1.2.3"),
     )
 
@@ -224,6 +227,7 @@ def pandas_preprocessor_uri(tmp_path) -> str:
 def pandas_preprocessor_settings(pandas_preprocessor_uri: str) -> ModelSettings:
     return ModelSettings(
         name="sklearn-preprocessor-model",
+        implementation=SKLearnModel,
         parameters=ModelParameters(
             uri=pandas_preprocessor_uri,
             version="v1.2.3",

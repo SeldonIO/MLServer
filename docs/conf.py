@@ -56,6 +56,9 @@ autodoc_pydantic_settings_show_json = False
 bibtex_bibfiles = ["references.bib"]
 bibtex_reference_style = "author_year"
 
+# Auto-generate header anchors
+myst_heading_anchors = 3
+
 
 # -- Options for HTML output -------------------------------------------------
 

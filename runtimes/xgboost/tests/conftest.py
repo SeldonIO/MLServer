@@ -60,6 +60,7 @@ def classifier_uri(tmp_path) -> str:
 def model_settings(model_uri: str) -> ModelSettings:
     return ModelSettings(
         name="xgboost-model",
+        implementation=XGBoostModel,
         parameters=ModelParameters(uri=model_uri, version="v1.2.3"),
     )
 
@@ -76,6 +77,7 @@ async def model(model_settings: ModelSettings) -> XGBoostModel:
 async def classifier(classifier_uri: str) -> XGBoostModel:
     model_settings = ModelSettings(
         name="xgboost-model",
+        implementation=XGBoostModel,
         parameters=ModelParameters(uri=classifier_uri, version="v1.2.3"),
     )
     model = XGBoostModel(model_settings)

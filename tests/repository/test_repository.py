@@ -1,10 +1,40 @@
 import os
 import json
+import pytest
 
 from mlserver.repository import ModelRepository, DEFAULT_MODEL_SETTINGS_FILENAME
 from mlserver.settings import ModelSettings, ENV_PREFIX_MODEL_SETTINGS
+from mlserver.utils import get_import_path
 
-from .helpers import get_import_path
+
+@pytest.fixture
+def multi_model_folder(model_folder: str, sum_model_settings: ModelSettings) -> str:
+    # Remove original
+    model_settings_path = os.path.join(model_folder, DEFAULT_MODEL_SETTINGS_FILENAME)
+    os.remove(model_settings_path)
+
+    num_models = 5
+    for idx in range(num_models):
+        sum_model_settings.parameters.version = f"v{idx}"
+
+        model_version_folder = os.path.join(
+            model_folder,
+            "sum-model",
+            sum_model_settings.parameters.version,
+        )
+        os.makedirs(model_version_folder)
+
+        model_settings_path = os.path.join(
+            model_version_folder, DEFAULT_MODEL_SETTINGS_FILENAME
+        )
+        with open(model_settings_path, "w") as f:
+            settings_dict = sum_model_settings.dict()
+            settings_dict["implementation"] = get_import_path(
+                sum_model_settings.implementation
+            )
+            f.write(json.dumps(settings_dict))
+
+    return model_folder
 
 
 async def test_list(
@@ -77,20 +107,6 @@ async def test_list_fallback(
         == sum_model_settings.parameters.version  # type: ignore
     )
     assert default_model_settings._source is None
-
-
-async def test_name_fallback(model_folder: str, model_repository: ModelRepository):
-    # Create empty model-settings.json file
-    model_settings = ModelSettings()
-    model_settings_path = os.path.join(model_folder, DEFAULT_MODEL_SETTINGS_FILENAME)
-    with open(model_settings_path, "w") as model_settings_file:
-        d = model_settings.dict()
-        del d["name"]
-        d["implementation"] = get_import_path(d["implementation"])
-        json.dump(d, model_settings_file)
-
-    model_settings = model_repository._load_model_settings(model_settings_path)
-    assert model_settings.name == os.path.basename(model_folder)
 
 
 async def test_find(

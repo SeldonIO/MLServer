@@ -21,6 +21,7 @@ def alibi_detect_tabular_outlier_model_settings(
 ) -> ModelSettings:
     return ModelSettings(
         name="alibi-detect-model",
+        implementation=AlibiDetectRuntime,
         parameters=ModelParameters(
             uri=alibi_detect_tabular_outlier_model_uri,
             version="v1.2.3",

@@ -148,7 +148,7 @@ async def test_alibi_runtime_wrapper(custom_runtime_tf: MLModel):
     )
 
     # settings object is dummy and discarded
-    wrapper = _MockInit(ModelSettings())
+    wrapper = _MockInit(ModelSettings(name="foo", implementation=AlibiExplainRuntime))
 
     assert wrapper.settings == custom_runtime_tf.settings
     assert wrapper.name == custom_runtime_tf.name
@@ -208,7 +208,7 @@ async def test_explain_parameters_pass_through():
             return Explanation(meta={}, data={})
 
     rt = _DummyExplainer(
-        settings=ModelSettings(),
+        settings=ModelSettings(name="foo", implementation=AlibiExplainRuntime),
         explainer_settings=AlibiExplainSettings(
             infer_uri="dum",
             explainer_type="dum",
