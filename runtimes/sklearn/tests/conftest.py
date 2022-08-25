@@ -227,6 +227,7 @@ def pandas_preprocessor_uri(tmp_path) -> str:
 def pandas_preprocessor_settings(pandas_preprocessor_uri: str) -> ModelSettings:
     return ModelSettings(
         name="sklearn-preprocessor-model",
+        implementation=SKLearnModel,
         parameters=ModelParameters(
             uri=pandas_preprocessor_uri,
             version="v1.2.3",
