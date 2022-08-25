@@ -120,7 +120,7 @@ def create_app(
         app.add_middleware(
             PrometheusMiddleware,
             app_name="mlserver",
-            prefix="rest_server",
+            prefix=settings.metrics_rest_server_prefix,
             # TODO: Should we also exclude model's health endpoints?
             skip_paths=[
                 settings.metrics_endpoint,
