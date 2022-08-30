@@ -6,6 +6,7 @@ from mlserver.parallel.messages import (
     ModelUpdateMessage,
     ModelUpdateType,
 )
+from mlserver.utils import get_import_path
 
 from ..fixtures import SumModel
 
@@ -79,4 +80,9 @@ def test_model_update_message(kwargs: dict, expected: ModelUpdateMessage):
 def test_model_settings(
     model_update_message: ModelUpdateMessage, expected: ModelSettings
 ):
-    assert model_update_message.model_settings == expected
+    model_settings = model_update_message.model_settings
+    import_path = get_import_path(model_settings.implementation)
+    expected_path = get_import_path(expected.implementation)
+    assert import_path == expected_path
+
+    assert model_settings.name == expected.name
