@@ -29,7 +29,7 @@ class Parameters(BaseModel):
 
 
 class TensorData(BaseModel):
-    __root__: Any = Field(..., title="tensor_data")
+    __root__: Any = Field(..., title="TensorData")
 
     def __iter__(self):
         return iter(self.__root__)
