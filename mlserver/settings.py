@@ -1,6 +1,7 @@
 import sys
 import os
 import json
+import importlib
 
 from typing import Any, List, Optional
 from pydantic import BaseSettings, PyObject, Field
@@ -23,6 +24,16 @@ def _extra_sys_path(extra_path: str):
     yield
 
     sys.path.remove(extra_path)
+
+
+def _reload_module(obj: dict):
+    import_path = obj.get("implementation", None)
+    if not import_path:
+        return
+
+    module_path, _, _ = import_path.rpartition(".")
+    module = importlib.import_module(module_path)
+    importlib.reload(module)
 
 
 class CORSSettings(BaseSettings):
@@ -193,6 +204,7 @@ class ModelSettings(BaseSettings):
 
         model_folder = os.path.dirname(source)
         with _extra_sys_path(model_folder):
+            _reload_module(obj)
             model_settings = super().parse_obj(obj)
             model_settings._source = source
             return model_settings
