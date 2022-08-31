@@ -41,10 +41,6 @@ class RepositoryIndexResponse(BaseModel):
         return len(self.__root__)
 
 
-class RepositoryIndexErrorResponse(BaseModel):
-    error: Optional[str] = None
-
-
 class RepositoryLoadErrorResponse(BaseModel):
     error: Optional[str] = None
 
