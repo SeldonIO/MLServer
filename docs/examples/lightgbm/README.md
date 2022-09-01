@@ -103,7 +103,7 @@ inference_request = {
     ]
 }
 
-endpoint = "http://localhost:8788/v2/models/iris-lgb/versions/v0.1.0/infer"
+endpoint = "http://localhost:8080/v2/models/iris-lgb/versions/v0.1.0/infer"
 response = requests.post(endpoint, json=inference_request)
 
 response.json()
