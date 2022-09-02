@@ -251,6 +251,17 @@ Now that we have written and tested our custom model, the next step is to deploy
 With that goal in mind, the rough outline of steps will be to first build a custom image containing our code, and then deploy it.
 
 
+### Specifying requirements
+MLServer will automatically find your requirements.txt file and install necessary python packages
+
+
+```python
+%%writefile requirements.txt
+numpy==1.22.0
+numpyro==0.8.0
+jax==0.2.24
+```
+
 ### Building a custom image
 
 ```{note}
