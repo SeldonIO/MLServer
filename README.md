@@ -93,7 +93,7 @@ MLServer to start serving your machine learning models.
 - [Serving a `tempo` pipeline](./docs/examples/tempo/README.md)
 - [Serving a custom model](./docs/examples/custom/README.md)
 - [Serving an `alibi-detect` model](./docs/examples/alibi-detect/README.md)
-- [Serving a `HuggingFace` model](./docs/examples/huggingface/README.m)
+- [Serving a `HuggingFace` model](./docs/examples/huggingface/README.md)
 - [Multi-Model Serving with multiple frameworks](./docs/examples/mms/README.md)
 - [Loading / unloading models from a model repository](./docs/examples/model-repository/README.md)
 
