@@ -14,6 +14,7 @@ from ..utils import install_uvloop_event_loop
 
 from .build import generate_dockerfile, build_image, write_dockerfile
 from .serve import load_settings
+from ..batch_processing import process_batch, INFER_LOG_LEVEL
 
 
 def click_async(f):
@@ -85,6 +86,66 @@ async def dockerfile(folder: str, include_dockerignore: bool):
     )
     logger.info(f"Successfully written Dockerfile in {dockerfile_path}")
 
+
+@root.command("infer")
+@click.option(
+    "--url",
+    "-u",
+    default="localhost:8000",
+    type=str,
+)
+@click.option(
+    "--model-name",
+    "-m",
+    type=str,
+    required=True,
+)
+@click.option(
+    "--input-file-path",
+    "-i",
+    type=click.Path(),
+    required=True,
+)
+@click.option(
+    "--output-file-path",
+    "-o",
+    type=click.Path(),
+    required=True,
+)
+@click.option("--workers", "-w", type=int, default=10)
+@click.option(
+    "--verbose",
+    "-v",
+    default=False,
+    type=bool,
+)
+@click.option(
+    "--binary-payloads",
+    "-b",
+    default=False,
+    type=bool,
+)
+@click.option(
+    "--log-level",
+    "-l",
+    type=click.Choice(list(INFER_LOG_LEVEL)),
+    default="info",
+)
+@click_async
+# TODO: add flags for SLL (see Tritonclient examples)
+async def infer(
+    model_name, url, workers, verbose, input_file_path, output_file_path, log_level, binary_payloads
+):
+    await process_batch(
+        model_name,
+        url,
+        workers,
+        verbose,
+        input_file_path,
+        output_file_path,
+        log_level,
+        binary_payloads,
+    )
 
 def main():
     configure_logger()

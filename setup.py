@@ -53,6 +53,8 @@ setup(
         "py-grpc-prometheus",
         "uvloop;" + env_marker_cpython,
         "aiokafka",
+        "tritonclient[all]",
+        "aiofiles"
     ],
     extras_require={"all": ["orjson"]},
     entry_points={"console_scripts": ["mlserver=mlserver.cli:main"]},
