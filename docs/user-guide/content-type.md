@@ -210,7 +210,7 @@ However, this can be extended through the use of 3rd-party or custom runtimes.
 | ------------------------------------- | ------------ | ------------- | ------------------------------------ | ----------- | ------------------------------- |
 | [NumPy Array](#numpy-array)           | `np`         | ✅            | `mlserver.codecs.NumpyRequestCodec`  | ✅          | `mlserver.codecs.NumpyCodec`    |
 | [Pandas DataFrame](#pandas-dataframe) | `pd`         | ✅            | `mlserver.codecs.PandasCodec`        | ❌          |                                 |
-| [UTF-8 String](#utf-8-string)         | `str`        | ✅            | `mlserver.codecs.StringRequestCodec` | ✅          | `mlserver.codecs.StringCodec`   |
+| [UTF-8 String](#utf-8-string)         | `str`        | ✅            | `mlserver.codecs.string.StringRequestCodec` | ✅          | `mlserver.codecs.StringCodec`   |
 | [Base64](#base64)                     | `base64`     | ❌            |                                      | ✅          | `mlserver.codecs.Base64Codec`   |
 | [Datetime](#datetime)                 | `datetime`   | ❌            |                                      | ✅          | `mlserver.codecs.DatetimeCodec` |
 
@@ -440,7 +440,7 @@ emphasize-lines: 3,7-8
 ---
 emphasize-lines: 1,4
 ---
-from mlserver.codecs import StringRequestCodec
+from mlserver.codecs.string import StringRequestCodec
 
 # Encode an entire V2 request
 v2_request = StringRequestCodec.encode_request(foo, use_bytes=False)
