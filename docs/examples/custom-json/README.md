@@ -124,6 +124,8 @@ For that, we can use the Python types that `mlserver` provides out of box, or we
 ```python
 import requests
 import json
+from mlserver.types import InferenceResponse
+from mlserver.codecs.string import StringRequestCodec
 from pprint import PrettyPrinter
 
 pp = PrettyPrinter(indent=1)
@@ -150,7 +152,9 @@ response = requests.post(endpoint, json=inference_request)
 print(f"full response:\n")
 print(response)
 # retrive text output as dictionary
-output = json.loads(response.outputs[0].contents.bytes_contents[0])
+inference_response = InferenceResponse.parse_raw(response.text)
+raw_json = StringRequestCodec.decode_response(inference_response)
+output = json.loads(raw_json[0])
 print(f"\ndata part:\n")
 pp.pprint(output)
 ```
@@ -208,9 +212,4 @@ print(response)
 output = json.loads(response.outputs[0].contents.bytes_contents[0])
 print(f"\ndata part:\n")
 pp.pprint(output)
-```
-
-
-```python
-
 ```
