@@ -1,5 +1,5 @@
 # Code generation
-grpcio-tools==1.48.1
+grpcio-tools==1.49.0
 datamodel-code-generator==0.13.1
 ## Locking `prance` (a subdep of `datamodel-code-generator`) to an older
 ## version due to issues with the latest version of `pip`:
