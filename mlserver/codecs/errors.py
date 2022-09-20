@@ -1,3 +1,5 @@
+from typing import Any, Dict, List
+
 from ..errors import MLServerError
 
 
@@ -37,4 +39,14 @@ class CodecNotFound(MLServerError):
 class CodecError(MLServerError):
     def __init__(self, msg: str):
         msg = f"There was an error encoding / decoding the payload: {msg}"
+        super().__init__(msg)
+
+
+class InputNotFound(MLServerError):
+    def __init__(self, input_name: str, input_hints: Dict[str, Any]):
+        available_inputs = [f"'{input_name}'" for input_name in input_hints.keys()]
+        msg = (
+            f"Input '{input_name}' was not found. "
+            f"Available inputs are {', '.join(available_inputs)}."
+        )
         super().__init__(msg)
