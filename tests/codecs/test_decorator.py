@@ -35,14 +35,13 @@ def test_get_inputs(codec_decorator: CodecDecorator):
             ),
         ]
     )
-    expected = {
-        "foo": RequestInput(name="foo", datatype="INT32", shape=[1, 2], data=[1, 2]),
-        "bar": RequestInput(
-            name="bar", datatype="BYTES", shape=[1, 2], data=["asd", "qwe"]
-        ),
-    }
+    expected = {"foo": np.array([[1, 2]], dtype=np.int32), "bar": ["asd", "qwe"]}
+
     inputs = codec_decorator._get_inputs(inference_request)
-    assert inputs == expected
+
+    assert len(expected) == len(inputs)
+    np.testing.assert_equal(inputs["foo"], expected["foo"])
+    assert inputs["bar"] == expected["bar"]
 
 
 def test_get_inputs_not_found(codec_decorator: CodecDecorator):

@@ -35,14 +35,15 @@ class CodecDecorator:
         inputs = self._get_inputs(request)
         return None
 
-    def _get_inputs(self, request: InferenceRequest) -> Dict[str, RequestInput]:
+    def _get_inputs(self, request: InferenceRequest) -> Dict[str, Any]:
         inputs = {}
         for request_input in request.inputs:
             input_name = request_input.name
             if input_name not in self._input_codecs:
                 raise InputNotFound(input_name, self._input_codecs)
 
-            inputs[input_name] = request_input
+            input_codec = self._input_codecs[input_name]
+            inputs[input_name] = input_codec.decode_input(request_input)
 
         return inputs
 
