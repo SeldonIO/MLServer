@@ -6,6 +6,8 @@ from typing import List, Optional
 from mlserver.types import InferenceRequest, InferenceResponse, RequestInput
 from mlserver.codecs.decorator import CodecDecorator
 from mlserver.codecs.errors import InputNotFound
+from mlserver.codecs.numpy import NumpyCodec
+from mlserver.codecs.string import StringCodec
 
 from ..fixtures import SumModel
 
@@ -20,8 +22,8 @@ def codec_decorator() -> CodecDecorator:
 
 
 def test_codec_decorator(codec_decorator: CodecDecorator):
-    assert codec_decorator._request_hints == {"foo": np.ndarray, "bar": List[str]}
-    assert codec_decorator._response_hints == np.ndarray
+    assert codec_decorator._input_codecs == {"foo": NumpyCodec, "bar": StringCodec}
+    assert codec_decorator._output_codecs == NumpyCodec
 
 
 def test_get_inputs(codec_decorator: CodecDecorator):
