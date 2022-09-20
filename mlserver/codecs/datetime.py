@@ -46,6 +46,7 @@ class DatetimeCodec(InputCodec):
     """
 
     ContentType = "datetime"
+    TypeHint = List[_Datetime]
 
     @classmethod
     def can_encode(cls, payload: Any) -> bool:

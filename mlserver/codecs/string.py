@@ -40,6 +40,7 @@ class StringCodec(InputCodec):
     """
 
     ContentType = "str"
+    TypeHint = List[str]
 
     @classmethod
     def can_encode(cls, payload: Any) -> bool:
@@ -89,3 +90,4 @@ class StringCodec(InputCodec):
 class StringRequestCodec(SingleInputRequestCodec):
     InputCodec = StringCodec
     ContentType = StringCodec.ContentType
+    TypeHint = List[str]
