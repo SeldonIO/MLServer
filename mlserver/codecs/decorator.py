@@ -31,9 +31,16 @@ class CodecDecorator:
         output_codecs = codecs.pop("return", ())
         return codecs, output_codecs
 
+    def _get_response(self, output) -> InferenceResponse:
+        response_outputs = [self._output_codecs.encode_output(output)]
+        return InferenceResponse(
+            model_name="", model_version="", outputs=response_outputs
+        )
+
     def __call__(self, request: InferenceRequest) -> InferenceResponse:
         inputs = self._get_inputs(request)
-        return None
+        outputs = self._predict(**inputs)
+        return self._get_response(outputs)
 
     def _get_inputs(self, request: InferenceRequest) -> Dict[str, Any]:
         inputs = {}

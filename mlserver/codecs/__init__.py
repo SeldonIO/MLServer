@@ -4,6 +4,7 @@ from .string import StringCodec
 from .base64 import Base64Codec
 from .datetime import DatetimeCodec
 from .errors import CodecError
+from .decorator import decode_args
 from .base import (
     InputCodec,
     RequestCodec,
@@ -45,4 +46,5 @@ __all__ = [
     "encode_response_output",
     "decode_request_input",
     "decode_inference_request",
+    "decode_args",
 ]
