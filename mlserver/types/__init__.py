@@ -19,7 +19,6 @@ from .model_repository import (
     RepositoryIndexResponseItem,
     State,
     RepositoryIndexResponse,
-    RepositoryIndexErrorResponse,
     RepositoryLoadErrorResponse,
     RepositoryUnloadErrorResponse,
 )
@@ -44,7 +43,6 @@ __all__ = [
     "RepositoryIndexResponseItem",
     "State",
     "RepositoryIndexResponse",
-    "RepositoryIndexErrorResponse",
     "RepositoryLoadErrorResponse",
     "RepositoryUnloadErrorResponse",
 ]

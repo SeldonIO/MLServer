@@ -28,7 +28,7 @@ class RepositoryIndexResponseItem(BaseModel):
 
 class RepositoryIndexResponse(BaseModel):
     __root__: List["RepositoryIndexResponseItem"] = Field(
-        ..., title="repository_index_response"
+        ..., title="RepositoryIndexResponse"
     )
 
     def __iter__(self):
@@ -39,10 +39,6 @@ class RepositoryIndexResponse(BaseModel):
 
     def __len__(self):
         return len(self.__root__)
-
-
-class RepositoryIndexErrorResponse(BaseModel):
-    error: Optional[str] = None
 
 
 class RepositoryLoadErrorResponse(BaseModel):
