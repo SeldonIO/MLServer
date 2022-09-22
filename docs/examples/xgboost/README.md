@@ -45,6 +45,8 @@ test_dataset_path = _download_file(TEST_DATASET_URL)
 # NOTE: Workaround to load SVMLight files from the XGBoost example
 X_train, y_train = load_svmlight_file(train_dataset_path)
 X_test, y_test = load_svmlight_file(test_dataset_path)
+X_train = X_train.toarray()
+X_test = X_test.toarray()
 
 # read in data
 dtrain = xgb.DMatrix(data=X_train, label=y_train)
@@ -113,13 +115,6 @@ mlserver start .
 
 Since this command will start the server and block the terminal, waiting for requests, this will need to be ran in the background on a separate terminal.
 
----
-**NOTE**
-
-You may first need to install the XGBoost inference runtime for MLServer using `pip install mlserver-xgboost`
-
----
-
 ### Send test inference request
 
 We now have our model being served by `mlserver`.
@@ -138,7 +133,7 @@ inference_request = {
           "name": "predict",
           "shape": x_0.shape,
           "datatype": "FP32",
-          "data": x_0.toarray().tolist()
+          "data": x_0.tolist()
         }
     ]
 }
