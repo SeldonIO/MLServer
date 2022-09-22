@@ -95,6 +95,8 @@ test_dataset_path = _download_file(TEST_DATASET_URL)
 # NOTE: Workaround to load SVMLight files from the XGBoost example
 X_train, y_train = load_svmlight_file(train_dataset_path)
 X_test_agar, y_test_agar = load_svmlight_file(test_dataset_path)
+X_train = X_train.toarray()
+X_test_agar = X_test_agar.toarray()
 
 # read in data
 dtrain = xgb.DMatrix(data=X_train, label=y_train)
@@ -223,7 +225,7 @@ inference_request = {
           "name": "predict",
           "shape": x_0.shape,
           "datatype": "FP32",
-          "data": x_0.toarray().tolist()
+          "data": x_0.tolist()
         }
     ]
 }
