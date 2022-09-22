@@ -44,7 +44,7 @@ class JsonHelloWorldModel(MLModel):
         request = self._extract_json(payload)
         response = {
             "request": request,
-            "server_response": "Got your request. Hello from the server."
+            "server_response": "Got your request. Hello from the server.",
         }
         response_bytes = json.dumps(response).encode("UTF-8")
 
@@ -58,9 +58,9 @@ class JsonHelloWorldModel(MLModel):
                     shape=[len(response_bytes)],
                     datatype="BYTES",
                     data=[response_bytes],
-                    parameters=types.Parameters(content_type="str")
+                    parameters=types.Parameters(content_type="str"),
                 )
-            ]
+            ],
         )
 
     def _extract_json(self, payload: types.InferenceRequest) -> Dict[str, Any]:
@@ -124,14 +124,16 @@ For that, we can use the Python types that `mlserver` provides out of box, or we
 ```python
 import requests
 import json
+from mlserver.types import InferenceResponse
+from mlserver.codecs.string import StringRequestCodec
+from pprint import PrettyPrinter
 
-inputs = {
-    "name": "Foo Bar",
-    "message": "Hello from Client (REST)!"
-}
+pp = PrettyPrinter(indent=1)
+
+inputs = {"name": "Foo Bar", "message": "Hello from Client (REST)!"}
 
 # NOTE: this uses characters rather than encoded bytes. It is recommended that you use the `mlserver` types to assist in the correct encoding.
-inputs_string= json.dumps(inputs)
+inputs_string = json.dumps(inputs)
 
 inference_request = {
     "inputs": [
@@ -139,7 +141,7 @@ inference_request = {
             "name": "echo_request",
             "shape": [len(inputs_string)],
             "datatype": "BYTES",
-            "data": [inputs_string]
+            "data": [inputs_string],
         }
     ]
 }
@@ -147,7 +149,14 @@ inference_request = {
 endpoint = "http://localhost:8080/v2/models/json-hello-world/infer"
 response = requests.post(endpoint, json=inference_request)
 
-response.json()
+print(f"full response:\n")
+print(response)
+# retrive text output as dictionary
+inference_response = InferenceResponse.parse_raw(response.text)
+raw_json = StringRequestCodec.decode_response(inference_response)
+output = json.loads(raw_json[0])
+print(f"\ndata part:\n")
+pp.pprint(output)
 ```
 
 ### Send test inference request (gRPC)
@@ -168,12 +177,12 @@ import grpc
 import mlserver.grpc.converters as converters
 import mlserver.grpc.dataplane_pb2_grpc as dataplane
 import mlserver.types as types
+from pprint import PrettyPrinter
+
+pp = PrettyPrinter(indent=1)
 
 model_name = "json-hello-world"
-inputs = {
-    "name": "Foo Bar",
-    "message": "Hello from Client (gRPC)!"
-}
+inputs = {"name": "Foo Bar", "message": "Hello from Client (gRPC)!"}
 inputs_bytes = json.dumps(inputs).encode("UTF-8")
 
 inference_request = types.InferenceRequest(
@@ -183,25 +192,24 @@ inference_request = types.InferenceRequest(
             shape=[len(inputs_bytes)],
             datatype="BYTES",
             data=[inputs_bytes],
-            parameters=types.Parameters(content_type="str")
+            parameters=types.Parameters(content_type="str"),
         )
     ]
 )
 
 inference_request_g = converters.ModelInferRequestConverter.from_types(
-    inference_request,
-    model_name=model_name,
-    model_version=None
+    inference_request, model_name=model_name, model_version=None
 )
 
 grpc_channel = grpc.insecure_channel("localhost:8081")
 grpc_stub = dataplane.GRPCInferenceServiceStub(grpc_channel)
 
 response = grpc_stub.ModelInfer(inference_request_g)
-response
-```
 
-
-```python
-
+print(f"full response:\n")
+print(response)
+# retrive text output as dictionary
+output = json.loads(response.outputs[0].contents.bytes_contents[0])
+print(f"\ndata part:\n")
+pp.pprint(output)
 ```
