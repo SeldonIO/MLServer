@@ -1,12 +1,13 @@
 import asyncio
 import random
 import string
+import numpy as np
 
-from typing import Dict
+from typing import Dict, List
 
 from mlserver import MLModel
 from mlserver.types import InferenceRequest, InferenceResponse, Parameters
-from mlserver.codecs import NumpyCodec
+from mlserver.codecs import NumpyCodec, decode_args
 from mlserver.handlers.custom import custom_handler
 from mlserver.errors import MLServerError
 
@@ -52,6 +53,12 @@ class ErrorModel(MLModel):
 
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
         raise MLServerError(self.error_message)
+
+
+class SimpleModel(MLModel):
+    @decode_args
+    async def predict(self, foo: np.ndarray, bar: List[str]) -> np.ndarray:
+        return foo.sum(axis=1, keepdims=True)
 
 
 class SlowModel(MLModel):

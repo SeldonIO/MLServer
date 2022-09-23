@@ -1,3 +1,4 @@
+from functools import wraps
 from typing import Any, Awaitable, Callable, Dict, Tuple, get_type_hints
 
 from ..types import InferenceRequest, InferenceResponse, RequestInput
@@ -8,11 +9,13 @@ from .errors import InputNotFound
 PredictFunc = Callable[[InferenceRequest], Awaitable[InferenceResponse]]
 
 
-class CodecDecorator:
+# TODO: Should this follow the codec's interface
+class ArgsDecoder:
     """
     Internal codec that knows how to map type hints to codecs.
     """
 
+    # TODO: Should this receive the whole class as argument?
     def __init__(self, predict: Callable):
         self._predict = predict
         self._input_codecs, self._output_codecs = self._get_codecs(predict)
@@ -31,8 +34,10 @@ class CodecDecorator:
         output_codecs = codecs.pop("return", ())
         return codecs, output_codecs
 
-    def _get_response(self, output) -> InferenceResponse:
-        response_outputs = [self._output_codecs.encode_output(output)]
+    def get_response(self, output) -> InferenceResponse:
+        response_outputs = [
+            self._output_codecs.encode_output(name="output-0", payload=output)
+        ]
         return InferenceResponse(
             model_name="", model_version="", outputs=response_outputs
         )
@@ -42,7 +47,7 @@ class CodecDecorator:
         outputs = self._predict(**inputs)
         return self._get_response(outputs)
 
-    def _get_inputs(self, request: InferenceRequest) -> Dict[str, Any]:
+    def get_inputs(self, request: InferenceRequest) -> Dict[str, Any]:
         inputs = {}
         for request_input in request.inputs:
             input_name = request_input.name
@@ -56,4 +61,12 @@ class CodecDecorator:
 
 
 def decode_args(predict: Callable) -> PredictFunc:
-    return CodecDecorator(predict)
+    decoder = ArgsDecoder(predict)
+
+    @wraps(predict)
+    async def _f(self, request: InferenceRequest) -> InferenceResponse:
+        inputs = decoder.get_inputs(request)
+        outputs = await predict(self, **inputs)
+        return decoder.get_response(outputs)
+
+    return _f
