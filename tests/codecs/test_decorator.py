@@ -4,7 +4,7 @@ import numpy as np
 from typing import List, Optional
 
 from mlserver.types import InferenceRequest, InferenceResponse, RequestInput
-from mlserver.codecs.decorator import ArgsDecoder, decode_args
+from mlserver.codecs.decorator import SignatureCodec, decode_args
 from mlserver.codecs.errors import InputNotFound
 from mlserver.codecs.numpy import NumpyCodec, NumpyRequestCodec
 from mlserver.codecs.string import StringCodec
@@ -17,8 +17,8 @@ def predict_fn(foo: np.ndarray, bar: List[str]) -> np.ndarray:
 
 
 @pytest.fixture
-def args_decoder() -> ArgsDecoder:
-    return ArgsDecoder(predict_fn)
+def signature_codec() -> SignatureCodec:
+    return SignatureCodec(predict_fn)
 
 
 @pytest.fixture
@@ -41,27 +41,27 @@ def inference_request(input_values: dict) -> InferenceRequest:
     )
 
 
-def test_args_decoder(args_decoder: ArgsDecoder):
-    assert args_decoder._input_codecs == {"foo": NumpyCodec, "bar": StringCodec}
-    assert args_decoder._output_codecs == NumpyCodec
+def test_args_decoder(signature_codec: SignatureCodec):
+    assert signature_codec._input_codecs == {"foo": NumpyCodec, "bar": StringCodec}
+    assert signature_codec._output_codecs == NumpyCodec
 
 
-def test_get_inputs(
-    args_decoder: ArgsDecoder,
+def test_decode_request(
+    signature_codec: SignatureCodec,
     inference_request: InferenceRequest,
     input_values: dict,
 ):
-    inputs = args_decoder.get_inputs(inference_request)
+    inputs = signature_codec.decode_request(inference_request)
 
     assert len(input_values) == len(inputs)
     np.testing.assert_equal(inputs["foo"], input_values["foo"])
     assert inputs["bar"] == input_values["bar"]
 
 
-def test_get_inputs_not_found(args_decoder: ArgsDecoder, inference_request):
+def test_decode_request_not_found(signature_codec: SignatureCodec, inference_request):
     inference_request.inputs[0].name = "not-foo"
     with pytest.raises(InputNotFound) as err:
-        inputs = args_decoder.get_inputs(inference_request)
+        inputs = signature_codec.decode_request(inference_request)
 
 
 async def test_decode_args(

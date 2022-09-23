@@ -3,14 +3,14 @@ from typing import Any, Awaitable, Callable, Dict, Tuple, get_type_hints
 
 from ..types import InferenceRequest, InferenceResponse, RequestInput
 
-from .base import InputCodec, find_input_codec
+from .base import RequestCodec, InputCodec, find_input_codec
 from .errors import InputNotFound
 
 PredictFunc = Callable[[InferenceRequest], Awaitable[InferenceResponse]]
 
 
 # TODO: Should this follow the codec's interface
-class ArgsDecoder:
+class SignatureCodec(RequestCodec):
     """
     Internal codec that knows how to map type hints to codecs.
     """
@@ -34,20 +34,18 @@ class ArgsDecoder:
         output_codecs = codecs.pop("return", ())
         return codecs, output_codecs
 
-    def get_response(self, output) -> InferenceResponse:
+    def encode_response(
+        self, model_name: str, payload: Any, model_version: str = None
+    ) -> InferenceResponse:
+        # TODO: Deal with multiple return values
         response_outputs = [
-            self._output_codecs.encode_output(name="output-0", payload=output)
+            self._output_codecs.encode_output(name="output-0", payload=payload)
         ]
         return InferenceResponse(
-            model_name="", model_version="", outputs=response_outputs
+            model_name=model_name, model_version=model_version, outputs=response_outputs
         )
 
-    def __call__(self, request: InferenceRequest) -> InferenceResponse:
-        inputs = self._get_inputs(request)
-        outputs = self._predict(**inputs)
-        return self._get_response(outputs)
-
-    def get_inputs(self, request: InferenceRequest) -> Dict[str, Any]:
+    def decode_request(self, request: InferenceRequest) -> Dict[str, Any]:
         inputs = {}
         for request_input in request.inputs:
             input_name = request_input.name
@@ -61,12 +59,16 @@ class ArgsDecoder:
 
 
 def decode_args(predict: Callable) -> PredictFunc:
-    decoder = ArgsDecoder(predict)
+    codec = SignatureCodec(predict)
 
     @wraps(predict)
     async def _f(self, request: InferenceRequest) -> InferenceResponse:
-        inputs = decoder.get_inputs(request)
+        inputs = codec.decode_request(request=request)
+
         outputs = await predict(self, **inputs)
-        return decoder.get_response(outputs)
+
+        return codec.encode_response(
+            model_name=self.name, payload=outputs, model_version=self.version
+        )
 
     return _f
