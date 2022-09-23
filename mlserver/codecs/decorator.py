@@ -1,15 +1,37 @@
 from functools import wraps
-from typing import Any, Awaitable, Callable, Dict, Tuple, get_type_hints
+from typing import (
+    Any,
+    Awaitable,
+    Callable,
+    Dict,
+    List,
+    Optional,
+    Union,
+    Type,
+    Tuple,
+    get_type_hints,
+)
 
 from ..types import InferenceRequest, InferenceResponse, RequestInput
 
 from .base import RequestCodec, InputCodec, find_input_codec
-from .errors import InputNotFound
+from .errors import InputNotFound, CodecNotFound
 
 PredictFunc = Callable[[InferenceRequest], Awaitable[InferenceResponse]]
 
 
-# TODO: Should this follow the codec's interface
+def _as_list(a: Optional[Union[Any, Tuple[Any]]]) -> List[Any]:
+    if a is None:
+        return []
+
+    if isinstance(a, tuple):
+        # Split into components
+        return list(a)
+
+    # Otherwise, assume it's a single element
+    return [a]
+
+
 class SignatureCodec(RequestCodec):
     """
     Internal codec that knows how to map type hints to codecs.
@@ -23,27 +45,27 @@ class SignatureCodec(RequestCodec):
     def _get_codecs(
         self, pred: Callable
     ) -> Tuple[Dict[str, InputCodec], Tuple[InputCodec]]:
-        type_hints = get_type_hints(pred)
-        codecs = {}
-        for name, type_hint in type_hints.items():
+        input_hints = get_type_hints(pred)
+        output_hints = _as_list(input_hints.pop("return", None))
+
+        input_codecs = {}
+        for name, type_hint in input_hints.items():
             codec = find_input_codec(type_hint=type_hint)
-            # TODO: Raise error if codec does not exist
             # TODO: Consider metadata as well! (needs to be done at runtime)
-            codecs[name] = codec
+            if codec is None:
+                raise CodecNotFound(name=name, payload_type=type_hint, is_input=True)
 
-        output_codecs = codecs.pop("return", ())
-        return codecs, output_codecs
+            input_codecs[name] = codec
 
-    def encode_response(
-        self, model_name: str, payload: Any, model_version: str = None
-    ) -> InferenceResponse:
-        # TODO: Deal with multiple return values
-        response_outputs = [
-            self._output_codecs.encode_output(name="output-0", payload=payload)
-        ]
-        return InferenceResponse(
-            model_name=model_name, model_version=model_version, outputs=response_outputs
-        )
+        output_codecs = []
+        for type_hint in output_hints:
+            codec = find_input_codec(type_hint=type_hint)
+            if codec is None:
+                raise CodecNotFound(payload_type=type_hint, is_input=False)
+
+            output_codecs.append(codec)
+
+        return input_codecs, output_codecs
 
     def decode_request(self, request: InferenceRequest) -> Dict[str, Any]:
         inputs = {}
@@ -56,6 +78,24 @@ class SignatureCodec(RequestCodec):
             inputs[input_name] = input_codec.decode_input(request_input)
 
         return inputs
+
+    def encode_response(
+        self, model_name: str, payload: Any, model_version: str = None
+    ) -> InferenceResponse:
+        payloads = _as_list(payload)
+        outputs = []
+        for idx, payload in enumerate(payloads):
+            # TODO: Check if there's mismatch
+            codec = self._output_codecs[idx]
+
+            # TODO: Check model metadata for output names
+            output_name = f"output-{idx}"
+            response_output = codec.encode_output(name=output_name, payload=payload)
+            outputs.append(response_output)
+
+        return InferenceResponse(
+            model_name=model_name, model_version=model_version, outputs=outputs
+        )
 
 
 def decode_args(predict: Callable) -> PredictFunc:

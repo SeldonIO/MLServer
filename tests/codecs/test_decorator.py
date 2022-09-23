@@ -12,7 +12,7 @@ from mlserver.codecs.string import StringCodec
 from ..fixtures import SimpleModel
 
 
-def predict_fn(foo: np.ndarray, bar: List[str]) -> np.ndarray:
+async def predict_fn(foo: np.ndarray, bar: List[str]) -> np.ndarray:
     return np.array([3])
 
 
@@ -41,9 +41,9 @@ def inference_request(input_values: dict) -> InferenceRequest:
     )
 
 
-def test_args_decoder(signature_codec: SignatureCodec):
+def test_signature_codec(signature_codec: SignatureCodec):
     assert signature_codec._input_codecs == {"foo": NumpyCodec, "bar": StringCodec}
-    assert signature_codec._output_codecs == NumpyCodec
+    assert signature_codec._output_codecs == [NumpyCodec]
 
 
 def test_decode_request(
@@ -62,6 +62,14 @@ def test_decode_request_not_found(signature_codec: SignatureCodec, inference_req
     inference_request.inputs[0].name = "not-foo"
     with pytest.raises(InputNotFound) as err:
         inputs = signature_codec.decode_request(inference_request)
+
+
+def test_encode_response(signature_codec: SignatureCodec, output_value: np.ndarray):
+    response = signature_codec.encode_response(model_name="foo", payload=output_value)
+
+    assert response.model_name == "foo"
+    assert len(response.outputs) == 1
+    assert response.outputs[0].name == "output-0"
 
 
 async def test_decode_args(
