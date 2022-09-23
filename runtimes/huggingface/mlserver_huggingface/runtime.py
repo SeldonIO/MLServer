@@ -57,6 +57,15 @@ class HuggingFaceRuntime(MLModel):
                     ),
                 )
 
+        if settings.max_batch_size != self.hf_settings.batch_size:
+            raise InvalidTranformerInitialisation(
+                500,
+                (
+                    f"HggingFace batch_size: {self.hf_settings.batch_size}."
+                    f" Should match the MLServer max_batch_size: {settings.max_batch_size}"
+                ),
+            )
+
         super().__init__(settings)
 
     async def load(self) -> bool:
