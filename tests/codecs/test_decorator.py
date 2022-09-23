@@ -59,10 +59,9 @@ def test_get_inputs(
 
 
 def test_get_inputs_not_found(args_decoder: ArgsDecoder, inference_request):
+    inference_request.inputs[0].name = "not-foo"
     with pytest.raises(InputNotFound) as err:
         inputs = args_decoder.get_inputs(inference_request)
-
-    print(err)
 
 
 async def test_decode_args(
