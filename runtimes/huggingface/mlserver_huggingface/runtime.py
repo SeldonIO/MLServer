@@ -61,8 +61,8 @@ class HuggingFaceRuntime(MLModel):
             raise InvalidTranformerInitialisation(
                 500,
                 (
-                    f"HggingFace batch_size: {self.hf_settings.batch_size}."
-                    f" Should match the MLServer max_batch_size: {settings.max_batch_size}"
+                    f"hf batch_size: {self.hf_settings.batch_size}. is different "
+                    f"from MLServer max_batch_size: {settings.max_batch_size}"
                 ),
             )
 
