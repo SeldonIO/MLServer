@@ -42,6 +42,16 @@ class CodecError(MLServerError):
         super().__init__(msg)
 
 
+class OutputNotFound(MLServerError):
+    def __init__(self, output_idx: str, output_hints: List[Type]):
+        expected_outputs = [f"'{output_hint}'" for output_hint in output_hints]
+        msg = (
+            "Unexpected output value at position '{output_idx}'. "
+            f"Expected outputs are {', '.join(expected_outputs)} outputs are expected."
+        )
+        super().__init__(msg)
+
+
 class InputNotFound(MLServerError):
     def __init__(self, input_name: str, input_hints: Dict[str, Any]):
         available_inputs = [f"'{input_name}'" for input_name in input_hints.keys()]
