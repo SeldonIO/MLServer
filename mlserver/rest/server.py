@@ -61,17 +61,24 @@ class RESTServer:
         await self._server.serve()
 
     def _get_config(self):
-        kwargs = {
-            "host": self._settings.host,
-            "port": self._settings.http_port,
-            "root_path": self._settings.root_path,
-            "access_log": self._settings.debug,
-        }
+        kwargs = {}
+
+        if self._settings.custom_rest_server_settings:
+            kwargs.update(self._settings.custom_rest_server_settings)
+
+        kwargs.update(
+            {
+                "host": self._settings.host,
+                "port": self._settings.http_port,
+                "root_path": self._settings.root_path,
+                "access_log": self._settings.debug,
+            }
+        )
 
         if self._settings.logging_settings:
             # If not None, use ours. Otherwise, let Uvicorn fall back on its
             # own config.
-            kwargs["log_config"] = self._settings.logging_settings
+            kwargs.update({"log_config": self._settings.logging_settings})
 
         return uvicorn.Config(self._app, **kwargs)
 

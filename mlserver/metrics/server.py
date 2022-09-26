@@ -37,6 +37,11 @@ class MetricsServer:
         await self._server.serve()
 
     def _get_config(self):
+        kwargs = {}
+
+        if self._settings.custom_metrics_server_settings:
+            kwargs.update(self._settings.custom_metrics_server_settings)
+
         kwargs = {
             "host": self._settings.host,
             "port": self._settings.metrics_port,

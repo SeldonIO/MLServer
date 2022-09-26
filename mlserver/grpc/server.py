@@ -64,17 +64,22 @@ class GRPCServer:
         return self._server
 
     def _get_options(self) -> List[Tuple[str, Any]]:
-        options = []
+        options_dict = {}
+
+        if self._settings.custom_grpc_server_settings:
+            options_dict.update(self._settings.custom_grpc_server_settings)
 
         max_message_length = self._settings.grpc_max_message_length
         if max_message_length is not None:
-            options += [
-                ("grpc.max_message_length", max_message_length),
-                ("grpc.max_send_message_length", max_message_length),
-                ("grpc.max_receive_message_length", max_message_length),
-            ]
+            options_dict.update(
+                {
+                    "grpc.max_message_length": max_message_length,
+                    "grpc.max_send_message_length": max_message_length,
+                    "grpc.max_receive_message_length": max_message_length,
+                }
+            )
 
-        return options
+        return list(options_dict.items())
 
     async def start(self):
         self._create_server()
