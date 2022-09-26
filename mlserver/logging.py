@@ -4,6 +4,7 @@ import sys
 
 from logging import Formatter, StreamHandler
 from pathlib import Path
+from typing import Dict, Union
 import logging.config
 
 from .settings import Settings
@@ -18,13 +19,18 @@ def get_logger():
     return logger
 
 
-def apply_logging_file(logging_settings: str):
-    if "json" in Path(logging_settings).suffix:
-        with open(logging_settings) as settings_file:
-            config = json.load(settings_file)
+def apply_logging_file(logging_settings: Union[str, Dict]):
+    if isinstance(logging_settings, str) and Path(logging_settings).is_file():
+        if "json" in Path(logging_settings).suffix:
+            with open(logging_settings) as settings_file:
+                config = json.load(settings_file)
+            logging.config.dictConfig(config)
+        else:
+            logging.config.fileConfig(fname=logging_settings, disable_existing_loggers=False)
+    elif isinstance(logging_settings, Dict):
         logging.config.dictConfig(config)
     else:
-        logging.config.fileConfig(fname=logging_settings, disable_existing_loggers=False)
+        logger.warning("Unable to parse logging_settings.")
 
 
 def configure_logger(settings: Settings = None):
