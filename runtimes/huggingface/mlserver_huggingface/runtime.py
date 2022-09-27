@@ -19,6 +19,7 @@ from mlserver_huggingface.common import (
 from mlserver_huggingface.codecs import MultiStringRequestCodec
 from transformers.pipelines import SUPPORTED_TASKS
 from optimum.pipelines import SUPPORTED_TASKS as SUPPORTED_OPTIMUM_TASKS
+from mlserver.logging import logger
 
 
 class HuggingFaceRuntime(MLModel):
@@ -58,13 +59,10 @@ class HuggingFaceRuntime(MLModel):
                 )
 
         if settings.max_batch_size != self.hf_settings.batch_size:
-            raise InvalidTranformerInitialisation(
-                500,
-                (
-                    f"hf batch_size: {self.hf_settings.batch_size}. is different "
-                    f"from MLServer max_batch_size: {settings.max_batch_size}"
-                ),
-            )
+            logger.warning(
+                f"hf batch_size: {self.hf_settings.batch_size} is different "
+                f"from MLServer max_batch_size: {settings.max_batch_size}"
+                )
 
         super().__init__(settings)
 
