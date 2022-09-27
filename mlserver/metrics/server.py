@@ -1,5 +1,4 @@
 import uvicorn
-import logging
 
 from fastapi import FastAPI
 from starlette_exporter import handle_metrics
