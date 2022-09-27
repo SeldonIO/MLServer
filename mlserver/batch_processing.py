@@ -61,9 +61,10 @@ def setup_logging(debug: bool):
 
 
 def json_to_triton(
-    inference_request: InferenceRequest, binary_data: bool
+    request_json: str, binary_data: bool
 ) -> Tuple[str, List[httpclient.InferInput], List[httpclient.InferRequestedOutput]]:
     inputs = []
+    inference_request = InferenceRequest.parse_obj(orjson.loads(request_json))
     for request_input in inference_request.inputs or []:
         new_input = httpclient.InferInput(
             request_input.name, request_input.shape, request_input.datatype
@@ -101,7 +102,7 @@ def serialize_triton_infer_result(triton_output: httpclient.InferResult):
 
 
 async def produce(queue: asyncio.Queue, fname: str):
-    async with aiofiles.open(fname) as f:
+    async with aiofiles.open(fname, "rb") as f:
         async for line in f:
             await queue.put(line)
 
@@ -140,7 +141,7 @@ async def consume(
         item = await queue_in.get()
         try:
             request_id, inputs, outputs = json_to_triton(
-                InferenceRequest.parse_obj(orjson.loads(item)), binary_data
+                item, binary_data
             )
             if request_id is None or request_id == "":
                 request_id = str(uuid.uuid4())
