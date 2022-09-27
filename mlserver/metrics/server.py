@@ -43,11 +43,13 @@ class MetricsServer:
             )
             kwargs.update(self._settings._custom_metrics_server_settings)
 
-        kwargs = {
-            "host": self._settings.host,
-            "port": self._settings.metrics_port,
-            "access_log": self._settings.debug,
-        }
+        kwargs.update(
+            {
+                "host": self._settings.host,
+                "port": self._settings.metrics_port,
+                "access_log": self._settings.debug,
+            }
+        )
 
         # TODO: we want to disable logger unless debug is enabled (otherwise,
         # prom reqs can be spammy)
