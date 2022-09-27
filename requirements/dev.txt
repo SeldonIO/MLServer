@@ -3,7 +3,7 @@ grpcio-tools==1.48.1
 datamodel-code-generator==0.13.1
 ## Locking `prance` (a subdep of `datamodel-code-generator`) to an older
 ## version due to issues with the latest version of `pip`:
-## https://github.com/pypa/pip/issues/9613 
+## https://github.com/pypa/pip/issues/9613
 prance==0.20.0
 
 # Testing
@@ -16,7 +16,7 @@ docker==6.0.0
 aiohttp==3.8.3
 aiohttp-retry==2.8.3
 ## Used for FastAPI Async testing
-httpx==0.22.0
+httpx==0.23.0
 kafka-python==2.0.2
 tenacity==8.1.0
 
@@ -35,4 +35,3 @@ twine==4.0.1
 
 # Fetch licenses
 pip-licenses==3.5.4
-
