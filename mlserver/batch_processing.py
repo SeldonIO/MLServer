@@ -1,4 +1,6 @@
+from dataclasses import dataclass
 from functools import wraps
+from pyexpat import model
 import uuid
 import tritonclient.http.aio as httpclient
 
@@ -55,13 +57,33 @@ def click_async(f):
     return wrapper
 
 
+@dataclass
+class BatchInputItem:
+    index: int
+    item: bytes
+
+
+@dataclass
+class BatchOutputItem:
+    index: int
+    item: httpclient.InferResult
+
+
 def setup_logging(debug: bool):
     if debug:
         logger.setLevel(logging.DEBUG)
 
 
+def get_headers(request_id: str) -> Dict[str, str]:
+    headers = {"content-type": "application/json"}
+    if request_id:
+        headers["seldon-puid"] = request_id
+        headers["x-request-id"] = request_id
+    return headers
+
+
 def json_to_triton(
-    request_json: str, binary_data: bool
+    request_json: bytes, binary_data: bool
 ) -> Tuple[str, List[httpclient.InferInput], List[httpclient.InferRequestedOutput]]:
     inputs = []
     inference_request = InferenceRequest.parse_obj(orjson.loads(request_json))
@@ -82,13 +104,19 @@ def json_to_triton(
         )
         outputs.append(new_output)
 
-    return inference_request.id, inputs, outputs
+    request_id = (
+        str(uuid.uuid4()) if inference_request.id is None else inference_request.id
+    )
+    return request_id, inputs, outputs
 
 
-def serialize_triton_infer_result(triton_output: httpclient.InferResult):
-    response = triton_output.get_response()
+def serialize_triton_infer_result(output_item: BatchOutputItem):
+    response = output_item.item.get_response()
+    if "parameters" not in response:
+        response["parameters"] = {}
+    response["parameters"]["batch_index"] = output_item.index
     for (n, output) in enumerate(response["outputs"]):
-        data = triton_output.as_numpy(output["name"])
+        data = output_item.item.as_numpy(output["name"])
         response["outputs"][n]["data"] = data.flatten().tolist()
 
         # Removing "binary_data_size" parameters as now this is 1-D list
@@ -101,10 +129,65 @@ def serialize_triton_infer_result(triton_output: httpclient.InferResult):
     return orjson.dumps(response)
 
 
+async def process_item(
+    item: BatchInputItem,
+    model_name: str,
+    worker_id: int,
+    triton_client: httpclient.InferenceServerClient,
+    binary_data: bool,
+) -> BatchOutputItem:
+    try:
+        request_id, inputs, outputs = json_to_triton(item.item, binary_data)
+    except Exception as e:
+        logger.error(f"consumer {worker_id}: failed to deserialize item: {e}")
+        raise
+    try:
+        logger.debug(f"consumer {worker_id}: sending request")
+        data = await triton_client.infer(
+            model_name,
+            inputs,
+            outputs=outputs,
+            request_id=request_id,
+            headers=get_headers(request_id),
+        )
+        logger.debug(f"consumer {worker_id}: received response")
+    except Exception as e:
+        logger.error(f"Consumer {worker_id}: failed to process task: {e}")
+        raise
+    return BatchOutputItem(index=item.index, item=data)
+
+
 async def produce(queue: asyncio.Queue, fname: str):
     async with aiofiles.open(fname, "rb") as f:
+        index = 0
         async for line in f:
-            await queue.put(line)
+            await queue.put(BatchInputItem(index=index, item=line))
+            index += 1
+
+
+async def consume(
+    model_name: str,
+    worker_id: int,
+    triton_client: httpclient.InferenceServerClient,
+    binary_data: bool,
+    extra_verbose: bool,
+    queue_in: asyncio.Queue,
+    queue_out: asyncio.Queue,
+):
+    while True:
+        input_item = await queue_in.get()
+        try:
+            output_item = await process_item(
+                input_item, model_name, worker_id, triton_client, binary_data
+            )
+        except Exception as e:
+            if extra_verbose:
+                logger.error(f"consumer {worker_id}: failed to process item {item}")
+            queue_in.task_done()
+            continue
+
+        await queue_out.put(output_item)
+        queue_in.task_done()
 
 
 async def finalize(queue: asyncio.Queue, fname: str):
@@ -119,50 +202,6 @@ async def finalize(queue: asyncio.Queue, fname: str):
             except Exception as e:
                 logger.error(f"Failed to finalize task: {e}")
             queue.task_done()
-
-
-def get_headers(request_id: str) -> Dict[str, str]:
-    headers = {"content-type": "application/json"}
-    if request_id:
-        headers["seldon-puid"] = request_id
-        headers["x-request-id"] = request_id
-    return headers
-
-
-async def consume(
-    model_name: str,
-    worker_id: int,
-    triton_client: httpclient.InferenceServerClient,
-    queue_in: asyncio.Queue,
-    queue_out: asyncio.Queue,
-    binary_data: bool,
-):
-    while True:
-        item = await queue_in.get()
-        try:
-            request_id, inputs, outputs = json_to_triton(
-                item, binary_data
-            )
-            if request_id is None or request_id == "":
-                request_id = str(uuid.uuid4())
-        except Exception as e:
-            logger.error(f"Failed to deserialize item: {item}")
-            queue_in.task_done()
-            continue
-        try:
-            logger.debug(f"consumer {worker_id}: sending request")
-            data = await triton_client.infer(
-                model_name,
-                inputs,
-                outputs=outputs,
-                request_id=request_id,
-                headers=get_headers(request_id),
-            )
-            logger.debug(f"consumer {worker_id}: received response")
-            await queue_out.put(data)
-        except Exception as e:
-            logger.error(f"Consumer {worker_id}: Failed to process task: {e}")
-        queue_in.task_done()
 
 
 async def process_batch(
@@ -217,9 +256,10 @@ async def process_batch(
                 model_name,
                 worker_id,
                 triton_client,
+                binary_data,
+                extra_verbose,
                 queue_in,
                 queue_out,
-                binary_data,
             )
         )
         consumers.append(consumer)

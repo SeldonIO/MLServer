@@ -1,6 +1,7 @@
 import pytest
 import asyncio
 
+from tempfile import TemporaryDirectory
 from prometheus_client.registry import REGISTRY, CollectorRegistry
 from starlette_exporter import PrometheusMiddleware
 
@@ -14,8 +15,20 @@ from ..conftest import TESTDATA_PATH
 
 
 @pytest.fixture()
+def tmp_dir():
+    directory = TemporaryDirectory()
+    yield directory
+    directory.cleanup()
+
+
+@pytest.fixture()
 def single_input():
     return os.path.join(TESTDATA_PATH, "batch_processing", "single.txt")
+
+
+@pytest.fixture()
+def many_input():
+    return os.path.join(TESTDATA_PATH, "batch_processing", "many.txt")
 
 
 @pytest.fixture()
