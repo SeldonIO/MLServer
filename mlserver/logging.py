@@ -28,7 +28,7 @@ def apply_logging_file(logging_settings: Union[str, Dict]):
         else:
             logging.config.fileConfig(fname=logging_settings, disable_existing_loggers=False)
     elif isinstance(logging_settings, Dict):
-        logging.config.dictConfig(config)
+        logging.config.dictConfig(logging_settings)
     else:
         logger.warning("Unable to parse logging_settings.")
 
