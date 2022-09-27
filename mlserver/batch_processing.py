@@ -142,7 +142,7 @@ async def consume(
             request_id, inputs, outputs = json_to_triton(
                 InferenceRequest.parse_obj(orjson.loads(item)), binary_data
             )
-            if request_id is None or request_id=="":
+            if request_id is None or request_id == "":
                 request_id = str(uuid.uuid4())
         except Exception as e:
             logger.error(f"Failed to deserialize item: {item}")
@@ -179,7 +179,7 @@ async def process_batch(
 ):
     start_time = timer()
 
-    if transport=="grpc":
+    if transport == "grpc":
         raise click.BadParameter("The 'grpc' transport is not yet supported.")
 
     if extra_verbose:
