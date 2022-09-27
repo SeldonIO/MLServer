@@ -7,8 +7,6 @@ from starlette_exporter import handle_metrics
 from ..settings import Settings
 from .logging import logger
 
-logger = logging.getLogger("mlserver.metrics")
-
 
 class _NoSignalServer(uvicorn.Server):
     def install_signal_handlers(self):
