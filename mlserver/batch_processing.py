@@ -1,4 +1,5 @@
 from functools import wraps
+import uuid
 import tritonclient.http.aio as httpclient
 
 import asyncio
@@ -80,8 +81,7 @@ def json_to_triton(
         )
         outputs.append(new_output)
 
-    request_id = inference_request.id if inference_request.id is not None else ""
-    return request_id, inputs, outputs
+    return inference_request.id, inputs, outputs
 
 
 def serialize_triton_infer_result(triton_output: httpclient.InferResult):
@@ -142,11 +142,12 @@ async def consume(
             request_id, inputs, outputs = json_to_triton(
                 InferenceRequest.parse_obj(orjson.loads(item)), binary_data
             )
+            if request_id is None or request_id=="":
+                request_id = str(uuid.uuid4())
         except Exception as e:
             logger.error(f"Failed to deserialize item: {item}")
             queue_in.task_done()
             continue
-
         try:
             logger.debug(f"consumer {worker_id}: sending request")
             data = await triton_client.infer(
@@ -159,7 +160,7 @@ async def consume(
             logger.debug(f"consumer {worker_id}: received response")
             await queue_out.put(data)
         except Exception as e:
-            logger.error(f"Failed to process task: {e}")
+            logger.error(f"Consumer {worker_id}: Failed to process task: {e}")
         queue_in.task_done()
 
 

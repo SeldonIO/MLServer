@@ -1,3 +1,4 @@
+from uuid import UUID
 import pytest
 import json
 
@@ -10,7 +11,6 @@ from tests.batch_processing.conftest import single_input
 from ..utils import RESTClient
 
 
-
 async def test_single(rest_client: RESTClient, settings: Settings, single_input: str):
     model_name = "sum-model"
     url = f"{settings.host}:{settings.http_port}"
@@ -19,14 +19,33 @@ async def test_single(rest_client: RESTClient, settings: Settings, single_input:
     # inference_request = InferenceRequest.parse_file(single_input)
     # response = await rest_client.infer(model_name, inference_request)
 
-    await process_batch(model_name, url, 1, True, single_input, "/tmp/output.txt", "debug", False)
+    await process_batch(
+        model_name=model_name,
+        url=url,
+        workers=1,
+        input_data_path=single_input,
+        output_data_path="/tmp/output.txt",
+        binary_data=False,
+        transport="rest",
+        use_ssl=False,
+        insecure=False,
+        verbose=True,
+        extra_verbose=True,
+    )
 
     with open("/tmp/output.txt") as f:
         response = json.load(f)
 
     assert response["outputs"][0]["data"][0] == 6
+    try:
+        _ = UUID(response["id"])
+    except ValueError:
+        raise RuntimeError(f"Response id is not set or is not valid UUID; got {response['id']}")
 
-async def test_single_with_id(rest_client: RESTClient, settings: Settings, single_input_with_id: str):
+
+async def test_single_with_id(
+    rest_client: RESTClient, settings: Settings, single_input_with_id: str
+):
     model_name = "sum-model"
     url = f"{settings.host}:{settings.http_port}"
     await rest_client.wait_until_ready()
@@ -34,7 +53,19 @@ async def test_single_with_id(rest_client: RESTClient, settings: Settings, singl
     # inference_request = InferenceRequest.parse_file(single_input)
     # response = await rest_client.infer(model_name, inference_request)
 
-    await process_batch(model_name, url, 1, True, single_input_with_id, "/tmp/output.txt", "debug", False)
+    await process_batch(
+        model_name=model_name,
+        url=url,
+        workers=1,
+        input_data_path=single_input_with_id,
+        output_data_path="/tmp/output.txt",
+        binary_data=False,
+        transport="rest",
+        use_ssl=False,
+        insecure=False,
+        verbose=True,
+        extra_verbose=True,
+    )
 
     with open("/tmp/output.txt") as f:
         response = json.load(f)
