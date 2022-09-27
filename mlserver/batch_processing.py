@@ -8,23 +8,20 @@ import click
 import json
 import orjson
 
+from typing import Dict, List, Tuple
+
 import numpy as np
 
 from mlserver.types import InferenceRequest
 from mlserver.codecs import NumpyCodec
+from mlserver.logging import get_logger
 
 from time import perf_counter as timer
 
 
-INFER_LOG_LEVEL = {
-    "debug": logging.DEBUG,
-    "info": logging.INFO,
-    "warning": logging.WARNING,
-    "error": logging.ERROR,
-}
+CHOICES_TRANSPORT = ["rest", "grpc"]
 
-logger = logging.getLogger(__name__)
-
+logger = get_logger()
 
 # Monkey patching is required for error responses coming from MLServer.
 async def _get_error(response):
@@ -38,7 +35,9 @@ async def _get_error(response):
         try:
             return httpclient.InferenceServerException(msg=error_response["error"])
         except KeyError:
-            return httpclient.InferenceServerException(msg=json.dumps(error_response["detail"]))
+            return httpclient.InferenceServerException(
+                msg=json.dumps(error_response["detail"])
+            )
     else:
         return None
 
@@ -55,14 +54,14 @@ def click_async(f):
     return wrapper
 
 
-def setup_logging(log_level: str):
-    LOG_FORMAT = (
-        "%(asctime)s - batch_processor.py:%(lineno)s - %(levelname)s:  %(message)s"
-    )
-    logging.basicConfig(level=INFER_LOG_LEVEL[log_level], format=LOG_FORMAT)
+def setup_logging(debug: bool):
+    if debug:
+        logger.setLevel(logging.DEBUG)
 
 
-def inference_request_to_triton(inference_request: InferenceRequest, binary_data: bool):
+def json_to_triton(
+    inference_request: InferenceRequest, binary_data: bool
+) -> Tuple[str, List[httpclient.InferInput], List[httpclient.InferRequestedOutput]]:
     inputs = []
     for request_input in inference_request.inputs or []:
         new_input = httpclient.InferInput(
@@ -81,7 +80,8 @@ def inference_request_to_triton(inference_request: InferenceRequest, binary_data
         )
         outputs.append(new_output)
 
-    return inputs, outputs
+    request_id = inference_request.id if inference_request.id is not None else ""
+    return request_id, inputs, outputs
 
 
 def serialize_triton_infer_result(triton_output: httpclient.InferResult):
@@ -91,7 +91,10 @@ def serialize_triton_infer_result(triton_output: httpclient.InferResult):
         response["outputs"][n]["data"] = data.flatten().tolist()
 
         # Removing "binary_data_size" parameters as now this is 1-D list
-        if output["parameters"] is not None and "binary_data_size" in output["parameters"]:
+        if (
+            output["parameters"] is not None
+            and "binary_data_size" in output["parameters"]
+        ):
             del response["outputs"][n]["parameters"]["binary_data_size"]
 
     return orjson.dumps(response)
@@ -117,26 +120,43 @@ async def finalize(queue: asyncio.Queue, fname: str):
             queue.task_done()
 
 
+def get_headers(request_id: str) -> Dict[str, str]:
+    headers = {"content-type": "application/json"}
+    if request_id:
+        headers["seldon-puid"] = request_id
+        headers["x-request-id"] = request_id
+    return headers
+
+
 async def consume(
     model_name: str,
     worker_id: int,
     triton_client: httpclient.InferenceServerClient,
     queue_in: asyncio.Queue,
     queue_out: asyncio.Queue,
-    binary_payloads: bool,
+    binary_data: bool,
 ):
     while True:
         item = await queue_in.get()
-        inference_request = InferenceRequest.parse_obj(orjson.loads(item))
-        print(f"consumer {worker_id}: request:", inference_request.inputs[0].shape)
-        inputs, outputs = inference_request_to_triton(
-            inference_request, binary_payloads
-        )
-
-        headers = {"content-type": "application/json"}
         try:
-            data = await triton_client.infer(model_name, inputs, outputs=outputs, headers=headers)
-            print(f"consumer {worker_id}: received response")
+            request_id, inputs, outputs = json_to_triton(
+                InferenceRequest.parse_obj(orjson.loads(item)), binary_data
+            )
+        except Exception as e:
+            logger.error(f"Failed to deserialize item: {item}")
+            queue_in.task_done()
+            continue
+
+        try:
+            logger.debug(f"consumer {worker_id}: sending request")
+            data = await triton_client.infer(
+                model_name,
+                inputs,
+                outputs=outputs,
+                request_id=request_id,
+                headers=get_headers(request_id),
+            )
+            logger.debug(f"consumer {worker_id}: received response")
             await queue_out.put(data)
         except Exception as e:
             logger.error(f"Failed to process task: {e}")
@@ -144,20 +164,45 @@ async def consume(
 
 
 async def process_batch(
-    model_name, url, workers, verbose, input_file_path, output_file_path, log_level, binary_payloads
+    model_name,
+    url,
+    workers,
+    input_data_path,
+    output_data_path,
+    binary_data,
+    transport,
+    use_ssl,
+    insecure,
+    verbose,
+    extra_verbose,
 ):
     start_time = timer()
-    setup_logging(log_level)
-    logger.info(f"Server url: {url}")
-    logger.info(f"input file path: {input_file_path}")
-    logger.info(f"output file path: {output_file_path}")
-    if verbose:
+
+    if transport=="grpc":
+        raise click.BadParameter("The 'grpc' transport is not yet supported.")
+
+    if extra_verbose:
+        verbose = True
+        logger.info("Running in extra verbose mode.")
+    elif verbose:
         logger.info("Running in verbose mode.")
+
+    setup_logging(debug=verbose)
+    logger.info(f"Server url: {url}")
+    logger.info(f"input file path: {input_data_path}")
+    logger.info(f"output file path: {output_data_path}")
+
+    if insecure:
+        ssl_context = False
+    else:
+        ssl_context = None
 
     triton_client = httpclient.InferenceServerClient(
         url=url,
-        verbose=verbose,
+        verbose=extra_verbose,
         conn_limit=workers,
+        ssl=use_ssl,
+        ssl_context=ssl_context,
     )
 
     queue_in = asyncio.Queue(2 * workers)
@@ -166,13 +211,20 @@ async def process_batch(
     consumers = []
     for worker_id in range(workers):
         consumer = asyncio.create_task(
-            consume(model_name, worker_id, triton_client, queue_in, queue_out, binary_payloads)
+            consume(
+                model_name,
+                worker_id,
+                triton_client,
+                queue_in,
+                queue_out,
+                binary_data,
+            )
         )
         consumers.append(consumer)
 
-    finalizer = asyncio.create_task(finalize(queue_out, output_file_path))
+    finalizer = asyncio.create_task(finalize(queue_out, output_data_path))
 
-    await produce(queue_in, input_file_path)
+    await produce(queue_in, input_data_path)
     await queue_in.join()
     await queue_out.join()
 

@@ -21,6 +21,11 @@ def single_input():
     return os.path.join(TESTDATA_PATH, "batch_processing", "single.txt")
 
 
+@pytest.fixture()
+def single_input_with_id():
+    return os.path.join(TESTDATA_PATH, "batch_processing", "single_with_id.txt")
+
+
 @pytest.fixture
 def settings(settings: Settings) -> Settings:
     http_port, grpc_port, metrics_port = get_available_ports(3)
