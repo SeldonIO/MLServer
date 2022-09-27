@@ -61,11 +61,14 @@ class HuggingFaceRuntime(MLModel):
 
     async def load(self) -> bool:
         # Loading & caching pipeline in asyncio loop to avoid blocking
+        print("loading model...")
         await asyncio.get_running_loop().run_in_executor(
             None, load_pipeline_from_settings, self.hf_settings
         )
+        print("(re)loading model...")
         # Now we load the cached model which should not block asyncio
         self._model = load_pipeline_from_settings(self.hf_settings)
+        print("model has been loaded!")
         self.ready = True
         return self.ready
 
@@ -84,8 +87,8 @@ class HuggingFaceRuntime(MLModel):
         prediction = self._model(*args, **kwargs)
 
         # TODO: Convert hf output to v2 protocol, for now we use to_json
-        str_out = json.dumps(prediction, cls=NumpyEncoder)
-        prediction_encoded = StringCodec.encode_output(payload=[str_out], name="output")
+        str_out = [json.dumps(pred, cls=NumpyEncoder) for pred in prediction]
+        prediction_encoded = StringCodec.encode_output(payload=str_out, name="output")
 
         return InferenceResponse(
             model_name=self.name,
