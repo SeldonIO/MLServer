@@ -67,6 +67,9 @@ class GRPCServer:
         options_dict = {}
 
         if self._settings._custom_grpc_server_settings:
+            logger.warning(
+                "gRPC custom configuration is out of support. Use as your own risk"
+            )
             options_dict.update(self._settings._custom_grpc_server_settings)
 
         max_message_length = self._settings.grpc_max_message_length

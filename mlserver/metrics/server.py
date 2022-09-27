@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from starlette_exporter import handle_metrics
 
 from ..settings import Settings
+from .logging import logger
 
 logger = logging.getLogger("mlserver.metrics")
 
@@ -40,6 +41,9 @@ class MetricsServer:
         kwargs = {}
 
         if self._settings._custom_metrics_server_settings:
+            logger.warning(
+                "REST custom configuration is out of support. Use as your own risk"
+            )
             kwargs.update(self._settings._custom_metrics_server_settings)
 
         kwargs = {

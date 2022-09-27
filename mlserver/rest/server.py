@@ -6,6 +6,7 @@ from ..model import MLModel
 
 from .utils import matches
 from .app import create_app
+from .logging import logger
 
 
 class _NoSignalServer(uvicorn.Server):
@@ -64,6 +65,9 @@ class RESTServer:
         kwargs = {}
 
         if self._settings._custom_rest_server_settings:
+            logger.warning(
+                "REST custom configuration is out of support. Use as your own risk"
+            )
             kwargs.update(self._settings._custom_rest_server_settings)
 
         kwargs.update(
