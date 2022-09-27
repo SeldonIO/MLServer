@@ -1,6 +1,5 @@
 import os
 from uuid import UUID
-import pytest
 import json
 
 from mlserver.batch_processing import process_batch

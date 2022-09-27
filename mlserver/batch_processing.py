@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from functools import wraps
-from pyexpat import model
 import uuid
 import tritonclient.http.aio as httpclient
 
@@ -13,8 +12,6 @@ import orjson
 
 from typing import Dict, List, Tuple
 
-import numpy as np
-
 from mlserver.types import InferenceRequest
 from mlserver.codecs import NumpyCodec
 from mlserver.logging import get_logger
@@ -25,6 +22,7 @@ from time import perf_counter as timer
 CHOICES_TRANSPORT = ["rest", "grpc"]
 
 logger = get_logger()
+
 
 # Monkey patching is required for error responses coming from MLServer.
 async def _get_error(response):
@@ -180,9 +178,11 @@ async def consume(
             output_item = await process_item(
                 input_item, model_name, worker_id, triton_client, binary_data
             )
-        except Exception as e:
+        except Exception:
             if extra_verbose:
-                logger.error(f"consumer {worker_id}: failed to process item {item}")
+                logger.error(
+                    f"consumer {worker_id}: failed to process item {input_item}"
+                )
             queue_in.task_done()
             continue
 

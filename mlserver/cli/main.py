@@ -93,7 +93,10 @@ async def dockerfile(folder: str, include_dockerignore: bool):
     "-u",
     default="localhost:8080",
     envvar="MLSERVER_INFER_URL",
-    help="URL of the MLServer to send inference requests to. Should not contain http or https.",
+    help=(
+        "URL of the MLServer to send inference requests to. "
+        "Should not contain http or https."
+    ),
 )
 @click.option(
     "--model-name",
@@ -150,7 +153,10 @@ async def dockerfile(folder: str, include_dockerignore: bool):
     envvar="MLSERVER_INFER_TRANSPORT",
     type=click.Choice(CHOICES_TRANSPORT),
     default="rest",
-    help="Transport type to use to send inference requests. Can be 'rest' or 'grpc' (not yet supported).",
+    help=(
+        "Transport type to use to send inference requests. "
+        "Can be 'rest' or 'grpc' (not yet supported)."
+    ),
 )
 @click.option(
     "--use-ssl",
