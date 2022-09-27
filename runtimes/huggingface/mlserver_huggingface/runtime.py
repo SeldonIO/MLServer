@@ -62,7 +62,7 @@ class HuggingFaceRuntime(MLModel):
             logger.warning(
                 f"hf batch_size: {self.hf_settings.batch_size} is different "
                 f"from MLServer max_batch_size: {settings.max_batch_size}"
-                )
+            )
 
         super().__init__(settings)
 
