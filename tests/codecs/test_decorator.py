@@ -50,9 +50,18 @@ def inference_request(input_values: dict) -> InferenceRequest:
     )
 
 
-def test_signature_codec(signature_codec: SignatureCodec):
+def test_get_codecs(signature_codec: SignatureCodec):
     assert signature_codec._input_codecs == {"foo": NumpyCodec, "bar": StringCodec}
     assert signature_codec._output_codecs == [NumpyCodec]
+
+
+def test_get_codecs_with_request():
+    def _f(foo: pd.DataFrame) -> (np.ndarray, pd.DataFrame):
+        return np.array([2]), pd.DataFrame({"bar": [2]})
+
+    signature_codec = SignatureCodec(_f)
+    assert signature_codec._input_codecs == {"foo": PandasCodec}
+    assert signature_codec._output_codecs == [NumpyCodec, PandasCodec]
 
 
 def test_decode_request(

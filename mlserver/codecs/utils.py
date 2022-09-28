@@ -26,6 +26,7 @@ DefaultInputPrefix = "input-"
 InputOrOutput = Union[RequestInput, ResponseOutput]
 InputCodecLike = Union[Type[InputCodec], InputCodec]
 RequestCodecLike = Union[Type[RequestCodec], RequestCodec]
+Codec = Union[InputCodecLike, RequestCodecLike]
 
 Parametrised = Union[
     InferenceRequest, RequestInput, RequestOutput, ResponseOutput, InferenceResponse

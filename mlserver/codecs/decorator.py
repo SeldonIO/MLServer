@@ -14,8 +14,9 @@ from typing import (
 
 from ..types import InferenceRequest, InferenceResponse, RequestInput, ResponseOutput
 
-from .base import RequestCodec, InputCodec, find_input_codec
+from .base import RequestCodec, InputCodec, find_input_codec, find_request_codec
 from .errors import InputNotFound, OutputNotFound, CodecNotFound
+from .utils import Codec
 
 PredictFunc = Callable[[InferenceRequest], Awaitable[InferenceResponse]]
 
@@ -42,30 +43,36 @@ class SignatureCodec(RequestCodec):
         self._predict = predict
         self._input_codecs, self._output_codecs = self._get_codecs(predict)
 
-    def _get_codecs(
-        self, pred: Callable
-    ) -> Tuple[Dict[str, InputCodec], Tuple[InputCodec]]:
+    def _get_codecs(self, pred: Callable) -> Tuple[Dict[str, Codec], Tuple[Codec]]:
         self._input_hints = get_type_hints(pred)
         self._output_hints = _as_list(self._input_hints.pop("return", None))
 
         input_codecs = {}
         for name, type_hint in self._input_hints.items():
-            codec = find_input_codec(type_hint=type_hint)
+            codec = self._find_codec(name=name, type_hint=type_hint, is_input=True)
             # TODO: Consider metadata as well! (needs to be done at runtime)
-            if codec is None:
-                raise CodecNotFound(name=name, payload_type=type_hint, is_input=True)
-
             input_codecs[name] = codec
 
         output_codecs = []
         for type_hint in self._output_hints:
-            codec = find_input_codec(type_hint=type_hint)
-            if codec is None:
-                raise CodecNotFound(payload_type=type_hint, is_input=False)
-
+            # Try either as an input or as a request codec
+            codec = self._find_codec(name=None, type_hint=type_hint, is_input=False)
             output_codecs.append(codec)
 
         return input_codecs, output_codecs
+
+    def _find_codec(
+        self, name: Optional[str], type_hint: Type, is_input: bool = False
+    ) -> Codec:
+        codec = find_input_codec(type_hint=type_hint)
+        if codec is not None:
+            return codec
+
+        codec = find_request_codec(type_hint=type_hint)
+        if codec is not None:
+            return codec
+
+        raise CodecNotFound(name=name, payload_type=type_hint, is_input=is_input)
 
     def decode_request(self, request: InferenceRequest) -> Dict[str, Any]:
         inputs = {}
