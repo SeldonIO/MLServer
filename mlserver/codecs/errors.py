@@ -47,7 +47,7 @@ class OutputNotFound(MLServerError):
         expected_outputs = [f"'{output_hint}'" for output_hint in output_hints]
         msg = (
             f"Unexpected output value at position '{output_idx}' ({output_type}). "
-            f"Expected outputs are {', '.join(expected_outputs)} outputs are expected."
+            f"Expected outputs are {', '.join(expected_outputs)} outputs."
         )
         super().__init__(msg)
 

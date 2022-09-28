@@ -4,6 +4,7 @@ import numpy as np
 from typing import Any, List, Optional
 
 from mlserver.types import InferenceRequest, InferenceResponse, RequestInput
+from mlserver.codecs.base import InputCodec
 from mlserver.codecs.decorator import SignatureCodec, decode_args
 from mlserver.codecs.errors import InputNotFound, OutputNotFound
 from mlserver.codecs.numpy import NumpyCodec, NumpyRequestCodec
@@ -64,19 +65,42 @@ def test_decode_request_not_found(signature_codec: SignatureCodec, inference_req
         signature_codec.decode_request(inference_request)
 
 
-def test_encode_response(signature_codec: SignatureCodec, output_value: np.ndarray):
-    response = signature_codec.encode_response(model_name="foo", payload=output_value)
+@pytest.mark.parametrize(
+    "output_values, output_codecs",
+    [
+        (np.array([2]), [NumpyCodec]),
+        (["foo"], [StringCodec]),
+        ((np.array([2]), ["foo"]), [NumpyCodec, StringCodec]),
+        ((["foo"], np.array([2])), [StringCodec, NumpyCodec]),
+    ],
+)
+def test_encode_response(
+    signature_codec: SignatureCodec,
+    output_values: np.ndarray,
+    output_codecs: List[InputCodec],
+):
+    signature_codec._output_codecs = output_codecs
+    response = signature_codec.encode_response(model_name="foo", payload=output_values)
 
     assert response.model_name == "foo"
-    assert len(response.outputs) == 1
-    assert response.outputs[0].name == "output-0"
+
+    outputs = response.outputs
+    assert len(outputs) == len(output_values)
+    for idx, output in enumerate(outputs):
+        assert output.name == f"output-{idx}"
+
+        codec = output_codecs[idx]
+        expected = output_values
+        if isinstance(output_values, tuple):
+            expected = output_values[idx]
+        assert codec.decode_output(output) == expected
 
 
 @pytest.mark.parametrize(
     "invalid_values",
     [
-        ["foo", np.array([2])],
-        [np.array([2]), "foo"],
+        ("foo", np.array([2])),
+        (np.array([2]), "foo"),
     ],
 )
 def test_encode_response_not_found(
