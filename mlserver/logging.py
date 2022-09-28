@@ -26,7 +26,9 @@ def apply_logging_file(logging_settings: Union[str, Dict]):
                 config = json.load(settings_file)
             logging.config.dictConfig(config)
         else:
-            logging.config.fileConfig(fname=logging_settings, disable_existing_loggers=False)
+            logging.config.fileConfig(
+                fname=logging_settings, disable_existing_loggers=False
+            )
     elif isinstance(logging_settings, Dict):
         logging.config.dictConfig(logging_settings)
     else:
