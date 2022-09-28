@@ -6,6 +6,7 @@ from ..model import MLModel
 
 from .utils import matches
 from .app import create_app
+from .logging import logger
 
 
 class _NoSignalServer(uvicorn.Server):
@@ -61,17 +62,27 @@ class RESTServer:
         await self._server.serve()
 
     def _get_config(self):
-        kwargs = {
-            "host": self._settings.host,
-            "port": self._settings.http_port,
-            "root_path": self._settings.root_path,
-            "access_log": self._settings.debug,
-        }
+        kwargs = {}
+
+        if self._settings._custom_rest_server_settings:
+            logger.warning(
+                "REST custom configuration is out of support. Use as your own risk"
+            )
+            kwargs.update(self._settings._custom_rest_server_settings)
+
+        kwargs.update(
+            {
+                "host": self._settings.host,
+                "port": self._settings.http_port,
+                "root_path": self._settings.root_path,
+                "access_log": self._settings.debug,
+            }
+        )
 
         if self._settings.logging_settings:
             # If not None, use ours. Otherwise, let Uvicorn fall back on its
             # own config.
-            kwargs["log_config"] = self._settings.logging_settings
+            kwargs.update({"log_config": self._settings.logging_settings})
 
         return uvicorn.Config(self._app, **kwargs)
 

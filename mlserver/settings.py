@@ -146,6 +146,11 @@ class Settings(BaseSettings):
     kafka_topic_input: str = "mlserver-input"
     kafka_topic_output: str = "mlserver-output"
 
+    # Custom server settings
+    _custom_rest_server_settings: Optional[dict] = None
+    _custom_metrics_server_settings: Optional[dict] = None
+    _custom_grpc_server_settings: Optional[dict] = None
+
 
 class ModelParameters(BaseSettings):
     """
