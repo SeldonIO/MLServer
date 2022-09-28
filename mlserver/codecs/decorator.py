@@ -15,7 +15,7 @@ from typing import (
 from ..types import InferenceRequest, InferenceResponse, RequestInput, ResponseOutput
 
 from .base import RequestCodec, InputCodec, find_input_codec, find_request_codec
-from .errors import InputNotFound, OutputNotFound, CodecNotFound
+from .errors import InputsNotFound, OutputNotFound, CodecNotFound
 from .utils import Codec
 
 PredictFunc = Callable[[InferenceRequest], Awaitable[InferenceResponse]]
@@ -76,15 +76,40 @@ class SignatureCodec(RequestCodec):
 
     def decode_request(self, request: InferenceRequest) -> Dict[str, Any]:
         inputs = {}
+        extra_request_inputs = []
         for request_input in request.inputs:
             input_name = request_input.name
             if input_name not in self._input_codecs:
-                raise InputNotFound(input_name, self._input_codecs)
+                # Aggregate extra request inputs to check later, as they could
+                # be part of aggregated request codecs (e.g. like dataframes)
+                extra_request_inputs.append(request_input)
+                continue
 
-            input_codec = self._input_codecs[input_name]
-            inputs[input_name] = input_codec.decode_input(request_input)
+            # Ensure matching codec is an input codec
+            codec = self._input_codecs[input_name]
+            if not issubclass(codec, InputCodec):
+                raise CodecNotFound(name=input_name, is_input=True)
+
+            inputs[input_name] = codec.decode_input(request_input)
+
+        if extra_request_inputs:
+            request_codec = self._get_request_codec()
+            if not request_codec:
+                # If there are no request codecs that can aggregate all
+                # remaining inputs, raise an error
+                raise InputsNotFound(extra_request_inputs, self._input_codecs)
+
+            # We create a fake request built from the extra request inputs
+            name, codec = request_codec
+            extra_inputs = InferenceRequest(inputs=extra_request_inputs)
+            inputs[name] = codec.decode_request(extra_inputs)
 
         return inputs
+
+    def _get_request_codec(self) -> Optional[Tuple[str, RequestCodec]]:
+        for name, codec in self._input_codecs.items():
+            if issubclass(codec, RequestCodec):
+                return name, codec
 
     def encode_response(
         self, model_name: str, payload: Any, model_version: str = None

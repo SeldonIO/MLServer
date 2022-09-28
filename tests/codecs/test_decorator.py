@@ -2,7 +2,7 @@ import pytest
 import numpy as np
 import pandas as pd
 
-from typing import Any, List, Optional
+from typing import Any, Dict, List, Optional
 
 from mlserver.types import (
     InferenceRequest,
@@ -12,8 +12,9 @@ from mlserver.types import (
     Parameters,
 )
 from mlserver.codecs.base import InputCodec
+from mlserver.codecs.utils import Codec
 from mlserver.codecs.decorator import SignatureCodec, decode_args
-from mlserver.codecs.errors import InputNotFound, OutputNotFound
+from mlserver.codecs.errors import InputsNotFound, OutputNotFound
 from mlserver.codecs.numpy import NumpyCodec, NumpyRequestCodec
 from mlserver.codecs.string import StringCodec
 from mlserver.codecs.pandas import PandasCodec
@@ -64,21 +65,63 @@ def test_get_codecs_with_request():
     assert signature_codec._output_codecs == [NumpyCodec, PandasCodec]
 
 
+@pytest.mark.parametrize(
+    "request_inputs, input_codecs, expected_values",
+    [
+        (
+            [
+                RequestInput(name="foo", datatype="INT64", shape=[1], data=[2]),
+                RequestInput(name="bar", datatype="BYTES", shape=[1], data=[b"asd"]),
+            ],
+            {"foo": NumpyCodec, "bar": StringCodec},
+            {"foo": np.array([2]), "bar": ["asd"]},
+        ),
+        (
+            [
+                RequestInput(name="a", datatype="INT64", shape=[1], data=[2]),
+                RequestInput(name="b", datatype="BYTES", shape=[1], data=["asd"]),
+            ],
+            {"foo": PandasCodec},
+            {"foo": pd.DataFrame({"a": [2], "b": ["asd"]})},
+        ),
+        (
+            [
+                RequestInput(name="bar", datatype="BYTES", shape=[1], data=[b"fiu"]),
+                RequestInput(name="a", datatype="INT64", shape=[1], data=[2]),
+                RequestInput(name="b", datatype="BYTES", shape=[1], data=["asd"]),
+            ],
+            {"bar": StringCodec, "foo": PandasCodec},
+            {"bar": ["fiu"], "foo": pd.DataFrame({"a": [2], "b": ["asd"]})},
+        ),
+    ],
+)
 def test_decode_request(
     signature_codec: SignatureCodec,
-    inference_request: InferenceRequest,
-    input_values: dict,
+    request_inputs: List[RequestInput],
+    input_codecs: Dict[str, Codec],
+    expected_values: dict,
 ):
+    signature_codec._input_codecs = input_codecs
+
+    inference_request = InferenceRequest(inputs=request_inputs)
     inputs = signature_codec.decode_request(inference_request)
 
-    assert len(input_values) == len(inputs)
-    np.testing.assert_equal(inputs["foo"], input_values["foo"])
-    assert inputs["bar"] == input_values["bar"]
+    assert len(inputs) == len(expected_values)
+    for key, value in inputs.items():
+        assert key in expected_values
+        expected_value = expected_values[key]
+
+        if isinstance(expected_value, pd.DataFrame):
+            pd.testing.assert_frame_equal(value, expected_value)
+        else:
+            assert value == expected_value
 
 
-def test_decode_request_not_found(signature_codec: SignatureCodec, inference_request):
+def test_decode_request_not_found(
+    signature_codec: SignatureCodec, inference_request: InferenceRequest
+):
     inference_request.inputs[0].name = "not-foo"
-    with pytest.raises(InputNotFound) as err:
+    with pytest.raises(InputsNotFound) as err:
         signature_codec.decode_request(inference_request)
 
 

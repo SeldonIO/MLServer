@@ -1,5 +1,6 @@
 from typing import Any, Dict, List, Type
 
+from ..types import RequestInput
 from ..errors import MLServerError
 
 
@@ -52,11 +53,12 @@ class OutputNotFound(MLServerError):
         super().__init__(msg)
 
 
-class InputNotFound(MLServerError):
-    def __init__(self, input_name: str, input_hints: Dict[str, Any]):
+class InputsNotFound(MLServerError):
+    def __init__(self, inputs: List[RequestInput], input_hints: Dict[str, Any]):
+        inputs = [f"'{inp.name}'" for inp in inputs]
         available_inputs = [f"'{input_name}'" for input_name in input_hints.keys()]
         msg = (
-            f"Input '{input_name}' was not found. "
+            f"Input {', '.join(inputs)} was not found. "
             f"Available inputs are {', '.join(available_inputs)}."
         )
         super().__init__(msg)
