@@ -109,7 +109,7 @@ def json_to_triton(
     return request_id, inputs, outputs
 
 
-def serialize_triton_infer_result(output_item: BatchOutputItem):
+def serialize_triton_infer_result(output_item: BatchOutputItem) -> bytes:
     response = output_item.item.get_response()
     if "parameters" not in response:
         response["parameters"] = {}
@@ -218,6 +218,12 @@ async def process_batch(
     verbose,
     extra_verbose,
 ):
+    """
+    Process batch requests against V2-compatible inference server.
+
+    Currently, this is meant to be an entrypoint for the `mlserver infer ...` CLI.
+    Note: this feature is currently experimental and API is subject to change.
+    """
     start_time = timer()
 
     if transport == "grpc":

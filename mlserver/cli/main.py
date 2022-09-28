@@ -188,6 +188,9 @@ async def infer(
     verbose,
     extra_verbose,
 ):
+    """
+    Execute batch inference requests against V2-compatible inference server (experimental).
+    """
     await process_batch(
         model_name=model_name,
         url=url,
