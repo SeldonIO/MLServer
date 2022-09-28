@@ -1,14 +1,22 @@
 import pytest
 import numpy as np
+import pandas as pd
 
 from typing import Any, List, Optional
 
-from mlserver.types import InferenceRequest, InferenceResponse, RequestInput
+from mlserver.types import (
+    InferenceRequest,
+    InferenceResponse,
+    RequestInput,
+    ResponseOutput,
+    Parameters,
+)
 from mlserver.codecs.base import InputCodec
 from mlserver.codecs.decorator import SignatureCodec, decode_args
 from mlserver.codecs.errors import InputNotFound, OutputNotFound
 from mlserver.codecs.numpy import NumpyCodec, NumpyRequestCodec
 from mlserver.codecs.string import StringCodec
+from mlserver.codecs.pandas import PandasCodec
 
 from ..fixtures import SimpleModel
 
@@ -66,34 +74,121 @@ def test_decode_request_not_found(signature_codec: SignatureCodec, inference_req
 
 
 @pytest.mark.parametrize(
-    "output_values, output_codecs",
+    "output_values, output_codecs, expected_outputs",
     [
-        (np.array([2]), [NumpyCodec]),
-        (["foo"], [StringCodec]),
-        ((np.array([2]), ["foo"]), [NumpyCodec, StringCodec]),
-        ((["foo"], np.array([2])), [StringCodec, NumpyCodec]),
+        (
+            np.array([2]),
+            [NumpyCodec],
+            [
+                ResponseOutput(
+                    name="output-0",
+                    datatype="INT64",
+                    shape=[1],
+                    data=[2],
+                )
+            ],
+        ),
+        (
+            ["foo"],
+            [StringCodec],
+            [
+                ResponseOutput(
+                    name="output-0",
+                    datatype="BYTES",
+                    shape=[1],
+                    data=[b"foo"],
+                    parameters=Parameters(content_type=StringCodec.ContentType),
+                )
+            ],
+        ),
+        (
+            (np.array([2]), ["foo"]),
+            [NumpyCodec, StringCodec],
+            [
+                ResponseOutput(
+                    name="output-0",
+                    datatype="INT64",
+                    shape=[1],
+                    data=[2],
+                ),
+                ResponseOutput(
+                    name="output-1",
+                    datatype="BYTES",
+                    shape=[1],
+                    data=[b"foo"],
+                    parameters=Parameters(content_type=StringCodec.ContentType),
+                ),
+            ],
+        ),
+        (
+            (["foo"], np.array([2])),
+            [StringCodec, NumpyCodec],
+            [
+                ResponseOutput(
+                    name="output-0",
+                    datatype="BYTES",
+                    shape=[1],
+                    data=[b"foo"],
+                    parameters=Parameters(content_type=StringCodec.ContentType),
+                ),
+                ResponseOutput(
+                    name="output-1",
+                    datatype="INT64",
+                    shape=[1],
+                    data=[2],
+                ),
+            ],
+        ),
+        (
+            pd.DataFrame({"a": [2], "b": ["foo"]}),
+            [PandasCodec],
+            [
+                ResponseOutput(name="a", datatype="INT64", shape=[1], data=[2]),
+                ResponseOutput(name="b", datatype="BYTES", shape=[1], data=[b"foo"]),
+            ],
+        ),
+        (
+            (pd.DataFrame({"a": [2], "b": ["foo"]}), ["bar"]),
+            [PandasCodec, StringCodec],
+            [
+                ResponseOutput(name="a", datatype="INT64", shape=[1], data=[2]),
+                ResponseOutput(name="b", datatype="BYTES", shape=[1], data=[b"foo"]),
+                ResponseOutput(
+                    name="output-1",
+                    datatype="BYTES",
+                    shape=[1],
+                    data=[b"bar"],
+                    parameters=Parameters(content_type=StringCodec.ContentType),
+                ),
+            ],
+        ),
+        (
+            (np.array([3]), pd.DataFrame({"a": [2], "b": ["foo"]})),
+            [NumpyCodec, PandasCodec],
+            [
+                ResponseOutput(
+                    name="output-0",
+                    datatype="INT64",
+                    shape=[1],
+                    data=[3],
+                ),
+                ResponseOutput(name="a", datatype="INT64", shape=[1], data=[2]),
+                ResponseOutput(name="b", datatype="BYTES", shape=[1], data=[b"foo"]),
+            ],
+        ),
     ],
 )
 def test_encode_response(
     signature_codec: SignatureCodec,
     output_values: np.ndarray,
     output_codecs: List[InputCodec],
+    expected_outputs: List[ResponseOutput],
 ):
     signature_codec._output_codecs = output_codecs
     response = signature_codec.encode_response(model_name="foo", payload=output_values)
 
     assert response.model_name == "foo"
-
-    outputs = response.outputs
-    assert len(outputs) == len(output_values)
-    for idx, output in enumerate(outputs):
-        assert output.name == f"output-{idx}"
-
-        codec = output_codecs[idx]
-        expected = output_values
-        if isinstance(output_values, tuple):
-            expected = output_values[idx]
-        assert codec.decode_output(output) == expected
+    assert response.outputs == expected_outputs
 
 
 @pytest.mark.parametrize(

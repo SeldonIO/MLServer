@@ -12,7 +12,7 @@ from typing import (
     get_type_hints,
 )
 
-from ..types import InferenceRequest, InferenceResponse, RequestInput
+from ..types import InferenceRequest, InferenceResponse, RequestInput, ResponseOutput
 
 from .base import RequestCodec, InputCodec, find_input_codec
 from .errors import InputNotFound, OutputNotFound, CodecNotFound
@@ -85,23 +85,34 @@ class SignatureCodec(RequestCodec):
         payloads = _as_list(payload)
         outputs = []
         for idx, payload in enumerate(payloads):
-            output_type = type(payload)
-            if idx >= len(self._output_codecs):
-                raise OutputNotFound(idx, output_type, self._output_hints)
-
-            # TODO: Fallback to encode_by_payload?
-            codec = self._output_codecs[idx]
-            if not codec.can_encode(payload):
-                raise OutputNotFound(idx, output_type, self._output_hints)
-
-            # TODO: Check model metadata for output names
-            output_name = f"output-{idx}"
-            response_output = codec.encode_output(name=output_name, payload=payload)
-            outputs.append(response_output)
+            outputs += self._encode_outputs(idx, payload)
 
         return InferenceResponse(
             model_name=model_name, model_version=model_version, outputs=outputs
         )
+
+    def _encode_outputs(self, idx: int, payload: Any) -> List[ResponseOutput]:
+        output_type = type(payload)
+        if idx >= len(self._output_codecs):
+            raise OutputNotFound(idx, output_type, self._output_hints)
+
+        # TODO: Fallback to encode_by_payload?
+        codec = self._output_codecs[idx]
+        if not codec.can_encode(payload):
+            raise OutputNotFound(idx, output_type, self._output_hints)
+
+        if issubclass(codec, InputCodec):
+            # TODO: Check model metadata for output names
+            output_name = f"output-{idx}"
+            response_output = codec.encode_output(name=output_name, payload=payload)
+            return [response_output]
+
+        if issubclass(codec, RequestCodec):
+            # NOTE: We will ignore `model_name` and only grab the outputs
+            response = codec.encode_response(model_name="", payload=payload)
+            return response.outputs
+
+        return []
 
 
 def decode_args(predict: Callable) -> PredictFunc:
