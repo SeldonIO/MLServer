@@ -1,11 +1,11 @@
 import pytest
 import numpy as np
 
-from typing import List, Optional
+from typing import Any, List, Optional
 
 from mlserver.types import InferenceRequest, InferenceResponse, RequestInput
 from mlserver.codecs.decorator import SignatureCodec, decode_args
-from mlserver.codecs.errors import InputNotFound
+from mlserver.codecs.errors import InputNotFound, OutputNotFound
 from mlserver.codecs.numpy import NumpyCodec, NumpyRequestCodec
 from mlserver.codecs.string import StringCodec
 
@@ -61,7 +61,7 @@ def test_decode_request(
 def test_decode_request_not_found(signature_codec: SignatureCodec, inference_request):
     inference_request.inputs[0].name = "not-foo"
     with pytest.raises(InputNotFound) as err:
-        inputs = signature_codec.decode_request(inference_request)
+        signature_codec.decode_request(inference_request)
 
 
 def test_encode_response(signature_codec: SignatureCodec, output_value: np.ndarray):
@@ -70,6 +70,20 @@ def test_encode_response(signature_codec: SignatureCodec, output_value: np.ndarr
     assert response.model_name == "foo"
     assert len(response.outputs) == 1
     assert response.outputs[0].name == "output-0"
+
+
+@pytest.mark.parametrize(
+    "invalid_values",
+    [
+        ["foo", np.array([2])],
+        [np.array([2]), "foo"],
+    ],
+)
+def test_encode_response_not_found(
+    signature_codec: SignatureCodec, invalid_values: List[Any]
+):
+    with pytest.raises(OutputNotFound):
+        signature_codec.encode_response(model_name="foo", payload=invalid_values)
 
 
 async def test_decode_args(

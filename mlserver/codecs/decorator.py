@@ -15,7 +15,7 @@ from typing import (
 from ..types import InferenceRequest, InferenceResponse, RequestInput
 
 from .base import RequestCodec, InputCodec, find_input_codec
-from .errors import InputNotFound, CodecNotFound
+from .errors import InputNotFound, OutputNotFound, CodecNotFound
 
 PredictFunc = Callable[[InferenceRequest], Awaitable[InferenceResponse]]
 
@@ -45,11 +45,11 @@ class SignatureCodec(RequestCodec):
     def _get_codecs(
         self, pred: Callable
     ) -> Tuple[Dict[str, InputCodec], Tuple[InputCodec]]:
-        input_hints = get_type_hints(pred)
-        output_hints = _as_list(input_hints.pop("return", None))
+        self._input_hints = get_type_hints(pred)
+        self._output_hints = _as_list(self._input_hints.pop("return", None))
 
         input_codecs = {}
-        for name, type_hint in input_hints.items():
+        for name, type_hint in self._input_hints.items():
             codec = find_input_codec(type_hint=type_hint)
             # TODO: Consider metadata as well! (needs to be done at runtime)
             if codec is None:
@@ -58,7 +58,7 @@ class SignatureCodec(RequestCodec):
             input_codecs[name] = codec
 
         output_codecs = []
-        for type_hint in output_hints:
+        for type_hint in self._output_hints:
             codec = find_input_codec(type_hint=type_hint)
             if codec is None:
                 raise CodecNotFound(payload_type=type_hint, is_input=False)
@@ -85,8 +85,14 @@ class SignatureCodec(RequestCodec):
         payloads = _as_list(payload)
         outputs = []
         for idx, payload in enumerate(payloads):
-            # TODO: Check if there's mismatch
+            output_type = type(payload)
+            if idx >= len(self._output_codecs):
+                raise OutputNotFound(idx, output_type, self._output_hints)
+
+            # TODO: Fallback to encode_by_payload?
             codec = self._output_codecs[idx]
+            if not codec.can_encode(payload):
+                raise OutputNotFound(idx, output_type, self._output_hints)
 
             # TODO: Check model metadata for output names
             output_name = f"output-{idx}"

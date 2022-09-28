@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Type
 
 from ..errors import MLServerError
 
@@ -43,10 +43,10 @@ class CodecError(MLServerError):
 
 
 class OutputNotFound(MLServerError):
-    def __init__(self, output_idx: str, output_hints: List[Type]):
+    def __init__(self, output_idx: str, output_type: Type, output_hints: List[Type]):
         expected_outputs = [f"'{output_hint}'" for output_hint in output_hints]
         msg = (
-            "Unexpected output value at position '{output_idx}'. "
+            f"Unexpected output value at position '{output_idx}' ({output_type}). "
             f"Expected outputs are {', '.join(expected_outputs)} outputs are expected."
         )
         super().__init__(msg)
