@@ -1,11 +1,13 @@
 import pytest
 import numpy as np
+import pandas as pd
 
 from typing import Any, Optional
 
 from mlserver.types import InferenceRequest, RequestInput, Parameters, TensorData
 from mlserver.codecs import RequestCodec, NumpyCodec, StringCodec
 from mlserver.codecs.numpy import NumpyRequestCodec
+from mlserver.codecs.pandas import PandasCodec
 from mlserver.model import MLModel
 
 
@@ -181,6 +183,25 @@ def test_decode(sum_model: MLModel, request_input: RequestInput, expected: Any):
             ),
             None,
         ),
+        # Request combining content type annotations at both the input and
+        # request levels
+        (
+            InferenceRequest(
+                parameters=Parameters(content_type=PandasCodec.ContentType),
+                inputs=[
+                    RequestInput(name="a", datatype="INT64", shape=[3], data=[1, 2, 3]),
+                    RequestInput(
+                        name="b",
+                        datatype="BYTES",
+                        shape=[3],
+                        data=[b"a", b"b", b"c"],
+                        parameters=Parameters(content_type=StringCodec.ContentType),
+                    ),
+                ],
+            ),
+            pd.DataFrame({"a": [1, 2, 3], "b": ["a", "b", "c"]}),
+            None,
+        ),
     ],
 )
 def test_decode_request(
@@ -191,7 +212,9 @@ def test_decode_request(
 ):
     decoded_request = sum_model.decode_request(inference_request, default_codec)
 
-    if isinstance(expected, np.ndarray):
+    if isinstance(expected, pd.DataFrame):
+        pd.testing.assert_frame_equal(decoded_request, expected)  # type: ignore
+    elif isinstance(expected, np.ndarray):
         np.testing.assert_array_equal(decoded_request, expected)  # type: ignore
     else:
         assert decoded_request == expected
