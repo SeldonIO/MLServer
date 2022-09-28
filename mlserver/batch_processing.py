@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from functools import wraps
-import uuid
 import tritonclient.http.aio as httpclient
 
 import asyncio
