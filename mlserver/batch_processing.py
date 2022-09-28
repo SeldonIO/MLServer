@@ -120,7 +120,7 @@ def serialize_triton_infer_result(output_item: BatchOutputItem) -> bytes:
 
         # Removing "binary_data_size" parameters as now this is 1-D list
         if (
-            output["parameters"] is not None
+            output.get("parameters") is not None
             and "binary_data_size" in output["parameters"]
         ):
             del response["outputs"][n]["parameters"]["binary_data_size"]
@@ -138,7 +138,7 @@ async def process_item(
     try:
         request_id, inputs, outputs = json_to_triton(item.item, binary_data)
     except Exception as e:
-        logger.error(f"consumer {worker_id}: failed to deserialize item: {e}")
+        logger.error(f"consumer {worker_id}: failed to deserialize item: {repr(e)}")
         raise
     try:
         logger.debug(f"consumer {worker_id}: sending request")
@@ -151,7 +151,7 @@ async def process_item(
         )
         logger.debug(f"consumer {worker_id}: received response")
     except Exception as e:
-        logger.error(f"Consumer {worker_id}: failed to process task: {e}")
+        logger.error(f"Consumer {worker_id}: failed to process task: {repr(e)}")
         raise
     return BatchOutputItem(index=item.index, item=data)
 
@@ -201,7 +201,7 @@ async def finalize(queue: asyncio.Queue, fname: str):
                 await f.write(output)
                 await f.write(b"\n")
             except Exception as e:
-                logger.error(f"Failed to finalize task: {e}")
+                logger.error(f"Failed to finalize task: {repr(e)}")
             queue.task_done()
 
 
