@@ -18,6 +18,8 @@ from mlserver.logging import get_logger
 
 from time import perf_counter as timer
 
+from mlserver.utils import generate_uuid
+
 
 CHOICES_TRANSPORT = ["rest", "grpc"]
 
@@ -103,7 +105,7 @@ def json_to_triton(
         outputs.append(new_output)
 
     request_id = (
-        str(uuid.uuid4()) if inference_request.id is None else inference_request.id
+        generate_uuid() if inference_request.id is None else inference_request.id
     )
     return request_id, inputs, outputs
 

@@ -145,7 +145,7 @@ async def dockerfile(folder: str, include_dockerignore: bool):
     is_flag=True,
     default=False,
     envvar="MLSERVER_INFER_EXTRA_VERBOSE",
-    help="Extra verbose mode (shows detailed requesets and responses).",
+    help="Extra verbose mode (shows detailed requests and responses).",
 )
 @click.option(
     "--transport",
