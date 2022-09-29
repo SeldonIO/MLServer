@@ -1,0 +1,6 @@
+{"inputs":[{"name":"input-0","shape":[1,3],"datatype":"INT32","data":[1,0,0]}]}
+{"inputs":[{"name":"input-0","shape":[1,3],"datatype":"INT32","data":[2,0,0]}]}
+{"inputs":[{"name":"input-0","shape":[1,3],"datatype":"INT32","data":[3,0,0]}]}
+{"inputs":[{"name":"input-0","shape":[1,3],"datatype":"INT32","data":[4,0,0]}]}
+{"inputs":[{"name":"input-0","shape":[1,3],"datatype":"INT32","data":[5,0,0]}]}
+{"inputs":[{"name":"input-0","shape":[1,3],"datatype":"INT32","data":[6,0,0]}]}

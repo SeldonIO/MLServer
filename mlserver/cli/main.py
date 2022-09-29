@@ -14,6 +14,7 @@ from ..utils import install_uvloop_event_loop
 
 from .build import generate_dockerfile, build_image, write_dockerfile
 from .serve import load_settings
+from ..batch_processing import process_batch, CHOICES_TRANSPORT
 
 
 def click_async(f):
@@ -84,6 +85,125 @@ async def dockerfile(folder: str, include_dockerignore: bool):
         folder, dockerfile, include_dockerignore=include_dockerignore
     )
     logger.info(f"Successfully written Dockerfile in {dockerfile_path}")
+
+
+@root.command("infer")
+@click.option(
+    "--url",
+    "-u",
+    default="localhost:8080",
+    envvar="MLSERVER_INFER_URL",
+    help=(
+        "URL of the MLServer to send inference requests to. "
+        "Should not contain http or https."
+    ),
+)
+@click.option(
+    "--model-name",
+    "-m",
+    type=str,
+    required=True,
+    envvar="MLSERVER_INFER_MODEL_NAME",
+    help="Name of the model to send inference requests to.",
+)
+@click.option(
+    "--input-data-path",
+    "-i",
+    required=True,
+    type=click.Path(),
+    envvar="MLSERVER_INFER_INPUT_DATA_PATH",
+    help="Local path to the input file containing inference requests to be processed.",
+)
+@click.option(
+    "--output-data-path",
+    "-o",
+    required=True,
+    type=click.Path(),
+    envvar="MLSERVER_INFER_OUTPUT_DATA_PATH",
+    help="Local path to the output file for the inference responses to be  written to.",
+)
+@click.option("--workers", "-w", default=10, envvar="MLSERVER_INFER_WORKERS")
+@click.option(
+    "--binary-data",
+    "-b",
+    is_flag=True,
+    default=False,
+    envvar="MLSERVER_INFER_BINARY_DATA",
+    help="Send inference requests as binary data (not fully supported).",
+)
+@click.option(
+    "--verbose",
+    "-v",
+    is_flag=True,
+    default=False,
+    envvar="MLSERVER_INFER_VERBOSE",
+    help="Verbose mode.",
+)
+@click.option(
+    "--extra-verbose",
+    "-vv",
+    is_flag=True,
+    default=False,
+    envvar="MLSERVER_INFER_EXTRA_VERBOSE",
+    help="Extra verbose mode (shows detailed requests and responses).",
+)
+@click.option(
+    "--transport",
+    "-t",
+    envvar="MLSERVER_INFER_TRANSPORT",
+    type=click.Choice(CHOICES_TRANSPORT),
+    default="rest",
+    help=(
+        "Transport type to use to send inference requests. "
+        "Can be 'rest' or 'grpc' (not yet supported)."
+    ),
+)
+@click.option(
+    "--use-ssl",
+    "-s",
+    is_flag=True,
+    default=False,
+    envvar="MLSERVER_INFER_USE_SSL",
+    help="Use SSL in communications with inference server.",
+)
+@click.option(
+    "--insecure",
+    is_flag=True,
+    default=False,
+    envvar="MLSERVER_INFER_INSECURE",
+    help="Disable SSL verification in communications. Use with caution.",
+)
+@click_async
+# TODO: add flags for SSL --key-file and --cert-file (see Tritonclient examples)
+async def infer(
+    model_name,
+    url,
+    workers,
+    input_data_path,
+    output_data_path,
+    binary_data,
+    transport,
+    use_ssl,
+    insecure,
+    verbose,
+    extra_verbose,
+):
+    """
+    Execute batch inference requests against V2 inference server (experimental).
+    """
+    await process_batch(
+        model_name=model_name,
+        url=url,
+        workers=workers,
+        input_data_path=input_data_path,
+        output_data_path=output_data_path,
+        binary_data=binary_data,
+        transport=transport,
+        use_ssl=use_ssl,
+        insecure=insecure,
+        verbose=verbose,
+        extra_verbose=extra_verbose,
+    )
 
 
 def main():
