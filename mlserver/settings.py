@@ -3,7 +3,7 @@ import os
 import json
 import importlib
 
-from typing import Any, List, Optional
+from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseSettings, PyObject, Field
 from contextlib import contextmanager
 
@@ -137,8 +137,8 @@ class Settings(BaseSettings):
     """
 
     # Logging settings
-    logging_settings: Optional[str] = None
-    """Path to logging config file."""
+    logging_settings: Optional[Union[str, Dict]] = None
+    """Path to logging config file or dictionary configuration."""
 
     # Kakfa Server settings
     kafka_enabled: bool = False
