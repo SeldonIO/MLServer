@@ -1,4 +1,4 @@
-from functools import wraps
+from functools import wraps, partial
 from typing import (
     Any,
     Awaitable,
@@ -12,13 +12,14 @@ from typing import (
     get_type_hints,
 )
 
-from ..types import InferenceRequest, InferenceResponse, RequestInput, ResponseOutput
+from ..types import InferenceRequest, InferenceResponse, ResponseOutput
+from ..model import MLModel
 
 from .base import RequestCodec, InputCodec, find_input_codec, find_request_codec
 from .errors import InputsNotFound, OutputNotFound, CodecNotFound
 from .utils import Codec
 
-PredictFunc = Callable[[InferenceRequest], Awaitable[InferenceResponse]]
+PredictFunc = Callable[[MLModel, InferenceRequest], Awaitable[InferenceResponse]]
 
 
 def _as_list(a: Optional[Union[Any, Tuple[Any]]]) -> List[Any]:
@@ -33,6 +34,20 @@ def _as_list(a: Optional[Union[Any, Tuple[Any]]]) -> List[Any]:
     return [a]
 
 
+def _is_codec_type(c: Codec, t: Type) -> bool:
+    if issubclass(c, t):  # type: ignore
+        return True
+
+    if isinstance(c, t):
+        return True
+
+    return False
+
+
+_is_input_codec = partial(_is_codec_type, t=InputCodec)
+_is_request_codec = partial(_is_codec_type, t=RequestCodec)
+
+
 class SignatureCodec(RequestCodec):
     """
     Internal codec that knows how to map type hints to codecs.
@@ -43,7 +58,7 @@ class SignatureCodec(RequestCodec):
         self._predict = predict
         self._input_codecs, self._output_codecs = self._get_codecs(predict)
 
-    def _get_codecs(self, pred: Callable) -> Tuple[Dict[str, Codec], Tuple[Codec]]:
+    def _get_codecs(self, pred: Callable) -> Tuple[Dict[str, Codec], List[Codec]]:
         self._input_hints = get_type_hints(pred)
         self._output_hints = _as_list(self._input_hints.pop("return", None))
 
@@ -68,13 +83,15 @@ class SignatureCodec(RequestCodec):
         if codec is not None:
             return codec
 
-        codec = find_request_codec(type_hint=type_hint)
+        codec = find_request_codec(type_hint=type_hint)  # type: ignore
         if codec is not None:
             return codec
 
-        raise CodecNotFound(name=name, payload_type=type_hint, is_input=is_input)
+        raise CodecNotFound(name=name, payload_type=str(type_hint), is_input=is_input)
 
-    def decode_request(self, request: InferenceRequest) -> Dict[str, Any]:
+    def decode_request(  # type: ignore
+        self, request: InferenceRequest
+    ) -> Dict[str, Any]:
         inputs = {}
         extra_request_inputs = []
         for request_input in request.inputs:
@@ -87,10 +104,10 @@ class SignatureCodec(RequestCodec):
 
             # Ensure matching codec is an input codec
             codec = self._input_codecs[input_name]
-            if not issubclass(codec, InputCodec):
+            if not _is_input_codec(codec):
                 raise CodecNotFound(name=input_name, is_input=True)
 
-            inputs[input_name] = codec.decode_input(request_input)
+            inputs[input_name] = codec.decode_input(request_input)  # type: ignore
 
         if extra_request_inputs:
             request_codec = self._get_request_codec()
@@ -108,10 +125,12 @@ class SignatureCodec(RequestCodec):
 
     def _get_request_codec(self) -> Optional[Tuple[str, RequestCodec]]:
         for name, codec in self._input_codecs.items():
-            if issubclass(codec, RequestCodec):
-                return name, codec
+            if _is_request_codec(codec):
+                return name, codec  # type: ignore
 
-    def encode_response(
+        return None
+
+    def encode_response(  # type: ignore
         self, model_name: str, payload: Any, model_version: str = None
     ) -> InferenceResponse:
         payloads = _as_list(payload)
@@ -133,15 +152,19 @@ class SignatureCodec(RequestCodec):
         if not codec.can_encode(payload):
             raise OutputNotFound(idx, output_type, self._output_hints)
 
-        if issubclass(codec, InputCodec):
+        if _is_input_codec(codec):
             # TODO: Check model metadata for output names
             output_name = f"output-{idx}"
-            response_output = codec.encode_output(name=output_name, payload=payload)
+            response_output = codec.encode_output(  # type: ignore
+                name=output_name, payload=payload
+            )
             return [response_output]
 
-        if issubclass(codec, RequestCodec):
+        if _is_request_codec(codec):
             # NOTE: We will ignore `model_name` and only grab the outputs
-            response = codec.encode_response(model_name="", payload=payload)
+            response = codec.encode_response(  # type: ignore
+                model_name="", payload=payload
+            )
             return response.outputs
 
         return []
@@ -151,7 +174,7 @@ def decode_args(predict: Callable) -> PredictFunc:
     codec = SignatureCodec(predict)
 
     @wraps(predict)
-    async def _f(self, request: InferenceRequest) -> InferenceResponse:
+    async def _f(self: MLModel, request: InferenceRequest) -> InferenceResponse:
         inputs = codec.decode_request(request=request)
 
         outputs = await predict(self, **inputs)

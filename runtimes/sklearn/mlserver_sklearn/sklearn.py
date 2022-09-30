@@ -76,7 +76,8 @@ class SKLearnModel(MLModel):
                     )
 
         # Regression models do not support `predict_proba`
-        if PREDICT_PROBA_OUTPUT in [o.name for o in payload.outputs]:
+        output_names = [o.name for o in payload.outputs]  # type: ignore
+        if PREDICT_PROBA_OUTPUT in output_names:
             # Ensure model supports it
             maybe_regressor = self._model
             if isinstance(self._model, Pipeline):

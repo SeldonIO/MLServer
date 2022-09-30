@@ -2,7 +2,7 @@ import pytest
 import numpy as np
 import pandas as pd
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 from mlserver.types import (
     InferenceRequest,
@@ -13,7 +13,7 @@ from mlserver.types import (
 )
 from mlserver.codecs.base import InputCodec
 from mlserver.codecs.utils import Codec
-from mlserver.codecs.decorator import SignatureCodec, decode_args
+from mlserver.codecs.decorator import SignatureCodec
 from mlserver.codecs.errors import InputsNotFound, OutputNotFound
 from mlserver.codecs.numpy import NumpyCodec, NumpyRequestCodec
 from mlserver.codecs.string import StringCodec
@@ -121,7 +121,7 @@ def test_decode_request_not_found(
     signature_codec: SignatureCodec, inference_request: InferenceRequest
 ):
     inference_request.inputs[0].name = "not-foo"
-    with pytest.raises(InputsNotFound) as err:
+    with pytest.raises(InputsNotFound):
         signature_codec.decode_request(inference_request)
 
 

@@ -10,6 +10,8 @@ from .base import (
     RequestCodec,
     register_input_codec,
     register_request_codec,
+    InputCodecLike,
+    RequestCodecLike,
 )
 from .utils import (
     DecodedParameterName,
@@ -20,8 +22,6 @@ from .utils import (
     encode_response_output,
     decode_request_input,
     decode_inference_request,
-    InputCodecLike,
-    RequestCodecLike,
 )
 
 __all__ = [

@@ -5,6 +5,9 @@ from typing import Any, ClassVar, Dict, Iterable, Optional, Type, Union
 from ..types import InferenceRequest, InferenceResponse, RequestInput, ResponseOutput
 from ..logging import logger
 
+InputCodecLike = Union[Type["InputCodec"], "InputCodec"]
+RequestCodecLike = Union[Type["RequestCodec"], "RequestCodec"]
+
 
 def deprecated(reason: str):
     def _deprecated(func):
@@ -28,7 +31,7 @@ class InputCodec:
     """
 
     ContentType: ClassVar[str] = ""
-    TypeHint: ClassVar[Type] = None
+    TypeHint: ClassVar[Type] = type(None)
 
     @classmethod
     def can_encode(cls, payload: Any) -> bool:
@@ -71,7 +74,7 @@ class RequestCodec:
     """
 
     ContentType: ClassVar[str] = ""
-    TypeHint: ClassVar[Type] = None
+    TypeHint: ClassVar[Type] = type(None)
 
     @classmethod
     def can_encode(cls, payload: Any) -> bool:
@@ -163,19 +166,19 @@ class _CodecRegistry:
 
     def __init__(
         self,
-        input_codecs: Dict[str, Type[InputCodec]] = {},
-        request_codecs: Dict[str, Type[RequestCodec]] = {},
+        input_codecs: Dict[str, InputCodecLike] = {},
+        request_codecs: Dict[str, RequestCodecLike] = {},
     ):
         self._input_codecs = input_codecs
         self._request_codecs = request_codecs
 
-    def register_input_codec(self, content_type: str, codec: Type[InputCodec]):
+    def register_input_codec(self, content_type: str, codec: InputCodecLike):
         # TODO: Raise error if codec exists?
         self._input_codecs[content_type] = codec
 
     def find_input_codec(
         self, content_type: str = None, payload: Any = None, type_hint: Type = None
-    ) -> Type[InputCodec]:
+    ) -> Optional[InputCodecLike]:
         if content_type:
             # TODO: Raise error if codec doesn't exist
             return self._input_codecs[content_type]
@@ -186,25 +189,25 @@ class _CodecRegistry:
 
         return None
 
-    def find_input_codec_by_payload(self, payload: Any) -> Optional[Type[InputCodec]]:
+    def find_input_codec_by_payload(self, payload: Any) -> Optional[InputCodecLike]:
         return _find_codec_by_payload(
             payload, self._input_codecs.values()  # type: ignore
         )
 
     def find_input_codec_by_type_hint(
         self, type_hint: Type
-    ) -> Optional[Type[InputCodec]]:
+    ) -> Optional[InputCodecLike]:
         return _find_codec_by_type_hint(
             type_hint, self._input_codecs.values()  # type: ignore
         )
 
-    def register_request_codec(self, content_type: str, codec: Type[RequestCodec]):
+    def register_request_codec(self, content_type: str, codec: RequestCodecLike):
         # TODO: Raise error if codec exists?
         self._request_codecs[content_type] = codec
 
     def find_request_codec(
         self, content_type: str = None, payload: Any = None, type_hint: Type = None
-    ) -> Type[RequestCodec]:
+    ) -> Optional[RequestCodecLike]:
         if content_type:
             # TODO: Raise error if codec doesn't exist
             return self._request_codecs[content_type]
@@ -215,16 +218,14 @@ class _CodecRegistry:
 
         return None
 
-    def find_request_codec_by_payload(
-        self, payload: Any
-    ) -> Optional[Type[RequestCodec]]:
+    def find_request_codec_by_payload(self, payload: Any) -> Optional[RequestCodecLike]:
         return _find_codec_by_payload(
             payload, self._request_codecs.values()  # type: ignore
         )
 
     def find_request_codec_by_type_hint(
         self, type_hint: Type
-    ) -> Optional[Type[RequestCodec]]:
+    ) -> Optional[RequestCodecLike]:
         return _find_codec_by_type_hint(
             type_hint, self._request_codecs.values()  # type: ignore
         )
@@ -240,13 +241,13 @@ find_input_codec_by_payload = _codec_registry.find_input_codec_by_payload
 find_input_codec_by_type_hint = _codec_registry.find_input_codec_by_type_hint
 
 
-def register_request_codec(CodecKlass: Type[RequestCodec]):
+def register_request_codec(CodecKlass: RequestCodecLike):
     if CodecKlass.ContentType is not None:
         _codec_registry.register_request_codec(CodecKlass.ContentType, CodecKlass)
     return CodecKlass
 
 
-def register_input_codec(CodecKlass: Type[InputCodec]):
+def register_input_codec(CodecKlass: InputCodecLike):
     if CodecKlass.ContentType is not None:
         _codec_registry.register_input_codec(CodecKlass.ContentType, CodecKlass)
     return CodecKlass
