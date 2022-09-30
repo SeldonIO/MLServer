@@ -10,16 +10,19 @@ from typing import (
     Type,
     Tuple,
     get_type_hints,
+    TYPE_CHECKING,
 )
 
 from ..types import InferenceRequest, InferenceResponse, ResponseOutput
-from ..model import MLModel
 
 from .base import RequestCodec, InputCodec, find_input_codec, find_request_codec
 from .errors import InputsNotFound, OutputNotFound, CodecNotFound
 from .utils import Codec
 
-PredictFunc = Callable[[MLModel, InferenceRequest], Awaitable[InferenceResponse]]
+if TYPE_CHECKING:
+    from ..model import MLModel
+
+PredictFunc = Callable[["MLModel", InferenceRequest], Awaitable[InferenceResponse]]
 
 
 def _as_list(a: Optional[Union[Any, Tuple[Any]]]) -> List[Any]:
@@ -174,7 +177,7 @@ def decode_args(predict: Callable) -> PredictFunc:
     codec = SignatureCodec(predict)
 
     @wraps(predict)
-    async def _f(self: MLModel, request: InferenceRequest) -> InferenceResponse:
+    async def _f(self: "MLModel", request: InferenceRequest) -> InferenceResponse:
         inputs = codec.decode_request(request=request)
 
         outputs = await predict(self, **inputs)
