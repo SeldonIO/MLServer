@@ -16,11 +16,13 @@ from mlserver.types import (
 from mlserver.settings import ModelSettings
 from mlserver.codecs.errors import CodecError
 from mlserver.codecs.utils import (
+    decode_inference_request,
     encode_response_output,
     encode_inference_response,
     SingleInputRequestCodec,
     DecodedParameterName,
 )
+from mlserver.codecs.pandas import PandasCodec
 from mlserver.codecs.numpy import NumpyRequestCodec
 from mlserver.codecs.string import StringCodec
 
@@ -127,6 +129,39 @@ def test_encode_inference_response(
 ):
     inference_response = encode_inference_response(payload, sum_model_settings)
     assert inference_response == expected
+
+
+@pytest.mark.parametrize(
+    "inference_request, expected",
+    [
+        (
+            InferenceRequest(
+                parameters=Parameters(content_type=PandasCodec.ContentType),
+                inputs=[
+                    RequestInput(name="a", datatype="INT64", shape=[3], data=[1, 2, 3]),
+                    RequestInput(
+                        name="b",
+                        datatype="BYTES",
+                        shape=[3],
+                        data=[b"a", b"b", b"c"],
+                        parameters=Parameters(content_type=StringCodec.ContentType),
+                    ),
+                ],
+            ),
+            pd.DataFrame({"a": [1, 2, 3], "b": ["a", "b", "c"]}),
+        ),
+    ],
+)
+def test_decode_inference_request(
+    inference_request: InferenceRequest,
+    expected: Any,
+):
+    decoded = decode_inference_request(inference_request)
+
+    if isinstance(expected, pd.DataFrame):
+        pd.testing.assert_frame_equal(decoded, expected)
+    else:
+        assert decoded == expected
 
 
 @pytest.mark.parametrize(
