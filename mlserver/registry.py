@@ -1,8 +1,9 @@
 import asyncio
+from packaging.version import parse as parse_version
+from packaging.version import Version, LegacyVersion
 
-from typing import Callable, Awaitable, List, Dict, Optional
+from typing import Callable, Awaitable, List, Dict, Optional, Union
 from itertools import chain
-from functools import cmp_to_key
 
 from .model import MLModel
 from .errors import ModelNotFound
@@ -21,30 +22,19 @@ def _get_version(model_settings: ModelSettings) -> Optional[str]:
     return None
 
 
-def _is_newer(a: MLModel, b: MLModel) -> int:
+def _sem_ver(m: MLModel) -> Union[LegacyVersion, Version]:
+    return parse_version(m.version or "v9999999")
+
+
+def _is_newer(a: MLModel, b: MLModel) -> bool:
     """
     Returns true if 'a' is newer than 'b'.
-
-    TODO: Support other ordering schemes (e.g. semver).
     """
     if a.version is None:
-        return 1
-
+        return True
     if b.version is None:
-        return -1
-
-    try:
-        a_int = int(a.version)
-        b_int = int(b.version)
-
-        return a_int - b_int
-    except ValueError:
-        if a.version > b.version:
-            return 1
-        elif a.version < b.version:
-            return -1
-        else:
-            return 0
+        return False
+    return _sem_ver(a) > _sem_ver(b)
 
 
 class SingleModelRegistry:
@@ -77,8 +67,7 @@ class SingleModelRegistry:
     def _find_default(self) -> Optional[MLModel]:
         if self._default is None:
             if self._versions:
-                version_key = cmp_to_key(_is_newer)
-                latest_model = max(self._versions.values(), key=version_key)
+                latest_model = max(self._versions.values(), key=_sem_ver)
                 return latest_model
 
         return self._default
@@ -97,19 +86,7 @@ class SingleModelRegistry:
                 self._default = new_model
                 return new_model
 
-            if new_model.version is None:
-                # If new model doesn't have a version, assume it's "defaulter"
-                # than previous default
-                self._default = new_model
-                return new_model
-
-            if self._default.version is None:
-                # If default doesn't have a version (and new one does), assume
-                # that current default is "defaulter" than new one
-                return self._default
-
-            # Otherwise, compare versions
-            if _is_newer(new_model, self._default) >= 0:
+            if _is_newer(new_model, self._default):
                 self._default = new_model
                 return new_model
 
