@@ -70,7 +70,7 @@ def _is_optional(t: Type) -> bool:
 def _unwrap_optional(t: Type) -> Type:
     args = get_args(t)
     for arg in args:
-        if arg != type(None):
+        if not isinstance(arg, type(None)):
             return arg
 
     return t

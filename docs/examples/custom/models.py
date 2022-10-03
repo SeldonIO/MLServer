@@ -2,9 +2,8 @@ import json
 import numpyro
 import numpy as np
 
-from typing import Dict
 from jax import random
-from mlserver import MLModel, types
+from mlserver import MLModel
 from mlserver.codecs import decode_args
 from mlserver.utils import get_model_uri
 from numpyro.infer import Predictive
