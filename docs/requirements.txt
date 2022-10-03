@@ -1,7 +1,7 @@
 Sphinx==5.2.1
 sphinx_material==0.0.35
 readthedocs-sphinx-search==0.1.2
-myst-parser==0.18.0
+myst-parser==0.18.1
 sphinxcontrib-bibtex==2.5.0
 autodoc_pydantic==1.7.2
 sphinx-click==4.3.0
