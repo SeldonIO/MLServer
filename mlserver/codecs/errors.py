@@ -14,7 +14,7 @@ class CodecNotFound(MLServerError):
     ):
         msg = ""
         if name:
-            msg = f"with name {name}"
+            msg = f"with name '{name}'"
 
             if payload_type:
                 msg = f"{msg} and type {payload_type}"

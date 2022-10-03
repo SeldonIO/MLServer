@@ -65,6 +65,15 @@ def test_get_codecs_with_request():
     assert signature_codec._output_codecs == [NumpyCodec, PandasCodec]
 
 
+def test_get_codecs_with_optional():
+    def _f(foo: np.ndarray, bar: List[str] = None) -> np.ndarray:
+        return np.array([2])
+
+    signature_codec = SignatureCodec(_f)
+    assert signature_codec._input_codecs == {"foo": NumpyCodec, "bar": StringCodec}
+    assert signature_codec._output_codecs == [NumpyCodec]
+
+
 @pytest.mark.parametrize(
     "request_inputs, input_codecs, expected_values",
     [

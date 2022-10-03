@@ -11,6 +11,8 @@ from typing import (
     Tuple,
     get_type_hints,
     TYPE_CHECKING,
+    get_origin,
+    get_args,
 )
 
 from ..types import InferenceRequest, InferenceResponse, ResponseOutput
@@ -51,6 +53,29 @@ _is_input_codec = partial(_is_codec_type, t=InputCodec)
 _is_request_codec = partial(_is_codec_type, t=RequestCodec)
 
 
+def _is_optional(t: Type) -> bool:
+    origin = get_origin(t)
+    if origin == Optional:
+        return True
+
+    if origin == Union:
+        # Cover case where Optional[a] is reported as Union[a, None]
+        args = get_args(t)
+        if len(args) == 2 and type(None) in args:
+            return True
+
+    return False
+
+
+def _unwrap_optional(t: Type) -> Type:
+    args = get_args(t)
+    for arg in args:
+        if arg != type(None):
+            return arg
+
+    return t
+
+
 class SignatureCodec(RequestCodec):
     """
     Internal codec that knows how to map type hints to codecs.
@@ -62,7 +87,7 @@ class SignatureCodec(RequestCodec):
         self._input_codecs, self._output_codecs = self._get_codecs(predict)
 
     def _get_codecs(self, pred: Callable) -> Tuple[Dict[str, Codec], List[Codec]]:
-        self._input_hints = get_type_hints(pred)
+        self._input_hints = self._get_type_hints(pred)
         self._output_hints = _as_list(self._input_hints.pop("return", None))
 
         input_codecs = {}
@@ -78,6 +103,16 @@ class SignatureCodec(RequestCodec):
             output_codecs.append(codec)
 
         return input_codecs, output_codecs
+
+    def _get_type_hints(self, pred: Callable) -> Dict[str, Type]:
+        type_hints = get_type_hints(pred)
+        # For us, `typing.Optional` is just syntactic sugar, so let's ensure we
+        # unwrap it
+        for name, hint in type_hints.items():
+            if _is_optional(hint):
+                type_hints[name] = _unwrap_optional(hint)
+
+        return type_hints
 
     def _find_codec(
         self, name: Optional[str], type_hint: Type, is_input: bool = False
