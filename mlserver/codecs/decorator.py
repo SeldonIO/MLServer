@@ -1,8 +1,8 @@
 from functools import wraps, partial
 from typing import (
     Any,
-    Awaitable,
     Callable,
+    Coroutine,
     Dict,
     List,
     Optional,
@@ -24,7 +24,9 @@ from .utils import Codec
 if TYPE_CHECKING:
     from ..model import MLModel
 
-PredictFunc = Callable[["MLModel", InferenceRequest], Awaitable[InferenceResponse]]
+PredictFunc = Callable[
+    ["MLModel", InferenceRequest], Coroutine[Any, Any, InferenceResponse]
+]
 
 
 def _as_list(a: Optional[Union[Any, Tuple[Any]]]) -> List[Any]:
