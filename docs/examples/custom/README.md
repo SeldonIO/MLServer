@@ -104,7 +104,7 @@ Our custom inference wrapper should be responsible of:
 
 
 ```python
-%%writefile models.py
+# %load models.py
 import json
 import numpyro
 import numpy as np
@@ -112,6 +112,7 @@ import numpy as np
 from typing import Dict
 from jax import random
 from mlserver import MLModel, types
+from mlserver.codecs import decode_args
 from mlserver.utils import get_model_uri
 from numpyro.infer import Predictive
 from numpyro import distributions as dist
@@ -132,33 +133,21 @@ class NumpyroModel(MLModel):
         self.ready = True
         return self.ready
 
-    async def predict(self, payload: types.InferenceRequest) -> types.InferenceResponse:
-        inputs = self._extract_inputs(payload)
-        predictions = self._predictive(rng_key=random.PRNGKey(0), **inputs)
+    @decode_args
+    async def predict(
+        self,
+        marriage: np.ndarray = None,
+        age: np.ndarray = None,
+        divorce: np.ndarray = None,
+    ) -> np.ndarray:
+        predictions = self._predictive(
+            rng_key=random.PRNGKey(0), marriage=marriage, age=age, divorce=divorce
+        )
 
         obs = predictions["obs"]
         obs_mean = obs.mean()
 
-        return types.InferenceResponse(
-            id=payload.id,
-            model_name=self.name,
-            model_version=self.version,
-            outputs=[
-                types.ResponseOutput(
-                    name="obs_mean",
-                    shape=obs_mean.shape,
-                    datatype="FP32",
-                    data=np.asarray(obs_mean).tolist(),
-                )
-            ],
-        )
-
-    def _extract_inputs(self, payload: types.InferenceRequest) -> Dict[str, np.ndarray]:
-        inputs = {}
-        for inp in payload.inputs:
-            inputs[inp.name] = np.array(inp.data)
-
-        return inputs
+        return np.asarray(obs_mean)
 
     def _model(self, marriage=None, age=None, divorce=None):
         a = numpyro.sample("a", dist.Normal(0.0, 0.2))
@@ -172,6 +161,7 @@ class NumpyroModel(MLModel):
         sigma = numpyro.sample("sigma", dist.Exponential(1.0))
         mu = a + M + A
         numpyro.sample("obs", dist.Normal(mu, sigma), obs=divorce)
+
 ```
 
 ### Settings files
@@ -185,17 +175,18 @@ The next step will be to create 2 configuration files:
 
 
 ```python
-%%writefile settings.json
+# %load settings.json
 {
     "debug": "true"
 }
+
 ```
 
 #### `model-settings.json`
 
 
 ```python
-%%writefile model-settings.json
+# %load model-settings.json
 {
     "name": "numpyro-divorce",
     "implementation": "models.NumpyroModel",
@@ -203,6 +194,7 @@ The next step will be to create 2 configuration files:
         "uri": "./numpyro-divorce.json"
     }
 }
+
 ```
 
 ### Start serving our model
@@ -226,21 +218,20 @@ For that, we can use the Python types that `mlserver` provides out of box, or we
 
 ```python
 import requests
+import numpy as np
 
-x_0 = [28.0]
-inference_request = {
-    "inputs": [
-        {
-          "name": "marriage",
-          "shape": [1],
-          "datatype": "FP32",
-          "data": x_0
-        }
+from mlserver.types import InferenceRequest
+from mlserver.codecs import NumpyCodec
+
+x_0 = np.array([28.0])
+inference_request = InferenceRequest(
+    inputs=[
+        NumpyCodec.encode_input(name="marriage", payload=x_0)
     ]
-}
+)
 
 endpoint = "http://localhost:8080/v2/models/numpyro-divorce/infer"
-response = requests.post(endpoint, json=inference_request)
+response = requests.post(endpoint, json=inference_request.dict())
 
 response.json()
 ```
@@ -256,10 +247,12 @@ MLServer will automatically find your requirements.txt file and install necessar
 
 
 ```python
-%%writefile requirements.txt
-numpy==1.22.0
+# %load requirements.txt
+numpy==1.22.4
 numpyro==0.8.0
 jax==0.2.24
+jaxlib==0.3.7
+
 ```
 
 ### Building a custom image
@@ -288,26 +281,22 @@ docker run -it --rm -p 8080:8080 my-custom-numpyro-server:0.1.0
 
 
 ```python
-import requests
+import numpy as np
 
-x_0 = [28.0]
-inference_request = {
-    "inputs": [
-        {
-          "name": "marriage",
-          "shape": [1],
-          "datatype": "FP32",
-          "data": x_0
-        }
+from mlserver.types import InferenceRequest
+from mlserver.codecs import NumpyCodec
+
+x_0 = np.array([28.0])
+inference_request = InferenceRequest(
+    inputs=[
+        NumpyCodec.encode_input(name="marriage", payload=x_0)
     ]
-}
+)
 
 endpoint = "http://localhost:8080/v2/models/numpyro-divorce/infer"
-response = requests.post(endpoint, json=inference_request)
+response = requests.post(endpoint, json=inference_request.dict())
 
-print(response)
-print(response.text)
-
+response.json()
 ```
 
 As we should be able to see, the server running within our Docker image responds as expected.

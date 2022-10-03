@@ -5,6 +5,7 @@ import numpy as np
 from typing import Dict
 from jax import random
 from mlserver import MLModel, types
+from mlserver.codecs import decode_args
 from mlserver.utils import get_model_uri
 from numpyro.infer import Predictive
 from numpyro import distributions as dist
@@ -25,33 +26,21 @@ class NumpyroModel(MLModel):
         self.ready = True
         return self.ready
 
-    async def predict(self, payload: types.InferenceRequest) -> types.InferenceResponse:
-        inputs = self._extract_inputs(payload)
-        predictions = self._predictive(rng_key=random.PRNGKey(0), **inputs)
+    @decode_args
+    async def predict(
+        self,
+        marriage: np.ndarray = None,
+        age: np.ndarray = None,
+        divorce: np.ndarray = None,
+    ) -> np.ndarray:
+        predictions = self._predictive(
+            rng_key=random.PRNGKey(0), marriage=marriage, age=age, divorce=divorce
+        )
 
         obs = predictions["obs"]
         obs_mean = obs.mean()
 
-        return types.InferenceResponse(
-            id=payload.id,
-            model_name=self.name,
-            model_version=self.version,
-            outputs=[
-                types.ResponseOutput(
-                    name="obs_mean",
-                    shape=obs_mean.shape,
-                    datatype="FP32",
-                    data=np.asarray(obs_mean).tolist(),
-                )
-            ],
-        )
-
-    def _extract_inputs(self, payload: types.InferenceRequest) -> Dict[str, np.ndarray]:
-        inputs = {}
-        for inp in payload.inputs:
-            inputs[inp.name] = np.array(inp.data)
-
-        return inputs
+        return np.asarray(obs_mean)
 
     def _model(self, marriage=None, age=None, divorce=None):
         a = numpyro.sample("a", dist.Normal(0.0, 0.2))
