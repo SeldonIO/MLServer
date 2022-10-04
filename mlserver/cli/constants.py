@@ -1,6 +1,6 @@
 DockerfileName = "Dockerfile"
 DockerfileTemplate = """
-FROM continuumio/miniconda3:4.10.3 AS env-builder
+FROM continuumio/miniconda3:4.12.0 AS env-builder
 SHELL ["/bin/bash", "-c"]
 
 ARG MLSERVER_ENV_NAME="mlserver-custom-env" \\
