@@ -2,7 +2,7 @@ import pytest
 import numpy as np
 import pandas as pd
 
-from typing import Any, Dict, List
+from typing import Any, Callable, Dict, Optional, List
 
 from mlserver.types import (
     InferenceRequest,
@@ -24,6 +24,14 @@ from ..fixtures import SimpleModel
 
 async def predict_fn(foo: np.ndarray, bar: List[str]) -> np.ndarray:
     return np.array([3])
+
+
+def _implicit_optional(foo: np.ndarray, bar: List[str] = None) -> np.ndarray:
+    return np.array([2])
+
+
+def _explicit_optional(foo: np.ndarray, bar: Optional[List[str]]) -> np.ndarray:
+    return np.array([2])
 
 
 @pytest.fixture
@@ -65,11 +73,9 @@ def test_get_codecs_with_request():
     assert signature_codec._output_codecs == [NumpyCodec, PandasCodec]
 
 
-def test_get_codecs_with_optional():
-    def _f(foo: np.ndarray, bar: List[str] = None) -> np.ndarray:
-        return np.array([2])
-
-    signature_codec = SignatureCodec(_f)
+@pytest.mark.parametrize("predict_fn", [_implicit_optional, _explicit_optional])
+def test_get_codecs_with_optional(predict_fn: Callable):
+    signature_codec = SignatureCodec(predict_fn)
     assert signature_codec._input_codecs == {"foo": NumpyCodec, "bar": StringCodec}
     assert signature_codec._output_codecs == [NumpyCodec]
 
@@ -262,6 +268,10 @@ def test_encode_response(
 def test_encode_response_not_found(
     signature_codec: SignatureCodec, invalid_values: List[Any]
 ):
+    """
+    Ensure the `SignatureCodec` detects when an output does not match the
+    method's signature and raise an error.
+    """
     with pytest.raises(OutputNotFound):
         signature_codec.encode_response(model_name="foo", payload=invalid_values)
 
