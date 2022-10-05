@@ -4,8 +4,8 @@ from functools import reduce
 from operator import mul
 from typing import List
 
-from .utils import InputOrOutput
-from .lists import ListElement
+from .codecs.utils import InputOrOutput
+from .codecs.lists import ListElement
 
 _DatatypeToCtype = {
     "BOOL": "?",

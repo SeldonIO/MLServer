@@ -3,7 +3,7 @@ import numpy as np
 
 
 from mlserver.types import RequestInput, ResponseOutput
-from mlserver.codecs.pack import (
+from mlserver.raw import (
     pack_bytes,
     pack_tensor,
     unpack_bytes,
