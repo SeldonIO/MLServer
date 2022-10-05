@@ -58,21 +58,33 @@ def _unpack_tensor(elem: InputOrOutput, raw: bytes) -> list:
 
 class RawInputCodec(InputCodec):
     @classmethod
-    def _unpack(cls, elem: InputOrOutput, raw: bytes) -> InputOrOutput:
+    def _unpack(cls, elem: InputOrOutput, raw: bytes) -> list:
         # TODO: Assert that `data` field is empty
         if elem.datatype == "BYTES":
-            elem.data = _unpack_bytes(raw)
-        else:
-            elem.data = _unpack_tensor(elem, raw)
+            return _unpack_bytes(raw)
 
-        return elem
+        return _unpack_tensor(elem, raw)
 
     @classmethod
-    def decode_input(cls, request_input: RequestInput, raw: bytes) -> RequestInput:
-        return cls._unpack(request_input, raw)
+    def encode_input(cls, request_input: RequestInput, raw: bytes) -> RequestInput:
+        unpacked = cls._unpack(request_input, raw)
+        request_input.data = unpacked
+        return request_input
 
     @classmethod
-    def decode_output(
+    def decode_input(cls, request_input: RequestInput) -> bytes:
+        # pack and return packed
+        pass
+
+    @classmethod
+    def encode_output(
         cls, response_output: ResponseOutput, raw: bytes
     ) -> ResponseOutput:
-        return cls._unpack(request_input, raw)
+        unpacked = cls._unpack(response_output, raw)
+        response_output.data = unpacked
+        return response_output
+
+    @classmethod
+    def decode_output(cls, request_output: ResponseOutput) -> bytes:
+        # pack and return packed
+        pass

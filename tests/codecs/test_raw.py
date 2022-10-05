@@ -66,6 +66,6 @@ def test_unpack_tensor(tensor: np.ndarray):
         ),
     ],
 )
-def test_decode_input(request_input: RequestInput, raw: bytes, expected: list):
-    decoded_input = RawInputCodec.decode_input(request_input, raw=raw)
-    assert decoded_input.data == expected
+def test_encode_input(request_input: RequestInput, raw: bytes, expected: list):
+    encoded_input = RawInputCodec.encode_input(request_input, raw=raw)
+    assert encoded_input.data == expected
