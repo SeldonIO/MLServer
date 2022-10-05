@@ -5,6 +5,7 @@ from operator import mul
 from typing import List
 
 from .utils import InputOrOutput
+from .lists import ListElement
 
 _DatatypeToCtype = {
     "BOOL": "?",
@@ -21,9 +22,17 @@ _DatatypeToCtype = {
     "FP64": "d",
 }
 
+_SizeFormat = "<I"
+
 
 def _tensor_length(shape: List[int]) -> int:
     return reduce(mul, shape, 1)
+
+
+def _tensor_format(elem: InputOrOutput) -> str:
+    size = _tensor_length(elem.shape)
+    ctype = _DatatypeToCtype[elem.datatype]
+    return f"{size}{ctype}"
 
 
 def unpack_bytes(raw: bytes) -> List[bytes]:
@@ -35,22 +44,46 @@ def unpack_bytes(raw: bytes) -> List[bytes]:
     length = len(raw)
     elems = []
     while offset < length:
-        [size] = struct.unpack_from("<I", raw, offset)
+        [size] = struct.unpack_from(_SizeFormat, raw, offset)
         offset += 4
-        elem_format = f"<{size}s"
-        [elem] = struct.unpack_from(elem_format, raw, offset)
+        [elem] = struct.unpack_from(f"<{size}s", raw, offset)
         offset += size
+
         elems.append(elem)
 
     return elems
 
 
-def unpack_tensor(elem: InputOrOutput, raw: bytes) -> list:
-    size = _tensor_length(elem.shape)
-    ctype = _DatatypeToCtype[elem.datatype]
-    form = f"{size}{ctype}"
+def pack_bytes(unpacked: List[ListElement]) -> bytes:
+    packed = []
+    for elem in unpacked:
+        as_bytes = _ensure_bytes(elem)
+        size = len(as_bytes)
 
-    return list(struct.unpack(form, raw))
+        packed_size = struct.pack(_SizeFormat, size)
+        packed.append(packed_size)
+
+        packed_elem = struct.pack(f"<{size}s", elem)
+        packed.append(packed_elem)
+
+    return b"".join(packed)
+
+
+def _ensure_bytes(elem: ListElement) -> bytes:
+    if isinstance(elem, str):
+        return encode_str(elem)
+
+    return elem
+
+
+def unpack_tensor(elem: InputOrOutput, raw: bytes) -> list:
+    tensor_format = _tensor_format(elem)
+    return list(struct.unpack(tensor_format, raw))
+
+
+def pack_tensor(elem: InputOrOutput) -> bytes:
+    tensor_format = _tensor_format(elem)
+    return struct.pack(tensor_format, *elem.data)
 
 
 def unpack(elem: InputOrOutput, raw: bytes) -> list:
