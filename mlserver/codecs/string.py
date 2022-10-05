@@ -2,9 +2,9 @@ from typing import Any, List
 
 from ..types import RequestInput, ResponseOutput, Parameters
 
-from .utils import SingleInputRequestCodec, is_list_of, InputOrOutput
+from .utils import SingleInputRequestCodec, InputOrOutput
 from .base import InputCodec, register_input_codec, register_request_codec
-from .pack import unpack, PackElement
+from .lists import as_list, is_list_of, ListElement
 
 _DefaultStrCodec = "utf-8"
 
@@ -13,9 +13,10 @@ def encode_str(elem: str) -> bytes:
     return elem.encode(_DefaultStrCodec)
 
 
-def decode_str(encoded: PackElement, str_codec=_DefaultStrCodec) -> str:
+def decode_str(encoded: ListElement, str_codec=_DefaultStrCodec) -> str:
     if encoded is None:
         return None
+
     if isinstance(encoded, bytes):
         return encoded.decode(str_codec)
 
@@ -29,7 +30,7 @@ def decode_str(encoded: PackElement, str_codec=_DefaultStrCodec) -> str:
 
 def _decode_input_or_output(input_or_output: InputOrOutput) -> List[str]:
     packed = input_or_output.data.__root__
-    unpacked = map(decode_str, unpack(packed))
+    unpacked = map(decode_str, as_list(packed))
     return list(unpacked)
 
 

@@ -3,9 +3,8 @@ from datetime import datetime
 from functools import partial
 
 from ..types import RequestInput, ResponseOutput
-from .utils import is_list_of
+from .lists import is_list_of, as_list, ListElement
 from .base import InputCodec, register_input_codec
-from .pack import unpack, PackElement
 
 _Datetime = Union[str, datetime]
 _DatetimeStrCodec = "ascii"
@@ -27,14 +26,14 @@ def _encode_datetime(elem: _Datetime, use_bytes: bool) -> Union[bytes, str]:
     return iso_date.encode(_DatetimeStrCodec)
 
 
-def _ensure_str(elem: PackElement) -> str:
+def _ensure_str(elem: ListElement) -> str:
     if isinstance(elem, str):
         return elem
 
     return elem.decode(_DatetimeStrCodec)
 
 
-def _decode_datetime(elem: PackElement) -> datetime:
+def _decode_datetime(elem: ListElement) -> datetime:
     iso_format = _ensure_str(elem)
     return datetime.fromisoformat(iso_format)
 
@@ -69,7 +68,7 @@ class DatetimeCodec(InputCodec):
     def decode_output(cls, response_output: ResponseOutput) -> List[datetime]:
         packed = response_output.data.__root__
 
-        return list(map(_decode_datetime, unpack(packed)))
+        return list(map(_decode_datetime, as_list(packed)))
 
     @classmethod
     def encode_input(
@@ -87,4 +86,4 @@ class DatetimeCodec(InputCodec):
     def decode_input(cls, request_input: RequestInput) -> List[datetime]:
         packed = request_input.data.__root__
 
-        return list(map(_decode_datetime, unpack(packed)))
+        return list(map(_decode_datetime, as_list(packed)))

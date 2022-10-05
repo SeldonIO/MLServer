@@ -7,7 +7,7 @@ from .base import RequestCodec, register_request_codec
 from .numpy import to_datatype, to_dtype
 from .string import encode_str
 from .utils import get_decoded_or_raw, InputOrOutput
-from .pack import PackElement
+from .lists import ListElement
 from ..types import InferenceRequest, InferenceResponse, RequestInput, ResponseOutput
 
 
@@ -44,7 +44,7 @@ def _to_response_output(series: pd.Series, use_bytes: bool = True) -> ResponseOu
     )
 
 
-def _ensure_bytes(elem: PackElement) -> bytes:
+def _ensure_bytes(elem: ListElement) -> bytes:
     if isinstance(elem, str):
         return encode_str(elem)
 

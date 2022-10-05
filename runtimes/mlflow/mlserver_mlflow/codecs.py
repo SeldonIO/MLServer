@@ -9,7 +9,7 @@ from mlserver.codecs import (
     register_request_codec,
     get_decoded_or_raw,
 )
-from mlserver.codecs.utils import is_list_of
+from mlserver.codecs.lists import is_list_of
 
 from typing import Any
 
