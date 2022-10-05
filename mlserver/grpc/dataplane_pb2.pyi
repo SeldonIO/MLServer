@@ -435,7 +435,10 @@ class ModelInferRequest(google.protobuf.message.Message):
             pass
         @property
         def contents(self) -> global___InferTensorContents:
-            """The input tensor data."""
+            """The input tensor data.
+            This field must not be specified if tensor contents are being specified
+            in ModelInferRequest.raw_input_contents.
+            """
             pass
         def __init__(
             self,
@@ -548,6 +551,7 @@ class ModelInferRequest(google.protobuf.message.Message):
     PARAMETERS_FIELD_NUMBER: builtins.int
     INPUTS_FIELD_NUMBER: builtins.int
     OUTPUTS_FIELD_NUMBER: builtins.int
+    RAW_INPUT_CONTENTS_FIELD_NUMBER: builtins.int
     model_name: typing.Text = ...
     """The name of the model to use for inferencing."""
 
@@ -587,6 +591,31 @@ class ModelInferRequest(google.protobuf.message.Message):
         specified all outputs produced by the model will be returned.
         """
         pass
+    @property
+    def raw_input_contents(
+        self,
+    ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[
+        builtins.bytes
+    ]:
+        """The data contained in an input tensor can be represented in "raw" bytes
+        form or in the repeated type that matches the tensor's data type. Using
+        the "raw" bytes form will typically allow higher performance due to the
+        way protobuf allocation and reuse interacts with GRPC. For example, see
+        https://github.com/grpc/grpc/issues/23231.
+
+        To use the raw representation 'raw_input_contents' must be initialized
+        with data for each tensor in the same order as 'inputs'. For each tensor,
+        the size of this content must match what is expected by the tensor's shape
+        and data type. The raw data must be the flattened, one-dimensional,
+        row-major order of the tensor elements without any stride or padding
+        between the elements. Note that the FP16 and BF16 data types must be
+        represented as raw content as there is no specific data type for a 16-bit
+        float type.
+
+        If this field is specified then InferInputTensor::contents must not be
+        specified for any input tensor.
+        """
+        pass
     def __init__(
         self,
         *,
@@ -602,6 +631,7 @@ class ModelInferRequest(google.protobuf.message.Message):
         outputs: typing.Optional[
             typing.Iterable[global___ModelInferRequest.InferRequestedOutputTensor]
         ] = ...,
+        raw_input_contents: typing.Optional[typing.Iterable[builtins.bytes]] = ...,
     ) -> None: ...
     def ClearField(
         self,
@@ -618,6 +648,8 @@ class ModelInferRequest(google.protobuf.message.Message):
             b"outputs",
             "parameters",
             b"parameters",
+            "raw_input_contents",
+            b"raw_input_contents",
         ],
     ) -> None: ...
 
@@ -681,7 +713,10 @@ class ModelInferResponse(google.protobuf.message.Message):
             pass
         @property
         def contents(self) -> global___InferTensorContents:
-            """The output tensor data."""
+            """The output tensor data.
+            This field must not be specified if tensor contents are being specified
+            in ModelInferResponse.raw_output_contents.
+            """
             pass
         def __init__(
             self,
@@ -739,6 +774,7 @@ class ModelInferResponse(google.protobuf.message.Message):
     ID_FIELD_NUMBER: builtins.int
     PARAMETERS_FIELD_NUMBER: builtins.int
     OUTPUTS_FIELD_NUMBER: builtins.int
+    RAW_OUTPUT_CONTENTS_FIELD_NUMBER: builtins.int
     model_name: typing.Text = ...
     """The name of the model used for inference."""
 
@@ -764,6 +800,31 @@ class ModelInferResponse(google.protobuf.message.Message):
     ]:
         """The output tensors holding inference results."""
         pass
+    @property
+    def raw_output_contents(
+        self,
+    ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[
+        builtins.bytes
+    ]:
+        """The data contained in an output tensor can be represented in "raw" bytes
+        form or in the repeated type that matches the tensor's data type. Using
+        the "raw" bytes form will typically allow higher performance due to the
+        way protobuf allocation and reuse interacts with GRPC. For example, see
+        https://github.com/grpc/grpc/issues/23231.
+
+        To use the raw representation 'raw_output_contents' must be initialized
+        with data for each tensor in the same order as 'outputs'. For each tensor,
+        the size of this content must match what is expected by the tensor's shape
+        and data type. The raw data must be the flattened, one-dimensional,
+        row-major order of the tensor elements without any stride or padding
+        between the elements. Note that the FP16 and BF16 data types must be
+        represented as raw content as there is no specific data type for a 16-bit
+        float type.
+
+        If this field is specified then InferOutputTensor::contents must not be
+        specified for any output tensor.
+        """
+        pass
     def __init__(
         self,
         *,
@@ -776,6 +837,7 @@ class ModelInferResponse(google.protobuf.message.Message):
         outputs: typing.Optional[
             typing.Iterable[global___ModelInferResponse.InferOutputTensor]
         ] = ...,
+        raw_output_contents: typing.Optional[typing.Iterable[builtins.bytes]] = ...,
     ) -> None: ...
     def ClearField(
         self,
@@ -790,6 +852,8 @@ class ModelInferResponse(google.protobuf.message.Message):
             b"outputs",
             "parameters",
             b"parameters",
+            "raw_output_contents",
+            b"raw_output_contents",
         ],
     ) -> None: ...
 
