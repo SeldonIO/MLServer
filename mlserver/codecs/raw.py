@@ -2,7 +2,7 @@ from ..types import RequestInput, ResponseOutput
 
 from .base import InputCodec
 from .utils import InputOrOutput
-from .pack import unpack
+from .pack import pack, unpack
 
 
 class RawInputCodec(InputCodec):
@@ -19,7 +19,7 @@ class RawInputCodec(InputCodec):
     @classmethod
     def decode_input(cls, request_input: RequestInput) -> bytes:
         # pack and return packed
-        pass
+        return pack(request_input)
 
     @classmethod
     def encode_output(
@@ -30,4 +30,4 @@ class RawInputCodec(InputCodec):
     @classmethod
     def decode_output(cls, request_output: ResponseOutput) -> bytes:
         # pack and return packed
-        pass
+        return pack(request_output)

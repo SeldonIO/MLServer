@@ -63,7 +63,7 @@ def pack_bytes(unpacked: List[ListElement]) -> bytes:
         packed_size = struct.pack(_SizeFormat, size)
         packed.append(packed_size)
 
-        packed_elem = struct.pack(f"<{size}s", elem)
+        packed_elem = struct.pack(f"<{size}s", as_bytes)
         packed.append(packed_elem)
 
     return b"".join(packed)
@@ -91,3 +91,30 @@ def unpack(elem: InputOrOutput, raw: bytes) -> list:
         return unpack_bytes(raw)
 
     return unpack_tensor(elem, raw)
+
+
+def pack(elem: InputOrOutput) -> bytes:
+    if elem.datatype == "BYTES":
+        return pack_bytes(elem.data)
+
+    return pack_tensor(elem)
+
+
+def inject_raw(
+    elems: List[InputOrOutput], raw_contents: List[bytes]
+) -> List[InputOrOutput]:
+    for elem, raw in zip(elems, raw_contents):
+        # TODO: Assert that `data` field is empty
+        elem.data = unpack(elem, raw)
+
+    return elems
+
+
+def extract_raw(elems: List[InputOrOutput]) -> (List[InputOrOutput], List[bytes]):
+    raw_contents = []
+    for elem in elems:
+        raw = pack(elem)
+        raw_contents.append(raw)
+        elem.data = []
+
+    return elems, raw_contents
