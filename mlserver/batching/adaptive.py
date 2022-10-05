@@ -8,6 +8,7 @@ import asyncio
 from asyncio import Future, Queue, wait_for, Task
 from functools import partial
 from typing import AsyncIterator, Awaitable, Dict, Optional, Tuple
+from prometheus_client import Histogram
 
 from ..model import MLModel
 from ..types import (
@@ -32,6 +33,10 @@ class AdaptiveBatcher:
         self._async_responses: Dict[str, Future[InferenceResponse]] = {}
         self._batching_task = None
 
+        self.batch_queue_request_count = Histogram(
+            "batch_queue_request_counter", "counter of request queue batch size"
+        )
+
     async def predict(self, req: InferenceRequest) -> InferenceResponse:
         internal_id, _ = await self._queue_request(req)
         self._start_batcher_if_needed()
@@ -51,6 +56,10 @@ class AdaptiveBatcher:
         req: InferenceRequest,
     ) -> Tuple[str, Awaitable[InferenceResponse]]:
         internal_id = generate_uuid()
+
+        with self.batch_queue_request_count.time():
+            batch_queue_size = self._requests.qsize()
+            self.batch_queue_request_count.observe(batch_queue_size)
 
         await self._requests.put((internal_id, req))
 

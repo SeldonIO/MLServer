@@ -12,6 +12,7 @@ from ..utils import install_uvloop_event_loop
 from .messages import ModelUpdateType, ModelUpdateMessage, InferenceResponseMessage
 from .utils import terminate_queue, END_OF_QUEUE
 from .logging import logger
+from prometheus_client import Histogram
 
 IGNORED_SIGNALS = [signal.SIGINT, signal.SIGTERM, signal.SIGQUIT]
 
@@ -28,6 +29,10 @@ class Worker(Process):
         self.model_updates: JoinableQueue[ModelUpdateMessage] = JoinableQueue()
 
         self.__executor = None
+
+        # self.model_queue_request_count = Histogram(
+        #     "model_queue_request_counter", "Counter of request queue model"
+        # )
 
     @property
     def _executor(self):
@@ -93,6 +98,11 @@ class Worker(Process):
 
                     await self._process_request(request)
                 elif r is self.model_updates._reader:
+
+                    # with self.model_queue_request_count.time():
+                    #     model_queue_size = self._requests.qsize()
+                    #     self.model_queue_request_count.observe(model_queue_size)
+
                     model_update = self.model_updates.get()
                     # If the queue gets terminated, detect the "sentinel value"
                     # and stop reading

@@ -5,6 +5,7 @@ from concurrent.futures import ThreadPoolExecutor
 from multiprocessing import Queue
 from functools import wraps
 from typing import Any, Dict, Coroutine, Callable
+from prometheus_client import Histogram
 
 from ..model import MLModel
 from ..types import InferenceRequest, InferenceResponse
@@ -56,6 +57,10 @@ class InferencePool:
             worker.start()
             self._workers[worker.pid] = worker
 
+        self.queue_request_count = Histogram(
+            "queue_request_counter", "counter of request queue size"
+        )
+
         # Start processing responses
         self._start_processing_responses()
 
@@ -91,6 +96,10 @@ class InferencePool:
 
     async def _process_response(self, response: InferenceResponseMessage):
         internal_id = response.id
+
+        queue_size = self._requests.qsize()
+        with self.queue_request_count.time():
+            self.queue_request_count.observe(queue_size)
 
         async_response = self._async_responses[internal_id]
 
