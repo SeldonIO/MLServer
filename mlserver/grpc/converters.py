@@ -346,7 +346,13 @@ class InferOutputTensorConverter:
     def to_types(
         cls, pb_object: pb.ModelInferResponse.InferOutputTensor
     ) -> types.ResponseOutput:
-        pass
+        return types.ResponseOutput(
+            name=pb_object.name,
+            shape=list(pb_object.shape),
+            datatype=pb_object.datatype,
+            parameters=ParametersConverter.to_types(pb_object.parameters),
+            data=InferTensorContentsConverter.to_types(pb_object.contents),
+        )
 
     @classmethod
     def from_types(

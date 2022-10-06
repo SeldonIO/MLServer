@@ -6,6 +6,12 @@ from mlserver.cloudevents import (
     CLOUDEVENTS_HEADER_SPECVERSION,
 )
 from mlserver.grpc import dataplane_pb2 as pb
+from mlserver.grpc.converters import (
+    InferTensorContentsConverter,
+    InferInputTensorConverter,
+    InferOutputTensorConverter,
+)
+from mlserver.raw import pack, unpack
 from mlserver import __version__
 
 
@@ -63,6 +69,33 @@ async def test_model_infer(
         model_infer_request.ClearField("model_version")
 
     prediction = await inference_service_stub.ModelInfer(model_infer_request)
+
+    expected = pb.InferTensorContents(int64_contents=[6])
+
+    assert len(prediction.outputs) == 1
+    assert prediction.outputs[0].contents == expected
+
+
+async def test_model_infer_raw_contents(inference_service_stub, model_infer_request):
+    # Prepare request with raw contents
+    for input_tensor in model_infer_request.inputs:
+        request_input = InferInputTensorConverter.to_types(input_tensor)
+        packed = pack(request_input)
+        model_infer_request.raw_input_contents.append(packed)
+        input_tensor.ClearField("contents")
+
+    prediction = await inference_service_stub.ModelInfer(model_infer_request)
+
+    # Convert raw output into contents field
+    for output_tensor, raw_output in zip(
+        prediction.outputs, prediction.raw_output_contents
+    ):
+        response_output = InferOutputTensorConverter.to_types(output_tensor)
+        data = unpack(response_output, raw_output)
+        contents = InferTensorContentsConverter.from_types(
+            data, response_output.datatype
+        )
+        output_tensor.contents.CopyFrom(contents)
 
     expected = pb.InferTensorContents(int64_contents=[6])
 
