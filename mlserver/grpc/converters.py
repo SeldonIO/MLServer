@@ -4,6 +4,7 @@ from . import dataplane_pb2 as pb
 from . import model_repository_pb2 as mr_pb
 
 from .. import types
+from ..raw import extract_raw, inject_raw
 
 _FIELDS = {
     "BOOL": "bool_contents",
@@ -134,6 +135,10 @@ class ModelInferRequestConverter:
                 InferRequestedOutputTensorConverter.to_types(out)
                 for out in pb_object.outputs
             ]
+
+        if pb_object.raw_input_contents:
+            # Unpack and inject raw contents into `data` fields if present
+            inject_raw(inference_request.inputs, pb_object.raw_input_contents)
 
         return inference_request
 
@@ -301,7 +306,14 @@ class ModelInferResponseConverter:
         pass
 
     @classmethod
-    def from_types(cls, type_object: types.InferenceResponse) -> pb.ModelInferResponse:
+    def from_types(
+        cls, type_object: types.InferenceResponse, use_raw: bool = False
+    ) -> pb.ModelInferResponse:
+        if use_raw:
+            # Extract the raw data in advance, to ensure the `data` field of
+            # the output objects is empty
+            type_object.outputs, raw = extract_raw(type_object.outputs)
+
         model_infer_response = pb.ModelInferResponse(
             model_name=type_object.model_name,
             outputs=[
@@ -309,6 +321,10 @@ class ModelInferResponseConverter:
                 for output in type_object.outputs
             ],
         )
+
+        if use_raw:
+            # If using raw outputs, ensure it's set on the final object
+            model_infer_response.raw_output_contents.extend(raw)
 
         if type_object.model_version is not None:
             model_infer_response.model_version = type_object.model_version
