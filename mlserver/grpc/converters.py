@@ -138,7 +138,9 @@ class ModelInferRequestConverter:
 
         if pb_object.raw_input_contents:
             # Unpack and inject raw contents into `data` fields if present
-            inject_raw(inference_request.inputs, pb_object.raw_input_contents)
+            inject_raw(
+                inference_request.inputs, pb_object.raw_input_contents  # type: ignore
+            )
 
         return inference_request
 
@@ -312,7 +314,7 @@ class ModelInferResponseConverter:
         if use_raw:
             # Extract the raw data in advance, to ensure the `data` field of
             # the output objects is empty
-            type_object.outputs, raw = extract_raw(type_object.outputs)
+            type_object.outputs, raw = extract_raw(type_object.outputs)  # type: ignore
 
         model_infer_response = pb.ModelInferResponse(
             model_name=type_object.model_name,

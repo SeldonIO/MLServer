@@ -2,7 +2,7 @@ import struct
 
 from functools import reduce
 from operator import mul
-from typing import List
+from typing import List, Tuple
 
 from .codecs.string import encode_str
 from .codecs.utils import InputOrOutput
@@ -96,7 +96,7 @@ def unpack(elem: InputOrOutput, raw: bytes) -> list:
 
 def pack(elem: InputOrOutput) -> bytes:
     if elem.datatype == "BYTES":
-        return pack_bytes(elem.data)
+        return pack_bytes(elem.data)  # type: ignore
 
     return pack_tensor(elem)
 
@@ -106,16 +106,16 @@ def inject_raw(
 ) -> List[InputOrOutput]:
     for elem, raw in zip(elems, raw_contents):
         # TODO: Assert that `data` field is empty
-        elem.data = unpack(elem, raw)
+        elem.data = unpack(elem, raw)  # type: ignore
 
     return elems
 
 
-def extract_raw(elems: List[InputOrOutput]) -> (List[InputOrOutput], List[bytes]):
+def extract_raw(elems: List[InputOrOutput]) -> Tuple[List[InputOrOutput], List[bytes]]:
     raw_contents = []
     for elem in elems:
         raw = pack(elem)
         raw_contents.append(raw)
-        elem.data = []
+        elem.data = []  # type: ignore
 
     return elems, raw_contents

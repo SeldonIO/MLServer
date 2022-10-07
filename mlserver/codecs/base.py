@@ -47,7 +47,7 @@ class InputCodec:
         raise NotImplementedError()
 
     @classmethod
-    def decode_output(cls, response_output: ResponseOutput, **kwargs) -> Any:
+    def decode_output(cls, response_output: ResponseOutput) -> Any:
         raise NotImplementedError()
 
     @classmethod
@@ -60,7 +60,7 @@ class InputCodec:
         return cls.decode_input(request_input)
 
     @classmethod
-    def decode_input(cls, request_input: RequestInput, **kwargs) -> Any:
+    def decode_input(cls, request_input: RequestInput) -> Any:
         raise NotImplementedError()
 
 
