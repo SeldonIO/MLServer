@@ -46,11 +46,12 @@ async def responses() -> Queue:
 
 @pytest.fixture
 async def worker(
+    settings,
     event_loop,
     responses: Queue,
     load_message: ModelUpdateMessage,
 ) -> Worker:
-    worker = Worker(responses)
+    worker = Worker(settings, responses)
 
     # Simulate the worker running on a different process, but keep it to a
     # thread to simplify debugging.

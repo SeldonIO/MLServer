@@ -44,7 +44,7 @@ class InferencePool:
         for idx in range(self._settings.parallel_workers):
             # TODO: Set callback to restart worker if it goes down (would
             # `worker.join` help with that?)
-            worker = Worker(responses)
+            worker = Worker(settings, responses)
             worker.start()
             self._workers[worker.pid] = worker  # type: ignore
 

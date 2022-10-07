@@ -8,6 +8,8 @@ from concurrent.futures import ThreadPoolExecutor
 
 from ..registry import MultiModelRegistry
 from ..utils import install_uvloop_event_loop, schedule_with_callback
+from ..logging import configure_logger
+from ..settings import Settings
 
 from .messages import (
     ModelRequestMessage,
@@ -26,8 +28,9 @@ def _noop():
 
 
 class Worker(Process):
-    def __init__(self, responses: Queue):
+    def __init__(self, settings: Settings, responses: Queue):
         super().__init__()
+        self._settings = settings
         self._responses = responses
         self._requests: Queue[ModelRequestMessage] = Queue()
         self._model_updates: JoinableQueue[ModelUpdateMessage] = JoinableQueue()
@@ -48,6 +51,7 @@ class Worker(Process):
 
     def run(self):
         install_uvloop_event_loop()
+        configure_logger(self._settings)
         self._ignore_signals()
         asyncio.run(self.coro_run())
 
