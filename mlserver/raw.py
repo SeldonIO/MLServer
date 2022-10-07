@@ -4,6 +4,7 @@ from functools import reduce
 from operator import mul
 from typing import List
 
+from .codecs.string import encode_str
 from .codecs.utils import InputOrOutput
 from .codecs.lists import ListElement
 

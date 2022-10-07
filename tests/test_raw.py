@@ -1,6 +1,7 @@
 import pytest
 import numpy as np
 
+from typing import List
 
 from mlserver.types import RequestInput, ResponseOutput
 from mlserver.raw import (
@@ -22,8 +23,14 @@ def test_unpack_bytes():
     assert unpacked == expected
 
 
-def test_pack_bytes():
-    unpacked = [b"one", b"two", b"three"]
+@pytest.mark.parametrize(
+    "unpacked",
+    [
+        [b"one", b"two", b"three"],
+        ["one", "two", "three"],
+    ],
+)
+def test_pack_bytes(unpacked: List[str]):
     expected = b"\x03\x00\x00\x00one\x03\x00\x00\x00two\x05\x00\x00\x00three"
 
     packed = pack_bytes(unpacked)
