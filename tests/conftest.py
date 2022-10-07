@@ -13,7 +13,7 @@ from mlserver.utils import install_uvloop_event_loop
 from mlserver.logging import get_logger
 from mlserver import types, Settings, ModelSettings
 
-from .fixtures import SumModel, ErrorModel
+from .fixtures import SumModel, ErrorModel, SimpleModel
 
 TESTS_PATH = os.path.dirname(__file__)
 TESTDATA_PATH = os.path.join(TESTS_PATH, "testdata")
@@ -59,6 +59,15 @@ def sum_model_settings() -> ModelSettings:
 
 
 @pytest.fixture
+def simple_model_settings() -> ModelSettings:
+    model_settings_path = os.path.join(TESTDATA_PATH, DEFAULT_MODEL_SETTINGS_FILENAME)
+    model_settings = ModelSettings.parse_file(model_settings_path)
+    model_settings.name = "simple-model"
+    model_settings.implementation = SimpleModel
+    return model_settings
+
+
+@pytest.fixture
 def error_model_settings() -> ModelSettings:
     model_settings_path = os.path.join(TESTDATA_PATH, DEFAULT_MODEL_SETTINGS_FILENAME)
     model_settings = ModelSettings.parse_file(model_settings_path)
@@ -73,6 +82,14 @@ async def error_model(
 ) -> ErrorModel:
     await model_registry.load(error_model_settings)
     return await model_registry.get_model(error_model_settings.name)
+
+
+@pytest.fixture
+async def simple_model(
+    model_registry: MultiModelRegistry, simple_model_settings: ModelSettings
+) -> SimpleModel:
+    await model_registry.load(simple_model_settings)
+    return await model_registry.get_model(simple_model_settings.name)
 
 
 @pytest.fixture

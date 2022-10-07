@@ -1,3 +1,6 @@
+from typing import Any, Dict, List, Type
+
+from ..types import RequestInput
 from ..errors import MLServerError
 
 
@@ -11,7 +14,7 @@ class CodecNotFound(MLServerError):
     ):
         msg = ""
         if name:
-            msg = f"with name {name}"
+            msg = f"with name '{name}'"
 
             if payload_type:
                 msg = f"{msg} and type {payload_type}"
@@ -37,4 +40,25 @@ class CodecNotFound(MLServerError):
 class CodecError(MLServerError):
     def __init__(self, msg: str):
         msg = f"There was an error encoding / decoding the payload: {msg}"
+        super().__init__(msg)
+
+
+class OutputNotFound(MLServerError):
+    def __init__(self, output_idx: int, output_type: Type, output_hints: List[Type]):
+        expected_outputs = [f"'{output_hint}'" for output_hint in output_hints]
+        msg = (
+            f"Unexpected output value at position '{output_idx}' ({output_type}). "
+            f"Expected outputs are {', '.join(expected_outputs)} outputs."
+        )
+        super().__init__(msg)
+
+
+class InputsNotFound(MLServerError):
+    def __init__(self, inputs: List[RequestInput], input_hints: Dict[str, Any]):
+        input_names = [f"'{inp.name}'" for inp in inputs]
+        available_inputs = [f"'{input_name}'" for input_name in input_hints.keys()]
+        msg = (
+            f"Input {', '.join(input_names)} was not found. "
+            f"Available inputs are {', '.join(available_inputs)}."
+        )
         super().__init__(msg)

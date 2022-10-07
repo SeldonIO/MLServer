@@ -33,27 +33,29 @@ from numpyro import distributions as dist
 from jax import random
 from numpyro.infer import MCMC, NUTS
 
-DATASET_URL = 'https://raw.githubusercontent.com/rmcelreath/rethinking/master/data/WaffleDivorce.csv'
-dset = pd.read_csv(DATASET_URL, sep=';')
+DATASET_URL = "https://raw.githubusercontent.com/rmcelreath/rethinking/master/data/WaffleDivorce.csv"
+dset = pd.read_csv(DATASET_URL, sep=";")
 
 standardize = lambda x: (x - x.mean()) / x.std()
 
-dset['AgeScaled'] = dset.MedianAgeMarriage.pipe(standardize)
-dset['MarriageScaled'] = dset.Marriage.pipe(standardize)
-dset['DivorceScaled'] = dset.Divorce.pipe(standardize)
+dset["AgeScaled"] = dset.MedianAgeMarriage.pipe(standardize)
+dset["MarriageScaled"] = dset.Marriage.pipe(standardize)
+dset["DivorceScaled"] = dset.Divorce.pipe(standardize)
+
 
 def model(marriage=None, age=None, divorce=None):
-    a = numpyro.sample('a', dist.Normal(0., 0.2))
-    M, A = 0., 0.
+    a = numpyro.sample("a", dist.Normal(0.0, 0.2))
+    M, A = 0.0, 0.0
     if marriage is not None:
-        bM = numpyro.sample('bM', dist.Normal(0., 0.5))
+        bM = numpyro.sample("bM", dist.Normal(0.0, 0.5))
         M = bM * marriage
     if age is not None:
-        bA = numpyro.sample('bA', dist.Normal(0., 0.5))
+        bA = numpyro.sample("bA", dist.Normal(0.0, 0.5))
         A = bA * age
-    sigma = numpyro.sample('sigma', dist.Exponential(1.))
+    sigma = numpyro.sample("sigma", dist.Exponential(1.0))
     mu = a + M + A
-    numpyro.sample('obs', dist.Normal(mu, sigma), obs=divorce)
+    numpyro.sample("obs", dist.Normal(mu, sigma), obs=divorce)
+
 
 # Start from this source of randomness. We will split keys for subsequent operations.
 rng_key = random.PRNGKey(0)
@@ -64,7 +66,9 @@ num_warmup, num_samples = 1000, 2000
 # Run NUTS.
 kernel = NUTS(model)
 mcmc = MCMC(kernel, num_warmup=num_warmup, num_samples=num_samples)
-mcmc.run(rng_key_, marriage=dset.MarriageScaled.values, divorce=dset.DivorceScaled.values)
+mcmc.run(
+    rng_key_, marriage=dset.MarriageScaled.values, divorce=dset.DivorceScaled.values
+)
 mcmc.print_summary()
 ```
 
@@ -83,9 +87,9 @@ samples = mcmc.get_samples()
 serialisable = {}
 for k, v in samples.items():
     serialisable[k] = np.asarray(v).tolist()
-    
+
 model_file_name = "numpyro-divorce.json"
-with open(model_file_name, 'w') as model_file:
+with open(model_file_name, "w") as model_file:
     json.dump(serialisable, model_file)
 ```
 
@@ -104,14 +108,14 @@ Our custom inference wrapper should be responsible of:
 
 
 ```python
-%%writefile models.py
+# %load models.py
 import json
 import numpyro
 import numpy as np
 
-from typing import Dict
 from jax import random
-from mlserver import MLModel, types
+from mlserver import MLModel
+from mlserver.codecs import decode_args
 from mlserver.utils import get_model_uri
 from numpyro.infer import Predictive
 from numpyro import distributions as dist
@@ -132,33 +136,21 @@ class NumpyroModel(MLModel):
         self.ready = True
         return self.ready
 
-    async def predict(self, payload: types.InferenceRequest) -> types.InferenceResponse:
-        inputs = self._extract_inputs(payload)
-        predictions = self._predictive(rng_key=random.PRNGKey(0), **inputs)
+    @decode_args
+    async def predict(
+        self,
+        marriage: np.ndarray = None,
+        age: np.ndarray = None,
+        divorce: np.ndarray = None,
+    ) -> np.ndarray:
+        predictions = self._predictive(
+            rng_key=random.PRNGKey(0), marriage=marriage, age=age, divorce=divorce
+        )
 
         obs = predictions["obs"]
         obs_mean = obs.mean()
 
-        return types.InferenceResponse(
-            id=payload.id,
-            model_name=self.name,
-            model_version=self.version,
-            outputs=[
-                types.ResponseOutput(
-                    name="obs_mean",
-                    shape=obs_mean.shape,
-                    datatype="FP32",
-                    data=np.asarray(obs_mean).tolist(),
-                )
-            ],
-        )
-
-    def _extract_inputs(self, payload: types.InferenceRequest) -> Dict[str, np.ndarray]:
-        inputs = {}
-        for inp in payload.inputs:
-            inputs[inp.name] = np.array(inp.data)
-
-        return inputs
+        return np.asarray(obs_mean)
 
     def _model(self, marriage=None, age=None, divorce=None):
         a = numpyro.sample("a", dist.Normal(0.0, 0.2))
@@ -172,6 +164,7 @@ class NumpyroModel(MLModel):
         sigma = numpyro.sample("sigma", dist.Exponential(1.0))
         mu = a + M + A
         numpyro.sample("obs", dist.Normal(mu, sigma), obs=divorce)
+
 ```
 
 ### Settings files
@@ -185,17 +178,18 @@ The next step will be to create 2 configuration files:
 
 
 ```python
-%%writefile settings.json
+# %load settings.json
 {
     "debug": "true"
 }
+
 ```
 
 #### `model-settings.json`
 
 
 ```python
-%%writefile model-settings.json
+# %load model-settings.json
 {
     "name": "numpyro-divorce",
     "implementation": "models.NumpyroModel",
@@ -203,6 +197,7 @@ The next step will be to create 2 configuration files:
         "uri": "./numpyro-divorce.json"
     }
 }
+
 ```
 
 ### Start serving our model
@@ -226,21 +221,20 @@ For that, we can use the Python types that `mlserver` provides out of box, or we
 
 ```python
 import requests
+import numpy as np
 
-x_0 = [28.0]
-inference_request = {
-    "inputs": [
-        {
-          "name": "marriage",
-          "shape": [1],
-          "datatype": "FP32",
-          "data": x_0
-        }
+from mlserver.types import InferenceRequest
+from mlserver.codecs import NumpyCodec
+
+x_0 = np.array([28.0])
+inference_request = InferenceRequest(
+    inputs=[
+        NumpyCodec.encode_input(name="marriage", payload=x_0)
     ]
-}
+)
 
 endpoint = "http://localhost:8080/v2/models/numpyro-divorce/infer"
-response = requests.post(endpoint, json=inference_request)
+response = requests.post(endpoint, json=inference_request.dict())
 
 response.json()
 ```
@@ -256,10 +250,12 @@ MLServer will automatically find your requirements.txt file and install necessar
 
 
 ```python
-%%writefile requirements.txt
-numpy==1.22.0
+# %load requirements.txt
+numpy==1.22.4
 numpyro==0.8.0
 jax==0.2.24
+jaxlib==0.3.7
+
 ```
 
 ### Building a custom image
@@ -288,26 +284,22 @@ docker run -it --rm -p 8080:8080 my-custom-numpyro-server:0.1.0
 
 
 ```python
-import requests
+import numpy as np
 
-x_0 = [28.0]
-inference_request = {
-    "inputs": [
-        {
-          "name": "marriage",
-          "shape": [1],
-          "datatype": "FP32",
-          "data": x_0
-        }
+from mlserver.types import InferenceRequest
+from mlserver.codecs import NumpyCodec
+
+x_0 = np.array([28.0])
+inference_request = InferenceRequest(
+    inputs=[
+        NumpyCodec.encode_input(name="marriage", payload=x_0)
     ]
-}
+)
 
 endpoint = "http://localhost:8080/v2/models/numpyro-divorce/infer"
-response = requests.post(endpoint, json=inference_request)
+response = requests.post(endpoint, json=inference_request.dict())
 
-print(response)
-print(response.text)
-
+response.json()
 ```
 
 As we should be able to see, the server running within our Docker image responds as expected.
@@ -323,7 +315,7 @@ There is a large number of tools out there to deploy images.
 However, for our example, we will focus on deploying it to a cluster running [Seldon Core](https://docs.seldon.io/projects/seldon-core/en/latest/).
 
 ```{note}
-Also consider that depending on your Kubernetes installation Seldon Core might excpect to get the container image from a public container registry like [Docker hub](https://hub.docker.com/) or [Google Container Registry](https://cloud.google.com/container-registry). For that you need to do an extra step of pushing the container to the registry using `docker tag <image name> <container registry>/<image name>` and `docker push <container registry>/<image name>` and also updating the `image` section of the yaml file to `<container registry>/<image name>`. 
+Also consider that depending on your Kubernetes installation Seldon Core might expect to get the container image from a public container registry like [Docker hub](https://hub.docker.com/) or [Google Container Registry](https://cloud.google.com/container-registry). For that you need to do an extra step of pushing the container to the registry using `docker tag <image name> <container registry>/<image name>` and `docker push <container registry>/<image name>` and also updating the `image` section of the yaml file to `<container registry>/<image name>`. 
 ```
 
 For that, we will need to create a `SeldonDeployment` resource which instructs Seldon Core to deploy a model embedded within our custom image and compliant with the [V2 Inference Protocol](https://github.com/kserve/kserve/tree/master/docs/predict-api/v2).

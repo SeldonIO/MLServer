@@ -46,6 +46,7 @@ class Base64Codec(InputCodec):
     """
 
     ContentType = "base64"
+    TypeHint = List[bytes]
 
     @classmethod
     def can_encode(cls, payload: Any) -> bool:

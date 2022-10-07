@@ -47,6 +47,72 @@ class MyCustomRuntime(MLModel):
     return self._model.predict(payload)
 ```
 
+### Simplified interface
+
+MLServer exposes an alternative _"simplified" interface_ which can be used to
+write custom runtimes.
+This interface can be enabled by decorating your `predict()` method with the
+`mlserver.codecs.decode_args` decorator, and it lets you specify in the method
+signature both how you want your request payload to be decoded and how to
+encode the response back.
+
+Based on the information provided in the method signature, MLServer will
+automatically decode the request payload into the different inputs specified as
+keyword arguments.
+Under the hood, this is implemented through [MLServer's codecs and content types
+system](./content-type.md).
+
+```{note}
+MLServer's _"simplified" interface_ aims to cover use cases where encoding /
+decoding can be done through one of the codecs built-in into the MLServer
+package.
+However, there are instances where this may not be enough (e.g. variable number
+of inputs, variable content types, etc.).
+For these types of cases, please use MLServer's [_"advanced"
+interface_](#writing-a-custom-inference-runtime), where you will have full
+control over the full encoding / decoding process.
+```
+
+As an example of the above, let's assume a model which
+
+- Takes two lists of strings as inputs:
+  - `questions`, containing multiple questions to ask our model.
+  - `context`, containing multiple contexts for each of the
+    questions.
+- Returns a Numpy array with some predictions as the output.
+
+Leveraging MLServer's simplified notation, we can represent the above as the
+following custom runtime:
+
+```{code-block} python
+---
+emphasize-lines: 2, 12-13
+---
+from mlserver import MLModel
+from mlserver.codecs import decode_args
+
+class MyCustomRuntime(MLModel):
+
+  async def load(self) -> bool:
+    # TODO: Replace for custom logic to load a model artifact
+    self._model = load_my_custom_model()
+    self.ready = True
+    return self.ready
+
+  @decode_args
+  async def predict(self, questions: List[str], context: List[str]) -> np.ndarray:
+    # TODO: Replace for custom logic to run inference
+    return self._model.predict(questions, context)
+```
+
+Note that, the method signature of our `predict` method now specifies:
+
+- The input names that we should be looking for in the request
+  payload (i.e. `questions` and `context`).
+- The expected content type for each of the request inputs (i.e. `List[str]` on
+  both cases).
+- The expected content type of the response outputs (i.e. `np.ndarray`).
+
 ### Read and write headers
 
 ```{note}

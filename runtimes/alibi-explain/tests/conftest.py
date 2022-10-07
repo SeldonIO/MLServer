@@ -35,7 +35,7 @@ _ANCHOR_IMAGE_DIR = TESTS_PATH / ".data" / "mnist_anchor_image"
 
 
 @pytest.fixture
-async def inference_pool(settings: Settings) -> InferencePool:
+async def inference_pool(settings: Settings) -> AsyncIterable[InferencePool]:
     pool = InferencePool(settings)
     yield pool
 
@@ -72,7 +72,7 @@ def settings() -> Settings:
 @pytest.fixture
 async def model_registry(
     custom_runtime_tf_settings, inference_pool
-) -> MultiModelRegistry:
+) -> AsyncIterable[MultiModelRegistry]:
     model_registry = MultiModelRegistry(
         on_model_load=[inference_pool.load_model],
         on_model_reload=[inference_pool.reload_model],
@@ -155,7 +155,7 @@ def anchor_image_directory() -> Path:
 @pytest.fixture
 async def anchor_image_runtime_with_remote_predict_patch(
     anchor_image_directory, custom_runtime_tf: MLModel, mocker
-) -> AlibiExplainRuntime:
+) -> AsyncIterable[AlibiExplainRuntime]:
     def _mock_metadata(*args, **kwargs):
         return MetadataModelResponse(name="dummy", platform="dummy")
 

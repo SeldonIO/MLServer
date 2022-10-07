@@ -54,6 +54,7 @@ def _ensure_bytes(elem: PackElement) -> bytes:
 @register_request_codec
 class PandasCodec(RequestCodec):
     ContentType = "pd"
+    TypeHint = pd.DataFrame
 
     @classmethod
     def can_encode(cls, payload: Any) -> bool:

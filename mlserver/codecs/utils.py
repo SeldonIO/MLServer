@@ -15,8 +15,9 @@ from .base import (
     find_input_codec_by_payload,
     find_request_codec,
     find_request_codec_by_payload,
-    InputCodec,
     RequestCodec,
+    InputCodecLike,
+    RequestCodecLike,
 )
 from .errors import CodecError
 
@@ -24,8 +25,7 @@ DefaultOutputPrefix = "output-"
 DefaultInputPrefix = "input-"
 
 InputOrOutput = Union[RequestInput, ResponseOutput]
-InputCodecLike = Union[Type[InputCodec], InputCodec]
-RequestCodecLike = Union[Type[RequestCodec], RequestCodec]
+Codec = Union[InputCodecLike, RequestCodecLike]
 
 Parametrised = Union[
     InferenceRequest, RequestInput, RequestOutput, ResponseOutput, InferenceResponse
@@ -175,7 +175,7 @@ class SingleInputRequestCodec(RequestCodec):
     element.
     """
 
-    InputCodec: Optional[Type[InputCodec]] = None
+    InputCodec: Optional[InputCodecLike] = None
 
     @classmethod
     def can_encode(cls, payload: Any) -> bool:

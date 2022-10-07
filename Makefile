@@ -60,8 +60,8 @@ lint: generate
 	mypy ./mlserver
 	for _runtime in ./runtimes/*; \
 	do \
-		mypy $$_runtime; \
-	done || exit 1 # Return error if mypy failed
+		mypy $$_runtime || exit 1; \
+	done
 	mypy ./benchmarking
 	mypy ./docs/examples
 	# Check if something has changed after generation
