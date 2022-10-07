@@ -1,4 +1,4 @@
-from typing import Any, Union, Dict, Optional, Type
+from typing import Any, Union, Dict, Optional
 
 from ..types import (
     InferenceRequest,
