@@ -184,6 +184,7 @@ async def test_unload_version(
 @pytest.mark.parametrize(
     "versions, expected",
     [
+        ([None], None),
         (["4", "3", "2", "1", "7", "5", "6"], "7"),
         (["v1", "v3", "v2"], "v3"),
         (["v10", "v3", "v2"], "v10"),

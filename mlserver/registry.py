@@ -49,7 +49,7 @@ class SingleModelRegistry:
         on_model_reload: List[ModelReloadHook] = [],
         on_model_unload: List[ModelRegistryHook] = [],
     ):
-        self._versions: Dict[str, MLModel] = {}
+        self._versions: Dict[Union[str, None], MLModel] = {}
         self._default: Optional[MLModel] = None
 
         self._name = model_settings.name
@@ -215,7 +215,9 @@ class SingleModelRegistry:
         if model.version:
             self._versions[model.version] = model
 
-        self._refresh_default(model)
+        refreshed = self._refresh_default(model)
+        if refreshed:
+            self._versions[refreshed.version] = refreshed
 
     def empty(self) -> bool:
         if self._versions:
