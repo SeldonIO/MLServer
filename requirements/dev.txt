@@ -11,7 +11,7 @@ grpcio-tools==1.41.0
 ## https://github.com/pypa/pip/issues/9613
 prance==0.20.0
 
-tritonclient[all]==2.25.0
+tritonclient[all]==2.26.0
 
 # Testing
 pytest==7.1.3
