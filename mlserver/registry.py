@@ -34,7 +34,8 @@ def _is_newer(a: MLModel, b: MLModel) -> bool:
         return True
     if b.version is None:
         return False
-    return _sem_ver(a) > _sem_ver(b)
+    # equal case is when we want to reload a model, we assume this case a newer version
+    return _sem_ver(a) >= _sem_ver(b)
 
 
 class SingleModelRegistry:
@@ -160,18 +161,11 @@ class SingleModelRegistry:
         self._clear_default()
 
     async def unload_version(self, version: str = None):
-        if version:
-            model = await self.get_model(version)
-            await self._unload_model(model)
-            del self._versions[version]
+        model = await self.get_model(version)
+        await self._unload_model(model)
+        del self._versions[version]
 
-            if model == self.default:
-                self._clear_default()
-
-        elif self.default and not self.default.version:
-            # If version is None, and default model doesn't have a version,
-            # then unload and find a new default
-            await self._unload_model(self.default)
+        if model == self.default:
             self._clear_default()
 
     async def _unload_model(self, model: MLModel, new_model: MLModel = None):
@@ -202,14 +196,7 @@ class SingleModelRegistry:
 
     async def get_models(self) -> List[MLModel]:
         # NOTE: `.values()` returns a "view" instead of a list
-        models = list(self._versions.values())
-
-        # Add default if not versioned (as it won't be present on the
-        # `_versions` dict
-        if self.default and not self.default.version:
-            models.append(self.default)
-
-        return models
+        return list(self._versions.values())
 
     def _register(self, model: MLModel):
         if model.version:
