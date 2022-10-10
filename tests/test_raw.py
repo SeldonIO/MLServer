@@ -5,10 +5,10 @@ from typing import List
 
 from mlserver.types import RequestInput, ResponseOutput
 from mlserver.raw import (
-    pack_bytes,
-    pack_tensor,
-    unpack_bytes,
-    unpack_tensor,
+    _pack_bytes,
+    _pack_tensor,
+    _unpack_bytes,
+    _unpack_tensor,
     extract_raw,
     inject_raw,
 )
@@ -19,7 +19,7 @@ def test_unpack_bytes():
     raw = b"\x03\x00\x00\x00one\x03\x00\x00\x00two\x05\x00\x00\x00three"
     expected = [b"one", b"two", b"three"]
 
-    unpacked = unpack_bytes(raw)
+    unpacked = _unpack_bytes(raw)
     assert unpacked == expected
 
 
@@ -33,7 +33,7 @@ def test_unpack_bytes():
 def test_pack_bytes(unpacked: List[str]):
     expected = b"\x03\x00\x00\x00one\x03\x00\x00\x00two\x05\x00\x00\x00three"
 
-    packed = pack_bytes(unpacked)
+    packed = _pack_bytes(unpacked)
     assert packed == expected
 
 
@@ -71,7 +71,7 @@ def test_unpack_tensor(tensor: np.ndarray):
     request_input.data = []
     raw = tensor.tobytes()
 
-    unpacked = unpack_tensor(request_input, raw)
+    unpacked = _unpack_tensor(request_input, raw)
     request_input.data = unpacked
     decoded = NumpyCodec.decode_input(request_input)
 
@@ -109,7 +109,7 @@ def test_unpack_tensor(tensor: np.ndarray):
 )
 def test_pack_tensor(tensor: np.ndarray):
     request_input = NumpyCodec.encode_input(name="foo", payload=tensor)
-    packed = pack_tensor(request_input)
+    packed = _pack_tensor(request_input)
 
     expected = tensor.tobytes()
 

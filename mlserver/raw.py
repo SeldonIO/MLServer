@@ -36,7 +36,7 @@ def _tensor_format(elem: InputOrOutput) -> str:
     return f"{size}{ctype}"
 
 
-def unpack_bytes(raw: bytes) -> List[bytes]:
+def _unpack_bytes(raw: bytes) -> List[bytes]:
     """
     From Triton's implementation:
         https://github.com/triton-inference-server/client/blob/6cc412c50ca4282cec6e9f62b3c2781be433dcc6/src/python/library/tritonclient/utils/__init__.py#L246-L273
@@ -55,7 +55,7 @@ def unpack_bytes(raw: bytes) -> List[bytes]:
     return elems
 
 
-def pack_bytes(unpacked: List[ListElement]) -> bytes:
+def _pack_bytes(unpacked: List[ListElement]) -> bytes:
     packed = []
     for elem in unpacked:
         as_bytes = _ensure_bytes(elem)
@@ -77,28 +77,28 @@ def _ensure_bytes(elem: ListElement) -> bytes:
     return elem
 
 
-def unpack_tensor(elem: InputOrOutput, raw: bytes) -> list:
+def _unpack_tensor(elem: InputOrOutput, raw: bytes) -> list:
     tensor_format = _tensor_format(elem)
     return list(struct.unpack(tensor_format, raw))
 
 
-def pack_tensor(elem: InputOrOutput) -> bytes:
+def _pack_tensor(elem: InputOrOutput) -> bytes:
     tensor_format = _tensor_format(elem)
     return struct.pack(tensor_format, *elem.data)
 
 
 def unpack(elem: InputOrOutput, raw: bytes) -> list:
     if elem.datatype == "BYTES":
-        return unpack_bytes(raw)
+        return _unpack_bytes(raw)
 
-    return unpack_tensor(elem, raw)
+    return _unpack_tensor(elem, raw)
 
 
 def pack(elem: InputOrOutput) -> bytes:
     if elem.datatype == "BYTES":
-        return pack_bytes(elem.data)  # type: ignore
+        return _pack_bytes(elem.data)  # type: ignore
 
-    return pack_tensor(elem)
+    return _pack_tensor(elem)
 
 
 def inject_raw(
