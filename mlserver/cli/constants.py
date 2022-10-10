@@ -48,8 +48,11 @@ COPY \\
 
 USER root
 # Install dependencies system-wide, to ensure that they are available for every
-# user
-RUN ./hack/build-env.sh .
+# user and give permissions to (future) environment folder.
+RUN ./hack/build-env.sh . && \\
+    mkdir -p ./envs/base && \\
+    chown -R 1000:0 ./envs/base && \\
+    chmod -R 776 ./envs/base
 USER 1000
 
 # Copy everything else
