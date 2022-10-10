@@ -196,7 +196,7 @@ class SingleModelRegistry:
 
     async def get_models(self) -> List[MLModel]:
         # NOTE: `.values()` returns a "view" instead of a list
-        return list(self._versions.values())
+        return list(v for k, v in self._versions.items() if k)
 
     def _register(self, model: MLModel):
         if model.version:

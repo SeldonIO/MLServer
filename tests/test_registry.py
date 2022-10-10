@@ -7,7 +7,7 @@ from typing import List, Union
 from mlserver.model import MLModel
 from mlserver.errors import ModelNotFound
 from mlserver.registry import MultiModelRegistry, SingleModelRegistry
-from mlserver.settings import ModelSettings
+from mlserver.settings import ModelSettings, ModelParameters
 
 from .fixtures import SlowModel
 
@@ -213,7 +213,11 @@ async def test_find_default(
 
 
 async def test_model_not_ready(model_registry: MultiModelRegistry):
-    slow_model_settings = ModelSettings(name="slow-model", implementation=SlowModel)
+    slow_model_settings = ModelSettings(
+        name="slow-model",
+        implementation=SlowModel,
+        parameters=ModelParameters(version="v1"),
+    )
 
     load_task = asyncio.create_task(model_registry.load(slow_model_settings))
     # Use asyncio.sleep() to give control back to loop so that the load above
@@ -252,3 +256,30 @@ async def test_rolling_reload(
         await reload_task
     except CancelledError:
         pass
+
+
+@pytest.mark.parametrize(
+    "versions",
+    [
+        ["v0", "v1"],
+        ["v0", "v1", "v2"],
+    ],
+)
+async def test_get_models_dont_return_default_twice(
+    versions: List[Union[str, None]],
+    model_registry: MultiModelRegistry,
+    sum_model_settings: ModelSettings,
+):
+    sum_model_settings.name = "model-foo"
+    sum_model_settings = sum_model_settings.copy(deep=True)
+    for i, version in enumerate(versions):
+        sum_model_settings = sum_model_settings.copy(deep=True)
+        sum_model_settings.parameters.version = version
+        await model_registry.load(sum_model_settings)
+        if not i:
+            sum_model_settings = sum_model_settings.copy(deep=True)
+            sum_model_settings.parameters.version = None
+            await model_registry.load(sum_model_settings)
+
+    models = await model_registry.get_models(sum_model_settings.name)
+    assert set(m.version for m in models) == set(versions)

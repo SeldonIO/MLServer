@@ -101,11 +101,7 @@ async def test_load_removes_stale_models(
 
     # Validate that the stale test models have been loaded
     registry_models = await model_registry.get_models(sum_model_settings.name)
-    stale_length = (
-        len(to_load)
-        + 1  # Count the (stale) default model
-        + 1  # Count the previous (non-stale) model
-    )
+    stale_length = len(to_load) + 1  # Count the previous (non-stale) model
     assert len(registry_models) == stale_length
 
     # Reload our model and validate whether stale models have been removed
