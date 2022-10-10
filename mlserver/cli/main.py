@@ -209,7 +209,6 @@ async def infer(
 def main():
     configure_logger()
     install_uvloop_event_loop()
-    logger.info('*'*80)
     root()
 
 
