@@ -35,7 +35,7 @@ mypy-protobuf==3.1.0
 types-protobuf==3.20.4
 types-orjson==3.6.2
 types-aiofiles==22.1.0
-black==22.8.0
+black==22.10.0
 
 # Pushing to PyPi
 wheel==0.37.1
