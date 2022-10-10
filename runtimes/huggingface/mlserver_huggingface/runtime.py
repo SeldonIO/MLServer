@@ -91,7 +91,6 @@ class HuggingFaceRuntime(MLModel):
         if "args" in kwargs:
             args = kwargs["args"]
             del kwargs["args"]
-
         prediction = self._model(*args, **kwargs)
 
         # TODO: Convert hf output to v2 protocol, for now we use to_json
