@@ -117,11 +117,9 @@ def inference_request(request) -> types.InferenceRequest:
     return types.InferenceRequest.parse_file(payload_path)
 
 
-@pytest.fixture(
-    params=["inference-response.json", "inference-response-with-output.json"]
-)
-def inference_response(request) -> types.InferenceResponse:
-    payload_path = os.path.join(TESTDATA_PATH, request.param)
+@pytest.fixture
+def inference_response() -> types.InferenceResponse:
+    payload_path = os.path.join(TESTDATA_PATH, "inference-response.json")
     return types.InferenceResponse.parse_file(payload_path)
 
 

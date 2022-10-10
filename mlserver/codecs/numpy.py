@@ -5,7 +5,8 @@ from typing import Any
 from ..types import RequestInput, ResponseOutput, Parameters
 
 from .base import InputCodec, register_input_codec, register_request_codec
-from .utils import SingleInputRequestCodec, is_list_of, InputOrOutput
+from .utils import SingleInputRequestCodec, InputOrOutput
+from .lists import is_list_of
 from .string import encode_str
 
 _DatatypeToNumpy = {

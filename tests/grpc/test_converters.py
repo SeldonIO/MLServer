@@ -42,6 +42,36 @@ def test_modelmetadataresponse_from_types(metadata_model_response):
         assert pb_obj.shape == ty_obj.shape
 
 
+@pytest.mark.parametrize(
+    "model_infer_request",
+    [
+        pb.ModelInferRequest(
+            id="",
+            inputs=[
+                pb.ModelInferRequest.InferInputTensor(
+                    name="input-0",
+                    datatype="INT32",
+                    shape=[1, 3],
+                    parameters={"content_type": pb.InferParameter(string_param="np")},
+                    contents=pb.InferTensorContents(int_contents=[1, 2, 3]),
+                )
+            ],
+        ),
+        pb.ModelInferRequest(
+            id="",
+            inputs=[
+                pb.ModelInferRequest.InferInputTensor(
+                    name="input-0",
+                    datatype="INT32",
+                    shape=[1, 3],
+                    parameters={"content_type": pb.InferParameter(string_param="np")},
+                    contents=pb.InferTensorContents(),
+                )
+            ],
+            raw_input_contents=[b"\x01\x00\x00\x00\x02\x00\x00\x00\x03\x00\x00\x00"],
+        ),
+    ],
+)
 def test_modelinferrequest_to_types(model_infer_request):
     inference_request = ModelInferRequestConverter.to_types(model_infer_request)
 
@@ -62,20 +92,45 @@ def test_modelinferrequest_to_types(model_infer_request):
     assert dict(inference_request) == dict(expected)
 
 
-def test_modelinferresponse_from_types(inference_response):
-    model_infer_response = ModelInferResponseConverter.from_types(inference_response)
-
-    expected = pb.ModelInferResponse(
-        model_name="sum-model",
-        id="123",
-        outputs=[
-            pb.ModelInferResponse.InferOutputTensor(
-                name=inference_response.outputs[0].name,
-                datatype="FP32",
-                shape=[1],
-                contents=pb.InferTensorContents(fp32_contents=[21.0]),
-            )
-        ],
+@pytest.mark.parametrize(
+    "use_raw, expected",
+    [
+        (
+            False,
+            pb.ModelInferResponse(
+                model_name="sum-model",
+                id="123",
+                outputs=[
+                    pb.ModelInferResponse.InferOutputTensor(
+                        name="output-0",
+                        datatype="FP32",
+                        shape=[1],
+                        contents=pb.InferTensorContents(fp32_contents=[21.0]),
+                    )
+                ],
+            ),
+        ),
+        (
+            True,
+            pb.ModelInferResponse(
+                model_name="sum-model",
+                id="123",
+                outputs=[
+                    pb.ModelInferResponse.InferOutputTensor(
+                        name="output-0",
+                        datatype="FP32",
+                        shape=[1],
+                        contents=pb.InferTensorContents(),
+                    )
+                ],
+                raw_output_contents=[b"\x00\x00\xa8A"],
+            ),
+        ),
+    ],
+)
+def test_modelinferresponse_from_types(inference_response, use_raw, expected):
+    model_infer_response = ModelInferResponseConverter.from_types(
+        inference_response, use_raw=use_raw
     )
 
     assert type(model_infer_response) is pb.ModelInferResponse

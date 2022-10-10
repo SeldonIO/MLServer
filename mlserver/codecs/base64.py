@@ -5,21 +5,21 @@ from typing import Any, List, Union
 from functools import partial
 
 from ..types import RequestInput, ResponseOutput
-from .utils import is_list_of
+from .lists import is_list_of
 from .base import InputCodec, register_input_codec
-from .pack import unpack, PackElement
+from .lists import as_list, ListElement
 
 _Base64StrCodec = "ascii"
 
 
-def _ensure_bytes(elem: PackElement) -> bytes:
+def _ensure_bytes(elem: ListElement) -> bytes:
     if isinstance(elem, str):
         return elem.encode(_Base64StrCodec)
 
     return elem
 
 
-def _encode_base64(elem: PackElement, use_bytes: bool) -> Union[bytes, str]:
+def _encode_base64(elem: ListElement, use_bytes: bool) -> Union[bytes, str]:
     as_bytes = _ensure_bytes(elem)
     b64_encoded = base64.b64encode(as_bytes)
     if use_bytes:
@@ -28,7 +28,7 @@ def _encode_base64(elem: PackElement, use_bytes: bool) -> Union[bytes, str]:
     return b64_encoded.decode(_Base64StrCodec)
 
 
-def _decode_base64(elem: PackElement) -> bytes:
+def _decode_base64(elem: ListElement) -> bytes:
     as_bytes = _ensure_bytes(elem)
 
     # Check that the input is valid base64.
@@ -69,7 +69,7 @@ class Base64Codec(InputCodec):
     @classmethod
     def decode_output(cls, response_output: ResponseOutput) -> List[bytes]:
         packed = response_output.data.__root__
-        return list(map(_decode_base64, unpack(packed)))
+        return list(map(_decode_base64, as_list(packed)))
 
     @classmethod
     def encode_input(
@@ -88,4 +88,4 @@ class Base64Codec(InputCodec):
     def decode_input(cls, request_input: RequestInput) -> List[bytes]:
         packed = request_input.data.__root__
 
-        return list(map(_decode_base64, unpack(packed)))
+        return list(map(_decode_base64, as_list(packed)))
