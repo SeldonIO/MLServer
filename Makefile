@@ -7,8 +7,6 @@ IMAGE_NAME := seldonio/mlserver
 
 install-dev:
 	pip install -r requirements/dev.txt
-	pip install --editable .
-	pip install --editable .[all]
 	for _runtime in ./runtimes/*; \
 	do \
 		pip install --editable $$_runtime; \
@@ -17,6 +15,7 @@ install-dev:
 			pip install -r $$_runtime/requirements-dev.txt; \
 		fi \
 	done
+	pip install --editable .[all]
 
 _generate: # "private" target to call `fmt` after `generate`
 	./hack/generate-types.sh
