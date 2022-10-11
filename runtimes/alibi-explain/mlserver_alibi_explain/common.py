@@ -53,7 +53,7 @@ def convert_from_bytes(output: ResponseOutput, ty: Optional[Type] = None) -> Any
 
 # TODO: add retry and better exceptions handling
 def remote_predict(
-    v2_payload: InferenceRequest, predictor_url: str, ssl_verify_path: str
+    v2_payload: InferenceRequest, predictor_url: str, ssl_verify_path: Optional[str]
 ) -> InferenceResponse:
     verify: Union[str, bool] = True
     if ssl_verify_path != "":
@@ -64,7 +64,7 @@ def remote_predict(
     return InferenceResponse.parse_raw(response_raw.text)
 
 
-def remote_metadata(url: str, ssl_verify_path: str) -> MetadataModelResponse:
+def remote_metadata(url: str, ssl_verify_path: Optional[str]) -> MetadataModelResponse:
     """Get metadata from v2 endpoint"""
     verify: Union[str, bool] = True
     if ssl_verify_path != "":
