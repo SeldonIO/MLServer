@@ -26,8 +26,9 @@ _unpackEnv() {
 
 _activateEnv() {
   local _envFolder=$1
+  local _activate="$_envFolder/bin/activate"
 
-  if ! [[ -d $_envFolder ]]; then
+  if ! [[ -f $_activate ]]; then
     echo "Environment not found at '$_envFolder'"
     return
   fi
@@ -35,7 +36,7 @@ _activateEnv() {
   echo "--> Sourcing new environment at $_envFolder..."
   # Need to disable unbound errors for activate
   set +u
-  source "$_envFolder/bin/activate"
+  source $_activate
   set -u
 
   echo "--> Calling conda-unpack..."
