@@ -33,7 +33,9 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
 
         self.infer_uri = explainer_settings.infer_uri
         self.infer_metadata: Optional[MetadataModelResponse] = None
-        self.ssl_verify_path = explainer_settings.ssl_verify_path
+        self.ssl_verify_path = ""
+        if explainer_settings.ssl_verify_path is not None:
+            self.ssl_verify_path = explainer_settings.ssl_verify_path
 
         # TODO: validate the settings are ok with this specific explainer
         super().__init__(settings, explainer_settings)
