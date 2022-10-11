@@ -46,7 +46,7 @@ RUN pip install --upgrade pip wheel setuptools && \
     else \
         for _runtime in $RUNTIMES; do \
             _wheelName=$(echo $_runtime | tr '-' '_'); \
-            pip install "./dist/$_wheelName-"*.whl; \
+            pip install "./dist/mlserver_$_wheelName-"*.whl; \
         done \
     fi
 
