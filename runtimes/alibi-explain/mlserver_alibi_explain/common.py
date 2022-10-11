@@ -103,7 +103,7 @@ class AlibiExplainSettings(BaseSettings):
     infer_uri: str
     explainer_type: str
     init_parameters: Optional[dict]
-    ssl_verify_path: str
+    ssl_verify_path: Optional[str]
 
 
 def import_and_get_class(class_path: str) -> type:
