@@ -1,3 +1,5 @@
+import asyncio
+
 from mlserver.errors import MLServerError
 from enum import Enum
 from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
@@ -59,12 +61,15 @@ class KafkaServer:
     async def _consumer_loop(self):
         logger.info("Reading messages from consumer")
         async for request in self._consumer:
-            try:
-                await self._process_request(request)
-            except MLServerError as err:
-                logger.exception(f"ERROR {err.status_code} - {str(err)}")
-            except Exception as err:
-                logger.exception(f"ERROR 500 - {str(err)}")
+            asyncio.Task(self.consume_request(request))
+
+    async def consume_request(self, request):
+        try:
+            await self._process_request(request)
+        except MLServerError as err:
+            logger.exception(f"ERROR {err.status_code} - {str(err)}")
+        except Exception as err:
+            logger.exception(f"ERROR 500 - {str(err)}")
 
     async def _process_request(self, request_record):
         kafka_request = KafkaMessage.from_kafka_record(request_record)
