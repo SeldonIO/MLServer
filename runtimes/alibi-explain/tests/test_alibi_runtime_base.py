@@ -121,6 +121,7 @@ async def test_remote_predict__smoke(custom_runtime_tf, rest_client):
             remote_predict,
             inference_request,
             predictor_url=endpoint,
+            ssl_verify_path="",
         )
         assert isinstance(res, InferenceResponse)
 

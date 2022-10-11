@@ -53,17 +53,23 @@ def convert_from_bytes(output: ResponseOutput, ty: Optional[Type] = None) -> Any
 
 # TODO: add retry and better exceptions handling
 def remote_predict(
-    v2_payload: InferenceRequest, predictor_url: str
+    v2_payload: InferenceRequest, predictor_url: str, ssl_verify_path: str
 ) -> InferenceResponse:
-    response_raw = requests.post(predictor_url, json=v2_payload.dict())
+    verify = True
+    if ssl_verify_path != "":
+        verify = ssl_verify_path
+    response_raw = requests.post(predictor_url, json=v2_payload.dict(), verify=verify)
     if response_raw.status_code != 200:
         raise RemoteInferenceError(response_raw.status_code, response_raw.reason)
     return InferenceResponse.parse_raw(response_raw.text)
 
 
-def remote_metadata(url: str) -> MetadataModelResponse:
+def remote_metadata(url: str, ssl_verify_path: str) -> MetadataModelResponse:
     """Get metadata from v2 endpoint"""
-    response_raw = requests.get(url)
+    verify = True
+    if ssl_verify_path != "":
+        verify = ssl_verify_path
+    response_raw = requests.get(url, verify=verify)
     if response_raw.status_code != 200:
         raise RemoteInferenceError(response_raw.status_code, response_raw.reason)
     return MetadataModelResponse.parse_raw(response_raw.text)
@@ -97,6 +103,7 @@ class AlibiExplainSettings(BaseSettings):
     infer_uri: str
     explainer_type: str
     init_parameters: Optional[dict]
+    ssl_verify_path: str
 
 
 def import_and_get_class(class_path: str) -> type:
