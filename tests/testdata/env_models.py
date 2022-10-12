@@ -11,7 +11,7 @@ from sklearn.dummy import DummyClassifier
 
 from mlserver import MLModel
 from mlserver.types import InferenceRequest, InferenceResponse
-from mlserver.codecs import NumpyCodec
+from mlserver.codecs import NumpyRequestCodec
 
 
 class DummySKLearnModel(MLModel):
@@ -27,8 +27,9 @@ class DummySKLearnModel(MLModel):
         return self.ready
 
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
-        decoded = self.decode(payload.inputs[0])
+        decoded = self.decode_request(payload, default_codec=NumpyRequestCodec)
         prediction = self._model.predict(decoded)
 
-        output = NumpyCodec().encode(name="prediction", payload=prediction)
-        return InferenceResponse(id=payload.id, model_name=self.name, outputs=[output])
+        return NumpyRequestCodec.encode_response(
+            model_name=self.name, payload=prediction, model_version=self.version
+        )

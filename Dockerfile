@@ -66,5 +66,5 @@ USER 1000
 
 # We need to build and activate the "hot-loaded" environment before MLServer
 # starts
-CMD source ./hack/activate-env.sh $MLSERVER_ENV_TARBALL . && \
+CMD source ./hack/activate-env.sh $MLSERVER_ENV_TARBALL && \
     mlserver start $MLSERVER_MODELS_DIR

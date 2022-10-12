@@ -7,9 +7,9 @@ set -o pipefail
 # This script may be called with `source`, so we can't rely on the `$0` trick.
 PARENT_FOLDER=$(dirname "$BASH_SOURCE")
 
-if [ "$#" -ne 2 ]; then
+if [ "$#" -ne 1 ]; then
   echo 'Invalid number of arguments'
-  echo "Usage: ./build-env.sh <srcFolder> <dstFolder>"
+  echo "Usage: ./build-env.sh <srcFolder>"
   exit 1
 fi
 
@@ -36,18 +36,15 @@ _generateDotenv() {
 
 _main() {
   local _srcFolder=$1
-  local _dstFolder=$2
-
-  mkdir -p $_dstFolder
 
   local _requirementsTxt="$_srcFolder/requirements.txt"
   _installRequirements $_requirementsTxt
 
-  local _dotenv="$_dstFolder/.env"
+  local _dotenv="./.env"
   _generateDotenv $_srcFolder $_dotenv
 
   # TODO: If MLServer is not present, should we install it from the local wheel
   # in the Docker image?
 }
 
-_main $1 $2
+_main $1

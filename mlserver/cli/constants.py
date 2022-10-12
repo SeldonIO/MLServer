@@ -48,8 +48,9 @@ COPY \\
 
 USER root
 # Install dependencies system-wide, to ensure that they are available for every
-# user
-RUN ./hack/build-env.sh . ./envs/base && \
+# user and give permissions to (future) environment folder.
+RUN ./hack/build-env.sh . && \\
+    mkdir -p ./envs/base && \\
     chown -R 1000:0 ./envs/base && \\
     chmod -R 776 ./envs/base
 USER 1000
@@ -59,7 +60,7 @@ COPY . .
 
 # Override MLServer's own `CMD` to activate the embedded environment
 # (optionally activating the hot-loaded one as well).
-CMD source ./hack/activate-env.sh ./envs/base.tar.gz ./envs/base && \\
+CMD source ./hack/activate-env.sh ./envs/base.tar.gz && \\
     mlserver start $MLSERVER_MODELS_DIR
 """
 

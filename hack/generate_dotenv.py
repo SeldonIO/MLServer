@@ -82,9 +82,10 @@ def _parse_dict_values(name: str, value: str) -> str:
     try:
         value = value.replace("'", '"')
         json.loads(value)
-        return f"export {name}='{value}'\n"
+        return f"{name}='{value}'\n"
     except JSONDecodeError:
-        return f'export {name}="{value}"\n'
+        # If not JSON, then assume it's a plain string
+        return f'{name}="{value}"\n'
 
 
 @click.command()
