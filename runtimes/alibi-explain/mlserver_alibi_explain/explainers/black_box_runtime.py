@@ -33,6 +33,9 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
 
         self.infer_uri = explainer_settings.infer_uri
         self.infer_metadata: Optional[MetadataModelResponse] = None
+        self.ssl_verify_path = ""
+        if explainer_settings.ssl_verify_path is not None:
+            self.ssl_verify_path = explainer_settings.ssl_verify_path
 
         # TODO: validate the settings are ok with this specific explainer
         super().__init__(settings, explainer_settings)
@@ -70,11 +73,15 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
             meta_url = construct_metadata_url(self.infer_uri)
             # get the metadata of the underlying inference model via v2
             # metadata endpoint
-            self.infer_metadata = remote_metadata(meta_url)
+            self.infer_metadata = remote_metadata(
+                meta_url, ssl_verify_path=self.ssl_verify_path
+            )
 
         v2_request = to_v2_inference_request(input_data, self.infer_metadata)
         v2_response = remote_predict(
-            v2_payload=v2_request, predictor_url=self.infer_uri
+            v2_payload=v2_request,
+            predictor_url=self.infer_uri,
+            ssl_verify_path=self.ssl_verify_path,
         )
 
         # TODO: do we care about more than one output?

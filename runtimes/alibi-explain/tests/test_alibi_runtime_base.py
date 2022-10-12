@@ -96,6 +96,7 @@ async def test_anchors__smoke(
 
 async def test_remote_predict__smoke(custom_runtime_tf, rest_client):
     def _sync_request(*args, **kwargs):
+        kwargs.pop("verify", None)
         return run_async_as_sync(rest_client.post, *args, **kwargs)
 
     with patch("mlserver_alibi_explain.common.requests") as mock_requests:
@@ -121,6 +122,7 @@ async def test_remote_predict__smoke(custom_runtime_tf, rest_client):
             remote_predict,
             inference_request,
             predictor_url=endpoint,
+            ssl_verify_path="",
         )
         assert isinstance(res, InferenceResponse)
 

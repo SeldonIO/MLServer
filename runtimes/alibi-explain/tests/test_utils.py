@@ -67,7 +67,7 @@ def test_remote_metadata__smoke(data, expected_input_name, expected_name):
         test_client = _TestClientWrapper(data)
 
         mock_requests.get = test_client.get_test_client().get
-        result = remote_metadata("/")
+        result = remote_metadata("/", ssl_verify_path="")
 
         if result.inputs:
             assert result.inputs[0].name == expected_input_name
