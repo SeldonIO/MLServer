@@ -1,4 +1,4 @@
-import asyncio
+from asyncio import Task
 
 from mlserver.errors import MLServerError
 from enum import Enum
@@ -12,6 +12,7 @@ from ..model import MLModel
 from .logging import logger
 from .handlers import KafkaHandlers
 from .message import KafkaMessage
+from ..utils import schedule_with_callback
 
 
 # TODO: Explore implementing custom handler
@@ -61,11 +62,13 @@ class KafkaServer:
     async def _consumer_loop(self):
         logger.info("Reading messages from consumer")
         async for request in self._consumer:
-            asyncio.Task(self.consume_request(request))
+            schedule_with_callback(
+                self._process_request(request), self._process_request_cb
+            )
 
-    async def consume_request(self, request):
+    def _process_request_cb(self, process_request_task: Task):
         try:
-            await self._process_request(request)
+            process_request_task.result()
         except MLServerError as err:
             logger.exception(f"ERROR {err.status_code} - {str(err)}")
         except Exception as err:
