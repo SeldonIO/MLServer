@@ -36,6 +36,7 @@ jobs:
           remove-dotnet: "true"
           remove-haskell: "true"
           remove-android: "true"
+          root-reserve-mb: "10240"
       - uses: actions/checkout@v2
         with:
           ref: ${{ github.event.inputs.version }}
@@ -95,6 +96,7 @@ jobs:
           remove-dotnet: "true"
           remove-haskell: "true"
           remove-android: "true"
+          root-reserve-mb: "10240"
       - uses: actions/checkout@v2
         with:
           ref: ${{ github.event.inputs.version }}
