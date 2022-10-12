@@ -30,15 +30,12 @@ jobs:
     needs: draft-release
     runs-on: ubuntu-latest
     steps:
-      - name: Patch Docker Daemon data-root
-        # From https://github.com/orgs/community/discussions/26357
-        run: |
-          DOCKER_DATA_ROOT='/mnt/var/lib/docker'
-          DOCKER_DAEMON_JSON='/etc/docker/daemon.json'
-          sudo mkdir -p "${DOCKER_DATA_ROOT}"
-          jq --arg dataroot "${DOCKER_DATA_ROOT}" '. + {"data-root": $dataroot}' "${DOCKER_DAEMON_JSON}" > "/tmp/docker.json.tmp"
-          sudo mv "/tmp/docker.json.tmp" "${DOCKER_DAEMON_JSON}"
-          sudo systemctl restart docker
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@master
+        with:
+          remove-dotnet: "true"
+          remove-haskell: "true"
+          remove-android: "true"
       - uses: actions/checkout@v2
         with:
           ref: ${{ github.event.inputs.version }}
@@ -92,15 +89,12 @@ jobs:
           - sklearn
           - xgboost
     steps:
-      - name: Patch Docker Daemon data-root
-        # From https://github.com/orgs/community/discussions/26357
-        run: |
-          DOCKER_DATA_ROOT='/mnt/var/lib/docker'
-          DOCKER_DAEMON_JSON='/etc/docker/daemon.json'
-          sudo mkdir -p "${DOCKER_DATA_ROOT}"
-          jq --arg dataroot "${DOCKER_DATA_ROOT}" '. + {"data-root": $dataroot}' "${DOCKER_DAEMON_JSON}" > "/tmp/docker.json.tmp"
-          sudo mv "/tmp/docker.json.tmp" "${DOCKER_DAEMON_JSON}"
-          sudo systemctl restart docker
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@master
+        with:
+          remove-dotnet: "true"
+          remove-haskell: "true"
+          remove-android: "true"
       - uses: actions/checkout@v2
         with:
           ref: ${{ github.event.inputs.version }}
