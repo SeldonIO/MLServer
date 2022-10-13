@@ -52,7 +52,7 @@ jobs:
           python setup.py \
             sdist -d ./dist \
             bdist_wheel -d ./dist
-          # twine upload dist/*
+          twine upload dist/*
         env:
           TWINE_NON_INTERACTIVE: 1
           TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
@@ -71,7 +71,7 @@ jobs:
           DOCKER_BUILDKIT=1 docker build . \
             --build-arg RUNTIMES=all \
             -t $MLSERVER_IMAGE
-          # docker push $MLSERVER_IMAGE
+          docker push $MLSERVER_IMAGE
         env:
           MLSERVER_IMAGE: seldonio/mlserver:${{ github.event.inputs.version }}
 
@@ -106,7 +106,7 @@ jobs:
           python setup.py \
             sdist -d ./dist \
             bdist_wheel -d ./dist
-          # twine upload ./dist/*
+          twine upload ./dist/*
         env:
           TWINE_NON_INTERACTIVE: 1
           TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
@@ -121,6 +121,6 @@ jobs:
           DOCKER_BUILDKIT=1 docker build . \
             --build-arg RUNTIMES=mlserver-${{ matrix.runtime }} \
             -t $RUNTIME_IMAGE
-          # docker push $RUNTIME_IMAGE
+          docker push $RUNTIME_IMAGE
         env:
           RUNTIME_IMAGE: seldonio/mlserver:${{ github.event.inputs.version }}-${{ matrix.runtime }}
