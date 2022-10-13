@@ -44,7 +44,10 @@ COPY --from=wheel-builder /opt/mlserver/dist ./dist
 RUN pip install --upgrade pip wheel setuptools && \
     pip install $(ls ./dist/mlserver-*.whl)[all]; \
     if [[ $RUNTIMES == "all" ]]; then \
-        pip install ./dist/mlserver_*.whl; \
+        for _wheel in "./dist/mlserver_"*.whl; do \
+            echo "--> Installing $_wheel..."; \
+            pip install $_wheel; \
+        done \
     else \
         for _runtime in $RUNTIMES; do \
             _wheelName=$(echo $_runtime | tr '-' '_'); \
