@@ -76,6 +76,7 @@ async def test_many(
         lines = f.readlines()
         responses = [json.loads(line) for line in lines]
 
+    assert len(responses) == 6
     for response in responses:
         assert (
             response["outputs"][0]["data"][0]
