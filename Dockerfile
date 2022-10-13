@@ -45,6 +45,7 @@ RUN pip install --upgrade pip wheel setuptools && \
     pip install $(ls ./dist/mlserver-*.whl)[all]; \
     if [[ $RUNTIMES == "all" ]]; then \
         for _wheel in "./dist/mlserver_"*.whl; do \
+            echo "--> Installing $_wheel..."
             pip install $_wheel; \
         done \
     else \
