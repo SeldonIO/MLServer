@@ -44,7 +44,11 @@ class ServerMetadataResponseConverter:
     def to_types(
         cls, pb_object: pb.ServerMetadataResponse
     ) -> types.MetadataServerResponse:
-        pass
+        return types.MetadataServerResponse(
+            name=pb_object.name,
+            version=pb_object.version,
+            extensions=list(pb_object.extensions),
+        )
 
     @classmethod
     def from_types(
@@ -62,7 +66,24 @@ class ModelMetadataResponseConverter:
     def to_types(
         cls, pb_object: pb.ModelMetadataResponse
     ) -> types.MetadataModelResponse:
-        pass
+        metadata = types.MetadataModelResponse(
+            name=pb_object.name,
+            platform=pb_object.platform,
+            versions=list(pb_object.versions),
+            parameters=ParametersConverter.to_types(pb_object.parameters),
+        )
+
+        if pb_object.inputs:
+            metadata.inputs = [
+                TensorMetadataConverter.to_types(inp) for inp in pb_object.inputs
+            ]
+
+        if pb_object.outputs:
+            metadata.outputs = [
+                TensorMetadataConverter.to_types(out) for out in pb_object.outputs
+            ]
+
+        return metadata
 
     @classmethod
     def from_types(
@@ -98,7 +119,12 @@ class TensorMetadataConverter:
     def to_types(
         cls, pb_object: pb.ModelMetadataResponse.TensorMetadata
     ) -> types.MetadataTensor:
-        pass
+        return types.MetadataTensor(
+            name=pb_object.name,
+            datatype=pb_object.datatype,
+            shape=list(pb_object.shape),
+            parameters=ParametersConverter.to_types(pb_object.parameters),
+        )
 
     @classmethod
     def from_types(
@@ -146,8 +172,17 @@ class ModelInferRequestConverter:
 
     @classmethod
     def from_types(
-        cls, type_object: types.InferenceRequest, model_name: str, model_version: str
+        cls,
+        type_object: types.InferenceRequest,
+        model_name: str,
+        model_version: str = "",
+        use_raw: bool = False,
     ) -> pb.ModelInferRequest:
+        if use_raw:
+            # Extract the raw data in advance, to ensure the `data` field of
+            # the input objects is empty
+            type_object.inputs, raw = extract_raw(type_object.inputs)  # type: ignore
+
         model_infer_request = pb.ModelInferRequest(
             model_name=model_name,
             model_version=model_version,
@@ -155,6 +190,9 @@ class ModelInferRequestConverter:
                 InferInputTensorConverter.from_types(inp) for inp in type_object.inputs
             ],
         )
+
+        if use_raw:
+            model_infer_request.raw_input_contents.extend(raw)
 
         if type_object.id is not None:
             model_infer_request.id = type_object.id
@@ -305,7 +343,26 @@ class InferTensorContentsConverter:
 class ModelInferResponseConverter:
     @classmethod
     def to_types(cls, pb_object: pb.ModelInferResponse) -> types.InferenceResponse:
-        pass
+        inference_response = types.InferenceResponse.construct(
+            id=pb_object.id,
+            model_name=pb_object.model_name,
+            parameters=ParametersConverter.to_types(pb_object.parameters),
+            outputs=[
+                InferOutputTensorConverter.to_types(output)
+                for output in pb_object.outputs
+            ],
+        )
+
+        if pb_object.model_version:
+            inference_response.model_version = pb_object.model_version
+
+        if pb_object.raw_output_contents:
+            # Unpack and inject raw contents into `data` fields if present
+            inject_raw(
+                inference_response.outputs, pb_object.raw_output_contents  # type: ignore
+            )
+
+        return inference_response
 
     @classmethod
     def from_types(
