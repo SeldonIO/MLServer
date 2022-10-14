@@ -1,3 +1,5 @@
+from asyncio import Task
+
 from mlserver.errors import MLServerError
 from enum import Enum
 from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
@@ -10,6 +12,7 @@ from ..model import MLModel
 from .logging import logger
 from .handlers import KafkaHandlers
 from .message import KafkaMessage
+from ..utils import schedule_with_callback
 
 
 # TODO: Explore implementing custom handler
@@ -59,12 +62,17 @@ class KafkaServer:
     async def _consumer_loop(self):
         logger.info("Reading messages from consumer")
         async for request in self._consumer:
-            try:
-                await self._process_request(request)
-            except MLServerError as err:
-                logger.exception(f"ERROR {err.status_code} - {str(err)}")
-            except Exception as err:
-                logger.exception(f"ERROR 500 - {str(err)}")
+            schedule_with_callback(
+                self._process_request(request), self._process_request_cb
+            )
+
+    def _process_request_cb(self, process_request_task: Task):
+        try:
+            process_request_task.result()
+        except MLServerError as err:
+            logger.exception(f"ERROR {err.status_code} - {str(err)}")
+        except Exception as err:
+            logger.exception(f"ERROR 500 - {str(err)}")
 
     async def _process_request(self, request_record):
         kafka_request = KafkaMessage.from_kafka_record(request_record)
