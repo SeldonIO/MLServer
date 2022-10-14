@@ -146,7 +146,7 @@ def test_modelinferrequest_to_types(model_infer_request):
         ),
     ],
 )
-def test_modelinferrequest_to_types(use_raw, expected):
+def test_modelinferrequest_from_types(use_raw, expected):
     inference_request = types.InferenceRequest(
         id="123",
         inputs=[

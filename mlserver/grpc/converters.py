@@ -359,7 +359,8 @@ class ModelInferResponseConverter:
         if pb_object.raw_output_contents:
             # Unpack and inject raw contents into `data` fields if present
             inject_raw(
-                inference_response.outputs, pb_object.raw_output_contents  # type: ignore
+                inference_response.outputs,  # type: ignore
+                pb_object.raw_output_contents,  # type: ignore
             )
 
         return inference_response
