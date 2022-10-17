@@ -123,10 +123,9 @@ async def dockerfile(folder: str, include_dockerignore: bool):
     help="Local path to the output file for the inference responses to be  written to.",
 )
 @click.option("--workers", "-w", default=10, envvar="MLSERVER_INFER_WORKERS")
-@click.option("--batch-size", "-s", default=1, envvar="MLSERVER_INFER_BATCH_SIZE")
+@click.option("--batch-size", "-b", default=1, envvar="MLSERVER_INFER_BATCH_SIZE")
 @click.option(
     "--binary-data",
-    "-b",
     is_flag=True,
     default=False,
     envvar="MLSERVER_INFER_BINARY_DATA",
