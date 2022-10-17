@@ -149,12 +149,18 @@ def preprocess_items(
     item_indices = {}
     for item in items:
         inference_request = InferenceRequest.parse_obj(orjson.loads(item.item))
+        # try to use `id` provided in the input file to identify each request in the batch
         if inference_request.id is None:
             inference_request.id = generate_uuid()
         inference_requests[inference_request.id] = inference_request
         item_indices[inference_request.id] = item.index
     batched = BatchedRequests(inference_requests)
-    batched.merged_request.id = generate_uuid()
+
+    # Set `id` for batched requests - if only single request use its own id
+    if len(items) == 1:
+        batched.merged_request.id = inference_request.id
+    else:
+        batched.merged_request.id = generate_uuid()
     return (
         TritonRequest.from_inference_request(batched.merged_request, binary_data),
         batched,
@@ -172,6 +178,7 @@ def postprocess_items(
     for item_id, inference_response in batched.split_response(
         full_inference_response
     ).items():
+        # Add `id` used for batched requests to Parameters under `inference_id` key
         inference_response.parameters.batch_index = item_indices[item_id]
         inference_response.parameters.inference_id = full_inference_response.id
         output_items.append(

@@ -79,9 +79,7 @@ async def test_many(
         responses = [json.loads(line) for line in lines]
 
     assert len(responses) == 6
-    inference_indices = []
     for response in responses:
-        inference_indices.append(response["parameters"]["inference_id"])
         assert (
             response["outputs"][0]["data"][0]
             == response["parameters"]["batch_index"] + 1
@@ -91,7 +89,8 @@ async def test_many(
             _ = UUID(response["id"])
         except ValueError:
             raise RuntimeError(f"Response id is not a valid UUID; got {response['id']}")
-    assert len(set(inference_indices)) == 6
+
+        assert response["parameters"]["inference_id"] == response["id"]
 
 
 async def test_many_batch(
