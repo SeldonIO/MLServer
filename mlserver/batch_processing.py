@@ -9,7 +9,7 @@ import click
 import json
 import orjson
 
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 from mlserver.batching.requests import BatchedRequests
 
 from mlserver.types import InferenceRequest, InferenceResponse, Parameters
@@ -86,12 +86,12 @@ def get_headers(request_id: str) -> Dict[str, str]:
 class TritonRequest:
     id: str
     inputs: List[httpclient.InferInput]
-    outputs: List[httpclient.InferRequestedOutput] = None
+    outputs: Optional[List[httpclient.InferRequestedOutput]]
 
     @classmethod
     def from_inference_request(
         cls, inference_request: InferenceRequest, binary_data: bool
-    ) -> Tuple[str, List[httpclient.InferInput], List[httpclient.InferRequestedOutput]]:
+    ) -> "TritonRequest":
         inputs = []
 
         for request_input in inference_request.inputs or []:
@@ -111,7 +111,11 @@ class TritonRequest:
             )
             outputs.append(new_output)
 
-        return TritonRequest(inference_request.id, inputs, outputs)
+        if inference_request.id is None:
+            request_id = ""
+        else:
+            request_id = inference_request.id
+        return TritonRequest(request_id, inputs, outputs)
 
 
 def infer_result_to_infer_response(item: httpclient.InferResult) -> InferenceResponse:
@@ -149,7 +153,7 @@ def preprocess_items(
     item_indices = {}
     for item in items:
         inference_request = InferenceRequest.parse_obj(orjson.loads(item.item))
-        # try to use `id` provided in the input file to identify each request in the batch
+        # try to use `id` from the input file to identify each request in the batch
         if inference_request.id is None:
             inference_request.id = generate_uuid()
         inference_requests[inference_request.id] = inference_request

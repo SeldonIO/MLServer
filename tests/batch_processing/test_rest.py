@@ -137,7 +137,7 @@ async def test_many_batch(
         except ValueError:
             raise RuntimeError(f"Response id is not a valid UUID; got {response['id']}")
 
-    # We expect two unique inference indices as we have 6 requests and micro batch size is 3
+    # We expect two unique inference indices as we have 6 requests and batch size is 3
     assert len(set(inference_indices)) == 2
 
 
