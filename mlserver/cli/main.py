@@ -123,6 +123,7 @@ async def dockerfile(folder: str, include_dockerignore: bool):
     help="Local path to the output file for the inference responses to be  written to.",
 )
 @click.option("--workers", "-w", default=10, envvar="MLSERVER_INFER_WORKERS")
+@click.option("--batch-size", "-s", default=1, envvar="MLSERVER_INFER_BATCH_SIZE")
 @click.option(
     "--binary-data",
     "-b",
@@ -160,7 +161,6 @@ async def dockerfile(folder: str, include_dockerignore: bool):
 )
 @click.option(
     "--use-ssl",
-    "-s",
     is_flag=True,
     default=False,
     envvar="MLSERVER_INFER_USE_SSL",
@@ -179,6 +179,7 @@ async def infer(
     model_name,
     url,
     workers,
+    batch_size,
     input_data_path,
     output_data_path,
     binary_data,
@@ -195,6 +196,7 @@ async def infer(
         model_name=model_name,
         url=url,
         workers=workers,
+        batch_size=batch_size,
         input_data_path=input_data_path,
         output_data_path=output_data_path,
         binary_data=binary_data,

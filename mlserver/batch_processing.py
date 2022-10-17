@@ -10,6 +10,7 @@ import json
 import orjson
 
 from typing import Dict, List, Tuple
+from mlserver.batching.requests import BatchedRequests
 
 from mlserver.types import InferenceRequest, InferenceResponse, Parameters
 from mlserver.codecs import NumpyCodec
@@ -141,32 +142,59 @@ def infer_result_to_infer_response(item: httpclient.InferResult) -> InferenceRes
     return inference_response
 
 
-def preprocess_item(item: BatchInputItem, binary_data: bool) -> TritonRequest:
-    inference_request = InferenceRequest.parse_obj(orjson.loads(item.item))
-    if inference_request.id is None:
-        inference_request.id = generate_uuid()
-    return TritonRequest.from_inference_request(inference_request, binary_data)
+def preprocess_items(
+    items: List[BatchInputItem], binary_data: bool
+) -> Tuple[TritonRequest, BatchedRequests, Dict[str, int]]:
+    inference_requests = {}
+    item_indices = {}
+    for item in items:
+        inference_request = InferenceRequest.parse_obj(orjson.loads(item.item))
+        if inference_request.id is None:
+            inference_request.id = generate_uuid()
+        inference_requests[inference_request.id] = inference_request
+        item_indices[inference_request.id] = item.index
+    batched = BatchedRequests(inference_requests)
+    batched.merged_request.id = generate_uuid()
+    return (
+        TritonRequest.from_inference_request(batched.merged_request, binary_data),
+        batched,
+        item_indices,
+    )
 
 
-def postprocess_item(
-    infer_result: httpclient.InferResult, index: int
-) -> BatchOutputItem:
-    inference_response = infer_result_to_infer_response(infer_result)
-    inference_response.parameters.batch_index = index
-    return BatchOutputItem(index=index, item=inference_response.json().encode())
+def postprocess_items(
+    infer_result: httpclient.InferResult,
+    batched: BatchedRequests,
+    item_indices: Dict[str, int],
+) -> List[BatchOutputItem]:
+    full_inference_response = infer_result_to_infer_response(infer_result)
+    output_items = []
+    for item_id, inference_response in batched.split_response(
+        full_inference_response
+    ).items():
+        inference_response.parameters.batch_index = item_indices[item_id]
+        inference_response.parameters.inference_id = full_inference_response.id
+        output_items.append(
+            BatchOutputItem(
+                index=item_indices[item_id], item=inference_response.json().encode()
+            )
+        )
+    return output_items
 
 
-async def process_item(
-    item: BatchInputItem,
+async def process_items(
+    items: List[BatchInputItem],
     model_name: str,
     worker_id: int,
     triton_client: httpclient.InferenceServerClient,
     binary_data: bool,
-) -> BatchOutputItem:
+) -> List[BatchOutputItem]:
     try:
-        triton_request = preprocess_item(item, binary_data)
+        triton_request, batched, inference_indices = preprocess_items(
+            items, binary_data
+        )
     except Exception as e:
-        logger.error(f"consumer {worker_id}: failed to preprocess item: {repr(e)}")
+        logger.error(f"consumer {worker_id}: failed to preprocess items: {repr(e)}")
         raise
 
     try:
@@ -184,19 +212,25 @@ async def process_item(
         raise
 
     try:
-        output_item = postprocess_item(infer_result, item.index)
+        output_items = postprocess_items(infer_result, batched, inference_indices)
     except Exception as e:
         logger.error(f"consumer {worker_id}: failed to postprocess item: {repr(e)}")
 
-    return output_item
+    return output_items
 
 
-async def produce(queue: asyncio.Queue, fname: str):
+async def produce(queue: asyncio.Queue, fname: str, batch_size: int):
     async with aiofiles.open(fname, "rb") as f:
         index = 0
+        batch = []
         async for line in f:
-            await queue.put(BatchInputItem(index=index, item=line))
+            batch.append(BatchInputItem(index=index, item=line))
+            if len(batch) == batch_size:
+                await queue.put(batch)
+                batch = []
             index += 1
+        if batch:
+            await queue.put(batch)
 
 
 async def consume(
@@ -209,20 +243,20 @@ async def consume(
     queue_out: asyncio.Queue,
 ):
     while True:
-        input_item = await queue_in.get()
+        input_items = await queue_in.get()
         try:
-            output_item = await process_item(
-                input_item, model_name, worker_id, triton_client, binary_data
+            output_items = await process_items(
+                input_items, model_name, worker_id, triton_client, binary_data
             )
         except Exception:
             if extra_verbose:
                 logger.error(
-                    f"consumer {worker_id}: failed to process item {input_item}"
+                    f"consumer {worker_id}: failed to process item {input_items}"
                 )
             queue_in.task_done()
             continue
 
-        await queue_out.put(output_item)
+        await queue_out.put(output_items)
         queue_in.task_done()
 
 
@@ -231,11 +265,12 @@ async def finalize(queue: asyncio.Queue, fname: str):
     async with aiofiles.open(fname, "wb") as f:
         while True:
             batch_output = await queue.get()
-            try:
-                await f.write(batch_output.item)
-                await f.write(b"\n")
-            except Exception as e:
-                logger.error(f"Failed to finalize task: {repr(e)}")
+            for item in batch_output:
+                try:
+                    await f.write(item.item)
+                    await f.write(b"\n")
+                except Exception as e:
+                    logger.error(f"Failed to finalize task: {repr(e)}")
             queue.task_done()
 
 
@@ -243,6 +278,7 @@ async def process_batch(
     model_name,
     url,
     workers,
+    batch_size,
     input_data_path,
     output_data_path,
     binary_data,
@@ -273,6 +309,7 @@ async def process_batch(
     logger.info(f"Server url: {url}")
     logger.info(f"input file path: {input_data_path}")
     logger.info(f"output file path: {output_data_path}")
+    logger.info(f"micro-batch size: {batch_size}")
 
     if insecure:
         ssl_context = False
@@ -307,7 +344,7 @@ async def process_batch(
 
     finalizer = asyncio.create_task(finalize(queue_out, output_data_path))
 
-    await produce(queue_in, input_data_path)
+    await produce(queue_in, input_data_path, batch_size)
     await queue_in.join()
     await queue_out.join()
 
