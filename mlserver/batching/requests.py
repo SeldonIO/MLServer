@@ -18,7 +18,9 @@ def _get_data(payload: Union[RequestInput, ResponseOutput]):
 
 def _merge_parameters(
     all_params: dict,
-    parametrised_obj: Union[InferenceRequest, RequestInput, RequestOutput],
+    parametrised_obj: Union[
+        InferenceRequest, InferenceResponse, RequestInput, RequestOutput
+    ],
 ) -> dict:
     if not parametrised_obj.parameters:
         return all_params

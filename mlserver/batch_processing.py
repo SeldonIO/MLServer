@@ -9,6 +9,7 @@ import click
 import json
 import orjson
 
+from time import perf_counter as timer
 from typing import Dict, List, Optional, Tuple
 from mlserver.batching.requests import BatchedRequests
 
@@ -16,9 +17,9 @@ from mlserver.types import InferenceRequest, InferenceResponse, Parameters
 from mlserver.codecs import NumpyCodec
 from mlserver.logging import get_logger
 
-from time import perf_counter as timer
 
 from mlserver.utils import generate_uuid
+from mlserver.batching.requests import _merge_parameters
 
 
 CHOICES_TRANSPORT = ["rest", "grpc"]
@@ -119,27 +120,30 @@ class TritonRequest:
 
 
 def infer_result_to_infer_response(item: httpclient.InferResult) -> InferenceResponse:
-    response = item.get_response()
+    infer_response = item.get_response()
 
     outputs = []
-    for output_item in response["outputs"]:
-        output_name = output_item["name"]
-        output = NumpyCodec.encode_output(output_name, item.as_numpy(output_name))
-        output_parameters = output_item["parameters"]
-        if output_parameters is not None:
+    for response_output in infer_response["outputs"]:
+        name = response_output["name"]
+        output = NumpyCodec.encode_output(name, item.as_numpy(name))
+
+        # Drop "binary_data_size" from `paramaters` as we decoded the output
+        parameters = response_output.get("parameters")
+        if parameters is not None:
             # Create copy in case this code will ever be used in another context as
             # we are modifying the original parameters by removing unwanted key
-            output_parameters = output_parameters.copy()
-            if "binary_data_size" in output_parameters:
-                del output_parameters["binary_data_size"]
-            output.parameters = Parameters(**output_parameters)
+            parameters = parameters.copy()
+            if "binary_data_size" in parameters:
+                del parameters["binary_data_size"]
+            output.parameters = Parameters(**parameters)
+
         outputs.append(output)
 
     inference_response = InferenceResponse(
-        model_name=response["model_name"],
-        model_version=response.get("model_version", None),
-        id=response.get("id", None),
-        parameters=response.get("parameters", Parameters()),
+        model_name=infer_response["model_name"],
+        model_version=infer_response.get("model_version", None),
+        id=infer_response.get("id", None),
+        parameters=infer_response.get("parameters", None),
         outputs=outputs,
     )
 
@@ -183,8 +187,14 @@ def postprocess_items(
         full_inference_response
     ).items():
         # Add `id` used for batched requests to Parameters under `inference_id` key
-        inference_response.parameters.batch_index = item_indices[item_id]
-        inference_response.parameters.inference_id = full_inference_response.id
+        new_params = {
+            "batch_index": item_indices[item_id],
+            "inference_id": full_inference_response.id,
+        }
+        inference_response.parameters = Parameters(
+            **_merge_parameters(new_params, inference_response)
+        )
+
         output_items.append(
             BatchOutputItem(
                 index=item_indices[item_id], item=inference_response.json().encode()
