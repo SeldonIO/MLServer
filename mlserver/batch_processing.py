@@ -11,8 +11,10 @@ import orjson
 
 from time import perf_counter as timer
 from typing import Dict, List, Optional, Tuple
-from mlserver.batching.requests import BatchedRequests
 
+from pydantic.error_wrappers import ValidationError
+
+from mlserver.batching.requests import BatchedRequests
 from mlserver.types import InferenceRequest, InferenceResponse, Parameters
 from mlserver.codecs import NumpyCodec
 from mlserver.logging import get_logger
@@ -29,6 +31,7 @@ logger = get_logger()
 
 
 # Monkey patching is required for error responses coming from MLServer.
+# MLServer will contain `detail` field instead of `error` one like Triton.
 async def _get_error(response):
     """
     Returns the InferenceServerException object if response
@@ -151,28 +154,44 @@ def infer_result_to_infer_response(item: httpclient.InferResult) -> InferenceRes
     return inference_response
 
 
+def _serialize_validation_error(index: int, error: ValidationError) -> BatchOutputItem:
+    msg = {
+        "parameters": {"batch_index": index},
+        "error": {"status": "preprocessing error", "msg": error.errors()},
+    }
+    return BatchOutputItem(item=json.dumps(msg).encode(), index=index)
+
+
 def preprocess_items(
     items: List[BatchInputItem], binary_data: bool
-) -> Tuple[TritonRequest, BatchedRequests, Dict[str, int]]:
-    inference_requests = {}
+) -> Tuple[TritonRequest, BatchedRequests, List[BatchOutputItem], Dict[str, int]]:
     item_indices = {}
+    inference_requests = {}
+    invalid_inputs = []
     for item in items:
-        inference_request = InferenceRequest.parse_obj(orjson.loads(item.item))
-        # try to use `id` from the input file to identify each request in the batch
-        if inference_request.id is None:
-            inference_request.id = generate_uuid()
-        inference_requests[inference_request.id] = inference_request
-        item_indices[inference_request.id] = item.index
+        try:
+            inference_request = InferenceRequest.parse_obj(orjson.loads(item.item))
+            # try to use `id` from the input file to identify each request in the batch
+            if inference_request.id is None:
+                inference_request.id = generate_uuid()
+            inference_requests[inference_request.id] = inference_request
+            item_indices[inference_request.id] = item.index
+        except ValidationError as e:
+            logger.error(
+                f"preprocessing error: batch_index={item.index}, error={repr(e)}"
+            )
+            invalid_inputs.append(_serialize_validation_error(item.index, e))
     batched = BatchedRequests(inference_requests)
 
     # Set `id` for batched requests - if only single request use its own id
-    if len(items) == 1:
+    if len(inference_requests) == 1:
         batched.merged_request.id = inference_request.id
     else:
         batched.merged_request.id = generate_uuid()
     return (
         TritonRequest.from_inference_request(batched.merged_request, binary_data),
         batched,
+        invalid_inputs,
         item_indices,
     )
 
@@ -212,11 +231,13 @@ async def process_items(
     binary_data: bool,
 ) -> List[BatchOutputItem]:
     try:
-        triton_request, batched, inference_indices = preprocess_items(
+        triton_request, batched, invalid_inputs, inference_indices = preprocess_items(
             items, binary_data
         )
+        if len(invalid_inputs) == len(items):
+            return invalid_inputs
     except Exception as e:
-        logger.error(f"consumer {worker_id}: failed to preprocess items: {repr(e)}")
+        logger.error(f"consumer {worker_id}: failed to preprocess items: {e}")
         raise
 
     try:
@@ -230,15 +251,15 @@ async def process_items(
         )
         logger.debug(f"consumer {worker_id}: received response")
     except Exception as e:
-        logger.error(f"consumer {worker_id}: failed to process task: {repr(e)}")
+        logger.error(f"consumer {worker_id}: failed to process task: {e}")
         raise
 
     try:
         output_items = postprocess_items(infer_result, batched, inference_indices)
     except Exception as e:
-        logger.error(f"consumer {worker_id}: failed to postprocess item: {repr(e)}")
+        logger.error(f"consumer {worker_id}: failed to postprocess item: {e}")
 
-    return output_items
+    return output_items + invalid_inputs
 
 
 async def produce(queue: asyncio.Queue, fname: str, batch_size: int):
@@ -301,6 +322,7 @@ async def finalize(queue: asyncio.Queue, fname: str) -> int:
                 queue.task_done()
     except asyncio.CancelledError:
         return counter
+
 
 async def process_batch(
     model_name,
