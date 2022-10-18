@@ -26,6 +26,7 @@ from mlserver.batching.requests import _merge_parameters
 
 CHOICES_TRANSPORT = ["rest", "grpc"]
 FINALIZER_REPORT_FREQUENCY = 100
+RETRY_SLEEP_TIME = 1
 
 logger = get_logger()
 
@@ -253,7 +254,7 @@ async def send_requests(
             )
             if i + 1 == retries:
                 raise
-            await asyncio.sleep(1)
+            await asyncio.sleep(RETRY_SLEEP_TIME)
 
 
 async def process_items(
