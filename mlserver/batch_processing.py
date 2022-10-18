@@ -311,6 +311,7 @@ async def process_batch(
     output_data_path,
     binary_data,
     transport,
+    timeout,
     use_ssl,
     insecure,
     verbose,
@@ -334,10 +335,12 @@ async def process_batch(
         logger.info("Running in verbose mode.")
 
     setup_logging(debug=verbose)
-    logger.info(f"Server url: {url}")
-    logger.info(f"Model name: {model_name}")
+    logger.info(f"server url: {url}")
+    logger.info(f"model name: {model_name}")
     logger.info(f"input file path: {input_data_path}")
     logger.info(f"output file path: {output_data_path}")
+    logger.info(f"workers: {workers}")
+    logger.info(f"connection timeout: {timeout}")
     logger.info(f"micro-batch size: {batch_size}")
 
     if insecure:
@@ -349,6 +352,7 @@ async def process_batch(
         url=url,
         verbose=extra_verbose,
         conn_limit=workers,
+        conn_timeout=timeout,
         ssl=use_ssl,
         ssl_context=ssl_context,
     )

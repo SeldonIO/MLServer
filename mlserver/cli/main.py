@@ -166,6 +166,12 @@ async def dockerfile(folder: str, include_dockerignore: bool):
     ),
 )
 @click.option(
+    "--timeout",
+    default=60,
+    envvar="MLSERVER_INFER_CONNECTION_TIMEOUT",
+    help="Connection timeout to be passed to tritonclient.",
+)
+@click.option(
     "--use-ssl",
     is_flag=True,
     default=False,
@@ -190,6 +196,7 @@ async def infer(
     output_data_path,
     binary_data,
     transport,
+    timeout,
     use_ssl,
     insecure,
     verbose,
@@ -207,6 +214,7 @@ async def infer(
         output_data_path=output_data_path,
         binary_data=binary_data,
         transport=transport,
+        timeout=timeout,
         use_ssl=use_ssl,
         insecure=insecure,
         verbose=verbose,
