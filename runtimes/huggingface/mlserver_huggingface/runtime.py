@@ -94,7 +94,10 @@ class HuggingFaceRuntime(MLModel):
         prediction = self._model(*args, **kwargs)
 
         # TODO: Convert hf output to v2 protocol, for now we use to_json
-        str_out = [json.dumps(pred, cls=NumpyEncoder) for pred in prediction]
+        if isinstance(prediction, dict):
+            str_out = [json.dumps(prediction, cls=NumpyEncoder)]
+        else:
+            str_out = [json.dumps(pred, cls=NumpyEncoder) for pred in prediction]
         prediction_encoded = StringCodec.encode_output(payload=str_out, name="output")
 
         return InferenceResponse(

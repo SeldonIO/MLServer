@@ -25,7 +25,7 @@ ENV MLSERVER_MODELS_DIR=/mnt/models \
 RUN apt-get update && \
     apt-get -y --no-install-recommends install \
         unattended-upgrades \
-        libgomp1 libgl1-mesa-dev libglib2.0-0 build-essential && \
+        libgomp1 libgl1-mesa-dev libglib2.0-0 build-essential ffmpeg && \
     unattended-upgrades
 
 RUN mkdir /opt/mlserver
