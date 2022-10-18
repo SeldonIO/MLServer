@@ -23,6 +23,7 @@ from mlserver.batching.requests import _merge_parameters
 
 
 CHOICES_TRANSPORT = ["rest", "grpc"]
+FINALIZER_REPORT_FREQUENCY = 100
 
 logger = get_logger()
 
@@ -281,19 +282,25 @@ async def consume(
         queue_in.task_done()
 
 
-async def finalize(queue: asyncio.Queue, fname: str):
+async def finalize(queue: asyncio.Queue, fname: str) -> int:
     # TODO: Test if output directory is writtable, sysexit otherwise.
-    async with aiofiles.open(fname, "wb") as f:
-        while True:
-            batch_output = await queue.get()
-            for item in batch_output:
-                try:
-                    await f.write(item.item)
-                    await f.write(b"\n")
-                except Exception as e:
-                    logger.error(f"Failed to finalize task: {repr(e)}")
-            queue.task_done()
-
+    counter = 0
+    try:
+        async with aiofiles.open(fname, "wb") as f:
+            while True:
+                batch_output = await queue.get()
+                for item in batch_output:
+                    try:
+                        await f.write(item.item)
+                        await f.write(b"\n")
+                    except Exception as e:
+                        logger.error(f"Failed to finalize task: {repr(e)}")
+                    counter += 1
+                    if counter % FINALIZER_REPORT_FREQUENCY == 0:
+                        logger.info(f"Finalizer: processed instances: {counter}")
+                queue.task_done()
+    except asyncio.CancelledError:
+        return counter
 
 async def process_batch(
     model_name,
@@ -328,6 +335,7 @@ async def process_batch(
 
     setup_logging(debug=verbose)
     logger.info(f"Server url: {url}")
+    logger.info(f"Model name: {model_name}")
     logger.info(f"input file path: {input_data_path}")
     logger.info(f"output file path: {output_data_path}")
     logger.info(f"micro-batch size: {batch_size}")
@@ -371,10 +379,11 @@ async def process_batch(
 
     for consumer in consumers:
         consumer.cancel()
+    await asyncio.gather(*consumers, return_exceptions=True)
 
     finalizer.cancel()
-
-    await asyncio.gather(*consumers, finalizer, return_exceptions=True)
+    processed_instances = await finalizer
+    logger.info(f"Total processed instances: {processed_instances}")
 
     await triton_client.close()
 
