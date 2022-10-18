@@ -123,6 +123,7 @@ async def dockerfile(folder: str, include_dockerignore: bool):
     help="Local path to the output file for the inference responses to be  written to.",
 )
 @click.option("--workers", "-w", default=10, envvar="MLSERVER_INFER_WORKERS")
+@click.option("--retries", "-r", default=3, envvar="MLSERVER_INFER_RETRIES")
 @click.option(
     "--batch-size",
     "-s",
@@ -191,6 +192,7 @@ async def infer(
     model_name,
     url,
     workers,
+    retries,
     batch_size,
     input_data_path,
     output_data_path,
@@ -209,6 +211,7 @@ async def infer(
         model_name=model_name,
         url=url,
         workers=workers,
+        retries=retries,
         batch_size=batch_size,
         input_data_path=input_data_path,
         output_data_path=output_data_path,

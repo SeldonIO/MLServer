@@ -162,6 +162,14 @@ def _serialize_validation_error(index: int, error: ValidationError) -> BatchOutp
     return BatchOutputItem(item=json.dumps(msg).encode(), index=index)
 
 
+def _serialize_inference_error(index: int, error: Exception) -> BatchOutputItem:
+    msg = {
+        "parameters": {"batch_index": index},
+        "error": {"status": "preprocessing error", "msg": str(error)},
+    }
+    return BatchOutputItem(item=json.dumps(msg).encode(), index=index)
+
+
 def preprocess_items(
     items: List[BatchInputItem], binary_data: bool
 ) -> Tuple[TritonRequest, BatchedRequests, List[BatchOutputItem], Dict[str, int]]:
@@ -223,10 +231,36 @@ def postprocess_items(
     return output_items
 
 
+async def send_requests(
+    model_name: str,
+    triton_client: httpclient.InferenceServerClient,
+    triton_request: TritonRequest,
+    retries: int,
+    worker_id: int,
+) -> httpclient.InferResult:
+    for i in range(retries):
+        try:
+            return await triton_client.infer(
+                model_name,
+                triton_request.inputs,
+                outputs=triton_request.outputs,
+                request_id=triton_request.id,
+                headers=get_headers(triton_request.id),
+            )
+        except Exception as e:
+            logger.error(
+                f"consumer {worker_id}: retries {i+1}/{retries}, exception {e}"
+            )
+            if i + 1 == retries:
+                raise
+            await asyncio.sleep(1)
+
+
 async def process_items(
     items: List[BatchInputItem],
     model_name: str,
     worker_id: int,
+    retries: int,
     triton_client: httpclient.InferenceServerClient,
     binary_data: bool,
 ) -> List[BatchOutputItem]:
@@ -242,17 +276,20 @@ async def process_items(
 
     try:
         logger.debug(f"consumer {worker_id}: sending request")
-        infer_result = await triton_client.infer(
+        infer_result = await send_requests(
             model_name,
-            triton_request.inputs,
-            outputs=triton_request.outputs,
-            request_id=triton_request.id,
-            headers=get_headers(triton_request.id),
+            triton_client,
+            triton_request,
+            retries,
+            worker_id,
         )
         logger.debug(f"consumer {worker_id}: received response")
     except Exception as e:
         logger.error(f"consumer {worker_id}: failed to process task: {e}")
-        raise
+        failed_results = [
+            _serialize_inference_error(index, e) for index in inference_indices.values()
+        ]
+        return failed_results + invalid_inputs
 
     try:
         output_items = postprocess_items(infer_result, batched, inference_indices)
@@ -279,6 +316,7 @@ async def produce(queue: asyncio.Queue, fname: str, batch_size: int):
 async def consume(
     model_name: str,
     worker_id: int,
+    retries: int,
     triton_client: httpclient.InferenceServerClient,
     binary_data: bool,
     extra_verbose: bool,
@@ -289,7 +327,7 @@ async def consume(
         input_items = await queue_in.get()
         try:
             output_items = await process_items(
-                input_items, model_name, worker_id, triton_client, binary_data
+                input_items, model_name, worker_id, retries, triton_client, binary_data
             )
         except Exception:
             if extra_verbose:
@@ -328,6 +366,7 @@ async def process_batch(
     model_name,
     url,
     workers,
+    retries,
     batch_size,
     input_data_path,
     output_data_path,
@@ -388,6 +427,7 @@ async def process_batch(
             consume(
                 model_name,
                 worker_id,
+                retries,
                 triton_client,
                 binary_data,
                 extra_verbose,

@@ -30,9 +30,11 @@ def single_input():
 def invalid_input():
     return os.path.join(TESTDATA_PATH, "batch_processing", "invalid.txt")
 
+
 @pytest.fixture()
 def invalid_among_many():
     return os.path.join(TESTDATA_PATH, "batch_processing", "invalid_among_many.txt")
+
 
 @pytest.fixture()
 def many_input():
