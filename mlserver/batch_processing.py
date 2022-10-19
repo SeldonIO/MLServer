@@ -349,7 +349,13 @@ async def consume(
         try:
             start_time = timer()
             output_items = await process_items(
-                input_items, model_name, worker_id, retries, triton_client, headers, binary_data
+                input_items,
+                model_name,
+                worker_id,
+                retries,
+                triton_client,
+                headers,
+                binary_data,
             )
             if batch_interval > 0 or batch_jitter > 0:
                 total_sleep_time = batch_interval + random() * batch_jitter

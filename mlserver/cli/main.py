@@ -176,7 +176,7 @@ async def dockerfile(folder: str, include_dockerignore: bool):
         "Headers to be set on each inference request send to the server. "
         "Multiple options are allowed as: -H 'Header1: Val1' -H 'Header2: Val2'. "
         "When setting up as environmental provide as 'Header1:Val1 Header2:Val2'."
-    )
+    ),
 )
 @click.option(
     "--timeout",
