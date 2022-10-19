@@ -337,7 +337,9 @@ async def consume(
             if batch_interval > 0 or batch_jitter > 0:
                 total_sleep_time = batch_interval + random() * batch_jitter
                 remaining_sleep_time = total_sleep_time - (timer() - start_time)
-                logger.debug(f"consume {worker_id}: sleeping for {remaining_sleep_time:.3f}")
+                logger.debug(
+                    f"consume {worker_id}: sleeping for {remaining_sleep_time:.3f}"
+                )
                 await asyncio.sleep(remaining_sleep_time)
         except Exception:
             if extra_verbose:

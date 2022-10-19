@@ -177,7 +177,7 @@ async def dockerfile(folder: str, include_dockerignore: bool):
     default=0,
     type=float,
     envvar="MLSERVER_INFER_BATCH_INTERVAL",
-    help="Minimum time interval (in seconds) between inference requests made by each worker.",
+    help="Minimum time interval (in seconds) between requests made by each worker.",
 )
 @click.option(
     "--batch-jitter",
