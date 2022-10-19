@@ -364,20 +364,20 @@ async def finalize(queue: asyncio.Queue, fname: str) -> int:
 
 
 async def process_batch(
-    model_name,
-    url,
-    workers,
-    retries,
-    batch_size,
-    input_data_path,
-    output_data_path,
-    binary_data,
-    transport,
-    timeout,
-    use_ssl,
-    insecure,
-    verbose,
-    extra_verbose,
+    model_name: str,
+    url: str,
+    workers: int,
+    retries: int,
+    batch_size: int,
+    input_data_path: str,
+    output_data_path: str,
+    binary_data: bool,
+    transport: str,
+    timeout: float,
+    use_ssl: bool,
+    insecure: bool,
+    verbose: bool,
+    extra_verbose: bool,
 ):
     """
     Process batch requests against V2-compatible inference server.
@@ -402,6 +402,7 @@ async def process_batch(
     logger.info(f"input file path: {input_data_path}")
     logger.info(f"output file path: {output_data_path}")
     logger.info(f"workers: {workers}")
+    logger.info(f"retries: {retries}")
     logger.info(f"connection timeout: {timeout}")
     logger.info(f"micro-batch size: {batch_size}")
 
