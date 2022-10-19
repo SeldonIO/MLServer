@@ -13,7 +13,7 @@ COPY \
 # /opt/mlserver/dist folder
 RUN ./hack/build-wheels.sh /opt/mlserver/dist
 
-FROM python:3.8-slim
+FROM registry.access.redhat.com/ubi8/ubi-minimal
 SHELL ["/bin/bash", "-c"]
 
 ARG RUNTIMES="all"
@@ -22,11 +22,14 @@ ENV MLSERVER_MODELS_DIR=/mnt/models \
     MLSERVER_ENV_TARBALL=/mnt/models/environment.tar.gz \
     PATH=/opt/mlserver/.local/bin:$PATH
 
-RUN apt-get update && \
-    apt-get -y --no-install-recommends install \
-        unattended-upgrades \
-        libgomp1 libgl1-mesa-dev libglib2.0-0 build-essential ffmpeg && \
-    unattended-upgrades
+# TODO: Install ffpmeg
+RUN microdnf update -y && \
+    microdnf install -y \
+        python38 \
+        libgomp mesa-libGL \
+        glib2-devel shadow-utils && \
+    ln -s /usr/bin/pip3 /usr/bin/pip && \
+    ln -s /usr/bin/python3 /usr/bin/python
 
 RUN mkdir /opt/mlserver
 WORKDIR /opt/mlserver
@@ -50,10 +53,12 @@ RUN pip install --upgrade pip wheel setuptools && \
     else \
         for _runtime in $RUNTIMES; do \
             _wheelName=$(echo $_runtime | tr '-' '_'); \
-            pip install "./dist/$_wheelName-"*.whl; \
+            _wheel="./dist/$_wheelName-"*.whl; \
+            echo "--> Installing $_wheel..."; \
+            pip install $_wheel; \
         done \
     fi && \
-    pip install $(ls ./dist/mlserver-*.whl)
+    pip install $(ls "./dist/mlserver-"*.whl)
 
 COPY requirements/docker.txt requirements/docker.txt
 RUN pip install -r requirements/docker.txt
