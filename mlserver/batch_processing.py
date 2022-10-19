@@ -9,15 +9,17 @@ import click
 import json
 import orjson
 
-from typing import Dict, List, Tuple
+from time import perf_counter as timer
+from typing import Dict, List, Optional, Tuple
+from mlserver.batching.requests import BatchedRequests
 
-from mlserver.types import InferenceRequest
+from mlserver.types import InferenceRequest, InferenceResponse, Parameters
 from mlserver.codecs import NumpyCodec
 from mlserver.logging import get_logger
 
-from time import perf_counter as timer
 
 from mlserver.utils import generate_uuid
+from mlserver.batching.requests import _merge_parameters
 
 
 CHOICES_TRANSPORT = ["rest", "grpc"]
@@ -65,7 +67,7 @@ class BatchInputItem:
 @dataclass
 class BatchOutputItem:
     index: int
-    item: httpclient.InferResult
+    item: bytes
 
 
 def setup_logging(debug: bool):
@@ -81,87 +83,175 @@ def get_headers(request_id: str) -> Dict[str, str]:
     return headers
 
 
-def json_to_triton(
-    request_json: bytes, binary_data: bool
-) -> Tuple[str, List[httpclient.InferInput], List[httpclient.InferRequestedOutput]]:
-    inputs = []
-    inference_request = InferenceRequest.parse_obj(orjson.loads(request_json))
-    for request_input in inference_request.inputs or []:
-        new_input = httpclient.InferInput(
-            request_input.name, request_input.shape, request_input.datatype
-        )
-        new_input.set_data_from_numpy(
-            NumpyCodec.decode_input(request_input),
-            binary_data=binary_data,
-        )
-        inputs.append(new_input)
+@dataclass
+class TritonRequest:
+    id: str
+    inputs: List[httpclient.InferInput]
+    outputs: Optional[List[httpclient.InferRequestedOutput]]
+
+    @classmethod
+    def from_inference_request(
+        cls, inference_request: InferenceRequest, binary_data: bool
+    ) -> "TritonRequest":
+        inputs = []
+
+        for request_input in inference_request.inputs or []:
+            new_input = httpclient.InferInput(
+                request_input.name, request_input.shape, request_input.datatype
+            )
+            new_input.set_data_from_numpy(
+                NumpyCodec.decode_input(request_input),
+                binary_data=binary_data,
+            )
+            inputs.append(new_input)
+
+        outputs = []
+        for request_output in inference_request.outputs or []:
+            new_output = httpclient.InferRequestedOutput(
+                request_output.name, binary_data=binary_data
+            )
+            outputs.append(new_output)
+
+        if inference_request.id is None:
+            request_id = ""
+        else:
+            request_id = inference_request.id
+        return TritonRequest(request_id, inputs, outputs)
+
+
+def infer_result_to_infer_response(item: httpclient.InferResult) -> InferenceResponse:
+    infer_response = item.get_response()
 
     outputs = []
-    for request_output in inference_request.outputs or []:
-        new_output = httpclient.InferRequestedOutput(
-            request_output.name, binary_data=binary_data
-        )
-        outputs.append(new_output)
+    for response_output in infer_response["outputs"]:
+        name = response_output["name"]
+        output = NumpyCodec.encode_output(name, item.as_numpy(name))
 
-    request_id = (
-        generate_uuid() if inference_request.id is None else inference_request.id
+        # Drop "binary_data_size" from `paramaters` as we decoded the output
+        parameters = response_output.get("parameters")
+        if parameters is not None:
+            # Create copy in case this code will ever be used in another context as
+            # we are modifying the original parameters by removing unwanted key
+            parameters = parameters.copy()
+            if "binary_data_size" in parameters:
+                del parameters["binary_data_size"]
+            output.parameters = Parameters(**parameters)
+
+        outputs.append(output)
+
+    inference_response = InferenceResponse(
+        model_name=infer_response["model_name"],
+        model_version=infer_response.get("model_version", None),
+        id=infer_response.get("id", None),
+        parameters=infer_response.get("parameters", None),
+        outputs=outputs,
     )
-    return request_id, inputs, outputs
+
+    return inference_response
 
 
-def serialize_triton_infer_result(output_item: BatchOutputItem) -> bytes:
-    response = output_item.item.get_response()
-    if "parameters" not in response:
-        response["parameters"] = {}
-    response["parameters"]["batch_index"] = output_item.index
-    for (n, output) in enumerate(response["outputs"]):
-        data = output_item.item.as_numpy(output["name"])
-        response["outputs"][n]["data"] = data.flatten().tolist()
+def preprocess_items(
+    items: List[BatchInputItem], binary_data: bool
+) -> Tuple[TritonRequest, BatchedRequests, Dict[str, int]]:
+    inference_requests = {}
+    item_indices = {}
+    for item in items:
+        inference_request = InferenceRequest.parse_obj(orjson.loads(item.item))
+        # try to use `id` from the input file to identify each request in the batch
+        if inference_request.id is None:
+            inference_request.id = generate_uuid()
+        inference_requests[inference_request.id] = inference_request
+        item_indices[inference_request.id] = item.index
+    batched = BatchedRequests(inference_requests)
 
-        # Removing "binary_data_size" parameters as now this is 1-D list
-        if (
-            output.get("parameters") is not None
-            and "binary_data_size" in output["parameters"]
-        ):
-            del response["outputs"][n]["parameters"]["binary_data_size"]
+    # Set `id` for batched requests - if only single request use its own id
+    if len(items) == 1:
+        batched.merged_request.id = inference_request.id
+    else:
+        batched.merged_request.id = generate_uuid()
+    return (
+        TritonRequest.from_inference_request(batched.merged_request, binary_data),
+        batched,
+        item_indices,
+    )
 
-    return orjson.dumps(response)
+
+def postprocess_items(
+    infer_result: httpclient.InferResult,
+    batched: BatchedRequests,
+    item_indices: Dict[str, int],
+) -> List[BatchOutputItem]:
+    full_inference_response = infer_result_to_infer_response(infer_result)
+    output_items = []
+    for item_id, inference_response in batched.split_response(
+        full_inference_response
+    ).items():
+        # Add `id` used for batched requests to Parameters under `inference_id` key
+        new_params = {
+            "batch_index": item_indices[item_id],
+            "inference_id": full_inference_response.id,
+        }
+        inference_response.parameters = Parameters(
+            **_merge_parameters(new_params, inference_response)
+        )
+
+        output_items.append(
+            BatchOutputItem(
+                index=item_indices[item_id], item=inference_response.json().encode()
+            )
+        )
+    return output_items
 
 
-async def process_item(
-    item: BatchInputItem,
+async def process_items(
+    items: List[BatchInputItem],
     model_name: str,
     worker_id: int,
     triton_client: httpclient.InferenceServerClient,
     binary_data: bool,
-) -> BatchOutputItem:
+) -> List[BatchOutputItem]:
     try:
-        request_id, inputs, outputs = json_to_triton(item.item, binary_data)
+        triton_request, batched, inference_indices = preprocess_items(
+            items, binary_data
+        )
     except Exception as e:
-        logger.error(f"consumer {worker_id}: failed to deserialize item: {repr(e)}")
+        logger.error(f"consumer {worker_id}: failed to preprocess items: {repr(e)}")
         raise
+
     try:
         logger.debug(f"consumer {worker_id}: sending request")
-        data = await triton_client.infer(
+        infer_result = await triton_client.infer(
             model_name,
-            inputs,
-            outputs=outputs,
-            request_id=request_id,
-            headers=get_headers(request_id),
+            triton_request.inputs,
+            outputs=triton_request.outputs,
+            request_id=triton_request.id,
+            headers=get_headers(triton_request.id),
         )
         logger.debug(f"consumer {worker_id}: received response")
     except Exception as e:
-        logger.error(f"Consumer {worker_id}: failed to process task: {repr(e)}")
+        logger.error(f"consumer {worker_id}: failed to process task: {repr(e)}")
         raise
-    return BatchOutputItem(index=item.index, item=data)
+
+    try:
+        output_items = postprocess_items(infer_result, batched, inference_indices)
+    except Exception as e:
+        logger.error(f"consumer {worker_id}: failed to postprocess item: {repr(e)}")
+
+    return output_items
 
 
-async def produce(queue: asyncio.Queue, fname: str):
+async def produce(queue: asyncio.Queue, fname: str, batch_size: int):
     async with aiofiles.open(fname, "rb") as f:
         index = 0
+        batch = []
         async for line in f:
-            await queue.put(BatchInputItem(index=index, item=line))
+            batch.append(BatchInputItem(index=index, item=line))
+            if len(batch) == batch_size:
+                await queue.put(batch)
+                batch = []
             index += 1
+        if batch:
+            await queue.put(batch)
 
 
 async def consume(
@@ -174,20 +264,20 @@ async def consume(
     queue_out: asyncio.Queue,
 ):
     while True:
-        input_item = await queue_in.get()
+        input_items = await queue_in.get()
         try:
-            output_item = await process_item(
-                input_item, model_name, worker_id, triton_client, binary_data
+            output_items = await process_items(
+                input_items, model_name, worker_id, triton_client, binary_data
             )
         except Exception:
             if extra_verbose:
                 logger.error(
-                    f"consumer {worker_id}: failed to process item {input_item}"
+                    f"consumer {worker_id}: failed to process item {input_items}"
                 )
             queue_in.task_done()
             continue
 
-        await queue_out.put(output_item)
+        await queue_out.put(output_items)
         queue_in.task_done()
 
 
@@ -195,13 +285,13 @@ async def finalize(queue: asyncio.Queue, fname: str):
     # TODO: Test if output directory is writtable, sysexit otherwise.
     async with aiofiles.open(fname, "wb") as f:
         while True:
-            item = await queue.get()
-            try:
-                output = serialize_triton_infer_result(item)
-                await f.write(output)
-                await f.write(b"\n")
-            except Exception as e:
-                logger.error(f"Failed to finalize task: {repr(e)}")
+            batch_output = await queue.get()
+            for item in batch_output:
+                try:
+                    await f.write(item.item)
+                    await f.write(b"\n")
+                except Exception as e:
+                    logger.error(f"Failed to finalize task: {repr(e)}")
             queue.task_done()
 
 
@@ -209,6 +299,7 @@ async def process_batch(
     model_name,
     url,
     workers,
+    batch_size,
     input_data_path,
     output_data_path,
     binary_data,
@@ -239,6 +330,7 @@ async def process_batch(
     logger.info(f"Server url: {url}")
     logger.info(f"input file path: {input_data_path}")
     logger.info(f"output file path: {output_data_path}")
+    logger.info(f"micro-batch size: {batch_size}")
 
     if insecure:
         ssl_context = False
@@ -273,7 +365,7 @@ async def process_batch(
 
     finalizer = asyncio.create_task(finalize(queue_out, output_data_path))
 
-    await produce(queue_in, input_data_path)
+    await produce(queue_in, input_data_path, batch_size)
     await queue_in.join()
     await queue_out.join()
 
