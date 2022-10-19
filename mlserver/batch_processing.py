@@ -301,7 +301,9 @@ async def process_items(
     return output_items + invalid_inputs
 
 
-async def produce(queue: asyncio.Queue, fname: str, batch_size: int):
+async def produce(
+    queue: "asyncio.Queue[List[BatchInputItem]]", fname: str, batch_size: int
+):
     async with aiofiles.open(fname, "rb") as f:
         index = 0
         batch = []
@@ -324,8 +326,8 @@ async def consume(
     triton_client: httpclient.InferenceServerClient,
     binary_data: bool,
     extra_verbose: bool,
-    queue_in: asyncio.Queue,
-    queue_out: asyncio.Queue,
+    queue_in: "asyncio.Queue[List[BatchInputItem]]",
+    queue_out: "asyncio.Queue[List[BatchOutputItem]]",
 ):
     while True:
         input_items = await queue_in.get()
@@ -353,7 +355,7 @@ async def consume(
         queue_in.task_done()
 
 
-async def finalize(queue: asyncio.Queue, fname: str) -> int:
+async def finalize(queue: "asyncio.Queue[List[BatchOutputItem]]", fname: str) -> int:
     # TODO: Test if output directory is writtable, sysexit otherwise.
     counter = 0
     try:
@@ -435,8 +437,8 @@ async def process_batch(
         ssl_context=ssl_context,
     )
 
-    queue_in = asyncio.Queue(2 * workers)
-    queue_out = asyncio.Queue(2 * workers)
+    queue_in: asyncio.Queue[List[BatchInputItem]] = asyncio.Queue(2 * workers)
+    queue_out: asyncio.Queue[List[BatchOutputItem]] = asyncio.Queue(2 * workers)
 
     consumers = []
     for worker_id in range(workers):
