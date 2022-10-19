@@ -173,6 +173,20 @@ async def dockerfile(folder: str, include_dockerignore: bool):
     help="Connection timeout to be passed to tritonclient.",
 )
 @click.option(
+    "--batch-interval",
+    default=0,
+    type=float,
+    envvar="MLSERVER_INFER_BATCH_INTERVAL",
+    help="Minimum time interval (in seconds) between inference requests made by each worker.",
+)
+@click.option(
+    "--batch-jitter",
+    default=0,
+    type=float,
+    envvar="MLSERVER_INFER_BATCH_JITTER",
+    help="Maximum random jitter (in seconds) added to batch interval between requests.",
+)
+@click.option(
     "--use-ssl",
     is_flag=True,
     default=False,
@@ -199,6 +213,8 @@ async def infer(
     binary_data,
     transport,
     timeout,
+    batch_interval,
+    batch_jitter,
     use_ssl,
     insecure,
     verbose,
@@ -218,6 +234,8 @@ async def infer(
         binary_data=binary_data,
         transport=transport,
         timeout=timeout,
+        batch_interval=batch_interval,
+        batch_jitter=batch_jitter,
         use_ssl=use_ssl,
         insecure=insecure,
         verbose=verbose,

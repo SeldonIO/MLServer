@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from functools import wraps
+from random import random
 import tritonclient.http.aio as httpclient
 
 import asyncio
@@ -318,6 +319,8 @@ async def consume(
     model_name: str,
     worker_id: int,
     retries: int,
+    batch_interval: float,
+    batch_jitter: float,
     triton_client: httpclient.InferenceServerClient,
     binary_data: bool,
     extra_verbose: bool,
@@ -327,9 +330,15 @@ async def consume(
     while True:
         input_items = await queue_in.get()
         try:
+            start_time = timer()
             output_items = await process_items(
                 input_items, model_name, worker_id, retries, triton_client, binary_data
             )
+            if batch_interval > 0 or batch_jitter > 0:
+                total_sleep_time = batch_interval + random() * batch_jitter
+                remaining_sleep_time = total_sleep_time - (timer() - start_time)
+                logger.debug(f"consume {worker_id}: sleeping for {remaining_sleep_time:.3f}")
+                await asyncio.sleep(remaining_sleep_time)
         except Exception:
             if extra_verbose:
                 logger.error(
@@ -374,6 +383,8 @@ async def process_batch(
     binary_data: bool,
     transport: str,
     timeout: float,
+    batch_interval: float,
+    batch_jitter: float,
     use_ssl: bool,
     insecure: bool,
     verbose: bool,
@@ -403,6 +414,8 @@ async def process_batch(
     logger.info(f"output file path: {output_data_path}")
     logger.info(f"workers: {workers}")
     logger.info(f"retries: {retries}")
+    logger.info(f"batch interval: {batch_interval}")
+    logger.info(f"batch jiter: {batch_jitter}")
     logger.info(f"connection timeout: {timeout}")
     logger.info(f"micro-batch size: {batch_size}")
 
@@ -430,6 +443,8 @@ async def process_batch(
                 model_name,
                 worker_id,
                 retries,
+                batch_interval,
+                batch_jitter,
                 triton_client,
                 binary_data,
                 extra_verbose,
