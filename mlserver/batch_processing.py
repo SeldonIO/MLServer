@@ -81,8 +81,8 @@ def setup_logging(debug: bool):
         logger.setLevel(logging.DEBUG)
 
 
-def get_headers(request_id: str) -> Dict[str, str]:
-    headers = {"content-type": "application/json"}
+def get_headers(request_id: str, headers: Dict[str, str]) -> Dict[str, str]:
+    headers = {"content-type": "application/json", **headers}
     if request_id:
         headers["seldon-puid"] = request_id
         headers["x-request-id"] = request_id
@@ -154,6 +154,17 @@ def infer_result_to_infer_response(item: httpclient.InferResult) -> InferenceRes
     )
 
     return inference_response
+
+
+def _preprocess_headers(headers: List[str]) -> Dict[str, str]:
+    output = {}
+    for item in headers:
+        try:
+            key, val = [x.strip() for x in item.split(":")]
+            output[key] = val
+        except ValueError:
+            logger.error(f"Cannot process '{item}' as valid header. Ignoring.")
+    return output
 
 
 def _serialize_validation_error(index: int, error: ValidationError) -> BatchOutputItem:
@@ -237,6 +248,7 @@ async def send_requests(
     model_name: str,
     triton_client: httpclient.InferenceServerClient,
     triton_request: TritonRequest,
+    headers: Dict[str, str],
     retries: int,
     worker_id: int,
 ) -> httpclient.InferResult:
@@ -247,7 +259,7 @@ async def send_requests(
                 triton_request.inputs,
                 outputs=triton_request.outputs,
                 request_id=triton_request.id,
-                headers=get_headers(triton_request.id),
+                headers=get_headers(triton_request.id, headers),
             )
         except Exception as e:
             logger.error(
@@ -264,6 +276,7 @@ async def process_items(
     worker_id: int,
     retries: int,
     triton_client: httpclient.InferenceServerClient,
+    headers: Dict[str, str],
     binary_data: bool,
 ) -> List[BatchOutputItem]:
     try:
@@ -282,6 +295,7 @@ async def process_items(
             model_name,
             triton_client,
             triton_request,
+            headers,
             retries,
             worker_id,
         )
@@ -324,6 +338,7 @@ async def consume(
     batch_interval: float,
     batch_jitter: float,
     triton_client: httpclient.InferenceServerClient,
+    headers: Dict[str, str],
     binary_data: bool,
     extra_verbose: bool,
     queue_in: "asyncio.Queue[List[BatchInputItem]]",
@@ -334,7 +349,7 @@ async def consume(
         try:
             start_time = timer()
             output_items = await process_items(
-                input_items, model_name, worker_id, retries, triton_client, binary_data
+                input_items, model_name, worker_id, retries, triton_client, headers, binary_data
             )
             if batch_interval > 0 or batch_jitter > 0:
                 total_sleep_time = batch_interval + random() * batch_jitter
@@ -386,6 +401,7 @@ async def process_batch(
     output_data_path: str,
     binary_data: bool,
     transport: str,
+    request_headers: List[str],
     timeout: float,
     batch_interval: float,
     batch_jitter: float,
@@ -411,9 +427,12 @@ async def process_batch(
     elif verbose:
         logger.info("Running in verbose mode.")
 
+    headers = _preprocess_headers(request_headers)
+
     setup_logging(debug=verbose)
     logger.info(f"server url: {url}")
     logger.info(f"model name: {model_name}")
+    logger.info(f"request headers: {headers}")
     logger.info(f"input file path: {input_data_path}")
     logger.info(f"output file path: {output_data_path}")
     logger.info(f"workers: {workers}")
@@ -450,6 +469,7 @@ async def process_batch(
                 batch_interval,
                 batch_jitter,
                 triton_client,
+                headers,
                 binary_data,
                 extra_verbose,
                 queue_in,

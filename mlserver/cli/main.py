@@ -129,7 +129,7 @@ async def dockerfile(folder: str, include_dockerignore: bool):
     "-s",
     default=1,
     envvar="MLSERVER_INFER_BATCH_SIZE",
-    help="Send inference requests grouped together as micro-batch.",
+    help="Send inference requests grouped together as micro-batches.",
 )
 @click.option(
     "--binary-data",
@@ -165,6 +165,18 @@ async def dockerfile(folder: str, include_dockerignore: bool):
         "Transport type to use to send inference requests. "
         "Can be 'rest' or 'grpc' (not yet supported)."
     ),
+)
+@click.option(
+    "--request-headers",
+    "-H",
+    envvar="MLSERVER_INFER_REQUEST_HEADERS",
+    type=str,
+    multiple=True,
+    help=(
+        "Headers to be set on each inference request send to the server. "
+        "Multiple options are allowed as: -H 'Header1: Val1' -H 'Header2: Val2'. "
+        "When setting up as environmental provide as 'Header1:Val1 Header2:Val2'."
+    )
 )
 @click.option(
     "--timeout",
@@ -212,6 +224,7 @@ async def infer(
     output_data_path,
     binary_data,
     transport,
+    request_headers,
     timeout,
     batch_interval,
     batch_jitter,
@@ -233,6 +246,7 @@ async def infer(
         output_data_path=output_data_path,
         binary_data=binary_data,
         transport=transport,
+        request_headers=request_headers,
         timeout=timeout,
         batch_interval=batch_interval,
         batch_jitter=batch_jitter,
