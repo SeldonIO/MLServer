@@ -1,9 +1,7 @@
 import asyncio
 
 from multiprocessing import Queue
-from functools import wraps
 from typing import Any, Coroutine, Callable, Dict
-from prometheus_client import Histogram
 
 from ..model import MLModel
 from ..types import InferenceRequest, InferenceResponse
@@ -43,7 +41,6 @@ class InferencePool:
         self._workers: Dict[int, Worker] = {}
         self._settings = settings
         responses: Queue[ModelResponseMessage] = Queue()
-
         for idx in range(self._settings.parallel_workers):
             # TODO: Set callback to restart worker if it goes down (would
             # `worker.join` help with that?)
