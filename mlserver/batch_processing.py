@@ -444,7 +444,7 @@ async def process_batch(
     logger.info(f"workers: {workers}")
     logger.info(f"retries: {retries}")
     logger.info(f"batch interval: {batch_interval}")
-    logger.info(f"batch jiter: {batch_jitter}")
+    logger.info(f"batch jitter: {batch_jitter}")
     logger.info(f"connection timeout: {timeout}")
     logger.info(f"micro-batch size: {batch_size}")
 
