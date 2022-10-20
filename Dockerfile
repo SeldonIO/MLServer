@@ -42,7 +42,6 @@ COPY --from=wheel-builder /opt/mlserver/dist ./dist
 # note: if runtime is "all" we install mlserver-<version>-py3-none-any.whl
 # we have to use this syntax to return the correct file: $(ls ./dist/mlserver-*.whl)
 RUN pip install --upgrade pip wheel setuptools && \
-    pip install $(ls ./dist/mlserver-*.whl)[all]; \
     if [[ $RUNTIMES == "all" ]]; then \
         for _wheel in "./dist/mlserver_"*.whl; do \
             echo "--> Installing $_wheel..."; \
@@ -53,7 +52,8 @@ RUN pip install --upgrade pip wheel setuptools && \
             _wheelName=$(echo $_runtime | tr '-' '_'); \
             pip install "./dist/$_wheelName-"*.whl; \
         done \
-    fi
+    fi && \
+    pip install $(ls ./dist/mlserver-*.whl)
 
 COPY requirements/docker.txt requirements/docker.txt
 RUN pip install -r requirements/docker.txt
