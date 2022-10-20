@@ -45,15 +45,17 @@ def adaptive_batching(f: Callable[[InferenceRequest], Awaitable[InferenceRespons
     return _inner
 
 
-async def load_batching(model: MLModel):
+async def load_batching(model: MLModel) -> MLModel:
     if model.settings.max_batch_size <= 1:
-        return None
+        return model
 
     if model.settings.max_batch_time <= 0:
-        return None
+        return model
 
     batcher = AdaptiveBatcher(model)
     setattr(model, _AdaptiveBatchingAttr, batcher)
 
     # Decorate predict method
     setattr(model, "predict", adaptive_batching(model.predict))
+
+    return model

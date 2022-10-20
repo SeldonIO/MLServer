@@ -1,12 +1,9 @@
 import os
-import pytest
 
 from mlserver.model import MLModel
-from mlserver.settings import Settings, ModelSettings
+from mlserver.settings import Settings
 from mlserver.types import InferenceRequest
 from mlserver.parallel.pool import InferencePool
-
-from ..fixtures import ErrorModel
 
 
 def check_pid(pid):
@@ -46,39 +43,12 @@ async def test_load(
     inference_request: InferenceRequest,
 ):
     sum_model.settings.name = "foo"
-    await inference_pool.load_model(sum_model)
+    model = await inference_pool.load_model(sum_model)
 
-    # NOTE: This should leverage the worker inference_pool, after decorating the method
-    inference_response = await sum_model.predict(inference_request)
+    # NOTE: This should leverage the worker inference_pool, after wrapping the
+    # model
+    inference_response = await model.predict(inference_request)
 
     assert inference_response.id == inference_request.id
     assert inference_response.model_name == sum_model.settings.name
     assert len(inference_response.outputs) == 1
-
-
-async def test_predict(
-    inference_pool: InferencePool,
-    sum_model_settings: ModelSettings,
-    inference_request: InferenceRequest,
-):
-    inference_response = await inference_pool.predict(
-        sum_model_settings, inference_request
-    )
-
-    assert inference_response.id == inference_request.id
-    assert inference_response.model_name == sum_model_settings.name
-    assert len(inference_response.outputs) == 1
-
-
-async def test_predict_error(
-    inference_pool: InferencePool,
-    error_model: MLModel,
-    error_model_settings: ModelSettings,
-    inference_request: InferenceRequest,
-):
-    await inference_pool.load_model(error_model)
-
-    with pytest.raises(Exception) as excinfo:
-        await inference_pool.predict(error_model_settings, inference_request)
-
-    assert str(excinfo.value) == ErrorModel.error_message

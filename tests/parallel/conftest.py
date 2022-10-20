@@ -7,33 +7,33 @@ from mlserver.settings import ModelSettings
 from mlserver.types import InferenceRequest
 from mlserver.utils import generate_uuid
 from mlserver.model import MLModel
+from mlserver.parallel.model import ModelMethods
 from mlserver.parallel.pool import InferencePool
 from mlserver.parallel.worker import Worker
 from mlserver.parallel.utils import cancel_task
 from mlserver.parallel.messages import (
     ModelUpdateMessage,
     ModelUpdateType,
-    InferenceRequestMessage,
+    ModelRequestMessage,
 )
 
 
 @pytest.fixture
-async def inference_pool(
-    inference_pool: InferencePool, sum_model: MLModel
-) -> InferencePool:
-    await inference_pool.load_model(sum_model)
+async def sum_model(inference_pool: InferencePool, sum_model: MLModel) -> MLModel:
+    parallel_model = await inference_pool.load_model(sum_model)
 
-    yield inference_pool
+    yield parallel_model
 
     await inference_pool.unload_model(sum_model)
 
 
 @pytest.fixture
-async def requests() -> Queue:
-    q = Queue()
-    yield q
+async def error_model(inference_pool: InferencePool, error_model: MLModel) -> MLModel:
+    model = await inference_pool.load_model(error_model)
 
-    q.close()
+    yield model
+
+    await inference_pool.unload_model(error_model)
 
 
 @pytest.fixture
@@ -47,11 +47,10 @@ async def responses() -> Queue:
 @pytest.fixture
 async def worker(
     event_loop,
-    requests: Queue,
     responses: Queue,
     load_message: ModelUpdateMessage,
 ) -> Worker:
-    worker = Worker(requests, responses)
+    worker = Worker(responses)
 
     # Simulate the worker running on a different process, but keep it to a
     # thread to simplify debugging.
@@ -86,10 +85,33 @@ def unload_message(sum_model_settings: ModelSettings) -> ModelUpdateMessage:
 @pytest.fixture
 def inference_request_message(
     sum_model_settings: ModelSettings, inference_request: InferenceRequest
-) -> InferenceRequestMessage:
-    return InferenceRequestMessage(
+) -> ModelRequestMessage:
+    return ModelRequestMessage(
         id=generate_uuid(),
         model_name=sum_model_settings.name,
         model_version=sum_model_settings.parameters.version,
-        inference_request=inference_request,
+        method_name=ModelMethods.Predict.value,
+        method_args=[inference_request],
+    )
+
+
+@pytest.fixture
+def metadata_request_message(sum_model_settings: ModelSettings) -> ModelRequestMessage:
+    return ModelRequestMessage(
+        id=generate_uuid(),
+        model_name=sum_model_settings.name,
+        model_version=sum_model_settings.parameters.version,
+        method_name=ModelMethods.Metadata.value,
+    )
+
+
+@pytest.fixture
+def custom_request_message(sum_model_settings: ModelSettings) -> ModelRequestMessage:
+    return ModelRequestMessage(
+        id=generate_uuid(),
+        model_name=sum_model_settings.name,
+        model_version=sum_model_settings.parameters.version,
+        # From `SumModel` class in tests/fixtures.py
+        method_name="my_payload",
+        method_kwargs={"payload": [1, 2, 3]},
     )

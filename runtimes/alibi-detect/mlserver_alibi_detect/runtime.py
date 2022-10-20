@@ -12,6 +12,8 @@ import numpy as np
 
 ENV_PREFIX_ALIBI_DETECT_SETTINGS = "MLSERVER_MODEL_ALIBI_DETECT_"
 
+ALIBI_MODULE_NAMES = {"cd": "drift", "od": "outlier", "ad": "adversarial"}
+
 
 class AlibiDetectSettings(BaseSettings):
     """
@@ -63,7 +65,7 @@ class AlibiDetectRuntime(MLModel):
             predict_kwargs = self.alibi_detect_settings.predict_parameters
 
         try:
-            y = self._model.predict(input_data, **predict_kwargs)
+            y = self._model.predict(np.array(input_data), **predict_kwargs)
         except (ValueError, IndexError) as e:
             raise InferenceError(
                 f"Invalid predict parameters for model {self._settings.name}: {e}"
@@ -74,9 +76,26 @@ class AlibiDetectRuntime(MLModel):
             outputs.append(
                 NumpyCodec.encode_output(name=key, payload=np.array([y["data"][key]]))
             )
+        # Add headers
+        y["meta"]["headers"] = {
+            "x-seldon-alibi-type": self.get_alibi_type(),
+            "x-seldon-alibi-method": self.get_alibi_method(),
+        }
         return types.InferenceResponse(
             model_name=self.name,
             model_version=self.version,
             parameters=y["meta"],
             outputs=outputs,
         )
+
+    def get_alibi_method(self) -> str:
+        module: str = type(self._model).__module__
+        return module.split(".")[-1]
+
+    def get_alibi_type(self) -> str:
+        module: str = type(self._model).__module__
+        method = module.split(".")[-2]
+        if method in ALIBI_MODULE_NAMES:
+            return ALIBI_MODULE_NAMES[method]
+        else:
+            return "unknown"

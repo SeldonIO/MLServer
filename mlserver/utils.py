@@ -2,7 +2,8 @@ import os
 import uuid
 import asyncio
 
-from typing import Callable, Dict, Optional, List
+from asyncio import Task
+from typing import Callable, Dict, Optional, List, Type
 
 from .logging import logger
 from .types import InferenceRequest, InferenceResponse, Parameters
@@ -121,3 +122,13 @@ def install_uvloop_event_loop():
     policy = _check_current_event_loop_policy()
 
     logger.info(f"Using asyncio event-loop policy: {policy}")
+
+
+def schedule_with_callback(coro, cb) -> Task:
+    task = asyncio.create_task(coro)
+    task.add_done_callback(cb)
+    return task
+
+
+def get_import_path(klass: Type):
+    return f"{klass.__module__}.{klass.__name__}"

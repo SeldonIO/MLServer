@@ -1,8 +1,12 @@
-openapi: 3.0.0
+openapi: 3.0.3
 info:
   title: Data Plane
   version: '2.0'
-  description: 'https://github.com/kubeflow/kfserving/blob/master/docs/predict-api/v2/required_api.md'
+  contact:
+    name: Seldon Technologies Ltd.
+    url: 'https://www.seldon.io/'
+    email: hello@seldon.io
+  description: REST protocol to interact with inference servers.
   license:
     name: Apache 2.0
 servers: []
@@ -13,118 +17,238 @@ paths:
       responses:
         '200':
           description: OK
-      operationId: get-v2-health-live
-      description: The “server live” API indicates if the inference server is able to receive and respond to metadata and inference requests. The “server live” API can be used directly to implement the Kubernetes livenessProbe.
+      operationId: server-live
+      description: The “server live” API indicates if the inference server is able to receive and respond to metadata and inference requests. The “server live” API can be used directly to implement the Kubernetes `livenessProbe`.
+      tags:
+        - health
+        - server
   /v2/health/ready:
     get:
       summary: Server Ready
-      tags: []
+      tags:
+        - health
+        - server
       responses:
         '200':
           description: OK
-      operationId: get-v2-health-ready
+      operationId: server-ready
       description: The “server ready” health API indicates if all the models are ready for inferencing. The “server ready” health API can be used directly to implement the Kubernetes readinessProbe.
-  '/v2/models/${MODEL_NAME}/versions/${MODEL_VERSION}/ready':
+  '/v2/models/{model_name}/versions/{model_version}/ready':
     parameters:
       - schema:
           type: string
-        name: MODEL_NAME
+        name: model_name
         in: path
         required: true
       - schema:
           type: string
-        name: MODEL_VERSION
+        name: model_version
         in: path
         required: true
     get:
       summary: Model Ready
-      tags: []
+      tags:
+        - health
+        - model
       responses:
         '200':
           description: OK
-      operationId: get-v2-models-$-modelName-versions-$-modelVersion-ready
+      operationId: model-version-ready
       description: The “model ready” health API indicates if a specific model is ready for inferencing. The model name and (optionally) version must be available in the URL. If a version is not provided the server may choose a version based on its own policies.
-  /v2/:
+  '/v2/models/{model_name}/ready':
+    parameters:
+      - schema:
+          type: string
+        name: model_name
+        in: path
+        required: true
+    get:
+      summary: Model Ready
+      tags:
+        - health
+        - model
+      responses:
+        '200':
+          description: OK
+      operationId: model-ready
+      description: The “model ready” health API indicates if a specific model is ready for inferencing. The model name and (optionally) version must be available in the URL. If a version is not provided the server may choose a version based on its own policies.
+  /v2:
     get:
       summary: Server Metadata
-      tags: []
+      tags:
+        - metadata
+        - server
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/metadata_server_response'
+                $ref: '#/components/schemas/MetadataServerResponse'
         '400':
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/metadata_server_error_response'
-      operationId: get-v2
-      description: 'The server metadata endpoint provides information about the server. A server metadata request is made with an HTTP GET to a server metadata endpoint. In the corresponding response the HTTP body contains the [Server Metadata Response JSON Object](#server-metadata-response-json-object) or the [Server Metadata Response JSON Error Object](#server-metadata-response-json-error-object).'
-  '/v2/models/${MODEL_NAME}/versions/${MODEL_VERSION}':
+                $ref: '#/components/schemas/MetadataServerErrorResponse'
+      operationId: server-metadata
+      description: The server metadata endpoint provides information about the server. A server metadata request is made with an HTTP GET to a server metadata endpoint.
+  '/v2/models/{model_name}/versions/{model_version}':
     parameters:
       - schema:
           type: string
-        name: MODEL_NAME
+        name: model_name
         in: path
         required: true
       - schema:
           type: string
-        name: MODEL_VERSION
+        name: model_version
         in: path
         required: true
     get:
       summary: Model Metadata
-      tags: []
+      tags:
+        - metadata
+        - model
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/metadata_model_response'
-      operationId: get-v2-models-$-modelName-versions-$-modelVersion
-      description: 'The per-model metadata endpoint provides information about a model. A model metadata request is made with an HTTP GET to a model metadata endpoint. In the corresponding response the HTTP body contains the [Model Metadata Response JSON Object](#model-metadata-response-json-object) or the [Model Metadata Response JSON Error Object](#model-metadata-response-json-error-object). The model name and (optionally) version must be available in the URL. If a version is not provided the server may choose a version based on its own policies or return an error.'
-  '/v2/models/${MODEL_NAME}/versions/${MODEL_VERSION}/infer':
+                $ref: '#/components/schemas/MetadataModelResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MetadataModelErrorResponse'
+      operationId: model-version-metadata
+      description: The per-model metadata endpoint provides information about a model. A model metadata request is made with an HTTP GET to a model metadata endpoint. The model name and (optionally) version must be available in the URL. If a version is not provided the server may choose a version based on its own policies or return an error.
+  '/v2/models/{model_name}':
     parameters:
       - schema:
           type: string
-        name: MODEL_NAME
+        name: model_name
         in: path
         required: true
-      - schema:
-          type: string
-        name: MODEL_VERSION
-        in: path
-        required: true
-    post:
-      summary: Inference
-      operationId: post-v2-models-$-MODEL_NAME-versions-$-MODEL_VERSION-infer
+    get:
+      summary: Model Metadata
+      tags:
+        - metadata
+        - model
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inference_response'
+                $ref: '#/components/schemas/MetadataModelResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MetadataModelErrorResponse'
+      operationId: model-metadata
+      description: The per-model metadata endpoint provides information about a model. A model metadata request is made with an HTTP GET to a model metadata endpoint. The model name and (optionally) version must be available in the URL. If a version is not provided the server may choose a version based on its own policies or return an error.
+  '/v2/models/{model_name}/versions/{model_version}/infer':
+    parameters:
+      - schema:
+          type: string
+        name: model_name
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: model_version
+        in: path
+        required: true
+    post:
+      summary: Model Inference
+      operationId: model-version-inference
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InferenceResponse'
         '400':
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inference_error_response'
+                $ref: '#/components/schemas/InferenceErrorResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InferenceErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InferenceErrorResponse'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/inference_request'
-      description: 'An inference request is made with an HTTP POST to an inference endpoint. In the request the HTTP body contains the [Inference Request JSON Object](#inference-request-json-object). In the corresponding response the HTTP body contains the [Inference Response JSON Object](#inference-response-json-object) or [Inference Response JSON Error Object](#inference-response-json-error-object). See [Inference Request Examples](#inference-request-examples) for some example HTTP/REST requests and responses.'
+              $ref: '#/components/schemas/InferenceRequest'
+      description: An inference request is made with an HTTP POST to an inference endpoint. The model name and (optionally) version must be available in the URL. If a version is not provided the server may choose a version based on its own policies or return an error.
+      tags:
+        - inference
+        - model
+  '/v2/models/{model_name}/infer':
+    parameters:
+      - schema:
+          type: string
+        name: model_name
+        in: path
+        required: true
+    post:
+      summary: Model Inference
+      operationId: model-inference
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InferenceResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InferenceErrorResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InferenceErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InferenceErrorResponse'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InferenceRequest'
+      description: An inference request is made with an HTTP POST to an inference endpoint. The model name and (optionally) version must be available in the URL. If a version is not provided the server may choose a version based on its own policies or return an error.
+      tags:
+        - inference
+        - model
 components:
   schemas:
-    metadata_server_response:
-      title: metadata_server_response
+    MetadataServerResponse:
+      title: MetadataServerResponse
       type: object
       description: ''
       x-examples: {}
@@ -141,16 +265,8 @@ components:
         - name
         - version
         - extensions
-    metadata_server_error_response:
-      title: metadata_server_error_response
-      type: object
-      properties:
-        error:
-          type: string
-      required:
-        - error
-    metadata_model_response:
-      title: metadata_model_response
+    MetadataModelResponse:
+      title: MetadataModelResponse
       type: object
       properties:
         name:
@@ -164,18 +280,26 @@ components:
         inputs:
           type: array
           items:
-            $ref: '#/components/schemas/metadata_tensor'
+            $ref: '#/components/schemas/MetadataTensor'
         outputs:
           type: array
           items:
-            $ref: '#/components/schemas/metadata_tensor'
+            $ref: '#/components/schemas/MetadataTensor'
         parameters:
-          $ref: '#/components/schemas/parameters'
+          $ref: '#/components/schemas/Parameters'
       required:
         - name
         - platform
-    metadata_tensor:
-      title: metadata_tensor
+    MetadataServerErrorResponse:
+      title: MetadataServerErrorResponse
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+    MetadataTensor:
+      title: MetadataTensor
       type: object
       properties:
         name:
@@ -187,21 +311,21 @@ components:
           items:
             type: integer
         parameters:
-          $ref: '#/components/schemas/parameters'
+          $ref: '#/components/schemas/Parameters'
       required:
         - name
         - datatype
         - shape
-    metadata_model_error_response:
-      title: metadata_model_error_response
+    MetadataModelErrorResponse:
+      title: MetadataModelErrorResponse
       type: object
       properties:
         error:
           type: string
       required:
         - error
-    inference_request:
-      title: inference_request
+    InferenceRequest:
+      title: InferenceRequest
       type: object
       x-examples:
         Example 1:
@@ -244,20 +368,20 @@ components:
         id:
           type: string
         parameters:
-          $ref: '#/components/schemas/parameters'
+          $ref: '#/components/schemas/Parameters'
         inputs:
           type: array
           items:
-            $ref: '#/components/schemas/request_input'
+            $ref: '#/components/schemas/RequestInput'
         outputs:
           type: array
           items:
-            $ref: '#/components/schemas/request_output'
+            $ref: '#/components/schemas/RequestOutput'
       required:
         - inputs
-    parameters:
+    Parameters:
       type: object
-      title: parameters
+      title: Parameters
       x-examples: {}
       additionalProperties: true
       properties:
@@ -265,8 +389,8 @@ components:
           type: string
         headers:
           type: object
-    request_input:
-      title: request_input
+    RequestInput:
+      title: RequestInput
       type: object
       properties:
         name:
@@ -278,28 +402,28 @@ components:
         datatype:
           type: string
         parameters:
-          $ref: '#/components/schemas/parameters'
+          $ref: '#/components/schemas/Parameters'
         data:
-          $ref: '#/components/schemas/tensor_data'
+          $ref: '#/components/schemas/TensorData'
       required:
         - name
         - shape
         - datatype
         - data
-    tensor_data:
-      title: tensor_data
-    request_output:
-      title: request_output
+    TensorData:
+      title: TensorData
+    RequestOutput:
+      title: RequestOutput
       type: object
       properties:
         name:
           type: string
         parameters:
-          $ref: '#/components/schemas/parameters'
+          $ref: '#/components/schemas/Parameters'
       required:
         - name
-    response_output:
-      title: response_output
+    ResponseOutput:
+      title: ResponseOutput
       type: object
       properties:
         name:
@@ -311,16 +435,16 @@ components:
         datatype:
           type: string
         parameters:
-          $ref: '#/components/schemas/parameters'
+          $ref: '#/components/schemas/Parameters'
         data:
-          $ref: '#/components/schemas/tensor_data'
+          $ref: '#/components/schemas/TensorData'
       required:
         - name
         - shape
         - datatype
         - data
-    inference_response:
-      title: inference_response
+    InferenceResponse:
+      title: InferenceResponse
       type: object
       properties:
         model_name:
@@ -330,17 +454,23 @@ components:
         id:
           type: string
         parameters:
-          $ref: '#/components/schemas/parameters'
+          $ref: '#/components/schemas/Parameters'
         outputs:
           type: array
           items:
-            $ref: '#/components/schemas/response_output'
+            $ref: '#/components/schemas/ResponseOutput'
       required:
         - model_name
         - outputs
-    inference_error_response:
-      title: inference_error_response
+    InferenceErrorResponse:
+      title: InferenceErrorResponse
       type: object
       properties:
         error:
           type: string
+tags:
+  - name: health
+  - name: inference
+  - name: metadata
+  - name: model
+  - name: server

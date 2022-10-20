@@ -1,5 +1,11 @@
-from typing import List, Optional
+import sys
+import os
+import json
+import importlib
+
+from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseSettings, PyObject, Field
+from contextlib import contextmanager
 
 from .version import __version__
 from .types import MetadataTensor
@@ -9,6 +15,25 @@ ENV_PREFIX_SETTINGS = "MLSERVER_"
 ENV_PREFIX_MODEL_SETTINGS = "MLSERVER_MODEL_"
 
 DEFAULT_PARALLEL_WORKERS = 1
+
+
+@contextmanager
+def _extra_sys_path(extra_path: str):
+    sys.path.insert(0, extra_path)
+
+    yield
+
+    sys.path.remove(extra_path)
+
+
+def _reload_module(obj: dict):
+    import_path = obj.get("implementation", None)
+    if not import_path:
+        return
+
+    module_path, _, _ = import_path.rpartition(".")
+    module = importlib.import_module(module_path)
+    importlib.reload(module)
 
 
 class CORSSettings(BaseSettings):
@@ -106,15 +131,25 @@ class Settings(BaseSettings):
     Port used to expose metrics endpoint.
     """
 
+    metrics_rest_server_prefix: str = "rest_server"
+    """
+    Metrics rest server string prefix to be exported.
+    """
+
     # Logging settings
-    logging_settings: Optional[str] = None
-    """Path to logging config file."""
+    logging_settings: Optional[Union[str, Dict]] = None
+    """Path to logging config file or dictionary configuration."""
 
     # Kakfa Server settings
     kafka_enabled: bool = False
     kafka_servers: str = "localhost:9092"
     kafka_topic_input: str = "mlserver-input"
     kafka_topic_output: str = "mlserver-output"
+
+    # Custom server settings
+    _custom_rest_server_settings: Optional[dict] = None
+    _custom_metrics_server_settings: Optional[dict] = None
+    _custom_grpc_server_settings: Optional[dict] = None
 
 
 class ModelParameters(BaseSettings):
@@ -159,6 +194,26 @@ class ModelSettings(BaseSettings):
     # Source points to the file where model settings were loaded from
     _source: Optional[str] = None
 
+    @classmethod
+    def parse_file(cls, path: str) -> "ModelSettings":  # type: ignore
+        with open(path, "r") as f:
+            obj = json.load(f)
+            obj["_source"] = path
+            return cls.parse_obj(obj)
+
+    @classmethod
+    def parse_obj(cls, obj: Any) -> "ModelSettings":
+        source = obj.pop("_source", None)
+        if not source:
+            return super().parse_obj(obj)
+
+        model_folder = os.path.dirname(source)
+        with _extra_sys_path(model_folder):
+            _reload_module(obj)
+            model_settings = super().parse_obj(obj)
+            model_settings._source = source
+            return model_settings
+
     name: str = ""
     """Name of the model."""
 
@@ -201,7 +256,7 @@ class ModelSettings(BaseSettings):
     to wait for enough requests to build a full batch."""
 
     # Custom model class implementation
-    implementation: PyObject = "mlserver.model.MLModel"  # type: ignore
+    implementation: PyObject
     """*Python path* to the inference runtime to use to serve this model (e.g.
     ``mlserver_sklearn.SKLearnModel``)."""
 

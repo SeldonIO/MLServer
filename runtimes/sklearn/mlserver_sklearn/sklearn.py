@@ -14,10 +14,11 @@ from mlserver.types import (
 )
 from mlserver.utils import get_model_uri
 
-
+PREDICT_FN_KEY = "predict_fn"
 PREDICT_OUTPUT = "predict"
 PREDICT_PROBA_OUTPUT = "predict_proba"
-VALID_OUTPUTS = [PREDICT_OUTPUT, PREDICT_PROBA_OUTPUT]
+PREDICT_TRANSFORM = "transform"
+VALID_OUTPUTS = [PREDICT_OUTPUT, PREDICT_PROBA_OUTPUT, PREDICT_TRANSFORM]
 
 WELLKNOWN_MODEL_FILENAMES = ["model.joblib", "model.pickle", "model.pkl"]
 
@@ -51,14 +52,26 @@ class SKLearnModel(MLModel):
 
     def _check_request(self, payload: InferenceRequest) -> InferenceRequest:
         if not payload.outputs:
+            found_predict_fn = False
+            if self.settings.parameters:
+                if self.settings.parameters.extra:
+                    if PREDICT_FN_KEY in self.settings.parameters.extra:
+                        payload.outputs = [
+                            RequestOutput(
+                                name=self.settings.parameters.extra[PREDICT_FN_KEY]
+                            )
+                        ]
+                        found_predict_fn = True
             # By default, only return the result of `predict()`
-            payload.outputs = [RequestOutput(name=PREDICT_OUTPUT)]
+            if not found_predict_fn:
+                payload.outputs = [RequestOutput(name=PREDICT_OUTPUT)]
         else:
             for request_output in payload.outputs:
                 if request_output.name not in VALID_OUTPUTS:
                     raise InferenceError(
-                        f"SKLearnModel only supports '{PREDICT_OUTPUT}' and "
-                        f"'{PREDICT_PROBA_OUTPUT}' as outputs "
+                        f"SKLearnModel only supports '{PREDICT_OUTPUT}', "
+                        f"'{PREDICT_PROBA_OUTPUT}' and "
+                        f"'{PREDICT_TRANSFORM}' as outputs "
                         f"({request_output.name} was received)"
                     )
 

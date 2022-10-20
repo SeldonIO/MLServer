@@ -39,7 +39,7 @@ You can install the `mlserver` package running:
 pip install mlserver
 ```
 
-Note that to use any of the optional [inference runtimes](#Inference-Runtimes),
+Note that to use any of the optional [inference runtimes](#inference-runtimes),
 you'll need to install the relevant package.
 For example, to serve a `scikit-learn` model, you would need to install the
 `mlserver-sklearn` package:
@@ -78,6 +78,7 @@ Out of the box, MLServer provides support for:
 | Tempo        | ✅        | [`github.com/SeldonIO/tempo`](https://github.com/SeldonIO/tempo) |
 | MLflow       | ✅        | [MLServer MLflow](./runtimes/mlflow)                             |
 | Alibi-Detect | ✅        | [MLServer Alibi Detect](./runtimes/alibi-detect)                 |
+| HuggingFace  | ✅        | [MLServer HuggingFace](./runtimes/huggingface)                   |
 
 ## Examples
 
@@ -92,6 +93,7 @@ MLServer to start serving your machine learning models.
 - [Serving a `tempo` pipeline](./docs/examples/tempo/README.md)
 - [Serving a custom model](./docs/examples/custom/README.md)
 - [Serving an `alibi-detect` model](./docs/examples/alibi-detect/README.md)
+- [Serving a `HuggingFace` model](./docs/examples/huggingface/README.md)
 - [Multi-Model Serving with multiple frameworks](./docs/examples/mms/README.md)
 - [Loading / unloading models from a model repository](./docs/examples/model-repository/README.md)
 

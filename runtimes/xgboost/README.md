@@ -15,14 +15,9 @@ this [worked out example](../../docs/examples/xgboost/README.md).
 
 ## Content Types
 
-The XGBoost runtime supports a new `dmatrix` content type, aim to decode V2
-Inference payloads into [XGBoost's `DMatrix` data
-type](https://xgboost.readthedocs.io/en/stable/python/python_api.html#xgboost.DMatrix).
-This content type uses a similar set of encoding rules as the [NumPy Array
-one](../../docs/user-guide/content-type).
-
-If no content type is specified on either the request payload or the model's
-metadata, the XGBoost runtime will default to the `dmatrix` content type.
+If no [content type](../../docs/user-guide/content-type) is present on the
+request or metadata, the XGBoost runtime will try to decode the payload as a
+[NumPy Array](../../docs/user-guide/content-type).
 To avoid this, either send a different content type explicitly, or define the
 correct one as part of your [model's
 metadata](../../docs/reference/model-settings).

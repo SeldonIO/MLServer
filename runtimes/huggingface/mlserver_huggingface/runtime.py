@@ -14,10 +14,12 @@ from mlserver_huggingface.common import (
     parse_parameters_from_env,
     InvalidTranformerInitialisation,
     load_pipeline_from_settings,
+    NumpyEncoder,
 )
 from mlserver_huggingface.codecs import MultiStringRequestCodec
 from transformers.pipelines import SUPPORTED_TASKS
 from optimum.pipelines import SUPPORTED_TASKS as SUPPORTED_OPTIMUM_TASKS
+from mlserver.logging import logger
 
 
 class HuggingFaceRuntime(MLModel):
@@ -56,15 +58,24 @@ class HuggingFaceRuntime(MLModel):
                     ),
                 )
 
+        if settings.max_batch_size != self.hf_settings.batch_size:
+            logger.warning(
+                f"hf batch_size: {self.hf_settings.batch_size} is different "
+                f"from MLServer max_batch_size: {settings.max_batch_size}"
+            )
+
         super().__init__(settings)
 
     async def load(self) -> bool:
         # Loading & caching pipeline in asyncio loop to avoid blocking
+        print("loading model...")
         await asyncio.get_running_loop().run_in_executor(
             None, load_pipeline_from_settings, self.hf_settings
         )
+        print("(re)loading model...")
         # Now we load the cached model which should not block asyncio
         self._model = load_pipeline_from_settings(self.hf_settings)
+        print("model has been loaded!")
         self.ready = True
         return self.ready
 
@@ -83,9 +94,8 @@ class HuggingFaceRuntime(MLModel):
         prediction = self._model(*args, **kwargs)
 
         # TODO: Convert hf output to v2 protocol, for now we use to_json
-        prediction_encoded = StringCodec.encode_output(
-            payload=[json.dumps(prediction)], name="output"
-        )
+        str_out = [json.dumps(pred, cls=NumpyEncoder) for pred in prediction]
+        prediction_encoded = StringCodec.encode_output(payload=str_out, name="output")
 
         return InferenceResponse(
             model_name=self.name,

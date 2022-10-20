@@ -50,7 +50,7 @@ def model_signature(dataset: tuple) -> ModelSignature:
 
 
 @pytest.fixture
-def model_uri(tmp_path, dataset: tuple, model_signature: ModelSignature) -> str:
+def model_uri(tmp_path: str, dataset: tuple, model_signature: ModelSignature) -> str:
     X, y = dataset
 
     clf = DummyClassifier(strategy="prior")
@@ -101,6 +101,7 @@ def model_settings(model_uri: str) -> ModelSettings:
 def model_settings_pytorch_fixed(pytorch_model_uri) -> ModelSettings:
     return ModelSettings(
         name="mlflow-model",
+        implementation=MLflowRuntime,
         parameters=ModelParameters(uri=pytorch_model_uri),
     )
 

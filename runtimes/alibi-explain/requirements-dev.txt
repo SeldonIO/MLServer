@@ -1,2 +1,2 @@
 types-requests
-httpx==0.22.0
+httpx==0.23.0

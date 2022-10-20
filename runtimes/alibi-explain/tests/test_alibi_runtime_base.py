@@ -1,9 +1,11 @@
 import json
+
+import alibi.explainers.anchors.anchor_tabular
 import pytest
+import numpy as np
+
 from typing import Any, Dict
 from unittest.mock import patch
-
-import numpy as np
 from alibi.api.interfaces import Explanation
 from numpy.testing import assert_array_equal
 
@@ -18,6 +20,7 @@ from mlserver.types import (
     MetadataTensor,
 )
 from mlserver_alibi_explain.common import (
+    execute_async,
     convert_from_bytes,
     remote_predict,
     AlibiExplainSettings,
@@ -113,7 +116,12 @@ async def test_remote_predict__smoke(custom_runtime_tf, rest_client):
 
         endpoint = f"v2/models/{custom_runtime_tf.settings.name}/infer"
 
-        res = remote_predict(inference_request, predictor_url=endpoint)
+        res = await execute_async(
+            None,
+            remote_predict,
+            inference_request,
+            predictor_url=endpoint,
+        )
         assert isinstance(res, InferenceResponse)
 
 
@@ -140,7 +148,7 @@ async def test_alibi_runtime_wrapper(custom_runtime_tf: MLModel):
     )
 
     # settings object is dummy and discarded
-    wrapper = _MockInit(ModelSettings())
+    wrapper = _MockInit(ModelSettings(name="foo", implementation=AlibiExplainRuntime))
 
     assert wrapper.settings == custom_runtime_tf.settings
     assert wrapper.name == custom_runtime_tf.name
@@ -178,6 +186,10 @@ async def test_alibi_runtime_wrapper(custom_runtime_tf: MLModel):
     assert wrapper_public_funcs == expected_public_funcs
 
 
+def fake_predictor(x):
+    return x
+
+
 async def test_explain_parameters_pass_through():
     # test that the explain parameters are wired properly, if it runs ok then
     # the assertion is fine
@@ -196,12 +208,15 @@ async def test_explain_parameters_pass_through():
             return Explanation(meta={}, data={})
 
     rt = _DummyExplainer(
-        settings=ModelSettings(),
+        settings=ModelSettings(name="foo", implementation=AlibiExplainRuntime),
         explainer_settings=AlibiExplainSettings(
             infer_uri="dum",
             explainer_type="dum",
             init_parameters=None,
         ),
+    )
+    rt._model = alibi.explainers.anchors.anchor_tabular.AnchorTabular(
+        fake_predictor, ["a"]
     )
 
     inference_request = InferenceRequest(

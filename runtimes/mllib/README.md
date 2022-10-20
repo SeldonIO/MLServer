@@ -11,5 +11,4 @@ pip install mlserver mlserver-mllib
 ```
 
 For further information on how to use MLServer with Spark MLlib, you can check
-out the [github.com/SeldonIO/MLServer
-repository](https://github.com/SeldonIO/MLServer).
+out the [MLServer repository](https://github.com/SeldonIO/MLServer).

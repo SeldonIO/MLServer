@@ -1,8 +1,10 @@
+import json
+
 from enum import IntEnum
 from pydantic import BaseModel
-from typing import Optional
+from typing import Any, Dict, List, Optional
 
-from ..types import InferenceRequest, InferenceResponse
+from ..utils import get_import_path
 from ..settings import ModelSettings
 
 
@@ -11,23 +13,42 @@ class ModelUpdateType(IntEnum):
     Unload = 2
 
 
-class InferenceRequestMessage(BaseModel):
+class ModelRequestMessage(BaseModel):
     id: str
     model_name: str
     model_version: Optional[str] = None
-    inference_request: InferenceRequest
+    method_name: str
+    method_args: List[Any] = []
+    method_kwargs: Dict[str, Any] = {}
 
 
-class InferenceResponseMessage(BaseModel):
+class ModelResponseMessage(BaseModel):
     class Config:
         # This is to allow having an Exception field
         arbitrary_types_allowed = True
 
     id: str
-    inference_response: Optional[InferenceResponse]
+    return_value: Optional[Any]
     exception: Optional[Exception]
 
 
 class ModelUpdateMessage(BaseModel):
     update_type: ModelUpdateType
-    model_settings: ModelSettings
+    serialised_model_settings: str
+
+    def __init__(self, *args, **kwargs):
+        model_settings = kwargs.pop("model_settings", None)
+        if model_settings:
+            as_dict = model_settings.dict()
+            # Ensure the private `_source` attr also gets serialised
+            if model_settings._source:
+                as_dict["_source"] = model_settings._source
+
+            import_path = get_import_path(model_settings.implementation)
+            as_dict["implementation"] = import_path
+            kwargs["serialised_model_settings"] = json.dumps(as_dict)
+        return super().__init__(*args, **kwargs)
+
+    @property
+    def model_settings(self) -> ModelSettings:
+        return ModelSettings.parse_raw(self.serialised_model_settings)

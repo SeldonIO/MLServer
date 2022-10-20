@@ -24,7 +24,7 @@ html_title = "MLServer Documentation"
 author = "Seldon Technologies"
 
 # The full version, including alpha/beta/rc tags
-release = "1.1.0"
+release = "1.2.0.dev6"
 
 
 # -- General configuration ---------------------------------------------------
@@ -55,6 +55,9 @@ autodoc_pydantic_settings_show_json = False
 # Bibtex settings
 bibtex_bibfiles = ["references.bib"]
 bibtex_reference_style = "author_year"
+
+# Auto-generate header anchors
+myst_heading_anchors = 3
 
 
 # -- Options for HTML output -------------------------------------------------

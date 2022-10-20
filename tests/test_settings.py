@@ -1,4 +1,9 @@
+import os
+import sys
+import pytest
+
 from mlserver.settings import CORSSettings, Settings, ModelSettings, ModelParameters
+from mlserver.repository import DEFAULT_MODEL_SETTINGS_FILENAME
 from .conftest import TESTDATA_PATH
 
 
@@ -37,6 +42,7 @@ def test_model_settings_from_env(monkeypatch):
     monkeypatch.setenv("mlserver_model_name", model_name)
     monkeypatch.setenv("mlserver_model_version", model_version)
     monkeypatch.setenv("mlserver_model_uri", model_uri)
+    monkeypatch.setenv("mlserver_model_implementation", "mlserver.MLModel")
 
     model_settings = ModelSettings()
     model_settings.parameters = ModelParameters()
@@ -44,3 +50,25 @@ def test_model_settings_from_env(monkeypatch):
     assert model_settings.name == model_name
     assert model_settings.parameters.version == model_version
     assert model_settings.parameters.uri == model_uri
+
+
+@pytest.mark.parametrize(
+    "obj",
+    [
+        ({"name": "foo", "implementation": "tests.fixtures.SumModel"}),
+        (
+            {
+                "_source": os.path.join(TESTDATA_PATH, DEFAULT_MODEL_SETTINGS_FILENAME),
+                "name": "foo",
+                "implementation": "models.SumModel",
+            }
+        ),
+    ],
+)
+def test_model_settings_parse_obj(obj: dict):
+    pre_sys_path = sys.path[:]
+    model_settings = ModelSettings.parse_obj(obj)
+    post_sys_path = sys.path[:]
+
+    assert pre_sys_path == post_sys_path
+    assert model_settings.implementation.__name__ == "SumModel"

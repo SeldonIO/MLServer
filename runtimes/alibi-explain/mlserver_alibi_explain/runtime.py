@@ -1,6 +1,6 @@
 import json
+import numpy as np
 from typing import Any, Optional, List, Dict
-
 from alibi.api.interfaces import Explanation, Explainer
 from alibi.saving import load_explainer
 
@@ -10,7 +10,7 @@ from mlserver.codecs import (
     StringCodec,
     RequestCodecLike,
 )
-from mlserver.errors import ModelParametersMissing, InvalidModelURI
+from mlserver.errors import ModelParametersMissing
 from mlserver.handlers import custom_handler
 from mlserver.model import MLModel
 from mlserver.rest.responses import Response
@@ -24,6 +24,8 @@ from mlserver.types import (
     MetadataTensor,
     ResponseOutput,
 )
+from mlserver.utils import get_model_uri
+
 from mlserver_alibi_explain.alibi_dependency_reference import (
     get_mlmodel_class_as_str,
     get_alibi_class_as_str,
@@ -80,13 +82,25 @@ class AlibiExplainRuntimeBase(MLModel):
 
         # TODO: convert and validate?
         input_data = self.decode_request(payload, default_codec=NumpyRequestCodec)
-        output_data = await self._async_explain_impl(input_data, payload.parameters)
+        output_data = await self._async_explain_impl(
+            np.array(input_data), payload.parameters
+        )
 
         return InferenceResponse(
             model_name=self.name,
             model_version=self.version,
             outputs=[output_data],
+            parameters=Parameters(
+                headers={
+                    "x-seldon-alibi-type": "explanation",
+                    "x-seldon-alibi-method": self.get_alibi_method(),
+                }
+            ),
         )
+
+    def get_alibi_method(self) -> str:
+        module: str = type(self._model).__module__  # type: ignore
+        return module.split(".")[-1]
 
     async def _async_explain_impl(
         self, input_data: Any, settings: Optional[Parameters]
@@ -109,17 +123,17 @@ class AlibiExplainRuntimeBase(MLModel):
             payload=[explanation.to_json()], name="explanation"
         )
 
-    def _load_from_uri(self, predictor: Any) -> Explainer:
+    async def _load_from_uri(self, predictor: Any) -> Explainer:
         # load the model from disk
         # full model is passed as `predictor`
         # load the model from disk
         model_parameters: Optional[ModelParameters] = self.settings.parameters
         if model_parameters is None:
             raise ModelParametersMissing(self.name)
-        uri = model_parameters.uri
-        if uri is None:
-            raise InvalidModelURI(self.name)
-        return load_explainer(uri, predictor=predictor)
+        absolute_uri = await get_model_uri(self.settings)
+        return await execute_async(
+            loop=None, fn=load_explainer, path=absolute_uri, predictor=predictor
+        )
 
     def _explain_impl(self, input_data: Any, explain_parameters: Dict) -> Explanation:
         """Actual explain to be implemented by subclasses"""

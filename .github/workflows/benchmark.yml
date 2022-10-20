@@ -1,0 +1,36 @@
+name: MLServer Benchmarks
+
+on:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron: "23 18 * * *"
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        scenario: ["inference-rest.js", "inference-grpc.js"]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Install Dependencies
+        run: |
+          make install-dev
+      - name: Install k6
+        working-directory: ./benchmarking
+        run: |
+          curl https://github.com/grafana/k6/releases/download/v0.38.3/k6-v0.38.3-linux-amd64.tar.gz -L | tar xvz --strip-components 1
+      - name: Start Test Server & Run Benchmark
+        working-directory: ./benchmarking
+        run: |
+          make start-testserver &
+          sleep 5 && # Wait for test server to come up
+          ./k6 run ./scenarios/${{ matrix.scenario }}
+        env:
+          MLSERVER_HOST: localhost
+          MLSERVER_HTTP_PORT: 8080
+          MLSERVER_GRPC_PORT: 8081

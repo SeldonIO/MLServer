@@ -1,63 +1,93 @@
 openapi: 3.0.0
 info:
   title: Model Repository
-  version: '2.0'
-  description: 'https://github.com/triton-inference-server/server/blob/master/docs/protocol/extension_model_repository.md#httprest'
+  version: "2.0"
+  contact:
+    name: Seldon Technologies Ltd.
+    url: "https://www.seldon.io/"
+    email: hello@seldon.io
+  description: "The Model Repository API allows the user to manage the models running in the inference server. That is, querying the currently available models, load them and unload them."
 servers: []
 paths:
   /v2/repository/index:
     post:
-      summary: ''
-      operationId: post-v2-repository-index
+      summary: ""
+      operationId: repository-index
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/repository_index_response'
-      description: ''
+                $ref: "#/components/schemas/RepositoryIndexResponse"
+      description: "The index API returns information about every model available in a model repository, even if it is not currently loaded into Triton. The index API provides a way to determine which models can potentially be loaded by the Load API. A model-repository index request is made with an HTTP POST to the index endpoint. In the corresponding response the HTTP body contains the JSON response."
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/repository_index_request'
-  '/v2/repository/models/${MODEL_NAME}/load':
+              $ref: "#/components/schemas/RepositoryIndexRequest"
+      tags:
+        - extension
+        - model-repository
+        - server
+  "/v2/repository/models/{model_name}/load":
     parameters:
       - schema:
           type: string
-        name: MODEL_NAME
+        name: model_name
         in: path
         required: true
     post:
-      summary: ''
-      operationId: post-v2-repository-models-$-MODEL_NAME-load
+      summary: ""
+      operationId: load-model
       responses:
-        '200':
+        "200":
           description: OK
-  '/v2/repository/models/${MODEL_NAME}/unload':
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RepositoryLoadErrorResponse"
+      description: "The load API requests that a model be loaded into Triton, or reloaded if the model is already loaded. A load request is made with an HTTP POST to a load endpoint. A successful load request is indicated by a 200 HTTP status."
+      tags:
+        - extension
+        - model
+        - model-repository
+  "/v2/repository/models/{model_name}/unload":
     parameters:
       - schema:
           type: string
-        name: MODEL_NAME
+        name: model_name
         in: path
         required: true
     post:
-      summary: ''
-      operationId: post-v2-repository-models-$-MODEL_NAME-unload
+      summary: ""
+      operationId: model-unload
       responses:
-        '200':
+        "200":
           description: OK
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RepositoryUnloadErrorResponse"
+      description: The unload API requests that a model be unloaded from Triton. An unload request is made with an HTTP POST to an unload endpoint. A successful unload request is indicated by a 200 HTTP status.
+      tags:
+        - extension
+        - model
+        - model-repository
 components:
   schemas:
-    repository_index_request:
-      title: repository_index_request
+    RepositoryIndexRequest:
+      title: RepositoryIndexRequest
       type: object
       properties:
         ready:
           type: boolean
-    repository_index_response:
-      title: repository_index_response
+    RepositoryIndexResponse:
+      title: RepositoryIndexResponse
       type: array
       items:
         type: object
@@ -80,21 +110,20 @@ components:
           - name
           - state
           - reason
-    repository_index_error_response:
-      title: repository_index_error_response
+    RepositoryLoadErrorResponse:
+      title: RepositoryLoadErrorResponse
       type: object
       properties:
         error:
           type: string
-    repository_load_error_response:
-      title: repository_load_error_response
+    RepositoryUnloadErrorResponse:
+      title: RepositoryUnloadErrorResponse
       type: object
       properties:
         error:
           type: string
-    repository_unload_error_response:
-      title: repository_unload_error_response
-      type: object
-      properties:
-        error:
-          type: string
+tags:
+  - name: extension
+  - name: model
+  - name: model-repository
+  - name: server

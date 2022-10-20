@@ -1,4 +1,3 @@
-import json
 import pytest
 import os
 import shutil
@@ -15,7 +14,6 @@ from mlserver.logging import get_logger
 from mlserver import types, Settings, ModelSettings
 
 from .fixtures import SumModel, ErrorModel
-from .helpers import get_import_path
 
 TESTS_PATH = os.path.dirname(__file__)
 TESTDATA_PATH = os.path.join(TESTS_PATH, "testdata")
@@ -56,13 +54,13 @@ def event_loop():
 
 @pytest.fixture
 def sum_model_settings() -> ModelSettings:
-    model_settings_path = os.path.join(TESTDATA_PATH, "model-settings.json")
+    model_settings_path = os.path.join(TESTDATA_PATH, DEFAULT_MODEL_SETTINGS_FILENAME)
     return ModelSettings.parse_file(model_settings_path)
 
 
 @pytest.fixture
 def error_model_settings() -> ModelSettings:
-    model_settings_path = os.path.join(TESTDATA_PATH, "model-settings.json")
+    model_settings_path = os.path.join(TESTDATA_PATH, DEFAULT_MODEL_SETTINGS_FILENAME)
     model_settings = ModelSettings.parse_file(model_settings_path)
     model_settings.name = "error-model"
     model_settings.implementation = ErrorModel
@@ -138,45 +136,15 @@ def model_repository_handlers(
 
 
 @pytest.fixture
-def model_folder(tmp_path):
-    to_copy = ["model-settings.json"]
+def model_folder(tmp_path: str) -> str:
+    to_copy = [DEFAULT_MODEL_SETTINGS_FILENAME]
 
     for file_name in to_copy:
         src = os.path.join(TESTDATA_PATH, file_name)
-        dst = tmp_path.joinpath(file_name)
+        dst = os.path.join(tmp_path, file_name)
         shutil.copyfile(src, dst)
 
-    return tmp_path
-
-
-@pytest.fixture
-def multi_model_folder(model_folder, sum_model_settings):
-    # Remove original
-    model_settings_path = os.path.join(model_folder, DEFAULT_MODEL_SETTINGS_FILENAME)
-    os.remove(model_settings_path)
-
-    num_models = 5
-    for idx in range(num_models):
-        sum_model_settings.parameters.version = f"v{idx}"
-
-        model_version_folder = os.path.join(
-            model_folder,
-            "sum-model",
-            sum_model_settings.parameters.version,
-        )
-        os.makedirs(model_version_folder)
-
-        model_settings_path = os.path.join(
-            model_version_folder, DEFAULT_MODEL_SETTINGS_FILENAME
-        )
-        with open(model_settings_path, "w") as f:
-            settings_dict = sum_model_settings.dict()
-            settings_dict["implementation"] = get_import_path(
-                sum_model_settings.implementation
-            )
-            f.write(json.dumps(settings_dict))
-
-    return model_folder
+    return str(tmp_path)
 
 
 @pytest.fixture

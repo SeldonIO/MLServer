@@ -6,6 +6,7 @@ from ..model import MLModel
 
 from .utils import matches
 from .app import create_app
+from .logging import logger
 
 
 class _NoSignalServer(uvicorn.Server):
@@ -29,7 +30,7 @@ class RESTServer:
             model_repository_handlers=self._model_repository_handlers,
         )
 
-    async def add_custom_handlers(self, model: MLModel):
+    async def add_custom_handlers(self, model: MLModel) -> MLModel:
         handlers = get_custom_handlers(model)
         for custom_handler, handler_method in handlers:
             self._app.add_api_route(
@@ -38,10 +39,12 @@ class RESTServer:
                 methods=[custom_handler.rest_method],
             )
 
-    async def delete_custom_handlers(self, model: MLModel):
+        return model
+
+    async def delete_custom_handlers(self, model: MLModel) -> MLModel:
         handlers = get_custom_handlers(model)
         if len(handlers) == 0:
-            return
+            return model
 
         # NOTE: Loop in reverse, so that it's quicker to find all the recently
         # added routes and we can remove routes on-the-fly
@@ -51,22 +54,35 @@ class RESTServer:
                     self._app.routes.pop(i)
                     handlers.pop(j)
 
+        return model
+
     async def start(self):
         cfg = self._get_config()
         self._server = _NoSignalServer(cfg)
         await self._server.serve()
 
     def _get_config(self):
-        kwargs = {
-            "host": self._settings.host,
-            "port": self._settings.http_port,
-            "root_path": self._settings.root_path,
-        }
+        kwargs = {}
+
+        if self._settings._custom_rest_server_settings:
+            logger.warning(
+                "REST custom configuration is out of support. Use as your own risk"
+            )
+            kwargs.update(self._settings._custom_rest_server_settings)
+
+        kwargs.update(
+            {
+                "host": self._settings.host,
+                "port": self._settings.http_port,
+                "root_path": self._settings.root_path,
+                "access_log": self._settings.debug,
+            }
+        )
 
         if self._settings.logging_settings:
             # If not None, use ours. Otherwise, let Uvicorn fall back on its
             # own config.
-            kwargs["log_config"] = self._settings.logging_settings
+            kwargs.update({"log_config": self._settings.logging_settings})
 
         return uvicorn.Config(self._app, **kwargs)
 

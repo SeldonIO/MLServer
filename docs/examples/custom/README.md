@@ -251,6 +251,17 @@ Now that we have written and tested our custom model, the next step is to deploy
 With that goal in mind, the rough outline of steps will be to first build a custom image containing our code, and then deploy it.
 
 
+### Specifying requirements
+MLServer will automatically find your requirements.txt file and install necessary python packages
+
+
+```python
+%%writefile requirements.txt
+numpy==1.22.0
+numpyro==0.8.0
+jax==0.2.24
+```
+
 ### Building a custom image
 
 ```{note}
@@ -310,6 +321,10 @@ This section expects access to a functional Kubernetes cluster with Seldon Core 
 Now that we've built a custom image and verified that it works as expected, we can move to the next step and deploy it.
 There is a large number of tools out there to deploy images.
 However, for our example, we will focus on deploying it to a cluster running [Seldon Core](https://docs.seldon.io/projects/seldon-core/en/latest/).
+
+```{note}
+Also consider that depending on your Kubernetes installation Seldon Core might excpect to get the container image from a public container registry like [Docker hub](https://hub.docker.com/) or [Google Container Registry](https://cloud.google.com/container-registry). For that you need to do an extra step of pushing the container to the registry using `docker tag <image name> <container registry>/<image name>` and `docker push <container registry>/<image name>` and also updating the `image` section of the yaml file to `<container registry>/<image name>`. 
+```
 
 For that, we will need to create a `SeldonDeployment` resource which instructs Seldon Core to deploy a model embedded within our custom image and compliant with the [V2 Inference Protocol](https://github.com/kserve/kserve/tree/master/docs/predict-api/v2).
 This can be achieved by _applying_ (i.e. `kubectl apply`) a `SeldonDeployment` manifest to the cluster, similar to the one below:

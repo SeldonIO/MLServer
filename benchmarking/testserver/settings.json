@@ -1,4 +1,6 @@
 {
   "debug": false,
-  "load_models_at_startup": false
+  "load_models_at_startup": false,
+  "parallel_workers": 2,
+  "metrics_endpoint": null
 }

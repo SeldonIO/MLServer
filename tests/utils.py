@@ -1,6 +1,8 @@
 import aiohttp
 import socket
 
+from typing import List
+
 from aiohttp.client_exceptions import (
     ClientConnectorError,
     ClientOSError,
@@ -11,12 +13,19 @@ from aiohttp_retry import RetryClient, ExponentialRetry
 from mlserver.types import RepositoryIndexResponse, InferenceRequest, InferenceResponse
 
 
-def get_available_port() -> int:
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.bind(("", 0))
-    port = s.getsockname()[1]
-    s.close()
-    return port
+def get_available_ports(n: int = 1) -> List[int]:
+    ports = set()
+
+    while len(ports) < n:
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.bind(("", 0))
+        port = s.getsockname()[1]
+        s.close()
+
+        # The ports set will ensure there are no duplicates
+        ports.add(port)
+
+    return list(ports)
 
 
 class RESTClient:
@@ -31,12 +40,13 @@ class RESTClient:
         retry_options = ExponentialRetry(
             attempts=10,
             start_timeout=0.5,
+            statuses=[400],
             exceptions={ClientConnectorError, ClientOSError, ServerDisconnectedError},
         )
         retry_client = RetryClient(raise_for_status=True, retry_options=retry_options)
 
         async with retry_client:
-            await retry_client.get(endpoint, raise_for_status=True)
+            await retry_client.get(endpoint)
 
     async def wait_until_ready(self) -> None:
         endpoint = f"http://{self._http_server}/v2/health/ready"

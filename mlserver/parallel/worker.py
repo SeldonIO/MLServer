@@ -2,14 +2,19 @@ import asyncio
 import select
 import signal
 
-from queue import Empty
+from asyncio import Task
 from multiprocessing import Process, Queue, JoinableQueue
 from concurrent.futures import ThreadPoolExecutor
 
 from ..registry import MultiModelRegistry
-from ..utils import install_uvloop_event_loop
+from ..utils import install_uvloop_event_loop, schedule_with_callback
 
-from .messages import ModelUpdateType, ModelUpdateMessage, InferenceResponseMessage
+from .messages import (
+    ModelRequestMessage,
+    ModelUpdateType,
+    ModelUpdateMessage,
+    ModelResponseMessage,
+)
 from .utils import terminate_queue, END_OF_QUEUE
 from .logging import logger
 from prometheus_client import Histogram
@@ -17,22 +22,24 @@ from prometheus_client import Histogram
 IGNORED_SIGNALS = [signal.SIGINT, signal.SIGTERM, signal.SIGQUIT]
 
 
+queue_request_count = Histogram(
+    "queue_request_counter",
+    "counter of request queue size",
+)
+
+
 def _noop():
     pass
 
 
 class Worker(Process):
-    def __init__(self, requests: Queue, responses: Queue):
+    def __init__(self, responses: Queue):
         super().__init__()
-        self._requests = requests
         self._responses = responses
-        self.model_updates: JoinableQueue[ModelUpdateMessage] = JoinableQueue()
+        self._requests: Queue[ModelRequestMessage] = Queue()
+        self._model_updates: JoinableQueue[ModelUpdateMessage] = JoinableQueue()
 
         self.__executor = None
-
-        # self.model_queue_request_count = Histogram(
-        #     "model_queue_request_counter", "Counter of request queue model"
-        # )
 
     @property
     def _executor(self):
@@ -75,61 +82,63 @@ class Worker(Process):
 
     async def coro_run(self):
         self.__inner_init__()
+        loop = asyncio.get_event_loop()
 
         while self._active:
-            readable, _, _ = select.select(
-                [self._requests._reader, self.model_updates._reader],
-                [],
-                [],
-            )
+            readable = await loop.run_in_executor(self._executor, self._select)
             for r in readable:
                 if r is self._requests._reader:
-                    try:
-                        # NOTE: `select.select` will notify all workers when a
-                        # new message is available. However, only one of them
-                        # will be able to read it. To save us from doing more
-                        # complex synchronisation, we just try to read and
-                        # we'll continue if there are no messages in the queue.
-                        request = self._requests.get(block=False)
-                    except Empty:
-                        # Some other worker got that request first, so ignore
-                        # and continue
-                        continue
+                    request = self._requests.get()
 
-                    await self._process_request(request)
-                elif r is self.model_updates._reader:
-
-                    # with self.model_queue_request_count.time():
-                    #     model_queue_size = self._requests.qsize()
-                    #     self.model_queue_request_count.observe(model_queue_size)
-
-                    model_update = self.model_updates.get()
+                    schedule_with_callback(
+                        self._process_request(request), self._request_cb
+                    )
+                elif r is self._model_updates._reader:
+                    model_update = self._model_updates.get()
                     # If the queue gets terminated, detect the "sentinel value"
                     # and stop reading
                     if model_update is END_OF_QUEUE:
                         self._active = False
-                        self.model_updates.task_done()
+                        self._model_updates.task_done()
                         return
 
-                    await self._process_model_update(model_update)
-                    self.model_updates.task_done()
+                    schedule_with_callback(
+                        self._process_model_update(model_update), self._update_cb
+                    )
 
-    async def _process_request(self, request):
+    def _select(self):
+        readable, _, _ = select.select(
+            [self._requests._reader, self._model_updates._reader],
+            [],
+            [],
+        )
+
+        return readable
+
+    async def _process_request(self, request) -> ModelResponseMessage:
         try:
             model = await self._model_registry.get_model(
                 request.model_name, request.model_version
             )
 
-            inference_response = await model.predict(request.inference_request)
-
-            response = InferenceResponseMessage(
-                id=request.id, inference_response=inference_response
+            queue_size = self._requests.qsize()
+            queue_request_count.observe(
+                queue_size, {"queue": "request_worker_queue"}
             )
-            self._responses.put(response)
+
+            method = getattr(model, request.method_name)
+            return_value = await method(*request.method_args, **request.method_kwargs)
+            return ModelResponseMessage(id=request.id, return_value=return_value)
         except Exception as e:
-            logger.exception("An error occurred during inference in a parallel worker.")
-            exception = InferenceResponseMessage(id=request.id, exception=e)
-            self._responses.put(exception)
+            logger.exception(
+                f"An error occurred calling method '{request.method_name}' "
+                f"from model '{request.model_name}'."
+            )
+            return ModelResponseMessage(id=request.id, exception=e)
+
+    def _request_cb(self, request_task: Task):
+        response_message = request_task.result()
+        self._responses.put(response_message)
 
     async def _process_model_update(self, update: ModelUpdateMessage):
         model_settings = update.model_settings
@@ -142,14 +151,28 @@ class Worker(Process):
                 "Unknown model update message with type ", update.update_type
             )
 
+    def _update_cb(self, update_task: Task):
+        err = update_task.exception()
+        if err:
+            logger.error(err)
+
+        self._model_updates.task_done()
+
+    def send_request(self, request_message: ModelRequestMessage):
+        """
+        Send an inference request message to the worker.
+        Note that this method should be both multiprocess- and thread-safe.
+        """
+        self._requests.put(request_message)
+
     async def send_update(self, model_update: ModelUpdateMessage):
         """
         Send a model update to the worker.
         Note that this method should be both multiprocess- and thread-safe.
         """
         loop = asyncio.get_event_loop()
-        self.model_updates.put(model_update)
-        await loop.run_in_executor(self._executor, self.model_updates.join)
+        self._model_updates.put(model_update)
+        await loop.run_in_executor(self._executor, self._model_updates.join)
 
     async def stop(self):
         """
@@ -157,7 +180,8 @@ class Worker(Process):
         Note that this method should be both multiprocess- and thread-safe.
         """
         loop = asyncio.get_event_loop()
-        await terminate_queue(self.model_updates)
-        await loop.run_in_executor(self._executor, self.model_updates.join)
-        self.model_updates.close()
+        await terminate_queue(self._model_updates)
+        await loop.run_in_executor(self._executor, self._model_updates.join)
+        self._model_updates.close()
+        self._requests.close()
         self._executor.shutdown()

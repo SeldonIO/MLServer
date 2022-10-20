@@ -1,21 +1,23 @@
 import asyncio
 import json
 import os
+import pytest
+import tensorflow as tf
+import functools
+
 from pathlib import Path
 from typing import AsyncIterable, Dict, Any, Iterable
 from unittest.mock import patch
+from typing import Type
 
-import pytest
-import tensorflow as tf
-from alibi.api.interfaces import Explanation
-from alibi.explainers import AnchorImage
-from fastapi import FastAPI
 from httpx import AsyncClient
+from fastapi import FastAPI
+from alibi.api.interfaces import Explanation, Explainer
+from alibi.explainers import AnchorImage
 
-from helpers.tf_model import get_tf_mnist_model_uri
-from helpers.run_async import run_async_as_sync
 from mlserver import MLModel
 from mlserver.handlers import DataPlane, ModelRepositoryHandlers
+from mlserver.parallel import InferencePool
 from mlserver.registry import MultiModelRegistry
 from mlserver.repository import ModelRepository
 from mlserver.rest import RESTServer
@@ -25,9 +27,19 @@ from mlserver.utils import install_uvloop_event_loop
 from mlserver_alibi_explain.common import AlibiExplainSettings
 from mlserver_alibi_explain.runtime import AlibiExplainRuntime, AlibiExplainRuntimeBase
 
+from helpers.tf_model import get_tf_mnist_model_uri
+from helpers.run_async import run_async_as_sync
 
 TESTS_PATH = Path(os.path.dirname(__file__))
 _ANCHOR_IMAGE_DIR = TESTS_PATH / ".data" / "mnist_anchor_image"
+
+
+@pytest.fixture
+async def inference_pool(settings: Settings) -> InferencePool:
+    pool = InferencePool(settings)
+    yield pool
+
+    await pool.close()
 
 
 @pytest.fixture
@@ -58,10 +70,20 @@ def settings() -> Settings:
 
 
 @pytest.fixture
-async def model_registry(custom_runtime_tf_settings) -> MultiModelRegistry:
-    model_registry = MultiModelRegistry()
+async def model_registry(
+    custom_runtime_tf_settings, inference_pool
+) -> MultiModelRegistry:
+    model_registry = MultiModelRegistry(
+        on_model_load=[inference_pool.load_model],
+        on_model_reload=[inference_pool.reload_model],
+        on_model_unload=[inference_pool.unload_model],
+    )
+
     await model_registry.load(custom_runtime_tf_settings)
-    return model_registry
+
+    yield model_registry
+
+    await model_registry.unload(custom_runtime_tf_settings.name)
 
 
 @pytest.fixture
@@ -132,41 +154,43 @@ def anchor_image_directory() -> Path:
 
 @pytest.fixture
 async def anchor_image_runtime_with_remote_predict_patch(
-    anchor_image_directory,
-    custom_runtime_tf: MLModel,
-    remote_predict_mock_path: str = "mlserver_alibi_explain.common.remote_predict",
-    remote_metadata_mock_path: str = "mlserver_alibi_explain.common.remote_metadata",
+    anchor_image_directory, custom_runtime_tf: MLModel, mocker
 ) -> AlibiExplainRuntime:
-    with patch(remote_predict_mock_path) as remote_predict:
-        with patch(remote_metadata_mock_path) as remote_metadata:
+    def _mock_metadata(*args, **kwargs):
+        return MetadataModelResponse(name="dummy", platform="dummy")
 
-            def mock_metadata(*args, **kwargs):
-                return MetadataModelResponse(name="dummy", platform="dummy")
+    def _mock_predict(*args, **kwargs):
+        # mock implementation is required as we dont want to spin up a server,
+        # we just use MLModel.predict
+        return run_async_as_sync(custom_runtime_tf.predict, kwargs["v2_payload"])
 
-            def mock_predict(*args, **kwargs):
-                # mock implementation is required as we dont want to spin up a server,
-                # we just use MLModel.predict
-                return run_async_as_sync(
-                    custom_runtime_tf.predict, kwargs["v2_payload"]
-                )
+    remote_predict = mocker.patch(
+        "mlserver_alibi_explain.explainers.black_box_runtime.remote_predict"
+    )
+    remote_metadata = mocker.patch(
+        "mlserver_alibi_explain.explainers.black_box_runtime.remote_metadata"
+    )
 
-            remote_predict.side_effect = mock_predict
-            remote_metadata.side_effect = mock_metadata
+    remote_predict.side_effect = functools.partial(
+        _mock_predict, runtime=custom_runtime_tf
+    )
+    remote_metadata.side_effect = _mock_metadata
 
-            rt = AlibiExplainRuntime(
-                ModelSettings(
-                    parallel_workers=0,
-                    parameters=ModelParameters(
-                        uri=str(anchor_image_directory),
-                        extra=AlibiExplainSettings(
-                            explainer_type="anchor_image", infer_uri="dummy_call"
-                        ),
-                    ),
-                )
-            )
-            await rt.load()
+    rt = AlibiExplainRuntime(
+        ModelSettings(
+            parallel_workers=0,
+            implementation=AlibiExplainRuntime,
+            parameters=ModelParameters(
+                uri=str(anchor_image_directory),
+                extra=AlibiExplainSettings(
+                    explainer_type="anchor_image", infer_uri="dummy_call"
+                ),
+            ),
+        )
+    )
+    await rt.load()
 
-            return rt
+    yield rt
 
 
 @pytest.fixture
@@ -174,6 +198,7 @@ async def integrated_gradients_runtime() -> AlibiExplainRuntime:
     rt = AlibiExplainRuntime(
         ModelSettings(
             parallel_workers=1,
+            implementation=AlibiExplainRuntime,
             parameters=ModelParameters(
                 extra=AlibiExplainSettings(
                     init_parameters={"n_steps": 50, "method": "gausslegendre"},
@@ -191,6 +216,16 @@ async def integrated_gradients_runtime() -> AlibiExplainRuntime:
 @pytest.fixture
 def dummy_explainer_settings() -> Iterable[ModelSettings]:
     class _DummyExplainer(AlibiExplainRuntimeBase):
+        def __init__(self, settings: ModelSettings, explainer_class: Type[Explainer]):
+            self._explainer_class = explainer_class
+            self._model = None
+            # if we are here we are sure that settings.parameters is set,
+            # just helping mypy
+            assert settings.parameters is not None
+            extra = settings.parameters.extra
+            explainer_settings = AlibiExplainSettings(**extra)  # type: ignore
+            super().__init__(settings, explainer_settings)
+
         def _explain_impl(
             self, input_data: Any, explain_parameters: Dict
         ) -> Explanation:
