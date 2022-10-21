@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from functools import wraps
+import os
 from random import random
 import tritonclient.http.aio as httpclient
 
@@ -165,6 +166,10 @@ def _preprocess_headers(headers: List[str]) -> Dict[str, str]:
         except ValueError:
             logger.error(f"Cannot process '{item}' as valid header. Ignoring.")
     return output
+
+
+def _verify_write_access(fpath: str):
+    return os.access(os.path.dirname(os.path.abspath(fpath)), os.W_OK)
 
 
 def _serialize_validation_error(index: int, error: ValidationError) -> BatchOutputItem:
@@ -447,6 +452,11 @@ async def process_batch(
     logger.info(f"batch jitter: {batch_jitter}")
     logger.info(f"connection timeout: {timeout}")
     logger.info(f"micro-batch size: {batch_size}")
+
+    if not _verify_write_access(output_data_path):
+        raise click.BadParameter(
+            f"Provided output file path '{output_data_path}' is not writable."
+        )
 
     if insecure:
         ssl_context = False
