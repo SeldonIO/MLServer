@@ -30,8 +30,12 @@ ENV MLSERVER_MODELS_DIR=/mnt/models \
 # Install some base dependencies required for some libraries
 RUN microdnf update -y && \
     microdnf install -y \
-        libgomp mesa-libGL \
-        glib2-devel shadow-utils
+        tar \
+        gzip \
+        libgomp \
+        mesa-libGL \
+        glib2-devel \
+        shadow-utils
 
 # Install Conda, Python 3.8 and FFmpeg
 RUN microdnf install -y wget && \
