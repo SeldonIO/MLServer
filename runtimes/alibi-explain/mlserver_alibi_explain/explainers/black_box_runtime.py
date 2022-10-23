@@ -15,6 +15,7 @@ from mlserver_alibi_explain.common import (
 )
 from mlserver_alibi_explain.runtime import AlibiExplainRuntimeBase
 
+
 class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
     """
     Runtime for black box explainer runtime, i.e. explainer that would just need access

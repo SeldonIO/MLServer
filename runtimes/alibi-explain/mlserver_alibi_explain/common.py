@@ -58,12 +58,12 @@ def remote_predict(
     verify: Union[str, bool] = True
     if ssl_verify_path != "":
         verify = ssl_verify_path
-    response_raw = requests.post(predictor_url, json=v2_payload.dict(exclude_unset=True), verify=verify)
+    response_raw = requests.post(
+        predictor_url, json=v2_payload.dict(exclude_unset=True), verify=verify
+    )
     if response_raw.status_code != 200:
         raise RemoteInferenceError(response_raw.status_code, response_raw.reason)
     return InferenceResponse.parse_raw(response_raw.text)
-
-
 
 
 def remote_metadata(url: str, ssl_verify_path: str) -> MetadataModelResponse:
@@ -153,7 +153,9 @@ def to_v2_inference_request(
         # or even whether it is a probability of classes or targets etc
         inputs=[
             input_payload_codec.encode_input(  # type: ignore
-                name=input_name, payload=input_data, use_bytes=False,
+                name=input_name,
+                payload=input_data,
+                use_bytes=False,
             )
         ],
         outputs=outputs,

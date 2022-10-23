@@ -196,7 +196,7 @@ async def test_end_2_end_explain_v1_output(
                     RequestInput(
                         parameters=Parameters(content_type=StringCodec.ContentType),
                         name=_DEFAULT_INPUT_NAME,
-                        data=[b"dummy", b"dummy text"],
+                        data=["dummy", "dummy text"],
                         shape=[2],
                         datatype="BYTES",
                     )

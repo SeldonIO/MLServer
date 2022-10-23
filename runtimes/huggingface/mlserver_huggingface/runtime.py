@@ -85,7 +85,7 @@ class HuggingFaceRuntime(MLModel):
         """
 
         # Adding some logging as hard to debug given the many types of input accepted
-        logger.debug("Payload %s",payload)
+        logger.debug("Payload %s", payload)
 
         # TODO: convert and validate?
         kwargs = self.decode_request(payload, default_codec=MultiStringRequestCodec)
