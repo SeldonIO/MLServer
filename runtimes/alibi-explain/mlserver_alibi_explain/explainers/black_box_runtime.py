@@ -15,7 +15,6 @@ from mlserver_alibi_explain.common import (
 )
 from mlserver_alibi_explain.runtime import AlibiExplainRuntimeBase
 
-
 class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
     """
     Runtime for black box explainer runtime, i.e. explainer that would just need access
@@ -68,8 +67,7 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
         # The contract is that alibi-explain would input/output ndarray
         # in the case of AnchorText, we have a list of strings instead though.
         # TODO: for now we only support v2 protocol, do we need more support?
-
-        if self.infer_metadata is None:
+        if self.infer_metadata is None and self.infer_uri.find("/v2/pipelines/") == -1:
             meta_url = construct_metadata_url(self.infer_uri)
             # get the metadata of the underlying inference model via v2
             # metadata endpoint
@@ -83,6 +81,5 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
             predictor_url=self.infer_uri,
             ssl_verify_path=self.ssl_verify_path,
         )
-
         # TODO: do we care about more than one output?
         return NumpyCodec.decode_output(v2_response.outputs[0])
