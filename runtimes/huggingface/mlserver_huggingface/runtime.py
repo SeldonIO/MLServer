@@ -90,11 +90,17 @@ class HuggingFaceRuntime(MLModel):
         # TODO: convert and validate?
         kwargs = self.decode_request(payload, default_codec=MultiStringRequestCodec)
 
-        args = kwargs.pop("args", [])
+        args = kwargs.pop("args", None)
+
         X = kwargs.pop("array_inputs", None)
         if X is not None:
             args = [list(X)] + args
-        prediction = self._model(args, **kwargs)
+        if args is None:
+            prediction = self._model(**kwargs)
+        else:
+            prediction = self._model(args, **kwargs)
+
+        logger.debug("Prediction %s", prediction)
 
         # TODO: Convert hf output to v2 protocol, for now we use to_json
         if isinstance(prediction, dict):
