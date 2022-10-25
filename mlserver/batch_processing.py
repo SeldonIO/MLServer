@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 from functools import wraps
+import os
+from random import random
 import tritonclient.http.aio as httpclient
 
 import asyncio
@@ -11,8 +13,10 @@ import orjson
 
 from time import perf_counter as timer
 from typing import Dict, List, Optional, Tuple
-from mlserver.batching.requests import BatchedRequests
 
+from pydantic.error_wrappers import ValidationError
+
+from mlserver.batching.requests import BatchedRequests
 from mlserver.types import InferenceRequest, InferenceResponse, Parameters
 from mlserver.codecs import NumpyCodec
 from mlserver.logging import get_logger
@@ -23,11 +27,14 @@ from mlserver.batching.requests import _merge_parameters
 
 
 CHOICES_TRANSPORT = ["rest", "grpc"]
+FINALIZER_REPORT_FREQUENCY = 100
+RETRY_SLEEP_TIME = 1
 
 logger = get_logger()
 
 
 # Monkey patching is required for error responses coming from MLServer.
+# MLServer will contain `detail` field instead of `error` one like Triton.
 async def _get_error(response):
     """
     Returns the InferenceServerException object if response
@@ -75,8 +82,8 @@ def setup_logging(debug: bool):
         logger.setLevel(logging.DEBUG)
 
 
-def get_headers(request_id: str) -> Dict[str, str]:
-    headers = {"content-type": "application/json"}
+def get_headers(request_id: str, headers: Dict[str, str]) -> Dict[str, str]:
+    headers = {"content-type": "application/json", **headers}
     if request_id:
         headers["seldon-puid"] = request_id
         headers["x-request-id"] = request_id
@@ -150,28 +157,67 @@ def infer_result_to_infer_response(item: httpclient.InferResult) -> InferenceRes
     return inference_response
 
 
+def _preprocess_headers(headers: List[str]) -> Dict[str, str]:
+    output = {}
+    for item in headers:
+        try:
+            key, val = [x.strip() for x in item.split(":")]
+            output[key] = val
+        except ValueError:
+            logger.error(f"Cannot process '{item}' as valid header. Ignoring.")
+    return output
+
+
+def _verify_write_access(fpath: str):
+    return os.access(os.path.dirname(os.path.abspath(fpath)), os.W_OK)
+
+
+def _serialize_validation_error(index: int, error: ValidationError) -> BatchOutputItem:
+    msg = {
+        "parameters": {"batch_index": index},
+        "error": {"status": "preprocessing error", "msg": error.errors()},
+    }
+    return BatchOutputItem(item=json.dumps(msg).encode(), index=index)
+
+
+def _serialize_inference_error(index: int, error: Exception) -> BatchOutputItem:
+    msg = {
+        "parameters": {"batch_index": index},
+        "error": {"status": "preprocessing error", "msg": str(error)},
+    }
+    return BatchOutputItem(item=json.dumps(msg).encode(), index=index)
+
+
 def preprocess_items(
     items: List[BatchInputItem], binary_data: bool
-) -> Tuple[TritonRequest, BatchedRequests, Dict[str, int]]:
-    inference_requests = {}
+) -> Tuple[TritonRequest, BatchedRequests, List[BatchOutputItem], Dict[str, int]]:
     item_indices = {}
+    inference_requests = {}
+    invalid_inputs = []
     for item in items:
-        inference_request = InferenceRequest.parse_obj(orjson.loads(item.item))
-        # try to use `id` from the input file to identify each request in the batch
-        if inference_request.id is None:
-            inference_request.id = generate_uuid()
-        inference_requests[inference_request.id] = inference_request
-        item_indices[inference_request.id] = item.index
+        try:
+            inference_request = InferenceRequest.parse_obj(orjson.loads(item.item))
+            # try to use `id` from the input file to identify each request in the batch
+            if inference_request.id is None:
+                inference_request.id = generate_uuid()
+            inference_requests[inference_request.id] = inference_request
+            item_indices[inference_request.id] = item.index
+        except ValidationError as e:
+            logger.error(
+                f"preprocessing error: batch_index={item.index}, error={repr(e)}"
+            )
+            invalid_inputs.append(_serialize_validation_error(item.index, e))
     batched = BatchedRequests(inference_requests)
 
     # Set `id` for batched requests - if only single request use its own id
-    if len(items) == 1:
+    if len(inference_requests) == 1:
         batched.merged_request.id = inference_request.id
     else:
         batched.merged_request.id = generate_uuid()
     return (
         TritonRequest.from_inference_request(batched.merged_request, binary_data),
         batched,
+        invalid_inputs,
         item_indices,
     )
 
@@ -203,44 +249,80 @@ def postprocess_items(
     return output_items
 
 
+async def send_requests(
+    model_name: str,
+    triton_client: httpclient.InferenceServerClient,
+    triton_request: TritonRequest,
+    headers: Dict[str, str],
+    retries: int,
+    worker_id: int,
+) -> httpclient.InferResult:
+    for i in range(retries):
+        try:
+            return await triton_client.infer(
+                model_name,
+                triton_request.inputs,
+                outputs=triton_request.outputs,
+                request_id=triton_request.id,
+                headers=get_headers(triton_request.id, headers),
+            )
+        except Exception as e:
+            logger.error(
+                f"consumer {worker_id}: retries {i+1}/{retries}, exception {e}"
+            )
+            if i + 1 == retries:
+                raise
+            await asyncio.sleep(RETRY_SLEEP_TIME)
+
+
 async def process_items(
     items: List[BatchInputItem],
     model_name: str,
     worker_id: int,
+    retries: int,
     triton_client: httpclient.InferenceServerClient,
+    headers: Dict[str, str],
     binary_data: bool,
 ) -> List[BatchOutputItem]:
     try:
-        triton_request, batched, inference_indices = preprocess_items(
+        triton_request, batched, invalid_inputs, inference_indices = preprocess_items(
             items, binary_data
         )
+        if len(invalid_inputs) == len(items):
+            return invalid_inputs
     except Exception as e:
-        logger.error(f"consumer {worker_id}: failed to preprocess items: {repr(e)}")
+        logger.error(f"consumer {worker_id}: failed to preprocess items: {e}")
         raise
 
     try:
         logger.debug(f"consumer {worker_id}: sending request")
-        infer_result = await triton_client.infer(
+        infer_result = await send_requests(
             model_name,
-            triton_request.inputs,
-            outputs=triton_request.outputs,
-            request_id=triton_request.id,
-            headers=get_headers(triton_request.id),
+            triton_client,
+            triton_request,
+            headers,
+            retries,
+            worker_id,
         )
         logger.debug(f"consumer {worker_id}: received response")
     except Exception as e:
-        logger.error(f"consumer {worker_id}: failed to process task: {repr(e)}")
-        raise
+        logger.error(f"consumer {worker_id}: failed to process task: {e}")
+        failed_results = [
+            _serialize_inference_error(index, e) for index in inference_indices.values()
+        ]
+        return failed_results + invalid_inputs
 
     try:
         output_items = postprocess_items(infer_result, batched, inference_indices)
     except Exception as e:
-        logger.error(f"consumer {worker_id}: failed to postprocess item: {repr(e)}")
+        logger.error(f"consumer {worker_id}: failed to postprocess item: {e}")
 
-    return output_items
+    return output_items + invalid_inputs
 
 
-async def produce(queue: asyncio.Queue, fname: str, batch_size: int):
+async def produce(
+    queue: "asyncio.Queue[List[BatchInputItem]]", fname: str, batch_size: int
+):
     async with aiofiles.open(fname, "rb") as f:
         index = 0
         batch = []
@@ -257,18 +339,36 @@ async def produce(queue: asyncio.Queue, fname: str, batch_size: int):
 async def consume(
     model_name: str,
     worker_id: int,
+    retries: int,
+    batch_interval: float,
+    batch_jitter: float,
     triton_client: httpclient.InferenceServerClient,
+    headers: Dict[str, str],
     binary_data: bool,
     extra_verbose: bool,
-    queue_in: asyncio.Queue,
-    queue_out: asyncio.Queue,
+    queue_in: "asyncio.Queue[List[BatchInputItem]]",
+    queue_out: "asyncio.Queue[List[BatchOutputItem]]",
 ):
     while True:
         input_items = await queue_in.get()
         try:
+            start_time = timer()
             output_items = await process_items(
-                input_items, model_name, worker_id, triton_client, binary_data
+                input_items,
+                model_name,
+                worker_id,
+                retries,
+                triton_client,
+                headers,
+                binary_data,
             )
+            if batch_interval > 0 or batch_jitter > 0:
+                total_sleep_time = batch_interval + random() * batch_jitter
+                remaining_sleep_time = total_sleep_time - (timer() - start_time)
+                logger.debug(
+                    f"consume {worker_id}: sleeping for {remaining_sleep_time:.3f}"
+                )
+                await asyncio.sleep(remaining_sleep_time)
         except Exception:
             if extra_verbose:
                 logger.error(
@@ -281,33 +381,45 @@ async def consume(
         queue_in.task_done()
 
 
-async def finalize(queue: asyncio.Queue, fname: str):
+async def finalize(queue: "asyncio.Queue[List[BatchOutputItem]]", fname: str) -> int:
     # TODO: Test if output directory is writtable, sysexit otherwise.
-    async with aiofiles.open(fname, "wb") as f:
-        while True:
-            batch_output = await queue.get()
-            for item in batch_output:
-                try:
-                    await f.write(item.item)
-                    await f.write(b"\n")
-                except Exception as e:
-                    logger.error(f"Failed to finalize task: {repr(e)}")
-            queue.task_done()
+    counter = 0
+    try:
+        async with aiofiles.open(fname, "wb") as f:
+            while True:
+                batch_output = await queue.get()
+                for item in batch_output:
+                    try:
+                        await f.write(item.item)
+                        await f.write(b"\n")
+                    except Exception as e:
+                        logger.error(f"Failed to finalize task: {repr(e)}")
+                    counter += 1
+                    if counter % FINALIZER_REPORT_FREQUENCY == 0:
+                        logger.info(f"Finalizer: processed instances: {counter}")
+                queue.task_done()
+    except asyncio.CancelledError:
+        return counter
 
 
 async def process_batch(
-    model_name,
-    url,
-    workers,
-    batch_size,
-    input_data_path,
-    output_data_path,
-    binary_data,
-    transport,
-    use_ssl,
-    insecure,
-    verbose,
-    extra_verbose,
+    model_name: str,
+    url: str,
+    workers: int,
+    retries: int,
+    batch_size: int,
+    input_data_path: str,
+    output_data_path: str,
+    binary_data: bool,
+    transport: str,
+    request_headers: List[str],
+    timeout: float,
+    batch_interval: float,
+    batch_jitter: float,
+    use_ssl: bool,
+    insecure: bool,
+    verbose: bool,
+    extra_verbose: bool,
 ):
     """
     Process batch requests against V2-compatible inference server.
@@ -326,11 +438,25 @@ async def process_batch(
     elif verbose:
         logger.info("Running in verbose mode.")
 
+    headers = _preprocess_headers(request_headers)
+
     setup_logging(debug=verbose)
-    logger.info(f"Server url: {url}")
+    logger.info(f"server url: {url}")
+    logger.info(f"model name: {model_name}")
+    logger.info(f"request headers: {headers}")
     logger.info(f"input file path: {input_data_path}")
     logger.info(f"output file path: {output_data_path}")
+    logger.info(f"workers: {workers}")
+    logger.info(f"retries: {retries}")
+    logger.info(f"batch interval: {batch_interval}")
+    logger.info(f"batch jitter: {batch_jitter}")
+    logger.info(f"connection timeout: {timeout}")
     logger.info(f"micro-batch size: {batch_size}")
+
+    if not _verify_write_access(output_data_path):
+        raise click.BadParameter(
+            f"Provided output file path '{output_data_path}' is not writable."
+        )
 
     if insecure:
         ssl_context = False
@@ -341,12 +467,13 @@ async def process_batch(
         url=url,
         verbose=extra_verbose,
         conn_limit=workers,
+        conn_timeout=timeout,
         ssl=use_ssl,
         ssl_context=ssl_context,
     )
 
-    queue_in = asyncio.Queue(2 * workers)
-    queue_out = asyncio.Queue(2 * workers)
+    queue_in: asyncio.Queue[List[BatchInputItem]] = asyncio.Queue(2 * workers)
+    queue_out: asyncio.Queue[List[BatchOutputItem]] = asyncio.Queue(2 * workers)
 
     consumers = []
     for worker_id in range(workers):
@@ -354,7 +481,11 @@ async def process_batch(
             consume(
                 model_name,
                 worker_id,
+                retries,
+                batch_interval,
+                batch_jitter,
                 triton_client,
+                headers,
                 binary_data,
                 extra_verbose,
                 queue_in,
@@ -371,10 +502,11 @@ async def process_batch(
 
     for consumer in consumers:
         consumer.cancel()
+    await asyncio.gather(*consumers, return_exceptions=True)
 
     finalizer.cancel()
-
-    await asyncio.gather(*consumers, finalizer, return_exceptions=True)
+    processed_instances = await finalizer
+    logger.info(f"Total processed instances: {processed_instances}")
 
     await triton_client.close()
 
