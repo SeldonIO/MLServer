@@ -74,7 +74,7 @@ RUN . $CONDA_PATH/etc/profile.d/conda.sh && \
     pip install --upgrade pip wheel setuptools && \
     if [[ $RUNTIMES == "all" ]]; then \
         for _wheel in "./dist/mlserver_"*.whl; do \
-            if [[ _wheel == "*mllib*" ]]; then \
+            if [[ ! $_wheel == *"mllib"* ]]; then \
                 echo "--> Installing $_wheel..."; \
                 pip install $_wheel; \
             fi \
