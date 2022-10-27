@@ -65,14 +65,19 @@ RUN useradd -u 1000 -s /bin/bash mlserver -d $MLSERVER_PATH && \
     chmod -R 776 $MLSERVER_PATH
 
 COPY --from=wheel-builder /opt/mlserver/dist ./dist 
-# note: if runtime is "all" we install mlserver-<version>-py3-none-any.whl
+# NOTE: if runtime is "all" we install mlserver-<version>-py3-none-any.whl
 # we have to use this syntax to return the correct file: $(ls ./dist/mlserver-*.whl)
+# NOTE: Temporarily excluding mllib from the main image due to:
+#   CVE-2022-25168
+#   CVE-2022-42889
 RUN . $CONDA_PATH/etc/profile.d/conda.sh && \
     pip install --upgrade pip wheel setuptools && \
     if [[ $RUNTIMES == "all" ]]; then \
         for _wheel in "./dist/mlserver_"*.whl; do \
-            echo "--> Installing $_wheel..."; \
-            pip install $_wheel; \
+            if [[ _wheel == "*mllib*" ]]; then \
+                echo "--> Installing $_wheel..."; \
+                pip install $_wheel; \
+            fi \
         done \
     else \
         for _runtime in $RUNTIMES; do \
