@@ -19,10 +19,13 @@ async def test_invocations_invalid_content_type(
 @pytest.mark.parametrize(
     "content_type, payload",
     [
-        ("application/json", {"columns": ["foo"], "data": [1, 2, 3]}),
+        (
+            "application/json",
+            {"dataframe_split": {"columns": ["foo"], "data": [1, 2, 3]}},
+        ),
         (
             "application/json; format=pandas-records",
-            [{"foo": 1}, {"foo": 2}, {"foo": 3}],
+            {"dataframe_records": [{"foo": 1}, {"foo": 2}, {"foo": 3}]},
         ),
         ("application/json", {"instances": [1, 2, 3]}),
         ("application/json", {"inputs": [1, 2, 3]}),

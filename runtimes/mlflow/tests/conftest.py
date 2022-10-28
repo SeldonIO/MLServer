@@ -94,6 +94,7 @@ def model_settings(model_uri: str) -> ModelSettings:
         name="mlflow-model",
         implementation=MLflowRuntime,
         parameters=ModelParameters(uri=model_uri),
+        parallel_workers=0,
     )
 
 

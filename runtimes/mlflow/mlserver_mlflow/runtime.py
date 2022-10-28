@@ -9,13 +9,8 @@ from mlflow.pyfunc.scoring_server import (
     CONTENT_TYPES,
     CONTENT_TYPE_CSV,
     CONTENT_TYPE_JSON,
-    CONTENT_TYPE_JSON_SPLIT_ORIENTED,
-    CONTENT_TYPE_JSON_RECORDS_ORIENTED,
-    CONTENT_TYPE_JSON_SPLIT_NUMPY,
     parse_csv_input,
     infer_and_parse_json_input,
-    parse_json_input,
-    parse_split_oriented_json_input_to_numpy,
     predictions_to_json,
 )
 
@@ -65,7 +60,7 @@ class MLflowRuntime(MLModel):
     async def invocations(
         self,
         raw_body: str = Depends(_get_raw_body),
-        content_type: Optional[str] = Header(default=None),
+        content_type: str = Header(default=""),
     ) -> Response:
         """
         This custom handler is meant to mimic the behaviour of the existing
@@ -75,31 +70,43 @@ class MLflowRuntime(MLModel):
 
             https://github.com/mlflow/mlflow/blob/master/mlflow/pyfunc/scoring_server/__init__.py
         """
+        # Content-Type can include other attributes like CHARSET
+        # Content-type RFC: https://datatracker.ietf.org/doc/html/rfc2045#section-5.1
+        # TODO: Suport ";" in quoted parameter values
+        type_parts = content_type.split(";")
+        type_parts = list(map(str.strip, type_parts))
+        mime_type = type_parts[0]
+        parameter_value_pairs = type_parts[1:]
+        parameter_values = {}
+        for parameter_value_pair in parameter_value_pairs:
+            (key, _, value) = parameter_value_pair.partition("=")
+            parameter_values[key] = value
+
+        charset = parameter_values.get("charset", "utf-8").lower()
+        if charset != "utf-8":
+            raise InferenceError("The scoring server only supports UTF-8")
+
+        unexpected_content_parameters = set(parameter_values.keys()).difference(
+            {"charset"}
+        )
+        if unexpected_content_parameters:
+            err_message = (
+                f"Unrecognized content type parameters: "
+                f"{', '.join(unexpected_content_parameters)}."
+            )
+            raise InferenceError(err_message)
+
         if content_type == CONTENT_TYPE_CSV:
             csv_input = StringIO(raw_body)
-            data = parse_csv_input(csv_input=csv_input)
+            data = parse_csv_input(csv_input=csv_input, schema=self._input_schema)
         elif content_type == CONTENT_TYPE_JSON:
             data = infer_and_parse_json_input(raw_body, self._input_schema)
-        elif content_type == CONTENT_TYPE_JSON_SPLIT_ORIENTED:
-            data = parse_json_input(
-                json_input=StringIO(raw_body),
-                orient="split",
-                schema=self._input_schema,
-            )
-        elif content_type == CONTENT_TYPE_JSON_RECORDS_ORIENTED:
-            data = parse_json_input(
-                json_input=StringIO(raw_body),
-                orient="records",
-                schema=self._input_schema,
-            )
-        elif content_type == CONTENT_TYPE_JSON_SPLIT_NUMPY:
-            data = parse_split_oriented_json_input_to_numpy(raw_body)
         else:
-            content_type_error_message = (
+            err_message = (
                 "This predictor only supports the following content types, "
                 f"{CONTENT_TYPES}. Got '{content_type}'."
             )
-            raise InferenceError(content_type_error_message)
+            raise InferenceError(err_message)
 
         try:
             raw_predictions = self._model.predict(data)
