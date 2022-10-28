@@ -1,0 +1,14 @@
+docker.io/seldonio/conda-ubi8:1.15.0
+docker.io/seldonio/seldon-core-s2i-python38-ubi8:1.15.0
+docker.io/seldonio/seldon-core-s2i-python3:1.15.0
+docker.io/seldonio/seldon-core-operator-ubi8:1.15.0
+docker.io/seldonio/seldon-core-executor-ubi8:1.15.0
+docker.io/seldonio/alibi-detect-server:1.15.0
+docker.io/seldonio/alibiexplainer:1.15.0
+docker.io/seldonio/sklearnserver:1.15.0
+docker.io/seldonio/mlflowserver:1.15.0
+docker.io/seldonio/xgboostserver:1.15.0
+docker.io/seldonio/tfserving-proxy:1.15.0
+docker.io/seldonio/rclone-storage-initializer:1.15.0
+docker.io/seldonio/mlserver-sc-slim:1.15.0
+docker.io/seldonio/mlserver-sc:1.15.0
