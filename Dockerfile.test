@@ -1,0 +1,15 @@
+FROM registry.access.redhat.com/ubi9/ubi-minimal
+SHELL ["/bin/bash", "-c"]
+
+# Enable EPEL an RPMFusion and install FFmpeg
+# Last line will trigger the following error:
+#       error: Could not depsolve transaction; 1 problem detected:
+#       Problem: conflicting requests
+#       - nothing provides libSDL2-2.0.so.0()(64bit) needed by ffmpeg-4.2.8-1.el8.x86_64
+RUN microdnf update -y && \
+    rpm -ivh https://download.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm && \
+    rpm -ivh https://download1.rpmfusion.org/free/el/rpmfusion-free-release-8.noarch.rpm && \
+    rpm -ivh https://download1.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-8.noarch.rpm && \
+    microdnf install ffmpeg 
+
+
