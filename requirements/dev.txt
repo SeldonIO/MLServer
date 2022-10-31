@@ -1,5 +1,5 @@
 # Code generation
-datamodel-code-generator==0.13.1
+datamodel-code-generator==0.13.3
 
 ## Locking `grpcio-tools` for compatibility with `tritonclient`, which currently pins
 ## `grpcio==1.41.0` due to memory leak in later versions: https://github.com/grpc/grpc/issues/28513
