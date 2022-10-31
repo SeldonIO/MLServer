@@ -2,6 +2,8 @@ import pytest
 
 from typing import Optional, Union
 
+from mlserver.codecs.string import encode_str
+
 
 @pytest.mark.parametrize("content_type", ["", None, "application/pdf"])
 async def test_invocations_invalid_content_type(
@@ -24,7 +26,7 @@ async def test_invocations_invalid_content_type(
             {"dataframe_split": {"columns": ["foo"], "data": [1, 2, 3]}},
         ),
         (
-            "application/json; format=pandas-records",
+            "application/json",
             {"dataframe_records": [{"foo": 1}, {"foo": 2}, {"foo": 3}]},
         ),
         ("application/json", {"instances": [1, 2, 3]}),
@@ -38,6 +40,9 @@ async def test_invocations(rest_client, content_type: str, payload: Union[list, 
 
     assert response.status_code == 200
 
-    y_pred = response.json()
+    res = response.json()
+    assert "predictions" in res
+
+    y_pred = res["predictions"]
     assert isinstance(y_pred, list)
     assert len(y_pred) == 1
