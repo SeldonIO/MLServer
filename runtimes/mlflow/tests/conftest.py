@@ -94,6 +94,7 @@ def model_settings(model_uri: str) -> ModelSettings:
         name="mlflow-model",
         implementation=MLflowRuntime,
         parameters=ModelParameters(uri=model_uri),
+        # TODO: Remove before merging
         parallel_workers=0,
     )
 
