@@ -4,6 +4,7 @@ from io import StringIO
 from fastapi import Depends, Header, Request, Response
 from typing import Optional
 
+from mlflow.version import VERSION
 from mlflow.exceptions import MlflowException
 from mlflow.pyfunc.scoring_server import (
     CONTENT_TYPES,
@@ -54,6 +55,31 @@ class MLflowRuntime(MLModel):
             https://github.com/mlflow/mlflow/blob/master/mlflow/pyfunc/scoring_server/__init__.py
         """
         return "\n"
+
+    @custom_handler(rest_path="/health", rest_method="GET")
+    async def health(self) -> str:
+        """
+        This custom handler is meant to mimic the behaviour of the existing
+        health endpoint in MLflow's local dev server.
+        For details about its implementation, please consult the original
+        implementation in the MLflow repository:
+
+            https://github.com/mlflow/mlflow/blob/master/mlflow/pyfunc/scoring_server/__init__.py
+        """
+        return "\n"
+
+    # TODO: Decouple from REST
+    @custom_handler(rest_path="/version", rest_method="GET")
+    async def mlflow_version(self) -> str:
+        """
+        This custom handler is meant to mimic the behaviour of the existing
+        version endpoint in MLflow's local dev server.
+        For details about its implementation, please consult the original
+        implementation in the MLflow repository:
+
+            https://github.com/mlflow/mlflow/blob/master/mlflow/pyfunc/scoring_server/__init__.py
+        """
+        return VERSION
 
     # TODO: Decouple from REST
     @custom_handler(rest_path="/invocations")
