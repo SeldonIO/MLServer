@@ -2,7 +2,6 @@ import mlflow
 
 from io import StringIO
 from fastapi import Depends, Header, Request, Response
-from typing import Optional
 
 from mlflow.version import VERSION
 from mlflow.exceptions import MlflowException
@@ -122,10 +121,10 @@ class MLflowRuntime(MLModel):
             )
             raise InferenceError(err_message)
 
-        if content_type == CONTENT_TYPE_CSV:
+        if mime_type == CONTENT_TYPE_CSV:
             csv_input = StringIO(raw_body)
             data = parse_csv_input(csv_input=csv_input, schema=self._input_schema)
-        elif content_type == CONTENT_TYPE_JSON:
+        elif mime_type == CONTENT_TYPE_JSON:
             data = infer_and_parse_json_input(raw_body, self._input_schema)
         else:
             err_message = (

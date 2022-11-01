@@ -2,8 +2,6 @@ import pytest
 
 from typing import Optional, Union
 
-from mlserver.codecs.string import encode_str
-
 
 @pytest.mark.parametrize("content_type", ["", None, "application/pdf"])
 async def test_invocations_invalid_content_type(
