@@ -141,6 +141,8 @@ By default, we should be able to find the saved artifact under the `mlruns` fold
 
 
 ```python
+import os
+
 [experiment_file_path] = !ls -td ./mlruns/0/* | head -1
 model_path = os.path.join(experiment_file_path, "artifacts", "model")
 print(model_path)

@@ -9,21 +9,11 @@ from typing import (
     Union,
     Type,
     Tuple,
+    get_origin,
+    get_args,
     get_type_hints,
     TYPE_CHECKING,
 )
-
-try:
-    from typing import get_origin, get_args
-except ImportError:
-    # The `get_origin` and `get_args` don't exist in Python 3.7, so we'll
-    # backfill them manually.
-    # When we remove support for Python 3.7, remove these methods.
-    def get_origin(t: Type) -> Type:  # type: ignore
-        return getattr(t, "__origin__", type(None))
-
-    def get_args(t: Type) -> tuple:  # type: ignore
-        return getattr(t, "__args__", ())
 
 
 from ..types import InferenceRequest, InferenceResponse, ResponseOutput
