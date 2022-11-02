@@ -55,7 +55,7 @@ class StringCodec(InputCodec):
         if use_bytes:
             packed = list(map(encode_str, payload))  # type: ignore
 
-        shape = [len(payload)]
+        shape = [len(payload), 1]
         return ResponseOutput(
             name=name,
             datatype="BYTES",

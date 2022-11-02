@@ -28,7 +28,7 @@ def test_can_encode(payload: Any, expected: bool):
             True,
             ResponseOutput(
                 name="foo",
-                shape=[1],
+                shape=[1, 1],
                 datatype="BYTES",
                 data=[b"UHl0aG9uIGlzIGZ1bg=="],
             ),
@@ -39,7 +39,7 @@ def test_can_encode(payload: Any, expected: bool):
             True,
             ResponseOutput(
                 name="foo",
-                shape=[1],
+                shape=[1, 1],
                 datatype="BYTES",
                 data=[b"UHl0aG9uIGlzIGZ1bg=="],
             ),
@@ -50,7 +50,7 @@ def test_can_encode(payload: Any, expected: bool):
             True,
             ResponseOutput(
                 name="foo",
-                shape=[2],
+                shape=[2, 1],
                 datatype="BYTES",
                 data=[b"UHl0aG9uIGlzIGZ1bg==", b"UHl0aG9uIGlzIGZ1bg=="],
             ),
@@ -61,7 +61,7 @@ def test_can_encode(payload: Any, expected: bool):
             False,
             ResponseOutput(
                 name="foo",
-                shape=[2],
+                shape=[2, 1],
                 datatype="BYTES",
                 data=["UHl0aG9uIGlzIGZ1bg==", "UHl0aG9uIGlzIGZ1bg=="],
             ),
@@ -83,7 +83,7 @@ def test_encode_output(decoded, use_bytes, expected):
             # Single base64-encoded binary string
             ResponseOutput(
                 name="foo",
-                shape=[1],
+                shape=[1, 1],
                 datatype="BYTES",
                 data="UHl0aG9uIGlzIGZ1bg==",
             ),
@@ -93,7 +93,7 @@ def test_encode_output(decoded, use_bytes, expected):
             # Single (non-base64-encoded) binary string
             ResponseOutput(
                 name="foo",
-                shape=[1],
+                shape=[1, 1],
                 datatype="BYTES",
                 data=b"Python is fun",
             ),
@@ -103,7 +103,7 @@ def test_encode_output(decoded, use_bytes, expected):
             # Single (non-base64-encoded) (non-binary) string
             ResponseOutput(
                 name="foo",
-                shape=[1],
+                shape=[1, 1],
                 datatype="BYTES",
                 data="Python is fun",
             ),
@@ -113,7 +113,7 @@ def test_encode_output(decoded, use_bytes, expected):
             # Multiple base64-encoded binary strings
             ResponseOutput(
                 name="foo",
-                shape=[2],
+                shape=[2, 1],
                 datatype="BYTES",
                 data=[b"UHl0aG9uIGlzIGZ1bg==", b"UHl0aG9uIGlzIGZ1bg=="],
             ),
@@ -136,7 +136,7 @@ def test_decode_output(encoded, expected):
             True,
             RequestInput(
                 name="foo",
-                shape=[1],
+                shape=[1, 1],
                 datatype="BYTES",
                 data=[b"UHl0aG9uIGlzIGZ1bg=="],
             ),
@@ -147,7 +147,7 @@ def test_decode_output(encoded, expected):
             True,
             RequestInput(
                 name="foo",
-                shape=[1],
+                shape=[1, 1],
                 datatype="BYTES",
                 data=[b"UHl0aG9uIGlzIGZ1bg=="],
             ),
@@ -158,7 +158,7 @@ def test_decode_output(encoded, expected):
             True,
             RequestInput(
                 name="foo",
-                shape=[2],
+                shape=[2, 1],
                 datatype="BYTES",
                 data=[b"UHl0aG9uIGlzIGZ1bg==", b"UHl0aG9uIGlzIGZ1bg=="],
             ),
@@ -169,7 +169,7 @@ def test_decode_output(encoded, expected):
             False,
             RequestInput(
                 name="foo",
-                shape=[2],
+                shape=[2, 1],
                 datatype="BYTES",
                 data=["UHl0aG9uIGlzIGZ1bg==", "UHl0aG9uIGlzIGZ1bg=="],
             ),
@@ -191,7 +191,7 @@ def test_encode_input(decoded, use_bytes, expected):
             # Single base64-encoded binary string
             RequestInput(
                 name="foo",
-                shape=[1],
+                shape=[1, 1],
                 datatype="BYTES",
                 data="UHl0aG9uIGlzIGZ1bg==",
             ),
@@ -201,7 +201,7 @@ def test_encode_input(decoded, use_bytes, expected):
             # Single (non-base64-encoded) binary string
             RequestInput(
                 name="foo",
-                shape=[1],
+                shape=[1, 1],
                 datatype="BYTES",
                 data=b"Python is fun",
             ),
@@ -211,7 +211,7 @@ def test_encode_input(decoded, use_bytes, expected):
             # Single (non-base64-encoded) (non-binary) string
             RequestInput(
                 name="foo",
-                shape=[1],
+                shape=[1, 1],
                 datatype="BYTES",
                 data="Python is fun",
             ),
@@ -221,7 +221,7 @@ def test_encode_input(decoded, use_bytes, expected):
             # Multiple base64-encoded binary strings
             RequestInput(
                 name="foo",
-                shape=[2],
+                shape=[2, 1],
                 datatype="BYTES",
                 data=[b"UHl0aG9uIGlzIGZ1bg==", b"UHl0aG9uIGlzIGZ1bg=="],
             ),
