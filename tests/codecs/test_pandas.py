@@ -32,33 +32,33 @@ def test_can_encode(payload: Any, expected: bool):
             pd.Series(data=["hey", "abc"], name="foo"),
             True,
             ResponseOutput(
-                name="foo", shape=[2], data=[b"hey", b"abc"], datatype="BYTES"
+                name="foo", shape=[2, 1], data=[b"hey", b"abc"], datatype="BYTES"
             ),
         ),
         (
             pd.Series(data=["hey", "abc"], name="foo"),
             False,
             ResponseOutput(
-                name="foo", shape=[2], data=["hey", "abc"], datatype="BYTES"
+                name="foo", shape=[2, 1], data=["hey", "abc"], datatype="BYTES"
             ),
         ),
         (
             pd.Series(data=[1, 2, 3], name="bar"),
             True,
-            ResponseOutput(name="bar", shape=[3], data=[1, 2, 3], datatype="INT64"),
+            ResponseOutput(name="bar", shape=[3, 1], data=[1, 2, 3], datatype="INT64"),
         ),
         (
             pd.Series(data=[1, 2.5, 3], name="bar"),
             True,
             ResponseOutput(
-                name="bar", shape=[3], data=[1.0, 2.5, 3.0], datatype="FP64"
+                name="bar", shape=[3, 1], data=[1.0, 2.5, 3.0], datatype="FP64"
             ),
         ),
         (
             pd.Series(data=[[1, 2, 3], [4, 5, 6]], name="bar"),
             True,
             ResponseOutput(
-                name="bar", shape=[2], data=[[1, 2, 3], [4, 5, 6]], datatype="BYTES"
+                name="bar", shape=[2, 1], data=[[1, 2, 3], [4, 5, 6]], datatype="BYTES"
             ),
         ),
     ],
@@ -133,10 +133,13 @@ def test_encode_response(dataframe, use_bytes, expected):
                 model_name="my-model",
                 outputs=[
                     ResponseOutput(
-                        name="a", shape=[3], datatype="INT64", data=[1, 2, 3]
+                        name="a", shape=[3, 1], datatype="INT64", data=[1, 2, 3]
                     ),
                     ResponseOutput(
-                        name="b", shape=[3], datatype="BYTES", data=[b"A", b"B", b"C"]
+                        name="b",
+                        shape=[3, 1],
+                        datatype="BYTES",
+                        data=[b"A", b"B", b"C"],
                     ),
                 ],
             ),
@@ -152,11 +155,11 @@ def test_encode_response(dataframe, use_bytes, expected):
                 model_name="my-model",
                 outputs=[
                     ResponseOutput(
-                        name="a", shape=[3], datatype="INT64", data=[1, 2, 3]
+                        name="a", shape=[3, 1], datatype="INT64", data=[1, 2, 3]
                     ),
                     ResponseOutput(
                         name="b",
-                        shape=[3],
+                        shape=[3, 1],
                         datatype="BYTES",
                         data=[b"A", b"B", b"C"],
                         parameters=Parameters(_decoded_payload=["A", "B", "C"]),
@@ -175,10 +178,15 @@ def test_encode_response(dataframe, use_bytes, expected):
                 model_name="my-model",
                 outputs=[
                     ResponseOutput(
-                        name="a", shape=[3], datatype="INT32", data=[1, 2, 3]
+                        name="a",
+                        shape=[
+                            3,
+                        ],
+                        datatype="INT32",
+                        data=[1, 2, 3],
                     ),
                     ResponseOutput(
-                        name="b", shape=[3], datatype="FP32", data=[5, 6, 7]
+                        name="b", shape=[3, 1], datatype="FP32", data=[5, 6, 7]
                     ),
                 ],
             ),
@@ -209,9 +217,14 @@ def test_decode_response(response: InferenceResponse, expected: pd.DataFrame):
             True,
             InferenceRequest(
                 inputs=[
-                    RequestInput(name="a", shape=[3], datatype="INT64", data=[1, 2, 3]),
                     RequestInput(
-                        name="b", shape=[3], datatype="BYTES", data=[b"A", b"B", b"C"]
+                        name="a", shape=[3, 1], datatype="INT64", data=[1, 2, 3]
+                    ),
+                    RequestInput(
+                        name="b",
+                        shape=[3, 1],
+                        datatype="BYTES",
+                        data=[b"A", b"B", b"C"],
                     ),
                 ],
             ),
@@ -226,9 +239,11 @@ def test_decode_response(response: InferenceResponse, expected: pd.DataFrame):
             False,
             InferenceRequest(
                 inputs=[
-                    RequestInput(name="a", shape=[3], datatype="INT64", data=[1, 2, 3]),
                     RequestInput(
-                        name="b", shape=[3], datatype="BYTES", data=["A", "B", "C"]
+                        name="a", shape=[3, 1], datatype="INT64", data=[1, 2, 3]
+                    ),
+                    RequestInput(
+                        name="b", shape=[3, 1], datatype="BYTES", data=["A", "B", "C"]
                     ),
                 ],
             ),
@@ -259,7 +274,7 @@ def test_encode_request(
                         name="b",
                         data=b"hello world",
                         datatype="BYTES",
-                        shape=[1],
+                        shape=[1, 1],
                         parameters=Parameters(_decoded_payload=["hello world"]),
                     ),
                 ]
@@ -282,7 +297,7 @@ def test_encode_request(
                         name="b",
                         data=b"ABC",
                         datatype="BYTES",
-                        shape=[3],
+                        shape=[3, 1],
                     ),
                 ]
             ),
@@ -314,37 +329,37 @@ def test_encode_request(
                         name="a",
                         data=[None, None],
                         datatype="FP64",
-                        shape=[1],
+                        shape=[2, 1],
                     ),
                     RequestInput(
                         name="b",
                         data=[1, 2],
                         datatype="FP32",
-                        shape=[2],
+                        shape=[2, 1],
                     ),
                     RequestInput(
                         name="c",
                         data=[3, 4],
                         datatype="INT32",
-                        shape=[2],
+                        shape=[2, 1],
                     ),
                     RequestInput(
                         name="d",
                         data=[5, 6],
                         datatype="UINT8",
-                        shape=[2],
+                        shape=[2, 1],
                     ),
                     RequestInput(
                         name="e",
                         data=[True, False],
                         datatype="BOOL",
-                        shape=[2],
+                        shape=[2, 1],
                     ),
                     RequestInput(
                         name="f",
                         data=[0, 1],
                         datatype="BOOL",
-                        shape=[2],
+                        shape=[2, 1],
                     ),
                 ]
             ),
