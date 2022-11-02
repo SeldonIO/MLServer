@@ -14,10 +14,13 @@ from ..types import (
     InferenceRequest,
     InferenceResponse,
 )
-from ..utils import generate_uuid, schedule_with_callback
+from ..utils import generate_uuid
 
 from .requests import BatchedRequests
 
+from prometheus_client import Histogram
+
+batch_queue_request_count = Histogram("batch_queue_request_counter", "counter of request queue batch size")
 
 class AdaptiveBatcher:
     def __init__(self, model: MLModel):
@@ -51,7 +54,7 @@ class AdaptiveBatcher:
         req: InferenceRequest,
     ) -> Tuple[str, Awaitable[InferenceResponse]]:
         internal_id = generate_uuid()
-
+        self._batch_queue_monitor()
         await self._requests.put((internal_id, req))
 
         loop = asyncio.get_running_loop()
@@ -59,6 +62,11 @@ class AdaptiveBatcher:
         self._async_responses[internal_id] = async_response
 
         return internal_id, async_response
+
+    def _batch_queue_monitor(self):
+        """Monitorize batch queue size"""
+        batch_queue_size = self._requests.qsize()
+        batch_queue_request_count.observe(batch_queue_size)
 
     async def _wait_response(self, internal_id: str) -> InferenceResponse:
         async_response = self._async_responses[internal_id]
@@ -75,9 +83,8 @@ class AdaptiveBatcher:
                 # If task hasn't finished yet, let it keep running
                 return
 
-        self._batching_task = schedule_with_callback(
-            self._batcher(), self._batching_task_callback
-        )
+        self._batching_task = asyncio.create_task(self._batcher())
+        self._batching_task.add_done_callback(self._batching_task_callback)
 
     def _batching_task_callback(self, batching_task: Task):
         err = batching_task.exception()
@@ -99,10 +106,8 @@ class AdaptiveBatcher:
             # We run prediction as a Task to ensure it gets scheduled
             # immediately.
             # That way, we can process multiple batches concurrently.
-            schedule_with_callback(
-                self._predict_fn(batched.merged_request),
-                partial(self._predict_callback, batched),
-            )
+            predict_task = asyncio.create_task(self._predict_fn(batched.merged_request))
+            predict_task.add_done_callback(partial(self._predict_callback, batched))
 
     def _predict_callback(self, batched: BatchedRequests, predict_task: Task):
         try:

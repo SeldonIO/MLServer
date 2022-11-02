@@ -4,7 +4,8 @@ from typing import Dict
 from itertools import cycle
 from multiprocessing import Queue
 from concurrent.futures import ThreadPoolExecutor
-from asyncio import Future
+from asyncio import Future, AbstractEventLoop
+from prometheus_client import Histogram
 
 from ..utils import schedule_with_callback
 
@@ -16,6 +17,16 @@ from .messages import (
     ModelResponseMessage,
 )
 
+queue_request_count = Histogram(
+    "queue_request_counter",
+    "counter of request queue size for workers",
+    ['workerpid']
+)
+
+process_request_count = Histogram(
+    "process_request_list_counter",
+    "list of processes queued for workers"
+)
 
 class Dispatcher:
     def __init__(self, workers: Dict[int, Worker], responses: Queue):
@@ -77,13 +88,15 @@ class Dispatcher:
     async def dispatch(
         self, request_message: ModelRequestMessage
     ) -> ModelResponseMessage:
-        worker = self._get_worker()
+        worker, wpid = self._get_worker()
+        self._workers_queue_monitor(worker,wpid)
         worker.send_request(request_message)
-
         loop = asyncio.get_running_loop()
+        self._workers_processes_monitor(loop)
         async_response = loop.create_future()
         internal_id = request_message.id
         self._async_responses[internal_id] = async_response
+        
 
         return await self._wait_response(internal_id)
 
@@ -93,7 +106,19 @@ class Dispatcher:
         By default, this is just a round-robin through all the workers.
         """
         worker_pid = next(self._workers_round_robin)
-        return self._workers[worker_pid]
+        return self._workers[worker_pid], worker_pid
+    
+    def _workers_queue_monitor(self, worker: Worker, worker_pid: int):
+        """Get metrics from every worker request queue"""
+        queue_size = worker._requests.qsize()
+        
+        queue_request_count.labels(workerpid=str(worker_pid)).observe(
+            float(queue_size)
+        )
+    
+    def _workers_processes_monitor(self, loop: AbstractEventLoop):
+        process_request_count.observe(float(len(asyncio.all_tasks(loop))))
+
 
     async def _wait_response(self, internal_id: str) -> ModelResponseMessage:
         async_response = self._async_responses[internal_id]
