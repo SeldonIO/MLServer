@@ -33,7 +33,9 @@ from mlserver.codecs.string import StringCodec
         (
             np.array([1, 2, 3, 4]),
             RequestOutput(name="foo"),
-            ResponseOutput(name="foo", datatype="INT64", shape=[4], data=[1, 2, 3, 4]),
+            ResponseOutput(
+                name="foo", datatype="INT64", shape=[4, 1], data=[1, 2, 3, 4]
+            ),
         ),
         (
             ["asd"],
@@ -102,7 +104,7 @@ def test_encode_response_output(
                 model_version="v1.2.3",
                 outputs=[
                     ResponseOutput(
-                        name="output-1", datatype="INT64", shape=[3], data=[1, 2, 3]
+                        name="output-1", datatype="INT64", shape=[3, 1], data=[1, 2, 3]
                     ),
                 ],
             ),

@@ -150,7 +150,7 @@ def test_decode_request_not_found(
                 ResponseOutput(
                     name="output-0",
                     datatype="INT64",
-                    shape=[1],
+                    shape=[1, 1],
                     data=[2],
                 )
             ],
@@ -175,7 +175,7 @@ def test_decode_request_not_found(
                 ResponseOutput(
                     name="output-0",
                     datatype="INT64",
-                    shape=[1],
+                    shape=[1, 1],
                     data=[2],
                 ),
                 ResponseOutput(
@@ -201,7 +201,7 @@ def test_decode_request_not_found(
                 ResponseOutput(
                     name="output-1",
                     datatype="INT64",
-                    shape=[1],
+                    shape=[1, 1],
                     data=[2],
                 ),
             ],
@@ -236,7 +236,7 @@ def test_decode_request_not_found(
                 ResponseOutput(
                     name="output-0",
                     datatype="INT64",
-                    shape=[1],
+                    shape=[1, 1],
                     data=[3],
                 ),
                 ResponseOutput(name="a", datatype="INT64", shape=[1, 1], data=[2]),
