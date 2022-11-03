@@ -6,3 +6,6 @@ pytorch-lightning==1.8.0.post1
 torchmetrics==0.10.2
 torchvision==0.14.0
 httpx==0.23.0
+
+# Force local tests to use MLflow 2.x
+mlflow >= 2.0.0rc0

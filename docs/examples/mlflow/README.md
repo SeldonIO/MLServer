@@ -288,20 +288,22 @@ Note that, in both cases, the request will be handled by the same MLServer insta
 import requests
 
 inference_request = {
-    "columns": [
-        "alcohol",
-        "chlorides",
-        "citric acid",
-        "density",
-        "fixed acidity",
-        "free sulfur dioxide",
-        "pH",
-        "residual sugar",
-        "sulphates",
-        "total sulfur dioxide",
-        "volatile acidity",
-    ],
-    "data": [[7.4,0.7,0,1.9,0.076,11,34,0.9978,3.51,0.56,9.4]],
+    "dataframe_split": {
+        "columns": [
+            "alcohol",
+            "chlorides",
+            "citric acid",
+            "density",
+            "fixed acidity",
+            "free sulfur dioxide",
+            "pH",
+            "residual sugar",
+            "sulphates",
+            "total sulfur dioxide",
+            "volatile acidity",
+        ],
+        "data": [[7.4,0.7,0,1.9,0.076,11,34,0.9978,3.51,0.56,9.4]]
+    }
 }
 
 endpoint = "http://localhost:8080/invocations"

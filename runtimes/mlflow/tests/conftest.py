@@ -3,6 +3,7 @@ import mlflow
 import pytest
 import asyncio
 import numpy as np
+import pandas as pd
 
 from sklearn.dummy import DummyClassifier
 from pytorch_lightning import Trainer
@@ -33,7 +34,7 @@ def event_loop():
 @pytest.fixture
 def dataset() -> tuple:
     n = 4
-    X = np.random.rand(n)
+    X = pd.DataFrame({"foo": np.random.rand(n)})
     y = np.random.rand(n)
 
     return X, y
@@ -43,8 +44,6 @@ def dataset() -> tuple:
 def model_signature(dataset: tuple) -> ModelSignature:
     X, y = dataset
     signature = infer_signature(X, y)
-
-    signature.inputs.inputs[0]._name = "foo"
 
     return signature
 

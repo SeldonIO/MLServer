@@ -4,7 +4,7 @@ import pandas as pd
 
 from typing import Any
 
-from mlserver.codecs import NumpyCodec
+from mlserver.codecs import NumpyCodec, PandasCodec
 from mlserver.types import (
     InferenceRequest,
     Parameters,
@@ -16,7 +16,6 @@ from mlflow.pyfunc import PyFuncModel
 from mlflow.models.signature import ModelSignature
 
 from mlserver_mlflow import MLflowRuntime
-from mlserver_mlflow.codecs import TensorDictCodec
 
 
 def test_load(runtime: MLflowRuntime):
@@ -159,4 +158,4 @@ async def test_metadata(runtime: MLflowRuntime, model_signature: ModelSignature)
     assert len(model_signature.outputs.inputs) == len(metadata.outputs)
 
     assert metadata.parameters is not None
-    assert metadata.parameters.content_type == TensorDictCodec.ContentType
+    assert metadata.parameters.content_type == PandasCodec.ContentType
