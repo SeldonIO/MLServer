@@ -31,13 +31,13 @@ jobs:
         python-version: ["3.8", "3.9", "3.10"]
         tox-environment:
           - py3
-          - all
           - sklearn
           - xgboost
           - lightgbm
           - mlflow
-          - alibiexplain
-          - alibidetect
+          - huggingface
+          - alibi-explain
+          - alibi-detect
           - all-runtimes
     steps:
       - name: Maximize build space
