@@ -40,7 +40,7 @@ from mlserver.rest.responses import Response
             {
                 "name": "output-0",
                 "datatype": "BYTES",
-                "shape": [3],
+                "shape": [3, 1],
                 "parameters": Parameters(content_type=StringCodec.ContentType),
                 "data": ["hey", "what's", "up"],
             },
@@ -51,7 +51,7 @@ from mlserver.rest.responses import Response
             {
                 "name": "output-0",
                 "datatype": "BYTES",
-                "shape": [1],
+                "shape": [1, 1],
                 "parameters": None,
                 "data": ["UHl0aG9uIGlzIGZ1bg=="],
             },

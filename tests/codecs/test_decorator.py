@@ -162,7 +162,7 @@ def test_decode_request_not_found(
                 ResponseOutput(
                     name="output-0",
                     datatype="BYTES",
-                    shape=[1],
+                    shape=[1, 1],
                     data=[b"foo"],
                     parameters=Parameters(content_type=StringCodec.ContentType),
                 )
@@ -181,7 +181,7 @@ def test_decode_request_not_found(
                 ResponseOutput(
                     name="output-1",
                     datatype="BYTES",
-                    shape=[1],
+                    shape=[1, 1],
                     data=[b"foo"],
                     parameters=Parameters(content_type=StringCodec.ContentType),
                 ),
@@ -194,7 +194,7 @@ def test_decode_request_not_found(
                 ResponseOutput(
                     name="output-0",
                     datatype="BYTES",
-                    shape=[1],
+                    shape=[1, 1],
                     data=[b"foo"],
                     parameters=Parameters(content_type=StringCodec.ContentType),
                 ),
@@ -210,20 +210,20 @@ def test_decode_request_not_found(
             pd.DataFrame({"a": [2], "b": ["foo"]}),
             [PandasCodec],
             [
-                ResponseOutput(name="a", datatype="INT64", shape=[1], data=[2]),
-                ResponseOutput(name="b", datatype="BYTES", shape=[1], data=[b"foo"]),
+                ResponseOutput(name="a", datatype="INT64", shape=[1, 1], data=[2]),
+                ResponseOutput(name="b", datatype="BYTES", shape=[1, 1], data=[b"foo"]),
             ],
         ),
         (
             (pd.DataFrame({"a": [2], "b": ["foo"]}), ["bar"]),
             [PandasCodec, StringCodec],
             [
-                ResponseOutput(name="a", datatype="INT64", shape=[1], data=[2]),
-                ResponseOutput(name="b", datatype="BYTES", shape=[1], data=[b"foo"]),
+                ResponseOutput(name="a", datatype="INT64", shape=[1, 1], data=[2]),
+                ResponseOutput(name="b", datatype="BYTES", shape=[1, 1], data=[b"foo"]),
                 ResponseOutput(
                     name="output-1",
                     datatype="BYTES",
-                    shape=[1],
+                    shape=[1, 1],
                     data=[b"bar"],
                     parameters=Parameters(content_type=StringCodec.ContentType),
                 ),
@@ -239,8 +239,8 @@ def test_decode_request_not_found(
                     shape=[1],
                     data=[3],
                 ),
-                ResponseOutput(name="a", datatype="INT64", shape=[1], data=[2]),
-                ResponseOutput(name="b", datatype="BYTES", shape=[1], data=[b"foo"]),
+                ResponseOutput(name="a", datatype="INT64", shape=[1, 1], data=[2]),
+                ResponseOutput(name="b", datatype="BYTES", shape=[1, 1], data=[b"foo"]),
             ],
         ),
     ],

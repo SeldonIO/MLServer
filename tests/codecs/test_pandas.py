@@ -84,10 +84,13 @@ def test_to_response_output(series, use_bytes, expected):
                 model_name="my-model",
                 outputs=[
                     ResponseOutput(
-                        name="a", shape=[3], datatype="INT64", data=[1, 2, 3]
+                        name="a", shape=[3, 1], datatype="INT64", data=[1, 2, 3]
                     ),
                     ResponseOutput(
-                        name="b", shape=[3], datatype="BYTES", data=[b"A", b"B", b"C"]
+                        name="b",
+                        shape=[3, 1],
+                        datatype="BYTES",
+                        data=[b"A", b"B", b"C"],
                     ),
                 ],
             ),
@@ -104,10 +107,10 @@ def test_to_response_output(series, use_bytes, expected):
                 model_name="my-model",
                 outputs=[
                     ResponseOutput(
-                        name="a", shape=[3], datatype="INT64", data=[1, 2, 3]
+                        name="a", shape=[3, 1], datatype="INT64", data=[1, 2, 3]
                     ),
                     ResponseOutput(
-                        name="b", shape=[3], datatype="BYTES", data=["A", "B", "C"]
+                        name="b", shape=[3, 1], datatype="BYTES", data=["A", "B", "C"]
                     ),
                 ],
             ),

@@ -41,7 +41,7 @@ from mlserver.codecs.string import StringCodec
             ResponseOutput(
                 name="bar",
                 datatype="BYTES",
-                shape=[1],
+                shape=[1, 1],
                 data=[b"asd"],
                 parameters=Parameters(content_type=StringCodec.ContentType),
             ),
@@ -50,7 +50,10 @@ from mlserver.codecs.string import StringCodec
             ["2021-02-25T12:00:00Z"],
             RequestOutput(name="bar", parameters=Parameters(content_type="datetime")),
             ResponseOutput(
-                name="bar", datatype="BYTES", shape=[1], data=[b"2021-02-25T12:00:00Z"]
+                name="bar",
+                datatype="BYTES",
+                shape=[1, 1],
+                data=[b"2021-02-25T12:00:00Z"],
             ),
         ),
         ({1, 2, 3, 4}, RequestOutput(name="bar"), None),
@@ -81,12 +84,12 @@ def test_encode_response_output(
                 model_version="v1.2.3",
                 outputs=[
                     ResponseOutput(
-                        name="a", datatype="INT64", shape=[3], data=[1, 2, 3]
+                        name="a", datatype="INT64", shape=[3, 1], data=[1, 2, 3]
                     ),
                     ResponseOutput(
                         name="b",
                         datatype="BYTES",
-                        shape=[3],
+                        shape=[3, 1],
                         data=[b"a", b"b", b"c"],
                     ),
                 ],
@@ -113,7 +116,7 @@ def test_encode_response_output(
                     ResponseOutput(
                         name="output-1",
                         datatype="BYTES",
-                        shape=[2],
+                        shape=[2, 1],
                         data=[b"foo", b"bar"],
                         parameters=Parameters(content_type=StringCodec.ContentType),
                     ),
