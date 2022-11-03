@@ -6,7 +6,7 @@ Most commonly, this type ranges from _"general purpose"_ NumPy arrays or Pandas
 DataFrames to more granular definitions, like `datetime` objects, `Pillow`
 images, etc.
 Unfortunately, the definition of the [V2 Inference
-Protocol](https://kserve.github.io/website/modelserving/inference_api/) doesn't
+Protocol](https://docs.seldon.io/projects/seldon-core/en/latest/reference/apis/v2-protocol.html) doesn't
 cover any of the specific use cases.
 This protocol can be thought of a wider _"lower level"_ spec, which only
 defines what fields a payload should have.
@@ -227,7 +227,7 @@ You can also learn more about building custom extensions for MLServer on the
 
 ```{note}
 The [V2 Inference
-Protocol](https://kserve.github.io/website/modelserving/inference_api/) expects
+Protocol](https://docs.seldon.io/projects/seldon-core/en/latest/reference/apis/v2-protocol.html) expects
 that the `data` of each input is sent as a **flat array**.
 Therefore, the `np` content type will expect that tensors are sent flattened.
 The information in the `shape` field will then be used to reshape the vector

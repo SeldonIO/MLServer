@@ -55,7 +55,7 @@ spec:
 As you can see highlighted above, all that we need to specify is that:
 
 - Our **inference deployment should use the [V2 inference
-  protocol](https://kserve.github.io/website/modelserving/inference_api/)**,
+  protocol](https://docs.seldon.io/projects/seldon-core/en/latest/reference/apis/v2-protocol.html)**,
   which is done by **setting the `protocol` field to `kfserving`**.
 - Our **model artifact is a serialised Scikit-Learn model**, therefore it
   should be served using the [MLServer SKLearn runtime](../../runtimes/sklearn),
@@ -63,7 +63,7 @@ As you can see highlighted above, all that we need to specify is that:
 
 Note that, while the `protocol` should always be set to `kfserving` (i.e. so
 that models are served using the [V2 inference
-protocol](https://kserve.github.io/website/modelserving/inference_api/)), the
+protocol](https://docs.seldon.io/projects/seldon-core/en/latest/reference/apis/v2-protocol.html)), the
 value of the `implementation` field will be dependant on your ML framework.
 The valid values of the `implementation` field are [pre-determined by Seldon
 Core](https://docs.seldon.io/projects/seldon-core/en/latest/graph/protocols.html#v2-kfserving-protocol).
@@ -152,7 +152,7 @@ custom MLServer image is:
 
 - Letting Seldon Core know that the model deployment will be served through the
   [V2 inference
-  protocol](https://kserve.github.io/website/modelserving/inference_api/)) by
+  protocol](https://docs.seldon.io/projects/seldon-core/en/latest/reference/apis/v2-protocol.html)) by
   setting the `protocol` field to `v2`.
 - Pointing our model container to use our **custom MLServer image**, by
   specifying it on the `image` field of the `componentSpecs` section of the
