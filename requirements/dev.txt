@@ -1,4 +1,4 @@
--r requirements/ci.txt
+-r ./ci.txt
 
 # Code generation
 datamodel-code-generator==0.13.1
