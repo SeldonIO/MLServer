@@ -9,7 +9,7 @@ from mlserver_alibi_explain.errors import InvalidExplanationShape
 @pytest.mark.parametrize(
     "output",
     [
-        ResponseOutput(name="foo", datatype="INT32", shape=[1, 1], data=[1]),
+        ResponseOutput(name="foo", datatype="INT32", shape=[1, 1, 1], data=[1]),
         ResponseOutput(name="foo", datatype="INT32", shape=[1, 2], data=[1, 2]),
     ],
 )

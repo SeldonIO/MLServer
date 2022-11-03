@@ -276,7 +276,7 @@ async def test_custom_explain_endpoint(dummy_alibi_explain_client):
         InferenceResponse(
             model_name="my-model",
             outputs=[
-                ResponseOutput(name="foo", datatype="INT32", shape=[1, 1], data=[1]),
+                ResponseOutput(name="foo", datatype="INT32", shape=[1, 1, 1], data=[1]),
             ],
         ),
         InferenceResponse(
