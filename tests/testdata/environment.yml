@@ -1,6 +1,6 @@
 name: custom-runtime-environment
 dependencies:
-  - python == 3.7
+  - python == 3.8
   - scikit-learn
   - pip:
       - mlserver == 1.2.0.dev6

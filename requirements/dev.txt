@@ -1,17 +1,14 @@
 # Code generation
 datamodel-code-generator==0.13.1
 
-## Locking `grpcio-tools` for compatibility with `tritonclient`, which currently pins
-## `grpcio==1.41.0` due to memory leak in later versions: https://github.com/grpc/grpc/issues/28513
-# grpcio-tools==1.48.1
-grpcio-tools==1.41.0
+grpcio-tools==1.48.1
 
 ## Locking `prance` (a subdep of `datamodel-code-generator`) to an older
 ## version due to issues with the latest version of `pip`:
 ## https://github.com/pypa/pip/issues/9613
 prance==0.20.0
 
-tritonclient[all]==2.26.0
+tritonclient[http]==2.26.0
 
 # Testing
 pytest==7.1.3
