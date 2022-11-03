@@ -10,9 +10,9 @@ install-dev:
 	for _runtime in ./runtimes/*; \
 	do \
 		pip install --editable $$_runtime; \
-		if [[ -f $$_runtime/requirements-dev.txt ]]; \
+		if [[ -f $$_runtime/requirements/dev.txt ]]; \
 		then \
-			pip install -r $$_runtime/requirements-dev.txt; \
+			pip install -r $$_runtime/requirements/dev.txt; \
 		fi \
 	done
 	pip install --editable .
