@@ -17,16 +17,6 @@ install-dev:
 	done
 	pip install --editable .
 
-install-ci: # only install tox + utils (runtimes will get installed through tox)
-	pip install -r requirements/dev.txt
-	for _runtime in ./runtimes/*; \
-	do \
-		if [[ -f $$_runtime/requirements/dev.txt ]]; \
-		then \
-			pip install -r $$_runtime/requirements/dev.txt; \
-		fi \
-	done
-
 _generate: # "private" target to call `fmt` after `generate`
 	./hack/generate-types.sh
 
