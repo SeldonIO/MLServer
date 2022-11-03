@@ -113,7 +113,7 @@ def test_decode_infer_request(encoded: pb.ModelInferRequest, expected: Any):
             pb.ModelInferResponse.InferOutputTensor(
                 name="output-0",
                 datatype="FP64",
-                shape=[1],
+                shape=[1, 1],
                 contents=pb.InferTensorContents(fp64_contents=[21.0]),
             ),
         ),

@@ -18,7 +18,7 @@ from mlserver.rest.responses import Response
             {
                 "name": "output-0",
                 "datatype": "FP64",
-                "shape": [1],
+                "shape": [1, 1],
                 "parameters": None,
                 "data": [21.0],
             },
