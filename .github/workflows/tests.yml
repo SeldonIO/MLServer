@@ -19,7 +19,7 @@ jobs:
           python-version: 3.8
       - name: Install dependencies
         run: |
-          make install-dev
+          make install-ci
       - name: Lint
         run: |
           make lint
@@ -29,6 +29,16 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.8", "3.9", "3.10"]
+        tox-environment:
+          - py3
+          - all
+          - sklearn
+          - xgboost
+          - lightgbm
+          - mlflow
+          - alibiexplain
+          - alibidetect
+          - all-runtimes
     steps:
       - name: Maximize build space
         uses: easimon/maximize-build-space@master
@@ -44,7 +54,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
-          make install-dev
+          make install-ci
       - name: Test
         run: |
-          make test
+          tox -e ${{ matrix.tox-environment }}
