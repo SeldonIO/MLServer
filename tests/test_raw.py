@@ -41,7 +41,7 @@ def test_pack_bytes(unpacked: List[str]):
     "tensor",
     [
         # bool
-        np.array([True, False, True]),
+        np.array([[True, False, True]]),
         # uint8
         np.array([[1, 2], [3, 4]], dtype=np.ubyte),
         # uint16

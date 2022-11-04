@@ -1,4 +1,4 @@
-from typing import Any, Union, Dict, Optional
+from typing import Any, Union, Dict, Optional, List
 
 from ..types import (
     InferenceRequest,
@@ -32,6 +32,17 @@ Parametrised = Union[
 ]
 Tagged = Union[MetadataTensor, ModelSettings]
 DecodedParameterName = "_decoded_payload"
+
+
+def inject_batch_dimension(shape: List[int]) -> List[int]:
+    """
+    Utility method to ensure that 1-dimensional shapes
+    assume that `[N] == [N, D]`.
+    """
+    if len(shape) > 1:
+        return shape
+
+    return shape + [1]
 
 
 def _get_content_type(

@@ -67,7 +67,7 @@ class AlibiExplainRuntimeBase(MLModel):
 
         output = v2_response.outputs[0]
 
-        if output.shape != [1]:
+        if output.shape not in ([1], [1, 1]):
             raise InvalidExplanationShape(output.shape)
 
         explanation = json.loads(output.data[0])

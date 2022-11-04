@@ -56,7 +56,7 @@ class DatetimeCodec(InputCodec):
         cls, name: str, payload: List[_Datetime], use_bytes: bool = True, **kwargs
     ) -> ResponseOutput:
         packed = map(partial(_encode_datetime, use_bytes=use_bytes), payload)
-        shape = [len(payload)]
+        shape = [len(payload), 1]
         return ResponseOutput(
             name=name,
             datatype="BYTES",

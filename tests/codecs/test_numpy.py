@@ -20,7 +20,7 @@ def test_can_encode(payload: Any, expected: bool):
     [
         (
             np.array([1, 2, 3]),
-            ResponseOutput(name="foo", shape=[3], data=[1, 2, 3], datatype="INT64"),
+            ResponseOutput(name="foo", shape=[3, 1], data=[1, 2, 3], datatype="INT64"),
         ),
         (
             np.array([[1, 2], [3, 4]]),
@@ -36,7 +36,7 @@ def test_can_encode(payload: Any, expected: bool):
         ),
         (
             np.array([1.0, 2.0]),
-            ResponseOutput(name="foo", shape=[2], data=[1, 2], datatype="FP64"),
+            ResponseOutput(name="foo", shape=[2, 1], data=[1, 2], datatype="FP64"),
         ),
         (
             np.array([[b"\x01"], [b"\x02"]], dtype=bytes),
@@ -47,7 +47,7 @@ def test_can_encode(payload: Any, expected: bool):
         (
             np.array(["foo", "bar"], dtype=str),
             ResponseOutput(
-                name="foo", shape=[2], data=[b"foo", b"bar"], datatype="BYTES"
+                name="foo", shape=[2, 1], data=[b"foo", b"bar"], datatype="BYTES"
             ),
         ),
     ],
@@ -111,18 +111,23 @@ def test_encode_input(request_input):
 
 
 @pytest.mark.parametrize(
-    "payload",
+    "payload, expected",
     [
-        np.array([1, 2, 3]),
-        np.array([[1, 2], [3, 4]]),
-        np.array([1.0, 2.0]),
-        np.array([[b"\x01"], [b"\x02"]], dtype=bytes),
+        (np.array([1, 2, 3]), np.array([[1], [2], [3]])),
+        (np.array([[1, 2], [3, 4]]), np.array([[1, 2], [3, 4]])),
+        (np.array([1.0, 2.0]), np.array([[1.0], [2.0]])),
+        (
+            np.array([[b"\x01"], [b"\x02"]], dtype=bytes),
+            np.array([[b"\x01"], [b"\x02"]], dtype=bytes),
+        ),
     ],
 )
-def test_decode_output(payload):
+def test_decode_output(payload, expected):
+    # Note that `decode(encode(x)) != x`, because of shape changes to make
+    # the `[N] == [N, 1]` explicit
     response_output = NumpyCodec.encode_output(name="foo", payload=payload)
     output_response_decoded = NumpyCodec.decode_output(response_output)
-    np.testing.assert_array_equal(output_response_decoded, payload)
+    np.testing.assert_array_equal(output_response_decoded, expected)
 
 
 @pytest.mark.parametrize(

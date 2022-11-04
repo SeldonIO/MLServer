@@ -66,7 +66,7 @@ async def test_predict_pytorch(runtime_pytorch: MLflowRuntime):
                     ResponseOutput(
                         name="output-1",
                         datatype="BYTES",
-                        shape=[1],
+                        shape=[1, 1],
                         data=[b"foo"],
                         parameters=Parameters(content_type="str"),
                     )
@@ -93,9 +93,11 @@ async def test_predict_pytorch(runtime_pytorch: MLflowRuntime):
                 model_name="mlflow-model",
                 outputs=[
                     ResponseOutput(
-                        name="foo", datatype="INT64", shape=[3], data=[1, 2, 3]
+                        name="foo", datatype="INT64", shape=[3, 1], data=[1, 2, 3]
                     ),
-                    ResponseOutput(name="bar", datatype="FP64", shape=[1], data=[1.2]),
+                    ResponseOutput(
+                        name="bar", datatype="FP64", shape=[1, 1], data=[1.2]
+                    ),
                 ],
             ),
         ),
@@ -105,12 +107,12 @@ async def test_predict_pytorch(runtime_pytorch: MLflowRuntime):
                 model_name="mlflow-model",
                 outputs=[
                     ResponseOutput(
-                        name="foo", datatype="INT64", shape=[3], data=[1, 2, 3]
+                        name="foo", datatype="INT64", shape=[3, 1], data=[1, 2, 3]
                     ),
                     ResponseOutput(
                         name="bar",
                         datatype="BYTES",
-                        shape=[2],
+                        shape=[2, 1],
                         data=[b"hello", b"world"],
                     ),
                 ],
@@ -122,10 +124,13 @@ async def test_predict_pytorch(runtime_pytorch: MLflowRuntime):
                 model_name="mlflow-model",
                 outputs=[
                     ResponseOutput(
-                        name="foo", datatype="INT64", shape=[3], data=[1, 2, 3]
+                        name="foo", datatype="INT64", shape=[3, 1], data=[1, 2, 3]
                     ),
                     ResponseOutput(
-                        name="bar", datatype="BYTES", shape=[3], data=[b"A", b"B", b"C"]
+                        name="bar",
+                        datatype="BYTES",
+                        shape=[3, 1],
+                        data=[b"A", b"B", b"C"],
                     ),
                 ],
             ),

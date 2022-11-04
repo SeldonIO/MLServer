@@ -23,42 +23,52 @@ def test_can_encode(payload: Any, expected: bool):
     "request_input, expected",
     [
         (
-            RequestInput(name="foo", datatype="BYTES", shape=[], data=b"hello world"),
+            RequestInput(
+                name="foo", datatype="BYTES", shape=[1, 1], data=b"hello world"
+            ),
             ["hello world"],
         ),
         (
-            RequestInput(name="foo", datatype="BYTES", shape=[], data="hello world"),
+            RequestInput(
+                name="foo", datatype="BYTES", shape=[1, 1], data="hello world"
+            ),
             ["hello world"],
         ),
         (
-            RequestInput(name="foo", datatype="BYTES", shape=[], data=["hello world"]),
+            RequestInput(
+                name="foo", datatype="BYTES", shape=[1, 1], data=["hello world"]
+            ),
             ["hello world"],
         ),
         (
-            RequestInput(name="foo", datatype="BYTES", shape=[], data=[b"hello world"]),
+            RequestInput(
+                name="foo", datatype="BYTES", shape=[1, 1], data=[b"hello world"]
+            ),
             ["hello world"],
         ),
         (
-            RequestInput(name="foo", datatype="BYTES", shape=[1], data=b"hello world"),
+            RequestInput(
+                name="foo", datatype="BYTES", shape=[1, 1], data=b"hello world"
+            ),
             ["hello world"],
         ),
         (
             RequestInput(
                 name="foo",
                 datatype="BYTES",
-                shape=[2],
+                shape=[2, 1],
                 data=["hello world", "hello world"],
             ),
             ["hello world", "hello world"],
         ),
         (
             RequestInput(
-                name="foo", datatype="BYTES", shape=[2], data=[b"hey", b"whats"]
+                name="foo", datatype="BYTES", shape=[2, 1], data=[b"hey", b"whats"]
             ),
             ["hey", "whats"],
         ),
         (
-            RequestInput(name="foo", datatype="BYTES", shape=[2], data=[None]),
+            RequestInput(name="foo", datatype="BYTES", shape=[1, 1], data=[None]),
             [None],
         ),
     ],
@@ -77,7 +87,7 @@ def test_decode_input(request_input, expected):
             True,
             ResponseOutput(
                 name="foo",
-                shape=[1],
+                shape=[1, 1],
                 datatype="BYTES",
                 data=[b"hello world"],
                 parameters=Parameters(content_type=StringCodec.ContentType),
@@ -88,7 +98,7 @@ def test_decode_input(request_input, expected):
             True,
             ResponseOutput(
                 name="foo",
-                shape=[2],
+                shape=[2, 1],
                 datatype="BYTES",
                 data=[b"hey", b"whats"],
                 parameters=Parameters(content_type=StringCodec.ContentType),
@@ -99,7 +109,7 @@ def test_decode_input(request_input, expected):
             False,
             ResponseOutput(
                 name="foo",
-                shape=[2],
+                shape=[2, 1],
                 datatype="BYTES",
                 data=["hey", "whats"],
                 parameters=Parameters(content_type=StringCodec.ContentType),
@@ -122,21 +132,21 @@ def test_encode_output(decoded, use_bytes, expected):
             ["hello world"],
             True,
             ResponseOutput(
-                name="foo", shape=[1], datatype="BYTES", data=[b"hello world"]
+                name="foo", shape=[1, 1], datatype="BYTES", data=[b"hello world"]
             ),
         ),
         (
             ["hey", "whats"],
             True,
             ResponseOutput(
-                name="foo", shape=[2], datatype="BYTES", data=[b"hey", b"whats"]
+                name="foo", shape=[2, 1], datatype="BYTES", data=[b"hey", b"whats"]
             ),
         ),
         (
             ["hey", "whats"],
             False,
             ResponseOutput(
-                name="foo", shape=[2], datatype="BYTES", data=["hey", "whats"]
+                name="foo", shape=[2, 1], datatype="BYTES", data=["hey", "whats"]
             ),
         ),
     ],
