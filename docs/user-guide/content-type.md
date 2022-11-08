@@ -6,7 +6,7 @@ Most commonly, this type ranges from _"general purpose"_ NumPy arrays or Pandas
 DataFrames to more granular definitions, like `datetime` objects, `Pillow`
 images, etc.
 Unfortunately, the definition of the [V2 Inference
-Protocol](https://kserve.github.io/website/modelserving/inference_api/) doesn't
+Protocol](https://docs.seldon.io/projects/seldon-core/en/latest/reference/apis/v2-protocol.html) doesn't
 cover any of the specific use cases.
 This protocol can be thought of a wider _"lower level"_ spec, which only
 defines what fields a payload should have.
@@ -206,13 +206,13 @@ Therefore, we can leverage this to override the model's metadata when needed.
 Out of the box, MLServer supports the following list of content types.
 However, this can be extended through the use of 3rd-party or custom runtimes.
 
-| Python Type                           | Content Type | Request Level | Request Codec                        | Input Level | Input Codec                     |
-| ------------------------------------- | ------------ | ------------- | ------------------------------------ | ----------- | ------------------------------- |
-| [NumPy Array](#numpy-array)           | `np`         | ✅            | `mlserver.codecs.NumpyRequestCodec`  | ✅          | `mlserver.codecs.NumpyCodec`    |
-| [Pandas DataFrame](#pandas-dataframe) | `pd`         | ✅            | `mlserver.codecs.PandasCodec`        | ❌          |                                 |
+| Python Type                           | Content Type | Request Level | Request Codec                               | Input Level | Input Codec                     |
+| ------------------------------------- | ------------ | ------------- | ------------------------------------------- | ----------- | ------------------------------- |
+| [NumPy Array](#numpy-array)           | `np`         | ✅            | `mlserver.codecs.NumpyRequestCodec`         | ✅          | `mlserver.codecs.NumpyCodec`    |
+| [Pandas DataFrame](#pandas-dataframe) | `pd`         | ✅            | `mlserver.codecs.PandasCodec`               | ❌          |                                 |
 | [UTF-8 String](#utf-8-string)         | `str`        | ✅            | `mlserver.codecs.string.StringRequestCodec` | ✅          | `mlserver.codecs.StringCodec`   |
-| [Base64](#base64)                     | `base64`     | ❌            |                                      | ✅          | `mlserver.codecs.Base64Codec`   |
-| [Datetime](#datetime)                 | `datetime`   | ❌            |                                      | ✅          | `mlserver.codecs.DatetimeCodec` |
+| [Base64](#base64)                     | `base64`     | ❌            |                                             | ✅          | `mlserver.codecs.Base64Codec`   |
+| [Datetime](#datetime)                 | `datetime`   | ❌            |                                             | ✅          | `mlserver.codecs.DatetimeCodec` |
 
 ```{note}
 MLServer allows you extend the supported content types by **adding custom
@@ -227,7 +227,7 @@ You can also learn more about building custom extensions for MLServer on the
 
 ```{note}
 The [V2 Inference
-Protocol](https://kserve.github.io/website/modelserving/inference_api/) expects
+Protocol](https://docs.seldon.io/projects/seldon-core/en/latest/reference/apis/v2-protocol.html) expects
 that the `data` of each input is sent as a **flat array**.
 Therefore, the `np` content type will expect that tensors are sent flattened.
 The information in the `shape` field will then be used to reshape the vector
@@ -241,6 +241,16 @@ into account the following:
   `dtype`](https://numpy.org/doc/stable/reference/arrays.dtypes.html).
 - The `shape` field will be used to reshape the flattened array expected by the
   V2 protocol into the expected tensor shape.
+
+```{note}
+By default, MLServer will always assume that an array with a single-dimensional
+shape, e.g. `[N]`, is equivalent to `[N, 1]`.
+That is, each entry will be treated like a single one-dimensional data point
+(i.e. instead of a `[1, D]` array, where the full array is a single
+`D`-dimensional data point).
+To avoid any ambiguity, where possible, the **Numpy codec will always
+explicitly encode `[N]` arrays as `[N, 1]`**.
+```
 
 For example, if we think of the following NumPy Array:
 

@@ -5,7 +5,7 @@ from typing import Any
 from ..types import RequestInput, ResponseOutput, Parameters
 
 from .base import InputCodec, register_input_codec, register_request_codec
-from .utils import SingleInputRequestCodec, InputOrOutput
+from .utils import SingleInputRequestCodec, InputOrOutput, inject_batch_dimension
 from .lists import is_list_of
 from .string import encode_str
 
@@ -112,10 +112,12 @@ class NumpyCodec(InputCodec):
     def encode_output(cls, name: str, payload: np.ndarray, **kwargs) -> ResponseOutput:
         datatype = to_datatype(payload.dtype)
 
+        shape = inject_batch_dimension(list(payload.shape))
+
         return ResponseOutput(
             name=name,
             datatype=datatype,
-            shape=list(payload.shape),
+            shape=shape,
             data=_encode_data(payload, datatype),
         )
 

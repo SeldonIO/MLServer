@@ -54,7 +54,7 @@ RUN microdnf install -y wget && \
     ln -s "$CONDA_PATH/etc/profile.d/conda.sh" /etc/profile.d/conda.sh && \
     echo ". $CONDA_PATH/etc/profile.d/conda.sh" >> ~/.bashrc
 
-RUN mkdir $MLSERVER_PATH 
+RUN mkdir $MLSERVER_PATH
 WORKDIR /opt/mlserver
 
 # Create user and fix permissions
@@ -64,15 +64,20 @@ RUN useradd -u 1000 -s /bin/bash mlserver -d $MLSERVER_PATH && \
     chown -R 1000:0 $MLSERVER_PATH && \
     chmod -R 776 $MLSERVER_PATH
 
-COPY --from=wheel-builder /opt/mlserver/dist ./dist 
-# note: if runtime is "all" we install mlserver-<version>-py3-none-any.whl
+COPY --from=wheel-builder /opt/mlserver/dist ./dist
+# NOTE: if runtime is "all" we install mlserver-<version>-py3-none-any.whl
 # we have to use this syntax to return the correct file: $(ls ./dist/mlserver-*.whl)
+# NOTE: Temporarily excluding mllib from the main image due to:
+#   CVE-2022-25168
+#   CVE-2022-42889
 RUN . $CONDA_PATH/etc/profile.d/conda.sh && \
     pip install --upgrade pip wheel setuptools && \
     if [[ $RUNTIMES == "all" ]]; then \
         for _wheel in "./dist/mlserver_"*.whl; do \
-            echo "--> Installing $_wheel..."; \
-            pip install $_wheel; \
+            if [[ ! $_wheel == *"mllib"* ]]; then \
+                echo "--> Installing $_wheel..."; \
+                pip install $_wheel; \
+            fi \
         done \
     else \
         for _runtime in $RUNTIMES; do \
@@ -85,6 +90,7 @@ RUN . $CONDA_PATH/etc/profile.d/conda.sh && \
     pip install $(ls "./dist/mlserver-"*.whl)
 
 COPY ./licenses/license.txt .
+COPY ./licenses/license.txt /licenses/
 COPY \
     ./hack/build-env.sh \
     ./hack/generate_dotenv.py \

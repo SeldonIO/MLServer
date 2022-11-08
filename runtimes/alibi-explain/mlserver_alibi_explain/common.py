@@ -38,7 +38,7 @@ def convert_from_bytes(output: ResponseOutput, ty: Optional[Type] = None) -> Any
     This utility function decodes the response from bytes string to python object dict.
     It is related to decoding StringCodec
     """
-    if output.shape != [1]:
+    if output.shape not in ([1], [1, 1]):
         raise InvalidExplanationShape(output.shape)
 
     if ty == str:

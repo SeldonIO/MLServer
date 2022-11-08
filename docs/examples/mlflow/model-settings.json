@@ -2,6 +2,6 @@
     "name": "wine-classifier",
     "implementation": "mlserver_mlflow.MLflowRuntime",
     "parameters": {
-        "uri": "./mlruns/0/3dbfe3a610214e09b6fd01e72d3b9597/artifacts/model"
+        "uri": "./mlruns/0/6cd26d62883641188b4f7616725ed838/artifacts/model"
     }
 }

@@ -4,7 +4,7 @@ import pandas as pd
 
 from typing import Any
 
-from mlserver.codecs import NumpyCodec
+from mlserver.codecs import NumpyCodec, PandasCodec
 from mlserver.types import (
     InferenceRequest,
     Parameters,
@@ -16,7 +16,6 @@ from mlflow.pyfunc import PyFuncModel
 from mlflow.models.signature import ModelSignature
 
 from mlserver_mlflow import MLflowRuntime
-from mlserver_mlflow.codecs import TensorDictCodec
 
 
 def test_load(runtime: MLflowRuntime):
@@ -67,7 +66,7 @@ async def test_predict_pytorch(runtime_pytorch: MLflowRuntime):
                     ResponseOutput(
                         name="output-1",
                         datatype="BYTES",
-                        shape=[1],
+                        shape=[1, 1],
                         data=[b"foo"],
                         parameters=Parameters(content_type="str"),
                     )
@@ -94,9 +93,11 @@ async def test_predict_pytorch(runtime_pytorch: MLflowRuntime):
                 model_name="mlflow-model",
                 outputs=[
                     ResponseOutput(
-                        name="foo", datatype="INT64", shape=[3], data=[1, 2, 3]
+                        name="foo", datatype="INT64", shape=[3, 1], data=[1, 2, 3]
                     ),
-                    ResponseOutput(name="bar", datatype="FP64", shape=[1], data=[1.2]),
+                    ResponseOutput(
+                        name="bar", datatype="FP64", shape=[1, 1], data=[1.2]
+                    ),
                 ],
             ),
         ),
@@ -106,12 +107,12 @@ async def test_predict_pytorch(runtime_pytorch: MLflowRuntime):
                 model_name="mlflow-model",
                 outputs=[
                     ResponseOutput(
-                        name="foo", datatype="INT64", shape=[3], data=[1, 2, 3]
+                        name="foo", datatype="INT64", shape=[3, 1], data=[1, 2, 3]
                     ),
                     ResponseOutput(
                         name="bar",
                         datatype="BYTES",
-                        shape=[2],
+                        shape=[2, 1],
                         data=[b"hello", b"world"],
                     ),
                 ],
@@ -123,10 +124,13 @@ async def test_predict_pytorch(runtime_pytorch: MLflowRuntime):
                 model_name="mlflow-model",
                 outputs=[
                     ResponseOutput(
-                        name="foo", datatype="INT64", shape=[3], data=[1, 2, 3]
+                        name="foo", datatype="INT64", shape=[3, 1], data=[1, 2, 3]
                     ),
                     ResponseOutput(
-                        name="bar", datatype="BYTES", shape=[3], data=[b"A", b"B", b"C"]
+                        name="bar",
+                        datatype="BYTES",
+                        shape=[3, 1],
+                        data=[b"A", b"B", b"C"],
                     ),
                 ],
             ),
@@ -159,4 +163,4 @@ async def test_metadata(runtime: MLflowRuntime, model_signature: ModelSignature)
     assert len(model_signature.outputs.inputs) == len(metadata.outputs)
 
     assert metadata.parameters is not None
-    assert metadata.parameters.content_type == TensorDictCodec.ContentType
+    assert metadata.parameters.content_type == PandasCodec.ContentType

@@ -39,13 +39,13 @@ from mlserver.grpc.converters import (
                     pb.ModelInferResponse.InferOutputTensor(
                         name="a",
                         datatype="INT64",
-                        shape=[3],
+                        shape=[3, 1],
                         contents=pb.InferTensorContents(int64_contents=[1, 2, 3]),
                     ),
                     pb.ModelInferResponse.InferOutputTensor(
                         name="b",
                         datatype="BYTES",
-                        shape=[3],
+                        shape=[3, 1],
                         contents=pb.InferTensorContents(
                             bytes_contents=[b"A", b"B", b"C"]
                         ),
@@ -113,7 +113,7 @@ def test_decode_infer_request(encoded: pb.ModelInferRequest, expected: Any):
             pb.ModelInferResponse.InferOutputTensor(
                 name="output-0",
                 datatype="FP64",
-                shape=[1],
+                shape=[1, 1],
                 contents=pb.InferTensorContents(fp64_contents=[21.0]),
             ),
         ),
@@ -133,7 +133,7 @@ def test_decode_infer_request(encoded: pb.ModelInferRequest, expected: Any):
             pb.ModelInferResponse.InferOutputTensor(
                 name="output-0",
                 datatype="BYTES",
-                shape=[3],
+                shape=[3, 1],
                 parameters={
                     "content_type": pb.InferParameter(
                         string_param=StringCodec.ContentType
@@ -150,7 +150,7 @@ def test_decode_infer_request(encoded: pb.ModelInferRequest, expected: Any):
             pb.ModelInferResponse.InferOutputTensor(
                 name="output-0",
                 datatype="BYTES",
-                shape=[1],
+                shape=[1, 1],
                 contents=pb.InferTensorContents(
                     bytes_contents=[b"UHl0aG9uIGlzIGZ1bg=="]
                 ),

@@ -6,7 +6,7 @@ from typing import Any, List
 from .base import RequestCodec, register_request_codec
 from .numpy import to_datatype, to_dtype
 from .string import encode_str
-from .utils import get_decoded_or_raw, InputOrOutput
+from .utils import get_decoded_or_raw, InputOrOutput, inject_batch_dimension
 from .lists import ListElement
 from ..types import InferenceRequest, InferenceResponse, RequestInput, ResponseOutput
 
@@ -35,9 +35,11 @@ def _to_response_output(series: pd.Series, use_bytes: bool = True) -> ResponseOu
         # encode them as bytes
         data = list(map(_ensure_bytes, data))
 
+    shape = inject_batch_dimension(list(series.shape))
+
     return ResponseOutput(
         name=series.name,
-        shape=list(series.shape),
+        shape=shape,
         # If string, it should be encoded to bytes
         data=data,
         datatype=datatype,

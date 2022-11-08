@@ -20,14 +20,17 @@ Note that these environments can also be created on the fly as we go, and then s
 %%writefile environment.yml
 
 name: old-sklearn
+channels:
+    - conda-forge
 dependencies:
-  - python == 3.7
-  - scikit-learn == 0.20.3
-  - joblib == 0.13.0
-  - requests
-  - pip:
-        - mlserver == 0.6.0.dev0
-        - mlserver-sklearn ==0.6.0.dev0
+    - python == 3.8
+    - scikit-learn == 0.24.2
+    - joblib == 0.17.0
+    - requests
+    - pip
+    - pip:
+        - mlserver == 1.1.0
+        - mlserver-sklearn == 1.1.0
 ```
 
 ### Train model in our custom environment
@@ -128,7 +131,7 @@ docker run -it --rm \
     -v "$PWD":/mnt/models \
     -e "MLSERVER_ENV_TARBALL=/mnt/models/old-sklearn.tar.gz" \
     -p 8080:8080 \
-    seldonio/mlserver:0.6.0.dev0
+    seldonio/mlserver:1.1.0-slim
 ```
 
 Note that we need to keep the server running in the background while we send requests.

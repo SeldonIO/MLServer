@@ -58,7 +58,7 @@ class Base64Codec(InputCodec):
     ) -> ResponseOutput:
         # Assume that payload is already in b64, so we only need to pack it
         packed = map(partial(_encode_base64, use_bytes=use_bytes), payload)
-        shape = [len(payload)]
+        shape = [len(payload), 1]
         return ResponseOutput(
             name=name,
             datatype="BYTES",

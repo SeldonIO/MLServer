@@ -55,7 +55,7 @@ need to specify the following points:
 - The model artifact is a Scikit-Learn model. Therefore, we will use the
   `sklearn` serving runtime to deploy it.
 - The model will be served using the [V2 inference
-  protocol](https://kserve.github.io/website/modelserving/inference_api/),
+  protocol](https://docs.seldon.io/projects/seldon-core/en/latest/reference/apis/v2-protocol.html),
   which can be enabled by setting the `protocolVersion` field to `v2`.
 
 Once you have your `InferenceService` manifest ready, then the next step is to
@@ -134,7 +134,7 @@ account are:
 - Pointing to our custom MLServer `image` in the custom container section of
   our `InferenceService`.
 - Explicitly choosing the [V2 inference
-  protocol](https://kserve.github.io/website/modelserving/inference_api/) to
+  protocol](https://docs.seldon.io/projects/seldon-core/en/latest/reference/apis/v2-protocol.html) to
   serve our model.
 - Let KServe know what port will be exposed by our custom container to send
   inference requests.

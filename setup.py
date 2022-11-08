@@ -53,7 +53,7 @@ setup(
         "py-grpc-prometheus",
         "uvloop;" + env_marker_cpython,
         "aiokafka",
-        "tritonclient[all]>=2.24",
+        "tritonclient[http]>=2.24",
         "aiofiles",
         "orjson",
     ],
