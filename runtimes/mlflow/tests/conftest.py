@@ -15,7 +15,7 @@ from mlserver.utils import install_uvloop_event_loop
 
 from mlserver_mlflow import MLflowRuntime
 
-from torch_fixtures import MNISTDataModule, LightningMNISTClassifier
+from .torch_fixtures import MNISTDataModule, LightningMNISTClassifier
 
 TESTS_PATH = os.path.dirname(__file__)
 TESTDATA_PATH = os.path.join(TESTS_PATH, "testdata")
