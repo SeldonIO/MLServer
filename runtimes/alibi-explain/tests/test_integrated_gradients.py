@@ -13,6 +13,7 @@ from mlserver_alibi_explain.common import convert_from_bytes
 
 from .helpers.tf_model import get_tf_mnist_model_uri
 
+
 @pytest.fixture()
 def payload() -> InferenceRequest:
     data = np.random.randn(1, 28, 28, 1) * 255
