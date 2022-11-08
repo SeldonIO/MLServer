@@ -27,8 +27,8 @@ from mlserver.utils import install_uvloop_event_loop
 from mlserver_alibi_explain.common import AlibiExplainSettings
 from mlserver_alibi_explain.runtime import AlibiExplainRuntime, AlibiExplainRuntimeBase
 
-from helpers.tf_model import get_tf_mnist_model_uri
-from helpers.run_async import run_async_as_sync
+from .helpers.tf_model import get_tf_mnist_model_uri, TFMNISTModel
+from .helpers.run_async import run_async_as_sync
 
 TESTS_PATH = Path(os.path.dirname(__file__))
 _ANCHOR_IMAGE_DIR = TESTS_PATH / ".data" / "mnist_anchor_image"
@@ -55,7 +55,7 @@ def event_loop():
 def custom_runtime_tf_settings() -> ModelSettings:
     return ModelSettings(
         name="custom_tf_mnist_model",
-        implementation="helpers.tf_model.TFMNISTModel",
+        implementation=TFMNISTModel,
     )
 
 
