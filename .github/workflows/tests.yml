@@ -29,14 +29,17 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.8", "3.9", "3.10"]
+        tox-environment:
+          - mlserver
+          - sklearn
+          - xgboost
+          - lightgbm
+          - mlflow
+          - huggingface
+          - alibi-explain
+          - alibi-detect
+          - all-runtimes
     steps:
-      - name: Maximize build space
-        uses: easimon/maximize-build-space@master
-        with:
-          remove-dotnet: "true"
-          remove-haskell: "true"
-          remove-android: "true"
-          root-reserve-mb: "20480"
       - uses: actions/checkout@v2
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
@@ -44,7 +47,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
-          make install-dev
+          pip install -r requirements/dev.txt
       - name: Test
         run: |
-          make test
+          tox -e ${{ matrix.tox-environment }}

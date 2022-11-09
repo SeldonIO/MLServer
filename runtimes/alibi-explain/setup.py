@@ -38,7 +38,7 @@ setup(
         "alibi[shap, tensorflow]",
         "orjson",
         # numba 0.55.0 requires: numpy <1.22 (for Shap / alibi)
-        "numpy<1.22",
+        "numpy<=1.22",
     ],
     long_description=_load_description(),
     long_description_content_type="text/markdown",
