@@ -51,3 +51,22 @@ jobs:
       - name: Test
         run: |
           tox -e ${{ matrix.tox-environment }}
+
+  all-runtimes:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9", "3.10"]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          pip install -r requirements/dev.txt
+      - name: Test
+        run: |
+          tox -e all-runtimes
