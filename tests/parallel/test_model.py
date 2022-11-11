@@ -1,5 +1,6 @@
 import pytest
 
+from mlserver.errors import MLServerError
 from mlserver.handlers.custom import get_custom_handlers
 from mlserver.types import InferenceRequest, MetadataModelResponse
 from mlserver.model import MLModel
@@ -24,7 +25,7 @@ async def test_predict_error(
     error_model: MLModel,
     inference_request: InferenceRequest,
 ):
-    with pytest.raises(Exception) as excinfo:
+    with pytest.raises(MLServerError) as excinfo:
         await error_model.predict(inference_request)
 
     assert str(excinfo.value) == ErrorModel.error_message

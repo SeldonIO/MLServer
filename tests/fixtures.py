@@ -51,6 +51,15 @@ class SumModel(MLModel):
 class ErrorModel(MLModel):
     error_message = "something really bad happened"
 
+    async def load(self) -> bool:
+        if self._settings.parameters:
+            load_error = getattr(self._settings.parameters, 'load_error', False)
+            if load_error:
+                raise MLServerError(self.error_message)
+
+        self.ready = True
+        return self.ready
+
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
         raise MLServerError(self.error_message)
 

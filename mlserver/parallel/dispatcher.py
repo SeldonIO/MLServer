@@ -1,6 +1,6 @@
 import asyncio
 
-from typing import Dict
+from typing import Dict, List
 from itertools import cycle
 from multiprocessing import Queue
 from concurrent.futures import ThreadPoolExecutor
@@ -94,7 +94,7 @@ class Dispatcher:
 
     async def dispatch_update(
         self, model_update: ModelUpdateMessage
-    ) -> ModelResponseMessage:
+    ) -> List[ModelResponseMessage]:
         return await asyncio.gather(
             *[self._dispatch_update(worker, model_update) for worker in self._workers.values()]
         )

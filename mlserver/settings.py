@@ -4,7 +4,7 @@ import json
 import importlib
 
 from typing import Any, Dict, List, Optional, Union
-from pydantic import BaseSettings, PyObject, Field
+from pydantic import BaseSettings, PyObject, Extra, Field
 from contextlib import contextmanager
 
 from .version import __version__
@@ -162,6 +162,7 @@ class ModelParameters(BaseSettings):
     """
 
     class Config:
+        extra = Extra.allow
         env_file = ENV_FILE_SETTINGS
         env_prefix = ENV_PREFIX_MODEL_SETTINGS
 
