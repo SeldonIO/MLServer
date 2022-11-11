@@ -12,8 +12,10 @@ class ModelUpdateType(IntEnum):
     Load = 1
     Unload = 2
 
+
 class Message(BaseModel):
     id: str = Field(default_factory=generate_uuid)
+
 
 class ModelRequestMessage(Message):
 

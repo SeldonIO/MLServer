@@ -53,7 +53,7 @@ class ErrorModel(MLModel):
 
     async def load(self) -> bool:
         if self._settings.parameters:
-            load_error = getattr(self._settings.parameters, 'load_error', False)
+            load_error = getattr(self._settings.parameters, "load_error", False)
             if load_error:
                 raise MLServerError(self.error_message)
 

@@ -131,7 +131,9 @@ class Worker(Process):
         response_message = process_task.result()
         self._responses.put(response_message)
 
-    async def _process_model_update(self, update: ModelUpdateMessage) -> ModelResponseMessage:
+    async def _process_model_update(
+        self, update: ModelUpdateMessage
+    ) -> ModelResponseMessage:
         try:
             model_settings = update.model_settings
             if update.update_type == ModelUpdateType.Load:
@@ -145,7 +147,7 @@ class Worker(Process):
 
             return ModelResponseMessage(id=update.id)
         except Exception as e:
-            logger.exception(f"An error occurred processing a model update.")
+            logger.exception("An error occurred processing a model update.")
             return ModelResponseMessage(id=update.id, exception=e)
 
     def send_request(self, request_message: ModelRequestMessage):
@@ -167,7 +169,6 @@ class Worker(Process):
         Close the worker's main loop.
         Note that this method should be both multiprocess- and thread-safe.
         """
-        loop = asyncio.get_event_loop()
         await terminate_queue(self._model_updates)
         self._model_updates.close()
         self._requests.close()

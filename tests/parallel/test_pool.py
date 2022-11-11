@@ -57,11 +57,12 @@ async def test_load(
     assert inference_response.model_name == sum_model.settings.name
     assert len(inference_response.outputs) == 1
 
+
 async def test_load_error(
     inference_pool: InferencePool,
     load_error_model: MLModel,
 ):
     with pytest.raises(MLServerError) as excinfo:
-        model = await inference_pool.load_model(load_error_model)
+        await inference_pool.load_model(load_error_model)
 
     assert str(excinfo.value) == ErrorModel.error_message

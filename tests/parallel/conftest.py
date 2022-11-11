@@ -37,12 +37,13 @@ async def error_model(inference_pool: InferencePool, error_model: MLModel) -> ML
 
     await inference_pool.unload_model(error_model)
 
+
 @pytest.fixture
 async def load_error_model() -> MLModel:
     error_model_settings = ModelSettings(
-        name='foo',
+        name="foo",
         implementation=ErrorModel,
-        parameters=ModelParameters(load_error=True)
+        parameters=ModelParameters(load_error=True),
     )
     error_model = ErrorModel(error_model_settings)
 

@@ -10,7 +10,7 @@ from ..utils import schedule_with_callback
 
 from .worker import Worker
 from .logging import logger
-from .utils import END_OF_QUEUE, cancel_task, terminate_queue
+from .utils import END_OF_QUEUE, cancel_task
 from .messages import (
     Message,
     ModelUpdateMessage,
@@ -96,10 +96,15 @@ class Dispatcher:
         self, model_update: ModelUpdateMessage
     ) -> List[ModelResponseMessage]:
         return await asyncio.gather(
-            *[self._dispatch_update(worker, model_update) for worker in self._workers.values()]
+            *[
+                self._dispatch_update(worker, model_update)
+                for worker in self._workers.values()
+            ]
         )
 
-    async def _dispatch_update(self, worker: Worker, model_update: ModelUpdateMessage) -> ModelResponseMessage:
+    async def _dispatch_update(
+        self, worker: Worker, model_update: ModelUpdateMessage
+    ) -> ModelResponseMessage:
         worker.send_update(model_update)
         return await self._dispatch(model_update)
 
@@ -110,7 +115,6 @@ class Dispatcher:
         self._async_responses[internal_id] = async_response
 
         return await self._wait_response(internal_id)
-
 
     async def _wait_response(self, internal_id: str) -> ModelResponseMessage:
         async_response = self._async_responses[internal_id]
