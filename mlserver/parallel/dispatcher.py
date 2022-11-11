@@ -6,7 +6,7 @@ from multiprocessing import Queue
 from concurrent.futures import ThreadPoolExecutor
 from asyncio import Future
 
-from ..utils import schedule_with_callback
+from ..utils import schedule_with_callback, generate_uuid
 
 from .worker import Worker
 from .logging import logger
@@ -105,8 +105,12 @@ class Dispatcher:
     async def _dispatch_update(
         self, worker: Worker, model_update: ModelUpdateMessage
     ) -> ModelResponseMessage:
-        worker.send_update(model_update)
-        return await self._dispatch(model_update)
+        # NOTE: Need to rewrite the UUID to ensure each worker sends back a
+        # unique result
+        worker_update = model_update.copy()
+        worker_update.id = generate_uuid()
+        worker.send_update(worker_update)
+        return await self._dispatch(worker_update)
 
     async def _dispatch(self, message: Message) -> ModelResponseMessage:
         loop = asyncio.get_running_loop()

@@ -1,6 +1,7 @@
 {
   "debug": true,
   "host": "127.0.0.1",
+  "parallel_workers": 2,
   "cors_settings": {
     "allow_origins": ["*"]
   }
