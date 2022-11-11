@@ -10,8 +10,12 @@ class BaseModel(_BaseModel):
         https://github.com/pydantic/pydantic/issues/1387#issuecomment-612901525
     """
 
-    def dict(self, exclude_unset=True, **kwargs):
-        super().dict(exclude_unset=exclude_unset, **kwargs)
+    def dict(self, exclude_unset=True, exclude_none=True, **kwargs):
+        return super().dict(
+            exclude_unset=exclude_unset, exclude_none=exclude_none, **kwargs
+        )
 
-    def json(self, exclude_unset=True, **kwargs):
-        super().json(exclude_unset=exclude_unset, **kwargs)
+    def json(self, exclude_unset=True, exclude_none=True, **kwargs):
+        return super().json(
+            exclude_unset=exclude_unset, exclude_none=exclude_none, **kwargs
+        )
