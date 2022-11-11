@@ -9,7 +9,7 @@ from ..settings import Settings
 
 from .model import ParallelModel
 from .worker import Worker
-from .utils import configure_inference_pool
+from .utils import configure_inference_pool, terminate_queue
 from .messages import (
     ModelResponseMessage,
     ModelUpdateMessage,
@@ -40,15 +40,15 @@ class InferencePool:
 
         self._workers: Dict[int, Worker] = {}
         self._settings = settings
-        responses: Queue[ModelResponseMessage] = Queue()
+        self._responses: Queue[ModelResponseMessage] = Queue()
         for idx in range(self._settings.parallel_workers):
             # TODO: Set callback to restart worker if it goes down (would
             # `worker.join` help with that?)
-            worker = Worker(settings, responses)
+            worker = Worker(settings, self._responses)
             worker.start()
             self._workers[worker.pid] = worker  # type: ignore
 
-        self._dispatcher = Dispatcher(self._workers, responses)
+        self._dispatcher = Dispatcher(self._workers, self._responses)
         self._dispatcher.start()
 
     async def load_model(self, model: MLModel) -> MLModel:
@@ -60,9 +60,7 @@ class InferencePool:
             update_type=ModelUpdateType.Load,
             model_settings=model.settings,  # type: ignore
         )
-        await asyncio.gather(
-            *[worker.send_update(load_message) for worker in self._workers.values()]
-        )
+        await self._dispatcher.dispatch_update(load_message)
 
         return ParallelModel(model, self._dispatcher)
 
@@ -80,9 +78,7 @@ class InferencePool:
             update_type=ModelUpdateType.Unload,
             model_settings=model.settings,  # type: ignore
         )
-        await asyncio.gather(
-            *[worker.send_update(unload_message) for worker in self._workers.values()]
-        )
+        await self._dispatcher.dispatch_update(unload_message)
 
         return ParallelModel(model, self._dispatcher)
 
@@ -116,6 +112,8 @@ class InferencePool:
     async def close(self):
         logger.info("Waiting for inference pool shutdown")
         await self._close_workers()
+        await terminate_queue(self._responses)
+        self._responses.close()
         await self._dispatcher.stop()
         logger.info("Inference pool shutdown complete")
 

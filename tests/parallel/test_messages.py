@@ -19,10 +19,12 @@ _dummy_model_settings = ModelSettings(name="foo", implementation=SumModel).dict(
     [
         (
             {
+                "id": "foo",
                 "update_type": ModelUpdateType.Load,
                 "model_settings": ModelSettings(name="foo", implementation=SumModel),
             },
             ModelUpdateMessage(
+                id="foo",
                 update_type=ModelUpdateType.Load,
                 serialised_model_settings=json.dumps(
                     {
@@ -37,12 +39,14 @@ _dummy_model_settings = ModelSettings(name="foo", implementation=SumModel).dict(
         ),
         (
             {
+                "id": "foo",
                 "update_type": ModelUpdateType.Load,
                 "serialised_model_settings": (
                     '{"name":"foo","implementation":"tests.fixtures.SumModel"}'
                 ),
             },
             ModelUpdateMessage(
+                id="foo",
                 update_type=ModelUpdateType.Load,
                 serialised_model_settings=(
                     '{"name":"foo","implementation":"tests.fixtures.SumModel"}'

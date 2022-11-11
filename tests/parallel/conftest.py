@@ -61,7 +61,9 @@ async def worker(
         None, lambda: asyncio.run(worker.coro_run())
     )
 
-    await worker.send_update(load_message)
+    # Send an update and wait for its response (although we ignore it)
+    worker.send_update(load_message)
+    responses.get()
 
     yield worker
 

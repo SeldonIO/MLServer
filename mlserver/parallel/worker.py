@@ -3,7 +3,7 @@ import select
 import signal
 
 from asyncio import Task
-from multiprocessing import Process, Queue, JoinableQueue
+from multiprocessing import Process, Queue
 from concurrent.futures import ThreadPoolExecutor
 
 from ..registry import MultiModelRegistry
@@ -33,7 +33,7 @@ class Worker(Process):
         self._settings = settings
         self._responses = responses
         self._requests: Queue[ModelRequestMessage] = Queue()
-        self._model_updates: JoinableQueue[ModelUpdateMessage] = JoinableQueue()
+        self._model_updates: Queue[ModelUpdateMessage] = Queue()
 
         self.__executor = None
 
@@ -88,7 +88,7 @@ class Worker(Process):
                     request = self._requests.get()
 
                     schedule_with_callback(
-                        self._process_request(request), self._request_cb
+                        self._process_request(request), self._handle_response
                     )
                 elif r is self._model_updates._reader:
                     model_update = self._model_updates.get()
@@ -96,11 +96,10 @@ class Worker(Process):
                     # and stop reading
                     if model_update is END_OF_QUEUE:
                         self._active = False
-                        self._model_updates.task_done()
                         return
 
                     schedule_with_callback(
-                        self._process_model_update(model_update), self._update_cb
+                        self._process_model_update(model_update), self._handle_response
                     )
 
     def _select(self):
@@ -128,27 +127,26 @@ class Worker(Process):
             )
             return ModelResponseMessage(id=request.id, exception=e)
 
-    def _request_cb(self, request_task: Task):
-        response_message = request_task.result()
+    def _handle_response(self, process_task: Task):
+        response_message = process_task.result()
         self._responses.put(response_message)
 
-    async def _process_model_update(self, update: ModelUpdateMessage):
-        model_settings = update.model_settings
-        if update.update_type == ModelUpdateType.Load:
-            await self._model_registry.load(model_settings)
-        elif update.update_type == ModelUpdateType.Unload:
-            await self._model_registry.unload(model_settings.name)
-        else:
-            logger.warning(
-                "Unknown model update message with type ", update.update_type
-            )
+    async def _process_model_update(self, update: ModelUpdateMessage) -> ModelResponseMessage:
+        try:
+            model_settings = update.model_settings
+            if update.update_type == ModelUpdateType.Load:
+                await self._model_registry.load(model_settings)
+            elif update.update_type == ModelUpdateType.Unload:
+                await self._model_registry.unload(model_settings.name)
+            else:
+                logger.warning(
+                    "Unknown model update message with type ", update.update_type
+                )
 
-    def _update_cb(self, update_task: Task):
-        err = update_task.exception()
-        if err:
-            logger.error(err)
-
-        self._model_updates.task_done()
+            return ModelResponseMessage(id=update.id)
+        except Exception as e:
+            logger.exception(f"An error occurred processing a model update.")
+            return ModelResponseMessage(id=update.id, exception=e)
 
     def send_request(self, request_message: ModelRequestMessage):
         """
@@ -157,14 +155,12 @@ class Worker(Process):
         """
         self._requests.put(request_message)
 
-    async def send_update(self, model_update: ModelUpdateMessage):
+    def send_update(self, model_update: ModelUpdateMessage):
         """
         Send a model update to the worker.
         Note that this method should be both multiprocess- and thread-safe.
         """
-        loop = asyncio.get_event_loop()
         self._model_updates.put(model_update)
-        await loop.run_in_executor(self._executor, self._model_updates.join)
 
     async def stop(self):
         """
@@ -173,7 +169,6 @@ class Worker(Process):
         """
         loop = asyncio.get_event_loop()
         await terminate_queue(self._model_updates)
-        await loop.run_in_executor(self._executor, self._model_updates.join)
         self._model_updates.close()
         self._requests.close()
         self._executor.shutdown()

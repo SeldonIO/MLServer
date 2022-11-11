@@ -57,6 +57,7 @@ async def test_custom_handler(
 async def test_load_model(
     worker: Worker,
     load_message: ModelUpdateMessage,
+    responses: Queue,
 ):
     loaded_models = await worker._model_registry.get_models()
     assert len(list(loaded_models)) == 1
@@ -66,7 +67,8 @@ async def test_load_model(
     new_load_message = ModelUpdateMessage(
         update_type=load_message.update_type, model_settings=new_model_settings
     )
-    await worker.send_update(new_load_message)
+    worker.send_update(new_load_message)
+    responses.get()
 
     loaded_models = list(await worker._model_registry.get_models())
     assert len(loaded_models) == 2
@@ -77,11 +79,13 @@ async def test_load_model(
 async def test_unload_model(
     worker: Worker,
     unload_message: ModelUpdateMessage,
+    responses: Queue,
 ):
     loaded_models = await worker._model_registry.get_models()
     assert len(list(loaded_models)) == 1
 
-    await worker.send_update(unload_message)
+    worker.send_update(unload_message)
+    responses.get()
 
     loaded_models = list(await worker._model_registry.get_models())
     assert len(loaded_models) == 0

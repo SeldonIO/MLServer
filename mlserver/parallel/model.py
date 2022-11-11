@@ -6,7 +6,6 @@ from ..errors import InferenceError
 from ..handlers.custom import get_custom_handlers, register_custom_handler
 from ..model import MLModel
 from ..types import MetadataModelResponse, InferenceRequest, InferenceResponse
-from ..utils import generate_uuid
 
 from .messages import ModelRequestMessage
 from .dispatcher import Dispatcher
@@ -61,9 +60,7 @@ class ParallelModel(MLModel):
         return inference_response
 
     async def _send(self, method_name: str, *args, **kwargs) -> Optional[Any]:
-        internal_id = generate_uuid()
         req_message = ModelRequestMessage(
-            id=internal_id,
             model_name=self.name,
             model_version=self.version,
             method_name=method_name,
@@ -71,5 +68,5 @@ class ParallelModel(MLModel):
             method_kwargs=kwargs,
         )
 
-        response_message = await self._dispatcher.dispatch(req_message)
+        response_message = await self._dispatcher.dispatch_request(req_message)
         return response_message.return_value
