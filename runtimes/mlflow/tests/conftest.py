@@ -97,6 +97,15 @@ def model_settings(model_uri: str) -> ModelSettings:
 
 
 @pytest.fixture
+def model_settings_scheme(model_uri: str) -> ModelSettings:
+    return ModelSettings(
+        name="mlflow-model",
+        implementation=MLflowRuntime,
+        parameters=ModelParameters(uri="file:" + model_uri),
+    )
+
+
+@pytest.fixture
 def model_settings_pytorch_fixed(pytorch_model_uri) -> ModelSettings:
     return ModelSettings(
         name="mlflow-model",
@@ -108,6 +117,14 @@ def model_settings_pytorch_fixed(pytorch_model_uri) -> ModelSettings:
 @pytest.fixture
 async def runtime(model_settings: ModelSettings) -> MLflowRuntime:
     model = MLflowRuntime(model_settings)
+    await model.load()
+
+    return model
+
+
+@pytest.fixture
+async def runtime_scheme(model_settings_scheme: ModelSettings) -> MLflowRuntime:
+    model = MLflowRuntime(model_settings_scheme)
     await model.load()
 
     return model

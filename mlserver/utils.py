@@ -1,6 +1,7 @@
 import os
 import uuid
 import asyncio
+import urllib.parse
 
 from asyncio import Task
 from typing import Callable, Dict, Optional, List, Type
@@ -12,7 +13,9 @@ from .errors import InvalidModelURI
 
 
 async def get_model_uri(
-    settings: ModelSettings, wellknown_filenames: List[str] = []
+    settings: ModelSettings,
+    wellknown_filenames: List[str] = [],
+    allowed_schemes: List[str] = [],
 ) -> str:
     if not settings.parameters:
         raise InvalidModelURI(settings.name)
@@ -20,6 +23,12 @@ async def get_model_uri(
     model_uri = settings.parameters.uri
     if not model_uri:
         raise InvalidModelURI(settings.name)
+
+    scheme = urllib.parse.urlparse(model_uri).scheme
+    if scheme != "":
+        if scheme in allowed_schemes:
+            return model_uri
+        raise InvalidModelURI(settings.name, model_uri)
 
     full_model_uri = _to_absolute_path(settings._source, model_uri)
     if os.path.isfile(full_model_uri):
