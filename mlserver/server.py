@@ -95,14 +95,20 @@ class MLServer:
 
         servers_task = asyncio.gather(*servers)
 
-        await asyncio.gather(
-            *[
-                self._model_registry.load(model_settings)
-                for model_settings in models_settings
-            ]
-        )
-
-        await servers_task
+        try:
+            await asyncio.gather(
+                *[
+                    self._model_registry.load(model_settings)
+                    for model_settings in models_settings
+                ]
+            )
+        except Exception:
+            # If one of the models failed to load during startup, shutdown the
+            # server gracefully
+            logger.exception("Some of the models failed to load during startup!")
+            await self.stop()
+        finally:
+            await servers_task
 
     async def add_custom_handlers(self, model: MLModel) -> MLModel:
         await self._rest_server.add_custom_handlers(model)

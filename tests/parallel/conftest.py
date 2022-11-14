@@ -3,7 +3,7 @@ import pytest
 
 from multiprocessing import Queue
 
-from mlserver.settings import ModelSettings
+from mlserver.settings import ModelSettings, ModelParameters
 from mlserver.types import InferenceRequest
 from mlserver.utils import generate_uuid
 from mlserver.model import MLModel
@@ -16,6 +16,8 @@ from mlserver.parallel.messages import (
     ModelUpdateType,
     ModelRequestMessage,
 )
+
+from ..fixtures import ErrorModel
 
 
 @pytest.fixture
@@ -34,6 +36,18 @@ async def error_model(inference_pool: InferencePool, error_model: MLModel) -> ML
     yield model
 
     await inference_pool.unload_model(error_model)
+
+
+@pytest.fixture
+async def load_error_model() -> MLModel:
+    error_model_settings = ModelSettings(
+        name="foo",
+        implementation=ErrorModel,
+        parameters=ModelParameters(load_error=True),
+    )
+    error_model = ErrorModel(error_model_settings)
+
+    yield error_model
 
 
 @pytest.fixture
@@ -61,7 +75,9 @@ async def worker(
         None, lambda: asyncio.run(worker.coro_run())
     )
 
-    await worker.send_update(load_message)
+    # Send an update and wait for its response (although we ignore it)
+    worker.send_update(load_message)
+    responses.get()
 
     yield worker
 

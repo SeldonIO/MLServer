@@ -1,10 +1,10 @@
 import json
 
 from enum import IntEnum
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Any, Dict, List, Optional
 
-from ..utils import get_import_path
+from ..utils import get_import_path, generate_uuid
 from ..settings import ModelSettings
 
 
@@ -13,8 +13,12 @@ class ModelUpdateType(IntEnum):
     Unload = 2
 
 
-class ModelRequestMessage(BaseModel):
-    id: str
+class Message(BaseModel):
+    id: str = Field(default_factory=generate_uuid)
+
+
+class ModelRequestMessage(Message):
+
     model_name: str
     model_version: Optional[str] = None
     method_name: str
@@ -22,17 +26,17 @@ class ModelRequestMessage(BaseModel):
     method_kwargs: Dict[str, Any] = {}
 
 
-class ModelResponseMessage(BaseModel):
+class ModelResponseMessage(Message):
     class Config:
         # This is to allow having an Exception field
         arbitrary_types_allowed = True
 
-    id: str
     return_value: Optional[Any]
     exception: Optional[Exception]
 
 
-class ModelUpdateMessage(BaseModel):
+class ModelUpdateMessage(Message):
+
     update_type: ModelUpdateType
     serialised_model_settings: str
 
