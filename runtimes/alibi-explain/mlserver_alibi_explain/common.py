@@ -59,7 +59,7 @@ def remote_predict(
     if ssl_verify_path != "":
         verify = ssl_verify_path
     response_raw = requests.post(
-        predictor_url, json=v2_payload.dict(exclude_unset=True), verify=verify
+        predictor_url, json=v2_payload.dict(), verify=verify
     )
     if response_raw.status_code != 200:
         raise RemoteInferenceError(response_raw.status_code, response_raw.reason)
