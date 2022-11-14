@@ -6,7 +6,6 @@ from functools import cmp_to_key
 
 from .model import MLModel
 from .errors import ModelNotFound
-from .types import RepositoryIndexResponse
 from .logging import logger
 from .settings import ModelSettings
 
@@ -126,9 +125,6 @@ class SingleModelRegistry:
         # Otherwise, find latest from current set of versions
         self._default = self._find_default()
         return self._default
-
-    async def index(self) -> RepositoryIndexResponse:
-        pass
 
     async def load(self, model_settings: ModelSettings) -> MLModel:
         # If there's a previously loaded model, we'll need to unload it at the
