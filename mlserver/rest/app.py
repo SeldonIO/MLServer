@@ -20,6 +20,20 @@ class APIRoute(FastAPIRoute):
     Custom route to use our own Request handler.
     """
 
+    def __init__(
+        self,
+        *args,
+        response_model_exclude_unset=True,
+        response_model_exclude_none=True,
+        **kwargs
+    ):
+        super().__init__(
+            *args,
+            response_model_exclude_unset=response_model_exclude_unset,
+            response_model_exclude_none=response_model_exclude_none,
+            **kwargs
+        )
+
     def get_route_handler(self) -> Callable:
         original_route_handler = super().get_route_handler()
 
