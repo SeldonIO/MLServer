@@ -2,7 +2,7 @@ import asyncio
 import signal
 import logging
 
-from typing import List
+from typing import Optional, List
 
 from .model import MLModel
 from .settings import Settings, ModelSettings
@@ -147,7 +147,7 @@ class MLServer:
                 sig, lambda s=sig: asyncio.create_task(self.stop(sig=s))
             )
 
-    async def stop(self, sig: int = None):
+    async def stop(self, sig: Optional[int] = None):
         if self._inference_pool:
             await self._inference_pool.close()
 

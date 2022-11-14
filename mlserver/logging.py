@@ -4,7 +4,7 @@ import sys
 
 from logging import Formatter, StreamHandler
 from pathlib import Path
-from typing import Dict, Union
+from typing import Optional, Dict, Union
 import logging.config
 
 from .settings import Settings
@@ -35,7 +35,7 @@ def apply_logging_file(logging_settings: Union[str, Dict]):
         logger.warning("Unable to parse logging_settings.")
 
 
-def configure_logger(settings: Settings = None):
+def configure_logger(settings: Optional[Settings] = None):
     logger = get_logger()
 
     # Don't add handler twice

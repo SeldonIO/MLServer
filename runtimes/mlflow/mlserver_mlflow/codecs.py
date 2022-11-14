@@ -1,6 +1,6 @@
 import numpy as np
 
-from typing import Dict
+from typing import Optional, Dict
 
 from mlserver.types import InferenceRequest, InferenceResponse
 from mlserver.codecs import (
@@ -34,7 +34,11 @@ class TensorDictCodec(RequestCodec):
 
     @classmethod
     def encode_response(
-        cls, model_name: str, payload: TensorDict, model_version: str = None, **kwargs
+        cls,
+        model_name: str,
+        payload: TensorDict,
+        model_version: Optional[str] = None,
+        **kwargs
     ) -> InferenceResponse:
         outputs = [
             NumpyCodec.encode_output(name, value, **kwargs)
