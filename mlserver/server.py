@@ -110,7 +110,6 @@ class MLServer:
         finally:
             await servers_task
 
-
     async def add_custom_handlers(self, model: MLModel) -> MLModel:
         await self._rest_server.add_custom_handlers(model)
         if self._kafka_server:
