@@ -7,6 +7,7 @@ from ..model import MLModel
 from .utils import matches
 from .app import create_app
 from .logging import logger
+from typing import Optional
 
 
 class _NoSignalServer(uvicorn.Server):
@@ -86,5 +87,5 @@ class RESTServer:
 
         return uvicorn.Config(self._app, **kwargs)
 
-    async def stop(self, sig: int = None):
+    async def stop(self, sig: Optional[int] = None):
         self._server.handle_exit(sig=sig, frame=None)

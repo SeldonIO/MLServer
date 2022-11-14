@@ -5,6 +5,7 @@ from starlette_exporter import handle_metrics
 
 from ..settings import Settings
 from .logging import logger
+from typing import Optional
 
 
 class _NoSignalServer(uvicorn.Server):
@@ -55,5 +56,5 @@ class MetricsServer:
         # prom reqs can be spammy)
         return uvicorn.Config(self._app, **kwargs)
 
-    async def stop(self, sig: int = None):
+    async def stop(self, sig: Optional[int] = None):
         self._server.handle_exit(sig=sig, frame=None)

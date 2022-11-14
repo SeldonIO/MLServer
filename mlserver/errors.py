@@ -1,4 +1,5 @@
 from fastapi import status
+from typing import Optional
 
 
 class MLServerError(Exception):
@@ -8,7 +9,7 @@ class MLServerError(Exception):
 
 
 class InvalidModelURI(MLServerError):
-    def __init__(self, name: str, model_uri: str = None):
+    def __init__(self, name: str, model_uri: Optional[str] = None):
         msg = f"Invalid URI specified for model {name}"
         if model_uri:
             msg += f" ({model_uri})"
@@ -17,7 +18,7 @@ class InvalidModelURI(MLServerError):
 
 
 class ModelNotFound(MLServerError):
-    def __init__(self, name: str, version: str = None):
+    def __init__(self, name: str, version: Optional[str] = None):
         msg = f"Model {name} not found"
         if version is not None:
             msg = f"Model {name} with version {version} not found"

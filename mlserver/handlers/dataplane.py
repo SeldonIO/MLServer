@@ -13,6 +13,7 @@ from prometheus_client import (
     Counter,
     Summary,
 )
+from typing import Optional
 
 
 _ModelInferRequestSuccess = Counter(
@@ -51,7 +52,7 @@ class DataPlane:
         models = await self._model_registry.get_models()
         return all([model.ready for model in models])
 
-    async def model_ready(self, name: str, version: str = None) -> bool:
+    async def model_ready(self, name: str, version: Optional[str] = None) -> bool:
         model = await self._model_registry.get_model(name, version)
         return model.ready
 
@@ -63,7 +64,7 @@ class DataPlane:
         )
 
     async def model_metadata(
-        self, name: str, version: str = None
+        self, name: str, version: Optional[str] = None
     ) -> MetadataModelResponse:
         model = await self._model_registry.get_model(name, version)
         # TODO: Make await optional for sync methods
@@ -73,7 +74,7 @@ class DataPlane:
         self,
         payload: InferenceRequest,
         name: str,
-        version: str = None,
+        version: Optional[str] = None,
     ) -> InferenceResponse:
 
         with _ModelInferRequestDuration.labels(

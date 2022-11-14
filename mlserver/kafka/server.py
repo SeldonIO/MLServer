@@ -13,6 +13,7 @@ from .logging import logger
 from .handlers import KafkaHandlers
 from .message import KafkaMessage
 from ..utils import schedule_with_callback
+from typing import Optional
 
 
 # TODO: Explore implementing custom handler
@@ -98,7 +99,7 @@ class KafkaServer:
         )
         logger.info(f"Processed message of type '{request_method}'")
 
-    async def stop(self, sig: int = None):
+    async def stop(self, sig: Optional[int] = None):
         logger.info("Waiting for Kafka server shutdown")
         await self._consumer.stop()
         await self._producer.stop()
