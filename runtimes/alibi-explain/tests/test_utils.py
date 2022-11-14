@@ -19,6 +19,7 @@ def test_can_load_runtime_impl(explainer_reference):
     import_and_get_class(explainer_reference.runtime_class)
     import_and_get_class(explainer_reference.alibi_class)
 
+
 def remove_kwarg(func, to_remove):
     @wraps(func)
     def _f(*args, **kwargs):
@@ -26,6 +27,7 @@ def remove_kwarg(func, to_remove):
         return func(*args, **kwargs)
 
     return _f
+
 
 class _TestClientWrapper:
     def __init__(self, data: Dict):
