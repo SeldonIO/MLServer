@@ -25,7 +25,7 @@ def _merge_parameters(
     if not parametrised_obj.parameters:
         return all_params
 
-    obj_params = parametrised_obj.parameters.dict(exclude_unset=True)
+    obj_params = parametrised_obj.parameters.dict()
     return {**all_params, **obj_params}
 
 

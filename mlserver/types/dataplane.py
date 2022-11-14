@@ -3,7 +3,9 @@
 
 from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel, Extra, Field
+from pydantic import Extra, Field
+
+from .base import BaseModel
 
 
 class MetadataServerResponse(BaseModel):
