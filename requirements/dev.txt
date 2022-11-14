@@ -16,7 +16,7 @@ pytest-asyncio==0.20.1
 pytest-mock==3.10.0
 pytest-cases==3.6.13
 tox==3.27.0
-docker==6.0.0
+docker==6.0.1
 aiohttp==3.8.3
 aiohttp-retry==2.8.3
 ## Used for FastAPI Async testing
