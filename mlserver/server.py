@@ -2,7 +2,7 @@ import asyncio
 import signal
 import logging
 
-from typing import List, Optional
+from typing import Optional, List
 
 from .model import MLModel
 from .settings import Settings, ModelSettings
