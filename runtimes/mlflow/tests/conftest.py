@@ -87,8 +87,10 @@ def pytorch_model_uri() -> str:
     return model_path
 
 
-@pytest.fixture
-def model_settings(model_uri: str) -> ModelSettings:
+@pytest.fixture(params=["", "file:"])
+def model_settings(model_uri: str, request: pytest.FixtureRequest) -> ModelSettings:
+    scheme = request.param
+    model_uri = scheme + model_uri
     return ModelSettings(
         name="mlflow-model",
         implementation=MLflowRuntime,
