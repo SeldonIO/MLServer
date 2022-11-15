@@ -3,6 +3,8 @@ import sys
 
 from typing import Optional, List, Tuple, Union
 
+from mlserver.repository.repository import ImplModelRepository
+
 from ..repository import ModelRepository
 from ..settings import Settings, ModelSettings
 
@@ -34,7 +36,7 @@ async def load_settings(
 
     models_settings = []
     if settings.load_models_at_startup:
-        repository = ModelRepository(settings.model_repository_root)
+        repository = ImplModelRepository(settings.model_repository_root)
         models_settings = await repository.list()
 
     return settings, models_settings

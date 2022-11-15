@@ -1,3 +1,4 @@
+import abc
 import os
 import glob
 
@@ -13,7 +14,17 @@ from .load import load_model_settings
 DEFAULT_MODEL_SETTINGS_FILENAME = "model-settings.json"
 
 
-class ModelRepository:
+class ModelRepository(metaclass=abc.ABCMeta):
+    @abc.abstractmethod
+    async def list(self) -> List[ModelSettings]:
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    async def find(self, name: str) -> List[ModelSettings]:
+        raise NotImplementedError
+
+
+class ImplModelRepository(ModelRepository):
     """
     Model repository, responsible of the discovery of models which can be
     loaded onto the model registry.

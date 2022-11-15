@@ -19,7 +19,8 @@ from mlserver import MLModel
 from mlserver.handlers import DataPlane, ModelRepositoryHandlers
 from mlserver.parallel import InferencePool
 from mlserver.registry import MultiModelRegistry
-from mlserver.repository import ModelRepository
+
+from mlserver.repository import ModelRepository, ImplModelRepository
 from mlserver.rest import RESTServer
 from mlserver.settings import ModelSettings, ModelParameters, Settings
 from mlserver.types import MetadataModelResponse
@@ -102,7 +103,7 @@ def model_repository(tmp_path, custom_runtime_tf) -> ModelRepository:
     }
 
     model_settings_path.write_text(json.dumps(model_settings_dict, indent=4))
-    return ModelRepository(tmp_path)
+    return ImplModelRepository(tmp_path)
 
 
 @pytest.fixture

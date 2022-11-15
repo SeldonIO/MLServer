@@ -7,7 +7,11 @@ import logging
 from unittest.mock import Mock
 from mlserver.handlers import DataPlane, ModelRepositoryHandlers
 from mlserver.registry import MultiModelRegistry
-from mlserver.repository import ModelRepository, DEFAULT_MODEL_SETTINGS_FILENAME
+from mlserver.repository import (
+    ModelRepository,
+    ImplModelRepository,
+    DEFAULT_MODEL_SETTINGS_FILENAME,
+)
 from mlserver.parallel import InferencePool
 from mlserver.utils import install_uvloop_event_loop
 from mlserver.logging import get_logger
@@ -164,7 +168,7 @@ def model_folder(tmp_path: str) -> str:
 
 @pytest.fixture
 def model_repository(model_folder: str) -> ModelRepository:
-    return ModelRepository(model_folder)
+    return ImplModelRepository(model_folder)
 
 
 @pytest.fixture
