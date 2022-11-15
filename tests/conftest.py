@@ -9,7 +9,7 @@ from mlserver.handlers import DataPlane, ModelRepositoryHandlers
 from mlserver.registry import MultiModelRegistry
 from mlserver.repository import (
     ModelRepository,
-    ImplModelRepository,
+    SchemalessModelRepository,
     DEFAULT_MODEL_SETTINGS_FILENAME,
 )
 from mlserver.parallel import InferencePool
@@ -168,7 +168,7 @@ def model_folder(tmp_path: str) -> str:
 
 @pytest.fixture
 def model_repository(model_folder: str) -> ModelRepository:
-    return ImplModelRepository(model_folder)
+    return SchemalessModelRepository(model_folder)
 
 
 @pytest.fixture

@@ -5,7 +5,7 @@ import glob
 from pydantic.error_wrappers import ValidationError
 from typing import Optional, List
 
-from ..settings import ModelParameters, ModelSettings
+from ..settings import ModelParameters, ModelSettings, Settings
 from ..errors import ModelNotFound
 from ..logging import logger
 
@@ -24,7 +24,7 @@ class ModelRepository(metaclass=abc.ABCMeta):
         raise NotImplementedError
 
 
-class ImplModelRepository(ModelRepository):
+class SchemalessModelRepository(ModelRepository):
     """
     Model repository, responsible of the discovery of models which can be
     loaded onto the model registry.
@@ -76,3 +76,17 @@ class ImplModelRepository(ModelRepository):
             raise ModelNotFound(name)
 
         return selected
+
+
+class ModelRepositoryFactory:
+    @staticmethod
+    def resolve_model_repository(settings: Settings) -> ModelRepository:
+        result: ModelRepository
+        if settings.model_repository_implementation:
+            result = settings.model_repository_implementation(
+                **settings.model_repository_implementation_args
+            )
+        else:
+            result = SchemalessModelRepository(settings.model_repository_root)
+
+        return result

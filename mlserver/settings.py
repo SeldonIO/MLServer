@@ -92,7 +92,7 @@ class Settings(BaseSettings):
 
     model_repository_implementation: Optional[PyObject]
 
-    model_repository_implementation_args: Optional[dict] = {}
+    model_repository_implementation_args: dict = {}
 
     load_models_at_startup: bool = True
     """Flag to load all available models automatically at startup."""
