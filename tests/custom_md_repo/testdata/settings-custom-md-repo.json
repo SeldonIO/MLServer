@@ -9,5 +9,10 @@
       "*"
     ]
   },
-  "model_repository_implementation": "tests.custom_md_repo.dummymdrepo.DummyModelRepository"
+  "model_repository_implementation": "tests.custom_md_repo.dummymdrepo.DummyModelRepository",
+  "model_repository_implementation_args": {
+    "files": [
+      "tests/custom_md_repo/testdata/model-settings.json"
+    ]
+  }
 }

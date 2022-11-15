@@ -1,5 +1,5 @@
 import os
-from typing import List
+from typing import List, Optional
 from mlserver.repository.repository import (
     ModelRepository,
     DEFAULT_MODEL_SETTINGS_FILENAME,
@@ -9,18 +9,18 @@ from mlserver.errors import ModelNotFound
 
 from ..fixtures import SumModel, ErrorModel, SimpleModel
 
-TESTS_PATH = os.path.dirname(__file__)
-TESTDATA_PATH = os.path.join(TESTS_PATH, "testdata")
-
 
 class DummyModelRepository(ModelRepository):
-    def __init__(self, extra_params: dict) -> None:
-        model_settings_path = os.path.join(
-            TESTDATA_PATH, DEFAULT_MODEL_SETTINGS_FILENAME
-        )
-        model_settings = ModelSettings.parse_file(model_settings_path)
+    def __init__(self, extra_params: Optional[dict] = None) -> None:
 
-        self._model_settings = [model_settings]
+        self._model_settings = []
+
+        if extra_params:
+            model_settings_files = extra_params["files"]
+            for model_settings_file in model_settings_files:
+                model_settings_path = model_settings_file
+                model_settings = ModelSettings.parse_file(model_settings_path)
+                self._model_settings.append(model_settings)
 
     async def list(self) -> List[ModelSettings]:
         return self._model_settings
