@@ -62,10 +62,9 @@ jobs:
           DOCKER_BUILDKIT=1 docker build . \
             --build-arg RUNTIMES="" \
             -t $MLSERVER_IMAGE-slim
-          DOCKER_BUILDKIT=1 docker build . \
-            --build-arg RUNTIMES=all \
-            -t $MLSERVER_IMAGE
-          docker push $MLSERVER_IMAGE
+          # DOCKER_BUILDKIT=1 docker build . \
+            # --build-arg RUNTIMES=all \
+            # -t $MLSERVER_IMAGE
         env:
           MLSERVER_IMAGE: seldonio/mlserver:${{ github.event.inputs.version }}
       - name: Login to DockerHub
@@ -75,8 +74,8 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Push to DockerHub
         run: |
-          docker push $MLSERVER_IMAGE-slim
-          docker push $MLSERVER_IMAGE
+          # docker push $MLSERVER_IMAGE-slim
+          # docker push $MLSERVER_IMAGE
         env:
           MLSERVER_IMAGE: seldonio/mlserver:${{ github.event.inputs.version }}
       - name: Login to Quay.io
