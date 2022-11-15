@@ -4,7 +4,7 @@ import pytest
 
 from mlserver.repository import (
     ModelRepository,
-    ImplModelRepository,
+    SchemalessModelRepository,
     DEFAULT_MODEL_SETTINGS_FILENAME,
 )
 from mlserver.settings import ModelSettings, ENV_PREFIX_MODEL_SETTINGS
@@ -63,7 +63,7 @@ async def test_list(
 
 
 async def test_list_multi_model(multi_model_folder: str):
-    multi_model_repository = ImplModelRepository(multi_model_folder)
+    multi_model_repository = SchemalessModelRepository(multi_model_folder)
 
     settings_list = await multi_model_repository.list()
     settings_list.sort(key=lambda ms: ms.parameters.version)  # type: ignore
