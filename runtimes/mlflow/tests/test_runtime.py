@@ -24,12 +24,6 @@ def test_load(runtime: MLflowRuntime):
     assert type(runtime._model) == PyFuncModel
 
 
-def test_load_scheme(runtime_scheme: MLflowRuntime):
-    assert runtime_scheme.ready
-
-    assert type(runtime_scheme._model) == PyFuncModel
-
-
 async def test_predict(runtime: MLflowRuntime, inference_request: InferenceRequest):
     response = await runtime.predict(inference_request)
 

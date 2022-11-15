@@ -2,7 +2,7 @@ import pytest
 import asyncio
 import platform
 
-from typing import Dict, Optional, List
+from typing import Dict, Optional
 from unittest.mock import patch
 
 from mlserver.utils import (
@@ -16,41 +16,43 @@ from mlserver.model import MLModel
 from mlserver.types import InferenceRequest, InferenceResponse, Parameters
 from mlserver.settings import ModelSettings, ModelParameters
 
-
-@pytest.mark.parametrize(
-    "uri, source, expected, schemes",
-    [
-        ("my-model.bin", None, "my-model.bin", []),
+test_get_model_uri_paramaters = [
+    ("s3://bucket/key", None, "s3://bucket/key"),
+    ("s3://bucket/key", "/mnt/models/model-settings.json", "s3://bucket/key"),
+]
+for scheme in ["", "file:"]:
+    for uri, source, expected in [
+        ("my-model.bin", None, "my-model.bin"),
         (
             "my-model.bin",
             "./my-model-folder/model-settings.json",
             "my-model-folder/my-model.bin",
-            [],
         ),
         (
             "my-model.bin",
             "./my-model-folder/../model-settings.json",
             "my-model.bin",
-            [],
         ),
         (
             "/an/absolute/path/my-model.bin",
             "/mnt/models/model-settings.json",
             "/an/absolute/path/my-model.bin",
-            [],
         ),
-        ("file:my-model.bin", None, "file:my-model.bin", ["file"]),
-    ],
+    ]:
+        test_get_model_uri_paramaters.append((scheme + uri, source, expected))
+
+
+@pytest.mark.parametrize(
+    "uri, source, expected",
+    test_get_model_uri_paramaters,
 )
-async def test_get_model_uri(
-    uri: str, source: Optional[str], expected: str, schemes: List[str]
-):
+async def test_get_model_uri(uri: str, source: Optional[str], expected: str):
     model_settings = ModelSettings(
         implementation=MLModel, parameters=ModelParameters(uri=uri)
     )
     model_settings._source = source
     with patch("os.path.isfile", return_value=True):
-        model_uri = await get_model_uri(model_settings, allowed_schemes=schemes)
+        model_uri = await get_model_uri(model_settings)
 
     assert model_uri == expected
 

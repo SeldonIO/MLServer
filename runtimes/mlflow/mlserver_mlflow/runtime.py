@@ -151,10 +151,7 @@ class MLflowRuntime(MLModel):
 
     async def load(self) -> bool:
         # TODO: Log info message
-        model_uri = await get_model_uri(
-            self._settings,
-            allowed_schemes=mlflow.store.artifact.artifact_repository_registry._artifact_repository_registry._registry,
-        )
+        model_uri = await get_model_uri(self._settings)
         self._model = mlflow.pyfunc.load_model(model_uri)
 
         self._input_schema = self._model.metadata.get_input_schema()
