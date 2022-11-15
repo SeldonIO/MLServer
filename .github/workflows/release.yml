@@ -52,7 +52,7 @@ jobs:
           python setup.py \
             sdist -d ./dist \
             bdist_wheel -d ./dist
-          twine upload dist/*
+          twine upload --skip-existing dist/*
         env:
           TWINE_NON_INTERACTIVE: 1
           TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
@@ -106,7 +106,7 @@ jobs:
           python setup.py \
             sdist -d ./dist \
             bdist_wheel -d ./dist
-          twine upload ./dist/*
+          twine upload --skip-existing ./dist/*
         env:
           TWINE_NON_INTERACTIVE: 1
           TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
