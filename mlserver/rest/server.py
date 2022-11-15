@@ -6,7 +6,7 @@ from ..model import MLModel
 
 from .utils import matches
 from .app import create_app
-from .logging import logger
+from .logging import logger, disable_health_access_logs
 from typing import Optional
 
 
@@ -60,6 +60,9 @@ class RESTServer:
     async def start(self):
         cfg = self._get_config()
         self._server = _NoSignalServer(cfg)
+        if not self._settings.debug:
+            disable_health_access_logs()
+
         await self._server.serve()
 
     def _get_config(self):
