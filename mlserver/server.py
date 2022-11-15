@@ -2,13 +2,13 @@ import asyncio
 import signal
 import logging
 
-from typing import Optional, List
+from typing import List, Optional
 
 from .model import MLModel
 from .settings import Settings, ModelSettings
 from .logging import configure_logger
 from .registry import MultiModelRegistry
-from .repository import ModelRepository
+from .repository import ModelRepository, ImplModelRepository
 from .handlers import DataPlane, ModelRepositoryHandlers
 from .parallel import InferencePool
 from .batching import load_batching
@@ -22,7 +22,9 @@ HANDLED_SIGNALS = [signal.SIGINT, signal.SIGTERM, signal.SIGQUIT]
 
 
 class MLServer:
-    def __init__(self, settings: Settings):
+    def __init__(
+        self, settings: Settings, model_repository: Optional[ModelRepository] = None
+    ):
         self._settings = settings
         self._inference_pool = None
         on_model_load = [
@@ -54,7 +56,18 @@ class MLServer:
             on_model_reload=on_model_reload,  # type: ignore
             on_model_unload=on_model_unload,  # type: ignore
         )
-        self._model_repository = ModelRepository(self._settings.model_repository_root)
+
+        if model_repository:
+            self._model_repository = model_repository
+        elif self._settings.model_repository_implementation:
+            self._model_repository = self._settings.model_repository_implementation(
+                self._settings.model_repository_implementation_args
+            )
+        else:
+            self._model_repository = ImplModelRepository(
+                self._settings.model_repository_root
+            )
+
         self._data_plane = DataPlane(
             settings=self._settings, model_registry=self._model_registry
         )

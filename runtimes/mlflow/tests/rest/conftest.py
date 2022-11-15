@@ -7,7 +7,7 @@ from typing import AsyncIterable
 from mlserver.handlers import DataPlane, ModelRepositoryHandlers
 from mlserver.registry import MultiModelRegistry
 from mlserver.rest import RESTServer
-from mlserver.repository import ModelRepository
+from mlserver.repository import ModelRepository, ImplModelRepository
 from mlserver.model import MLModel
 from mlserver.parallel import InferencePool
 from mlserver import Settings, ModelSettings
@@ -23,7 +23,7 @@ async def inference_pool(settings: Settings) -> AsyncIterable[InferencePool]:
 
 @pytest.fixture
 def model_repository(model_uri: str) -> ModelRepository:
-    return ModelRepository(model_uri)
+    return ImplModelRepository(model_uri)
 
 
 @pytest.fixture
