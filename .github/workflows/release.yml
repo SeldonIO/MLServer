@@ -107,8 +107,8 @@ jobs:
             $QUAY_MLSERVER_IMAGE-slim \
             --docker-config=${HOME}/.docker/config.json \
             --certification-project-id=$PROJECT_ID \
-            --pyxis-api-token=$PYXIS_API_TOKEN
-            # --submit
+            --pyxis-api-token=$PYXIS_API_TOKEN \
+            --submit
           # preflight check container \
             # $QUAY_MLSERVER_IMAGE \
             # --docker-config=${HOME}/.docker/config.json \
