@@ -15,6 +15,7 @@ from .messages import (
     ModelRequestMessage,
     ModelResponseMessage,
 )
+from prometheus_client import Histogram
 
 
 class Dispatcher:
@@ -26,6 +27,11 @@ class Dispatcher:
         self._process_responses_task = None
         self._executor = ThreadPoolExecutor()
         self._async_responses: Dict[str, Future[ModelResponseMessage]] = {}
+        self.queue_request_count = Histogram(
+            "worker_queue_request",
+            "counter of request queue size for workers",
+            ['workerpid']
+)
 
     def start(self):
         self._active = True
@@ -77,7 +83,8 @@ class Dispatcher:
     async def dispatch(
         self, request_message: ModelRequestMessage
     ) -> ModelResponseMessage:
-        worker = self._get_worker()
+        worker, wpid = self._get_worker()
+        self._workers_queue_monitor(worker,wpid)
         worker.send_request(request_message)
 
         loop = asyncio.get_running_loop()
@@ -93,7 +100,15 @@ class Dispatcher:
         By default, this is just a round-robin through all the workers.
         """
         worker_pid = next(self._workers_round_robin)
-        return self._workers[worker_pid]
+        return self._workers[worker_pid], worker_pid
+    
+    def _workers_queue_monitor(self, worker: Worker, worker_pid: int):
+        """Get metrics from every worker request queue"""
+        queue_size = worker._requests.qsize()
+        
+        self.queue_request_count.labels(workerpid=str(worker_pid)).observe(
+            float(queue_size)
+        )
 
     async def _wait_response(self, internal_id: str) -> ModelResponseMessage:
         async_response = self._async_responses[internal_id]

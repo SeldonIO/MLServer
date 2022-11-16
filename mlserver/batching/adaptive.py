@@ -18,6 +18,8 @@ from ..utils import generate_uuid, schedule_with_callback
 
 from .requests import BatchedRequests
 
+from prometheus_client import Histogram
+
 
 class AdaptiveBatcher:
     def __init__(self, model: MLModel):
@@ -31,6 +33,7 @@ class AdaptiveBatcher:
         self.__requests: Optional[Queue[Tuple[str, InferenceRequest]]] = None
         self._async_responses: Dict[str, Future[InferenceResponse]] = {}
         self._batching_task = None
+        self.batch_queue_request_count = Histogram("batch_queue_request_counter", "counter of request queue batch size")
 
     async def predict(self, req: InferenceRequest) -> InferenceResponse:
         internal_id, _ = await self._queue_request(req)
@@ -51,7 +54,7 @@ class AdaptiveBatcher:
         req: InferenceRequest,
     ) -> Tuple[str, Awaitable[InferenceResponse]]:
         internal_id = generate_uuid()
-
+        self._batch_queue_monitor()
         await self._requests.put((internal_id, req))
 
         loop = asyncio.get_running_loop()
@@ -59,6 +62,11 @@ class AdaptiveBatcher:
         self._async_responses[internal_id] = async_response
 
         return internal_id, async_response
+    
+    def _batch_queue_monitor(self):
+        """Monitorize batch queue size"""
+        batch_queue_size = self._requests.qsize()
+        self.batch_queue_request_count.observe(batch_queue_size)
 
     async def _wait_response(self, internal_id: str) -> InferenceResponse:
         async_response = self._async_responses[internal_id]
