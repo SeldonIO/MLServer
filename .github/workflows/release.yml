@@ -114,7 +114,7 @@ jobs:
             $QUAY_MLSERVER_IMAGE \
             --docker-config=${HOME}/.docker/config.json \
             --certification-project-id=$PROJECT_ID \
-            --pyxis-api-token=$PYXIS_API_TOKEN
+            --pyxis-api-token=$PYXIS_API_TOKEN \
             --artifacts ./artifacts/mlserver-slim \
             --submit
         env:
