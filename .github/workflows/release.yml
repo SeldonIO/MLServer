@@ -95,7 +95,7 @@ jobs:
           QUAY_MLSERVER_IMAGE: quay.io/redhat-isv-containers/63566bb9822ce8cef9ba27fc:${{ github.event.inputs.version }}
       - name: Install preflight
         run: |
-          wget https://github.com/redhat-openshift-ecosystem/openshift-preflight/releases/download/$PREFLIGHT_VERSION/preflight-linux-ppc64le
+          wget https://github.com/redhat-openshift-ecosystem/openshift-preflight/releases/download/$PREFLIGHT_VERSION/preflight-linux-amd64
           chmod u+x preflight-linux-amd64
           sudo mv preflight-linux-amd64 /usr/local/bin/preflight
           preflight --version
