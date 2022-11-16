@@ -108,12 +108,14 @@ jobs:
             --docker-config=${HOME}/.docker/config.json \
             --certification-project-id=$PROJECT_ID \
             --pyxis-api-token=$PYXIS_API_TOKEN \
+            --artifacts ./artifacts/mlserver \
             --submit
           preflight check container \
             $QUAY_MLSERVER_IMAGE \
             --docker-config=${HOME}/.docker/config.json \
             --certification-project-id=$PROJECT_ID \
             --pyxis-api-token=$PYXIS_API_TOKEN
+            --artifacts ./artifacts/mlserver-slim \
             --submit
         env:
           PYXIS_API_TOKEN: ${{ secrets.PYXIS_API_TOKEN }}
@@ -201,6 +203,7 @@ jobs:
             --docker-config=${HOME}/.docker/config.json \
             --certification-project-id=$PROJECT_ID \
             --pyxis-api-token=$PYXIS_API_TOKEN \
+            --artifacts ./artifacts/mlserver-${{ matrix.runtime }} \
             --submit
         env:
           PYXIS_API_TOKEN: ${{ secrets.PYXIS_API_TOKEN }}
