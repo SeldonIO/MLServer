@@ -92,8 +92,7 @@ jobs:
           # docker push $QUAY_MLSERVER_IMAGE
         env:
           MLSERVER_IMAGE: seldonio/mlserver:${{ github.event.inputs.version }}
-          PROJECT_ID: 63566bb9822ce8cef9ba27fc
-          QUAY_MLSERVER_IMAGE: quay.io/redhat-isv-containers/$PROJECT_ID:${{ github.event.inputs.version }}
+          QUAY_MLSERVER_IMAGE: quay.io/redhat-isv-containers/63566bb9822ce8cef9ba27fc:${{ github.event.inputs.version }}
       - name: Install preflight
         run: |
           wget https://github.com/redhat-openshift-ecosystem/openshift-preflight/releases/download/$PREFLIGHT_VERSION/preflight-linux-ppc64le
@@ -119,7 +118,7 @@ jobs:
         env:
           PYXIS_API_TOKEN: ${{ secrets.PYXIS_API_TOKEN }}
           PROJECT_ID: 63566bb9822ce8cef9ba27fc
-          QUAY_MLSERVER_IMAGE: quay.io/redhat-isv-containers/$PROJECT_ID:${{ github.event.inputs.version }}
+          QUAY_MLSERVER_IMAGE: quay.io/redhat-isv-containers/63566bb9822ce8cef9ba27fc:${{ github.event.inputs.version }}
 
   # runtimes:
   # needs: draft-release
