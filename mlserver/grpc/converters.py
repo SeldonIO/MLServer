@@ -23,7 +23,7 @@ _FIELDS = {
 }
 
 
-def _get_value(pb_object, default: Any = None) -> Any:
+def _get_value(pb_object, default: Optional[Any] = None) -> Any:
     fields = pb_object.ListFields()
     if len(fields) == 0:
         return default

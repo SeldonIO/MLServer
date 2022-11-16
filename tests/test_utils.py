@@ -16,10 +16,12 @@ from mlserver.model import MLModel
 from mlserver.types import InferenceRequest, InferenceResponse, Parameters
 from mlserver.settings import ModelSettings, ModelParameters
 
-
-@pytest.mark.parametrize(
-    "uri, source, expected",
-    [
+test_get_model_uri_paramaters = [
+    ("s3://bucket/key", None, "s3://bucket/key"),
+    ("s3://bucket/key", "/mnt/models/model-settings.json", "s3://bucket/key"),
+]
+for scheme in ["", "file:"]:
+    for uri, source, expected in [
         ("my-model.bin", None, "my-model.bin"),
         (
             "my-model.bin",
@@ -36,7 +38,13 @@ from mlserver.settings import ModelSettings, ModelParameters
             "/mnt/models/model-settings.json",
             "/an/absolute/path/my-model.bin",
         ),
-    ],
+    ]:
+        test_get_model_uri_paramaters.append((scheme + uri, source, expected))
+
+
+@pytest.mark.parametrize(
+    "uri, source, expected",
+    test_get_model_uri_paramaters,
 )
 async def test_get_model_uri(uri: str, source: Optional[str], expected: str):
     model_settings = ModelSettings(

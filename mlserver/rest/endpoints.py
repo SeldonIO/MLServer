@@ -13,6 +13,7 @@ from ..handlers import DataPlane, ModelRepositoryHandlers
 from ..utils import insert_headers, extract_headers
 
 from .utils import to_status_code
+from typing import Optional
 
 
 class Endpoints:
@@ -33,7 +34,9 @@ class Endpoints:
         is_ready = await self._data_plane.ready()
         return Response(status_code=to_status_code(is_ready))
 
-    async def model_ready(self, model_name: str, model_version: str = None) -> Response:
+    async def model_ready(
+        self, model_name: str, model_version: Optional[str] = None
+    ) -> Response:
         is_ready = await self._data_plane.model_ready(model_name, model_version)
         return Response(status_code=to_status_code(is_ready))
 
@@ -41,7 +44,7 @@ class Endpoints:
         return await self._data_plane.metadata()
 
     async def model_metadata(
-        self, model_name: str, model_version: str = None
+        self, model_name: str, model_version: Optional[str] = None
     ) -> MetadataModelResponse:
         return await self._data_plane.model_metadata(model_name, model_version)
 
@@ -51,7 +54,7 @@ class Endpoints:
         raw_response: Response,
         payload: InferenceRequest,
         model_name: str,
-        model_version: str = None,
+        model_version: Optional[str] = None,
     ) -> InferenceResponse:
         request_headers = dict(raw_request.headers)
         insert_headers(payload, request_headers)

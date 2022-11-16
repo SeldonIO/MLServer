@@ -23,6 +23,7 @@ _generatePydantic() {
     --input "${ROOT_FOLDER}/openapi/$apiName.yaml" \
     --output "${ROOT_FOLDER}/mlserver/types/$apiName.py" \
     --custom-template-dir "${ROOT_FOLDER}/hack/templates" \
+    --base-class ".base.BaseModel" \
     --disable-timestamp \
     --target-python-version 3.6
 }

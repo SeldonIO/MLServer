@@ -1,7 +1,7 @@
 import os
 import sys
 
-from typing import List, Tuple, Union
+from typing import Optional, List, Tuple, Union
 
 from ..repository import ModelRepository
 from ..settings import Settings, ModelSettings
@@ -9,7 +9,9 @@ from ..settings import Settings, ModelSettings
 DEFAULT_SETTINGS_FILENAME = "settings.json"
 
 
-async def load_settings(folder: str = None) -> Tuple[Settings, List[ModelSettings]]:
+async def load_settings(
+    folder: Optional[str] = None,
+) -> Tuple[Settings, List[ModelSettings]]:
     """
     Load server and model settings.
     """

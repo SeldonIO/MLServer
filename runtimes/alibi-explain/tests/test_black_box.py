@@ -9,7 +9,6 @@ import tensorflow as tf
 from alibi.saving import load_explainer
 from numpy.testing import assert_allclose
 
-from helpers.tf_model import get_tf_mnist_model_uri
 from mlserver import MLModel
 from mlserver.codecs import NumpyCodec, StringCodec
 from mlserver.types import (
@@ -27,6 +26,8 @@ from mlserver_alibi_explain.common import (
     to_v2_inference_request,
     _DEFAULT_INPUT_NAME,
 )
+
+from .helpers.tf_model import get_tf_mnist_model_uri
 
 TESTS_PATH = Path(os.path.dirname(__file__))
 _DEFAULT_ID_NAME = "dummy_id"

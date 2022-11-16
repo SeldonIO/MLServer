@@ -28,7 +28,7 @@ from mlserver_alibi_explain.common import (
 from mlserver_alibi_explain.runtime import AlibiExplainRuntime, AlibiExplainRuntimeBase
 from mlserver_alibi_explain.errors import InvalidExplanationShape
 
-from helpers.run_async import run_async_as_sync
+from .helpers.run_async import run_async_as_sync
 
 """
 Smoke tests for runtimes

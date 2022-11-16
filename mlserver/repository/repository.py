@@ -2,7 +2,7 @@ import os
 import glob
 
 from pydantic.error_wrappers import ValidationError
-from typing import List
+from typing import Optional, List
 
 from ..settings import ModelParameters, ModelSettings
 from ..errors import ModelNotFound
@@ -19,7 +19,7 @@ class ModelRepository:
     loaded onto the model registry.
     """
 
-    def __init__(self, root: str = None):
+    def __init__(self, root: Optional[str] = None):
         self._root = root
 
     async def list(self) -> List[ModelSettings]:

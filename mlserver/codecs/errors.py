@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Type
+from typing import Optional, Any, Dict, List, Type
 
 from ..types import RequestInput
 from ..errors import MLServerError
@@ -7,8 +7,8 @@ from ..errors import MLServerError
 class CodecNotFound(MLServerError):
     def __init__(
         self,
-        name: str = None,
-        payload_type: str = None,
+        name: Optional[str] = None,
+        payload_type: Optional[str] = None,
         is_input: bool = False,
         is_request: bool = False,
     ):

@@ -1,17 +1,19 @@
 import asyncio
 
-from typing import Dict
+from typing import Dict, List
 from itertools import cycle
 from multiprocessing import Queue
 from concurrent.futures import ThreadPoolExecutor
 from asyncio import Future
 
-from ..utils import schedule_with_callback
+from ..utils import schedule_with_callback, generate_uuid
 
 from .worker import Worker
 from .logging import logger
-from .utils import END_OF_QUEUE, cancel_task, terminate_queue
+from .utils import END_OF_QUEUE, cancel_task
 from .messages import (
+    Message,
+    ModelUpdateMessage,
     ModelRequestMessage,
     ModelResponseMessage,
 )
@@ -80,19 +82,14 @@ class Dispatcher:
         else:
             response_loop.call_soon_threadsafe(async_response.set_result, response)
 
-    async def dispatch(
+    async def dispatch_request(
         self, request_message: ModelRequestMessage
     ) -> ModelResponseMessage:
         worker, wpid = self._get_worker()
         self._workers_queue_monitor(worker,wpid)
         worker.send_request(request_message)
 
-        loop = asyncio.get_running_loop()
-        async_response = loop.create_future()
-        internal_id = request_message.id
-        self._async_responses[internal_id] = async_response
-
-        return await self._wait_response(internal_id)
+        return await self._dispatch(request_message)
 
     def _get_worker(self) -> Worker:
         """
@@ -110,6 +107,34 @@ class Dispatcher:
             float(queue_size)
         )
 
+    async def dispatch_update(
+        self, model_update: ModelUpdateMessage
+    ) -> List[ModelResponseMessage]:
+        return await asyncio.gather(
+            *[
+                self._dispatch_update(worker, model_update)
+                for worker in self._workers.values()
+            ]
+        )
+
+    async def _dispatch_update(
+        self, worker: Worker, model_update: ModelUpdateMessage
+    ) -> ModelResponseMessage:
+        # NOTE: Need to rewrite the UUID to ensure each worker sends back a
+        # unique result
+        worker_update = model_update.copy()
+        worker_update.id = generate_uuid()
+        worker.send_update(worker_update)
+        return await self._dispatch(worker_update)
+
+    async def _dispatch(self, message: Message) -> ModelResponseMessage:
+        loop = asyncio.get_running_loop()
+        async_response = loop.create_future()
+        internal_id = message.id
+        self._async_responses[internal_id] = async_response
+
+        return await self._wait_response(internal_id)
+
     async def _wait_response(self, internal_id: str) -> ModelResponseMessage:
         async_response = self._async_responses[internal_id]
 
@@ -122,8 +147,6 @@ class Dispatcher:
         return await async_response
 
     async def stop(self):
-        await terminate_queue(self._responses)
-        self._responses.close()
         self._executor.shutdown()
         if self._process_responses_task is not None:
             await cancel_task(self._process_responses_task)

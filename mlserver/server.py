@@ -2,7 +2,7 @@ import asyncio
 import signal
 import logging
 
-from typing import List
+from typing import Optional, List
 
 from .model import MLModel
 from .settings import Settings, ModelSettings
@@ -95,14 +95,20 @@ class MLServer:
 
         servers_task = asyncio.gather(*servers)
 
-        await asyncio.gather(
-            *[
-                self._model_registry.load(model_settings)
-                for model_settings in models_settings
-            ]
-        )
-
-        await servers_task
+        try:
+            await asyncio.gather(
+                *[
+                    self._model_registry.load(model_settings)
+                    for model_settings in models_settings
+                ]
+            )
+        except Exception:
+            # If one of the models failed to load during startup, shutdown the
+            # server gracefully
+            logger.exception("Some of the models failed to load during startup!")
+            await self.stop()
+        finally:
+            await servers_task
 
     async def add_custom_handlers(self, model: MLModel) -> MLModel:
         await self._rest_server.add_custom_handlers(model)
@@ -141,7 +147,7 @@ class MLServer:
                 sig, lambda s=sig: asyncio.create_task(self.stop(sig=s))
             )
 
-    async def stop(self, sig: int = None):
+    async def stop(self, sig: Optional[int] = None):
         if self._inference_pool:
             await self._inference_pool.close()
 

@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-from typing import Any, List
+from typing import Optional, Any, List
 
 from .base import RequestCodec, register_request_codec
 from .numpy import to_datatype, to_dtype
@@ -67,7 +67,7 @@ class PandasCodec(RequestCodec):
         cls,
         model_name: str,
         payload: pd.DataFrame,
-        model_version: str = None,
+        model_version: Optional[str] = None,
         use_bytes: bool = True,
         **kwargs
     ) -> InferenceResponse:

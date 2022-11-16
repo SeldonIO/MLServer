@@ -15,7 +15,7 @@ from mlserver.utils import install_uvloop_event_loop
 
 from mlserver_mlflow import MLflowRuntime
 
-from torch_fixtures import MNISTDataModule, LightningMNISTClassifier
+from .torch_fixtures import MNISTDataModule, LightningMNISTClassifier
 
 TESTS_PATH = os.path.dirname(__file__)
 TESTDATA_PATH = os.path.join(TESTS_PATH, "testdata")
@@ -87,8 +87,10 @@ def pytorch_model_uri() -> str:
     return model_path
 
 
-@pytest.fixture
-def model_settings(model_uri: str) -> ModelSettings:
+@pytest.fixture(params=["", "file:"])
+def model_settings(model_uri: str, request: pytest.FixtureRequest) -> ModelSettings:
+    scheme = request.param
+    model_uri = scheme + model_uri
     return ModelSettings(
         name="mlflow-model",
         implementation=MLflowRuntime,

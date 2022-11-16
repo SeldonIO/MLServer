@@ -1,4 +1,5 @@
 from typing import Dict
+from functools import wraps
 from unittest.mock import patch
 
 import pytest
@@ -19,6 +20,15 @@ def test_can_load_runtime_impl(explainer_reference):
     import_and_get_class(explainer_reference.alibi_class)
 
 
+def remove_kwarg(func, to_remove):
+    @wraps(func)
+    def _f(*args, **kwargs):
+        kwargs.pop(to_remove, None)
+        return func(*args, **kwargs)
+
+    return _f
+
+
 class _TestClientWrapper:
     def __init__(self, data: Dict):
         self.response = data
@@ -30,7 +40,12 @@ class _TestClientWrapper:
         async def metadata() -> Dict:
             return self.response
 
-        return TestClient(app)
+        test_client = TestClient(app)
+        # NOTE: FastAPI / Starlette no longer expose the `verify` flag on the
+        # `.get()` method, so let's pop it before calling the actual `.get()`
+        # See https://github.com/encode/starlette/pull/1376
+        test_client.get = remove_kwarg(test_client.get, "verify")
+        return test_client
 
 
 @pytest.mark.parametrize(

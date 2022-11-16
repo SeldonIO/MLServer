@@ -124,7 +124,7 @@ def decode_request_input(
 
 def decode_inference_request(
     inference_request: InferenceRequest,
-    model_settings: ModelSettings = None,
+    model_settings: Optional[ModelSettings] = None,
     metadata_inputs: Dict[str, MetadataTensor] = {},
 ) -> Optional[Any]:
     for request_input in inference_request.inputs:
@@ -187,7 +187,11 @@ class SingleInputRequestCodec(RequestCodec):
 
     @classmethod
     def encode_response(
-        cls, model_name: str, payload: Any, model_version: str = None, **kwargs
+        cls,
+        model_name: str,
+        payload: Any,
+        model_version: Optional[str] = None,
+        **kwargs,
     ) -> InferenceResponse:
         if cls.InputCodec is None:
             raise NotImplementedError(

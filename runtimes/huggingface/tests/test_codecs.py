@@ -17,10 +17,13 @@ from mlserver_huggingface.codecs import MultiStringRequestCodec
             InferenceRequest(
                 inputs=[
                     RequestInput(
-                        name="foo", datatype="BYTES", data=["bar1", "bar2"], shape=[2]
+                        name="foo",
+                        datatype="BYTES",
+                        data=["bar1", "bar2"],
+                        shape=[2, 1],
                     ),
                     RequestInput(
-                        name="foo2", datatype="BYTES", data=["var1"], shape=[1]
+                        name="foo2", datatype="BYTES", data=["var1"], shape=[1, 1]
                     ),
                 ]
             ),
@@ -46,7 +49,7 @@ def test_decode_request(inference_request, expected):
                         name="foo",
                         datatype="BYTES",
                         data=[b"bar1", b"bar2"],
-                        shape=[2],
+                        shape=[2, 1],
                         parameters=Parameters(
                             content_type=MultiStringRequestCodec.InputCodec.ContentType
                         ),
@@ -55,7 +58,7 @@ def test_decode_request(inference_request, expected):
                         name="foo2",
                         datatype="BYTES",
                         data=[b"var1"],
-                        shape=[1],
+                        shape=[1, 1],
                         parameters=Parameters(
                             content_type=MultiStringRequestCodec.InputCodec.ContentType
                         ),
@@ -73,7 +76,7 @@ def test_decode_request(inference_request, expected):
                         name="foo",
                         datatype="BYTES",
                         data=["bar1", "bar2"],
-                        shape=[2],
+                        shape=[2, 1],
                         parameters=Parameters(
                             content_type=MultiStringRequestCodec.InputCodec.ContentType
                         ),
@@ -82,7 +85,7 @@ def test_decode_request(inference_request, expected):
                         name="foo2",
                         datatype="BYTES",
                         data=["var1"],
-                        shape=[1],
+                        shape=[1, 1],
                         parameters=Parameters(
                             content_type=MultiStringRequestCodec.InputCodec.ContentType
                         ),
@@ -108,10 +111,13 @@ def test_encode_request(payload, use_bytes, expected):
                 model_name="my-model",
                 outputs=[
                     ResponseOutput(
-                        name="foo", datatype="BYTES", data=["bar1", "bar2"], shape=[2]
+                        name="foo",
+                        datatype="BYTES",
+                        data=["bar1", "bar2"],
+                        shape=[2, 1],
                     ),
                     ResponseOutput(
-                        name="foo2", datatype="BYTES", data=["var1"], shape=[1]
+                        name="foo2", datatype="BYTES", data=["var1"], shape=[1, 1]
                     ),
                 ],
             ),
@@ -138,7 +144,7 @@ def test_decode_response(inference_response, expected):
                         name="foo",
                         datatype="BYTES",
                         data=[b"bar1", b"bar2"],
-                        shape=[2],
+                        shape=[2, 1],
                         parameters=Parameters(
                             content_type=MultiStringRequestCodec.InputCodec.ContentType
                         ),
@@ -147,7 +153,7 @@ def test_decode_response(inference_response, expected):
                         name="foo2",
                         datatype="BYTES",
                         data=[b"var1"],
-                        shape=[1],
+                        shape=[1, 1],
                         parameters=Parameters(
                             content_type=MultiStringRequestCodec.InputCodec.ContentType
                         ),
@@ -165,7 +171,7 @@ def test_decode_response(inference_response, expected):
                         name="foo",
                         datatype="BYTES",
                         data=["bar1", "bar2"],
-                        shape=[2],
+                        shape=[2, 1],
                         parameters=Parameters(
                             content_type=MultiStringRequestCodec.InputCodec.ContentType
                         ),
@@ -174,7 +180,7 @@ def test_decode_response(inference_response, expected):
                         name="foo2",
                         datatype="BYTES",
                         data=["var1"],
-                        shape=[1],
+                        shape=[1, 1],
                         parameters=Parameters(
                             content_type=MultiStringRequestCodec.InputCodec.ContentType
                         ),

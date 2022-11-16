@@ -172,7 +172,7 @@ class SignatureCodec(RequestCodec):
         return None
 
     def encode_response(  # type: ignore
-        self, model_name: str, payload: Any, model_version: str = None
+        self, model_name: str, payload: Any, model_version: Optional[str] = None
     ) -> InferenceResponse:
         payloads = _as_list(payload)
         outputs = []

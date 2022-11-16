@@ -83,13 +83,17 @@ class RequestCodec:
     @classmethod
     @deprecated("The encode() method is now deprecated. Use encode_response() instead.")
     def encode(
-        cls, model_name: str, payload: Any, model_version: str = None
+        cls, model_name: str, payload: Any, model_version: Optional[str] = None
     ) -> InferenceResponse:
         return cls.encode_response(model_name, payload, model_version)
 
     @classmethod
     def encode_response(
-        cls, model_name: str, payload: Any, model_version: str = None, **kwargs
+        cls,
+        model_name: str,
+        payload: Any,
+        model_version: Optional[str] = None,
+        **kwargs,
     ) -> InferenceResponse:
         raise NotImplementedError()
 
@@ -177,7 +181,10 @@ class _CodecRegistry:
         self._input_codecs[content_type] = codec
 
     def find_input_codec(
-        self, content_type: str = None, payload: Any = None, type_hint: Type = None
+        self,
+        content_type: Optional[str] = None,
+        payload: Optional[Any] = None,
+        type_hint: Optional[Type] = None,
     ) -> Optional[InputCodecLike]:
         if content_type:
             # TODO: Raise error if codec doesn't exist
@@ -206,7 +213,10 @@ class _CodecRegistry:
         self._request_codecs[content_type] = codec
 
     def find_request_codec(
-        self, content_type: str = None, payload: Any = None, type_hint: Type = None
+        self,
+        content_type: Optional[str] = None,
+        payload: Optional[Any] = None,
+        type_hint: Optional[Type] = None,
     ) -> Optional[RequestCodecLike]:
         if content_type:
             # TODO: Raise error if codec doesn't exist
