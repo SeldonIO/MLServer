@@ -74,7 +74,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Push to DockerHub
         run: |
-          # docker push $MLSERVER_IMAGE-slim
+          docker push $MLSERVER_IMAGE-slim
           # docker push $MLSERVER_IMAGE
         env:
           MLSERVER_IMAGE: seldonio/mlserver:${{ github.event.inputs.version }}
