@@ -38,8 +38,8 @@ jobs:
           remove-android: "true"
           root-reserve-mb: "40960"
       - uses: actions/checkout@v2
-        # with:
-        # ref: ${{ github.event.inputs.version }}
+        with:
+          ref: ${{ github.event.inputs.version }}
       - name: Set up Python 3.8
         uses: actions/setup-python@v2
         with:
@@ -138,8 +138,8 @@ jobs:
           - xgboost
     steps:
       - uses: actions/checkout@v2
-        # with:
-        # ref: ${{ github.event.inputs.version }}
+        with:
+          ref: ${{ github.event.inputs.version }}
       - name: Set up Python 3.8
         uses: actions/setup-python@v2
         with:
