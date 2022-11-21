@@ -36,9 +36,9 @@ setup(
     install_requires=[
         "mlserver",
         "optimum[onnxruntime]>=1.2.3",
-        # Pin `transformers`, otherwise we risk falling into this issue:
+        # Avoid `transformers` versions incompatible with Optimum:
         # https://github.com/huggingface/optimum/issues/344
-        "transformers<=4.21.1",
+        "transformers <=4.21.1, >=4.22.0",
     ],
     long_description=_load_description(),
     long_description_content_type="text/markdown",
