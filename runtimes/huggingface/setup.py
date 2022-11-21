@@ -33,13 +33,7 @@ setup(
     author_email="hello@seldon.io",
     description="HuggingFace runtime for MLServer",
     packages=find_packages(exclude=["tests", "tests.*"]),
-    install_requires=[
-        "mlserver",
-        "optimum[onnxruntime]>=1.2.3",
-        # Pin `transformers`, otherwise we risk falling into this issue:
-        # https://github.com/huggingface/optimum/issues/344
-        "transformers<=4.21.1",
-    ],
+    install_requires=["mlserver", "optimum[onnxruntime]>=1.4.0"],
     long_description=_load_description(),
     long_description_content_type="text/markdown",
     license="Apache 2.0",
