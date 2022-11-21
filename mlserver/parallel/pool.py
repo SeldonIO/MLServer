@@ -19,8 +19,6 @@ from .dispatcher import Dispatcher
 
 PredictMethod = Callable[[InferenceRequest], Coroutine[Any, Any, InferenceResponse]]
 
-_InferencePoolAttr = "__inference_pool__"
-
 
 class InferencePool:
     """
@@ -119,6 +117,8 @@ class InferencePool:
         # First close down model updates loop
         for pid, worker in self._workers.items():
             await worker.stop()
-            worker.join()
+            worker.join(self._settings.parallel_workers_timeout)
+            if worker.exitcode is None:
+                worker.kill()
 
         self._workers.clear()

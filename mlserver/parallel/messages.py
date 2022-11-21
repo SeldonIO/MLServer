@@ -1,8 +1,9 @@
 import json
 
+from asyncio import CancelledError
 from enum import IntEnum
 from pydantic import BaseModel, Field
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from ..utils import get_import_path, generate_uuid
 from ..settings import ModelSettings
@@ -32,7 +33,7 @@ class ModelResponseMessage(Message):
         arbitrary_types_allowed = True
 
     return_value: Optional[Any]
-    exception: Optional[Exception]
+    exception: Optional[Union[Exception, CancelledError]]
 
 
 class ModelUpdateMessage(Message):
