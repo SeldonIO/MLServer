@@ -19,6 +19,7 @@ from .dispatcher import Dispatcher
 
 PredictMethod = Callable[[InferenceRequest], Coroutine[Any, Any, InferenceResponse]]
 
+
 class InferencePool:
     """
     The InferencePool class represents a pool of workers where we can run
