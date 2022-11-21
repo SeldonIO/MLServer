@@ -2,7 +2,7 @@ import asyncio
 import select
 import signal
 
-from asyncio import Task
+from asyncio import Task, CancelledError
 from multiprocessing import Process, Queue
 from concurrent.futures import ThreadPoolExecutor
 
@@ -120,7 +120,7 @@ class Worker(Process):
             method = getattr(model, request.method_name)
             return_value = await method(*request.method_args, **request.method_kwargs)
             return ModelResponseMessage(id=request.id, return_value=return_value)
-        except Exception as e:
+        except (Exception, CancelledError) as e:
             logger.exception(
                 f"An error occurred calling method '{request.method_name}' "
                 f"from model '{request.model_name}'."
@@ -146,7 +146,7 @@ class Worker(Process):
                 )
 
             return ModelResponseMessage(id=update.id)
-        except Exception as e:
+        except (Exception, CancelledError) as e:
             logger.exception("An error occurred processing a model update.")
             return ModelResponseMessage(id=update.id, exception=e)
 
