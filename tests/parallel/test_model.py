@@ -8,8 +8,12 @@ from mlserver.settings import ModelSettings
 
 from ..fixtures import ErrorModel
 
+from ..metrics.conftest import prometheus_registry
+from prometheus_client.registry  import CollectorRegistry
+
 
 async def test_predict(
+    prometheus_registry: CollectorRegistry,
     sum_model: MLModel,
     sum_model_settings: ModelSettings,
     inference_request: InferenceRequest,
@@ -22,6 +26,7 @@ async def test_predict(
 
 
 async def test_predict_error(
+    prometheus_registry: CollectorRegistry,
     error_model: MLModel,
     inference_request: InferenceRequest,
 ):
@@ -32,6 +37,7 @@ async def test_predict_error(
 
 
 async def test_metadata(
+    prometheus_registry: CollectorRegistry,
     sum_model: MLModel,
     sum_model_settings: ModelSettings,
 ):
@@ -42,7 +48,7 @@ async def test_metadata(
 
 
 async def test_metadata_cached(
-    sum_model: MLModel, sum_model_settings: ModelSettings, mocker
+    prometheus_registry: CollectorRegistry, sum_model: MLModel, sum_model_settings: ModelSettings, mocker
 ):
     expected_metadata = MetadataModelResponse(name="foo", platform="bar")
 
@@ -61,7 +67,7 @@ async def test_metadata_cached(
     send_stub.assert_called_once()
 
 
-async def test_custom_handlers(sum_model: MLModel):
+async def test_custom_handlers(prometheus_registry: CollectorRegistry, sum_model: MLModel):
     handlers = get_custom_handlers(sum_model)
     assert len(handlers) == 2
 

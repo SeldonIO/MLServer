@@ -17,6 +17,8 @@ from mlserver.grpc.converters import (
 from mlserver.grpc.model_repository_pb2_grpc import ModelRepositoryServiceStub
 from mlserver.grpc import dataplane_pb2 as pb
 from mlserver.grpc import model_repository_pb2 as mr_pb
+from ..metrics.conftest import prometheus_registry
+from prometheus_client.registry  import CollectorRegistry
 
 
 @pytest.fixture
@@ -30,7 +32,7 @@ async def model_repository_service_stub(
 ) -> AsyncGenerator[ModelRepositoryServiceStub, None]:
     async with aio.insecure_channel(f"{settings.host}:{settings.grpc_port}") as channel:
         yield ModelRepositoryServiceStub(channel)
-
+    
 
 def test_repositoryindexrequest_to_types(grpc_repository_index_request):
     repository_index_request = RepositoryIndexRequestConverter.to_types(
@@ -83,7 +85,7 @@ async def test_model_repository_unload(
 
 
 async def test_model_repository_load(
-    inference_service_stub, model_repository_service_stub, sum_model_settings
+    inference_service_stub, model_repository_service_stub, sum_model_settings, prometheus_registry: CollectorRegistry
 ):
     await model_repository_service_stub.RepositoryModelUnload(
         mr_pb.RepositoryModelLoadRequest(model_name=sum_model_settings.name)
@@ -99,9 +101,12 @@ async def test_model_repository_load(
     assert response.name == sum_model_settings.name
 
 
+
+
 async def test_model_repository_load_error(
-    inference_service_stub, model_repository_service_stub, sum_model_settings
+    prometheus_registry: CollectorRegistry,inference_service_stub, model_repository_service_stub, sum_model_settings, 
 ):
+    
     with pytest.raises(grpc.RpcError) as err:
         load_request = mr_pb.RepositoryModelLoadRequest(model_name="my-model")
         await model_repository_service_stub.RepositoryModelLoad(load_request)
