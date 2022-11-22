@@ -4,7 +4,8 @@ import multiprocessing
 from asyncio import Task
 from multiprocessing import Queue
 
-from mlserver.settings import Settings
+from ..settings import Settings
+from .logging import logger
 
 END_OF_QUEUE = None
 
@@ -19,7 +20,11 @@ def configure_inference_pool(settings: Settings):
         multiprocessing.set_start_method("spawn", force=True)
     except RuntimeError:
         # TODO: Log warning saying that mp start method couldn't be set
-        pass
+        method = multiprocessing.get_start_method()
+        logger.exception(
+            "Failed to set multiprocessing's start method. "
+            f"Current method is '{method}'"
+        )
 
 
 async def terminate_queue(queue: Queue):
