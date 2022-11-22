@@ -1,15 +1,17 @@
 import asyncio
-import concurrent.futures
+import functools
 
-from typing import Any
+from concurrent.futures import ThreadPoolExecutor
+from typing import Any, Callable
+
 
 # TODO: this is very similar to `asyncio.to_thread` (python 3.9+),
 # so lets use it at some point.
 async def run_sync_as_async(fn: Callable, *args, **kwargs) -> Any:
     loop = asyncio.get_running_loop()
-    ctx = contextvars.copy_context()
-    func_call = functools.partial(ctx.run, fn, *args, **kwargs)
-    return loop.run_in_executor(None, func_call)
+    func_call = functools.partial(fn, *args, **kwargs)
+    with ThreadPoolExecutor() as executor:
+        return await loop.run_in_executor(executor, func_call)
 
 
 def run_async_as_sync(func, *args, **kwargs):
@@ -27,7 +29,7 @@ def run_async_as_sync(func, *args, **kwargs):
 
     # Run the func in separate thread loop
     # in order to avoid re-entrancy of current event loop
-    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+    with ThreadPoolExecutor(max_workers=1) as executor:
         if not args:
             args = tuple()
         # the function that should be called is always first argument
