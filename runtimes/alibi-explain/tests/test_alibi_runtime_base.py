@@ -20,7 +20,6 @@ from mlserver.types import (
     MetadataTensor,
 )
 from mlserver_alibi_explain.common import (
-    execute_async,
     convert_from_bytes,
     remote_predict,
     AlibiExplainSettings,
@@ -28,7 +27,7 @@ from mlserver_alibi_explain.common import (
 from mlserver_alibi_explain.runtime import AlibiExplainRuntime, AlibiExplainRuntimeBase
 from mlserver_alibi_explain.errors import InvalidExplanationShape
 
-from .helpers.run_async import run_async_as_sync
+from .helpers.run_async import run_async_as_sync, run_sync_as_async
 
 """
 Smoke tests for runtimes
@@ -117,8 +116,7 @@ async def test_remote_predict__smoke(custom_runtime_tf, rest_client):
 
         endpoint = f"v2/models/{custom_runtime_tf.settings.name}/infer"
 
-        res = await execute_async(
-            None,
+        res = await run_sync_as_async(
             remote_predict,
             inference_request,
             predictor_url=endpoint,
