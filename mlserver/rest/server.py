@@ -63,6 +63,11 @@ class RESTServer:
         if not self._settings.debug:
             disable_health_access_logs()
 
+        logger.info(
+            "HTTP server running on "
+            f"http://{self._settings.host}:{self._settings.http_port}"
+        )
+
         await self._server.serve()
 
     def _get_config(self):
