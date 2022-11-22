@@ -80,18 +80,6 @@ def construct_metadata_url(infer_url: str) -> str:
     return re.sub(r"/infer$", "", infer_url)
 
 
-# TODO: this is very similar to `asyncio.to_thread` (python 3.9+),
-# so lets use it at some point.
-def execute_async(
-    loop: Optional[AbstractEventLoop], fn: Callable, *args, **kwargs
-) -> Awaitable:
-    if loop is None:
-        loop = asyncio.get_running_loop()
-    ctx = contextvars.copy_context()
-    func_call = functools.partial(ctx.run, fn, *args, **kwargs)
-    return loop.run_in_executor(None, func_call)
-
-
 class AlibiExplainSettings(BaseSettings):
     """
     Parameters that apply only to alibi explain models

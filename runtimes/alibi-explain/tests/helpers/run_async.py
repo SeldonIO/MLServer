@@ -1,6 +1,16 @@
 import asyncio
 import concurrent.futures
 
+from typing import Any
+
+# TODO: this is very similar to `asyncio.to_thread` (python 3.9+),
+# so lets use it at some point.
+async def run_sync_as_async(fn: Callable, *args, **kwargs) -> Any:
+    loop = asyncio.get_running_loop()
+    ctx = contextvars.copy_context()
+    func_call = functools.partial(ctx.run, fn, *args, **kwargs)
+    return loop.run_in_executor(None, func_call)
+
 
 def run_async_as_sync(func, *args, **kwargs):
     def thread_func(*args, **kwargs):
