@@ -1,10 +1,6 @@
-import asyncio
-import contextvars
-import functools
 import re
-from asyncio import AbstractEventLoop
 from importlib import import_module
-from typing import Any, Optional, Type, Callable, Awaitable, Union, List
+from typing import Any, Optional, Type, Union, List
 
 import numpy as np
 import requests
@@ -78,18 +74,6 @@ def remote_metadata(url: str, ssl_verify_path: str) -> MetadataModelResponse:
 def construct_metadata_url(infer_url: str) -> str:
     """Construct v2 metadata endpoint from v2 infer endpoint"""
     return re.sub(r"/infer$", "", infer_url)
-
-
-# TODO: this is very similar to `asyncio.to_thread` (python 3.9+),
-# so lets use it at some point.
-def execute_async(
-    loop: Optional[AbstractEventLoop], fn: Callable, *args, **kwargs
-) -> Awaitable:
-    if loop is None:
-        loop = asyncio.get_running_loop()
-    ctx = contextvars.copy_context()
-    func_call = functools.partial(ctx.run, fn, *args, **kwargs)
-    return loop.run_in_executor(None, func_call)
 
 
 class AlibiExplainSettings(BaseSettings):

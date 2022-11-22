@@ -1,8 +1,12 @@
 import json
+import asyncio
 import numpy as np
+import functools
+
 from typing import Any, Optional, List, Dict
 from alibi.api.interfaces import Explanation, Explainer
 from alibi.saving import load_explainer
+from concurrent.futures import ThreadPoolExecutor
 
 from mlserver.codecs import (
     NumpyRequestCodec,
@@ -31,7 +35,6 @@ from mlserver_alibi_explain.alibi_dependency_reference import (
     get_alibi_class_as_str,
 )
 from mlserver_alibi_explain.common import (
-    execute_async,
     AlibiExplainSettings,
     import_and_get_class,
     EXPLAIN_PARAMETERS_TAG,
@@ -50,6 +53,7 @@ class AlibiExplainRuntimeBase(MLModel):
     ):
 
         self.alibi_explain_settings = explainer_settings
+        self._executor = ThreadPoolExecutor()
         super().__init__(settings)
 
     async def explain_v1_output(self, request: InferenceRequest) -> Response:
@@ -105,19 +109,19 @@ class AlibiExplainRuntimeBase(MLModel):
     async def _async_explain_impl(
         self, input_data: Any, settings: Optional[Parameters]
     ) -> ResponseOutput:
-        """run async"""
         explain_parameters = dict()
         if settings is not None:
             settings_dict = settings.dict()
             if EXPLAIN_PARAMETERS_TAG in settings_dict:
                 explain_parameters = settings_dict[EXPLAIN_PARAMETERS_TAG]
 
-        explanation = await execute_async(
-            loop=None,
-            fn=self._explain_impl,
+        loop = asyncio.get_running_loop()
+        explain_call = functools.partial(
+            self._explain_impl,
             input_data=input_data,
             explain_parameters=explain_parameters,
         )
+        explanation = await loop.run_in_executor(self._executor, explain_call)
         # TODO: Convert alibi-explain output to v2 protocol, for now we use to_json
         return StringCodec.encode_output(
             payload=[explanation.to_json()], name="explanation"
@@ -131,9 +135,12 @@ class AlibiExplainRuntimeBase(MLModel):
         if model_parameters is None:
             raise ModelParametersMissing(self.name)
         absolute_uri = await get_model_uri(self.settings)
-        return await execute_async(
-            loop=None, fn=load_explainer, path=absolute_uri, predictor=predictor
-        )
+        return await self._load_explainer(path=absolute_uri, predictor=predictor)
+
+    async def _load_explainer(self, path: str, predictor: Any) -> Explainer:
+        loop = asyncio.get_running_loop()
+        load_call = functools.partial(load_explainer, path=path, predictor=predictor)
+        return await loop.run_in_executor(self._executor, load_call)
 
     def _explain_impl(self, input_data: Any, explain_parameters: Dict) -> Explanation:
         """Actual explain to be implemented by subclasses"""
