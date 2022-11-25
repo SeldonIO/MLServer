@@ -5,7 +5,7 @@ import glob
 from pydantic.error_wrappers import ValidationError
 from typing import Optional, List
 
-from ..settings import ModelParameters, ModelSettings, Settings
+from ..settings import ModelParameters, ModelSettings
 from ..errors import ModelNotFound
 from ..logging import logger
 
@@ -30,7 +30,7 @@ class SchemalessModelRepository(ModelRepository):
     loaded onto the model registry.
     """
 
-    def __init__(self, root: Optional[str] = None):
+    def __init__(self, root: str):
         self._root = root
 
     async def list(self) -> List[ModelSettings]:
@@ -76,17 +76,3 @@ class SchemalessModelRepository(ModelRepository):
             raise ModelNotFound(name)
 
         return selected
-
-
-class ModelRepositoryFactory:
-    @staticmethod
-    def resolve_model_repository(settings: Settings) -> ModelRepository:
-        result: ModelRepository
-        if settings.model_repository_implementation:
-            result = settings.model_repository_implementation(
-                **settings.model_repository_implementation_args
-            )
-        else:
-            result = SchemalessModelRepository(settings.model_repository_root)
-
-        return result

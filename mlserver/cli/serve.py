@@ -3,9 +3,8 @@ import sys
 
 from typing import Optional, List, Tuple, Union
 
-from mlserver.repository.repository import ModelRepositoryFactory
+from mlserver.repository.factory import ModelRepositoryFactory
 
-from ..repository import ModelRepository
 from ..settings import Settings, ModelSettings
 
 DEFAULT_SETTINGS_FILENAME = "settings.json"

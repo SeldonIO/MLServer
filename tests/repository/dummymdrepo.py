@@ -6,7 +6,7 @@ from mlserver.errors import ModelNotFound
 
 
 class DummyModelRepository(ModelRepository):
-    def __init__(self, files: List[str]) -> None:
+    def __init__(self, root: str, files: List[str]) -> None:
 
         self._model_settings = []
 

@@ -4,13 +4,12 @@ import logging
 
 from typing import Optional, List
 
-from mlserver.repository.repository import ModelRepositoryFactory
+from mlserver.repository.factory import ModelRepositoryFactory
 
 from .model import MLModel
 from .settings import Settings, ModelSettings
 from .logging import configure_logger
 from .registry import MultiModelRegistry
-from .repository import ModelRepository, SchemalessModelRepository
 from .handlers import DataPlane, ModelRepositoryHandlers
 from .parallel import InferencePool
 from .batching import load_batching
