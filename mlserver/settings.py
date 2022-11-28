@@ -83,6 +83,9 @@ class Settings(BaseSettings):
     """When parallel inference is enabled, number of workers to run inference
     across."""
 
+    parallel_workers_timeout: int = 5
+    """Grace timeout to wait until the workers shut down when stopping MLServer."""
+
     # Model repository settings
     model_repository_root: str = "."
     """Root of the model repository, where we will search for models."""

@@ -70,8 +70,10 @@ COPY --from=wheel-builder /opt/mlserver/dist ./dist
 # NOTE: Temporarily excluding mllib from the main image due to:
 #   CVE-2022-25168
 #   CVE-2022-42889
+# NOTE: Pin setuptools due to breaking issue in 65.6.0
+#   https://github.com/pypa/setuptools/issues/3693
 RUN . $CONDA_PATH/etc/profile.d/conda.sh && \
-    pip install --upgrade pip wheel setuptools && \
+    pip install --upgrade pip wheel 'setuptools<65.6.0' && \
     if [[ $RUNTIMES == "all" ]]; then \
         for _wheel in "./dist/mlserver_"*.whl; do \
             if [[ ! $_wheel == *"mllib"* ]]; then \

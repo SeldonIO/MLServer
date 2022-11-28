@@ -3,7 +3,7 @@ datamodel-code-generator==0.13.5
 
 grpcio-tools==1.48.1
 
-tritonclient[http]==2.26.0
+tritonclient[http]==2.27.0
 
 # Testing
 pytest==7.2.0
@@ -24,15 +24,19 @@ flake8==5.0.4
 flake8-black==0.2.4
 mypy==0.990
 mypy-protobuf==3.1.0
-types-protobuf==3.20.4.4
+types-protobuf==3.20.4.5
 types-orjson==3.6.2
-types-aiofiles==22.1.0
-types-requests==2.28.11.4
+types-aiofiles==22.1.0.3
+types-requests==2.28.11.5
 black==22.10.0
 
 # Pushing to PyPi
-wheel==0.37.1
+wheel==0.38.4
 twine==4.0.1
 
 # Fetch licenses
 pip-licenses==4.0.1
+
+# Use same deps as Docker image
+setuptools<65.6.0
+

@@ -83,4 +83,12 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
             ssl_verify_path=self.ssl_verify_path,
         )
         # TODO: do we care about more than one output?
-        return NumpyCodec.decode_output(v2_response.outputs[0])
+        decoded = NumpyCodec.decode_output(v2_response.outputs[0])
+
+        if decoded.ndim > 1 and decoded.shape[-1] == 1:
+            # Assume the response tensor is shaped as `[N, 1]` and remove the
+            # explicit dimensionality shape (which Alibi doesn't seem to like)
+            last_dim = decoded.ndim - 1
+            return decoded.squeeze(axis=last_dim)
+
+        return decoded
