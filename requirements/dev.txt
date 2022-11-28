@@ -21,7 +21,7 @@ tenacity==8.1.0
 
 # Linting and formatting
 flake8==5.0.4
-flake8-black==0.2.4
+flake8-black==0.3.5
 mypy==0.990
 mypy-protobuf==3.1.0
 types-protobuf==3.20.4.5
