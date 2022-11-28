@@ -1,4 +1,4 @@
-FROM python:3.8-slim AS wheel-builder
+FROM python:3.11-slim AS wheel-builder
 SHELL ["/bin/bash", "-l", "-c"]
 
 COPY ./hack/build-wheels.sh ./hack/build-wheels.sh
