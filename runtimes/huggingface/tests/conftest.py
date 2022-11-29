@@ -1,5 +1,6 @@
 import pytest
 import asyncio
+from typing import Dict, Any
 
 from mlserver.utils import install_uvloop_event_loop
 from mlserver.types import InferenceRequest, RequestInput

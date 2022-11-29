@@ -29,10 +29,10 @@ async def test_infer_multiple(
 
     res = await runtime.predict(inference_request)
 
-    assert len(res.outputs) == 1
+    assert len(res.outputs) == 2
 
     response_output = res.outputs[0]
-    assert len(response_output.data) == 2
+    assert len(response_output.data) == 1
     for d in response_output.data:
         pred = json.loads(d)
         assert pred["answer"] == "Seldon"

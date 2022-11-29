@@ -7,7 +7,7 @@ from mlserver.types import (
     ResponseOutput,
     Parameters,
 )
-from mlserver_huggingface.codecs import MultiStringRequestCodec
+from mlserver_huggingface.codecs import MultiInputRequestCodec
 
 
 @pytest.mark.parametrize(
@@ -32,7 +32,7 @@ from mlserver_huggingface.codecs import MultiStringRequestCodec
     ],
 )
 def test_decode_request(inference_request, expected):
-    payload = MultiStringRequestCodec.decode_request(inference_request)
+    payload = MultiInputRequestCodec.decode_request(inference_request)
 
     assert payload == expected
 
@@ -44,6 +44,9 @@ def test_decode_request(inference_request, expected):
             {"foo": ["bar1", "bar2"], "foo2": ["var1"]},
             True,
             InferenceRequest(
+                parameters=Parameters(
+                    content_type=MultiInputRequestCodec.ContentType
+                ),
                 inputs=[
                     RequestInput(
                         name="foo",
@@ -51,7 +54,7 @@ def test_decode_request(inference_request, expected):
                         data=[b"bar1", b"bar2"],
                         shape=[2, 1],
                         parameters=Parameters(
-                            content_type=MultiStringRequestCodec.InputCodec.ContentType
+                            content_type=MultiInputRequestCodec.ContentType
                         ),
                     ),
                     RequestInput(
@@ -60,7 +63,7 @@ def test_decode_request(inference_request, expected):
                         data=[b"var1"],
                         shape=[1, 1],
                         parameters=Parameters(
-                            content_type=MultiStringRequestCodec.InputCodec.ContentType
+                            content_type=MultiInputRequestCodec.ContentType
                         ),
                     ),
                 ],
@@ -71,6 +74,9 @@ def test_decode_request(inference_request, expected):
             False,
             InferenceRequest(
                 model_name="my-model",
+                parameters=Parameters(
+                    content_type=MultiInputRequestCodec.ContentType
+                ),
                 inputs=[
                     RequestInput(
                         name="foo",
@@ -78,7 +84,7 @@ def test_decode_request(inference_request, expected):
                         data=["bar1", "bar2"],
                         shape=[2, 1],
                         parameters=Parameters(
-                            content_type=MultiStringRequestCodec.InputCodec.ContentType
+                            content_type=MultiInputRequestCodec.ContentType
                         ),
                     ),
                     RequestInput(
@@ -87,7 +93,7 @@ def test_decode_request(inference_request, expected):
                         data=["var1"],
                         shape=[1, 1],
                         parameters=Parameters(
-                            content_type=MultiStringRequestCodec.InputCodec.ContentType
+                            content_type=MultiInputRequestCodec.ContentType
                         ),
                     ),
                 ],
@@ -96,7 +102,7 @@ def test_decode_request(inference_request, expected):
     ],
 )
 def test_encode_request(payload, use_bytes, expected):
-    inference_request = MultiStringRequestCodec.encode_request(
+    inference_request = MultiInputRequestCodec.encode_request(
         payload=payload, use_bytes=use_bytes
     )
 
@@ -126,7 +132,7 @@ def test_encode_request(payload, use_bytes, expected):
     ],
 )
 def test_decode_response(inference_response, expected):
-    payload = MultiStringRequestCodec.decode_response(inference_response)
+    payload = MultiInputRequestCodec.decode_response(inference_response)
 
     assert payload == expected
 
@@ -138,60 +144,38 @@ def test_decode_response(inference_response, expected):
             {"foo": ["bar1", "bar2"], "foo2": ["var1"]},
             True,
             InferenceResponse(
-                model_name="my-model",
+                model_name='my-model',
                 outputs=[
                     ResponseOutput(
-                        name="foo",
-                        datatype="BYTES",
-                        data=[b"bar1", b"bar2"],
-                        shape=[2, 1],
-                        parameters=Parameters(
-                            content_type=MultiStringRequestCodec.InputCodec.ContentType
-                        ),
-                    ),
-                    ResponseOutput(
-                        name="foo2",
-                        datatype="BYTES",
-                        data=[b"var1"],
-                        shape=[1, 1],
-                        parameters=Parameters(
-                            content_type=MultiStringRequestCodec.InputCodec.ContentType
-                        ),
-                    ),
-                ],
-            ),
+                        name='output_0',
+                        shape=[43, 1],
+                        datatype='BYTES',
+                        parameters=Parameters(content_type='hg_json'),
+                        data=[b'{"foo": ["bar1", "bar2"], "foo2": ["var1"]}']
+                    )
+                ]
+            )
         ),
         (
             {"foo": ["bar1", "bar2"], "foo2": ["var1"]},
             False,
             InferenceResponse(
-                model_name="my-model",
+                model_name='my-model',
                 outputs=[
                     ResponseOutput(
-                        name="foo",
-                        datatype="BYTES",
-                        data=["bar1", "bar2"],
-                        shape=[2, 1],
-                        parameters=Parameters(
-                            content_type=MultiStringRequestCodec.InputCodec.ContentType
-                        ),
-                    ),
-                    ResponseOutput(
-                        name="foo2",
-                        datatype="BYTES",
-                        data=["var1"],
-                        shape=[1, 1],
-                        parameters=Parameters(
-                            content_type=MultiStringRequestCodec.InputCodec.ContentType
-                        ),
-                    ),
-                ],
-            ),
+                        name='output_0',
+                        shape=[43, 1],
+                        datatype='BYTES',
+                        parameters=Parameters(content_type='hg_json'),
+                        data=['{"foo": ["bar1", "bar2"], "foo2": ["var1"]}']
+                    )
+                ]
+            )
         ),
     ],
 )
 def test_encode_response(payload, use_bytes, expected):
-    inference_response = MultiStringRequestCodec.encode_response(
+    inference_response = MultiInputRequestCodec.encode_response(
         model_name=expected.model_name, payload=payload, use_bytes=use_bytes
     )
 
