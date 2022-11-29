@@ -174,6 +174,7 @@ Python clients.
 import requests
 import json
 import grpc
+from mlserver.codecs.string import StringRequestCodec
 import mlserver.grpc.converters as converters
 import mlserver.grpc.dataplane_pb2_grpc as dataplane
 import mlserver.types as types
@@ -209,7 +210,9 @@ response = grpc_stub.ModelInfer(inference_request_g)
 print(f"full response:\n")
 print(response)
 # retrive text output as dictionary
-output = json.loads(response.outputs[0].contents.bytes_contents[0])
+inference_response = converters.ModelInferResponseConverter.to_types(response)
+raw_json = StringRequestCodec.decode_response(inference_response)
+output = json.loads(raw_json[0])
 print(f"\ndata part:\n")
 pp.pprint(output)
 ```
