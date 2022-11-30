@@ -10,11 +10,10 @@ from mlserver.model import MLModel
 from mlserver.utils import generate_uuid
 
 from .conftest import TestRequestSender
-from ..metrics.conftest import prometheus_registry
+#from ..metrics.conftest import prometheus_registry
 from prometheus_client.registry  import CollectorRegistry
 
 async def test_batch_requests(
-    prometheus_registry: CollectorRegistry,
     adaptive_batcher: AdaptiveBatcher,
     send_request: TestRequestSender,
 ):
@@ -32,7 +31,6 @@ async def test_batch_requests(
 
 
 async def test_batch_requests_timeout(
-    prometheus_registry: CollectorRegistry,
     adaptive_batcher: AdaptiveBatcher,
     send_request: TestRequestSender,
 ):
@@ -51,7 +49,6 @@ async def test_batch_requests_timeout(
 
 
 async def test_batcher(
-    prometheus_registry: CollectorRegistry,
     adaptive_batcher: AdaptiveBatcher,
     send_request: TestRequestSender,
     sum_model: MLModel,
@@ -76,7 +73,6 @@ async def test_batcher(
 
 
 async def test_batcher_propagates_errors(
-    prometheus_registry: CollectorRegistry,
     adaptive_batcher: AdaptiveBatcher,
     send_request: TestRequestSender,
     mocker,
@@ -103,7 +99,6 @@ async def test_batcher_propagates_errors(
 
 
 async def test_batcher_cancels_responses(
-    prometheus_registry: CollectorRegistry,
     adaptive_batcher: AdaptiveBatcher,
     mocker,
 ):
@@ -190,7 +185,6 @@ async def test_batcher_cancels_responses(
     ],
 )
 async def test_predict(
-    prometheus_registry: CollectorRegistry,
     requests: List[InferenceRequest],
     adaptive_batcher: AdaptiveBatcher,
     sum_model: MLModel,

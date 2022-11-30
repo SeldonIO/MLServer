@@ -7,9 +7,6 @@ from aiohttp.client_exceptions import ClientConnectorError
 from ..utils import RESTClient
 from .utils import MetricsClient
 
-from .conftest import prometheus_registry
-from prometheus_client.registry  import CollectorRegistry
-
 
 @fixture
 @parametrize_with_cases("metrics_endpoint")
@@ -18,7 +15,7 @@ def settings(settings: Settings, metrics_endpoint: str) -> Settings:
     return settings
 
 
-async def test_metrics(prometheus_registry: CollectorRegistry, rest_client: RESTClient, metrics_client: MetricsClient):
+async def test_metrics(rest_client: RESTClient, metrics_client: MetricsClient):
     await rest_client.wait_until_ready()
 
     if metrics_client._metrics_endpoint is None:

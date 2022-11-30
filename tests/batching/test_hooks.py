@@ -3,11 +3,9 @@ import pytest
 from mlserver.model import MLModel
 from mlserver.types import InferenceRequest, InferenceResponse
 from mlserver.batching.hooks import load_batching
-from ..metrics.conftest import prometheus_registry
 from prometheus_client.registry  import CollectorRegistry
 
 async def test_batching_predict(
-    prometheus_registry: CollectorRegistry,
     sum_model: MLModel, inference_request: InferenceRequest
 ):
     await load_batching(sum_model)
@@ -30,7 +28,6 @@ async def test_batching_predict(
     ],
 )
 async def test_load_batching_disabled(
-    prometheus_registry: CollectorRegistry,
     max_batch_size: int, max_batch_time: float, sum_model: MLModel
 ):
     sum_model.settings.max_batch_size = max_batch_size

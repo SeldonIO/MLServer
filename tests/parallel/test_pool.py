@@ -9,8 +9,7 @@ from mlserver.parallel.pool import InferencePool
 
 from ..fixtures import ErrorModel
 
-from ..metrics.conftest import prometheus_registry
-from prometheus_client.registry  import CollectorRegistry
+
 
 def check_pid(pid):
     """
@@ -26,14 +25,14 @@ def check_pid(pid):
         return True
 
 
-def test_workers_start(prometheus_registry: CollectorRegistry, inference_pool: InferencePool,  settings: Settings):
+def test_workers_start(inference_pool: InferencePool,  settings: Settings):
     assert len(inference_pool._workers) == settings.parallel_workers
 
     for worker_pid in inference_pool._workers:
         assert check_pid(worker_pid)
 
 
-async def test_close(prometheus_registry: CollectorRegistry, inference_pool: InferencePool):
+async def test_close(inference_pool: InferencePool):
     worker_pids = [pid for pid in inference_pool._workers]
 
     await inference_pool.close()
@@ -44,7 +43,6 @@ async def test_close(prometheus_registry: CollectorRegistry, inference_pool: Inf
 
 
 async def test_load(
-    prometheus_registry: CollectorRegistry,
     inference_pool: InferencePool,
     sum_model: MLModel,
     inference_request: InferenceRequest,
@@ -62,7 +60,6 @@ async def test_load(
 
 
 async def test_load_error(
-    prometheus_registry: CollectorRegistry,
     inference_pool: InferencePool,
     load_error_model: MLModel,
 ):

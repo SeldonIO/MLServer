@@ -4,12 +4,10 @@ from mlserver.settings import ModelSettings
 from mlserver.parallel.worker import Worker
 from mlserver.parallel.messages import ModelUpdateMessage, ModelRequestMessage
 
-from ..metrics.conftest import prometheus_registry
-from prometheus_client.registry  import CollectorRegistry
+
 
 
 async def test_predict(
-    prometheus_registry: CollectorRegistry,
     worker: Worker,
     inference_request_message: ModelRequestMessage,
     responses: Queue,
@@ -27,7 +25,6 @@ async def test_predict(
 
 
 async def test_metadata(
-    prometheus_registry: CollectorRegistry,
     worker: Worker,
     metadata_request_message: ModelRequestMessage,
     sum_model_settings: ModelSettings,
@@ -44,7 +41,6 @@ async def test_metadata(
 
 
 async def test_custom_handler(
-    prometheus_registry: CollectorRegistry,
     worker: Worker,
     custom_request_message: ModelRequestMessage,
     sum_model_settings: ModelSettings,
@@ -61,7 +57,6 @@ async def test_custom_handler(
 
 
 async def test_load_model(
-    prometheus_registry: CollectorRegistry,
     worker: Worker,
     load_message: ModelUpdateMessage,
     responses: Queue,
@@ -84,7 +79,6 @@ async def test_load_model(
 
 
 async def test_unload_model(
-    prometheus_registry: CollectorRegistry,
     worker: Worker,
     unload_message: ModelUpdateMessage,
     responses: Queue,
@@ -100,7 +94,6 @@ async def test_unload_model(
 
 
 async def test_exception(
-    prometheus_registry: CollectorRegistry,
     worker: Worker,
     inference_request_message: ModelRequestMessage,
     responses: Queue,
