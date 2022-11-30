@@ -15,20 +15,14 @@ async def rest_client(mlserver: MLServer, settings: Settings):
     http_server = f"{settings.host}:{settings.http_port}"
     return RESTClient(http_server)
 
-
-async def test_rest_metrics(
+async def test_parallel_queue_metrics(
     metrics_client: MetricsClient,
     rest_client: RESTClient,
     inference_request: InferenceRequest,
     sum_model: MLModel,
 ):
     await rest_client.wait_until_ready()
-    metric_name = "rest_server_requests"
-
-    # Get metrics for gRPC server before sending any requests
-    metrics = await metrics_client.metrics()
-    rest_server_requests = find_metric(metrics, metric_name)
-    assert rest_server_requests is None
+    metric_name = "parallel_request_queue"
 
     expected_handled = 5
     await asyncio.gather(
@@ -39,7 +33,30 @@ async def test_rest_metrics(
     )
 
     metrics = await metrics_client.metrics()
-    rest_server_requests = find_metric(metrics, metric_name)
-    assert rest_server_requests is not None
-    assert len(rest_server_requests.samples) == 1
-    assert rest_server_requests.samples[0].value == expected_handled
+    parallel_request_queue = find_metric(metrics, metric_name)
+    assert parallel_request_queue is not None
+    assert len(parallel_request_queue.samples) != 0
+
+async def test_batch_queue_metrics (
+    metrics_client: MetricsClient,
+    rest_client: RESTClient,
+    inference_request: InferenceRequest,
+    sum_model: MLModel,
+):
+    await rest_client.wait_until_ready()
+    metric_name = "batch_request_queue"
+
+    expected_handled = 5
+    await asyncio.gather(
+        *[
+            rest_client.infer(sum_model.name, inference_request)
+            for _ in range(expected_handled)
+        ]
+    )
+
+    metrics = await metrics_client.metrics()
+    batch_request_queue  = find_metric(metrics, metric_name)
+    assert batch_request_queue  is not None
+    assert len(batch_request_queue.samples) != 0
+
+   

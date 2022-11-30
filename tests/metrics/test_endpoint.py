@@ -37,6 +37,8 @@ async def test_metrics(prometheus_registry: CollectorRegistry, rest_client: REST
             "rest_server_",
             "grpc_server_",
             "model_infer_",
+            "batch_request_",
+            "parallel_request_",
         )
         metrics_list = list(iter(metrics))
         assert len(metrics_list) > 0

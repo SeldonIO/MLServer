@@ -1,6 +1,6 @@
 import asyncio
 
-from typing import Dict, List
+from typing import Dict, List, Tuple
 from itertools import cycle
 from multiprocessing import Queue
 from concurrent.futures import ThreadPoolExecutor
@@ -29,8 +29,8 @@ class Dispatcher:
         self._process_responses_task = None
         self._executor = ThreadPoolExecutor()
         self._async_responses: Dict[str, Future[ModelResponseMessage]] = {}
-        self.queue_request_count = Histogram(
-            "worker_queue_request",
+        self.parallel_request_queue_size = Histogram(
+            "parallel_request_queue",
             "counter of request queue size for workers",
             ['workerpid']
 )
@@ -91,7 +91,7 @@ class Dispatcher:
 
         return await self._dispatch(request_message)
 
-    def _get_worker(self) -> Worker:
+    def _get_worker(self) -> Tuple[Worker, int]:
         """
         Get next available worker.
         By default, this is just a round-robin through all the workers.
@@ -103,7 +103,7 @@ class Dispatcher:
         """Get metrics from every worker request queue"""
         queue_size = worker._requests.qsize()
         
-        self.queue_request_count.labels(workerpid=str(worker_pid)).observe(
+        self.parallel_request_queue_size.labels(workerpid=str(worker_pid)).observe(
             float(queue_size)
         )
 
