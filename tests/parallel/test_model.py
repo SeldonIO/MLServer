@@ -9,7 +9,6 @@ from mlserver.settings import ModelSettings
 from ..fixtures import ErrorModel
 
 
-
 async def test_predict(
     sum_model: MLModel,
     sum_model_settings: ModelSettings,
@@ -43,7 +42,7 @@ async def test_metadata(
 
 
 async def test_metadata_cached(
-     sum_model: MLModel, sum_model_settings: ModelSettings, mocker
+    sum_model: MLModel, sum_model_settings: ModelSettings, mocker
 ):
     expected_metadata = MetadataModelResponse(name="foo", platform="bar")
 

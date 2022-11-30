@@ -32,8 +32,8 @@ class Dispatcher:
         self.parallel_request_queue_size = Histogram(
             "parallel_request_queue",
             "counter of request queue size for workers",
-            ['workerpid']
-)
+            ["workerpid"],
+        )
 
     def start(self):
         self._active = True
@@ -86,7 +86,7 @@ class Dispatcher:
         self, request_message: ModelRequestMessage
     ) -> ModelResponseMessage:
         worker, wpid = self._get_worker()
-        self._workers_queue_monitor(worker,wpid)
+        self._workers_queue_monitor(worker, wpid)
         worker.send_request(request_message)
 
         return await self._dispatch(request_message)
@@ -98,11 +98,11 @@ class Dispatcher:
         """
         worker_pid = next(self._workers_round_robin)
         return self._workers[worker_pid], worker_pid
-    
+
     def _workers_queue_monitor(self, worker: Worker, worker_pid: int):
         """Get metrics from every worker request queue"""
         queue_size = worker._requests.qsize()
-        
+
         self.parallel_request_queue_size.labels(workerpid=str(worker_pid)).observe(
             float(queue_size)
         )

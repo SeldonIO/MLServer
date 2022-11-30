@@ -10,7 +10,6 @@ from mlserver.parallel.pool import InferencePool
 from ..fixtures import ErrorModel
 
 
-
 def check_pid(pid):
     """
     Check For the existence of a unix pid.
@@ -25,7 +24,7 @@ def check_pid(pid):
         return True
 
 
-def test_workers_start(inference_pool: InferencePool,  settings: Settings):
+def test_workers_start(inference_pool: InferencePool, settings: Settings):
     assert len(inference_pool._workers) == settings.parallel_workers
 
     for worker_pid in inference_pool._workers:

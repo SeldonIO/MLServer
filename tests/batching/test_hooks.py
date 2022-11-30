@@ -3,7 +3,8 @@ import pytest
 from mlserver.model import MLModel
 from mlserver.types import InferenceRequest, InferenceResponse
 from mlserver.batching.hooks import load_batching
-from prometheus_client.registry  import CollectorRegistry
+from prometheus_client.registry import CollectorRegistry
+
 
 async def test_batching_predict(
     sum_model: MLModel, inference_request: InferenceRequest

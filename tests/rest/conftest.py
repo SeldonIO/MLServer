@@ -14,6 +14,7 @@ from starlette_exporter import PrometheusMiddleware
 
 from ..fixtures import SumModel
 
+
 @pytest.fixture()
 def delete_registry() -> CollectorRegistry:
     """
@@ -37,6 +38,7 @@ def delete_registry() -> CollectorRegistry:
     PrometheusMiddleware._metrics.clear()
 
     yield REGISTRY
+
 
 @pytest.fixture
 async def model_registry(

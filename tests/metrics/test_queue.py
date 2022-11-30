@@ -15,6 +15,7 @@ async def rest_client(mlserver: MLServer, settings: Settings):
     http_server = f"{settings.host}:{settings.http_port}"
     return RESTClient(http_server)
 
+
 async def test_parallel_queue_metrics(
     metrics_client: MetricsClient,
     rest_client: RESTClient,
@@ -37,7 +38,8 @@ async def test_parallel_queue_metrics(
     assert parallel_request_queue is not None
     assert len(parallel_request_queue.samples) != 0
 
-async def test_batch_queue_metrics (
+
+async def test_batch_queue_metrics(
     metrics_client: MetricsClient,
     rest_client: RESTClient,
     inference_request: InferenceRequest,
@@ -55,8 +57,6 @@ async def test_batch_queue_metrics (
     )
 
     metrics = await metrics_client.metrics()
-    batch_request_queue  = find_metric(metrics, metric_name)
-    assert batch_request_queue  is not None
+    batch_request_queue = find_metric(metrics, metric_name)
+    assert batch_request_queue is not None
     assert len(batch_request_queue.samples) != 0
-
-   

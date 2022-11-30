@@ -9,6 +9,7 @@ from mlserver.settings import Settings, ModelSettings
 from ..utils import RESTClient, get_available_ports
 from .utils import MetricsClient
 
+
 @pytest.fixture
 def settings(settings: Settings) -> Settings:
     http_port, grpc_port, metrics_port = get_available_ports(3)

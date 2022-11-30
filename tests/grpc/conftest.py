@@ -31,6 +31,7 @@ def _read_testdata_pb(payload_path: str, pb_klass):
 
     return model_infer_request
 
+
 @pytest.fixture()
 def delete_registry() -> CollectorRegistry:
     """

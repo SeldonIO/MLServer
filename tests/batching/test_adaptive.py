@@ -10,8 +10,10 @@ from mlserver.model import MLModel
 from mlserver.utils import generate_uuid
 
 from .conftest import TestRequestSender
-#from ..metrics.conftest import prometheus_registry
-from prometheus_client.registry  import CollectorRegistry
+
+# from ..metrics.conftest import prometheus_registry
+from prometheus_client.registry import CollectorRegistry
+
 
 async def test_batch_requests(
     adaptive_batcher: AdaptiveBatcher,

@@ -13,7 +13,8 @@ from mlserver.cloudevents import (
 
 from ..metrics.conftest import prometheus_registry
 from .conftest import delete_registry
-from prometheus_client.registry  import CollectorRegistry
+from prometheus_client.registry import CollectorRegistry
+
 
 async def test_live(prometheus_registry: CollectorRegistry, rest_client):
     endpoint = "/v2/health/live"
@@ -29,7 +30,9 @@ async def test_ready(prometheus_registry: CollectorRegistry, rest_client):
     assert response.status_code == 200
 
 
-async def test_model_ready(prometheus_registry: CollectorRegistry, rest_client, sum_model):
+async def test_model_ready(
+    prometheus_registry: CollectorRegistry, rest_client, sum_model
+):
     endpoint = f"/v2/models/{sum_model.name}/versions/{sum_model.version}/ready"
     response = await rest_client.get(endpoint)
 
@@ -47,7 +50,9 @@ async def test_metadata(prometheus_registry: CollectorRegistry, rest_client):
     assert metadata.extensions == []
 
 
-async def test_model_metadata(prometheus_registry: CollectorRegistry, rest_client, sum_model_settings):
+async def test_model_metadata(
+    prometheus_registry: CollectorRegistry, rest_client, sum_model_settings
+):
     endpoint = f"v2/models/{sum_model_settings.name}"
     response = await rest_client.get(endpoint)
 
@@ -62,7 +67,13 @@ async def test_model_metadata(prometheus_registry: CollectorRegistry, rest_clien
 @pytest.mark.parametrize(
     "model_name,model_version", [("sum-model", "v1.2.3"), ("sum-model", None)]
 )
-async def test_infer(prometheus_registry: CollectorRegistry, rest_client, inference_request, model_name, model_version):
+async def test_infer(
+    prometheus_registry: CollectorRegistry,
+    rest_client,
+    inference_request,
+    model_name,
+    model_version,
+):
     endpoint = f"/v2/models/{model_name}/infer"
     if model_version is not None:
         endpoint = f"/v2/models/{model_name}/versions/{model_version}/infer"
@@ -75,7 +86,12 @@ async def test_infer(prometheus_registry: CollectorRegistry, rest_client, infere
     assert prediction.outputs[0].data.__root__ == [6]
 
 
-async def test_infer_headers(prometheus_registry: CollectorRegistry, rest_client, inference_request, sum_model_settings):
+async def test_infer_headers(
+    prometheus_registry: CollectorRegistry,
+    rest_client,
+    inference_request,
+    sum_model_settings,
+):
     endpoint = f"/v2/models/{sum_model_settings.name}/infer"
     response = await rest_client.post(
         endpoint, json=inference_request.dict(), headers={"x-foo": "bar"}
@@ -92,7 +108,9 @@ async def test_infer_headers(prometheus_registry: CollectorRegistry, rest_client
     )
 
 
-async def test_infer_error(prometheus_registry: CollectorRegistry, rest_client, inference_request):
+async def test_infer_error(
+    prometheus_registry: CollectorRegistry, rest_client, inference_request
+):
     endpoint = "/v2/models/my-model/versions/v0/infer"
     response = await rest_client.post(endpoint, json=inference_request.dict())
 
@@ -100,7 +118,9 @@ async def test_infer_error(prometheus_registry: CollectorRegistry, rest_client, 
     assert response.json()["error"] == "Model my-model with version v0 not found"
 
 
-async def test_model_repository_index(prometheus_registry: CollectorRegistry, rest_client, repository_index_request):
+async def test_model_repository_index(
+    prometheus_registry: CollectorRegistry, rest_client, repository_index_request
+):
     endpoint = "/v2/repository/index"
     response = await rest_client.post(endpoint, json=repository_index_request.dict())
 
@@ -110,7 +130,9 @@ async def test_model_repository_index(prometheus_registry: CollectorRegistry, re
     assert len(models) == 1
 
 
-async def test_model_repository_unload(prometheus_registry: CollectorRegistry, rest_client, sum_model_settings):
+async def test_model_repository_unload(
+    prometheus_registry: CollectorRegistry, rest_client, sum_model_settings
+):
     endpoint = f"/v2/repository/models/{sum_model_settings.name}/unload"
     response = await rest_client.post(endpoint)
 
@@ -120,7 +142,12 @@ async def test_model_repository_unload(prometheus_registry: CollectorRegistry, r
     assert model_metadata.status_code == 404
 
 
-async def test_model_repository_load(delete_registry: CollectorRegistry, rest_client, sum_model_settings, prometheus_registry: CollectorRegistry):
+async def test_model_repository_load(
+    delete_registry: CollectorRegistry,
+    rest_client,
+    sum_model_settings,
+    prometheus_registry: CollectorRegistry,
+):
     await rest_client.post(f"/v2/repository/models/{sum_model_settings.name}/unload")
 
     endpoint = f"/v2/repository/models/{sum_model_settings.name}/load"
@@ -132,7 +159,9 @@ async def test_model_repository_load(delete_registry: CollectorRegistry, rest_cl
     assert model_metadata.status_code == 200
 
 
-async def test_model_repository_load_error(prometheus_registry: CollectorRegistry, rest_client, sum_model_settings):
+async def test_model_repository_load_error(
+    prometheus_registry: CollectorRegistry, rest_client, sum_model_settings
+):
     endpoint = "/v2/repository/models/my-model/load"
     response = await rest_client.post(endpoint)
 

@@ -44,6 +44,7 @@ def logger():
     logger.setLevel(logging.DEBUG)
     return logger
 
+
 @pytest.fixture(autouse=True)
 def prometheus_registry() -> CollectorRegistry:
     """
