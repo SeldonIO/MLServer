@@ -1,4 +1,4 @@
-from typing import List, Any, Dict
+from typing import List, Any
 from mlserver.codecs.base import InputCodec, register_input_codec
 from mlserver.types import RequestInput, ResponseOutput, Parameters
 from transformers.pipelines import Conversation
@@ -22,7 +22,7 @@ class HuggingfaceConversationCodec(InputCodec):
     def encode_output(
         cls, name: str, payload: List[Conversation], use_bytes: bool = True, **kwargs
     ) -> ResponseOutput:
-        encoded = [json_encode(item) for item in payload]
+        encoded = [json_encode(item, use_bytes=use_bytes) for item in payload]
         shape = [len(encoded), 1]
         return ResponseOutput(
             name=name,
@@ -35,7 +35,7 @@ class HuggingfaceConversationCodec(InputCodec):
         )
 
     @classmethod
-    def decode_output(cls, response_output: ResponseOutput) -> Dict[Any, Any]:
+    def decode_output(cls, response_output: ResponseOutput) -> List[Any]:
         packed = response_output.data.__root__
         return [json_decode(item) for item in packed]
 

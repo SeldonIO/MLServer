@@ -1,12 +1,17 @@
 import pytest
 import asyncio
-from typing import Dict, Any
 
 from mlserver.utils import install_uvloop_event_loop
 from mlserver.types import InferenceRequest, RequestInput
 from mlserver.settings import ModelSettings, ModelParameters
 
 from mlserver_huggingface import HuggingFaceRuntime
+
+
+# test a prediction spend long time, so add this command argument to enable test tasks
+# if not provide this command argument, task tests skiped
+def pytest_addoption(parser):
+    parser.addoption("--test-hg-tasks", action="store_true", default=False)
 
 
 @pytest.fixture(scope="module")

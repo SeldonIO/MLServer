@@ -1,4 +1,4 @@
-from typing import Optional, Type, Any, Dict, AnyStr, List, Union
+from typing import Optional, Type, Any, Dict, List, Union
 from mlserver.codecs.utils import (
     has_decoded,
     _save_decoded,
@@ -25,6 +25,7 @@ from .json import HuggingfaceSingleJSONCodec
 from .jsonlist import HuggingfaceListJSONCodec
 from .conversation import HuggingfaceConversationCodec
 from .numpylist import NumpyListCodec
+from .raw import RawCodec
 
 
 def set_content_type(input_v: RequestInput, content_type: str):
@@ -40,15 +41,15 @@ class MultiInputRequestCodec(RequestCodec):
     Huggingface codecs is prefered, then mlserver's
     """
 
-    ContentType: str = StringCodec.ContentType
-    DefaultCodec: Type[InputCodecTy] = StringCodec
+    DefaultCodec: Type["InputCodecTy"] = StringCodec
     InputCodecsWithPriority: List[Type[InputCodecTy]] = []
+    ContentType = StringCodec.ContentType
 
     @classmethod
     def _find_encode_codecs(
-        cls, payload: Dict[AnyStr, Any]
-    ) -> Dict[str, Union[Type[InputCodecTy], None]]:
-        field_codec = {}
+        cls, payload: Dict[str, Any]
+    ) -> Dict[str, Union[Type["InputCodecTy"], "InputCodecTy", None]]:
+        field_codec: Dict[str, Union[Type["InputCodecTy"], "InputCodecTy", None]] = {}
         for field, value in payload.items():
             for codec in cls.InputCodecsWithPriority:
                 if codec.can_encode(value):
@@ -56,14 +57,15 @@ class MultiInputRequestCodec(RequestCodec):
                     break
             if field not in field_codec:
                 field_codec[field] = find_input_codec_by_payload(value)
+
         return field_codec
 
     @classmethod
     def _find_decode_codecs(
         cls, data: Union[InferenceResponse, InferenceRequest]
-    ) -> Dict[str, Union[Type[InputCodecTy], None]]:
+    ) -> Dict[str, Union[Type[InputCodecTy], InputCodecTy, None]]:
         field_codec = {}
-        fields = []
+        fields = []  # type: ignore
         if data.parameters:
             default_codec = find_input_codec(data.parameters.content_type)
         else:
@@ -71,7 +73,7 @@ class MultiInputRequestCodec(RequestCodec):
         if isinstance(data, InferenceRequest):
             fields = data.inputs
         else:
-            fields = data.outputs
+            fields = data.outputs  # type: ignore
         for field in fields:
             if not field.parameters:
                 field_codec[field.name] = default_codec
@@ -87,12 +89,12 @@ class MultiInputRequestCodec(RequestCodec):
         return field_codec
 
     @classmethod
-    def _can_encode_request(cls, payload: Dict[AnyStr, Any]) -> bool:
+    def _can_encode_request(cls, payload: Dict[str, Any]) -> bool:
         field_codecs = cls._find_encode_codecs(payload)
         return bool(all(field_codecs.values()))
 
     @classmethod
-    def can_encode(cls, payload: Dict[AnyStr, Any]) -> bool:
+    def can_encode(cls, payload: Dict[str, Any]) -> bool:
         """
         Inputs always is Dict, Outputs always is list
         """
@@ -128,7 +130,9 @@ class MultiInputRequestCodec(RequestCodec):
         )
 
     @classmethod
-    def decode_response(cls, response: InferenceResponse) -> List[Any]:
+    def decode_response(
+        cls, response: InferenceResponse
+    ) -> Union[List[Any], Dict[Any, Any]]:
         """
         Always use HuggingfaceJSONCodec
         """
@@ -136,9 +140,11 @@ class MultiInputRequestCodec(RequestCodec):
         is_list = True
         field_codecs = cls._find_decode_codecs(response)
         for item in response.outputs:
-            if not has_decoded(item) and field_codecs.get(item.name):
-                decoded_payload = field_codecs[item.name].decode_input(item)
-                _save_decoded(item, decoded_payload)
+            if not has_decoded(item):
+                codec = field_codecs[item.name]
+                if codec is not None:
+                    decoded_payload = codec.decode_output(item)
+                    _save_decoded(item, decoded_payload)
 
             value = get_decoded_or_raw(item)
             data[item.name] = value
@@ -154,6 +160,10 @@ class MultiInputRequestCodec(RequestCodec):
         inputs = []
         for key, value in payload.items():
             codec = field_codecs[key]
+            if codec is None:
+                raise Exception(
+                    f"codec for key {key} value not found, value is {value}"
+                )
             input_v = codec.encode_input(key, value, **kwargs)
             set_content_type(input_v, codec.ContentType)
             inputs.append(input_v)
@@ -169,9 +179,11 @@ class MultiInputRequestCodec(RequestCodec):
         values = {}
         field_codecs = cls._find_decode_codecs(request)
         for item in request.inputs:
-            if not has_decoded(item) and field_codecs.get(item.name):
-                decoded_payload = field_codecs[item.name].decode_input(item)
-                _save_decoded(item, decoded_payload)
+            if not has_decoded(item):
+                codec = field_codecs[item.name]
+                if codec is not None:
+                    decoded_payload = codec.decode_input(item)
+                    _save_decoded(item, decoded_payload)
 
             value = get_decoded_or_raw(item)
             values[item.name] = value
@@ -186,6 +198,7 @@ class HuggingfaceRequestCodec(MultiInputRequestCodec):
         HuggingfaceListJSONCodec,
         HuggingfaceConversationCodec,
         NumpyListCodec,
+        RawCodec,
     ]
     ContentType = StringCodec.ContentType
     DefaultCodec = StringCodec

@@ -2,6 +2,7 @@ from typing import List, Any, Dict
 from mlserver.codecs.base import InputCodec, register_input_codec
 from mlserver.types import RequestInput, ResponseOutput, Parameters
 from mlserver.codecs.lists import is_list_of
+from functools import partial
 from .utils import json_decode, json_encode
 
 
@@ -21,7 +22,7 @@ class HuggingfaceListJSONCodec(InputCodec):
     def encode_output(
         cls, name: str, payload: List[Dict[Any, Any]], use_bytes: bool = True, **kwargs
     ) -> ResponseOutput:
-        packed = map(json_encode, payload)
+        packed = map(partial(json_encode, use_bytes=use_bytes), payload)
         shape = [len(payload), 1]
         return ResponseOutput(
             name=name,
@@ -40,7 +41,7 @@ class HuggingfaceListJSONCodec(InputCodec):
 
     @classmethod
     def encode_input(
-        cls, name: str, payload: Dict[Any, Any], use_bytes: bool = True, **kwargs
+        cls, name: str, payload: List[Dict[Any, Any]], use_bytes: bool = True, **kwargs
     ) -> RequestInput:
         output = cls.encode_output(name, payload, use_bytes)
         return RequestInput(

@@ -97,11 +97,12 @@ class HuggingFaceRuntime(MLModel):
 
         logger.debug("Prediction %s", prediction)
 
-        # TODO: Convert hf output to v2 protocol, for now we use to_json
-
-        return self.encode_response(payload=prediction, default_codec=HuggingfaceRequestCodec)
+        return self.encode_response(
+            payload=prediction, default_codec=HuggingfaceRequestCodec
+        )
 
     def _merge_metadata(self) -> None:
         meta = METADATA.get(self.hf_settings.task)
-        self.inputs += meta.get("inputs", [])
-        self.outputs += meta.get("outputs", [])
+        if meta:
+            self.inputs += meta.get("inputs", [])  # type: ignore
+            self.outputs += meta.get("outputs", [])  # type: ignore

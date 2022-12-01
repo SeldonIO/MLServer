@@ -21,14 +21,13 @@ class HuggingfaceSingleJSONCodec(InputCodec):
         cls, name: str, payload: Dict[Any, Any], use_bytes: bool = True, **kwargs
     ) -> ResponseOutput:
         encoded = json_encode(payload, use_bytes)
-        shape = [len(encoded), 1]
         return ResponseOutput(
             name=name,
             parameters=Parameters(
                 content_type=cls.ContentType,
             ),
             datatype="BYTES",
-            shape=shape,
+            shape=[1],
             data=[encoded],
         )
 

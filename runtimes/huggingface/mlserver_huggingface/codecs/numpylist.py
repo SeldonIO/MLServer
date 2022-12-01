@@ -20,7 +20,10 @@ class NumpyListCodec(InputCodec):
 
     @classmethod
     def can_encode(csl, payload: Any) -> bool:
-        return is_list_of(payload, np.ndarray)
+        if not is_list_of(payload, np.ndarray):
+            return False
+        # only the support same shaped ndarray
+        return len(set([matrix.shape for matrix in payload])) == 1
 
     @classmethod
     def encode_output(
@@ -36,6 +39,7 @@ class NumpyListCodec(InputCodec):
             datatype=datatype,
             shape=shape,
             data=_encode_data(composed, datatype),
+            parameters=Parameters(content_type=cls.ContentType),
         )
 
     @classmethod

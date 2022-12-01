@@ -1,6 +1,6 @@
 import io
 import base64
-from typing import List, Any
+from typing import List, Any, Union
 from PIL import Image
 from mlserver.codecs.base import InputCodec, register_input_codec
 from mlserver.codecs.lists import as_list, is_list_of
@@ -8,15 +8,17 @@ from mlserver.types import RequestInput, ResponseOutput, Parameters
 from functools import partial
 
 
-def _pil_base64encode(img: "Image.Image", use_bytes: bool = False) -> bytes:
+def _pil_base64encode(img: "Image.Image", use_bytes: bool = False) -> Union[bytes, str]:
     buf = io.BytesIO()
-    img.save(buf, format="png")
+    img.save(buf, format=img.format)
     if use_bytes:
         return base64.b64encode(buf.getvalue())
     return base64.b64encode(buf.getvalue()).decode()
 
 
-def _pil_base64decode(imgbytes: bytes) -> "Image.Image":
+def _pil_base64decode(imgbytes: Union[bytes, str]) -> "Image.Image":
+    if isinstance(imgbytes, bytes):
+        imgbytes = imgbytes.decode()
     buf = io.BytesIO(base64.b64decode(imgbytes))
     return Image.open(buf)
 

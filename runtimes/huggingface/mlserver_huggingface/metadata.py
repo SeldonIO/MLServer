@@ -1,6 +1,7 @@
+from typing import Dict, List
 from mlserver.types import MetadataTensor
 
-METADATA = {
+METADATA: Dict[str, Dict[str, List[MetadataTensor]]] = {
     "audio-classification": dict(
         inputs=[
             # file path inputs
@@ -8,27 +9,21 @@ METADATA = {
                 name="inputs",
                 shape=[-1],
                 datatype="BYTES",
-                parameters=dict(
-                    content_type="str"
-                ),
+                parameters=dict(content_type="str"),
             ),
             # file content bytes inputs
             MetadataTensor(
                 name="inputs",
                 shape=[-1],
                 datatype="BYTES",
-                parameters=dict(
-                    content_type="base64"
-                ),
+                parameters=dict(content_type="base64"),
             ),
             # numpy.ndarray inputs
             MetadataTensor(
                 name="inputs",
                 shape=[-1],
                 datatype="FP32",
-                parameters=dict(
-                    content_type="nplist"
-                ),
+                parameters=dict(content_type="nplist"),
             ),
         ],
         outputs=[
@@ -36,9 +31,7 @@ METADATA = {
                 name="output_*",
                 shape=[-1],
                 datatype="BYTES",
-                parameters=dict(
-                    content_type="hg_json"
-                ),
+                parameters=dict(content_type="hg_json"),
             ),
         ],
     ),
@@ -49,27 +42,21 @@ METADATA = {
                 name="inputs",
                 shape=[-1],
                 datatype="BYTES",
-                parameters=dict(
-                    content_type="str"
-                ),
+                parameters=dict(content_type="str"),
             ),
             # file content bytes inputs
             MetadataTensor(
                 name="inputs",
                 shape=[-1],
                 datatype="BYTES",
-                parameters=dict(
-                    content_type="base64"
-                ),
+                parameters=dict(content_type="base64"),
             ),
             # numpy.ndarray inputs
             MetadataTensor(
                 name="inputs",
                 shape=[-1],
                 datatype="FP32",
-                parameters=dict(
-                    content_type="nplist"
-                ),
+                parameters=dict(content_type="nplist"),
             ),
         ],
         outputs=[
@@ -77,9 +64,7 @@ METADATA = {
                 name="output_*",
                 shape=[-1],
                 datatype="BYTES",
-                parameters=dict(
-                    content_type="hg_json"
-                ),
+                parameters=dict(content_type="hg_json"),
             ),
         ],
     ),
@@ -89,9 +74,7 @@ METADATA = {
                 name="args",
                 shape=[-1],
                 datatype="BYTES",
-                parameters=dict(
-                    content_type="str"
-                ),
+                parameters=dict(content_type="str"),
             ),
         ],
         outputs=[
@@ -99,9 +82,7 @@ METADATA = {
                 name="outputs",
                 shape=[-1],
                 datatype="FP64",
-                parameters=dict(
-                    content_type="pd"
-                ),
+                parameters=dict(content_type="pd"),
             ),
         ],
     ),
@@ -111,9 +92,7 @@ METADATA = {
                 name="args",
                 shape=[-1],
                 datatype="BYTES",
-                parameters=dict(
-                    content_type="str"
-                ),
+                parameters=dict(content_type="str"),
             ),
         ],
         outputs=[
@@ -121,9 +100,7 @@ METADATA = {
                 name="outputs",
                 shape=[-1],
                 datatype="BYTES",
-                parameters=dict(
-                    content_type="hg_json"
-                ),
+                parameters=dict(content_type="hg_json"),
             ),
         ],
     ),
@@ -133,12 +110,10 @@ METADATA = {
                 name="args",
                 shape=[-1],
                 datatype="BYTES",
-                parameters=dict(
-                    content_type="str"
-                ),
+                parameters=dict(content_type="str"),
             ),
         ],
-        outputs=[]
+        outputs=[],
     ),
     "question-answering": dict(
         inputs=[
@@ -146,20 +121,16 @@ METADATA = {
                 name="context",
                 shape=[-1],
                 datatype="BYTES",
-                parameters=dict(
-                    content_type="str"
-                ),
+                parameters=dict(content_type="str"),
             ),
             MetadataTensor(
                 name="question",
                 shape=[-1],
                 datatype="BYTES",
-                parameters=dict(
-                    content_type="str"
-                ),
+                parameters=dict(content_type="str"),
             ),
         ],
-        outputs=[]
+        outputs=[],
     ),
     "table-question-answering": dict(
         inputs=[
@@ -167,12 +138,10 @@ METADATA = {
                 name="array_inputs",
                 shape=[-1],
                 datatype="BYTES",
-                parameters=dict(
-                    content_type="hg_jsonlist"
-                ),
+                parameters=dict(content_type="hg_jsonlist"),
             ),
         ],
-        outputs=[]
+        outputs=[],
     ),
     "visual-question-answering": dict(
         inputs=[
@@ -180,12 +149,10 @@ METADATA = {
                 name="array_inputs",
                 shape=[-1],
                 datatype="BYTES",
-                parameters=dict(
-                    content_type="hg_jsonlist"
-                ),
+                parameters=dict(content_type="hg_jsonlist"),
             ),
         ],
-        outputs=[]
+        outputs=[],
     ),
     "fill-mask": dict(
         inputs=[
@@ -193,12 +160,10 @@ METADATA = {
                 name="array_inputs",
                 shape=[-1],
                 datatype="BYTES",
-                parameters=dict(
-                    content_type="str"
-                ),
+                parameters=dict(content_type="str"),
             ),
         ],
-        outputs=[]
+        outputs=[],
     ),
     "summarization": dict(
         inputs=[
@@ -206,12 +171,10 @@ METADATA = {
                 name="array_inputs",
                 shape=[-1],
                 datatype="BYTES",
-                parameters=dict(
-                    content_type="str"
-                ),
+                parameters=dict(content_type="str"),
             ),
         ],
-        outputs=[]
+        outputs=[],
     ),
     "translation": dict(
         inputs=[
@@ -219,12 +182,10 @@ METADATA = {
                 name="array_inputs",
                 shape=[-1],
                 datatype="BYTES",
-                parameters=dict(
-                    content_type="str"
-                ),
+                parameters=dict(content_type="str"),
             ),
         ],
-        outputs=[]
+        outputs=[],
     ),
     "text2text-generation": dict(
         inputs=[
@@ -232,12 +193,10 @@ METADATA = {
                 name="array_inputs",
                 shape=[-1],
                 datatype="BYTES",
-                parameters=dict(
-                    content_type="str"
-                ),
+                parameters=dict(content_type="str"),
             ),
         ],
-        outputs=[]
+        outputs=[],
     ),
     "text-generation": dict(
         inputs=[
@@ -245,12 +204,10 @@ METADATA = {
                 name="array_inputs",
                 shape=[-1],
                 datatype="BYTES",
-                parameters=dict(
-                    content_type="str"
-                ),
+                parameters=dict(content_type="str"),
             ),
         ],
-        outputs=[]
+        outputs=[],
     ),
     "zero-shot-classification": dict(
         inputs=[
@@ -258,20 +215,16 @@ METADATA = {
                 name="array_inputs",
                 shape=[-1],
                 datatype="BYTES",
-                parameters=dict(
-                    content_type="str"
-                ),
+                parameters=dict(content_type="str"),
             ),
             MetadataTensor(
                 name="candidate_labels",
                 shape=[-1],
                 datatype="BYTES",
-                parameters=dict(
-                    content_type="str"
-                ),
+                parameters=dict(content_type="str"),
             ),
         ],
-        outputs=[]
+        outputs=[],
     ),
     "zero-shot-image-classification": dict(
         inputs=[
@@ -280,39 +233,30 @@ METADATA = {
                 name="array_inputs",
                 shape=[-1],
                 datatype="BYTES",
-                parameters=dict(
-                    content_type="str"
-                ),
+                parameters=dict(content_type="str"),
             ),
             # file content bytes inputs
             MetadataTensor(
                 name="array_inputs",
                 shape=[-1],
                 datatype="BYTES",
-                parameters=dict(
-                    content_type="base64"
-                ),
+                parameters=dict(content_type="base64"),
             ),
             # numpy.ndarray inputs
             MetadataTensor(
                 name="array_inputs",
                 shape=[-1],
                 datatype="FP32",
-                parameters=dict(
-                    content_type="nplist"
-                ),
+                parameters=dict(content_type="nplist"),
             ),
-
             MetadataTensor(
                 name="candidate_labels",
                 shape=[-1],
                 datatype="BYTES",
-                parameters=dict(
-                    content_type="str"
-                ),
+                parameters=dict(content_type="str"),
             ),
         ],
-        outputs=[]
+        outputs=[],
     ),
     "conversational": dict(
         inputs=[
@@ -320,12 +264,10 @@ METADATA = {
                 name="array_inputs",
                 shape=[-1],
                 datatype="FP32",
-                parameters=dict(
-                    content_type="hg_conversation"
-                ),
+                parameters=dict(content_type="hg_conversation"),
             ),
         ],
-        outputs=[]
+        outputs=[],
     ),
     "image-classification": dict(
         inputs=[
@@ -334,30 +276,24 @@ METADATA = {
                 name="inputs",
                 shape=[-1],
                 datatype="BYTES",
-                parameters=dict(
-                    content_type="str"
-                ),
+                parameters=dict(content_type="str"),
             ),
             # file content bytes inputs
             MetadataTensor(
                 name="inputs",
                 shape=[-1],
                 datatype="BYTES",
-                parameters=dict(
-                    content_type="base64"
-                ),
+                parameters=dict(content_type="base64"),
             ),
             # pillow image  inputs
             MetadataTensor(
                 name="inputs",
                 shape=[-1],
                 datatype="BYTES",
-                parameters=dict(
-                    content_type="pillow_image"
-                ),
+                parameters=dict(content_type="pillow_image"),
             ),
         ],
-        outputs=[]
+        outputs=[],
     ),
     "image-segmentation": dict(
         inputs=[
@@ -366,30 +302,24 @@ METADATA = {
                 name="inputs",
                 shape=[-1],
                 datatype="BYTES",
-                parameters=dict(
-                    content_type="str"
-                ),
+                parameters=dict(content_type="str"),
             ),
             # file content bytes inputs
             MetadataTensor(
                 name="inputs",
                 shape=[-1],
                 datatype="BYTES",
-                parameters=dict(
-                    content_type="base64"
-                ),
+                parameters=dict(content_type="base64"),
             ),
             # pillow image  inputs
             MetadataTensor(
                 name="inputs",
                 shape=[-1],
                 datatype="BYTES",
-                parameters=dict(
-                    content_type="pillow_image"
-                ),
+                parameters=dict(content_type="pillow_image"),
             ),
         ],
-        outputs=[]
+        outputs=[],
     ),
     "object-detection": dict(
         inputs=[
@@ -398,29 +328,23 @@ METADATA = {
                 name="inputs",
                 shape=[-1],
                 datatype="BYTES",
-                parameters=dict(
-                    content_type="str"
-                ),
+                parameters=dict(content_type="str"),
             ),
             # file content bytes inputs
             MetadataTensor(
                 name="inputs",
                 shape=[-1],
                 datatype="BYTES",
-                parameters=dict(
-                    content_type="base64"
-                ),
+                parameters=dict(content_type="base64"),
             ),
             # pillow image  inputs
             MetadataTensor(
                 name="inputs",
                 shape=[-1],
                 datatype="BYTES",
-                parameters=dict(
-                    content_type="pillow_image"
-                ),
+                parameters=dict(content_type="pillow_image"),
             ),
         ],
-        outputs=[]
-    )
+        outputs=[],
+    ),
 }
