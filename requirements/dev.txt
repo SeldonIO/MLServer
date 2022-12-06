@@ -35,7 +35,7 @@ wheel==0.38.4
 twine==4.0.2
 
 # Fetch licenses
-pip-licenses==4.0.1
+pip-licenses==4.0.2
 
 # Use same deps as Docker image
 setuptools<65.6.0
