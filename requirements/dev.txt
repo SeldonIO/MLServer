@@ -32,7 +32,7 @@ black==22.10.0
 
 # Pushing to PyPi
 wheel==0.38.4
-twine==4.0.1
+twine==4.0.2
 
 # Fetch licenses
 pip-licenses==4.0.1
