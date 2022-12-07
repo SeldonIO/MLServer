@@ -37,6 +37,3 @@ twine==4.0.1
 # Fetch licenses
 pip-licenses==4.0.1
 
-# Use same deps as Docker image
-setuptools<65.6.0
-
