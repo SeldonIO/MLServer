@@ -187,8 +187,7 @@ class _CodecRegistry:
         type_hint: Optional[Type] = None,
     ) -> Optional[InputCodecLike]:
         if content_type:
-            # TODO: Raise error if codec doesn't exist
-            return self._input_codecs[content_type]
+            return self._input_codecs.get(content_type)
         elif payload:
             return self.find_input_codec_by_payload(payload)
         elif type_hint:
@@ -219,8 +218,7 @@ class _CodecRegistry:
         type_hint: Optional[Type] = None,
     ) -> Optional[RequestCodecLike]:
         if content_type:
-            # TODO: Raise error if codec doesn't exist
-            return self._request_codecs[content_type]
+            return self._request_codecs.get(content_type)
         elif payload:
             return self.find_request_codec_by_payload(payload)
         elif type_hint:

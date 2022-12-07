@@ -40,6 +40,7 @@ def test_deprecated_methods(caplog):
     [
         ({"content_type": NumpyCodec.ContentType}, NumpyCodec),
         ({"content_type": StringCodec.ContentType}, StringCodec),
+        ({"content_type": "application/octet-stream"}, None),
         ({"type_hint": List[str]}, StringCodec),
         ({"type_hint": dict}, None),
         ({"payload": [datetime.now()]}, DatetimeCodec),
@@ -57,6 +58,7 @@ def test_find_input_codec(
     [
         ({"content_type": NumpyRequestCodec.ContentType}, NumpyRequestCodec),
         ({"content_type": StringRequestCodec.ContentType}, StringRequestCodec),
+        ({"content_type": "application/octet-stream"}, None),
         ({"type_hint": List[str]}, StringRequestCodec),
         ({"type_hint": dict}, None),
         ({"payload": ["foo"]}, StringRequestCodec),
