@@ -114,28 +114,20 @@ class MultiInputRequestCodec(RequestCodec):
         **kwargs,
     ) -> InferenceResponse:
         """
-        Always use HuggingfaceJSONCodec
+        Always use HuggingfaceListJSONCodec
         """
         if not isinstance(payload, list):
             payload = [payload]
         return InferenceResponse(
             model_name=model_name,
             model_version=model_version,
-            outputs=[
-                HuggingfaceSingleJSONCodec.encode_output(
-                    f"output_{idx}", value, **kwargs
-                )
-                for idx, value in enumerate(payload)
-            ],
+            outputs=[HuggingfaceListJSONCodec.encode_output("output", payload)],
         )
 
     @classmethod
     def decode_response(
         cls, response: InferenceResponse
     ) -> Union[List[Any], Dict[Any, Any]]:
-        """
-        Always use HuggingfaceJSONCodec
-        """
         data = {}
         is_list = True
         field_codecs = cls._find_decode_codecs(response)
