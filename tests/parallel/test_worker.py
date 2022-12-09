@@ -1,6 +1,7 @@
 from multiprocessing import Queue
 
 from mlserver.settings import ModelSettings
+from mlserver.parallel.errors import WorkerError
 from mlserver.parallel.worker import Worker
 from mlserver.parallel.messages import ModelUpdateMessage, ModelRequestMessage
 
@@ -112,4 +113,5 @@ async def test_exception(
     assert response.id == inference_request_message.id
     assert response.return_value is None
     assert response.exception is not None
-    assert str(response.exception) == error_msg
+    assert response.exception.__class__ == WorkerError
+    assert str(response.exception) == f"builtins.Exception: {error_msg}"

@@ -1,6 +1,4 @@
 from fastapi import status
-from asyncio import CancelledError
-from typing import Union
 
 from ..utils import get_import_path
 from ..errors import MLServerError
@@ -16,9 +14,11 @@ class WorkerError(MLServerError):
         https://github.com/SeldonIO/MLServer/issues/881
     """
 
-    def __init__(self, exc: Union[Exception, CancelledError]):
-        import_path = get_import_path(exc.__class__)
-        msg = f"{import_path}: {exc}"
+    def __init__(self, exc: BaseException):
+        msg = str(exc)
+        if isinstance(exc, BaseException):
+            import_path = get_import_path(exc.__class__)
+            msg = f"{import_path}: {exc}"
 
         status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
         if isinstance(exc, MLServerError):
