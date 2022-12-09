@@ -58,7 +58,7 @@ def remote_predict(
     response_raw = requests.post(
         predictor_url,
         json=v2_payload.dict(),
-        headers={SELDON_SKIP_LOGGING_HEADER: True},
+        headers={SELDON_SKIP_LOGGING_HEADER: "true"},
         verify=verify,
     )
     if response_raw.status_code != 200:
