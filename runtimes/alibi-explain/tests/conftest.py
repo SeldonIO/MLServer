@@ -153,29 +153,36 @@ def anchor_image_directory() -> Path:
 
 
 @pytest.fixture
-async def anchor_image_runtime_with_remote_predict_patch(
-    anchor_image_directory, custom_runtime_tf: MLModel, mocker
-) -> AsyncIterable[AlibiExplainRuntime]:
-    def _mock_metadata(*args, **kwargs):
-        return MetadataModelResponse(name="dummy", platform="dummy")
-
+def mock_remote_predict(mocker, custom_runtime_tf: MLModel):
     def _mock_predict(*args, **kwargs):
         # mock implementation is required as we dont want to spin up a server,
         # we just use MLModel.predict
         return run_async_as_sync(custom_runtime_tf.predict, kwargs["v2_payload"])
 
-    remote_predict = mocker.patch(
-        "mlserver_alibi_explain.explainers.black_box_runtime.remote_predict"
-    )
-    remote_metadata = mocker.patch(
-        "mlserver_alibi_explain.explainers.black_box_runtime.remote_metadata"
+    return mocker.patch(
+        "mlserver_alibi_explain.explainers.black_box_runtime.remote_predict",
+        side_effect=functools.partial(_mock_predict, runtime=custom_runtime_tf),
     )
 
-    remote_predict.side_effect = functools.partial(
-        _mock_predict, runtime=custom_runtime_tf
-    )
-    remote_metadata.side_effect = _mock_metadata
 
+@pytest.fixture
+def mock_remote_metadata(mocker):
+    def _mock_metadata(*args, **kwargs):
+        return MetadataModelResponse(name="dummy", platform="dummy")
+
+    return mocker.patch(
+        "mlserver_alibi_explain.explainers.black_box_runtime.remote_metadata",
+        side_effect=_mock_metadata,
+    )
+
+
+@pytest.fixture
+async def anchor_image_runtime_with_remote_predict_patch(
+    anchor_image_directory,
+    custom_runtime_tf: MLModel,
+    mock_remote_metadata,
+    mock_remote_predict,
+) -> AsyncIterable[AlibiExplainRuntime]:
     rt = AlibiExplainRuntime(
         ModelSettings(
             parallel_workers=0,
