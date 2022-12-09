@@ -33,7 +33,12 @@ setup(
     author_email="hello@seldon.io",
     description="HuggingFace runtime for MLServer",
     packages=find_packages(exclude=["tests", "tests.*"]),
-    install_requires=["mlserver", "optimum[onnxruntime]>=1.4.0"],
+    install_requires=[
+        "mlserver",
+        "optimum[onnxruntime]>=1.4.0",
+        "transformers",
+        "Pillow",
+    ],
     long_description=_load_description(),
     long_description_content_type="text/markdown",
     license="Apache 2.0",
