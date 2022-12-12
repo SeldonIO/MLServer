@@ -19,6 +19,7 @@ from .messages import (
 )
 from .utils import terminate_queue, END_OF_QUEUE
 from .logging import logger
+from .errors import WorkerError
 
 IGNORED_SIGNALS = [signal.SIGINT, signal.SIGTERM, signal.SIGQUIT]
 
@@ -125,7 +126,8 @@ class Worker(Process):
                 f"An error occurred calling method '{request.method_name}' "
                 f"from model '{request.model_name}'."
             )
-            return ModelResponseMessage(id=request.id, exception=e)
+            worker_error = WorkerError(e)
+            return ModelResponseMessage(id=request.id, exception=worker_error)
 
     def _handle_response(self, process_task: Task):
         response_message = process_task.result()
@@ -148,7 +150,8 @@ class Worker(Process):
             return ModelResponseMessage(id=update.id)
         except (Exception, CancelledError) as e:
             logger.exception("An error occurred processing a model update.")
-            return ModelResponseMessage(id=update.id, exception=e)
+            worker_error = WorkerError(e)
+            return ModelResponseMessage(id=update.id, exception=worker_error)
 
     def send_request(self, request_message: ModelRequestMessage):
         """
