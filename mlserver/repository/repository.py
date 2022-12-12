@@ -3,7 +3,7 @@ import os
 import glob
 
 from pydantic.error_wrappers import ValidationError
-from typing import Optional, List
+from typing import List
 
 from ..settings import ModelParameters, ModelSettings
 from ..errors import ModelNotFound

@@ -1,6 +1,3 @@
-import asyncio
-import os
-from time import sleep
 from mlserver.settings import Settings
 
 from ..utils import RESTClient

@@ -1,4 +1,3 @@
-import os
 from typing import List
 from mlserver.repository.repository import ModelRepository
 from mlserver.settings import ModelSettings
