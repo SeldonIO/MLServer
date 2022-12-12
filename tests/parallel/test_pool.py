@@ -65,4 +65,5 @@ async def test_load_error(
     with pytest.raises(MLServerError) as excinfo:
         await inference_pool.load_model(load_error_model)
 
-    assert str(excinfo.value) == ErrorModel.error_message
+    expected_msg = f"mlserver.errors.MLServerError: {ErrorModel.error_message}"
+    assert str(excinfo.value) == expected_msg
