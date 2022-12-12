@@ -19,6 +19,12 @@ jobs:
         with:
           commit_message: Bump version to ${{ github.event.inputs.version }}
           tagging_message: ${{ github.event.inputs.version }}
+      - name: Draft Release
+        uses: softprops/action-gh-release@v1
+        with:
+          generate_release_notes: false
+          draft: true
+          tag_name: ${{ github.event.inputs.version }}
 
   mlserver-sc:
     needs: draft-release
