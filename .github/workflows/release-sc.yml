@@ -61,8 +61,8 @@ jobs:
         uses: docker/login-action@v2
         with:
           registry: quay.io
-          username: ${{ secrets.QUAY_USERNAME }}
-          password: ${{ secrets.QUAY_PASSWORD }}
+          username: ${{ secrets.SC_QUAY_USERNAME }}
+          password: ${{ secrets.SC_QUAY_PASSWORD }}
       - name: Push to Quay.io
         run: |
           docker tag $MLSERVER_IMAGE $QUAY_MLSERVER_IMAGE
@@ -127,8 +127,8 @@ jobs:
         uses: docker/login-action@v2
         with:
           registry: quay.io
-          username: ${{ secrets.QUAY_USERNAME }}
-          password: ${{ secrets.QUAY_PASSWORD }}
+          username: ${{ secrets.SC_QUAY_USERNAME_SLIM }}
+          password: ${{ secrets.SC_QUAY_PASSWORD_SLIM }}
       - name: Push to Quay.io
         run: |
           docker tag $MLSERVER_IMAGE $QUAY_MLSERVER_IMAGE
