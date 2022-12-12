@@ -19,6 +19,7 @@ jobs:
         with:
           commit_message: Bump version to ${{ github.event.inputs.version }}
           tagging_message: ${{ github.event.inputs.version }}
+          push_options: "--force"
 
   mlserver-sc:
     needs: draft-release
