@@ -3,7 +3,8 @@ import sys
 
 from typing import Optional, List, Tuple, Union
 
-from ..repository import ModelRepository
+from mlserver.repository.factory import ModelRepositoryFactory
+
 from ..settings import Settings, ModelSettings
 
 DEFAULT_SETTINGS_FILENAME = "settings.json"
@@ -34,7 +35,7 @@ async def load_settings(
 
     models_settings = []
     if settings.load_models_at_startup:
-        repository = ModelRepository(settings.model_repository_root)
+        repository = ModelRepositoryFactory.resolve_model_repository(settings)
         models_settings = await repository.list()
 
     return settings, models_settings
