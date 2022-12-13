@@ -109,7 +109,7 @@ jobs:
       - name: Build Docker Image
         run: |
           DOCKER_BUILDKIT=1 docker build . \
-            --build-arg RUNTIMES=all \
+            --build-arg RUNTIMES="" \
             -t $MLSERVER_IMAGE
         env:
           MLSERVER_IMAGE: seldonio/mlserver-sc-slim:${{ github.event.inputs.version }}
