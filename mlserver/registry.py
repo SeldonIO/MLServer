@@ -159,7 +159,10 @@ class SingleModelRegistry:
 
             logger.info(f"Loaded model '{model.name}' succesfully.")
         except Exception:
-            logger.info(f"Couldn't load model '{model.name}'.")
+            logger.info(
+                f"Couldn't load model '{model.name}'. "
+                "Model will be removed from registry."
+            )
             await self._unload_model(model)
             raise
 
@@ -198,8 +201,12 @@ class SingleModelRegistry:
         logger.info(f"Unloaded {model_msg} succesfully.")
 
     async def _unload_model(self, model: MLModel):
-        for callback in self._on_model_unload:
-            await callback(model)
+        # NOTE: Every callback needs to run to ensure one doesn't block the
+        # others
+        await asyncio.gather(
+            *[callback(model) for callback in self._on_model_unload],
+            return_exceptions=True,
+        )
 
         if model.version:
             del self._versions[model.version]

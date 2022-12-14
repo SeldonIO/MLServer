@@ -244,6 +244,9 @@ async def test_model_load_error(model_registry: MultiModelRegistry):
     with pytest.raises(ModelNotFound):
         await model_registry.get_model(error_model_settings.name)
 
+    models = list(await model_registry.get_models())
+    assert len(models) == 1
+
 
 async def test_rolling_reload(
     model_registry: MultiModelRegistry, sum_model_settings: ModelSettings
