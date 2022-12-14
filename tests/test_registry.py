@@ -5,11 +5,11 @@ from asyncio import CancelledError
 from typing import List, Union
 
 from mlserver.model import MLModel
-from mlserver.errors import ModelNotFound
+from mlserver.errors import MLServerError, ModelNotFound
 from mlserver.registry import MultiModelRegistry, SingleModelRegistry
-from mlserver.settings import ModelSettings
+from mlserver.settings import ModelSettings, ModelParameters
 
-from .fixtures import SlowModel
+from .fixtures import ErrorModel, SlowModel
 
 
 @pytest.fixture
@@ -229,6 +229,20 @@ async def test_model_not_ready(model_registry: MultiModelRegistry):
         await load_task
     except CancelledError:
         pass
+
+
+async def test_model_load_error(model_registry: MultiModelRegistry):
+    error_model_settings = ModelSettings(
+        name="error-model",
+        implementation=ErrorModel,
+        parameters=ModelParameters(load_error=True),
+    )
+
+    with pytest.raises(MLServerError):
+        await model_registry.load(error_model_settings)
+
+    with pytest.raises(ModelNotFound):
+        await model_registry.get_model(error_model_settings.name)
 
 
 async def test_rolling_reload(
