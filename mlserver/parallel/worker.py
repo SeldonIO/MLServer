@@ -141,7 +141,9 @@ class Worker(Process):
             if update.update_type == ModelUpdateType.Load:
                 await self._model_registry.load(model_settings)
             elif update.update_type == ModelUpdateType.Unload:
-                await self._model_registry.unload(model_settings.name)
+                await self._model_registry.unload_version(
+                    model_settings.name, model_settings.version
+                )
             else:
                 logger.warning(
                     "Unknown model update message with type ", update.update_type
@@ -149,7 +151,10 @@ class Worker(Process):
 
             return ModelResponseMessage(id=update.id)
         except (Exception, CancelledError) as e:
-            logger.exception("An error occurred processing a model update.")
+            logger.exception(
+                "An error occurred processing a model update "
+                f"of type '{update.update_type.name}'."
+            )
             worker_error = WorkerError(e)
             return ModelResponseMessage(id=update.id, exception=worker_error)
 

@@ -61,10 +61,7 @@ class MLModel:
 
     @property
     def version(self) -> Optional[str]:
-        params = self._settings.parameters
-        if params is not None:
-            return params.version
-        return None
+        return self._settings.version
 
     @property
     def settings(self) -> ModelSettings:

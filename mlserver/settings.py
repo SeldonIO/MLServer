@@ -218,6 +218,13 @@ class ModelSettings(BaseSettings):
             model_settings._source = source
             return model_settings
 
+    @property
+    def version(self) -> Optional[str]:
+        params = self.parameters
+        if params is not None:
+            return params.version
+        return None
+
     name: str = ""
     """Name of the model."""
 
