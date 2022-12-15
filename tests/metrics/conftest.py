@@ -1,8 +1,6 @@
 import pytest
 import asyncio
 
-from prometheus_client.registry import REGISTRY, CollectorRegistry
-
 from mlserver.server import MLServer
 from mlserver.settings import Settings, ModelSettings
 

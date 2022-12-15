@@ -8,6 +8,12 @@ from mlserver.settings import ModelSettings, ModelParameters
 from mlserver_huggingface import HuggingFaceRuntime
 
 
+# test a prediction spend long time, so add this command argument to enable test tasks
+# if not provide this command argument, task tests skiped
+def pytest_addoption(parser):
+    parser.addoption("--test-hg-tasks", action="store_true", default=False)
+
+
 @pytest.fixture(scope="module")
 def event_loop():
     # NOTE: We need to override the `event_loop` fixture to change its scope to

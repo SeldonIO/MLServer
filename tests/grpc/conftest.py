@@ -4,7 +4,6 @@ import pytest
 from grpc import aio
 from typing import AsyncGenerator, Dict
 from google.protobuf import json_format
-from prometheus_client.registry import CollectorRegistry
 
 from mlserver.parallel import InferencePool
 from mlserver.batching import load_batching
@@ -19,7 +18,6 @@ from starlette_exporter import PrometheusMiddleware
 
 from ..conftest import TESTDATA_PATH
 from ..fixtures import SumModel
-from ..metrics.conftest import prometheus_registry  # noqa: F401
 
 TESTDATA_GRPC_PATH = os.path.join(TESTDATA_PATH, "grpc")
 
@@ -32,7 +30,7 @@ def _read_testdata_pb(payload_path: str, pb_klass):
     return model_infer_request
 
 
-@pytest.fixture()
+@pytest.fixture
 def delete_registry() -> CollectorRegistry:
     """
     Fixture used to ensure the registry is cleaned on each run.

@@ -1,4 +1,3 @@
-import json
 import asyncio
 from mlserver.model import MLModel
 from mlserver.settings import ModelSettings
@@ -6,20 +5,17 @@ from mlserver.types import (
     InferenceRequest,
     InferenceResponse,
 )
-from mlserver.codecs import (
-    StringCodec,
-)
 from mlserver_huggingface.common import (
     HuggingFaceSettings,
     parse_parameters_from_env,
     InvalidTranformerInitialisation,
     load_pipeline_from_settings,
-    NumpyEncoder,
 )
-from mlserver_huggingface.codecs import MultiStringRequestCodec
+from mlserver_huggingface.codecs import HuggingfaceRequestCodec
 from transformers.pipelines import SUPPORTED_TASKS
 from optimum.pipelines import SUPPORTED_TASKS as SUPPORTED_OPTIMUM_TASKS
 from mlserver.logging import logger
+from mlserver_huggingface.metadata import METADATA
 
 
 class HuggingFaceRuntime(MLModel):
@@ -68,6 +64,8 @@ class HuggingFaceRuntime(MLModel):
 
     async def load(self) -> bool:
         # Loading & caching pipeline in asyncio loop to avoid blocking
+        print("=" * 80)
+        print(self.hf_settings.task)
         print("loading model...")
         await asyncio.get_running_loop().run_in_executor(
             None, load_pipeline_from_settings, self.hf_settings
@@ -75,6 +73,7 @@ class HuggingFaceRuntime(MLModel):
         print("(re)loading model...")
         # Now we load the cached model which should not block asyncio
         self._model = load_pipeline_from_settings(self.hf_settings)
+        self._merge_metadata()
         print("model has been loaded!")
         self.ready = True
         return self.ready
@@ -88,29 +87,22 @@ class HuggingFaceRuntime(MLModel):
         logger.debug("Payload %s", payload)
 
         # TODO: convert and validate?
-        kwargs = self.decode_request(payload, default_codec=MultiStringRequestCodec)
+        kwargs = self.decode_request(payload, default_codec=HuggingfaceRequestCodec)
+        args = kwargs.pop("args", [])
 
-        args = kwargs.pop("args", None)
-
-        X = kwargs.pop("array_inputs", None)
-        if X is not None:
-            args = [list(X)] + args
-        if args is None:
-            prediction = self._model(**kwargs)
-        else:
-            prediction = self._model(args, **kwargs)
+        array_inputs = kwargs.pop("array_inputs", [])
+        if array_inputs:
+            args = [list(array_inputs)] + args
+        prediction = self._model(*args, **kwargs)
 
         logger.debug("Prediction %s", prediction)
 
-        # TODO: Convert hf output to v2 protocol, for now we use to_json
-        if isinstance(prediction, dict):
-            str_out = [json.dumps(prediction, cls=NumpyEncoder)]
-        else:
-            str_out = [json.dumps(pred, cls=NumpyEncoder) for pred in prediction]
-        prediction_encoded = StringCodec.encode_output(payload=str_out, name="output")
-
-        return InferenceResponse(
-            model_name=self.name,
-            model_version=self.version,
-            outputs=[prediction_encoded],
+        return self.encode_response(
+            payload=prediction, default_codec=HuggingfaceRequestCodec
         )
+
+    def _merge_metadata(self) -> None:
+        meta = METADATA.get(self.hf_settings.task)
+        if meta:
+            self.inputs += meta.get("inputs", [])  # type: ignore
+            self.outputs += meta.get("outputs", [])  # type: ignore

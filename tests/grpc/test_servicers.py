@@ -1,8 +1,5 @@
 import pytest
 import grpc
-from .conftest import delete_registry
-from ..metrics.conftest import prometheus_registry
-from prometheus_client.registry import CollectorRegistry
 
 
 from mlserver.cloudevents import (
@@ -17,38 +14,31 @@ from mlserver.grpc.converters import (
 )
 from mlserver.raw import pack, unpack
 from mlserver import __version__
+from .conftest import delete_registry  # noqa: F401
 
 
-async def test_server_live(
-    prometheus_registry: CollectorRegistry, inference_service_stub
-):
+async def test_server_live(inference_service_stub):
     req = pb.ServerLiveRequest()
     response = await inference_service_stub.ServerLive(req)
 
     assert response.live
 
 
-async def test_server_ready(
-    prometheus_registry: CollectorRegistry, inference_service_stub
-):
+async def test_server_ready(inference_service_stub):
     req = pb.ServerReadyRequest()
     response = await inference_service_stub.ServerReady(req)
 
     assert response.ready
 
 
-async def test_model_ready(
-    prometheus_registry: CollectorRegistry, inference_service_stub, sum_model
-):
+async def test_model_ready(inference_service_stub, sum_model):
     req = pb.ModelReadyRequest(name=sum_model.name, version=sum_model.version)
     response = await inference_service_stub.ModelReady(req)
 
     assert response.ready
 
 
-async def test_server_metadata(
-    prometheus_registry: CollectorRegistry, inference_service_stub
-):
+async def test_server_metadata(inference_service_stub):
     req = pb.ServerMetadataRequest()
     response = await inference_service_stub.ServerMetadata(req)
 
@@ -57,9 +47,7 @@ async def test_server_metadata(
     assert response.extensions == []
 
 
-async def test_model_metadata(
-    prometheus_registry: CollectorRegistry, inference_service_stub, sum_model_settings
-):
+async def test_model_metadata(inference_service_stub, sum_model_settings):
     req = pb.ModelMetadataRequest(
         name=sum_model_settings.name, version=sum_model_settings.parameters.version
     )
@@ -74,7 +62,6 @@ async def test_model_metadata(
     "model_name,model_version", [("sum-model", "v1.2.3"), ("sum-model", None)]
 )
 async def test_model_infer(
-    prometheus_registry: CollectorRegistry,
     inference_service_stub,
     model_infer_request,
     model_name,
@@ -94,9 +81,7 @@ async def test_model_infer(
     assert prediction.outputs[0].contents == expected
 
 
-async def test_model_infer_raw_contents(
-    prometheus_registry: CollectorRegistry, inference_service_stub, model_infer_request
-):
+async def test_model_infer_raw_contents(inference_service_stub, model_infer_request):
     # Prepare request with raw contents
     for input_tensor in model_infer_request.inputs:
         request_input = InferInputTensorConverter.to_types(input_tensor)
@@ -124,7 +109,6 @@ async def test_model_infer_raw_contents(
 
 
 async def test_model_infer_headers(
-    prometheus_registry: CollectorRegistry,
     inference_service_stub,
     model_infer_request,
     sum_model_settings,
@@ -149,9 +133,7 @@ async def test_model_infer_headers(
         assert trailing_metadata[key] == value
 
 
-async def test_model_infer_error(
-    prometheus_registry: CollectorRegistry, inference_service_stub, model_infer_request
-):
+async def test_model_infer_error(inference_service_stub, model_infer_request):
     with pytest.raises(grpc.RpcError) as err:
         model_infer_request.model_name = "my-model"
         await inference_service_stub.ModelInfer(model_infer_request)
@@ -161,7 +143,6 @@ async def test_model_infer_error(
 
 
 async def test_model_repository_index(
-    prometheus_registry: CollectorRegistry,
     inference_service_stub,
     grpc_repository_index_request,
 ):
@@ -170,9 +151,7 @@ async def test_model_repository_index(
     assert len(index.models) == 1
 
 
-async def test_model_repository_unload(
-    prometheus_registry: CollectorRegistry, inference_service_stub, sum_model_settings
-):
+async def test_model_repository_unload(inference_service_stub, sum_model_settings):
     unload_request = pb.RepositoryModelUnloadRequest(model_name=sum_model_settings.name)
     await inference_service_stub.RepositoryModelUnload(unload_request)
 
@@ -183,9 +162,8 @@ async def test_model_repository_unload(
 
 
 async def test_model_repository_load(
-    prometheus_registry: CollectorRegistry,
     inference_service_stub,
-    delete_registry: CollectorRegistry,
+    delete_registry,  # noqa: F811
     sum_model_settings,
 ):
     await inference_service_stub.RepositoryModelUnload(
@@ -201,9 +179,7 @@ async def test_model_repository_load(
     assert response.name == sum_model_settings.name
 
 
-async def test_model_repository_load_error(
-    prometheus_registry: CollectorRegistry, inference_service_stub, sum_model_settings
-):
+async def test_model_repository_load_error(inference_service_stub, sum_model_settings):
     with pytest.raises(grpc.RpcError) as err:
         load_request = pb.RepositoryModelLoadRequest(model_name="my-model")
         await inference_service_stub.RepositoryModelLoad(load_request)

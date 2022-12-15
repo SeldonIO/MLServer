@@ -86,9 +86,18 @@ class Settings(BaseSettings):
     parallel_workers_timeout: int = 5
     """Grace timeout to wait until the workers shut down when stopping MLServer."""
 
+    # Custom model repository class implementation
+    model_repository_implementation: Optional[PyObject] = None
+    """*Python path* to the inference runtime to model repository (e.g.
+    ``mlserver.repository.repository.SchemalessModelRepository``)."""
+
     # Model repository settings
     model_repository_root: str = "."
     """Root of the model repository, where we will search for models."""
+
+    # Model Repository parameters are meant to be set directly by the MLServer runtime.
+    model_repository_implementation_args: dict = {}
+    """Extra parameters for model repository."""
 
     load_models_at_startup: bool = True
     """Flag to load all available models automatically at startup."""

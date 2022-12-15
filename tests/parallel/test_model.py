@@ -28,7 +28,8 @@ async def test_predict_error(
     with pytest.raises(MLServerError) as excinfo:
         await error_model.predict(inference_request)
 
-    assert str(excinfo.value) == ErrorModel.error_message
+    expected_msg = f"mlserver.errors.MLServerError: {ErrorModel.error_message}"
+    assert str(excinfo.value) == expected_msg
 
 
 async def test_metadata(

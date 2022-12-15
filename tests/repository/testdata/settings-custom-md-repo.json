@@ -1,0 +1,18 @@
+{
+  "debug": true,
+  "host": "127.0.0.1",
+  "http_port": 8087,
+  "grpc_port": 8088,
+  "metrics_port": 8089,
+  "cors_settings": {
+    "allow_origins": [
+      "*"
+    ]
+  },
+  "model_repository_implementation": "tests.repository.dummymdrepo.DummyModelRepository",
+  "model_repository_implementation_args": {
+    "files": [
+      "tests/testdata/model-settings.json"
+    ]
+  }
+}

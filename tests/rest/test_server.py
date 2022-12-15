@@ -3,13 +3,8 @@ from mlserver.rest.utils import to_scope
 
 from ..fixtures import SumModel
 
-from ..metrics.conftest import prometheus_registry
-from prometheus_client.registry import CollectorRegistry
 
-
-def test_add_custom_handlers(
-    prometheus_registry: CollectorRegistry, rest_server: RESTServer, sum_model: SumModel
-):
+def test_add_custom_handlers(rest_server: RESTServer, sum_model: SumModel):
     scope = to_scope(sum_model.my_payload.__custom_handler__)
     found_route = None
     for route in rest_server._app.routes:
@@ -21,9 +16,7 @@ def test_add_custom_handlers(
     assert found_route is not None
 
 
-async def test_delete_custom_handlers(
-    prometheus_registry: CollectorRegistry, rest_server: RESTServer, sum_model: SumModel
-):
+async def test_delete_custom_handlers(rest_server: RESTServer, sum_model: SumModel):
     await rest_server.delete_custom_handlers(sum_model)
 
     scope = to_scope(sum_model.my_payload.__custom_handler__)

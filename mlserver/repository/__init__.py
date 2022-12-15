@@ -1,3 +1,14 @@
-from .repository import ModelRepository, DEFAULT_MODEL_SETTINGS_FILENAME
+from .repository import (
+    ModelRepository,
+    SchemalessModelRepository,
+    DEFAULT_MODEL_SETTINGS_FILENAME,
+)
 
-__all__ = ["ModelRepository", "DEFAULT_MODEL_SETTINGS_FILENAME"]
+from .factory import ModelRepositoryFactory
+
+__all__ = [
+    "ModelRepository",
+    "SchemalessModelRepository",
+    "DEFAULT_MODEL_SETTINGS_FILENAME",
+    "ModelRepositoryFactory",
+]

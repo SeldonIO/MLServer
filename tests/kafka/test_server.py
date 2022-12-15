@@ -7,12 +7,9 @@ from mlserver.types import InferenceResponse
 from mlserver.settings import Settings
 from mlserver.cloudevents import CLOUDEVENTS_HEADER_ID
 from mlserver.kafka.handlers import KafkaMessage, MLSERVER_MODEL_NAME_HEADER
-from ..metrics.conftest import prometheus_registry
-from prometheus_client.registry import CollectorRegistry
 
 
 async def test_infer(
-    prometheus_registry: CollectorRegistry,
     kafka_producer: AIOKafkaProducer,
     kafka_consumer: AIOKafkaConsumer,
     kafka_settings: Settings,
@@ -34,7 +31,6 @@ async def test_infer(
 
 
 async def test_infer_error(
-    prometheus_registry: CollectorRegistry,
     kafka_producer: AIOKafkaProducer,
     kafka_consumer: AIOKafkaConsumer,
     kafka_settings: Settings,

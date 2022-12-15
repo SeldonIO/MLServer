@@ -1,8 +1,9 @@
+import abc
 import os
 import glob
 
 from pydantic.error_wrappers import ValidationError
-from typing import Optional, List
+from typing import List
 
 from ..settings import ModelParameters, ModelSettings
 from ..errors import ModelNotFound
@@ -13,13 +14,23 @@ from .load import load_model_settings
 DEFAULT_MODEL_SETTINGS_FILENAME = "model-settings.json"
 
 
-class ModelRepository:
+class ModelRepository(metaclass=abc.ABCMeta):
+    @abc.abstractmethod
+    async def list(self) -> List[ModelSettings]:
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    async def find(self, name: str) -> List[ModelSettings]:
+        raise NotImplementedError
+
+
+class SchemalessModelRepository(ModelRepository):
     """
     Model repository, responsible of the discovery of models which can be
     loaded onto the model registry.
     """
 
-    def __init__(self, root: Optional[str] = None):
+    def __init__(self, root: str):
         self._root = root
 
     async def list(self) -> List[ModelSettings]:

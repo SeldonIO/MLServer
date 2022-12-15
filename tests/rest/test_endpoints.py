@@ -11,35 +11,31 @@ from mlserver.cloudevents import (
     CLOUDEVENTS_HEADER_SPECVERSION,
 )
 
-from ..metrics.conftest import prometheus_registry
-from .conftest import delete_registry
-from prometheus_client.registry import CollectorRegistry
+from .conftest import delete_registry  # noqa: F401
 
 
-async def test_live(prometheus_registry: CollectorRegistry, rest_client):
+async def test_live(rest_client):
     endpoint = "/v2/health/live"
     response = await rest_client.get(endpoint)
 
     assert response.status_code == 200
 
 
-async def test_ready(prometheus_registry: CollectorRegistry, rest_client):
+async def test_ready(rest_client):
     endpoint = "/v2/health/ready"
     response = await rest_client.get(endpoint)
 
     assert response.status_code == 200
 
 
-async def test_model_ready(
-    prometheus_registry: CollectorRegistry, rest_client, sum_model
-):
+async def test_model_ready(rest_client, sum_model):
     endpoint = f"/v2/models/{sum_model.name}/versions/{sum_model.version}/ready"
     response = await rest_client.get(endpoint)
 
     assert response.status_code == 200
 
 
-async def test_metadata(prometheus_registry: CollectorRegistry, rest_client):
+async def test_metadata(rest_client):
     endpoint = "/v2"
     response = await rest_client.get(endpoint)
 
@@ -50,9 +46,7 @@ async def test_metadata(prometheus_registry: CollectorRegistry, rest_client):
     assert metadata.extensions == []
 
 
-async def test_model_metadata(
-    prometheus_registry: CollectorRegistry, rest_client, sum_model_settings
-):
+async def test_model_metadata(rest_client, sum_model_settings):
     endpoint = f"v2/models/{sum_model_settings.name}"
     response = await rest_client.get(endpoint)
 
@@ -68,7 +62,6 @@ async def test_model_metadata(
     "model_name,model_version", [("sum-model", "v1.2.3"), ("sum-model", None)]
 )
 async def test_infer(
-    prometheus_registry: CollectorRegistry,
     rest_client,
     inference_request,
     model_name,
@@ -87,7 +80,6 @@ async def test_infer(
 
 
 async def test_infer_headers(
-    prometheus_registry: CollectorRegistry,
     rest_client,
     inference_request,
     sum_model_settings,
@@ -108,9 +100,7 @@ async def test_infer_headers(
     )
 
 
-async def test_infer_error(
-    prometheus_registry: CollectorRegistry, rest_client, inference_request
-):
+async def test_infer_error(rest_client, inference_request):
     endpoint = "/v2/models/my-model/versions/v0/infer"
     response = await rest_client.post(endpoint, json=inference_request.dict())
 
@@ -118,9 +108,7 @@ async def test_infer_error(
     assert response.json()["error"] == "Model my-model with version v0 not found"
 
 
-async def test_model_repository_index(
-    prometheus_registry: CollectorRegistry, rest_client, repository_index_request
-):
+async def test_model_repository_index(rest_client, repository_index_request):
     endpoint = "/v2/repository/index"
     response = await rest_client.post(endpoint, json=repository_index_request.dict())
 
@@ -130,9 +118,7 @@ async def test_model_repository_index(
     assert len(models) == 1
 
 
-async def test_model_repository_unload(
-    prometheus_registry: CollectorRegistry, rest_client, sum_model_settings
-):
+async def test_model_repository_unload(rest_client, sum_model_settings):
     endpoint = f"/v2/repository/models/{sum_model_settings.name}/unload"
     response = await rest_client.post(endpoint)
 
@@ -143,10 +129,9 @@ async def test_model_repository_unload(
 
 
 async def test_model_repository_load(
-    delete_registry: CollectorRegistry,
     rest_client,
+    delete_registry,  # noqa: F811
     sum_model_settings,
-    prometheus_registry: CollectorRegistry,
 ):
     await rest_client.post(f"/v2/repository/models/{sum_model_settings.name}/unload")
 
@@ -159,9 +144,7 @@ async def test_model_repository_load(
     assert model_metadata.status_code == 200
 
 
-async def test_model_repository_load_error(
-    prometheus_registry: CollectorRegistry, rest_client, sum_model_settings
-):
+async def test_model_repository_load_error(rest_client, sum_model_settings):
     endpoint = "/v2/repository/models/my-model/load"
     response = await rest_client.post(endpoint)
 

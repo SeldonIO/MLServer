@@ -4,11 +4,12 @@ import logging
 
 from typing import Optional, List
 
+from mlserver.repository.factory import ModelRepositoryFactory
+
 from .model import MLModel
 from .settings import Settings, ModelSettings
 from .logging import configure_logger
 from .registry import MultiModelRegistry
-from .repository import ModelRepository
 from .handlers import DataPlane, ModelRepositoryHandlers
 from .parallel import InferencePool
 from .batching import load_batching
@@ -54,7 +55,11 @@ class MLServer:
             on_model_reload=on_model_reload,  # type: ignore
             on_model_unload=on_model_unload,  # type: ignore
         )
-        self._model_repository = ModelRepository(self._settings.model_repository_root)
+
+        self._model_repository = ModelRepositoryFactory.resolve_model_repository(
+            self._settings
+        )
+
         self._data_plane = DataPlane(
             settings=self._settings, model_registry=self._model_registry
         )

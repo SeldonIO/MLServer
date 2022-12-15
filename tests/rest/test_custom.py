@@ -1,10 +1,7 @@
 from mlserver.types import InferenceRequest
-from ..metrics.conftest import prometheus_registry
-from prometheus_client.registry import CollectorRegistry
 
 
 async def test_custom_handler(
-    prometheus_registry: CollectorRegistry,
     rest_client,
     inference_request: InferenceRequest,
 ):
@@ -15,7 +12,6 @@ async def test_custom_handler(
 
 
 async def test_gzip_compression(
-    prometheus_registry: CollectorRegistry,
     rest_client,
     inference_request,
     sum_model_settings,
