@@ -69,16 +69,17 @@ runtimes](./docs/runtimes/custom.md)**.
 
 Out of the box, MLServer provides support for:
 
-| Framework    | Supported | Documentation                                                    |
-| ------------ | --------- | ---------------------------------------------------------------- |
-| Scikit-Learn | ✅        | [MLServer SKLearn](./runtimes/sklearn)                           |
-| XGBoost      | ✅        | [MLServer XGBoost](./runtimes/xgboost)                           |
-| Spark MLlib  | ✅        | [MLServer MLlib](./runtimes/mllib)                               |
-| LightGBM     | ✅        | [MLServer LightGBM](./runtimes/lightgbm)                         |
-| Tempo        | ✅        | [`github.com/SeldonIO/tempo`](https://github.com/SeldonIO/tempo) |
-| MLflow       | ✅        | [MLServer MLflow](./runtimes/mlflow)                             |
-| Alibi-Detect | ✅        | [MLServer Alibi Detect](./runtimes/alibi-detect)                 |
-| HuggingFace  | ✅        | [MLServer HuggingFace](./runtimes/huggingface)                   |
+| Framework     | Supported | Documentation                                                    |
+| ------------- | --------- | ---------------------------------------------------------------- |
+| Scikit-Learn  | ✅        | [MLServer SKLearn](./runtimes/sklearn)                           |
+| XGBoost       | ✅        | [MLServer XGBoost](./runtimes/xgboost)                           |
+| Spark MLlib   | ✅        | [MLServer MLlib](./runtimes/mllib)                               |
+| LightGBM      | ✅        | [MLServer LightGBM](./runtimes/lightgbm)                         |
+| Tempo         | ✅        | [`github.com/SeldonIO/tempo`](https://github.com/SeldonIO/tempo) |
+| MLflow        | ✅        | [MLServer MLflow](./runtimes/mlflow)                             |
+| Alibi-Detect  | ✅        | [MLServer Alibi Detect](./runtimes/alibi-detect)                 |
+| Alibi-Explain | ✅        | [MLServer Alibi Explain](./runtimes/alibi-explain)               |
+| HuggingFace   | ✅        | [MLServer HuggingFace](./runtimes/huggingface)                   |
 
 ## Examples
 
