@@ -113,7 +113,14 @@ METADATA: Dict[str, Dict[str, List[MetadataTensor]]] = {
                 parameters=dict(content_type="str"),
             ),
         ],
-        outputs=[],
+        outputs=[
+            MetadataTensor(
+                name="args",
+                shape=[-1],
+                datatype="BYTES",
+                parameters=dict(content_type="str"),
+            ),
+        ],
     ),
     "question-answering": dict(
         inputs=[
