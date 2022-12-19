@@ -1,7 +1,7 @@
 # Code generation
 datamodel-code-generator==0.14.0
 
-grpcio-tools==1.48.1
+grpcio-tools==1.51.1
 
 tritonclient[http]==2.28.0
 
