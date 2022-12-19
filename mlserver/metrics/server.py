@@ -52,8 +52,11 @@ class MetricsServer:
             }
         )
 
-        # TODO: we want to disable logger unless debug is enabled (otherwise,
-        # prom reqs can be spammy)
+        if self._settings.logging_settings:
+            # If not None, use ours. Otherwise, let Uvicorn fall back on its
+            # own config.
+            kwargs.update({"log_config": self._settings.logging_settings})
+
         return uvicorn.Config(self._app, **kwargs)
 
     async def stop(self, sig: Optional[int] = None):
