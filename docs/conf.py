@@ -39,6 +39,7 @@ extensions = [
     "sphinxcontrib.autodoc_pydantic",
     "sphinx_click",
     "sphinx_design",
+    "sphinx.ext.autodoc",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
