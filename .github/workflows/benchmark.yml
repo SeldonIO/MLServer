@@ -8,6 +8,7 @@ on:
 jobs:
   benchmark:
     runs-on: ubuntu-latest
+    if: github.repository == 'SeldonIO/MLServer' # Do not run this on forks.
     strategy:
       matrix:
         scenario: ["inference-rest.js", "inference-grpc.js"]
