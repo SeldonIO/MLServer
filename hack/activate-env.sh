@@ -10,6 +10,8 @@ if [ "$#" -ne 1 ]; then
   exit 1
 fi
 
+quiet=${3:-false}
+
 _unpackEnv() {
   local _envTarball=$1
   local _envFolder=$2
@@ -27,6 +29,7 @@ _unpackEnv() {
 _activateEnv() {
   local _envFolder=$1
   local _activate="$_envFolder/bin/activate"
+  local _quiet=$quiet
 
   if ! [[ -f $_activate ]]; then
     echo "Environment not found at '$_envFolder'"
@@ -40,7 +43,10 @@ _activateEnv() {
   set -u
 
   echo "--> Calling conda-unpack..."
-  conda-unpack
+  if [ $quiet ]; then
+    conda-unpack --quiet
+  else
+    conda-unpack
 
   echo "--> Disabling user-installed packages..."
   # https://github.com/conda/conda/issues/448#issuecomment-195848539
@@ -51,9 +57,10 @@ _main() {
   local _envTarball=$1
   local _envName=$(basename "${_envTarball%.tar.gz}")
   local _envFolder="./envs/$_envName"
+  local _quiet=$quiet
 
   _unpackEnv $_envTarball $_envFolder
-  _activateEnv $_envFolder
+  _activateEnv $_envFolder _quiet
 }
 
 _main $1
