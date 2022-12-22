@@ -53,12 +53,20 @@ async def start(folder: str):
 @click.option("--no-cache", default=False, is_flag=True)
 @click.option("--conda-unpack-quiet", default=False, is_flag=True)
 @click_async
-async def build(folder: str, tag: str, no_cache: bool = False, conda_unpack_quiet: bool = False):
+async def build(
+    folder: str, tag: str, no_cache: bool = False, conda_unpack_quiet: bool = False
+):
     """
     Build a Docker image for a custom MLServer runtime.
     """
     dockerfile = generate_dockerfile()
-    build_image(folder, dockerfile, tag, no_cache=no_cache, conda_unpack_quiet=conda_unpack_quiet)
+    build_image(
+        folder,
+        dockerfile,
+        tag,
+        no_cache=no_cache,
+        conda_unpack_quiet=conda_unpack_quiet,
+    )
     logger.info(f"Successfully built custom Docker image with tag {tag}")
 
 
