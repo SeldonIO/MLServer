@@ -5,7 +5,7 @@ SHELL ["/bin/bash", "-c"]
 
 ARG MLSERVER_ENV_NAME="mlserver-custom-env" \\
     MLSERVER_ENV_TARBALL="./envs/base.tar.gz" \\
-    CONDA_UNPACK_QUIET=""
+    CONDA_UNPACK_QUIET=false
 
 RUN conda config --add channels conda-forge && \\
     conda install conda-pack
