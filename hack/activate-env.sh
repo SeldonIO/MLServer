@@ -53,7 +53,7 @@ _main() {
   local _envFolder="./envs/$_envName"
 
   _unpackEnv $_envTarball $_envFolder
-  _activateEnv $_envFolder
+  _activateEnv $_envFolder _quiet
 }
 
 _main $1
