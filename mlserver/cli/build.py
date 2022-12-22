@@ -38,7 +38,7 @@ def write_dockerfile(
 
 
 def build_image(
-    folder: str, dockerfile: str, image_tag: str, no_cache: bool = False
+    folder: str, dockerfile: str, image_tag: str, no_cache: bool = False, conda_unpack_quiet: bool = False
 ) -> str:
     logger.info(f"Building Docker image with tag {image_tag}")
     _docker_command_prefix = "docker build --rm "
@@ -49,6 +49,8 @@ def build_image(
             build_cmd = _docker_command_prefix + "--no-cache " + _docker_command_suffix
         else:
             build_cmd = _docker_command_prefix + _docker_command_suffix
+        if conda_unpack_quiet:
+            build_cmd = build_cmd + "--build-arg conda_unpack_quiet=quiet"
         build_env = os.environ.copy()
         build_env["DOCKER_BUILDKIT"] = "1"
         subprocess.run(build_cmd, check=True, shell=True, env=build_env)

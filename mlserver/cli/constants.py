@@ -4,7 +4,8 @@ FROM continuumio/miniconda3:4.12.0 AS env-builder
 SHELL ["/bin/bash", "-c"]
 
 ARG MLSERVER_ENV_NAME="mlserver-custom-env" \\
-    MLSERVER_ENV_TARBALL="./envs/base.tar.gz"
+    MLSERVER_ENV_TARBALL="./envs/base.tar.gz" \\
+    CONDA_UNPACK_QUIET=""
 
 RUN conda config --add channels conda-forge && \\
     conda install conda-pack
@@ -61,7 +62,7 @@ COPY . .
 
 # Override MLServer's own `CMD` to activate the embedded environment
 # (optionally activating the hot-loaded one as well).
-CMD source ./hack/activate-env.sh ./envs/base.tar.gz && \\
+CMD source ./hack/activate-env.sh ./envs/base.tar.gz $CONDA_UNPACK_QUIET && \\
     mlserver start $MLSERVER_MODELS_DIR
 """
 
