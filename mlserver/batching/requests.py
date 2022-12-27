@@ -45,15 +45,22 @@ def _merge_input_parameters(
             "content_type",
             "headers",
         }
-        all_params = {**all_params, **obj_params}
+        uncommon_keys = set(all_params).union(set(obj_params)) - common_keys
+        new_all_params = {}
         for key in common_keys:
             if type(all_params[key]) == list:
-                all_params[key] = all_params[key].append(obj_params[key])
+                new_value = all_params[key] + [obj_params[key]]
+                new_all_params[key] = new_value
             else:
                 new_value = [all_params[key]]
                 new_value.append(obj_params[key])
-                all_params[key] = new_value
-    return all_params
+                new_all_params[key] = new_value
+        for key in uncommon_keys:
+            if key in all_params.keys():
+                new_all_params[key] = all_params[key]
+            if key in obj_params.keys():
+                new_all_params[key] = obj_params[key]
+    return new_all_params
 
 
 def _merge_data(
