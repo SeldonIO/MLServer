@@ -66,9 +66,10 @@ class MultiInputRequestCodec(RequestCodec):
     ) -> Dict[str, Union[Type[InputCodecTy], InputCodecTy, None]]:
         field_codec = {}
         fields = []  # type: ignore
-        if data.parameters:
+        default_codec = None
+        if data.parameters and data.parameters.content_type:
             default_codec = find_input_codec(data.parameters.content_type)
-        else:
+        if default_codec is None:
             default_codec = cls.DefaultCodec
         if isinstance(data, InferenceRequest):
             fields = data.inputs
