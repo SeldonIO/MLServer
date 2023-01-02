@@ -52,6 +52,40 @@ from mlserver.batching.requests import BatchedRequests
                 "req-1": RequestInput(
                     name="foo",
                     datatype="INT32",
+                    shape=[1, 3],
+                    data=[1, 2, 3],
+                    parameters=Parameters(content_type="np", foo="bar"),
+                ),
+                "req-2": RequestInput(
+                    name="foo",
+                    datatype="INT32",
+                    shape=[1, 3],
+                    data=[4, 5, 6],
+                ),
+                "req-3": RequestInput(
+                    name="foo",
+                    datatype="INT32",
+                    shape=[1, 3],
+                    data=[7, 8, 9],
+                    parameters=Parameters(foo="bar", time="13:00"),
+                ),
+            },
+            RequestInput(
+                name="foo",
+                datatype="INT32",
+                shape=[3, 3],
+                data=[1, 2, 3, 4, 5, 6, 7, 8, 9],
+                parameters=Parameters(
+                    content_type="np", foo=["bar", "bar"], time="13:00"
+                ),
+            ),
+            {"req-1": 1, "req-2": 1, "req-3": 1},
+        ),
+        (
+            {
+                "req-1": RequestInput(
+                    name="foo",
+                    datatype="INT32",
                     shape=[2, 3],
                     data=[1, 2, 3, 10, 11, 12],
                 ),

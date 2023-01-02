@@ -29,6 +29,40 @@ def _merge_parameters(
     return {**all_params, **obj_params}
 
 
+def _merge_input_parameters(
+    all_params: dict,
+    parametrised_obj: Union[
+        InferenceRequest, InferenceResponse, RequestInput, RequestOutput
+    ],
+) -> dict:
+    if not parametrised_obj.parameters:
+        return all_params
+    obj_params = parametrised_obj.parameters.dict()
+    if all_params == {}:
+        return obj_params
+    else:
+        common_keys = set(all_params).intersection(set(obj_params)) - {
+            "content_type",
+            "headers",
+        }
+        uncommon_keys = set(all_params).union(set(obj_params)) - common_keys
+        new_all_params = {}
+        for key in common_keys:
+            if type(all_params[key]) == list:
+                new_value = all_params[key] + [obj_params[key]]
+                new_all_params[key] = new_value
+            else:
+                new_value = [all_params[key]]
+                new_value.append(obj_params[key])
+                new_all_params[key] = new_value
+        for key in uncommon_keys:
+            if key in all_params.keys():
+                new_all_params[key] = all_params[key]
+            if key in obj_params.keys():
+                new_all_params[key] = obj_params[key]
+    return new_all_params
+
+
 def _merge_data(
     all_data: Union[list, List[str], List[bytes]]
 ) -> Union[list, str, bytes]:
@@ -109,7 +143,7 @@ class BatchedRequests:
         all_data = []
         all_params: dict = {}
         for internal_id, request_input in request_inputs.items():
-            all_params = _merge_parameters(all_params, request_input)
+            all_params = _merge_input_parameters(all_params, request_input)
             all_data.append(_get_data(request_input))
             minibatch_shape = Shape(request_input.shape)
             self._minibatch_sizes[internal_id] = minibatch_shape.batch_size

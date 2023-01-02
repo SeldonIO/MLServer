@@ -3,7 +3,7 @@ datamodel-code-generator==0.14.0
 
 grpcio-tools==1.48.1
 
-tritonclient[http]==2.28.0
+tritonclient[http]==2.29.0
 
 # Testing
 pytest==7.2.0
@@ -21,7 +21,7 @@ tenacity==8.1.0
 
 # Linting and formatting
 flake8==6.0.0
-flake8-black==0.3.5
+flake8-black==0.3.6
 mypy==0.991
 mypy-protobuf==3.1.0
 types-protobuf==4.21.0.2
