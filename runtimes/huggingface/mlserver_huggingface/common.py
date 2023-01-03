@@ -38,11 +38,16 @@ class HuggingFaceSettings(BaseSettings):
         env_prefix = ENV_PREFIX_HUGGINGFACE_SETTINGS
 
     task: str = ""
+    task_suffix: str = ""
     pretrained_model: Optional[str] = None
     pretrained_tokenizer: Optional[str] = None
     optimum_model: bool = False
     device: int = -1
     batch_size: Optional[int] = None
+
+    @property
+    def task_name(self):
+        return f"{self.task}{self.task_suffix}"
 
 
 def parse_parameters_from_env() -> Dict:
@@ -114,7 +119,7 @@ def load_pipeline_from_settings(hf_settings: HuggingFaceSettings) -> Pipeline:
         device = -1
 
     pp = pipeline(
-        hf_settings.task,
+        hf_settings.task_name,
         model=model,
         tokenizer=tokenizer,
         device=device,
