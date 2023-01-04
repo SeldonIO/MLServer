@@ -11,7 +11,7 @@ async def test_custom_handler(rest_client, inference_request: InferenceRequest):
 async def test_custom_handler_gzip(rest_client, inference_request: InferenceRequest):
     response = await rest_client.post(
         "/my-custom-endpoint",
-        data = gzip(json.dumps([1, 2, 3, 4]).encode('utf-8')),
+        data = gzip.compress(json.dumps([1, 2, 3, 4]).encode('utf-8')),
         headers = {
             "Content-Encoding": "gzip",
         }
