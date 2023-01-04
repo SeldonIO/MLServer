@@ -1,5 +1,6 @@
 from mlserver.types import InferenceRequest
-
+import json
+import gzip
 
 async def test_custom_handler(rest_client, inference_request: InferenceRequest):
     response = await rest_client.post("/my-custom-endpoint", json=[1, 2, 3, 4])
@@ -7,6 +8,17 @@ async def test_custom_handler(rest_client, inference_request: InferenceRequest):
     assert response.status_code == 200
     assert response.json() == 10
 
+async def test_custom_handler_gzip(rest_client, inference_request: InferenceRequest):
+    response = await rest_client.post(
+        "/my-custom-endpoint",
+        data = gzip(json.dumps([1, 2, 3, 4]).encode('utf-8')),
+        headers = {
+            "Content-Encoding": "gzip",
+        }
+    )
+
+    assert response.status_code == 200
+    assert response.json() == 10
 
 async def test_gzip_compression(rest_client, inference_request, sum_model_settings):
     endpoint = "/custom-endpoint-with-long-response"
