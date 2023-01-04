@@ -10,6 +10,7 @@ from .endpoints import Endpoints, ModelRepositoryEndpoints
 from .requests import Request
 from .responses import Response
 from .errors import _EXCEPTION_HANDLERS
+from .gzip_request import GzipRoute
 
 from ..settings import Settings
 from ..handlers import DataPlane, ModelRepositoryHandlers
@@ -117,7 +118,7 @@ def create_app(
         default_response_class=Response,
         exception_handlers=_EXCEPTION_HANDLERS,  # type: ignore
     )
-
+    app.router.route_class = GzipRoute
     app.add_middleware(GZipMiddleware)
     if settings.cors_settings is not None:
         app.add_middleware(
