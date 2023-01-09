@@ -125,7 +125,7 @@ class Settings(BaseSettings):
     grpc_port: int = 8081
     """Port where to listen for gRPC connections."""
 
-    grpc_max_message_length: Optional[int] = None
+    grpc_max_message_length: Optional[int] = 100 * 1024 * 1024
     """Maximum length (i.e. size) of gRPC payloads."""
 
     # CORS settings
