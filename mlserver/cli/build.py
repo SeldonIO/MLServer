@@ -38,10 +38,7 @@ def write_dockerfile(
 
 
 def build_image(
-    folder: str,
-    dockerfile: str,
-    image_tag: str,
-    no_cache: bool = False
+    folder: str, dockerfile: str, image_tag: str, no_cache: bool = False
 ) -> str:
     logger.info(f"Building Docker image with tag {image_tag}")
     _docker_command_prefix = "docker build --rm "
