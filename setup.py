@@ -41,7 +41,7 @@ setup(
     packages=find_packages(exclude=["tests", "tests.*"]),
     install_requires=[
         "click",
-        "fastapi",
+        "fastapi<=0.88.0",
         "python-dotenv",
         "grpcio",
         "importlib-metadata;python_version<'3.8'",
