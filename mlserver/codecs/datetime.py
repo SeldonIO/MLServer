@@ -41,7 +41,7 @@ def _decode_datetime(elem: ListElement) -> datetime:
 @register_input_codec
 class DatetimeCodec(InputCodec):
     """
-    Codec that convers to / from a base64 input.
+    Codec that convers to / from a datetime input.
     """
 
     ContentType = "datetime"

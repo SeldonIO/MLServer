@@ -5,4 +5,5 @@
 
 ./model.md
 ./types.md
+./codecs.md
 ```

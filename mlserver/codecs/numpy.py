@@ -98,7 +98,7 @@ def _encode_data(data: np.ndarray, datatype: str) -> list:
 @register_input_codec
 class NumpyCodec(InputCodec):
     """
-    Encodes a tensor as a numpy array.
+    Decodes an request input (response output) as a NumPy array.
     """
 
     ContentType = "np"
@@ -147,5 +147,11 @@ class NumpyCodec(InputCodec):
 
 @register_request_codec
 class NumpyRequestCodec(SingleInputRequestCodec):
+    """
+    Decodes the first input (output) of request (response) as a NumPy array.
+    This codec can be useful for cases where the whole payload is a single
+    NumPy tensor.
+    """
+
     InputCodec = NumpyCodec
     ContentType = NumpyCodec.ContentType

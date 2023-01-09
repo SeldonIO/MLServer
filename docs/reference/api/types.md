@@ -1,4 +1,4 @@
-# Main Types
+# Types
 
 ```{eval-rst}
 .. automodule:: mlserver.types

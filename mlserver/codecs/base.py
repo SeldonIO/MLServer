@@ -24,10 +24,11 @@ def deprecated(reason: str):
 class InputCodec:
     """
     The InputCodec interface lets you define type conversions of your raw input
-    data to / from the V2 Inference Protocol level.
-    Note that this codec applies at the individual input level.
-    For request-wide transformations (e.g. dataframes), use the RequestCodec
-    interface instead.
+    data to / from the Open Inference Protocol.
+    Note that this codec applies at the individual input (output) level.
+
+    For request-wide transformations (e.g. dataframes), use the
+    ``RequestCodec`` interface instead.
     """
 
     ContentType: ClassVar[str] = ""
@@ -35,6 +36,9 @@ class InputCodec:
 
     @classmethod
     def can_encode(cls, payload: Any) -> bool:
+        """
+        Evaluate whether the codec can encode (decode) the payload.
+        """
         return False
 
     @classmethod
@@ -44,14 +48,23 @@ class InputCodec:
 
     @classmethod
     def encode_output(cls, name: str, payload: Any, **kwargs) -> ResponseOutput:
+        """
+        Encode the given payload into a response output.
+        """
         raise NotImplementedError()
 
     @classmethod
     def decode_output(cls, response_output: ResponseOutput) -> Any:
+        """
+        Decode a response output into a high-level Python type.
+        """
         raise NotImplementedError()
 
     @classmethod
     def encode_input(cls, name: str, payload: Any, **kwargs) -> RequestInput:
+        """
+        Encode the given payload into a ``RequestInput``.
+        """
         raise NotImplementedError()
 
     @classmethod
@@ -61,15 +74,21 @@ class InputCodec:
 
     @classmethod
     def decode_input(cls, request_input: RequestInput) -> Any:
+        """
+        Decode a request input into a high-level Python type.
+        """
         raise NotImplementedError()
 
 
 class RequestCodec:
     """
-    The RequestCodec interface lets you define request-level conversions.
+    The ``RequestCodec`` interface lets you define request-level conversions
+    between high-level Python types and the Open Inference Protocol.
     This can be useful where the encoding of your payload encompases multiple
-    input heads (e.g. dataframes).
-    For individual input-level encoding / decoding, use the InputCodec
+    input heads (e.g. dataframes, where each column can be thought as a
+    separate input head).
+
+    For individual input-level encoding / decoding, use the ``InputCodec``
     interface instead.
     """
 
@@ -78,6 +97,9 @@ class RequestCodec:
 
     @classmethod
     def can_encode(cls, payload: Any) -> bool:
+        """
+        Evaluate whether the codec can encode (decode) the payload.
+        """
         return False
 
     @classmethod
@@ -95,14 +117,23 @@ class RequestCodec:
         model_version: Optional[str] = None,
         **kwargs,
     ) -> InferenceResponse:
+        """
+        Encode the given payload into an inference response.
+        """
         raise NotImplementedError()
 
     @classmethod
     def decode_response(cls, response: InferenceResponse) -> Any:
+        """
+        Decode an inference response into a high-level Python object.
+        """
         raise NotImplementedError()
 
     @classmethod
     def encode_request(cls, payload: Any, **kwargs) -> InferenceRequest:
+        """
+        Encode the given payload into an inference request.
+        """
         raise NotImplementedError()
 
     @classmethod
@@ -112,6 +143,9 @@ class RequestCodec:
 
     @classmethod
     def decode_request(cls, request: InferenceRequest) -> Any:
+        """
+        Decode an inference request into a high-level Python object.
+        """
         raise NotImplementedError()
 
 
