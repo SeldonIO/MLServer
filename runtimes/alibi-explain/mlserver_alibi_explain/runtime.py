@@ -90,9 +90,7 @@ class AlibiExplainRuntimeBase(MLModel):
         input_data = self.decode_request(payload, default_codec=NumpyRequestCodec)
         if isinstance(input_data, pd.DataFrame):
             input_data = np.array(input_data)
-        output_data = await self._async_explain_impl(
-            input_data, payload.parameters
-        )
+        output_data = await self._async_explain_impl(input_data, payload.parameters)
 
         return InferenceResponse(
             model_name=self.name,
