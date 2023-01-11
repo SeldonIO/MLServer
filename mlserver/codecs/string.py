@@ -37,7 +37,7 @@ def _decode_input_or_output(input_or_output: InputOrOutput) -> List[str]:
 @register_input_codec
 class StringCodec(InputCodec):
     """
-    Encodes a Python string as a BYTES input.
+    Encodes a list of Python strings as a BYTES input (output).
     """
 
     ContentType = "str"
@@ -89,6 +89,13 @@ class StringCodec(InputCodec):
 
 @register_request_codec
 class StringRequestCodec(SingleInputRequestCodec):
+    """
+    Decodes the first input (output) of request (response) as a list of
+    strings.
+    This codec can be useful for cases where the whole payload is a single
+    list of strings.
+    """
+
     InputCodec = StringCodec
     ContentType = StringCodec.ContentType
     TypeHint = List[str]

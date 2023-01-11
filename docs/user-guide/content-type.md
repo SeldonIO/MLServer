@@ -125,15 +125,15 @@ represents a high-level Python datatype (e.g. a Pandas Dataframe, a Numpy
 Array, etc.):
 
 - **Request Codecs**
-  - `encode_request(payload: Any) -> InferenceRequest`
-  - `decode_request(request: InferenceRequest) -> Any`
-  - `encode_response(model_name: str, payload: Any, model_version: str) -> InferenceResponse`
-  - `decode_response(response: InferenceResponse) -> Any`
+  - {func}`encode_request() <mlserver.codecs.RequestCodec.encode_request>`
+  - {func}`decode_request() <mlserver.codecs.RequestCodec.decode_request>`
+  - {func}`encode_response() <mlserver.codecs.RequestCodec.encode_response>`
+  - {func}`decode_response() <mlserver.codecs.RequestCodec.decode_response>`
 - **Input Codecs**
-  - `encode_input(name: str, payload: Any) -> RequestInput`
-  - `decode_input(request_input: RequestInput) -> Any`
-  - `encode_output(name: str, payload: Any) -> ResponseOutput`
-  - `decode_output(response_output: ResponseOutput) -> Any`
+  - {func}`encode_input() <mlserver.codecs.InputCodec.encode_input>`
+  - {func}`decode_input() <mlserver.codecs.InputCodec.decode_input>`
+  - {func}`encode_output() <mlserver.codecs.InputCodec.encode_output>`
+  - {func}`decode_output() <mlserver.codecs.InputCodec.decode_output>`
 
 Note that, these methods can also be used as helpers to **encode requests and
 decode responses on the client side**.

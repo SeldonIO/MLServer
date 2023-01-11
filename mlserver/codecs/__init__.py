@@ -29,6 +29,7 @@ __all__ = [
     "NumpyCodec",
     "NumpyRequestCodec",
     "StringCodec",
+    "StringRequestCodec",
     "Base64Codec",
     "DatetimeCodec",
     "PandasCodec",
