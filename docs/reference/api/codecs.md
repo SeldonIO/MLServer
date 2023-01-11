@@ -19,13 +19,6 @@ respectively.
    :members: InputCodec, RequestCodec
 ```
 
-## Helpers
-
-```{eval-rst}
-.. automodule:: mlserver.codecs
-   :members: register_input_codec, register_request_codec, has_decoded, get_decoded, get_decoded_or_raw, encode_inference_response, encode_response_output, decode_request_input, decode_args
-```
-
 ## Built-in Codecs
 
 The `mlserver` package will include a set of built-in codecs to cover common
