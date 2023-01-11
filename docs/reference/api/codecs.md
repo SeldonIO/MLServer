@@ -10,7 +10,8 @@ them.
 
 ## Base Codecs
 
-All the codecs within MLServer extend from either the {class}`InputCodec <mlserver.codecs.base.InputCodec>` or the {class}`RequestCodec <mlserver.codecs.base.RequestCodec>` base classes.
+All the codecs within MLServer extend from either the {class}`InputCodec <mlserver.codecs.base.InputCodec>`
+or the {class}`RequestCodec <mlserver.codecs.base.RequestCodec>` base classes.
 These define the interface to deal with input (outputs) and request (responses)
 respectively.
 

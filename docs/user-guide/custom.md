@@ -14,18 +14,18 @@ walks through the process of writing a custom runtime.
 
 MLServer is designed as an easy-to-extend framework, encouraging users to write
 their own custom runtimes easily.
-The starting point for this is the `mlserver.MLModel` abstract class, whose
-main methods are:
+The starting point for this is the {class}`MLModel <mlserver.model.MLModel>`
+abstract class, whose main methods are:
 
-- `load(self) -> bool`:
+- {func}`load() <mlserver.model.MLModel.load>`:
   Responsible for loading any artifacts related to a model (e.g. model
   weights, pickle files, etc.).
-- `predict(self, payload: InferenceRequest) -> InferenceResponse`:
+- {func}`predict() <mlserver.model.MLModel.predict>`:
   Responsible for using a model to perform inference on an incoming data point.
 
 Therefore, the _"one-line version"_ of how to write a custom runtime is to
-write a custom class extending from `mlserver.MLModel`, and then overriding
-those methods with your custom logic.
+write a custom class extending from {class}`MLModel <mlserver.model.MLModel>`,
+and then overriding those methods with your custom logic.
 
 ```{code-block} python
 ---
@@ -52,9 +52,9 @@ class MyCustomRuntime(MLModel):
 MLServer exposes an alternative _"simplified" interface_ which can be used to
 write custom runtimes.
 This interface can be enabled by decorating your `predict()` method with the
-`mlserver.codecs.decode_args` decorator, and it lets you specify in the method
-signature both how you want your request payload to be decoded and how to
-encode the response back.
+`mlserver.codecs.decode_args` decorator.
+This will let you specify in the method signature both how you want your
+request payload to be decoded and how to encode the response back.
 
 Based on the information provided in the method signature, MLServer will
 automatically decode the request payload into the different inputs specified as
