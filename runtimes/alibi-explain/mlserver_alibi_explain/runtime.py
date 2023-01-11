@@ -4,6 +4,8 @@ import numpy as np
 import functools
 
 from typing import Any, Optional, List, Dict
+
+import pandas as pd
 from alibi.api.interfaces import Explanation, Explainer
 from alibi.saving import load_explainer
 from concurrent.futures import ThreadPoolExecutor
@@ -86,8 +88,10 @@ class AlibiExplainRuntimeBase(MLModel):
 
         # TODO: convert and validate?
         input_data = self.decode_request(payload, default_codec=NumpyRequestCodec)
+        if isinstance(input_data, pd.DataFrame):
+            input_data = np.array(input_data)
         output_data = await self._async_explain_impl(
-            np.array(input_data), payload.parameters
+            input_data, payload.parameters
         )
 
         return InferenceResponse(
