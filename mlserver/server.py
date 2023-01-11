@@ -25,41 +25,17 @@ HANDLED_SIGNALS = [signal.SIGINT, signal.SIGTERM, signal.SIGQUIT]
 class MLServer:
     def __init__(self, settings: Settings):
         self._settings = settings
-        self._inference_pool = None
-        on_model_load = [
-            self.add_custom_handlers,
-            load_batching,
-        ]
-        on_model_reload = [self.reload_custom_handlers]
-        on_model_unload = [self.remove_custom_handlers]
+        self._add_signal_handlers()
 
+        self._inference_pool = None
         if self._settings.parallel_workers:
             # Only load inference pool if parallel inference has been enabled
             self._inference_pool = InferencePool(self._settings)
-            on_model_load = [
-                self._inference_pool.load_model,
-                self.add_custom_handlers,
-                load_batching,
-            ]
-            on_model_reload = [
-                self._inference_pool.reload_model,  # type: ignore
-                self.reload_custom_handlers,
-            ]
-            on_model_unload = [
-                self._inference_pool.unload_model,  # type: ignore
-                self.remove_custom_handlers,
-            ]
 
-        self._model_registry = MultiModelRegistry(
-            on_model_load=on_model_load,  # type: ignore
-            on_model_reload=on_model_reload,  # type: ignore
-            on_model_unload=on_model_unload,  # type: ignore
-        )
-
+        self._model_registry = self._create_model_registry()
         self._model_repository = ModelRepositoryFactory.resolve_model_repository(
             self._settings
         )
-
         self._data_plane = DataPlane(
             settings=self._settings, model_registry=self._model_registry
         )
@@ -72,7 +48,6 @@ class MLServer:
             logger.setLevel(logging.DEBUG)
 
         self._logger = configure_logger(settings)
-
         self._rest_server = RESTServer(
             self._settings, self._data_plane, self._model_repository_handlers
         )
@@ -88,8 +63,36 @@ class MLServer:
         if self._settings.metrics_endpoint:
             self._metrics_server = MetricsServer(self._settings)
 
+    def _create_model_registry(self) -> MultiModelRegistry:
+        on_model_load = [
+            self.add_custom_handlers,
+            load_batching,
+        ]
+        on_model_reload = [self.reload_custom_handlers]
+        on_model_unload = [self.remove_custom_handlers]
+
+        if self._inference_pool:
+            on_model_load = [
+                self._inference_pool.load_model,
+                self.add_custom_handlers,
+                load_batching,
+            ]
+            on_model_reload = [
+                self._inference_pool.reload_model,  # type: ignore
+                self.reload_custom_handlers,
+            ]
+            on_model_unload = [
+                self._inference_pool.unload_model,  # type: ignore
+                self.remove_custom_handlers,
+            ]
+
+        return MultiModelRegistry(
+            on_model_load=on_model_load,  # type: ignore
+            on_model_reload=on_model_reload,  # type: ignore
+            on_model_unload=on_model_unload,  # type: ignore
+        )
+
     async def start(self, models_settings: List[ModelSettings] = []):
-        self._add_signal_handlers()
 
         servers = [self._rest_server.start(), self._grpc_server.start()]
         if self._metrics_server:
@@ -159,8 +162,11 @@ class MLServer:
         if self._kafka_server:
             await self._kafka_server.stop()
 
-        await self._grpc_server.stop(sig)
-        await self._rest_server.stop(sig)
+        if self._grpc_server:
+            await self._grpc_server.stop(sig)
+
+        if self._rest_server:
+            await self._rest_server.stop(sig)
 
         if self._metrics_server:
             await self._metrics_server.stop(sig)
