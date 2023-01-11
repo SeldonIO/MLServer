@@ -40,7 +40,7 @@ _activateEnv() {
   set -u
 
   echo "--> Calling conda-unpack..."
-  conda-unpack
+  conda-unpack --quiet
 
   echo "--> Disabling user-installed packages..."
   # https://github.com/conda/conda/issues/448#issuecomment-195848539
