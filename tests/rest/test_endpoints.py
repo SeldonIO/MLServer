@@ -11,6 +11,8 @@ from mlserver.cloudevents import (
     CLOUDEVENTS_HEADER_SPECVERSION,
 )
 
+from .conftest import delete_registry  # noqa: F401
+
 
 async def test_live(rest_client):
     endpoint = "/v2/health/live"
@@ -59,7 +61,12 @@ async def test_model_metadata(rest_client, sum_model_settings):
 @pytest.mark.parametrize(
     "model_name,model_version", [("sum-model", "v1.2.3"), ("sum-model", None)]
 )
-async def test_infer(rest_client, inference_request, model_name, model_version):
+async def test_infer(
+    rest_client,
+    inference_request,
+    model_name,
+    model_version,
+):
     endpoint = f"/v2/models/{model_name}/infer"
     if model_version is not None:
         endpoint = f"/v2/models/{model_name}/versions/{model_version}/infer"
@@ -72,7 +79,11 @@ async def test_infer(rest_client, inference_request, model_name, model_version):
     assert prediction.outputs[0].data.__root__ == [6]
 
 
-async def test_infer_headers(rest_client, inference_request, sum_model_settings):
+async def test_infer_headers(
+    rest_client,
+    inference_request,
+    sum_model_settings,
+):
     endpoint = f"/v2/models/{sum_model_settings.name}/infer"
     response = await rest_client.post(
         endpoint, json=inference_request.dict(), headers={"x-foo": "bar"}
@@ -117,7 +128,11 @@ async def test_model_repository_unload(rest_client, sum_model_settings):
     assert model_metadata.status_code == 404
 
 
-async def test_model_repository_load(rest_client, sum_model_settings):
+async def test_model_repository_load(
+    rest_client,
+    delete_registry,  # noqa: F811
+    sum_model_settings,
+):
     await rest_client.post(f"/v2/repository/models/{sum_model_settings.name}/unload")
 
     endpoint = f"/v2/repository/models/{sum_model_settings.name}/load"

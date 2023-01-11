@@ -34,6 +34,8 @@ async def test_metrics(rest_client: RESTClient, metrics_client: MetricsClient):
             "rest_server_",
             "grpc_server_",
             "model_infer_",
+            "batch_request_",
+            "parallel_request_",
         )
         metrics_list = list(iter(metrics))
         assert len(metrics_list) > 0

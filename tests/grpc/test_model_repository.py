@@ -17,6 +17,7 @@ from mlserver.grpc.converters import (
 from mlserver.grpc.model_repository_pb2_grpc import ModelRepositoryServiceStub
 from mlserver.grpc import dataplane_pb2 as pb
 from mlserver.grpc import model_repository_pb2 as mr_pb
+from .conftest import delete_registry  # noqa: F401
 
 
 @pytest.fixture
@@ -83,7 +84,10 @@ async def test_model_repository_unload(
 
 
 async def test_model_repository_load(
-    inference_service_stub, model_repository_service_stub, sum_model_settings
+    inference_service_stub,
+    delete_registry,  # noqa: F811
+    model_repository_service_stub,
+    sum_model_settings,
 ):
     await model_repository_service_stub.RepositoryModelUnload(
         mr_pb.RepositoryModelLoadRequest(model_name=sum_model_settings.name)
@@ -100,8 +104,11 @@ async def test_model_repository_load(
 
 
 async def test_model_repository_load_error(
-    inference_service_stub, model_repository_service_stub, sum_model_settings
+    inference_service_stub,
+    model_repository_service_stub,
+    sum_model_settings,
 ):
+
     with pytest.raises(grpc.RpcError) as err:
         load_request = mr_pb.RepositoryModelLoadRequest(model_name="my-model")
         await model_repository_service_stub.RepositoryModelLoad(load_request)
