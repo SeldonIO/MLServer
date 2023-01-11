@@ -15,7 +15,7 @@ docker==6.0.1
 aiohttp==3.8.3
 aiohttp-retry==2.8.3
 ## Used for FastAPI Async testing
-httpx==0.23.1
+httpx==0.23.3
 kafka-python==2.0.2
 tenacity==8.1.0
 
