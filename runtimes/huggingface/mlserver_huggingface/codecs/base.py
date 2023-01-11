@@ -1,4 +1,4 @@
-from typing import Optional, Type, Any, Dict, List, Union
+from typing import Optional, Type, Any, Dict, List, Union, Sequence
 from mlserver.codecs.utils import (
     has_decoded,
     _save_decoded,
@@ -19,6 +19,7 @@ from mlserver.types import (
     InferenceRequest,
     InferenceResponse,
     RequestInput,
+    ResponseOutput,
 )
 from .image import PILImageCodec
 from .json import HuggingfaceSingleJSONCodec
@@ -64,11 +65,12 @@ class MultiInputRequestCodec(RequestCodec):
     def _find_decode_codecs(
         cls, data: Union[InferenceResponse, InferenceRequest]
     ) -> Dict[str, Union[Type[InputCodecTy], InputCodecTy, None]]:
-        field_codec = {}
-        fields = []  # type: ignore
-        if data.parameters:
+        field_codec: Dict[str, Union[Type[InputCodecTy], InputCodecTy, None]] = {}
+        default_codec: Union[Type[InputCodecTy], InputCodecTy, None] = None
+        fields: Sequence[Union[RequestInput, ResponseOutput]] = []
+        if data.parameters and data.parameters.content_type:
             default_codec = find_input_codec(data.parameters.content_type)
-        else:
+        if default_codec is None:
             default_codec = cls.DefaultCodec
         if isinstance(data, InferenceRequest):
             fields = data.inputs

@@ -36,7 +36,7 @@ def image_base64_bytes(fname: str) -> bytes:
     buf = io.BytesIO()
     img.save(buf, format=img.format)
     v = base64.b64encode(buf.getvalue())
-    return f"data:image/{img.format};base64,".encode() + v
+    return f"data:image/{img.format.lower()};base64,".encode() + v
 
 
 def image_base64_str(fname: str) -> str:

@@ -349,8 +349,8 @@ from ..utils import (
 )
 def test_encode_request(inputs, use_bytes, expected):
     payload = HuggingfaceRequestCodec.encode_request(inputs, use_bytes=use_bytes)
-    print(payload.inputs[0].data[0])
-    print(expected.inputs[0].data[0])
+    # print(payload.inputs[0].data[0])
+    # print(expected.inputs[0].data[0])
     assert payload == expected
 
 
