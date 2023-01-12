@@ -3,7 +3,7 @@ import numpy as np
 
 from typing import List
 
-from mlserver.types import RequestInput, ResponseOutput
+from mlserver.types import RequestInput, ResponseOutput, TensorData
 from mlserver.raw import (
     _pack_bytes,
     _pack_tensor,
@@ -116,19 +116,47 @@ def test_pack_tensor(tensor: np.ndarray):
     assert expected == packed
 
 
-def test_inject_raw():
-    inputs = [
-        RequestInput(name="foo", datatype="BYTES", shape=[3], data=[]),
-        RequestInput(name="bar", datatype="FP32", shape=[3, 2], data=[]),
-    ]
-    raw_contents = [
-        b"\x03\x00\x00\x00one\x03\x00\x00\x00two\x05\x00\x00\x00three",
-        np.array([1, 2, 3, 4, 5, 6], dtype=np.single).tobytes(),
-    ]
-
+@pytest.mark.parametrize(
+    "inputs, raw_contents, expected",
+    [
+        # With only raw entries
+        (
+            [
+                RequestInput(name="foo", datatype="BYTES", shape=[3], data=[]),
+                RequestInput(name="bar", datatype="FP32", shape=[3, 2], data=[]),
+            ],
+            [
+                b"\x03\x00\x00\x00one\x03\x00\x00\x00two\x05\x00\x00\x00three",
+                np.array([1, 2, 3, 4, 5, 6], dtype=np.single).tobytes(),
+            ],
+            [[b"one", b"two", b"three"], [1, 2, 3, 4, 5, 6]],
+        ),
+        # With mixed entries (i.e. raw and normal)
+        (
+            [
+                RequestInput(name="foo", datatype="BYTES", shape=[3], data=[]),
+                RequestInput(
+                    name="bar", datatype="FP32", shape=[3, 2], data=[1, 2, 3, 4, 5, 6]
+                ),
+                RequestInput(name="foo2", datatype="FP32", shape=[2, 2], data=[]),
+            ],
+            [
+                b"\x03\x00\x00\x00one\x03\x00\x00\x00two\x05\x00\x00\x00three",
+                np.array([7, 8, 9, 10], dtype=np.single).tobytes(),
+            ],
+            [
+                [b"one", b"two", b"three"],
+                TensorData.parse_obj([1, 2, 3, 4, 5, 6]),
+                [7, 8, 9, 10],
+            ],
+        ),
+    ],
+)
+def test_inject_raw(
+    inputs: List[RequestInput], raw_contents: List[bytes], expected: list
+):
     with_unpacked_raw = inject_raw(inputs, raw_contents)
 
-    expected = [[b"one", b"two", b"three"], [1, 2, 3, 4, 5, 6]]
     assert len(with_unpacked_raw) == len(expected)
     for request_input, expected in zip(with_unpacked_raw, expected):
         assert request_input.data == expected
