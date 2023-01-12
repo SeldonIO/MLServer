@@ -38,6 +38,9 @@ class HuggingFaceSettings(BaseSettings):
         env_prefix = ENV_PREFIX_HUGGINGFACE_SETTINGS
 
     task: str = ""
+    # Why need this filed?
+    # for translation task, required a suffix to specify source and target
+    # related issue: https://github.com/SeldonIO/MLServer/issues/947
     task_suffix: str = ""
     pretrained_model: Optional[str] = None
     pretrained_tokenizer: Optional[str] = None
@@ -47,7 +50,9 @@ class HuggingFaceSettings(BaseSettings):
 
     @property
     def task_name(self):
-        return f"{self.task}{self.task_suffix}"
+        if self.task == "translation":
+            return f"{self.task}{self.task_suffix}"
+        return self.task
 
 
 def parse_parameters_from_env() -> Dict:
