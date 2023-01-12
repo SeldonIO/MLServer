@@ -65,7 +65,7 @@ class HuggingFaceRuntime(MLModel):
     async def load(self) -> bool:
         # Loading & caching pipeline in asyncio loop to avoid blocking
         print("=" * 80)
-        print(self.hf_settings.task)
+        print(self.hf_settings.task_name)
         print("loading model...")
         await asyncio.get_running_loop().run_in_executor(
             None, load_pipeline_from_settings, self.hf_settings
