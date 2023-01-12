@@ -148,6 +148,14 @@ class Settings(BaseSettings):
     Metrics rest server string prefix to be exported.
     """
 
+    metrics_dir: Optional[str] = None
+    """
+    Directory used to share metrics across parallel workers.
+    Equivalent to the `PROMETHEUS_MULTIPROC_DIR` env var in
+    `prometheus-client`.
+    Note that this won't be used if the `parallel_workers` flag is disabled.
+    """
+
     # Logging settings
     logging_settings: Optional[Union[str, Dict]] = None
     """Path to logging config file or dictionary configuration."""

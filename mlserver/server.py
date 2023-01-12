@@ -43,25 +43,8 @@ class MLServer:
             repository=self._model_repository, model_registry=self._model_registry
         )
 
-        logger.setLevel(logging.INFO)
-        if self._settings.debug:
-            logger.setLevel(logging.DEBUG)
-
-        self._logger = configure_logger(settings)
-        self._rest_server = RESTServer(
-            self._settings, self._data_plane, self._model_repository_handlers
-        )
-        self._grpc_server = GRPCServer(
-            self._settings, self._data_plane, self._model_repository_handlers
-        )
-
-        self._kafka_server = None
-        if self._settings.kafka_enabled:
-            self._kafka_server = KafkaServer(self._settings, self._data_plane)
-
-        self._metrics_server = None
-        if self._settings.metrics_endpoint:
-            self._metrics_server = MetricsServer(self._settings)
+        self._configure_logger()
+        self._create_servers()
 
     def _create_model_registry(self) -> MultiModelRegistry:
         on_model_load = [
@@ -92,8 +75,30 @@ class MLServer:
             on_model_unload=on_model_unload,  # type: ignore
         )
 
-    async def start(self, models_settings: List[ModelSettings] = []):
+    def _configure_logger(self):
+        logger.setLevel(logging.INFO)
+        if self._settings.debug:
+            logger.setLevel(logging.DEBUG)
 
+        self._logger = configure_logger(settings)
+
+    def _create_servers(self):
+        self._rest_server = RESTServer(
+            self._settings, self._data_plane, self._model_repository_handlers
+        )
+        self._grpc_server = GRPCServer(
+            self._settings, self._data_plane, self._model_repository_handlers
+        )
+
+        self._kafka_server = None
+        if self._settings.kafka_enabled:
+            self._kafka_server = KafkaServer(self._settings, self._data_plane)
+
+        self._metrics_server = None
+        if self._settings.metrics_endpoint:
+            self._metrics_server = MetricsServer(self._settings)
+
+    async def start(self, models_settings: List[ModelSettings] = []):
         servers = [self._rest_server.start(), self._grpc_server.start()]
         if self._metrics_server:
             servers.append(self._metrics_server.start())
