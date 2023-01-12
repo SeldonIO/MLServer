@@ -104,9 +104,15 @@ def pack(elem: InputOrOutput) -> bytes:
 def inject_raw(
     elems: List[InputOrOutput], raw_contents: List[bytes]
 ) -> List[InputOrOutput]:
-    for elem, raw in zip(elems, raw_contents):
-        # TODO: Assert that `data` field is empty
-        elem.data = unpack(elem, raw)  # type: ignore
+    raw_idx = 0
+    for elem in elems:
+        if not elem.data:
+            # Only unpack raw entry, if input / output is empty
+            # This is to allow for mixed reqs / resp, where some entries have
+            # data, some entries are raw
+            raw = raw_contents[raw_idx]
+            elem.data = unpack(elem, raw)  # type: ignore
+            raw_idx += 1
 
     return elems
 
