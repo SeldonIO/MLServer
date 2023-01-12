@@ -80,7 +80,7 @@ class MLServer:
         if self._settings.debug:
             logger.setLevel(logging.DEBUG)
 
-        self._logger = configure_logger(settings)
+        self._logger = configure_logger(self._settings)
 
     def _create_servers(self):
         self._rest_server = RESTServer(
