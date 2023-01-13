@@ -1,0 +1,51 @@
+Metadata-Version: 2.1
+Name: tritonclient
+Version: 2.29.0
+Summary: Python client library and utilities for communicating with Triton Inference Server
+Home-page: https://developer.nvidia.com/nvidia-triton-inference-server
+Author: NVIDIA Inc.
+Author-email: sw-dl-triton@nvidia.com
+License: BSD
+Keywords: grpc,http,triton,tensorrt,inference,server,service,client,nvidia
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Intended Audience :: Developers
+Classifier: Intended Audience :: Science/Research
+Classifier: Intended Audience :: Information Technology
+Classifier: Topic :: Scientific/Engineering
+Classifier: Topic :: Scientific/Engineering :: Image Recognition
+Classifier: Topic :: Scientific/Engineering :: Artificial Intelligence
+Classifier: Topic :: Software Development :: Libraries
+Classifier: Topic :: Utilities
+Classifier: License :: OSI Approved :: BSD License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Environment :: Console
+Classifier: Natural Language :: English
+Classifier: Operating System :: OS Independent
+Description-Content-Type: text/markdown
+License-File: LICENSE.txt
+Requires-Dist: numpy (>=1.19.1)
+Requires-Dist: python-rapidjson (>=0.9.1)
+Provides-Extra: all
+Requires-Dist: protobuf (<3.20,>=3.5.0) ; extra == 'all'
+Requires-Dist: grpcio (==1.42.0) ; extra == 'all'
+Requires-Dist: numpy (>=1.19.1) ; extra == 'all'
+Requires-Dist: python-rapidjson (>=0.9.1) ; extra == 'all'
+Requires-Dist: geventhttpclient (<=2.0.2,>=1.4.4) ; extra == 'all'
+Requires-Dist: aiohttp (>=3.8.1) ; extra == 'all'
+Provides-Extra: grpc
+Requires-Dist: protobuf (<3.20,>=3.5.0) ; extra == 'grpc'
+Requires-Dist: grpcio (==1.42.0) ; extra == 'grpc'
+Requires-Dist: numpy (>=1.19.1) ; extra == 'grpc'
+Requires-Dist: python-rapidjson (>=0.9.1) ; extra == 'grpc'
+Provides-Extra: http
+Requires-Dist: geventhttpclient (<=2.0.2,>=1.4.4) ; extra == 'http'
+Requires-Dist: aiohttp (>=3.8.1) ; extra == 'http'
+Requires-Dist: numpy (>=1.19.1) ; extra == 'http'
+Requires-Dist: python-rapidjson (>=0.9.1) ; extra == 'http'
+
+See [download-using-python-package-installer-pip](https://github.com/triton-inference-server/client/tree/main#download-using-python-package-installer-pip) for package details.
+
+The [client examples](https://github.com/triton-inference-server/client/tree/main/src/python/examples) demonstrate how to use the package to issue request to [triton inference server](https://github.com/triton-inference-server/server).

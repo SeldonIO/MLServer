@@ -40,7 +40,6 @@ def invalid_among_many():
 def many_input():
     return os.path.join(TESTDATA_PATH, "batch_processing", "many.txt")
 
-
 @pytest.fixture()
 def single_input_with_id():
     return os.path.join(TESTDATA_PATH, "batch_processing", "single_with_id.txt")

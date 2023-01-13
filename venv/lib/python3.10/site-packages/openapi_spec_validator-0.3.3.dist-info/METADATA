@@ -1,0 +1,169 @@
+Metadata-Version: 2.1
+Name: openapi-spec-validator
+Version: 0.3.3
+Summary: OpenAPI 2.0 (aka Swagger) and OpenAPI 3.0 spec validator
+Home-page: https://github.com/p1c2u/openapi-spec-validator
+License: Apache-2.0
+Keywords: openapi,swagger,schema
+Author: Artur Maciag
+Author-email: maciag.artur@gmail.com
+Requires-Python: >=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: Apache Software License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python :: 2
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Topic :: Software Development :: Libraries
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Provides-Extra: dev
+Provides-Extra: requests
+Requires-Dist: PyYAML (>=5.1)
+Requires-Dist: jsonschema (>=3.2.0,<4.0.0)
+Requires-Dist: openapi-schema-validator (<0.2.0)
+Requires-Dist: pathlib2; python_version >= "2.7" and python_version < "2.8"
+Requires-Dist: pyrsistent (<0.17.0)
+Requires-Dist: requests; extra == "requests"
+Requires-Dist: setuptools
+Requires-Dist: six
+Project-URL: Repository, https://github.com/p1c2u/openapi-spec-validator
+Description-Content-Type: text/x-rst
+
+**********************
+OpenAPI Spec validator
+**********************
+
+.. image:: https://img.shields.io/pypi/v/openapi-spec-validator.svg
+     :target: https://pypi.python.org/pypi/openapi-spec-validator
+.. image:: https://travis-ci.org/p1c2u/openapi-spec-validator.svg?branch=master
+     :target: https://travis-ci.org/p1c2u/openapi-spec-validator
+.. image:: https://img.shields.io/codecov/c/github/p1c2u/openapi-spec-validator/master.svg?style=flat
+     :target: https://codecov.io/github/p1c2u/openapi-spec-validator?branch=master
+.. image:: https://img.shields.io/pypi/pyversions/openapi-spec-validator.svg
+     :target: https://pypi.python.org/pypi/openapi-spec-validator
+.. image:: https://img.shields.io/pypi/format/openapi-spec-validator.svg
+     :target: https://pypi.python.org/pypi/openapi-spec-validator
+.. image:: https://img.shields.io/pypi/status/openapi-spec-validator.svg
+     :target: https://pypi.python.org/pypi/openapi-spec-validator
+
+About
+#####
+
+OpenAPI Spec Validator is a Python library that validates OpenAPI Specs
+against the `OpenAPI 2.0 (aka
+Swagger) <https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md>`__
+and `OpenAPI
+3.0 <https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md>`__
+specification. The validator aims to check for full compliance with the
+Specification.
+
+Installation
+############
+
+::
+
+    $ pip install openapi-spec-validator
+
+Alternatively you can download the code and install from the repository:
+
+.. code-block:: bash
+
+   $ pip install -e git+https://github.com/p1c2u/openapi-spec-validator.git#egg=openapi_spec_validator
+
+
+Usage
+#####
+
+Command Line Interface
+**********************
+
+Straight forward way:
+
+.. code:: bash
+
+    $ openapi-spec-validator openapi.yaml
+
+pipes way:
+
+.. code:: bash
+
+    $ cat openapi.yaml | openapi-spec-validator -
+
+docker way:
+
+.. code:: bash
+
+    $ docker run -v path/to/openapi.yaml:/openapi.yaml --rm p1c2u/openapi-spec-validator /openapi.yaml
+
+or more pythonic way:
+
+.. code:: bash
+
+    $ python -m openapi_spec_validator openapi.yaml
+
+Examples
+********
+
+By default, OpenAPI v3 syntax is expected. To validate an OpenAPI v3 spec:
+
+.. code:: python
+
+    from openapi_spec_validator import validate_spec
+    from openapi_spec_validator.readers import read_from_filename
+
+    spec_dict, spec_url = read_from_filename('openapi.yaml')
+
+    # If no exception is raised by validate_spec(), the spec is valid.
+    validate_spec(spec_dict)
+
+    validate_spec({})
+
+    Traceback (most recent call last):
+        ...
+    OpenAPIValidationError: 'openapi' is a required property
+    
+In order to validate a Swagger / OpenAPI 2.0 spec file, import ``validate_v2_spec`` instead of ``validate_spec``. You can also explicitly import ``validate_v3_spec`` if you want to disambiguate the expected version.
+
+Add ``spec_url`` to validate spec with relative files:
+
+.. code:: python
+
+    validate_spec(spec_dict, spec_url='file:///path/to/spec/openapi.yaml')
+
+You can also validate spec from url:
+
+.. code:: python
+
+    from openapi_spec_validator import validate_spec_url
+
+    # If no exception is raised by validate_spec_url(), the spec is valid.
+    validate_spec_url('http://example.com/openapi.json')
+
+If you want to iterate through validation errors:
+
+.. code:: python
+
+    from openapi_spec_validator import openapi_v3_spec_validator
+
+    errors_iterator = openapi_v3_spec_validator.iter_errors(spec)
+
+Related projects
+################
+
+* `openapi-core <https://github.com/p1c2u/openapi-core>`__
+   Python library that adds client-side and server-side support for the OpenAPI.
+* `openapi-schema-validator <https://github.com/p1c2u/openapi-schema-validator>`__
+   Python library that validates schema against the OpenAPI Schema Specification v3.0.
+
+License
+#######
+
+Copyright (c) 2017-2021, Artur Maciag, All rights reserved. Apache v2
+

@@ -1,0 +1,25 @@
+Metadata-Version: 2.1
+Name: types-aiofiles
+Version: 22.1.0.4
+Summary: Typing stubs for aiofiles
+Home-page: https://github.com/python/typeshed
+License: Apache-2.0 license
+Project-URL: GitHub, https://github.com/python/typeshed
+Project-URL: Changes, https://github.com/typeshed-internal/stub_uploader/blob/main/data/changelogs/aiofiles.md
+Project-URL: Issue tracker, https://github.com/python/typeshed/issues
+Project-URL: Chat, https://gitter.im/python/typing
+Classifier: License :: OSI Approved :: Apache Software License
+Classifier: Programming Language :: Python :: 3
+Classifier: Typing :: Stubs Only
+Description-Content-Type: text/markdown
+
+## Typing stubs for aiofiles
+
+This is a PEP 561 type stub package for the `aiofiles` package.
+It can be used by type-checking tools like mypy, PyCharm, pytype etc. to check code
+that uses `aiofiles`. The source for this package can be found at
+https://github.com/python/typeshed/tree/main/stubs/aiofiles. All fixes for
+types and metadata should be contributed there.
+
+See https://github.com/python/typeshed/blob/main/README.md for more details.
+This package was generated from typeshed commit `553e7d46f0d1646b484f153fcc99f7aa9ad543f3`.
