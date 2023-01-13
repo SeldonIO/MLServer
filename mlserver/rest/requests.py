@@ -13,6 +13,7 @@ class Request(_Request):
     Custom request class which uses `orjson` if present.
     Otherwise, it falls back to the standard FastAPI request.
     """
+
     async def body(self) -> bytes:
         if not hasattr(self, "_body"):
             body = await super().body()
