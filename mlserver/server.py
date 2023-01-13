@@ -83,6 +83,12 @@ class MLServer:
         self._logger = configure_logger(self._settings)
 
     def _create_servers(self):
+        # NOTE: Metrics server needs to be created first, to initialise the
+        # multiprocess collector (if needed)
+        self._metrics_server = None
+        if self._settings.metrics_endpoint:
+            self._metrics_server = MetricsServer(self._settings)
+
         self._rest_server = RESTServer(
             self._settings, self._data_plane, self._model_repository_handlers
         )
@@ -93,10 +99,6 @@ class MLServer:
         self._kafka_server = None
         if self._settings.kafka_enabled:
             self._kafka_server = KafkaServer(self._settings, self._data_plane)
-
-        self._metrics_server = None
-        if self._settings.metrics_endpoint:
-            self._metrics_server = MetricsServer(self._settings)
 
     async def start(self, models_settings: List[ModelSettings] = []):
         servers = [self._rest_server.start(), self._grpc_server.start()]

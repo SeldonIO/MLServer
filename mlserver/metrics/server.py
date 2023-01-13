@@ -1,11 +1,13 @@
 import uvicorn
 
+from typing import Optional
+
 from fastapi import FastAPI
 from starlette_exporter import handle_metrics
 
 from ..settings import Settings
 from .logging import logger
-from typing import Optional
+from .prometheus import get_registry
 
 
 class _NoSignalServer(uvicorn.Server):
@@ -17,6 +19,7 @@ class MetricsServer:
     def __init__(self, settings: Settings):
         self._settings = settings
         self._app = self._get_app()
+        self._registry = get_registry(settings)
 
     def _get_app(self):
         app = FastAPI(debug=self._settings.debug)
