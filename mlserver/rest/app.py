@@ -117,7 +117,7 @@ def create_app(
         default_response_class=Response,
         exception_handlers=_EXCEPTION_HANDLERS,  # type: ignore
     )
-
+    app.router.route_class = APIRoute
     app.add_middleware(GZipMiddleware)
     if settings.cors_settings is not None:
         app.add_middleware(
