@@ -148,7 +148,7 @@ class Settings(BaseSettings):
     Metrics rest server string prefix to be exported.
     """
 
-    metrics_dir: Optional[str] = None
+    metrics_dir: str = os.getcwd()
     """
     Directory used to share metrics across parallel workers.
     Equivalent to the `PROMETHEUS_MULTIPROC_DIR` env var in
