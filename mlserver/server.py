@@ -15,7 +15,7 @@ from .parallel import InferencePool
 from .batching import load_batching
 from .rest import RESTServer
 from .grpc import GRPCServer
-from .metrics import MetricsServer, stop_metrics
+from .metrics import MetricsServer
 from .kafka import KafkaServer
 from .utils import logger
 
@@ -27,11 +27,19 @@ class MLServer:
         self._settings = settings
         self._add_signal_handlers()
 
+        self._metrics_server = None
+        if self._settings.metrics_endpoint:
+            self._metrics_server = MetricsServer(self._settings)
+
         self._inference_pool = None
         if self._settings.parallel_workers:
             # Only load inference pool if parallel inference has been enabled
+            on_worker_stop = []
+            if self._metrics_server:
+                on_worker_stop = [self._metrics_server.on_worker_stop]
+
             self._inference_pool = InferencePool(
-                self._settings, on_worker_stop=[stop_metrics]
+                self._settings, on_worker_stop=on_worker_stop
             )
 
         self._model_registry = self._create_model_registry()
@@ -85,12 +93,6 @@ class MLServer:
         self._logger = configure_logger(self._settings)
 
     def _create_servers(self):
-        # NOTE: Metrics server needs to be created first, to initialise the
-        # multiprocess collector (if needed)
-        self._metrics_server = None
-        if self._settings.metrics_endpoint:
-            self._metrics_server = MetricsServer(self._settings)
-
         self._rest_server = RESTServer(
             self._settings, self._data_plane, self._model_repository_handlers
         )

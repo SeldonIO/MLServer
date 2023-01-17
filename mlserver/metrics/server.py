@@ -7,7 +7,7 @@ from fastapi import FastAPI
 
 from ..settings import Settings
 from .logging import logger
-from .prometheus import PrometheusEndpoint
+from .prometheus import PrometheusEndpoint, stop_metrics
 
 
 class _NoSignalServer(uvicorn.Server):
@@ -25,6 +25,11 @@ class MetricsServer:
         app = FastAPI(debug=self._settings.debug)
         app.add_route(self._settings.metrics_endpoint, self._endpoint.handle_metrics)
         return app
+
+    async def on_worker_stop(self, worker: "mlserver.parallel.Worker"):
+        # NOTE: If a worker gets restarted (instead of regular shutdown), we may
+        # not want to remove old files to keep counts intact
+        await stop_metrics(self._settings, worker.pid)
 
     async def start(self):
         cfg = self._get_config()
@@ -63,5 +68,5 @@ class MetricsServer:
         return uvicorn.Config(self._app, **kwargs)
 
     async def stop(self, sig: Optional[int] = None):
-        mark_process_dead(os.getpid())
+        await stop_metrics(self._settings, os.getpid())
         self._server.handle_exit(sig=sig, frame=None)

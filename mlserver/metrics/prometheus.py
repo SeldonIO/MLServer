@@ -1,5 +1,8 @@
+import glob
 import os
+import asyncio
 
+from aiofiles.os import remove
 from prometheus_client import (
     REGISTRY,
     CollectorRegistry,
@@ -27,8 +30,14 @@ def configure_metrics(settings: Settings):
     values.ValueClass = values.get_value_class()
 
 
-async def stop_metrics(worker: "mlserver.parallel.Worker"):
-    mark_process_dead(worker.pid)
+async def stop_metrics(settings: Settings, pid: int):
+    if not settings.parallel_workers:
+        return
+
+    mark_process_dead(pid)
+    pattern = os.path.join(settings.metrics_dir, f"*_{pid}.db")
+    matching_files = glob.glob(pattern)
+    await asyncio.gather(*[remove(f) for f in matching_files])
 
 
 class PrometheusEndpoint:
