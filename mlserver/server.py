@@ -15,7 +15,7 @@ from .parallel import InferencePool
 from .batching import load_batching
 from .rest import RESTServer
 from .grpc import GRPCServer
-from .metrics import MetricsServer
+from .metrics import MetricsServer, stop_metrics
 from .kafka import KafkaServer
 from .utils import logger
 
@@ -30,7 +30,9 @@ class MLServer:
         self._inference_pool = None
         if self._settings.parallel_workers:
             # Only load inference pool if parallel inference has been enabled
-            self._inference_pool = InferencePool(self._settings)
+            self._inference_pool = InferencePool(
+                self._settings, on_worker_stop=[stop_metrics]
+            )
 
         self._model_registry = self._create_model_registry()
         self._model_repository = ModelRepositoryFactory.resolve_model_repository(

@@ -3,12 +3,11 @@ from prometheus_client.multiprocess import MultiProcessCollector
 
 from mlserver.settings import Settings
 
-from mlserver.metrics.prometheus import get_registry
+from mlserver.metrics.prometheus import PrometheusEndpoint
 
 
-def test_get_registry(settings: Settings):
-    registry = get_registry(settings)
-    collectors = [c for c in registry._collector_to_names.keys()]
+def test_get_registry(prometheus_endpoint: PrometheusEndpoint, settings: Settings):
+    collectors = [c for c in prometheus_endpoint._registry._collector_to_names.keys()]
 
     assert len(collectors) == 1
     assert isinstance(collectors[0], MultiProcessCollector)
@@ -17,6 +16,6 @@ def test_get_registry(settings: Settings):
 
 def test_get_registry_no_parallel(settings: Settings):
     settings.parallel_workers = 0
-    registry = get_registry(settings)
+    endpoint = PrometheusEndpoint(settings)
 
-    assert registry == REGISTRY
+    assert endpoint._registry == REGISTRY

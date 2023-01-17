@@ -7,7 +7,7 @@ from prometheus_client import (
     CONTENT_TYPE_LATEST,
     values,
 )
-from prometheus_client.multiprocess import MultiProcessCollector
+from prometheus_client.multiprocess import MultiProcessCollector, mark_process_dead
 from fastapi import Request, Response, status
 
 from ..settings import Settings
@@ -25,6 +25,10 @@ def configure_metrics(settings: Settings):
     # https://github.com/prometheus/client_python/blob/781e3e1851d80a53732bb8102d5754cf9d68b3c1/prometheus_client/values.py#L126-L134
     os.environ[PROMETHEUS_MULTIPROC_DIR] = settings.metrics_dir
     values.ValueClass = values.get_value_class()
+
+
+async def stop_metrics(worker: "mlserver.parallel.Worker"):
+    mark_process_dead(worker.pid)
 
 
 class PrometheusEndpoint:
