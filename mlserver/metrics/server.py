@@ -1,4 +1,5 @@
 import uvicorn
+import os
 
 from typing import Optional
 
@@ -62,4 +63,5 @@ class MetricsServer:
         return uvicorn.Config(self._app, **kwargs)
 
     async def stop(self, sig: Optional[int] = None):
+        mark_process_dead(os.getpid())
         self._server.handle_exit(sig=sig, frame=None)
