@@ -15,11 +15,12 @@ def prometheus_endpoint(settings: Settings) -> PrometheusEndpoint:
 
 
 @pytest.fixture
-def settings(settings: Settings) -> Settings:
+def settings(settings: Settings, tmp_path: str) -> Settings:
     http_port, grpc_port, metrics_port = get_available_ports(3)
     settings.http_port = http_port
     settings.grpc_port = grpc_port
     settings.metrics_port = metrics_port
+    settings.metrics_dir = str(tmp_path)
 
     return settings
 
