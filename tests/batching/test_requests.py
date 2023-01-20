@@ -288,7 +288,7 @@ def test_merged_request(
                     shape=[1, 3],
                     data=[1, 2, 3],
                     parameters=Parameters(
-                        content_type="np", foo="['foo_1']", bar="['bar_1']"
+                        content_type="np", foo="foo_1", bar="bar_1"
                     ),
                 ),
                 ResponseOutput(
@@ -297,7 +297,7 @@ def test_merged_request(
                     shape=[1, 3],
                     data=[4, 5, 6],
                     parameters=Parameters(
-                        content_type="np", foo="['foo_2']", bar="['bar_2']"
+                        content_type="np", foo="foo_2", bar="bar_2"
                     ),
                 ),
                 ResponseOutput(
@@ -305,7 +305,7 @@ def test_merged_request(
                     datatype="INT32",
                     shape=[1, 3],
                     data=[7, 8, 9],
-                    parameters=Parameters(content_type="np", bar="['bar_3']"),
+                    parameters=Parameters(content_type="np", bar="bar_3"),
                 ),
             ],
         ),

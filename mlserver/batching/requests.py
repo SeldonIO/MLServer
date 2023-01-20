@@ -270,9 +270,12 @@ class BatchedRequests:
             for parameter_name, parameter_values in merged_parameters.items():
                 if parameter_name in ["content_type", "headers"]:
                     continue
-                parameter_value = parameter_values[idx : idx + minibatch_size]
-                if parameter_value != []:
-                    parameter_args[parameter_name] = str(parameter_value)
+                try:
+                    parameter_value = parameter_values[idx]
+                    if parameter_value != []:
+                        parameter_args[parameter_name] = str(parameter_value)
+                except IndexError:
+                    pass
             if "content_type" in merged_parameters.keys():
                 parameter_args["content_type"] = merged_parameters["content_type"]
             if "headers" in merged_parameters.keys():
