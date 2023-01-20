@@ -71,3 +71,95 @@ The expected values are:
 
 - `T`, where `T > 0`, will wait `T` seconds at most.
 - `0`, will disable adaptive batching.
+
+### Merge and split of custom paramters
+
+MLserver allows adding custom parameters to the `parameters` field of the requests.
+These parameters are recived as a merged list of parameters inside the server, e.g.
+```python
+# request 1
+types.RequestInput(
+    name="parameters-np",
+    shape=[1],
+    datatype="BYTES",
+    data=[],
+    parameters=types.Parameters(
+        custom-param='value-1',
+    )
+)
+
+# request 2
+types.RequestInput(
+    name="parameters-np",
+    shape=[1],
+    datatype="BYTES",
+    data=[],
+    parameters=types.Parameters(
+        custom-param='value-2',
+    )
+)
+```
+
+is recived as follows in the batched request in the server:
+```python
+types.RequestInput(
+    name="parameters-np",
+    shape=[2],
+    datatype="BYTES",
+    data=[],
+    parameters=types.Parameters(
+        custom-param=['value-1', 'value-2'],
+    )
+)
+```
+
+The same way if the request is sent back from the server as a batched request
+
+```python
+types.ResponseOutput(
+    name="foo",
+    datatype="INT32",
+    shape=[3, 3],
+    data=[1, 2, 3, 4, 5, 6, 7, 8, 9],
+    parameters=types.Parameters(
+        content_type="np",
+        foo=["foo_1", "foo_2"],
+        bar=["bar_1", "bar_2", "bar_3"],
+    ),
+)
+```
+
+it will be returned unbatched from the server as follows:
+
+```python
+# Request 1
+types.ResponseOutput(
+    name="foo",
+    datatype="INT32",
+    shape=[1, 3],
+    data=[1, 2, 3],
+    parameters=types.Parameters(
+        content_type="np", foo="foo_1", bar="'bar_1"
+    ),
+)
+
+# Request 2
+types.ResponseOutput(
+    name="foo",
+    datatype="INT32",
+    shape=[1, 3],
+    data=[4, 5, 6],
+    parameters=types.Parameters(
+        content_type="np", foo="foo_2", bar="bar_2"
+    ),
+)
+
+# Request 3
+types.ResponseOutput(
+    name="foo",
+    datatype="INT32",
+    shape=[1, 3],
+    data=[7, 8, 9],
+    parameters=types.Parameters(content_type="np", bar="bar_3"),
+)
+```
