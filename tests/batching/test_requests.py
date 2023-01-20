@@ -287,18 +287,14 @@ def test_merged_request(
                     datatype="INT32",
                     shape=[1, 3],
                     data=[1, 2, 3],
-                    parameters=Parameters(
-                        content_type="np", foo="foo_1", bar="bar_1"
-                    ),
+                    parameters=Parameters(content_type="np", foo="foo_1", bar="bar_1"),
                 ),
                 ResponseOutput(
                     name="foo",
                     datatype="INT32",
                     shape=[1, 3],
                     data=[4, 5, 6],
-                    parameters=Parameters(
-                        content_type="np", foo="foo_2", bar="bar_2"
-                    ),
+                    parameters=Parameters(content_type="np", foo="foo_2", bar="bar_2"),
                 ),
                 ResponseOutput(
                     name="foo",
