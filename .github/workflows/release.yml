@@ -67,6 +67,18 @@ jobs:
             -t $MLSERVER_IMAGE
         env:
           MLSERVER_IMAGE: seldonio/mlserver:${{ github.event.inputs.version }}
+      - name: Check Docker Image for Vulnerabilities
+        uses: snyk/actions/docker@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          image: seldonio/mlserver:${{ github.event.inputs.version }}
+      - name: Check Docker Slim Image for Vulnerabilities
+        uses: snyk/actions/docker@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          image: seldonio/mlserver:${{ github.event.inputs.version }}-slim
       - name: Login to DockerHub
         uses: docker/login-action@v2
         with:
@@ -165,6 +177,12 @@ jobs:
             -t $RUNTIME_IMAGE
         env:
           RUNTIME_IMAGE: seldonio/mlserver:${{ github.event.inputs.version }}-${{ matrix.runtime }}
+      - name: Check Docker Image for Vulnerabilities
+        uses: snyk/actions/docker@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          image: seldonio/mlserver:${{ github.event.inputs.version }}-${{ matrix.runtime }}
       - name: Login to DockerHub
         uses: docker/login-action@v2
         with:

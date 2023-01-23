@@ -24,6 +24,15 @@ jobs:
         run: |
           make lint
 
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Check for vulnerabilities
+        uses: snyk/actions/python@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
   tests:
     runs-on: ubuntu-latest
     strategy:
