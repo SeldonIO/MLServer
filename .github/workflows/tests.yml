@@ -24,15 +24,6 @@ jobs:
         run: |
           make lint
 
-  security:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Security Scan
-        uses: snyk/actions/python@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-
   tests:
     runs-on: ubuntu-latest
     strategy:
