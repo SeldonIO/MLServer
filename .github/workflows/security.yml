@@ -1,16 +1,34 @@
-name: MLServer Tests
+name: MLServer Security Scan
 
 on:
   push:
     branches:
       - master
       - release/*
+  workflow_dispatch:
 
 jobs:
   security:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Install dependencies
+        run: |
+          make install-dev
+      - name: Create requirements.txt
+        run: |
+          # Snyk has issues working with complex setup.py files (e.g.
+          # https://github.com/snyk/cli/issues/1367).
+          # To account for this, we set up the environment and then dump it
+          # into a `requirements.txt` - this env includes both production and
+          # development dependencies.
+          # TODO: Once we move into Poetry, this can be replaced for the lock
+          # file.
+          pip freeze > requirements.txt
       - name: Security Scan
         uses: snyk/actions/python@master
         env:
