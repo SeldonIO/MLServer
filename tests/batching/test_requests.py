@@ -275,6 +275,43 @@ def test_merged_request(
                 datatype="INT32",
                 shape=[3, 3],
                 data=[1, 2, 3, 4, 5, 6, 7, 8, 9],
+                parameters=Parameters(
+                    content_type="np",
+                    foo=["foo_1", "foo_2"],
+                    bar=["bar_1", "bar_2", "bar_3"],
+                ),
+            ),
+            [
+                ResponseOutput(
+                    name="foo",
+                    datatype="INT32",
+                    shape=[1, 3],
+                    data=[1, 2, 3],
+                    parameters=Parameters(content_type="np", foo="foo_1", bar="bar_1"),
+                ),
+                ResponseOutput(
+                    name="foo",
+                    datatype="INT32",
+                    shape=[1, 3],
+                    data=[4, 5, 6],
+                    parameters=Parameters(content_type="np", foo="foo_2", bar="bar_2"),
+                ),
+                ResponseOutput(
+                    name="foo",
+                    datatype="INT32",
+                    shape=[1, 3],
+                    data=[7, 8, 9],
+                    parameters=Parameters(content_type="np", bar="bar_3"),
+                ),
+            ],
+        ),
+        (
+            {"req-1": 1, "req-2": 1, "req-3": 1},
+            ResponseOutput(
+                name="foo",
+                datatype="INT32",
+                shape=[3, 3],
+                data=[1, 2, 3, 4, 5, 6, 7, 8, 9],
                 parameters=Parameters(content_type="np"),
             ),
             [
