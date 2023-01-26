@@ -10,12 +10,6 @@ from ..utils import RESTClient
 from .utils import MetricsClient, find_metric
 
 
-@pytest.fixture
-async def rest_client(mlserver: MLServer, settings: Settings):
-    http_server = f"{settings.host}:{settings.http_port}"
-    return RESTClient(http_server)
-
-
 async def test_rest_metrics(
     metrics_client: MetricsClient,
     rest_client: RESTClient,

@@ -1,5 +1,7 @@
 import pytest
 import asyncio
+import glob
+import os
 
 from mlserver.server import MLServer
 from mlserver.settings import Settings, ModelSettings
@@ -42,6 +44,10 @@ async def mlserver(
 
     await server.stop()
     await server_task
+
+    pattern = os.path.join(settings.metrics_dir, "*.db")
+    prom_files = glob.glob(pattern)
+    assert not prom_files
 
 
 @pytest.fixture
