@@ -1,10 +1,7 @@
-import pytest
 import asyncio
 
 from mlserver.model import MLModel
 from mlserver.types import InferenceRequest
-from mlserver.server import MLServer
-from mlserver.settings import Settings
 
 from ..utils import RESTClient
 from .utils import MetricsClient, find_metric
@@ -19,7 +16,7 @@ async def test_rest_metrics(
     await rest_client.wait_until_ready()
     metric_name = "rest_server_requests"
 
-    # Get metrics for gRPC server before sending any requests
+    # Get metrics for REST server before sending any requests
     metrics = await metrics_client.metrics()
     rest_server_requests = find_metric(metrics, metric_name)
     assert rest_server_requests is None

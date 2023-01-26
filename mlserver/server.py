@@ -39,7 +39,7 @@ class MLServer:
                 on_worker_stop = [self._metrics_server.on_worker_stop]
 
             self._inference_pool = InferencePool(
-                self._settings, on_worker_stop=on_worker_stop
+                self._settings, on_worker_stop=on_worker_stop  # type: ignore
             )
 
         self._model_registry = self._create_model_registry()

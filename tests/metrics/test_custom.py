@@ -1,7 +1,6 @@
 import pytest
 import asyncio
 import os
-import glob
 
 from aiofiles.os import path
 from prometheus_client import Counter

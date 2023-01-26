@@ -1,13 +1,16 @@
 import uvicorn
 import os
 
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 
 from fastapi import FastAPI
 
 from ..settings import Settings
 from .logging import logger
 from .prometheus import PrometheusEndpoint, stop_metrics
+
+if TYPE_CHECKING:
+    from ..parallel import Worker
 
 
 class _NoSignalServer(uvicorn.Server):
@@ -26,7 +29,10 @@ class MetricsServer:
         app.add_route(self._settings.metrics_endpoint, self._endpoint.handle_metrics)
         return app
 
-    async def on_worker_stop(self, worker: "mlserver.parallel.Worker"):
+    async def on_worker_stop(self, worker: "Worker") -> None:
+        if not worker.pid:
+            return
+
         # NOTE: If a worker gets restarted (instead of regular shutdown), we may
         # not want to remove old files to keep counts intact
         await stop_metrics(self._settings, worker.pid)

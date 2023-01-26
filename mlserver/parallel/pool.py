@@ -1,7 +1,7 @@
 import asyncio
 
 from multiprocessing import Queue
-from typing import Any, Awaitable, Coroutine, Callable, Dict, List
+from typing import Awaitable, Callable, Dict, List
 
 from ..model import MLModel
 from ..types import InferenceRequest, InferenceResponse
