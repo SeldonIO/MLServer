@@ -1,4 +1,6 @@
 import pytest
+import sys
+import os
 
 from typing import List
 
@@ -57,3 +59,22 @@ def test_get_sys_path(env: Environment, expected: List[str]):
 def test_get_bin_path():
     env = Environment("/env", (3, 9))
     assert env.bin_path == "/env/bin"
+
+
+def test_activate_env():
+    env = Environment("/envs/foo/my-custom-env", (3, 8))
+    assert env._env_path not in ",".join(sys.path)
+    assert env._env_path not in os.environ["PATH"]
+
+    with env:
+        sys_path = env.sys_path
+        assert sys_path
+
+        for i, p in enumerate(sys_path):
+            assert sys.path[i] == p
+
+        bin_paths = os.environ["PATH"].split(os.pathsep)
+        assert bin_paths[0] == env.bin_path
+
+    assert env._env_path not in ",".join(sys.path)
+    assert env._env_path not in os.environ["PATH"]

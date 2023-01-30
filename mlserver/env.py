@@ -1,6 +1,3 @@
-"""
-Utilities to work with custom environments.
-"""
 import os
 import sys
 
@@ -10,7 +7,13 @@ from .logging import logger
 
 
 class Environment:
-    def __init__(self, env_path: str, version_info: tuple):
+    """
+    Custom Python environment.
+    The class can be used as a context manager to enable / disable the custom
+    environment.
+    """
+
+    def __init__(self, env_path: str, version_info: tuple) -> "Environment":
         if len(version_info) < 2:
             logger.warning(
                 "Invalid version info. Expected, at least, two dimensions "
@@ -22,6 +25,10 @@ class Environment:
 
     @classmethod
     def from_executable(cls, executable: str, version_info: tuple) -> "Environment":
+        """
+        Alternative constructor to instantiate an environment from the Python
+        bin executable (rather than the env path).
+        """
         env_path = os.path.dirname(os.path.dirname(executable))
         return cls(env_path, version_info)
 
@@ -45,11 +52,15 @@ class Environment:
     def bin_path(self) -> str:
         return os.path.join(self._env_path, "bin")
 
+    def __enter__(self):
+        self._prev_sys_path = sys.path
+        self._prev_bin_path = os.environ["PATH"]
 
-def activate_env(env_path: str):
-    sys_path = _get_sys_path(env_path)
-    sys.path = [*sys_path, sys.path]
+        sys.path = [*self.sys_path, *self._prev_sys_path]
+        os.environ["PATH"] = os.pathsep.join([self.bin_path, self._prev_bin_path])
 
-    bin_path = _get_bin_path(env_path)
-    prev_path = os.environ["PATH"]
-    os.environ["PATH"] = os.pathsep.join(bin_path, prev_path)
+        return self
+
+    def __exit__(self, *exc_details) -> None:
+        sys.path = self._prev_sys_path
+        os.environ["PATH"] = self._prev_bin_path
