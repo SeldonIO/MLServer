@@ -9,6 +9,11 @@ from .logging import logger
 
 
 def get_sys_path(executable: str, version_info: tuple) -> List[str]:
+    """
+    Returns list of PYTHONPATH (i.e. `sys.path`) to add to the environment for
+    a given Python binary.
+    This ensures that custom environments get loaded correctly.
+    """
     if len(version_info) < 2:
         logger.warning(
             "Invalid version info. Expected, at least, two dimensions "
@@ -27,3 +32,12 @@ def get_sys_path(executable: str, version_info: tuple) -> List[str]:
         os.path.join(lib_path, "lib-dynload"),
         os.path.join(lib_path, "site-packages"),
     ]
+
+
+def get_bin_path(executable: str) -> str:
+    """
+    Returns `./bin` path from custom environment (to be added to PATH env var).
+    This ensures that CLI binaries (e.g. Conda-installed Java) are available in
+    custom environments.
+    """
+    return os.path.dirname(executable)
