@@ -2,42 +2,54 @@
 Utilities to work with custom environments.
 """
 import os
+import sys
 
 from typing import List
 
 from .logging import logger
 
 
-def get_sys_path(executable: str, version_info: tuple) -> List[str]:
-    """
-    Returns list of PYTHONPATH (i.e. `sys.path`) to add to the environment for
-    a given Python binary.
-    This ensures that custom environments get loaded correctly.
-    """
-    if len(version_info) < 2:
-        logger.warning(
-            "Invalid version info. Expected, at least, two dimensions "
-            f"(i.e. (major, minor, ...)) but got {version_info}"
-        )
-        return []
+class Environment:
+    def __init__(self, env_path: str, version_info: tuple):
+        if len(version_info) < 2:
+            logger.warning(
+                "Invalid version info. Expected, at least, two dimensions "
+                f"(i.e. (major, minor, ...)) but got {version_info}"
+            )
 
-    env_path = os.path.dirname(os.path.dirname(executable))
-    major = version_info[0]
-    minor = version_info[1]
-    lib_path = os.path.join(env_path, "lib", f"python{major}.{minor}")
+        self._env_path = env_path
+        self._version_info = version_info
 
-    return [
-        f"{lib_path}.zip",
-        lib_path,
-        os.path.join(lib_path, "lib-dynload"),
-        os.path.join(lib_path, "site-packages"),
-    ]
+    @classmethod
+    def from_executable(cls, executable: str, version_info: tuple) -> "Environment":
+        env_path = os.path.dirname(os.path.dirname(executable))
+        return cls(env_path, version_info)
+
+    @property
+    def sys_path(self) -> List[str]:
+        if len(self._version_info) < 2:
+            return []
+
+        major = self._version_info[0]
+        minor = self._version_info[1]
+        lib_path = os.path.join(self._env_path, "lib", f"python{major}.{minor}")
+
+        return [
+            f"{lib_path}.zip",
+            lib_path,
+            os.path.join(lib_path, "lib-dynload"),
+            os.path.join(lib_path, "site-packages"),
+        ]
+
+    @property
+    def bin_path(self) -> str:
+        return os.path.join(self._env_path, "bin")
 
 
-def get_bin_path(executable: str) -> str:
-    """
-    Returns `./bin` path from custom environment (to be added to PATH env var).
-    This ensures that CLI binaries (e.g. Conda-installed Java) are available in
-    custom environments.
-    """
-    return os.path.dirname(executable)
+def activate_env(env_path: str):
+    sys_path = _get_sys_path(env_path)
+    sys.path = [*sys_path, sys.path]
+
+    bin_path = _get_bin_path(env_path)
+    prev_path = os.environ["PATH"]
+    os.environ["PATH"] = os.pathsep.join(bin_path, prev_path)

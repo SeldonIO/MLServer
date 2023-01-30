@@ -2,15 +2,28 @@ import pytest
 
 from typing import List
 
-from mlserver.env import get_sys_path, get_bin_path
+from mlserver.env import Environment
 
 
 @pytest.mark.parametrize(
-    "executable, version_info, expected",
+    "executable, expected",
+    [
+        ("/env/bin/python", "/env"),
+        ("/env/bin/python3", "/env"),
+        ("/envs/my-env/bin/python3", "/envs/my-env"),
+    ],
+)
+def from_executable(executable: str, expected: str):
+    env = Environment.from_executable(executable, (3, 8))
+    assert env._env_path == expected
+    assert env._version_info == (3, 8)
+
+
+@pytest.mark.parametrize(
+    "env, expected",
     [
         (
-            "/custom-environment/env/bin/python",
-            (3, 9),
+            Environment("/custom-environment/env", (3, 9)),
             [
                 "/custom-environment/env/lib/python3.9.zip",
                 "/custom-environment/env/lib/python3.9",
@@ -19,8 +32,7 @@ from mlserver.env import get_sys_path, get_bin_path
             ],
         ),
         (
-            "../bin/python",
-            (3, 7),
+            Environment("../", (3, 7)),
             [
                 "../lib/python3.7.zip",
                 "../lib/python3.7",
@@ -29,23 +41,19 @@ from mlserver.env import get_sys_path, get_bin_path
             ],
         ),
         (
-            "/bin/python",
-            (3,),
+            Environment("/", (3,)),
             [],
         ),
         (
-            "/bin/python",
-            (),
+            Environment("/", ()),
             [],
         ),
     ],
 )
-def test_get_sys_path(executable: str, version_info: tuple, expected: List[str]):
-    sys_path = get_sys_path(executable, version_info)
-    assert sys_path == expected
+def test_get_sys_path(env: Environment, expected: List[str]):
+    assert env.sys_path == expected
 
 
 def test_get_bin_path():
-    executable = "/env/bin/python"
-    path = get_bin_path(executable)
-    assert path == "/env/bin"
+    env = Environment("/env", (3, 9))
+    assert env.bin_path == "/env/bin"
