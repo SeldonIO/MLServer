@@ -48,7 +48,9 @@ setup(
         "importlib-metadata;python_version<'3.8'",
         "numpy",
         "pandas",
-        "protobuf",
+        # Force patch for CVE-2022-1941
+        # https://github.com/huggingface/optimum/issues/733
+        "protobuf == 3.20.3",
         "uvicorn",
         "starlette_exporter",
         "py-grpc-prometheus",
