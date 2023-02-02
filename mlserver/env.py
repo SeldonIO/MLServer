@@ -1,7 +1,7 @@
 import os
 import sys
 
-from typing import List
+from typing import Optional, List, Tuple
 
 from .logging import logger
 
@@ -13,15 +13,9 @@ class Environment:
     environment.
     """
 
-    def __init__(self, env_path: str, version_info: tuple) -> "Environment":
-        if len(version_info) < 2:
-            logger.warning(
-                "Invalid version info. Expected, at least, two dimensions "
-                f"(i.e. (major, minor, ...)) but got {version_info}"
-            )
-
+    def __init__(self, env_path: str, version_info: Tuple[str] = None) -> "Environment":
         self._env_path = env_path
-        self._version_info = version_info
+        self.version_info = version_info
 
     @classmethod
     def from_executable(cls, executable: str, version_info: tuple) -> "Environment":
@@ -34,11 +28,11 @@ class Environment:
 
     @property
     def sys_path(self) -> List[str]:
-        if len(self._version_info) < 2:
+        if len(self.version_info) < 2:
             return []
 
-        major = self._version_info[0]
-        minor = self._version_info[1]
+        major = self.version_info[0]
+        minor = self.version_info[1]
         lib_path = os.path.join(self._env_path, "lib", f"python{major}.{minor}")
 
         return [
@@ -51,6 +45,23 @@ class Environment:
     @property
     def bin_path(self) -> str:
         return os.path.join(self._env_path, "bin")
+
+    @property
+    def version_info(self) -> Tuple[str]:
+        if self._version_info is None:
+            return ()
+
+        return self._version_info
+
+    @version_info.setter
+    def version_info(self, v: Optional[Tuple[str]]):
+        if v is not None and len(v) < 2:
+            logger.warning(
+                "Invalid version info. Expected, at least, two dimensions "
+                f"(i.e. (major, minor, ...)) but got {v}"
+            )
+
+        self._version_info = v
 
     def __enter__(self):
         self._prev_sys_path = sys.path
