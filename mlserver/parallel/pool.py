@@ -6,6 +6,7 @@ from typing import Awaitable, Callable, Dict, List
 from ..model import MLModel
 from ..types import InferenceRequest, InferenceResponse
 from ..settings import Settings
+from ..env import Environment
 
 from .model import ParallelModel
 from .worker import Worker
@@ -35,7 +36,10 @@ class InferencePool:
     """
 
     def __init__(
-        self, settings: Settings, on_worker_stop: List[InferencePoolHook] = []
+        self,
+        settings: Settings,
+        env: Environment = None,
+        on_worker_stop: List[InferencePoolHook] = [],
     ):
         configure_inference_pool(settings)
 
@@ -47,7 +51,7 @@ class InferencePool:
         for idx in range(self._settings.parallel_workers):
             # TODO: Set callback to restart worker if it goes down (would
             # `worker.join` help with that?)
-            worker = Worker(settings, self._responses)
+            worker = Worker(settings, self._responses, env)
             worker.start()
             self._workers[worker.pid] = worker  # type: ignore
 
