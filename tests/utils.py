@@ -1,3 +1,4 @@
+import asyncio
 import aiohttp
 import socket
 
@@ -10,6 +11,7 @@ from aiohttp.client_exceptions import (
 )
 from aiohttp_retry import RetryClient, ExponentialRetry
 
+from mlserver.utils import generate_uuid
 from mlserver.types import RepositoryIndexResponse, InferenceRequest, InferenceResponse
 
 
@@ -26,6 +28,28 @@ def get_available_ports(n: int = 1) -> List[int]:
         ports.add(port)
 
     return list(ports)
+
+
+async def _run(cmd):
+    process = await asyncio.create_subprocess_shell(
+        cmd,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+
+    return_code = await process.wait()
+    if return_code != 0:
+        raise Exception(f"Command '{cmd}' failed with code '{return_code}'")
+
+
+async def _pack(env_yml: str, tarball_path: str):
+    uuid = generate_uuid()
+    env_name = f"mlserver-{uuid}"
+    try:
+        await _run(f"conda env create -n {env_name} -f {env_yml}")
+        await _run(f"conda-pack --ignore-missing-files -n {env_name} -o {tarball_path}")
+    finally:
+        await _run(f"conda env remove -n {env_name}")
 
 
 class RESTClient:

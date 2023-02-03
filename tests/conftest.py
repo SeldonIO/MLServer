@@ -20,9 +20,11 @@ from mlserver.logging import get_logger
 from mlserver import types, Settings, ModelSettings
 
 from .fixtures import SumModel, ErrorModel, SimpleModel
+from .utils import _pack
 
 TESTS_PATH = os.path.dirname(__file__)
 TESTDATA_PATH = os.path.join(TESTS_PATH, "testdata")
+TESTDATA_CACHE_PATH = os.path.join(TESTDATA_PATH, ".cache")
 
 
 def assert_not_called_with(self, *args, **kwargs):
@@ -40,6 +42,18 @@ def assert_not_called_with(self, *args, **kwargs):
 
 
 Mock.assert_not_called_with = assert_not_called_with
+
+
+@pytest.fixture
+async def env_tarball(tmp_path: str) -> str:
+    tarball_path = os.path.join(TESTDATA_CACHE_PATH, "environment.tar.gz")
+    if os.path.isfile(tarball_path):
+        return tarball_path
+
+    os.makedirs(TESTDATA_CACHE_PATH, exist_ok=True)
+    env_yml = os.path.join(TESTDATA_PATH, "environment.yml")
+    await _pack(env_yml, tarball_path)
+    return tarball_path
 
 
 @pytest.fixture(autouse=True)
