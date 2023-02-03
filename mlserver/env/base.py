@@ -1,9 +1,17 @@
+import asyncio
 import os
 import sys
+import tarfile
 
 from typing import Optional, List, Tuple
 
-from .logging import logger
+from ..logging import logger
+
+
+def _extract_env(tarball_path: str, env_path: str) -> None:
+    logger.info(f"Extracting environment tarball from {tarball_path}...")
+    with tarfile.open(tarball_path, "r") as tarball:
+        tarball.extractall(path=env_path)
 
 
 class Environment:
@@ -25,6 +33,17 @@ class Environment:
         """
         env_path = os.path.dirname(os.path.dirname(executable))
         return cls(env_path, version_info)
+
+    @classmethod
+    async def from_tarball(cls, tarball_path: str, env_path: str) -> "Environment":
+        loop = asyncio.get_running_loop()
+        await loop.run_in_executor(None, _extract_env, tarball_path, env_path)
+
+        return cls(env_path)
+
+    @property
+    def executable(self) -> str:
+        return os.path.join(self._env_path, "bin", "python")
 
     @property
     def sys_path(self) -> List[str]:

@@ -4,7 +4,14 @@ import os
 
 from typing import List
 
-from mlserver.env import Environment
+from mlserver.env.base import Environment
+
+
+async def test_from_tarball(env_tarball: str, tmp_path: str):
+    env = await Environment.from_tarball(env_tarball, env_path=tmp_path)
+
+    assert env.executable == os.path.join(tmp_path, "bin", "python")
+    assert os.path.isfile(env.executable)
 
 
 @pytest.mark.parametrize(
