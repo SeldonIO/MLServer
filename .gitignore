@@ -55,6 +55,7 @@ lightning_logs
 docs/_build/
 
 # Tests cache folders
+tests/testdata/.cache/**
 runtimes/alibi-explain/tests/.data/**
 runtimes/mlflow/tests/testdata/.cache/**
 
