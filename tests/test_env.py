@@ -4,7 +4,7 @@ import os
 
 from typing import List
 
-from mlserver.env.base import Environment
+from mlserver.env import Environment
 
 
 async def test_from_tarball(env_tarball: str, tmp_path: str):
