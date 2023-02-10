@@ -133,10 +133,10 @@ async def test_worker_env(
     response_message = responses.get()
 
     response = response_message.return_value
-    assert len(response.outputs) == 2
+    assert len(response.outputs) == 1
 
     # Note: These versions come from the `environment.yml` found in
     # `./tests/testdata/environment.yaml`
-    assert response.outputs[1].name == "sklearn_version"
-    [sklearn_version] = StringCodec.decode_output(response.outputs[1])
+    assert response.outputs[0].name == "sklearn_version"
+    [sklearn_version] = StringCodec.decode_output(response.outputs[0])
     assert sklearn_version == "0.24.2"

@@ -2,7 +2,17 @@ import asyncio
 import random
 import string
 import sys
+import os
 import numpy as np
+
+try:
+    # NOTE: This is used in the EnvModel down below, which tests dynamic
+    # loading custom environments.
+    # Therefore, it is expected (and alright) that this package is not present
+    # some times.
+    import sklearn
+except ImportError:
+    sklearn = None
 
 from typing import Dict, List
 
@@ -84,10 +94,6 @@ class SlowModel(MLModel):
 
 class EnvModel(MLModel):
     async def load(self):
-        import sklearn
-
-        v = sys.version_info
-        self._python_version = f"{v.major}.{v.minor}"
         self._sklearn_version = sklearn.__version__
         self.ready = True
         return self.ready

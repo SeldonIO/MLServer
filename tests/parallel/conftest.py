@@ -163,7 +163,6 @@ async def worker_with_env(
 ):
     # NOTE: This fixture will start an actual worker running on a separate
     # process.
-    configure_inference_pool(settings, env)
     worker = Worker(settings, responses, env)
 
     worker.start()
