@@ -18,9 +18,9 @@ async def test_from_tarball(env_tarball: str, tmp_path: str):
 
 def test_sys_path(env: Environment):
     expected = [
-        #  f"{env._env_path}/lib/python3.9.zip",
-        #  f"{env._env_path}/lib/python3.9",
-        #  f"{env._env_path}/lib/python3.9/lib-dynload",
+        f"{env._env_path}/lib/python3.9.zip",
+        f"{env._env_path}/lib/python3.9",
+        f"{env._env_path}/lib/python3.9/lib-dynload",
         f"{env._env_path}/lib/python3.9/site-packages",
     ]
     assert env.sys_path == expected
