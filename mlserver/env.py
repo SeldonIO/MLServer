@@ -2,10 +2,12 @@ import asyncio
 import os
 import sys
 import tarfile
+import glob
 
 from typing import Optional, List, Tuple
+from functools import cached_property
 
-from ..logging import logger
+from .logging import logger
 
 
 def _extract_env(tarball_path: str, env_path: str) -> None:
@@ -21,18 +23,8 @@ class Environment:
     environment.
     """
 
-    def __init__(self, env_path: str, version_info: Tuple[str] = None) -> "Environment":
+    def __init__(self, env_path: str) -> "Environment":
         self._env_path = env_path
-        self.version_info = version_info
-
-    @classmethod
-    def from_executable(cls, executable: str, version_info: tuple) -> "Environment":
-        """
-        Alternative constructor to instantiate an environment from the Python
-        bin executable (rather than the env path).
-        """
-        env_path = os.path.dirname(os.path.dirname(executable))
-        return cls(env_path, version_info)
 
     @classmethod
     async def from_tarball(cls, tarball_path: str, env_path: str) -> "Environment":
@@ -41,46 +33,32 @@ class Environment:
 
         return cls(env_path)
 
-    @property
-    def executable(self) -> str:
-        return os.path.join(self._env_path, "bin", "python")
-
-    @property
+    @cached_property
     def sys_path(self) -> List[str]:
-        if len(self.version_info) < 2:
+        if not self.lib_path:
             return []
 
-        major = self.version_info[0]
-        minor = self.version_info[1]
-        lib_path = os.path.join(self._env_path, "lib", f"python{major}.{minor}")
-
         return [
-            f"{lib_path}.zip",
-            lib_path,
-            os.path.join(lib_path, "lib-dynload"),
-            os.path.join(lib_path, "site-packages"),
+            f"{self.lib_path}.zip",
+            self.lib_path,
+            os.path.join(self.lib_path, "lib-dynload"),
+            os.path.join(self.lib_path, "site-packages"),
         ]
 
-    @property
+    @cached_property
     def bin_path(self) -> str:
         return os.path.join(self._env_path, "bin")
 
-    @property
-    def version_info(self) -> Tuple[str]:
-        if self._version_info is None:
-            return ()
+    @cached_property
+    def lib_path(self) -> str:
+        pattern = os.path.join(self._env_path, "lib", "python*")
+        matches = glob.glob(pattern)
 
-        return self._version_info
+        for match in matches:
+            if os.path.isdir(match):
+                return match
 
-    @version_info.setter
-    def version_info(self, v: Optional[Tuple[str]]):
-        if v is not None and len(v) < 2:
-            logger.warning(
-                "Invalid version info. Expected, at least, two dimensions "
-                f"(i.e. (major, minor, ...)) but got {v}"
-            )
-
-        self._version_info = v
+        return ""
 
     def __enter__(self):
         self._prev_sys_path = sys.path
