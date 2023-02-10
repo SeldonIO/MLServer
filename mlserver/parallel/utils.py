@@ -5,14 +5,13 @@ from asyncio import Task
 from multiprocessing import Queue
 
 from ..settings import Settings
-from ..env import Environment
 
 from .logging import logger
 
 END_OF_QUEUE = None
 
 
-def configure_inference_pool(settings: Settings, env: Environment = None):
+def configure_inference_pool(settings: Settings):
     if not settings.parallel_workers:
         return
 
@@ -27,9 +26,6 @@ def configure_inference_pool(settings: Settings, env: Environment = None):
             "Failed to set multiprocessing's start method. "
             f"Current method is '{method}'"
         )
-
-    if env:
-        multiprocessing.set_executable(env.executable)
 
 
 async def terminate_queue(queue: Queue):
