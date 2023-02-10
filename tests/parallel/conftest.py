@@ -1,23 +1,25 @@
 import asyncio
 import pytest
+import multiprocessing
 
 from multiprocessing import Queue
 
-from mlserver.settings import ModelSettings, ModelParameters
+from mlserver.settings import Settings, ModelSettings, ModelParameters
 from mlserver.types import InferenceRequest
 from mlserver.utils import generate_uuid
 from mlserver.model import MLModel
+from mlserver.env import Environment
 from mlserver.parallel.model import ModelMethods
 from mlserver.parallel.pool import InferencePool
 from mlserver.parallel.worker import Worker
-from mlserver.parallel.utils import cancel_task
+from mlserver.parallel.utils import configure_inference_pool, cancel_task
 from mlserver.parallel.messages import (
     ModelUpdateMessage,
     ModelUpdateType,
     ModelRequestMessage,
 )
 
-from ..fixtures import ErrorModel
+from ..fixtures import ErrorModel, EnvModel
 
 
 @pytest.fixture
@@ -51,7 +53,18 @@ async def load_error_model() -> MLModel:
 
 
 @pytest.fixture
-async def responses() -> Queue:
+def settings(settings: Settings) -> Settings:
+    settings.parallel_workers = 2
+
+    configure_inference_pool(settings)
+    return settings
+
+
+@pytest.fixture
+async def responses(settings: Settings) -> Queue:
+    # NOTE: This fixture depends on settings to ensure the multiprocessing
+    # context has been set ahead of time to `spawn` (handled in the
+    # configure_inference_pool method)
     q = Queue()
     yield q
 
@@ -60,7 +73,7 @@ async def responses() -> Queue:
 
 @pytest.fixture
 async def worker(
-    settings,
+    settings: Settings,
     event_loop,
     responses: Queue,
     load_message: ModelUpdateMessage,
@@ -132,3 +145,40 @@ def custom_request_message(sum_model_settings: ModelSettings) -> ModelRequestMes
         method_name="my_payload",
         method_kwargs={"payload": [1, 2, 3]},
     )
+
+
+@pytest.fixture
+async def env(env_tarball: str, tmp_path: str) -> Environment:
+    return await Environment.from_tarball(env_tarball, tmp_path)
+
+
+@pytest.fixture
+def env_model_settings() -> ModelSettings:
+    from mlserver_sklearn import SKLearnModel
+
+    return ModelSettings(name="env-model", implementation=EnvModel)
+
+
+@pytest.fixture
+async def worker_with_env(
+    settings: Settings,
+    responses: Queue,
+    env: Environment,
+    env_model_settings: ModelSettings,
+):
+    # NOTE: This fixture will start an actual worker running on a separate
+    # process.
+    configure_inference_pool(settings, env)
+    worker = Worker(settings, responses, env)
+
+    worker.start()
+
+    load_message = ModelUpdateMessage(
+        update_type=ModelUpdateType.Load, model_settings=env_model_settings
+    )
+    worker.send_update(load_message)
+    responses.get()
+
+    yield worker
+
+    await worker.stop()

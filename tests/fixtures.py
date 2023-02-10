@@ -96,7 +96,6 @@ class EnvModel(MLModel):
         return InferenceResponse(
             model_name=self.name,
             outputs=[
-                StringCodec.encode_output("python_version", [self._python_version]),
                 StringCodec.encode_output("sklearn_version", [self._sklearn_version]),
             ],
         )

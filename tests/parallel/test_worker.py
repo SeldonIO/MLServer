@@ -1,6 +1,9 @@
+import sys
+
 from multiprocessing import Queue
 
-from mlserver.settings import ModelSettings
+from mlserver.settings import Settings, ModelSettings
+from mlserver.codecs import StringCodec
 from mlserver.parallel.errors import WorkerError
 from mlserver.parallel.worker import Worker
 from mlserver.parallel.messages import ModelUpdateMessage, ModelRequestMessage
@@ -115,3 +118,25 @@ async def test_exception(
     assert response.exception is not None
     assert response.exception.__class__ == WorkerError
     assert str(response.exception) == f"builtins.Exception: {error_msg}"
+
+
+async def test_worker_env(
+    worker_with_env: Worker,
+    responses: Queue,
+    env_model_settings: ModelSettings,
+    inference_request_message: ModelRequestMessage,
+):
+    inference_request_message.model_name = env_model_settings.name
+    inference_request_message.model_version = env_model_settings.version
+
+    worker_with_env.send_request(inference_request_message)
+    response_message = responses.get()
+
+    response = response_message.return_value
+    assert len(response.outputs) == 2
+
+    # Note: These versions come from the `environment.yml` found in
+    # `./tests/testdata/environment.yaml`
+    assert response.outputs[1].name == "sklearn_version"
+    [sklearn_version] = StringCodec.decode_output(response.outputs[1])
+    assert sklearn_version == "0.24.2"
