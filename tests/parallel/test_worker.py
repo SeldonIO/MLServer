@@ -1,6 +1,6 @@
 from multiprocessing import Queue
 
-from mlserver.settings import Settings, ModelSettings
+from mlserver.settings import ModelSettings
 from mlserver.codecs import StringCodec
 from mlserver.parallel.errors import WorkerError
 from mlserver.parallel.worker import Worker

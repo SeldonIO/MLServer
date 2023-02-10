@@ -3,8 +3,6 @@ import sys
 import os
 import shutil
 
-from typing import List
-
 from mlserver.env import Environment
 
 

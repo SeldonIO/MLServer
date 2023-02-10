@@ -2,7 +2,7 @@ import asyncio
 import aiohttp
 import socket
 import yaml
-import subprocess
+
 import sys
 import os
 

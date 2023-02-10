@@ -1,6 +1,5 @@
 import asyncio
 import pytest
-import multiprocessing
 
 from multiprocessing import Queue
 

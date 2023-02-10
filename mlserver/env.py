@@ -4,7 +4,7 @@ import sys
 import tarfile
 import glob
 
-from typing import Optional, List, Tuple
+from typing import List
 from functools import cached_property
 
 from .logging import logger
@@ -23,7 +23,7 @@ class Environment:
     environment.
     """
 
-    def __init__(self, env_path: str) -> "Environment":
+    def __init__(self, env_path: str):
         self._env_path = env_path
 
     @classmethod

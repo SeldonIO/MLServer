@@ -3,7 +3,6 @@ import os
 import shutil
 import asyncio
 import logging
-import shutil
 
 from starlette_exporter import PrometheusMiddleware
 from prometheus_client.registry import REGISTRY, CollectorRegistry

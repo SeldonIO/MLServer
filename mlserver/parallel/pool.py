@@ -1,7 +1,7 @@
 import asyncio
 
 from multiprocessing import Queue
-from typing import Awaitable, Callable, Dict, List
+from typing import Awaitable, Callable, Dict, Optional, List
 
 from ..model import MLModel
 from ..types import InferenceRequest, InferenceResponse
@@ -38,7 +38,7 @@ class InferencePool:
     def __init__(
         self,
         settings: Settings,
-        env: Environment = None,
+        env: Optional[Environment] = None,
         on_worker_stop: List[InferencePoolHook] = [],
     ):
         configure_inference_pool(settings)
