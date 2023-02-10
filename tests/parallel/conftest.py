@@ -148,11 +148,6 @@ def custom_request_message(sum_model_settings: ModelSettings) -> ModelRequestMes
 
 
 @pytest.fixture
-async def env(env_tarball: str, tmp_path: str) -> Environment:
-    return await Environment.from_tarball(env_tarball, tmp_path)
-
-
-@pytest.fixture
 def env_model_settings() -> ModelSettings:
     from mlserver_sklearn import SKLearnModel
 

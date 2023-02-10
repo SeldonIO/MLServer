@@ -3,12 +3,14 @@ import os
 import shutil
 import asyncio
 import logging
+import shutil
 
+from starlette_exporter import PrometheusMiddleware
+from prometheus_client.registry import REGISTRY, CollectorRegistry
 from unittest.mock import Mock
+
 from mlserver.handlers import DataPlane, ModelRepositoryHandlers
 from mlserver.registry import MultiModelRegistry
-from prometheus_client.registry import REGISTRY, CollectorRegistry
-from starlette_exporter import PrometheusMiddleware
 from mlserver.repository import (
     ModelRepository,
     SchemalessModelRepository,
@@ -17,6 +19,7 @@ from mlserver.repository import (
 from mlserver.parallel import InferencePool
 from mlserver.utils import install_uvloop_event_loop
 from mlserver.logging import get_logger
+from mlserver.env import Environment
 from mlserver import types, Settings, ModelSettings
 
 from .fixtures import SumModel, ErrorModel, SimpleModel
@@ -55,6 +58,16 @@ async def env_tarball(tmp_path: str) -> str:
     env_yml = os.path.join(TESTDATA_PATH, "environment.yml")
     await _pack(env_yml, tarball_path)
     return tarball_path
+
+
+@pytest.fixture
+async def env(env_tarball: str, tmp_path: str) -> Environment:
+    env = await Environment.from_tarball(env_tarball, str(tmp_path))
+    yield env
+
+    # Envs can be quite heavy, so let's make sure we're clearing them up once
+    # the test finishes
+    shutil.rmtree(tmp_path)
 
 
 @pytest.fixture(autouse=True)
