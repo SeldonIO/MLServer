@@ -20,7 +20,7 @@ from mlserver.logging import get_logger
 from mlserver import types, Settings, ModelSettings
 
 from .fixtures import SumModel, ErrorModel, SimpleModel
-from .utils import _pack
+from .utils import _pack, _get_tarball_name
 
 TESTS_PATH = os.path.dirname(__file__)
 TESTDATA_PATH = os.path.join(TESTS_PATH, "testdata")
@@ -46,7 +46,8 @@ Mock.assert_not_called_with = assert_not_called_with
 
 @pytest.fixture
 async def env_tarball(tmp_path: str) -> str:
-    tarball_path = os.path.join(TESTDATA_CACHE_PATH, "environment.tar.gz")
+    tarball_name = _get_tarball_name()
+    tarball_path = os.path.join(TESTDATA_CACHE_PATH, tarball_name)
     if os.path.isfile(tarball_path):
         return tarball_path
 

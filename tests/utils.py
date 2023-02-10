@@ -1,7 +1,13 @@
 import asyncio
 import aiohttp
 import socket
+import yaml
+import subprocess
+import sys
+import os
 
+from itertools import filterfalse
+from asyncio import subprocess
 from typing import List
 
 from aiohttp.client_exceptions import (
@@ -42,14 +48,54 @@ async def _run(cmd):
         raise Exception(f"Command '{cmd}' failed with code '{return_code}'")
 
 
+def _read_env(env_yml) -> dict:
+    with open(env_yml, "r") as env_file:
+        return yaml.safe_load(env_file.read())
+
+
+def _write_env(env: dict, env_yml: str):
+    with open(env_yml, "w") as env_file:
+        env_file.write(yaml.dump(env))
+
+
+def _is_python(dep: str) -> bool:
+    return "python" in dep
+
+
+def _inject_python_version(env_yml: str, tarball_path: str) -> str:
+    """
+    To ensure the same environment.yml fixture we've got works across
+    environments, we inject dynamically the current Python version.
+    That way, we ensure tests using the tarball to load a dynamic custom
+    environment are using the same Python version used to run the tests.
+    """
+    env = _read_env(env_yml)
+
+    v = sys.version_info
+    without_python = list(filterfalse(_is_python, env["dependencies"]))
+    with_env_python = [f"python == {v.major}.{v.minor}", *without_python]
+    env["dependencies"] = with_env_python
+
+    dst_folder = os.path.dirname(tarball_path)
+    new_env_yml = os.path.join(dst_folder, f"environment-py{v.major}{v.minor}.yml")
+    _write_env(env, new_env_yml)
+    return new_env_yml
+
+
 async def _pack(env_yml: str, tarball_path: str):
     uuid = generate_uuid()
+    fixed_env_yml = _inject_python_version(env_yml, tarball_path)
     env_name = f"mlserver-{uuid}"
     try:
-        await _run(f"conda env create -n {env_name} -f {env_yml}")
+        await _run(f"conda env create -n {env_name} -f {fixed_env_yml}")
         await _run(f"conda-pack --ignore-missing-files -n {env_name} -o {tarball_path}")
     finally:
         await _run(f"conda env remove -n {env_name}")
+
+
+def _get_tarball_name() -> str:
+    v = sys.version_info
+    return f"environment-py{v.major}{v.minor}.tar.gz"
 
 
 class RESTClient:
