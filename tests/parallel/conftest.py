@@ -149,8 +149,6 @@ def custom_request_message(sum_model_settings: ModelSettings) -> ModelRequestMes
 
 @pytest.fixture
 def env_model_settings() -> ModelSettings:
-    from mlserver_sklearn import SKLearnModel
-
     return ModelSettings(name="env-model", implementation=EnvModel)
 
 
