@@ -1,5 +1,3 @@
-import sys
-
 from multiprocessing import Queue
 
 from mlserver.settings import Settings, ModelSettings

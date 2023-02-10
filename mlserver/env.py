@@ -38,10 +38,18 @@ class Environment:
         if not self.lib_path:
             return []
 
+        # NOTE: We will only expose the modules within `site-packages`.
+        # This modules are those installed by the user, and don't include
+        # Python system libraries.
+        # That way, we will keep using the Python version and modules from the
+        # main MLServer process.
+        # In the future, we may want to allow for a "global" custom env that
+        # also changes Python's system libraries - however, at the moment that
+        # breaks the dispatcher <-> worker pipeline.
         return [
-            f"{self.lib_path}.zip",
-            self.lib_path,
-            os.path.join(self.lib_path, "lib-dynload"),
+            #  f"{self.lib_path}.zip",
+            #  self.lib_path,
+            #  os.path.join(self.lib_path, "lib-dynload"),
             os.path.join(self.lib_path, "site-packages"),
         ]
 

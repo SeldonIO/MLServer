@@ -1,8 +1,6 @@
 import asyncio
 import random
 import string
-import sys
-import os
 import numpy as np
 
 try:
