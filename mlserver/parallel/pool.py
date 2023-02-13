@@ -1,5 +1,7 @@
+import asyncio
+
 from multiprocessing import Queue
-from typing import Any, Coroutine, Callable, Dict
+from typing import Awaitable, Callable, Dict, List
 
 from ..model import MLModel
 from ..types import InferenceRequest, InferenceResponse
@@ -17,7 +19,8 @@ from .logging import logger
 from .dispatcher import Dispatcher
 
 
-PredictMethod = Callable[[InferenceRequest], Coroutine[Any, Any, InferenceResponse]]
+PredictMethod = Callable[[InferenceRequest], Awaitable[InferenceResponse]]
+InferencePoolHook = Callable[[Worker], Awaitable[None]]
 
 
 class InferencePool:
@@ -31,9 +34,13 @@ class InferencePool:
     can occur in parallel across multiple models or instances of a model.
     """
 
-    def __init__(self, settings: Settings):
+    def __init__(
+        self, settings: Settings, on_worker_stop: List[InferencePoolHook] = []
+    ):
         configure_inference_pool(settings)
 
+        # TODO: Hook on_worker_stop to "worker unexpectedly died" event
+        self._on_worker_stop = on_worker_stop
         self._workers: Dict[int, Worker] = {}
         self._settings = settings
         self._responses: Queue[ModelResponseMessage] = Queue()
@@ -120,5 +127,8 @@ class InferencePool:
             worker.join(self._settings.parallel_workers_timeout)
             if worker.exitcode is None:
                 worker.kill()
+            await asyncio.gather(
+                *[callback(worker) for callback in self._on_worker_stop]
+            )
 
         self._workers.clear()

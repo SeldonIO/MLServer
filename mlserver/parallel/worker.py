@@ -10,6 +10,7 @@ from ..registry import MultiModelRegistry
 from ..utils import install_uvloop_event_loop, schedule_with_callback
 from ..logging import configure_logger
 from ..settings import Settings
+from ..metrics import configure_metrics
 
 from .messages import (
     ModelRequestMessage,
@@ -53,6 +54,7 @@ class Worker(Process):
     def run(self):
         install_uvloop_event_loop()
         configure_logger(self._settings)
+        configure_metrics(self._settings)
         self._ignore_signals()
         asyncio.run(self.coro_run())
 
