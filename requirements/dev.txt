@@ -3,7 +3,7 @@ datamodel-code-generator==0.16.1
 
 grpcio-tools==1.48.1
 
-tritonclient[http]==2.29.0
+tritonclient[http]==2.30.0
 
 # Testing
 pytest==7.2.1
