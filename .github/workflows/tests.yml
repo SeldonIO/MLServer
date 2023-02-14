@@ -47,6 +47,7 @@ jobs:
       - uses: conda-incubator/setup-miniconda@v2
         with:
           auto-update-conda: true
+          auto-activate-base: false
       - name: Install dependencies
         run: |
           pip install -r requirements/dev.txt
@@ -69,6 +70,7 @@ jobs:
       - uses: conda-incubator/setup-miniconda@v2
         with:
           auto-update-conda: true
+          auto-activate-base: false
       - name: Install dependencies
         run: |
           pip install -r requirements/dev.txt
