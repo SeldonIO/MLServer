@@ -77,7 +77,6 @@ class DataPlane:
         name: str,
         version: Optional[str] = None,
     ) -> InferenceResponse:
-
         infer_duration = self._ModelInferRequestDuration.labels(
             model=name, version=version
         ).time()

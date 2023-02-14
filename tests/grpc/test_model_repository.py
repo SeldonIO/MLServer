@@ -108,7 +108,6 @@ async def test_model_repository_load_error(
     model_repository_service_stub,
     sum_model_settings,
 ):
-
     with pytest.raises(grpc.RpcError) as err:
         load_request = mr_pb.RepositoryModelLoadRequest(model_name="my-model")
         await model_repository_service_stub.RepositoryModelLoad(load_request)

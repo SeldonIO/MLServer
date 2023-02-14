@@ -91,7 +91,6 @@ async def test_load_folder(
     alibi_detect_tabular_outlier_model_uri: str,
     alibi_detect_tabular_outlier_model_settings: ModelSettings,
 ):
-
     alibi_detect_tabular_outlier_model_settings.parameters.uri = (  # type: ignore
         alibi_detect_tabular_outlier_model_uri
     )

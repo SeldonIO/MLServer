@@ -220,7 +220,6 @@ class BatchedRequests:
     def _split_response_output(
         self, response_output: ResponseOutput
     ) -> Dict[str, ResponseOutput]:
-
         all_data = self._split_data(response_output)
         if response_output.parameters is not None:
             all_parameters = self._split_parameters(response_output)
