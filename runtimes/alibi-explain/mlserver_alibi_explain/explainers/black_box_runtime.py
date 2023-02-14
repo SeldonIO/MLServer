@@ -41,7 +41,6 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
         super().__init__(settings, explainer_settings)
 
     async def load(self) -> bool:
-
         # TODO: use init explainer field instead?
         if self.alibi_explain_settings.init_parameters is not None:
             init_parameters = self.alibi_explain_settings.init_parameters
@@ -54,7 +53,6 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
         return self.ready
 
     def _explain_impl(self, input_data: Any, explain_parameters: Dict) -> Explanation:
-
         # if we get a list of strings, we can only explain the first elem and there
         # is no way of just sending a plain string in v2, it has to be in a list
         # as the encoding is List[str] with content_type "BYTES"

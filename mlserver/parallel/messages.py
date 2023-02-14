@@ -19,7 +19,6 @@ class Message(BaseModel):
 
 
 class ModelRequestMessage(Message):
-
     model_name: str
     model_version: Optional[str] = None
     method_name: str
@@ -37,7 +36,6 @@ class ModelResponseMessage(Message):
 
 
 class ModelUpdateMessage(Message):
-
     update_type: ModelUpdateType
     serialised_model_settings: str
 

@@ -464,7 +464,6 @@ _sym_db.RegisterMessage(RepositoryModelUnloadResponse)
 
 _GRPCINFERENCESERVICE = DESCRIPTOR.services_by_name["GRPCInferenceService"]
 if _descriptor._USE_C_DESCRIPTORS == False:
-
     DESCRIPTOR._options = None
     _MODELMETADATARESPONSE_TENSORMETADATA_PARAMETERSENTRY._options = None
     _MODELMETADATARESPONSE_TENSORMETADATA_PARAMETERSENTRY._serialized_options = b"8\001"
