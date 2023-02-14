@@ -7,6 +7,7 @@ import sys
 import os
 
 from itertools import filterfalse
+
 from asyncio import subprocess
 from typing import List
 
@@ -39,8 +40,8 @@ def get_available_ports(n: int = 1) -> List[int]:
 async def _run(cmd):
     process = await asyncio.create_subprocess_shell(
         cmd,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
+        #  stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
     )
 
     return_code = await process.wait()
