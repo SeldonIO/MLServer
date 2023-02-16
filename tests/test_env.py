@@ -6,6 +6,12 @@ import shutil
 from mlserver.env import Environment
 
 
+@pytest.fixture
+def expected_python_folder() -> str:
+    v = sys.version_info
+    return f"python{v.major}.{v.minor}"
+
+
 async def test_from_tarball(env_tarball: str, tmp_path: str):
     env = await Environment.from_tarball(env_tarball, env_path=tmp_path)
 
@@ -14,12 +20,12 @@ async def test_from_tarball(env_tarball: str, tmp_path: str):
     assert os.path.isdir(env.lib_path)
 
 
-def test_sys_path(env: Environment):
+def test_sys_path(env: Environment, expected_python_folder: str):
     expected = [
-        f"{env._env_path}/lib/python3.9.zip",
-        f"{env._env_path}/lib/python3.9",
-        f"{env._env_path}/lib/python3.9/lib-dynload",
-        f"{env._env_path}/lib/python3.9/site-packages",
+        f"{env._env_path}/lib/{expected_python_folder}.zip",
+        f"{env._env_path}/lib/{expected_python_folder}",
+        f"{env._env_path}/lib/{expected_python_folder}/lib-dynload",
+        f"{env._env_path}/lib/{expected_python_folder}/site-packages",
     ]
     assert env.sys_path == expected
 
@@ -35,9 +41,9 @@ def test_sys_path_empty(env: Environment):
     "folder_name",
     ["python3.9", "python37", "python3.11", ""],
 )
-def test_lib_path(env: Environment, folder_name: str):
+def test_lib_path(env: Environment, folder_name: str, expected_python_folder: str):
     default_lib_path = env.lib_path
-    assert default_lib_path == f"{env._env_path}/lib/python3.9"
+    assert default_lib_path == f"{env._env_path}/lib/{expected_python_folder}"
 
     if folder_name:
         base_path = os.path.dirname(default_lib_path)
