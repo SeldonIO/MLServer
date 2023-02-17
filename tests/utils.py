@@ -40,8 +40,8 @@ def get_available_ports(n: int = 1) -> List[int]:
 async def _run(cmd):
     process = await asyncio.create_subprocess_shell(
         cmd,
-        #  stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
     )
 
     return_code = await process.wait()
