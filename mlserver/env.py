@@ -28,6 +28,9 @@ class Environment:
 
     @classmethod
     async def from_tarball(cls, tarball_path: str, env_path: str) -> "Environment":
+        """
+        Instantiate an Environment object from an environment tarball.
+        """
         loop = asyncio.get_running_loop()
         await loop.run_in_executor(None, _extract_env, tarball_path, env_path)
 
@@ -35,9 +38,19 @@ class Environment:
 
     @cached_property
     def sys_path(self) -> List[str]:
+        """
+        Extra paths that will be added to `sys.path` (i.e. `PYTHONPATH`) to
+        expose the custom environment.
+        These paths are mainly used on the `__enter__` method of the context
+        manager below.
+        """
         if not self.lib_path:
             return []
 
+        # This list of paths is mainly built from PEP370 (and also from how
+        # PYTHONPATH is defined by default).
+        # The main route is probably just `.../site-packages`, but we add the
+        # rest to be safe.
         return [
             f"{self.lib_path}.zip",
             self.lib_path,
@@ -47,10 +60,17 @@ class Environment:
 
     @cached_property
     def bin_path(self) -> str:
+        """
+        Path to the `../bin/` folder in our custom environment.
+        """
         return os.path.join(self._env_path, "bin")
 
     @cached_property
     def lib_path(self) -> str:
+        """
+        Base environment path (i.e. user data directory - as defined by
+        PEP370).
+        """
         pattern = os.path.join(self._env_path, "lib", "python*")
         matches = glob.glob(pattern)
 

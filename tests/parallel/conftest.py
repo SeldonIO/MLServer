@@ -73,7 +73,7 @@ async def responses(settings: Settings) -> Queue:
 @pytest.fixture
 async def worker(
     settings: Settings,
-    event_loop,
+    event_loop: asyncio.AbstractEventLoop,
     responses: Queue,
     load_message: ModelUpdateMessage,
 ) -> Worker:
