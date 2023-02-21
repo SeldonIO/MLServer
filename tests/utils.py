@@ -93,8 +93,9 @@ async def _pack(env_yml: str, tarball_path: str):
         # See https://github.com/conda/conda-pack/issues/244#issuecomment-1361094094
         await _run(
             "conda-pack"
-            f" --ignore-missing-files -n {env_name}"
+            " --ignore-missing-files "
             " --exclude lib/python3.1"
+            f" -n {env_name}"
             f" -o {tarball_path}"
         )
     finally:
