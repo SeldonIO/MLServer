@@ -18,7 +18,7 @@ async def test_from_tarball(env_tarball: str, tmp_path: str):
 
     executable = os.path.join(tmp_path, "bin", "python")
     assert os.path.isfile(executable)
-    assert os.path.isdir(env.lib_path)
+    assert os.path.isdir(env._lib_path)
 
 
 def test_sys_path(env: Environment, expected_python_folder: str):
@@ -28,14 +28,14 @@ def test_sys_path(env: Environment, expected_python_folder: str):
         f"{env._env_path}/lib/{expected_python_folder}/lib-dynload",
         f"{env._env_path}/lib/{expected_python_folder}/site-packages",
     ]
-    assert env.sys_path == expected
+    assert env._sys_path == expected
 
 
 def test_sys_path_empty(env: Environment):
     # Force lib_path to be empty
-    env.__dict__["lib_path"] = ""
+    env.__dict__["_lib_path"] = ""
     expected = []
-    assert env.sys_path == expected
+    assert env._sys_path == expected
 
 
 @pytest.mark.parametrize(
@@ -43,7 +43,7 @@ def test_sys_path_empty(env: Environment):
     ["python3.9", "python37", "python3.11", ""],
 )
 def test_lib_path(env: Environment, folder_name: str, expected_python_folder: str):
-    default_lib_path = env.lib_path
+    default_lib_path = env._lib_path
     assert default_lib_path == f"{env._env_path}/lib/{expected_python_folder}"
 
     if folder_name:
@@ -62,12 +62,12 @@ def test_lib_path(env: Environment, folder_name: str, expected_python_folder: st
         expected_path = ""
 
     # Force to look again for lib_path
-    del env.__dict__["lib_path"]
-    assert env.lib_path == expected_path
+    del env.__dict__["_lib_path"]
+    assert env._lib_path == expected_path
 
 
 def test_bin_path(env: Environment):
-    assert env.bin_path == f"{env._env_path}/bin"
+    assert env._bin_path == f"{env._env_path}/bin"
 
 
 def test_activate_env(env: Environment):
@@ -75,14 +75,14 @@ def test_activate_env(env: Environment):
     assert env._env_path not in os.environ["PATH"]
 
     with env:
-        sys_path = env.sys_path
+        sys_path = env._sys_path
         assert sys_path
 
         for i, p in enumerate(sys_path):
             assert sys.path[i] == p
 
         bin_paths = os.environ["PATH"].split(os.pathsep)
-        assert bin_paths[0] == env.bin_path
+        assert bin_paths[0] == env._bin_path
 
     assert env._env_path not in ",".join(sys.path)
     assert env._env_path not in os.environ["PATH"]
