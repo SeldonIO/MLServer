@@ -43,6 +43,7 @@ class HuggingFaceSettings(BaseSettings):
     # related issue: https://github.com/SeldonIO/MLServer/issues/947
     task_suffix: str = ""
     pretrained_model: Optional[str] = None
+    model_parameters: Optional[Dict] = None
     pretrained_tokenizer: Optional[str] = None
     optimum_model: bool = False
     device: int = -1
@@ -128,6 +129,7 @@ def load_pipeline_from_settings(hf_settings: HuggingFaceSettings) -> Pipeline:
         model=model,
         tokenizer=tokenizer,
         device=device,
+        model_kwargs=hf_settings.model_parameters,
         batch_size=hf_settings.batch_size,
     )
 
