@@ -2,7 +2,6 @@ import pytest
 import sys
 import os
 import shutil
-import glob
 
 from mlserver.env import Environment
 
