@@ -89,7 +89,14 @@ async def _pack(env_yml: str, tarball_path: str):
     env_name = f"mlserver-{uuid}"
     try:
         await _run(f"conda env create -n {env_name} -f {fixed_env_yml}")
-        await _run(f"conda-pack --ignore-missing-files -n {env_name} -o {tarball_path}")
+        # NOTE: We exclude Python's symlink into 3.1 for >=3.10
+        # See https://github.com/conda/conda-pack/issues/244#issuecomment-1361094094
+        await _run(
+            "conda-pack"
+            f" --ignore-missing-files -n {env_name}"
+            " --exclude lib/python3.1"
+            f" -o {tarball_path}"
+        )
     finally:
         await _run(f"conda env remove -n {env_name}")
 

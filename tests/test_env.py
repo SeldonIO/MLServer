@@ -51,14 +51,7 @@ def test_lib_path(env: Environment, folder_name: str, expected_python_folder: st
         expected_path = os.path.join(base_path, folder_name)
         os.rename(default_lib_path, expected_path)
     else:
-        # NOTE: Python 3.10 (and above?) includes a `python3.1` folder
-        # symlinked to the `python3.10` one.
-        # Therefore, to ensure there are no
-        # `python*` folders we'll need to remove all the globs
-        pattern = os.path.join(env._env_path, "lib", "python*")
-        matches = glob.glob(pattern)
-        for match in matches:
-            shutil.rmtree(match)
+        shutil.rmtree(env._lib_path)
         expected_path = ""
 
     # Force to look again for lib_path
