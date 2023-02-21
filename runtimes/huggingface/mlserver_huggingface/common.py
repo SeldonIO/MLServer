@@ -118,6 +118,7 @@ def load_pipeline_from_settings(hf_settings: HuggingFaceSettings) -> Pipeline:
         model = optimum_class.from_pretrained(
             hf_settings.pretrained_model,
             from_transformers=True,
+            **hf_settings.model_parameters,
         )
         tokenizer = AutoTokenizer.from_pretrained(tokenizer)
         # Device needs to be set to -1 due to known issue
