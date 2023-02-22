@@ -30,6 +30,7 @@ class DataPlane:
             CloudEventsMiddleware(settings)
         )
 
+        # TODO: Update to standardised set of labels
         self._ModelInferRequestSuccess = Counter(
             "model_infer_request_success",
             "Model infer request success count",

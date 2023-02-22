@@ -17,7 +17,6 @@ from mlserver.grpc.converters import (
 from mlserver.grpc.model_repository_pb2_grpc import ModelRepositoryServiceStub
 from mlserver.grpc import dataplane_pb2 as pb
 from mlserver.grpc import model_repository_pb2 as mr_pb
-from .conftest import delete_registry  # noqa: F401
 
 
 @pytest.fixture
@@ -85,7 +84,6 @@ async def test_model_repository_unload(
 
 async def test_model_repository_load(
     inference_service_stub,
-    delete_registry,  # noqa: F811
     model_repository_service_stub,
     sum_model_settings,
 ):

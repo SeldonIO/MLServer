@@ -14,7 +14,6 @@ from mlserver.grpc.converters import (
 )
 from mlserver.raw import pack, unpack
 from mlserver import __version__
-from .conftest import delete_registry  # noqa: F401
 
 
 async def test_server_live(inference_service_stub):
@@ -163,7 +162,6 @@ async def test_model_repository_unload(inference_service_stub, sum_model_setting
 
 async def test_model_repository_load(
     inference_service_stub,
-    delete_registry,  # noqa: F811
     sum_model_settings,
 ):
     await inference_service_stub.RepositoryModelUnload(

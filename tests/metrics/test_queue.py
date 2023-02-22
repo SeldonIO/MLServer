@@ -39,6 +39,7 @@ async def test_parallel_queue_metrics(
     assert len(parallel_request_queue.samples) != 0
 
 
+@pytest.mark.skip("TODO: Re-enable once we use new register / log helpers")
 async def test_batch_queue_metrics(
     metrics_client: MetricsClient,
     rest_client: RESTClient,

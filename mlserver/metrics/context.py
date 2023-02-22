@@ -1,21 +1,60 @@
+from contextvars import ContextVar
+from contextlib import contextmanager
 from prometheus_client import Histogram
 
+from ..settings import ModelSettings
 from .registry import REGISTRY
 
+model_name_var = ContextVar("model_name")
+model_version_var = ContextVar("model_version")
 
 SELDON_MODEL_NAME_LABEL = "model_name"
 SELDON_MODEL_VERSION_LABEL = "model_version"
 
 
-def _get_or_create(metric_name: str) -> Histogram:
-    if metric_name in REGISTRY:
-        # TODO: Check if metric is a Histogram?
-        return REGISTRY[metric_name]
+@contextmanager
+def model_context(model_settings: ModelSettings):
+    model_name_token = model_name_var.set(model_settings.name)
 
-    return Histogram(metric_name, "TOOD: Description??", registry=REGISTRY)
+    if model_settings.version:
+        model_version_token = model_version_var.set(model_settings.version)
+
+    try:
+        yield
+    finally:
+        model_name_var.reset(model_name_token)
+        model_version_var.reset(model_version_token)
+
+
+def register(name: str, description: str) -> Histogram:
+    if name in REGISTRY:
+        # TODO: Check if metric is a Histogram?
+        return REGISTRY[name]
+
+    return Histogram(
+        name,
+        description,
+        labelnames=[SELDON_MODEL_NAME_LABEL, SELDON_MODEL_VERSION_LABEL],
+        registry=REGISTRY,
+    )
+
+
+def _get_labels() -> dict:
+    try:
+        model_name = model_name_var.get()
+        labels = {SELDON_MODEL_NAME_LABEL: model_name}
+
+        model_version = model_version_var.get(None)
+        if model_version:
+            labels[SELDON_MODEL_VERSION_LABEL] = model_version
+        return labels
+    except LookupError:
+        # Calling outside of context
+        # TODO: Raise error message with clear logs
+        raise
 
 
 def log(**metrics):
     for metric_name, metric_value in metrics.items():
-        metric = _get_or_create(metric_name)
-        metric.observe(metric_value)
+        metric = register(metric_name, "TODO: Default description?")
+        metric.observe(metric_value, labels)

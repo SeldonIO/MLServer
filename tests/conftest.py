@@ -20,7 +20,7 @@ from mlserver.parallel import InferencePool
 from mlserver.utils import install_uvloop_event_loop
 from mlserver.logging import get_logger
 from mlserver.env import Environment
-from mlserver import types, Settings, ModelSettings
+from mlserver import types, Settings, ModelSettings, MLServer
 
 from .fixtures import SumModel, ErrorModel, SimpleModel
 from .utils import RESTClient, get_available_ports, _pack, _get_tarball_name
@@ -77,6 +77,7 @@ def logger():
     return logger
 
 
+@pytest.fixture
 def prometheus_registry() -> CollectorRegistry:
     """
     Fixture used to ensure the registry is cleaned on each run.
@@ -253,7 +254,7 @@ async def inference_pool(settings: Settings) -> InferencePool:
 
 
 @pytest.fixture
-def _mlserver_settings(settings: Settings):
+def _mlserver_settings(settings: Settings, tmp_path: str):
     """
     This is an indirect fixture used to tweak the standard settings ONLY when
     the `mlserver` fixture is used.
