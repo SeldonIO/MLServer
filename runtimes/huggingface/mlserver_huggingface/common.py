@@ -10,6 +10,8 @@ from mlserver.errors import MLServerError
 from transformers.pipelines import pipeline
 from transformers.pipelines.base import Pipeline
 from transformers.models.auto.tokenization_auto import AutoTokenizer
+import transformers
+from mlserver.logging import logger
 
 from optimum.pipelines import SUPPORTED_TASKS as SUPPORTED_OPTIMUM_TASKS
 
@@ -42,11 +44,12 @@ class HuggingFaceSettings(BaseSettings):
     # for translation task, required a suffix to specify source and target
     # related issue: https://github.com/SeldonIO/MLServer/issues/947
     task_suffix: str = ""
+    auto_loader_name: Optional[str] = "AutoModel"
     pretrained_model: Optional[str] = None
     model_parameters: Optional[Dict] = None
     pretrained_tokenizer: Optional[str] = None
     optimum_model: bool = False
-    device: int = -1
+    device: Optional[int] = None
     batch_size: Optional[int] = None
 
     @property
@@ -99,6 +102,10 @@ def parse_parameters_from_env() -> Dict:
                 )
     return parsed_parameters
 
+def _get_model_loader(hf_settings: HuggingFaceSettings): 
+    auto_loader_name = hf_settings.auto_loader_name
+    loader = getattr(transformers, auto_loader_name, None)
+    return loader
 
 def load_pipeline_from_settings(hf_settings: HuggingFaceSettings) -> Pipeline:
     """
@@ -114,23 +121,27 @@ def load_pipeline_from_settings(hf_settings: HuggingFaceSettings) -> Pipeline:
         tokenizer = model
 
     if hf_settings.optimum_model:
+        logger.debug("loading model through optimum")
         optimum_class = SUPPORTED_OPTIMUM_TASKS[hf_settings.task]["class"][0]
         model = optimum_class.from_pretrained(
             hf_settings.pretrained_model,
             from_transformers=True,
-            **hf_settings.model_parameters,
         )
         tokenizer = AutoTokenizer.from_pretrained(tokenizer)
         # Device needs to be set to -1 due to known issue
         # https://github.com/huggingface/optimum/issues/191
         device = -1
+    else:
+        logger.debug("loading model without optimum")
+        model = _get_model_loader(hf_settings).from_pretrained(model, **hf_settings.model_parameters)
+        #model = AutoModel.from_pretrained(model, **hf_settings.model_parameters)
+        tokenizer = AutoTokenizer.from_pretrained(tokenizer)
 
     pp = pipeline(
         hf_settings.task_name,
         model=model,
         tokenizer=tokenizer,
         device=device,
-        model_kwargs=hf_settings.model_parameters,
         batch_size=hf_settings.batch_size,
     )
 

@@ -22,6 +22,7 @@ class HuggingFaceRuntime(MLModel):
     """Runtime class for specific Huggingface models"""
 
     def __init__(self, settings: ModelSettings):
+        logger.debug("INFORMATION --- DELETE UPON MERGE --- THIS IS A FORK")
         env_params = parse_parameters_from_env()
         if not env_params and (
             not settings.parameters or not settings.parameters.extra
