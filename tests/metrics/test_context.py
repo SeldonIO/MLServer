@@ -5,6 +5,7 @@ from prometheus_client import Histogram
 
 from mlserver.settings import ModelSettings, ModelParameters
 from mlserver.metrics.registry import MetricsRegistry
+from mlserver.metrics.errors import InvalidModelContext
 from mlserver.metrics.context import (
     SELDON_MODEL_NAME_LABEL,
     SELDON_MODEL_VERSION_LABEL,
@@ -38,14 +39,14 @@ def test_model_context(name: str, version: Optional[str], expected: dict):
     model_settings = ModelSettings(
         name=name, implementation=SumModel, parameters=ModelParameters(version=version)
     )
-    with pytest.raises(LookupError):
+    with pytest.raises(InvalidModelContext):
         _get_labels_from_context()
 
     with model_context(model_settings):
         labels = _get_labels_from_context()
         assert labels == expected
 
-    with pytest.raises(LookupError):
+    with pytest.raises(InvalidModelContext):
         _get_labels_from_context()
 
 

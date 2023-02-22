@@ -4,6 +4,7 @@ from prometheus_client import Histogram
 
 from ..settings import ModelSettings
 from .registry import REGISTRY
+from .errors import InvalidModelContext
 
 model_name_var = ContextVar("model_name")
 model_version_var = ContextVar("model_version")
@@ -50,9 +51,7 @@ def _get_labels_from_context() -> dict:
             SELDON_MODEL_VERSION_LABEL: model_version,
         }
     except LookupError:
-        # Calling outside of context
-        # TODO: Raise error message with clear logs
-        raise
+        raise InvalidModelContext()
 
 
 def log(**metrics):
