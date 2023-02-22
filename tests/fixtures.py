@@ -3,11 +3,20 @@ import random
 import string
 import numpy as np
 
+try:
+    # NOTE: This is used in the EnvModel down below, which tests dynamic
+    # loading custom environments.
+    # Therefore, it is expected (and alright) that this package is not present
+    # some times.
+    import sklearn
+except ImportError:
+    sklearn = None
+
 from typing import Dict, List
 
 from mlserver import MLModel
 from mlserver.types import InferenceRequest, InferenceResponse, Parameters
-from mlserver.codecs import NumpyCodec, decode_args
+from mlserver.codecs import NumpyCodec, decode_args, StringCodec
 from mlserver.handlers.custom import custom_handler
 from mlserver.errors import MLServerError
 
@@ -79,3 +88,18 @@ class SlowModel(MLModel):
     async def infer(self, payload: InferenceRequest) -> InferenceResponse:
         await asyncio.sleep(10)
         return InferenceResponse(id=payload.id, model_name=self.name, outputs=[])
+
+
+class EnvModel(MLModel):
+    async def load(self):
+        self._sklearn_version = sklearn.__version__
+        self.ready = True
+        return self.ready
+
+    async def predict(self, inference_request: InferenceRequest) -> InferenceResponse:
+        return InferenceResponse(
+            model_name=self.name,
+            outputs=[
+                StringCodec.encode_output("sklearn_version", [self._sklearn_version]),
+            ],
+        )
