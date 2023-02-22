@@ -16,8 +16,10 @@ SELDON_MODEL_VERSION_LABEL = "model_version"
 def model_context(model_settings: ModelSettings):
     model_name_token = model_name_var.set(model_settings.name)
 
+    model_version = ""
     if model_settings.version:
-        model_version_token = model_version_var.set(model_settings.version)
+        model_version = model_settings.version
+    model_version_token = model_version_var.set(model_version)
 
     try:
         yield
@@ -39,15 +41,14 @@ def register(name: str, description: str) -> Histogram:
     )
 
 
-def _get_labels() -> dict:
+def _get_labels_from_context() -> dict:
     try:
         model_name = model_name_var.get()
-        labels = {SELDON_MODEL_NAME_LABEL: model_name}
-
-        model_version = model_version_var.get(None)
-        if model_version:
-            labels[SELDON_MODEL_VERSION_LABEL] = model_version
-        return labels
+        model_version = model_version_var.get()
+        return {
+            SELDON_MODEL_NAME_LABEL: model_name,
+            SELDON_MODEL_VERSION_LABEL: model_version,
+        }
     except LookupError:
         # Calling outside of context
         # TODO: Raise error message with clear logs
@@ -55,6 +56,8 @@ def _get_labels() -> dict:
 
 
 def log(**metrics):
+    labels = _get_labels_from_context()
     for metric_name, metric_value in metrics.items():
         metric = register(metric_name, "TODO: Default description?")
-        metric.observe(metric_value, labels)
+        with_labels = metric.labels(**labels)
+        with_labels.observe(metric_value, labels)
