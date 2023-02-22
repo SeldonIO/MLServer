@@ -12,7 +12,7 @@ from ..utils import RESTClient
 
 
 async def test_single(
-    tmp_dir: TemporaryDirectory,
+    tmp_path: str,
     rest_client: RESTClient,
     settings: Settings,
     single_input: str,
@@ -20,7 +20,7 @@ async def test_single(
     await rest_client.wait_until_ready()
     model_name = "sum-model"
     url = f"{settings.host}:{settings.http_port}"
-    output_file = os.path.join(tmp_dir.name, "output.txt")
+    output_file = os.path.join(tmp_path, "output.txt")
 
     await process_batch(
         model_name=model_name,
@@ -55,7 +55,7 @@ async def test_single(
 
 
 async def test_invalid(
-    tmp_dir: TemporaryDirectory,
+    tmp_path: str,
     rest_client: RESTClient,
     settings: Settings,
     invalid_input: str,
@@ -63,7 +63,7 @@ async def test_invalid(
     await rest_client.wait_until_ready()
     model_name = "sum-model"
     url = f"{settings.host}:{settings.http_port}"
-    output_file = os.path.join(tmp_dir.name, "output.txt")
+    output_file = os.path.join(tmp_path, "output.txt")
 
     await process_batch(
         model_name=model_name,
@@ -106,7 +106,7 @@ async def test_invalid(
 
 
 async def test_invalid_among_many(
-    tmp_dir: TemporaryDirectory,
+    tmp_path: str,
     rest_client: RESTClient,
     settings: Settings,
     invalid_among_many: str,
@@ -114,7 +114,7 @@ async def test_invalid_among_many(
     await rest_client.wait_until_ready()
     model_name = "sum-model"
     url = f"{settings.host}:{settings.http_port}"
-    output_file = os.path.join(tmp_dir.name, "output.txt")
+    output_file = os.path.join(tmp_path, "output.txt")
 
     await process_batch(
         model_name=model_name,
@@ -175,7 +175,7 @@ async def test_invalid_among_many(
 @pytest.mark.parametrize("workers", [1, 2, 5, 6])
 async def test_many(
     workers: int,
-    tmp_dir: TemporaryDirectory,
+    tmp_path: str,
     rest_client: RESTClient,
     settings: Settings,
     many_input: str,
@@ -183,7 +183,7 @@ async def test_many(
     await rest_client.wait_until_ready()
     model_name = "sum-model"
     url = f"{settings.host}:{settings.http_port}"
-    output_file = os.path.join(tmp_dir.name, "output.txt")
+    output_file = os.path.join(tmp_path, "output.txt")
 
     await process_batch(
         model_name=model_name,
@@ -227,7 +227,7 @@ async def test_many(
 @pytest.mark.parametrize("workers", [1, 2, 5, 6])
 async def test_many_batch(
     workers: int,
-    tmp_dir: TemporaryDirectory,
+    tmp_path: str,
     rest_client: RESTClient,
     settings: Settings,
     many_input: str,
@@ -235,7 +235,7 @@ async def test_many_batch(
     await rest_client.wait_until_ready()
     model_name = "sum-model"
     url = f"{settings.host}:{settings.http_port}"
-    output_file = os.path.join(tmp_dir.name, "output.txt")
+    output_file = os.path.join(tmp_path, "output.txt")
 
     await process_batch(
         model_name=model_name,
@@ -280,7 +280,7 @@ async def test_many_batch(
 
 
 async def test_single_with_id(
-    tmp_dir: TemporaryDirectory,
+    tmp_path: str,
     rest_client: RESTClient,
     settings: Settings,
     single_input_with_id: str,
@@ -288,7 +288,7 @@ async def test_single_with_id(
     await rest_client.wait_until_ready()
     model_name = "sum-model"
     url = f"{settings.host}:{settings.http_port}"
-    output_file = os.path.join(tmp_dir.name, "output.txt")
+    output_file = os.path.join(tmp_path, "output.txt")
 
     await process_batch(
         model_name=model_name,
