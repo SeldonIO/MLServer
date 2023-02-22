@@ -21,13 +21,13 @@ def metric(registry: MetricsRegistry) -> Histogram:
 def test_exists(
     registry: MetricsRegistry, metric: Histogram, metric_name: str, expected: bool
 ):
-    assert registry.exists(metric_name) == expected
+    assert (metric_name in registry) == expected
 
 
 def test_get(registry: MetricsRegistry, metric: Histogram):
-    assert registry.get(metric._name) == metric
+    assert registry[metric._name] == metric
 
 
 def test_get_error(registry: MetricsRegistry, metric: Histogram):
     with pytest.raises(KeyError):
-        registry.get("something_else")
+        registry["something_else"]

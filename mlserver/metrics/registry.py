@@ -14,5 +14,11 @@ class MetricsRegistry(CollectorRegistry):
         # TODO: Check that it's a MetricWrapperBase?
         return self._names_to_collectors[metric_name]
 
+    def __getitem__(self, metric_name: str) -> MetricWrapperBase:
+        return self.get(metric_name)
+
+    def __contains__(self, metric_name: str) -> bool:
+        return self.exists(metric_name)
+
 
 REGISTRY = MetricsRegistry()
