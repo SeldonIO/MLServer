@@ -13,6 +13,7 @@ from transformers.models.auto.tokenization_auto import AutoTokenizer
 import transformers
 from mlserver.logging import logger
 
+
 from optimum.pipelines import SUPPORTED_TASKS as SUPPORTED_OPTIMUM_TASKS
 
 
