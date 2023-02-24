@@ -13,19 +13,19 @@ from mlserver import metrics
 from ..utils import RESTClient
 from .utils import MetricsClient, find_metric
 
-COUNTER_NAME = "my_custom_counter"
+CUSTOM_METRIC_NAME = "my_custom_metric"
 
 
 class CustomMetricsModel(MLModel):
     async def load(self) -> bool:
-        metrics.register("my_custom_counter", "Test custom counter")
+        metrics.register(CUSTOM_METRIC_NAME, "Test custom counter")
         self.ready = True
         self.reqs = 0
         return self.ready
 
     async def predict(self, req: InferenceRequest) -> InferenceResponse:
         self.reqs += 1
-        metrics.log(my_custom_counter=self.reqs)
+        metrics.log(my_custom_metric=self.reqs)
         return InferenceResponse(model_name=self.name, outputs=[])
 
 
@@ -61,10 +61,8 @@ async def test_custom_metrics(
     await rest_client.wait_until_ready()
 
     metrics = await metrics_client.metrics()
-    custom_counter = find_metric(metrics, COUNTER_NAME)
-    assert custom_counter is not None
-    assert len(custom_counter.samples) == 1
-    assert custom_counter.samples[0].value == 0
+    custom_counter = find_metric(metrics, CUSTOM_METRIC_NAME)
+    assert custom_counter is None
 
     expected_value = 5
     await asyncio.gather(
@@ -75,7 +73,8 @@ async def test_custom_metrics(
     )
 
     metrics = await metrics_client.metrics()
-    custom_counter = find_metric(metrics, COUNTER_NAME)
-    assert custom_counter is not None
-    assert len(custom_counter.samples) == 1
-    assert custom_counter.samples[0].value == expected_value
+    custom_metric = find_metric(metrics, CUSTOM_METRIC_NAME)
+    assert custom_metric is not None
+
+    last_bucket = custom_metric.samples[-1]
+    assert last_bucket.value == expected_value
