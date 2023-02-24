@@ -1,4 +1,6 @@
 import pytest
+import asyncio
+import random
 
 from typing import Optional
 from prometheus_client import Histogram
@@ -48,6 +50,28 @@ def test_model_context(name: str, version: Optional[str], expected: dict):
 
     with pytest.raises(InvalidModelContext):
         _get_labels_from_context()
+
+
+async def test_model_context_multiple():
+    async def _get_labels(model_settings: ModelSettings) -> dict:
+        with model_context(model_settings):
+            # Force contexts to be overlapped by introducing a random wait
+            secs_to_wait = random.random()
+            await asyncio.sleep(secs_to_wait)
+            return _get_labels_from_context()
+
+    models_settings = [
+        ModelSettings(name=f"model-{idx}", implementation=SumModel) for idx in range(10)
+    ]
+
+    models_labels = await asyncio.gather(
+        *[_get_labels(model_settings) for model_settings in models_settings]
+    )
+
+    assert len(models_labels) == len(models_settings)
+    for model_settings, model_labels in zip(models_settings, models_labels):
+        assert model_labels[SELDON_MODEL_NAME_LABEL] == model_settings.name
+        assert model_labels[SELDON_MODEL_VERSION_LABEL] == ""
 
 
 def test_register(metrics_registry: MetricsRegistry, sum_model_context: ModelSettings):
