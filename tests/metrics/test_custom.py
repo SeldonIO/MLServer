@@ -3,12 +3,12 @@ import asyncio
 import os
 
 from aiofiles.os import path
-from prometheus_client import Counter
 
 from mlserver.server import MLServer
 from mlserver.model import MLModel
 from mlserver.settings import ModelSettings
 from mlserver.types import InferenceRequest, InferenceResponse
+from mlserver import metrics
 
 from ..utils import RESTClient
 from .utils import MetricsClient, find_metric
@@ -18,12 +18,14 @@ COUNTER_NAME = "my_custom_counter"
 
 class CustomMetricsModel(MLModel):
     async def load(self) -> bool:
-        self.counter = Counter(COUNTER_NAME, "Test custom counter")
+        metrics.register("my_custom_counter", "Test custom counter")
         self.ready = True
+        self.reqs = 0
         return self.ready
 
     async def predict(self, req: InferenceRequest) -> InferenceResponse:
-        self.counter.inc()
+        self.reqs += 1
+        metrics.log(my_custom_counter=self.reqs)
         return InferenceResponse(model_name=self.name, outputs=[])
 
 
@@ -36,13 +38,17 @@ async def custom_metrics_model(mlserver: MLServer) -> MLModel:
 
 
 async def test_db_files(
-    custom_metrics_model: MLModel, rest_client: RESTClient, mlserver: MLServer
+    custom_metrics_model: MLModel,
+    rest_client: RESTClient,
+    mlserver: MLServer,
+    inference_request: InferenceRequest,
 ):
     await rest_client.wait_until_ready()
+    await rest_client.infer(custom_metrics_model.name, inference_request)
 
     assert mlserver._settings.parallel_workers > 0
     for pid in mlserver._inference_pool._workers:
-        db_file = os.path.join(mlserver._settings.metrics_dir, f"counter_{pid}.db")
+        db_file = os.path.join(mlserver._settings.metrics_dir, f"histogram_{pid}.db")
         assert await path.isfile(db_file)
 
 

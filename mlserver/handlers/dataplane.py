@@ -1,3 +1,10 @@
+from prometheus_client import (
+    Counter,
+    Summary,
+)
+from typing import Optional
+
+from ..metrics import model_context
 from ..settings import Settings
 from ..registry import MultiModelRegistry
 from ..types import (
@@ -9,11 +16,6 @@ from ..types import (
 from ..middleware import InferenceMiddlewares
 from ..cloudevents import CloudEventsMiddleware
 from ..utils import generate_uuid
-from prometheus_client import (
-    Counter,
-    Summary,
-)
-from typing import Optional
 
 
 class DataPlane:
@@ -94,7 +96,8 @@ class DataPlane:
             self._inference_middleware.request_middleware(payload, model.settings)
 
             # TODO: Make await optional for sync methods
-            prediction = await model.predict(payload)
+            with model_context(model.settings):
+                prediction = await model.predict(payload)
 
             # Ensure ID matches
             prediction.id = payload.id
