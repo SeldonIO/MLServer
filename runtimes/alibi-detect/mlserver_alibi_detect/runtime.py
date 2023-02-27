@@ -40,7 +40,6 @@ class AlibiDetectRuntime(MLModel):
         super().__init__(settings)
 
     async def load(self) -> bool:
-
         model_uri = await get_model_uri(self._settings)
         try:
             self._model = load_detector(model_uri)

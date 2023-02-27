@@ -258,7 +258,6 @@ def test_merged_request(
     inference_requests: Dict[str, InferenceRequest],
     expected: InferenceRequest,
 ):
-
     batched = BatchedRequests(inference_requests)
     merged_request = batched.merged_request
 

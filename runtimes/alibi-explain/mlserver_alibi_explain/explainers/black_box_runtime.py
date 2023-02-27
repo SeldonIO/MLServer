@@ -41,7 +41,6 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
         super().__init__(settings, explainer_settings)
 
     async def load(self) -> bool:
-
         # TODO: use init explainer field instead?
         if self.alibi_explain_settings.init_parameters is not None:
             init_parameters = self.alibi_explain_settings.init_parameters
