@@ -90,6 +90,9 @@ class AlibiExplainSettings(BaseSettings):
 
     infer_uri: str
     explainer_type: str
+    explainer_batch: Optional[bool] = False
+    # In cases where the inference model can output multiple fields ands we are interested in a specific field for explanation
+    infer_output: Optional[str]
     init_parameters: Optional[dict]
     ssl_verify_path: Optional[str]
 
