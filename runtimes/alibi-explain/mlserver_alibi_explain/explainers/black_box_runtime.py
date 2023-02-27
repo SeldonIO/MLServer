@@ -78,7 +78,11 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
                 meta_url, ssl_verify_path=self.ssl_verify_path
             )
 
-        v2_request = to_v2_inference_request(input_data, self.infer_metadata)
+        v2_request = to_v2_inference_request(
+            input_data=input_data,
+            metadata=self.infer_metadata,
+            output=self.alibi_explain_settings.infer_output,
+        )
         v2_response = remote_predict(
             v2_payload=v2_request,
             predictor_url=self.infer_uri,
