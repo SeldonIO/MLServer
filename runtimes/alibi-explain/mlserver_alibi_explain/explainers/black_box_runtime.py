@@ -53,7 +53,6 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
         return self.ready
 
     def _explain_impl(self, input_data: Any, explain_parameters: Dict) -> Explanation:
-
         if not self.alibi_explain_settings.explainer_batch:
             # if we get a list of strings, we can only explain the first elem and there
             # is no way of just sending a plain string in v2, it has to be in a list
