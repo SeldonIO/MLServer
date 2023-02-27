@@ -170,9 +170,9 @@ def metadata_model_response() -> types.MetadataModelResponse:
     return types.MetadataModelResponse.parse_file(payload_path)
 
 
-@pytest.fixture(params=["inference-request.json", "inference-request-with-output.json"])
-def inference_request(request) -> types.InferenceRequest:
-    payload_path = os.path.join(TESTDATA_PATH, request.param)
+@pytest.fixture
+def inference_request() -> types.InferenceRequest:
+    payload_path = os.path.join(TESTDATA_PATH, "inference-request.json")
     return types.InferenceRequest.parse_file(payload_path)
 
 

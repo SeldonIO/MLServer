@@ -8,7 +8,15 @@ from mlserver.types import InferenceRequest, TensorData
 from mlserver.model import MLModel
 from mlserver.batching.adaptive import AdaptiveBatcher
 
+from ..conftest import TESTDATA_PATH
+
 TestRequestSender = Callable[[], Awaitable[Tuple[str, InferenceRequest]]]
+
+
+@pytest.fixture(params=["inference-request.json", "inference-request-with-output.json"])
+def inference_request(request) -> types.InferenceRequest:
+    payload_path = os.path.join(TESTDATA_PATH, request.param)
+    return types.InferenceRequest.parse_file(payload_path)
 
 
 @pytest.fixture
