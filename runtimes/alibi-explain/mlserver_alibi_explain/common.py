@@ -12,7 +12,8 @@ from mlserver.types import (
     InferenceResponse,
     InferenceRequest,
     Parameters,
-    MetadataModelResponse, RequestOutput,
+    MetadataModelResponse,
+    RequestOutput,
 )
 from mlserver.utils import generate_uuid
 

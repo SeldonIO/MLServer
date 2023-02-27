@@ -1,11 +1,10 @@
 import json
-
-import alibi.explainers.anchors.anchor_tabular
-import pytest
-import numpy as np
-
 from typing import Any, Dict
 from unittest.mock import patch
+
+import alibi.explainers.anchors.anchor_tabular
+import numpy as np
+import pytest
 from alibi.api.interfaces import Explanation
 from numpy.testing import assert_array_equal
 
@@ -24,9 +23,8 @@ from mlserver_alibi_explain.common import (
     remote_predict,
     AlibiExplainSettings,
 )
-from mlserver_alibi_explain.runtime import AlibiExplainRuntime, AlibiExplainRuntimeBase
 from mlserver_alibi_explain.errors import InvalidExplanationShape
-
+from mlserver_alibi_explain.runtime import AlibiExplainRuntime, AlibiExplainRuntimeBase
 from .helpers.run_async import run_async_as_sync, run_sync_as_async
 
 """
