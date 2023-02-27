@@ -137,11 +137,12 @@ async def test_end_2_end_explain_v1_output(
 
 
 @pytest.mark.parametrize(
-    "payload, metadata, expected_v2_request",
+    "payload, metadata, output, expected_v2_request",
     [
         # numpy payload
         (
             np.zeros([2, 4]),
+            None,
             None,
             InferenceRequest(
                 id=_DEFAULT_ID_NAME,
@@ -169,6 +170,7 @@ async def test_end_2_end_explain_v1_output(
                     MetadataTensor(name="output_name", datatype="dummy", shape=[])
                 ],
             ),
+            None,
             InferenceRequest(
                 id=_DEFAULT_ID_NAME,
                 parameters=Parameters(content_type=NumpyCodec.ContentType),
@@ -186,9 +188,94 @@ async def test_end_2_end_explain_v1_output(
                 ],  # inserted from metadata above
             ),
         ),
+        # multiple outputs in the metadata, return only the first output
+        (
+                np.zeros([2, 4]),
+                MetadataModelResponse(
+                    name="dummy",
+                    platform="dummy",
+                    inputs=[
+                        MetadataTensor(name="input_name", datatype="dummy", shape=[])],
+                    outputs=[
+                        MetadataTensor(name="output_name", datatype="dummy", shape=[]),
+                        MetadataTensor(name="output_name_2", datatype="dummy", shape=[])
+                    ],
+                ),
+                None,
+                InferenceRequest(
+                    id=_DEFAULT_ID_NAME,
+                    parameters=Parameters(content_type=NumpyCodec.ContentType),
+                    inputs=[
+                        RequestInput(
+                            parameters=Parameters(content_type=NumpyCodec.ContentType),
+                            name="input_name",  # inserted from metadata above
+                            data=np.zeros([2, 4]).flatten().tolist(),
+                            shape=[2, 4],
+                            datatype="FP64",  # default for np.zeros
+                        )
+                    ],
+                    outputs=[
+                        RequestOutput(name="output_name"),
+                    ],  # inserted from metadata above
+                ),
+        ),
+        # Specified output
+        (
+                np.zeros([2, 4]),
+                None,
+                "output_name",
+                InferenceRequest(
+                    id=_DEFAULT_ID_NAME,
+                    parameters=Parameters(content_type=NumpyCodec.ContentType),
+                    inputs=[
+                        RequestInput(
+                            parameters=Parameters(content_type=NumpyCodec.ContentType),
+                            name=_DEFAULT_INPUT_NAME,
+                            data=np.zeros([2, 4]).flatten().tolist(),
+                            shape=[2, 4],
+                            datatype="FP64",  # default for np.zeros
+                        )
+                    ],
+                    outputs=[
+                        RequestOutput(name="output_name"),
+                    ],  # inserted from output
+                ),
+        ),
+        # Specified output and metadata
+        (
+                np.zeros([2, 4]),
+                MetadataModelResponse(
+                    name="dummy",
+                    platform="dummy",
+                    inputs=[
+                        MetadataTensor(name="input_name", datatype="dummy", shape=[])],
+                    outputs=[
+                        MetadataTensor(name="output_name", datatype="dummy", shape=[]),
+                        MetadataTensor(name="output_name_2", datatype="dummy", shape=[])
+                    ],
+                ),
+                "output_name_2",
+                InferenceRequest(
+                    id=_DEFAULT_ID_NAME,
+                    parameters=Parameters(content_type=NumpyCodec.ContentType),
+                    inputs=[
+                        RequestInput(
+                            parameters=Parameters(content_type=NumpyCodec.ContentType),
+                            name="input_name",  # from metadata
+                            data=np.zeros([2, 4]).flatten().tolist(),
+                            shape=[2, 4],
+                            datatype="FP64",  # default for np.zeros
+                        )
+                    ],
+                    outputs=[
+                        RequestOutput(name="output_name_2"),
+                    ],  # from output
+                ),
+        ),
         # List[str] payload
         (
             ["dummy", "dummy text"],
+            None,
             None,
             InferenceRequest(
                 id=_DEFAULT_ID_NAME,
@@ -211,6 +298,7 @@ async def test_end_2_end_explain_v1_output(
     "mlserver_alibi_explain.common.generate_uuid",
     MagicMock(return_value=_DEFAULT_ID_NAME),
 )
-def test_encode_inference_request__as_expected(payload, metadata, expected_v2_request):
-    encoded_request = to_v2_inference_request(payload, metadata)
+def test_encode_inference_request__as_expected(
+        payload, metadata, output, expected_v2_request):
+    encoded_request = to_v2_inference_request(payload, metadata, output)
     assert encoded_request == expected_v2_request

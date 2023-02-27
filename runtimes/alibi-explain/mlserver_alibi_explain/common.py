@@ -12,7 +12,7 @@ from mlserver.types import (
     InferenceResponse,
     InferenceRequest,
     Parameters,
-    MetadataModelResponse,
+    MetadataModelResponse, RequestOutput,
 )
 from mlserver.utils import generate_uuid
 
@@ -132,14 +132,18 @@ def to_v2_inference_request(
     input_name = _DEFAULT_INPUT_NAME
     id_name = generate_uuid()
     default_outputs = []
+    outputs = []
+
+    if output:
+        outputs = [RequestOutput(name=output)]
 
     if metadata is not None:
         if metadata.inputs:
             # we only support a big single input numpy
             input_name = metadata.inputs[0].name
         if metadata.outputs:
-            # we can only explain a single output at the moment
-            default_outputs = [metadata.outputs[0]]
+            if not output:
+                default_outputs = [metadata.outputs[0]]
 
     # For List[str] (e.g. AnchorText), we use StringCodec for input
     input_payload_codec = StringCodec if type(input_data) == list else NumpyCodec
@@ -155,6 +159,6 @@ def to_v2_inference_request(
                 use_bytes=False,
             )
         ],
-        outputs=default_outputs if output is None else [output],
+        outputs=outputs if outputs else default_outputs,
     )
     return v2_request
