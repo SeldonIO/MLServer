@@ -20,8 +20,10 @@ from mlserver.parallel import InferencePool
 from mlserver.utils import install_uvloop_event_loop
 from mlserver.logging import get_logger
 from mlserver.env import Environment
+from mlserver.metrics.registry import MetricsRegistry, REGISTRY as METRICS_REGISTRY
 from mlserver import types, Settings, ModelSettings, MLServer
 
+from .metrics.utils import unregister_metrics
 from .fixtures import SumModel, ErrorModel, SimpleModel
 from .utils import RESTClient, get_available_ports, _pack, _get_tarball_name
 
@@ -78,7 +80,14 @@ def logger():
 
 
 @pytest.fixture
-def prometheus_registry() -> CollectorRegistry:
+def metrics_registry() -> MetricsRegistry:
+    yield METRICS_REGISTRY
+
+    unregister_metrics(METRICS_REGISTRY)
+
+
+@pytest.fixture
+def prometheus_registry(metrics_registry: MetricsRegistry) -> CollectorRegistry:
     """
     Fixture used to ensure the registry is cleaned on each run.
     Otherwise, `py-grpc-prometheus` will complain that metrics already exist.
@@ -91,11 +100,7 @@ def prometheus_registry() -> CollectorRegistry:
     """
     yield REGISTRY
 
-    # NOTE: Since the `REGISTRY` object is global, this fixture is NOT
-    # thread-safe!!
-    collectors = list(REGISTRY._collector_to_names.keys())
-    for collector in collectors:
-        REGISTRY.unregister(collector)
+    unregister_metrics(REGISTRY)
 
     # Clean metrics from `starlette_exporter` as well, as otherwise they won't
     # get re-created

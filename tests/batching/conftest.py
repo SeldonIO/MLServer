@@ -14,9 +14,9 @@ TestRequestSender = Callable[[], Awaitable[Tuple[str, InferenceRequest]]]
 
 
 @pytest.fixture(params=["inference-request.json", "inference-request-with-output.json"])
-def inference_request(request) -> types.InferenceRequest:
+def inference_request(request) -> InferenceRequest:
     payload_path = os.path.join(TESTDATA_PATH, request.param)
-    return types.InferenceRequest.parse_file(payload_path)
+    return InferenceRequest.parse_file(payload_path)
 
 
 @pytest.fixture

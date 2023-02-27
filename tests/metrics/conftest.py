@@ -9,17 +9,6 @@ from .utils import MetricsClient
 
 
 @pytest.fixture
-def metrics_registry() -> MetricsRegistry:
-    yield REGISTRY
-
-    # NOTE: Since the `REGISTRY` object is global, this fixture is NOT
-    # thread-safe!!
-    collectors = list(REGISTRY._collector_to_names.keys())
-    for collector in collectors:
-        REGISTRY.unregister(collector)
-
-
-@pytest.fixture
 def prometheus_endpoint(settings: Settings) -> PrometheusEndpoint:
     return PrometheusEndpoint(settings)
 

@@ -21,4 +21,4 @@ class MetricsRegistry(CollectorRegistry):
         return self.exists(metric_name)
 
 
-REGISTRY = MetricsRegistry()
+REGISTRY = MetricsRegistry(auto_describe=True)

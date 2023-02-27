@@ -15,6 +15,7 @@ from ..types import (
     InferenceResponse,
 )
 from ..utils import generate_uuid, schedule_with_callback
+from .. import metrics
 
 from .requests import BatchedRequests
 
@@ -31,10 +32,7 @@ class AdaptiveBatcher:
         self.__requests: Optional[Queue[Tuple[str, InferenceRequest]]] = None
         self._async_responses: Dict[str, Future[InferenceResponse]] = {}
         self._batching_task = None
-        # TODO: Use new mlserver.register / mlserver.log helpers
-        #  self.batch_request_queue_size = Histogram(
-        #  "batch_request_queue", "counter of request queue batch size"
-        #  )
+        metrics.register("batch_request_queue", "counter of request queue batch size")
 
     async def predict(self, req: InferenceRequest) -> InferenceResponse:
         internal_id, _ = await self._queue_request(req)
@@ -67,8 +65,7 @@ class AdaptiveBatcher:
     def _batch_queue_monitor(self):
         """Monitorize batch queue size"""
         batch_queue_size = self._requests.qsize()
-        # TODO: Use new mlserver.register / mlserver.log helpers
-        #  self.batch_request_queue_size.observe(batch_queue_size)
+        metrics.log(batch_request_queue=batch_queue_size)
 
     async def _wait_response(self, internal_id: str) -> InferenceResponse:
         async_response = self._async_responses[internal_id]
