@@ -131,14 +131,15 @@ def to_v2_inference_request(
     # MLServer does not really care about a correct input name!
     input_name = _DEFAULT_INPUT_NAME
     id_name = generate_uuid()
-    outputs = []
+    default_outputs = []
 
     if metadata is not None:
         if metadata.inputs:
             # we only support a big single input numpy
             input_name = metadata.inputs[0].name
         if metadata.outputs:
-            outputs = metadata.outputs
+            # we can only explain a single output at the moment
+            default_outputs = [metadata.outputs[0]]
 
     # For List[str] (e.g. AnchorText), we use StringCodec for input
     input_payload_codec = StringCodec if type(input_data) == list else NumpyCodec
@@ -154,6 +155,6 @@ def to_v2_inference_request(
                 use_bytes=False,
             )
         ],
-        outputs=outputs if output is None else [output],
+        outputs=default_outputs if output is None else [output],
     )
     return v2_request
