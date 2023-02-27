@@ -107,9 +107,13 @@ def import_and_get_class(class_path: str) -> type:
 def to_v2_inference_request(
     input_data: Union[np.ndarray, List[str]],
     metadata: Optional[MetadataModelResponse],
+    output: Optional[str],
 ) -> InferenceRequest:
     """
     Encode numpy payload to v2 protocol.
+
+    If `output` is set, it takes precedence over any outputs that are set in the
+    `metadata` given that the user then is explicitly defining an output.
 
     Note: We only fetch the first-input name and the list of outputs from the metadata
     endpoint currently. We should consider wider reconciliation with data types etc.
@@ -120,6 +124,8 @@ def to_v2_inference_request(
        Numpy ndarray to encode
     metadata
        Extra metadata that can help encode the payload.
+    output
+       The output we care about to explain from the inference model.
     """
 
     # MLServer does not really care about a correct input name!
@@ -148,6 +154,6 @@ def to_v2_inference_request(
                 use_bytes=False,
             )
         ],
-        outputs=outputs,
+        outputs=outputs if output is None else [output],
     )
     return v2_request
