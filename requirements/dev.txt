@@ -18,7 +18,7 @@ aiohttp-retry==2.8.3
 httpx==0.23.3
 kafka-python==2.0.2
 tenacity==8.2.1
-pyyaml==5.4.1
+pyyaml==6.0
 ## Latest version of conda-pack (0.7.0) is not on PyPi
 ## See https://github.com/conda/conda-pack/issues/219
 git+https://github.com/conda/conda-pack@0.7.0
