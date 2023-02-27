@@ -325,7 +325,7 @@ async def test_backbox_explain_with_batch(batch):
         if batch:
             assert input_data.shape == (2, 2)
         else:
-            assert input_data.shape == (2,)
+            assert input_data.shape == (2,)  # we have returned the first element
         return Explanation(meta={}, data={})
 
     rt = AlibiExplainBlackBoxRuntime(
