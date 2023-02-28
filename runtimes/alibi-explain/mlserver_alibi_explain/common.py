@@ -13,6 +13,7 @@ from mlserver.types import (
     InferenceRequest,
     Parameters,
     MetadataModelResponse,
+    RequestOutput,
 )
 from mlserver.utils import generate_uuid
 
@@ -21,8 +22,6 @@ from mlserver_alibi_explain.errors import RemoteInferenceError, InvalidExplanati
 _DEFAULT_INPUT_NAME = "predict"
 
 EXPLAINER_TYPE_TAG = "explainer_type"
-
-_MAX_RETRY_ATTEMPT = 3
 
 ENV_PREFIX_ALIBI_EXPLAIN_SETTINGS = "MLSERVER_MODEL_ALIBI_EXPLAIN_"
 EXPLAIN_PARAMETERS_TAG = "explain_parameters"
@@ -92,6 +91,10 @@ class AlibiExplainSettings(BaseSettings):
 
     infer_uri: str
     explainer_type: str
+    explainer_batch: Optional[bool] = False
+    # In cases where the inference model can output multiple fields and
+    # we are interested in a specific field for explanation
+    infer_output: Optional[str]
     init_parameters: Optional[dict]
     ssl_verify_path: Optional[str]
 
@@ -105,9 +108,13 @@ def import_and_get_class(class_path: str) -> type:
 def to_v2_inference_request(
     input_data: Union[np.ndarray, List[str]],
     metadata: Optional[MetadataModelResponse],
+    output: Optional[str],
 ) -> InferenceRequest:
     """
     Encode numpy payload to v2 protocol.
+
+    If `output` is set, it takes precedence over any outputs that are set in the
+    `metadata` given that the user then is explicitly defining an output.
 
     Note: We only fetch the first-input name and the list of outputs from the metadata
     endpoint currently. We should consider wider reconciliation with data types etc.
@@ -118,19 +125,26 @@ def to_v2_inference_request(
        Numpy ndarray to encode
     metadata
        Extra metadata that can help encode the payload.
+    output
+       The output we care about to explain from the inference model.
     """
 
     # MLServer does not really care about a correct input name!
     input_name = _DEFAULT_INPUT_NAME
     id_name = generate_uuid()
+    default_outputs = []
     outputs = []
+
+    if output:
+        outputs = [RequestOutput(name=output)]
 
     if metadata is not None:
         if metadata.inputs:
             # we only support a big single input numpy
             input_name = metadata.inputs[0].name
         if metadata.outputs:
-            outputs = metadata.outputs
+            if not output:
+                default_outputs = [metadata.outputs[0]]
 
     # For List[str] (e.g. AnchorText), we use StringCodec for input
     input_payload_codec = StringCodec if type(input_data) == list else NumpyCodec
@@ -146,6 +160,6 @@ def to_v2_inference_request(
                 use_bytes=False,
             )
         ],
-        outputs=outputs,
+        outputs=outputs if outputs else default_outputs,
     )
     return v2_request

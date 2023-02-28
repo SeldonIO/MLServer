@@ -37,7 +37,7 @@ class AlibiExplainWhiteBoxRuntime(ABC, AlibiExplainRuntimeBase):
             init_parameters["model"] = self._inference_model
             self._model = self._explainer_class(**init_parameters)  # type: ignore
         else:
-            self._model = self._load_from_uri(self._inference_model)
+            self._model = await self._load_from_uri(self._inference_model)
 
         self.ready = True
         return self.ready
