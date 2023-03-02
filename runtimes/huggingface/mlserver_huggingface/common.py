@@ -11,7 +11,15 @@ from transformers.pipelines import pipeline
 from transformers.pipelines.base import Pipeline
 from transformers.models.auto.tokenization_auto import AutoTokenizer
 
-from optimum.pipelines import SUPPORTED_TASKS as SUPPORTED_OPTIMUM_TASKS
+try:
+    # Optimum 1.7 changed the import name from `SUPPORTED_TASKS` to
+    # `ORT_SUPPORTED_TASKS`.
+    # We'll try to import the more recent one, falling back to the previous
+    # import name if not present.
+    # https://github.com/huggingface/optimum/blob/987b02e4f6e2a1c9325b364ff764da2e57e89902/optimum/pipelines/__init__.py#L18
+    from optimum.pipelines import ORT_SUPPORTED_TASKS as SUPPORTED_OPTIMUM_TASKS
+except ImportError:
+    from optimum.pipelines import SUPPORTED_TASKS as SUPPORTED_OPTIMUM_TASKS
 
 
 HUGGINGFACE_TASK_TAG = "task"
