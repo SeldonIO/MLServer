@@ -201,7 +201,11 @@ def settings() -> Settings:
 
 
 @pytest.fixture
-def data_plane(settings: Settings, model_registry: MultiModelRegistry) -> DataPlane:
+def data_plane(
+    settings: Settings,
+    model_registry: MultiModelRegistry,
+    prometheus_registry: CollectorRegistry,
+) -> DataPlane:
     return DataPlane(settings=settings, model_registry=model_registry)
 
 
