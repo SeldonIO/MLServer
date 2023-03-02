@@ -15,10 +15,10 @@ from mlserver_huggingface.common import (
     InvalidTranformerInitialisation,
     load_pipeline_from_settings,
     NumpyEncoder,
+    SUPPORTED_OPTIMUM_TASKS,
 )
 from mlserver_huggingface.codecs import MultiStringRequestCodec
 from transformers.pipelines import SUPPORTED_TASKS
-from optimum.pipelines import SUPPORTED_TASKS as SUPPORTED_OPTIMUM_TASKS
 from mlserver.logging import logger
 
 
