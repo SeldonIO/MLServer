@@ -42,8 +42,7 @@ async def test_metrics(
             "rest_server_",
             "grpc_server_",
             "model_infer_",
-            # TODO: Re-enable once we use new mlserver.register
-            #  "batch_request_",
+            "batch_request_",
             "parallel_request_",
         )
         metrics_list = list(iter(metrics))

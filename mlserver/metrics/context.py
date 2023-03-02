@@ -30,6 +30,10 @@ def model_context(model_settings: ModelSettings):
 
 
 def register(name: str, description: str) -> Histogram:
+    """
+    Registers a new metric with its description.
+    If the metric already exists, it will just return the existing one.
+    """
     if name in REGISTRY:
         # TODO: Check if metric is a Histogram?
         return REGISTRY[name]
@@ -56,6 +60,13 @@ def _get_labels_from_context() -> dict:
 
 
 def log(**metrics):
+    """
+    Logs a new set of metric values.
+    Each kwarg of this method will be treated as a separate metric / value
+    pair.
+    If any of the metrics does not exist, a new one will be created with a
+    default description.
+    """
     labels = _get_labels_from_context()
     for metric_name, metric_value in metrics.items():
         metric = register(metric_name, "TODO: Default description?")
