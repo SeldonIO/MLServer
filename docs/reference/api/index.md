@@ -13,4 +13,5 @@ MLServer framework.
 ./model.md
 ./types.md
 ./codecs.md
+./metrics.md
 ```
