@@ -44,8 +44,15 @@ async def test_db_files(
     mlserver: MLServer,
     inference_request: InferenceRequest,
 ):
+    # Ensure each worker gets a request / response so that it can create the
+    # relevant metric files
     await rest_client.wait_until_ready()
-    await rest_client.infer(custom_metrics_model.name, inference_request)
+    await asyncio.gather(
+        *[
+            await rest_client.infer(custom_metrics_model.name, inference_request)
+            for _ in range(mlserver._settings.parallel_workers)
+        ]
+    )
 
     assert mlserver._settings.parallel_workers > 0
     for pid in mlserver._inference_pool._workers:
