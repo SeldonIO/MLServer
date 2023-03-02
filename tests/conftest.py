@@ -255,7 +255,9 @@ def repository_index_response(sum_model_settings) -> types.RepositoryIndexRespon
 
 
 @pytest.fixture
-async def inference_pool(settings: Settings) -> InferencePool:
+async def inference_pool(
+    settings: Settings, prometheus_registry: CollectorRegistry
+) -> InferencePool:
     pool = InferencePool(settings)
     yield pool
 
