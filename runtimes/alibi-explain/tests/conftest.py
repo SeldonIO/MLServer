@@ -12,6 +12,8 @@ from typing import Type
 
 from httpx import AsyncClient
 from fastapi import FastAPI
+from prometheus_client.registry import REGISTRY, CollectorRegistry
+from starlette_exporter import PrometheusMiddleware
 from alibi.api.interfaces import Explanation, Explainer
 from alibi.explainers import AnchorImage
 
@@ -25,18 +27,51 @@ from mlserver.rest import RESTServer
 from mlserver.settings import ModelSettings, ModelParameters, Settings
 from mlserver.types import MetadataModelResponse
 from mlserver.utils import install_uvloop_event_loop
+from mlserver.metrics.registry import MetricsRegistry, REGISTRY as METRICS_REGISTRY
+
 from mlserver_alibi_explain.common import AlibiExplainSettings
 from mlserver_alibi_explain.runtime import AlibiExplainRuntime, AlibiExplainRuntimeBase
 
 from .helpers.tf_model import get_tf_mnist_model_uri, TFMNISTModel
 from .helpers.run_async import run_async_as_sync
+from .helpers.metrics import unregister_metrics
 
 TESTS_PATH = Path(os.path.dirname(__file__))
 _ANCHOR_IMAGE_DIR = TESTS_PATH / ".data" / "mnist_anchor_image"
 
 
 @pytest.fixture
-async def inference_pool(settings: Settings) -> AsyncIterable[InferencePool]:
+def metrics_registry() -> MetricsRegistry:
+    yield METRICS_REGISTRY
+
+    unregister_metrics(METRICS_REGISTRY)
+
+
+@pytest.fixture
+def prometheus_registry(metrics_registry: MetricsRegistry) -> CollectorRegistry:
+    """
+    Fixture used to ensure the registry is cleaned on each run.
+    Otherwise, `py-grpc-prometheus` will complain that metrics already exist.
+
+    TODO: Open issue in `py-grpc-prometheus` to check whether a metric exists
+    before creating it.
+    For an example on how to do this, see `starlette_exporter`'s implementation
+
+        https://github.com/stephenhillier/starlette_exporter/blob/947d4d631dd9a6a8c1071b45573c5562acba4834/starlette_exporter/middleware.py#L67
+    """
+    yield REGISTRY
+
+    unregister_metrics(REGISTRY)
+
+    # Clean metrics from `starlette_exporter` as well, as otherwise they won't
+    # get re-created
+    PrometheusMiddleware._metrics.clear()
+
+
+@pytest.fixture
+async def inference_pool(
+    settings: Settings, prometheus_registry: CollectorRegistry
+) -> AsyncIterable[InferencePool]:
     pool = InferencePool(settings)
     yield pool
 
@@ -121,6 +156,7 @@ async def rest_server(
     data_plane: DataPlane,
     model_repository_handlers: ModelRepositoryHandlers,
     custom_runtime_tf: MLModel,
+    prometheus_registry: CollectorRegistry,
 ) -> AsyncIterable[RESTServer]:
     server = RESTServer(
         settings=settings,
