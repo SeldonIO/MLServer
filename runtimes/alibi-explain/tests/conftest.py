@@ -41,7 +41,7 @@ _ANCHOR_IMAGE_DIR = TESTS_PATH / ".data" / "mnist_anchor_image"
 
 
 @pytest.fixture
-def metrics_registry() -> MetricsRegistry:
+def metrics_registry() -> Iterable[MetricsRegistry]:
     yield METRICS_REGISTRY
 
     unregister_metrics(METRICS_REGISTRY)

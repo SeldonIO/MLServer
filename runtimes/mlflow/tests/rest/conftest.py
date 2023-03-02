@@ -2,7 +2,7 @@ import pytest
 
 from fastapi import FastAPI
 from httpx import AsyncClient
-from typing import AsyncIterable
+from typing import Iterable, AsyncIterable
 from prometheus_client.registry import REGISTRY, CollectorRegistry
 from starlette_exporter import PrometheusMiddleware
 
@@ -19,7 +19,7 @@ from .utils import unregister_metrics
 
 
 @pytest.fixture
-def metrics_registry() -> MetricsRegistry:
+def metrics_registry() -> Iterable[MetricsRegistry]:
     yield METRICS_REGISTRY
 
     unregister_metrics(METRICS_REGISTRY)
