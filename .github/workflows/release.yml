@@ -140,6 +140,7 @@ jobs:
     needs: draft-release
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         runtime:
           - alibi-detect
