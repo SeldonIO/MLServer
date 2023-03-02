@@ -4,7 +4,7 @@ import pytest
 import asyncio
 import numpy as np
 import pandas as pd
-from typing import Iterable
+
 from sklearn.dummy import DummyClassifier
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping

@@ -1,16 +1,6 @@
 import pytest
-import asyncio
-
-from tempfile import TemporaryDirectory
-from prometheus_client.registry import REGISTRY, CollectorRegistry
-from starlette_exporter import PrometheusMiddleware
-
-from mlserver.server import MLServer
-from mlserver.settings import Settings, ModelSettings
-
-from ..utils import RESTClient, get_available_ports
-
 import os
+
 from ..conftest import TESTDATA_PATH
 
 

@@ -3,7 +3,6 @@ import pytest
 from mlserver.server import MLServer
 from mlserver.settings import Settings
 from mlserver.metrics.prometheus import PrometheusEndpoint
-from mlserver.metrics.registry import REGISTRY, MetricsRegistry
 
 from .utils import MetricsClient
 

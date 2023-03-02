@@ -6,8 +6,8 @@ from ..settings import ModelSettings
 from .registry import REGISTRY
 from .errors import InvalidModelContext
 
-model_name_var = ContextVar("model_name")
-model_version_var = ContextVar("model_version")
+model_name_var: ContextVar[str] = ContextVar("model_name")
+model_version_var: ContextVar[str] = ContextVar("model_version")
 
 SELDON_MODEL_NAME_LABEL = "model_name"
 SELDON_MODEL_VERSION_LABEL = "model_version"

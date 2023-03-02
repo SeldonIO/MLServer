@@ -10,7 +10,6 @@ from mlserver.rest import RESTServer
 from mlserver.registry import MultiModelRegistry
 from mlserver import Settings, ModelSettings
 from prometheus_client.registry import CollectorRegistry
-from starlette_exporter import PrometheusMiddleware
 
 from ..fixtures import SumModel
 

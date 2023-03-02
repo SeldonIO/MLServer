@@ -5,7 +5,6 @@ import pytest
 
 from mlserver.batch_processing import process_batch
 from mlserver.settings import Settings
-from tempfile import TemporaryDirectory
 
 
 from ..utils import RESTClient
