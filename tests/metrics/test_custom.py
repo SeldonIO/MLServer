@@ -49,7 +49,7 @@ async def test_db_files(
     await rest_client.wait_until_ready()
     await asyncio.gather(
         *[
-            await rest_client.infer(custom_metrics_model.name, inference_request)
+            rest_client.infer(custom_metrics_model.name, inference_request)
             for _ in range(mlserver._settings.parallel_workers)
         ]
     )
