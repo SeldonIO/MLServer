@@ -5,17 +5,19 @@ from mlserver.types import (
     InferenceRequest,
     InferenceResponse,
 )
-from mlserver_huggingface.common import (
+from transformers.pipelines import SUPPORTED_TASKS
+
+from mlserver.logging import logger
+
+from .common import (
     HuggingFaceSettings,
     parse_parameters_from_env,
     InvalidTranformerInitialisation,
     load_pipeline_from_settings,
+    SUPPORTED_OPTIMUM_TASKS,
 )
-from mlserver_huggingface.codecs import HuggingfaceRequestCodec
-from transformers.pipelines import SUPPORTED_TASKS
-from optimum.pipelines import SUPPORTED_TASKS as SUPPORTED_OPTIMUM_TASKS
-from mlserver.logging import logger
-from mlserver_huggingface.metadata import METADATA
+from .codecs import HuggingfaceRequestCodec
+from .metadata import METADATA
 
 
 class HuggingFaceRuntime(MLModel):
