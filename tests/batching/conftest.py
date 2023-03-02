@@ -7,11 +7,19 @@ from typing import Callable, Tuple, Awaitable
 from mlserver.utils import generate_uuid
 from mlserver.types import InferenceRequest, TensorData
 from mlserver.model import MLModel
+from mlserver.metrics.context import model_context
 from mlserver.batching.adaptive import AdaptiveBatcher
+from mlserver.settings import ModelSettings
 
 from ..conftest import TESTDATA_PATH
 
 TestRequestSender = Callable[[], Awaitable[Tuple[str, InferenceRequest]]]
+
+
+@pytest.fixture(autouse=True)
+def sum_model_context(sum_model_settings: ModelSettings) -> ModelSettings:
+    with model_context(sum_model_settings):
+        yield sum_model_settings
 
 
 @pytest.fixture(params=["inference-request.json", "inference-request-with-output.json"])
