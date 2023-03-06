@@ -1,5 +1,4 @@
 from fastapi import status
-from typing import Optional
 
 from ..errors import MLServerError
 
