@@ -36,7 +36,7 @@ def register(name: str, description: str) -> Histogram:
     """
     if name in REGISTRY:
         # TODO: Check if metric is a Histogram?
-        return REGISTRY[name]
+        return REGISTRY[name]  # type: ignore
 
     # TODO: How to enable multiple metric types?
     return Histogram(

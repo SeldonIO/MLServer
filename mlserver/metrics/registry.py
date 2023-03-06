@@ -1,6 +1,8 @@
 from prometheus_client import CollectorRegistry
 from prometheus_client.metrics import MetricWrapperBase
 
+from .errors import MetricNotFound
+
 
 class MetricsRegistry(CollectorRegistry):
     """
@@ -11,8 +13,14 @@ class MetricsRegistry(CollectorRegistry):
         return metric_name in self._names_to_collectors
 
     def get(self, metric_name: str) -> MetricWrapperBase:
-        # TODO: Check that it's a MetricWrapperBase?
-        return self._names_to_collectors[metric_name]
+        if metric_name not in self._names_to_collectors:
+            raise MetricNotFound(metric_name)
+
+        collector = self._names_to_collectors[metric_name]
+        if not isinstance(collector, MetricWrapperBase):
+            raise MetricNotFound(metric_name, collector)
+
+        return collector
 
     def __getitem__(self, metric_name: str) -> MetricWrapperBase:
         return self.get(metric_name)
