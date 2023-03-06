@@ -48,7 +48,9 @@ def metrics_registry() -> Iterable[MetricsRegistry]:
 
 
 @pytest.fixture
-def prometheus_registry(metrics_registry: MetricsRegistry) -> CollectorRegistry:
+def prometheus_registry(
+    metrics_registry: MetricsRegistry,
+) -> Iterable[CollectorRegistry]:
     """
     Fixture used to ensure the registry is cleaned on each run.
     Otherwise, `py-grpc-prometheus` will complain that metrics already exist.

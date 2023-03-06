@@ -2,6 +2,7 @@ import pytest
 
 from prometheus_client import Histogram
 
+from mlserver.metrics.errors import MetricNotFound
 from mlserver.metrics.registry import MetricsRegistry
 
 
@@ -32,5 +33,5 @@ def test_get(metrics_registry: MetricsRegistry, metric: Histogram):
 
 
 def test_get_error(metrics_registry: MetricsRegistry, metric: Histogram):
-    with pytest.raises(KeyError):
+    with pytest.raises(MetricNotFound):
         metrics_registry["something_else"]
