@@ -1,6 +1,8 @@
 import hashlib
 import asyncio
 
+ENV_HASH_ATTR = "__env_hash__"
+
 
 def sha256(tarball_path: str) -> str:
     """
@@ -26,3 +28,11 @@ def sha256(tarball_path: str) -> str:
 async def get_environment_hash(tarball_path: str) -> str:
     loop = asyncio.get_running_loop()
     return await loop.run_in_executor(None, sha256, tarball_path)
+
+
+def save_environment_hash(model: MLModel, env_hash: str):
+    setattr(model, ENV_HASH_ATTR)
+
+
+def read_environment_hash(model: MLModel) -> Optional[str]:
+    getattr(model, ENV_HASH_ATTR, None)
