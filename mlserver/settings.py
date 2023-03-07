@@ -195,7 +195,7 @@ class ModelParameters(BaseSettings):
     version: Optional[str] = None
     """Version of the model."""
 
-    environment: Optional[str] = None
+    environment_path: Optional[str] = None
     """Path to the environment tarball which should be used to load this
     model."""
 
