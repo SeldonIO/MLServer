@@ -10,6 +10,7 @@ from mlserver.model import MLModel
 from mlserver.env import Environment
 from mlserver.parallel.model import ModelMethods
 from mlserver.parallel.pool import InferencePool
+from mlserver.parallel.registry import InferencePoolRegistry
 from mlserver.parallel.worker import Worker
 from mlserver.parallel.utils import configure_inference_pool, cancel_task
 from mlserver.parallel.messages import (
@@ -19,6 +20,14 @@ from mlserver.parallel.messages import (
 )
 
 from ..fixtures import ErrorModel, EnvModel
+
+
+@pytest.fixture
+async def inference_pool_registry(settings: Settings) -> InferencePoolRegistry:
+    registry = InferencePoolRegistry(settings)
+    yield registry
+
+    await registry.close()
 
 
 @pytest.fixture
