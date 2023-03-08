@@ -16,6 +16,9 @@ ENV_PREFIX_MODEL_SETTINGS = "MLSERVER_MODEL_"
 
 DEFAULT_PARALLEL_WORKERS = 1
 
+DEFAULT_ENVIRONMENTS_DIR = os.path.join(os.getcwd(), ".envs")
+DEFAULT_METRICS_DIR = os.path.join(os.getcwd(), ".metrics")
+
 
 @contextmanager
 def _extra_sys_path(extra_path: str):
@@ -86,6 +89,13 @@ class Settings(BaseSettings):
     parallel_workers_timeout: int = 5
     """Grace timeout to wait until the workers shut down when stopping MLServer."""
 
+    environments_dir: str = DEFAULT_ENVIRONMENTS_DIR
+    """
+    Directory used to store custom environments.
+    By default, the `.envs` folder of the current working directory will be
+    used.
+    """
+
     # Custom model repository class implementation
     model_repository_implementation: Optional[PyObject] = None
     """*Python path* to the inference runtime to model repository (e.g.
@@ -148,12 +158,14 @@ class Settings(BaseSettings):
     Metrics rest server string prefix to be exported.
     """
 
-    metrics_dir: str = os.getcwd()
+    metrics_dir: str = DEFAULT_METRICS_DIR
     """
     Directory used to share metrics across parallel workers.
     Equivalent to the `PROMETHEUS_MULTIPROC_DIR` env var in
     `prometheus-client`.
     Note that this won't be used if the `parallel_workers` flag is disabled.
+    By default, the `.metrics` folder of the current working directory will be
+    used.
     """
 
     # Logging settings
