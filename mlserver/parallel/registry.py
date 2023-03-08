@@ -7,6 +7,7 @@ from ..model import MLModel
 from ..settings import Settings
 from ..env import Environment, compute_hash
 
+from .errors import EnvironmentNotFound
 from .logging import logger
 from .pool import InferencePool, InferencePoolHook
 
@@ -73,8 +74,7 @@ class InferencePoolRegistry:
             return self._default_pool
 
         if env_hash not in self._pools:
-            # TODO: Raise error for invalid env hash
-            pass
+            raise EnvironmentNotFound(model, env_hash)
 
         return self._pools[env_hash]
 

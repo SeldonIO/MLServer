@@ -4,6 +4,7 @@ from mlserver.model import MLModel
 from mlserver.settings import Settings, ModelSettings
 from mlserver.types import InferenceRequest
 from mlserver.codecs import StringCodec
+from mlserver.parallel.errors import EnvironmentNotFound
 from mlserver.parallel.registry import (
     InferencePoolRegistry,
     _set_environment_hash,
@@ -137,3 +138,11 @@ async def test_unload_model_removes_pool_if_empty(
 
     await inference_pool_registry.unload_model(model)
     assert len(inference_pool_registry._pools) == 0
+
+
+async def test_invalid_env_hash(
+    inference_pool_registry: InferencePoolRegistry, sum_model: MLModel
+):
+    _set_environment_hash(sum_model, "foo")
+    with pytest.raises(EnvironmentNotFound):
+        await inference_pool_registry._find(sum_model)

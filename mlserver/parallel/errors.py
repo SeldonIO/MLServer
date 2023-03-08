@@ -1,7 +1,20 @@
 from fastapi import status
 
+from ..model import MLModel
 from ..utils import get_import_path
 from ..errors import MLServerError
+
+
+class EnvironmentNotFound(MLServerError):
+    def __init__(self, model: MLModel, env_hash: str):
+        msg = (
+            f"Environment with hash '{env_hash}' was not found for model '{model.name}'"
+        )
+
+        if model.version:
+            msg += f" with version '{model.version}'"
+
+        super().__init__(msg, status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class WorkerError(MLServerError):
