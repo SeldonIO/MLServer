@@ -13,13 +13,13 @@ from .hash import get_environment_hash, save_environment_hash, read_environment_
 
 
 def _get_env_tarball_path(model: MLModel) -> Optional[str]:
-   if model.settings.parameters is None:
-       return None
+    if model.settings.parameters is None:
+        return None
 
-   return model.settings.parameters.environment_tarball
+    return model.settings.parameters.environment_tarball
 
 
-lass InferencePoolRegistry:
+class InferencePoolRegistry:
     """
     Keeps track of the different inference pools loaded in the server.
     Each inference pool will generally be used to load a different environment.
@@ -30,7 +30,9 @@ lass InferencePoolRegistry:
     ):
         self._settings = settings
         self._on_worker_stop = on_worker_stop
-        self._default_pool = InferencePool(settings, on_worker_stop=on_worker_stop)
+        self._default_pool = InferencePool(
+            self._settings, on_worker_stop=on_worker_stop
+        )
         self._pools: Dict[str, InferencePool] = {}
 
         os.makedirs(self._settings.environments_dir, exist_ok=True)
@@ -48,9 +50,14 @@ lass InferencePoolRegistry:
         env_path = self._get_env_path(env_hash)
         os.makedirs(env_path)
         env = await Environment.from_tarball(tarball_path, env_path)
-        pool = InferencePool(settings, env=env, on_worker_stop=self._on_worker_stop)
+        pool = InferencePool(
+            self._settings, env=env, on_worker_stop=self._on_worker_stop
+        )
         self._pools[env_hash] = pool
         return pool
+
+    def _get_env_path(self, env_hash: str) -> str:
+        return os.path.join(self._settings.environments_dir, env_hash)
 
     async def _find(self, model: MLModel) -> InferencePool:
         env_hash = read_environment_hash(model)
@@ -85,7 +92,7 @@ lass InferencePoolRegistry:
 
         if pool != self._default_pool:
             # TODO: If pool is now empty, remove it
-            # TODO: Also remove env path
+            # (we can use `self._close_pool`)
             pass
 
         return unloaded
@@ -97,6 +104,7 @@ lass InferencePoolRegistry:
         )
 
     async def _close_pool(self, env_hash: str = None):
+        # TODO: Remove env hash folder
         pool = self._default_pool
         pool_name = "default inference pool"
         if env_hash:
