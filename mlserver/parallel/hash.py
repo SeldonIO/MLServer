@@ -39,4 +39,4 @@ def save_environment_hash(model: MLModel, env_hash: str):
 
 
 def read_environment_hash(model: MLModel) -> Optional[str]:
-    getattr(model, ENV_HASH_ATTR, None)
+    return getattr(model, ENV_HASH_ATTR, None)
