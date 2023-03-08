@@ -3,7 +3,7 @@ import sys
 import os
 import shutil
 
-from mlserver.env import Environment
+from mlserver.env import Environment, compute_hash
 
 
 @pytest.fixture
@@ -12,12 +12,18 @@ def expected_python_folder() -> str:
     return f"python{v.major}.{v.minor}"
 
 
+async def test_compute_hash(env_tarball: str):
+    env_hash = await compute_hash(env_tarball)
+    assert len(env_hash) == 64
+
+
 async def test_from_tarball(env_tarball: str, tmp_path: str):
     env = await Environment.from_tarball(env_tarball, env_path=tmp_path)
 
     executable = os.path.join(tmp_path, "bin", "python")
     assert os.path.isfile(executable)
     assert os.path.isdir(env._lib_path)
+    assert len(env.env_hash) == 64
 
 
 def test_sys_path(env: Environment, expected_python_folder: str):

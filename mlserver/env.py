@@ -3,6 +3,7 @@ import os
 import sys
 import tarfile
 import glob
+import hashlib
 
 from typing import List
 from functools import cached_property
@@ -16,6 +17,32 @@ def _extract_env(tarball_path: str, env_path: str) -> None:
         tarball.extractall(path=env_path)
 
 
+def _compute_hash(tarball_path: str) -> str:
+    """
+    From Python 3.11's implementation of `hashlib.file_digest()`:
+    https://github.com/python/cpython/blob/3.11/Lib/hashlib.py#L257
+    """
+    h = hashlib.sha256()
+    buffer_size = 2**18
+
+    # Disable IO buffering since it's handled explicitly below
+    with open(tarball_path, "rb", buffering=0) as env_file:
+        buffer = bytearray(buffer_size)
+        view = memoryview(buffer)
+        while True:
+            size = env_file.readinto(buffer)
+            if size == 0:
+                break
+            h.update(view[:size])
+
+    return h.hexdigest()
+
+
+async def compute_hash(tarball_path: str) -> str:
+    loop = asyncio.get_running_loop()
+    return await loop.run_in_executor(None, _compute_hash, tarball_path)
+
+
 class Environment:
     """
     Custom Python environment.
@@ -23,18 +50,25 @@ class Environment:
     environment.
     """
 
-    def __init__(self, env_path: str):
+    def __init__(self, env_path: str, env_hash: str):
         self._env_path = env_path
+        self.env_hash = env_hash
 
     @classmethod
-    async def from_tarball(cls, tarball_path: str, env_path: str) -> "Environment":
+    async def from_tarball(
+        cls, tarball_path: str, env_path: str, env_hash: str = None
+    ) -> "Environment":
         """
         Instantiate an Environment object from an environment tarball.
+        If the env hash is not provided, it will be computed on-the-fly.
         """
         loop = asyncio.get_running_loop()
         await loop.run_in_executor(None, _extract_env, tarball_path, env_path)
 
-        return cls(env_path)
+        if not env_hash:
+            env_hash = await compute_hash(tarball_path)
+
+        return cls(env_path, env_hash)
 
     @cached_property
     def _sys_path(self) -> List[str]:
