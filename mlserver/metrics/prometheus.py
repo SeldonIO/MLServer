@@ -26,7 +26,7 @@ def configure_metrics(settings: Settings):
     # Note that this workaround depends on initialising all metrics in a
     # lazy manner (i.e. not as global values)
     # https://github.com/prometheus/client_python/blob/781e3e1851d80a53732bb8102d5754cf9d68b3c1/prometheus_client/values.py#L126-L134
-    os.makedirs(settings.metrics_dir, exists_ok=True)
+    os.makedirs(settings.metrics_dir, exist_ok=True)
     os.environ[PROMETHEUS_MULTIPROC_DIR] = settings.metrics_dir
     values.ValueClass = values.get_value_class()
 
