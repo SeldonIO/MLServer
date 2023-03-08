@@ -52,8 +52,9 @@ async def load_error_model() -> MLModel:
 
 
 @pytest.fixture
-def settings(settings: Settings) -> Settings:
+def settings(settings: Settings, tmp_path: str) -> Settings:
     settings.parallel_workers = 2
+    settings.environments_dir = str(tmp_path)
 
     configure_inference_pool(settings)
     return settings
@@ -147,8 +148,12 @@ def custom_request_message(sum_model_settings: ModelSettings) -> ModelRequestMes
 
 
 @pytest.fixture
-def env_model_settings() -> ModelSettings:
-    return ModelSettings(name="env-model", implementation=EnvModel)
+def env_model_settings(env_tarball: str) -> ModelSettings:
+    return ModelSettings(
+        name="env-model",
+        implementation=EnvModel,
+        parameters=ModelParameters(environment_path=env_tarball),
+    )
 
 
 @pytest.fixture

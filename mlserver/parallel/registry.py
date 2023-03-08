@@ -1,16 +1,18 @@
 import asyncio
+import os
 
 from typing import Optional, Dict, List
 
 from ..model import MLModel
 from ..settings import Settings
+from ..env import Environment
 
 from .logging import logger
 from .pool import InferencePool, InferencePoolHook
 from .hash import get_environment_hash, save_environment_hash, read_environment_hash
 
 
-def _get_environment_path(model: MLModel) -> Optional[str]:
+def _get_env_tarball_path(model: MLModel) -> Optional[str]:
     if model.settings.parameters is None:
         return None
 
@@ -26,21 +28,26 @@ class InferencePoolRegistry:
     def __init__(
         self, settings: Settings, on_worker_stop: List[InferencePoolHook] = []
     ):
+        self._settings = settings
         self._on_worker_stop = on_worker_stop
         self._default_pool = InferencePool(settings, on_worker_stop=on_worker_stop)
         self._pools: Dict[str, InferencePool] = {}
 
+        os.makedirs(self._settings.environments_dir, exist_ok=True)
+
     async def _get_or_create(self, model: MLModel) -> InferencePool:
-        env_path = _get_environment_path(model)
-        if not env_path:
+        tarball_path = _get_env_tarball_path(model)
+        if not tarball_path:
             return self._default_pool
 
-        env_hash = await get_environment_hash(env_path)
+        env_hash = await get_environment_hash(tarball_path)
         save_environment_hash(model, env_hash)
         if env_hash in self._pools:
             return self._pools[env_hash]
 
-        env = await Environment.from_tarball(env_path)
+        env_path = self._get_env_path(env_hash)
+        os.makedirs(env_path)
+        env = await Environment.from_tarball(tarball_path, env_path)
         pool = InferencePool(settings, env=env, on_worker_stop=self._on_worker_stop)
         self._pools[env_hash] = pool
         return pool

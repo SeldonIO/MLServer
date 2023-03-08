@@ -35,7 +35,7 @@ async def get_environment_hash(tarball_path: str) -> str:
 
 
 def save_environment_hash(model: MLModel, env_hash: str):
-    setattr(model, ENV_HASH_ATTR)
+    setattr(model, ENV_HASH_ATTR, env_hash)
 
 
 def read_environment_hash(model: MLModel) -> Optional[str]:
