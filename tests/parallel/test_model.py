@@ -5,7 +5,7 @@ from mlserver.handlers.custom import get_custom_handlers
 from mlserver.types import InferenceRequest, MetadataModelResponse
 from mlserver.model import MLModel
 from mlserver.settings import ModelSettings
-from mlserver.parallel import InferencePool
+from mlserver.parallel.pool import InferencePool
 
 from ..fixtures import ErrorModel
 
