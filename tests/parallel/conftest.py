@@ -23,11 +23,11 @@ from ..fixtures import ErrorModel, EnvModel
 
 
 @pytest.fixture
-async def inference_pool_registry(settings: Settings) -> InferencePoolRegistry:
-    registry = InferencePoolRegistry(settings)
-    yield registry
+async def inference_pool(settings: Settings) -> InferencePool:
+    pool = InferencePool(settings)
+    yield pool
 
-    await registry.close()
+    await pool.close()
 
 
 @pytest.fixture

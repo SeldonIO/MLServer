@@ -11,7 +11,7 @@ from .settings import Settings, ModelSettings
 from .logging import configure_logger
 from .registry import MultiModelRegistry
 from .handlers import DataPlane, ModelRepositoryHandlers
-from .parallel import InferencePool
+from .parallel import InferencePoolRegistry
 from .batching import load_batching
 from .rest import RESTServer
 from .grpc import GRPCServer
@@ -31,14 +31,14 @@ class MLServer:
         if self._settings.metrics_endpoint:
             self._metrics_server = MetricsServer(self._settings)
 
-        self._inference_pool = None
+        self._inference_pool_registry = None
         if self._settings.parallel_workers:
             # Only load inference pool if parallel inference has been enabled
             on_worker_stop = []
             if self._metrics_server:
                 on_worker_stop = [self._metrics_server.on_worker_stop]
 
-            self._inference_pool = InferencePool(
+            self._inference_pool_registry = InferencePoolRegistry(
                 self._settings, on_worker_stop=on_worker_stop  # type: ignore
             )
 
@@ -64,18 +64,18 @@ class MLServer:
         on_model_reload = [self.reload_custom_handlers]
         on_model_unload = [self.remove_custom_handlers]
 
-        if self._inference_pool:
+        if self._inference_pool_registry:
             on_model_load = [
-                self._inference_pool.load_model,
+                self._inference_pool_registry.load_model,
                 self.add_custom_handlers,
                 load_batching,
             ]
             on_model_reload = [
-                self._inference_pool.reload_model,  # type: ignore
+                self._inference_pool_registry.reload_model,  # type: ignore
                 self.reload_custom_handlers,
             ]
             on_model_unload = [
-                self._inference_pool.unload_model,  # type: ignore
+                self._inference_pool_registry.unload_model,  # type: ignore
                 self.remove_custom_handlers,
             ]
 
@@ -167,8 +167,8 @@ class MLServer:
             )
 
     async def stop(self, sig: Optional[int] = None):
-        if self._inference_pool:
-            await self._inference_pool.close()
+        if self._inference_pool_registry:
+            await self._inference_pool_registry.close()
 
         if self._kafka_server:
             await self._kafka_server.stop()

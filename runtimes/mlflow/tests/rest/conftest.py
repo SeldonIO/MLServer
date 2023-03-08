@@ -11,8 +11,8 @@ from mlserver.registry import MultiModelRegistry
 from mlserver.rest import RESTServer
 from mlserver.repository import ModelRepository, SchemalessModelRepository
 from mlserver.model import MLModel
-from mlserver.parallel import InferencePool
 from mlserver.metrics.registry import MetricsRegistry, REGISTRY as METRICS_REGISTRY
+from mlserver.parallel import InferencePoolRegistry
 from mlserver import Settings, ModelSettings
 
 from .utils import unregister_metrics
@@ -49,11 +49,13 @@ def prometheus_registry(
 
 
 @pytest.fixture
-async def inference_pool(settings: Settings) -> AsyncIterable[InferencePool]:
-    pool = InferencePool(settings)
-    yield pool
+async def inference_pool_registry(
+    settings: Settings,
+) -> AsyncIterable[InferencePoolRegistry]:
+    registry = InferencePoolRegistry(settings)
+    yield registry
 
-    await pool.close()
+    await registry.close()
 
 
 @pytest.fixture
@@ -63,12 +65,12 @@ def model_repository(model_uri: str) -> ModelRepository:
 
 @pytest.fixture
 async def model_registry(
-    inference_pool: InferencePool, model_settings: ModelSettings
+    inference_pool_registry: InferencePoolRegistry, model_settings: ModelSettings
 ) -> AsyncIterable[MultiModelRegistry]:
     model_registry = MultiModelRegistry(
-        on_model_load=[inference_pool.load_model],
-        on_model_reload=[inference_pool.reload_model],
-        on_model_unload=[inference_pool.unload_model],
+        on_model_load=[inference_pool_registry.load_model],
+        on_model_reload=[inference_pool_registry.reload_model],
+        on_model_unload=[inference_pool_registry.unload_model],
     )
 
     await model_registry.load(model_settings)

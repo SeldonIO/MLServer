@@ -16,7 +16,7 @@ from mlserver.repository import (
     SchemalessModelRepository,
     DEFAULT_MODEL_SETTINGS_FILENAME,
 )
-from mlserver.parallel import InferencePool
+from mlserver.parallel import InferencePoolRegistry
 from mlserver.utils import install_uvloop_event_loop
 from mlserver.logging import get_logger
 from mlserver.env import Environment
@@ -312,3 +312,11 @@ async def rest_client(mlserver: MLServer, settings: Settings):
     yield client
 
     await client.close()
+
+
+@pytest.fixture
+async def inference_pool_registry(settings: Settings) -> InferencePoolRegistry:
+    registry = InferencePoolRegistry(settings)
+    yield registry
+
+    await registry.close()
