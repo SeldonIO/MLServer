@@ -5,14 +5,23 @@ from typing import Optional, Dict, List
 
 from ..model import MLModel
 from ..settings import Settings
-from ..env import Environment
+from ..env import Environment, compute_hash
 
 from .logging import logger
 from .pool import InferencePool, InferencePoolHook
-from .hash import get_environment_hash, save_environment_hash, read_environment_hash
+
+ENV_HASH_ATTR = "__env_hash__"
 
 
-def _get_env_tarball_path(model: MLModel) -> Optional[str]:
+def _set_environment_hash(model: MLModel, env_hash: str):
+    setattr(model, ENV_HASH_ATTR, env_hash)
+
+
+def _get_environment_hash(model: MLModel) -> Optional[str]:
+    return getattr(model, ENV_HASH_ATTR, None)
+
+
+def _get_env_tarball(model: MLModel) -> Optional[str]:
     if model.settings.parameters is None:
         return None
 
@@ -38,18 +47,17 @@ class InferencePoolRegistry:
         os.makedirs(self._settings.environments_dir, exist_ok=True)
 
     async def _get_or_create(self, model: MLModel) -> InferencePool:
-        tarball_path = _get_env_tarball_path(model)
-        if not tarball_path:
+        env_tarball = _get_env_tarball(model)
+        if not env_tarball:
             return self._default_pool
 
-        env_hash = await get_environment_hash(tarball_path)
-        save_environment_hash(model, env_hash)
+        env_hash = await compute_hash(env_tarball)
         if env_hash in self._pools:
             return self._pools[env_hash]
 
         env_path = self._get_env_path(env_hash)
         os.makedirs(env_path)
-        env = await Environment.from_tarball(tarball_path, env_path)
+        env = await Environment.from_tarball(env_tarball, env_path, env_hash)
         pool = InferencePool(
             self._settings, env=env, on_worker_stop=self._on_worker_stop
         )
@@ -60,7 +68,7 @@ class InferencePoolRegistry:
         return os.path.join(self._settings.environments_dir, env_hash)
 
     async def _find(self, model: MLModel) -> InferencePool:
-        env_hash = read_environment_hash(model)
+        env_hash = _get_environment_hash(model)
         if not env_hash:
             return self._default_pool
 
@@ -71,17 +79,20 @@ class InferencePoolRegistry:
         return self._pools[env_hash]
 
     async def load_model(self, model: MLModel) -> MLModel:
+        # TODO: If load fails, should we remove pool if empty?
         pool = await self._get_or_create(model)
-        return await pool.load_model(model)
+        loaded = await pool.load_model(model)
+        _set_environment_hash(loaded, pool.env_hash)
+        return loaded
 
     async def reload_model(self, old_model: MLModel, new_model: MLModel) -> MLModel:
-        # TODO: What if env is now different?
-        old_pool = self._find(old_model)
-        new_pool = self._get_or_create(new_model)
+        old_hash = _get_environment_hash(old_model)
+        new_pool = await self._get_or_create(new_model)
 
-        loaded = await new_pool.load_model(new_model)
-        if old_pool != new_model:
-            # Unload from old one
+        loaded = await new_pool.reload_model(old_model, new_model)
+        _set_environment_hash(loaded, new_pool.env_hash)
+        if old_hash != new_pool.env_hash:
+            # Environment has changed in the new version, so unload the old one
             await self.unload_model(old_model)
 
         return loaded
@@ -90,10 +101,8 @@ class InferencePoolRegistry:
         pool = await self._find(model)
         unloaded = await pool.unload_model(model)
 
-        if pool != self._default_pool:
-            # TODO: If pool is now empty, remove it
-            # (we can use `self._close_pool`)
-            pass
+        if pool != self._default_pool and pool.empty():
+            await self._close_pool(pool.env_hash)
 
         return unloaded
 
@@ -114,3 +123,6 @@ class InferencePoolRegistry:
         logger.info(f"Waiting for shutdown of {pool_name}...")
         await pool.close()
         logger.info(f"Shutdown of {pool_name} complete")
+
+        if env_hash:
+            del self._pools[env_hash]

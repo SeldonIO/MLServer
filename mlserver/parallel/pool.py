@@ -45,19 +45,27 @@ class InferencePool:
 
         # TODO: Hook on_worker_stop to "worker unexpectedly died" event
         self._on_worker_stop = on_worker_stop
+        self._env = env
         self._workers: Dict[int, Worker] = {}
         self._settings = settings
         self._responses: Queue[ModelResponseMessage] = Queue()
         for idx in range(self._settings.parallel_workers):
             # TODO: Set callback to restart worker if it goes down (would
             # `worker.join` help with that?)
-            worker = Worker(settings, self._responses, env)
+            worker = Worker(self._settings, self._responses, self._env)
             worker.start()
             self._workers[worker.pid] = worker  # type: ignore
 
         self._dispatcher = Dispatcher(self._workers, self._responses)
         self._dispatcher.start()
         self._model_count = 0
+
+    @property
+    def env_hash(self) -> Optional[str]:
+        if not self._env:
+            return None
+
+        return self._env.env_hash
 
     async def load_model(self, model: MLModel) -> MLModel:
         if not self._should_load_model(model):

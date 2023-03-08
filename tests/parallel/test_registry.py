@@ -2,9 +2,14 @@ import pytest
 
 from mlserver.model import MLModel
 from mlserver.settings import Settings, ModelSettings
-from mlserver.parallel.registry import InferencePoolRegistry
 from mlserver.types import InferenceRequest
 from mlserver.codecs import StringCodec
+from mlserver.parallel.registry import (
+    InferencePoolRegistry,
+    _set_environment_hash,
+    _get_environment_hash,
+    ENV_HASH_ATTR,
+)
 
 from ..fixtures import EnvModel
 
@@ -18,7 +23,26 @@ async def env_model(
 
     yield model
 
-    await inference_pool_registry.unload_model(env_model)
+    await inference_pool_registry.unload_model(model)
+
+
+def test_set_environment_hash(sum_model: MLModel):
+    env_hash = "0e46fce1decb7a89a8b91c71d8b6975630a17224d4f00094e02e1a732f8e95f3"
+    _set_environment_hash(sum_model, env_hash)
+
+    assert hasattr(sum_model, ENV_HASH_ATTR)
+    assert getattr(sum_model, ENV_HASH_ATTR) == env_hash
+
+
+@pytest.mark.parametrize(
+    "env_hash",
+    ["0e46fce1decb7a89a8b91c71d8b6975630a17224d4f00094e02e1a732f8e95f3", None],
+)
+def test_get_environment_hash(sum_model: MLModel, env_hash: str):
+    if env_hash:
+        _set_environment_hash(sum_model, env_hash)
+
+    assert _get_environment_hash(sum_model) == env_hash
 
 
 async def test_default_pool(
@@ -60,3 +84,56 @@ async def test_load_model_with_env(
     assert response.outputs[0].name == "sklearn_version"
     [sklearn_version] = StringCodec.decode_output(response.outputs[0])
     assert sklearn_version == "1.0.2"
+
+
+async def test_load_creates_pool(
+    inference_pool_registry: InferencePoolRegistry,
+    env_model_settings: MLModel,
+):
+    assert len(inference_pool_registry._pools) == 0
+    env_model = EnvModel(env_model_settings)
+    model = await inference_pool_registry.load_model(env_model)
+
+    assert len(inference_pool_registry._pools) == 1
+
+
+async def test_load_reuses_pool(
+    inference_pool_registry: InferencePoolRegistry,
+    env_model: MLModel,
+    env_model_settings: ModelSettings,
+):
+    env_model_settings.name = "foo"
+    new_model = EnvModel(env_model_settings)
+
+    assert len(inference_pool_registry._pools) == 1
+    model = await inference_pool_registry.load_model(new_model)
+
+    assert len(inference_pool_registry._pools) == 1
+
+
+async def test_reload_model_with_env(
+    inference_pool_registry: InferencePoolRegistry,
+    env_model: MLModel,
+    env_model_settings: ModelSettings,
+):
+    env_model_settings.parameters.version = "v2.0"
+    new_model = EnvModel(env_model_settings)
+
+    assert len(inference_pool_registry._pools) == 1
+    model = await inference_pool_registry.reload_model(env_model, new_model)
+
+    assert len(inference_pool_registry._pools) == 1
+
+
+async def test_unload_model_removes_pool_if_empty(
+    inference_pool_registry: InferencePoolRegistry,
+    env_model_settings: MLModel,
+):
+    env_model = EnvModel(env_model_settings)
+    assert len(inference_pool_registry._pools) == 0
+
+    model = await inference_pool_registry.load_model(env_model)
+    assert len(inference_pool_registry._pools) == 1
+
+    await inference_pool_registry.unload_model(model)
+    assert len(inference_pool_registry._pools) == 0
