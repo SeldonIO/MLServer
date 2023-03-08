@@ -1,7 +1,12 @@
-from typing import Dict, List
+import asyncio
 
+from typing import Optional, Dict, List
+
+from ..model import MLModel
 from ..settings import Settings
-from ..pool import InferencePool, InferencePoolHook
+
+from .logging import logger
+from .pool import InferencePool, InferencePoolHook
 from .hash import get_environment_hash, save_environment_hash, read_environment_hash
 
 
@@ -68,7 +73,7 @@ class InferencePoolRegistry:
         return loaded
 
     async def unload_model(self, model: MLModel) -> MLModel:
-        pool = self._find(model)
+        pool = await self._find(model)
         unloaded = await pool.unload_model(model)
 
         if pool != self._default_pool:
@@ -83,10 +88,10 @@ class InferencePoolRegistry:
             *[self._close_pool(env_hash) for env_hash in self._pools],
         )
 
-    async def _close_pool(env_hash: str = None):
+    async def _close_pool(self, env_hash: str = None):
         pool = self._default_pool
         pool_name = "default inference pool"
-        if env_hash is None:
+        if env_hash:
             pool = self._pools[env_hash]
             pool_name = f"inference pool with hash '{env_hash}'"
 

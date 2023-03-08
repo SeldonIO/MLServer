@@ -1,6 +1,10 @@
 import hashlib
 import asyncio
 
+from typing import Optional
+
+from ..model import MLModel
+
 ENV_HASH_ATTR = "__env_hash__"
 
 

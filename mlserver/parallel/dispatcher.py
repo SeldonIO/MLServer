@@ -29,11 +29,12 @@ class Dispatcher:
         self._process_responses_task = None
         self._executor = ThreadPoolExecutor()
         self._async_responses: Dict[str, Future[ModelResponseMessage]] = {}
-        self.parallel_request_queue_size = Histogram(
-            "parallel_request_queue",
-            "counter of request queue size for workers",
-            ["workerpid"],
-        )
+        # TODO: Re-enable with .register / .log
+        #  self.parallel_request_queue_size = Histogram(
+        #  "parallel_request_queue",
+        #  "counter of request queue size for workers",
+        #  ["workerpid"],
+        #  )
 
     def start(self):
         self._active = True
@@ -103,9 +104,10 @@ class Dispatcher:
         """Get metrics from every worker request queue"""
         queue_size = worker._requests.qsize()
 
-        self.parallel_request_queue_size.labels(workerpid=str(worker_pid)).observe(
-            float(queue_size)
-        )
+        # TODO: Re-enable with .register / .log
+        #  self.parallel_request_queue_size.labels(workerpid=str(worker_pid)).observe(
+        #  float(queue_size)
+        #  )
 
     async def dispatch_update(
         self, model_update: ModelUpdateMessage

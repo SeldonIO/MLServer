@@ -57,6 +57,8 @@ async def test_load(
     assert inference_response.model_name == sum_model.settings.name
     assert len(inference_response.outputs) == 1
 
+    await inference_pool.unload_model(sum_model)
+
 
 async def test_load_error(
     inference_pool: InferencePool,
