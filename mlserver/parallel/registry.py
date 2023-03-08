@@ -13,13 +13,13 @@ from .hash import get_environment_hash, save_environment_hash, read_environment_
 
 
 def _get_env_tarball_path(model: MLModel) -> Optional[str]:
-    if model.settings.parameters is None:
-        return None
+   if model.settings.parameters is None:
+       return None
 
-    return model.settings.parameters.environment_path
+   return model.settings.parameters.environment_tarball
 
 
-class InferencePoolRegistry:
+lass InferencePoolRegistry:
     """
     Keeps track of the different inference pools loaded in the server.
     Each inference pool will generally be used to load a different environment.

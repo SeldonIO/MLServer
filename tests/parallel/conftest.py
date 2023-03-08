@@ -152,7 +152,7 @@ def env_model_settings(env_tarball: str) -> ModelSettings:
     return ModelSettings(
         name="env-model",
         implementation=EnvModel,
-        parameters=ModelParameters(environment_path=env_tarball),
+        parameters=ModelParameters(environment_tarball=env_tarball),
     )
 
 
