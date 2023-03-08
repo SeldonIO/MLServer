@@ -57,6 +57,7 @@ class InferencePool:
 
         self._dispatcher = Dispatcher(self._workers, self._responses)
         self._dispatcher.start()
+        self._model_count = 0
 
     async def load_model(self, model: MLModel) -> MLModel:
         if not self._should_load_model(model):
@@ -69,6 +70,7 @@ class InferencePool:
         )
         await self._dispatcher.dispatch_update(load_message)
 
+        self._model_count += 1
         return ParallelModel(model, self._dispatcher)
 
     async def reload_model(self, old_model: MLModel, new_model: MLModel) -> MLModel:
@@ -87,6 +89,7 @@ class InferencePool:
         )
         await self._dispatcher.dispatch_update(unload_message)
 
+        self._model_count -= 1
         return ParallelModel(model, self._dispatcher)
 
     def _should_load_model(self, model: MLModel):
@@ -115,6 +118,9 @@ class InferencePool:
             return False
 
         return True
+
+    def empty(self) -> bool:
+        return self._model_count == 0
 
     async def close(self):
         logger.info("Waiting for inference pool shutdown")
