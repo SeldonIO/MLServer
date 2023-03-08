@@ -75,7 +75,7 @@ class InferencePoolRegistry:
         loaded = await new_pool.load_model(new_model)
         if old_pool != new_model:
             # Unload from old one
-            await pool.unload_model
+            await self.unload_model(old_model)
 
         return loaded
 
@@ -85,6 +85,7 @@ class InferencePoolRegistry:
 
         if pool != self._default_pool:
             # TODO: If pool is now empty, remove it
+            # TODO: Also remove env path
             pass
 
         return unloaded
