@@ -16,9 +16,9 @@ RUN ./hack/build-wheels.sh /opt/mlserver/dist
 FROM registry.access.redhat.com/ubi9/ubi-minimal
 SHELL ["/bin/bash", "-c"]
 
-ARG PYTHON_VERSION=3.8.13
-ARG CONDA_VERSION=4.13.0
-ARG MINIFORGE_VERSION=${CONDA_VERSION}-1
+ARG PYTHON_VERSION=3.8.16
+ARG CONDA_VERSION=22.11.1
+ARG MINIFORGE_VERSION=${CONDA_VERSION}-4
 ARG RUNTIMES="all"
 
 ENV MLSERVER_MODELS_DIR=/mnt/models \
