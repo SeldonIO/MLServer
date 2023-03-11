@@ -29,6 +29,7 @@ eggs/
 .tox
 build/
 dist/
+venv/
 
 # Notebook Checkpoints
 .ipynb_checkpoints

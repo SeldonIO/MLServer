@@ -1,6 +1,7 @@
 from typing import Any
 
 from fastapi import Request as _Request
+from gzip import decompress as gzip_decompress
 
 try:
     import orjson
@@ -14,6 +15,14 @@ class Request(_Request):
     Otherwise, it falls back to the standard FastAPI request.
     """
 
+    async def body(self) -> bytes:
+        if not hasattr(self, "_body"):
+            body = await super().body()
+            if "gzip" in self.headers.getlist("Content-Encoding"):
+                body = gzip_decompress(body)
+            self._body = body
+        return self._body
+    
     async def json(self) -> Any:
         if orjson is None:
             return await super().json()
