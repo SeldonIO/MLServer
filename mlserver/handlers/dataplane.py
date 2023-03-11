@@ -16,21 +16,6 @@ from prometheus_client import (
 from typing import Optional
 
 
-_ModelInferRequestSuccess = Counter(
-    "model_infer_request_success",
-    "Model infer request success count",
-    ["model", "version"],
-)
-_ModelInferRequestFailure = Counter(
-    "model_infer_request_failure",
-    "Model infer request failure count",
-    ["model", "version"],
-)
-_ModelInferRequestDuration = Summary(
-    "model_infer_request_duration", "Model infer request duration", ["model", "version"]
-)
-
-
 class DataPlane:
     """
     Internal implementation of handlers, used by both the gRPC and REST
@@ -43,6 +28,22 @@ class DataPlane:
 
         self._inference_middleware = InferenceMiddlewares(
             CloudEventsMiddleware(settings)
+        )
+
+        self._ModelInferRequestSuccess = Counter(
+            "model_infer_request_success",
+            "Model infer request success count",
+            ["model", "version"],
+        )
+        self._ModelInferRequestFailure = Counter(
+            "model_infer_request_failure",
+            "Model infer request failure count",
+            ["model", "version"],
+        )
+        self._ModelInferRequestDuration = Summary(
+            "model_infer_request_duration",
+            "Model infer request duration",
+            ["model", "version"],
         )
 
     async def live(self) -> bool:
@@ -76,13 +77,14 @@ class DataPlane:
         name: str,
         version: Optional[str] = None,
     ) -> InferenceResponse:
-
-        with _ModelInferRequestDuration.labels(
+        infer_duration = self._ModelInferRequestDuration.labels(
             model=name, version=version
-        ).time(), _ModelInferRequestFailure.labels(
+        ).time()
+        infer_errors = self._ModelInferRequestFailure.labels(
             model=name, version=version
-        ).count_exceptions():
+        ).count_exceptions()
 
+        with infer_duration, infer_errors:
             if payload.id is None:
                 payload.id = generate_uuid()
 
@@ -98,6 +100,6 @@ class DataPlane:
 
             self._inference_middleware.response_middleware(prediction, model.settings)
 
-            _ModelInferRequestSuccess.labels(model=name, version=version).inc()
+            self._ModelInferRequestSuccess.labels(model=name, version=version).inc()
 
             return prediction

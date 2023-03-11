@@ -1,11 +1,16 @@
 import uvicorn
+import os
+
+from typing import Optional, TYPE_CHECKING
 
 from fastapi import FastAPI
-from starlette_exporter import handle_metrics
 
 from ..settings import Settings
 from .logging import logger
-from typing import Optional
+from .prometheus import PrometheusEndpoint, stop_metrics
+
+if TYPE_CHECKING:
+    from ..parallel import Worker
 
 
 class _NoSignalServer(uvicorn.Server):
@@ -16,12 +21,21 @@ class _NoSignalServer(uvicorn.Server):
 class MetricsServer:
     def __init__(self, settings: Settings):
         self._settings = settings
+        self._endpoint = PrometheusEndpoint(settings)
         self._app = self._get_app()
 
     def _get_app(self):
         app = FastAPI(debug=self._settings.debug)
-        app.add_route(self._settings.metrics_endpoint, handle_metrics)
+        app.add_route(self._settings.metrics_endpoint, self._endpoint.handle_metrics)
         return app
+
+    async def on_worker_stop(self, worker: "Worker") -> None:
+        if not worker.pid:
+            return
+
+        # NOTE: If a worker gets restarted (instead of regular shutdown), we may
+        # not want to remove old files to keep counts intact
+        await stop_metrics(self._settings, worker.pid)
 
     async def start(self):
         cfg = self._get_config()
@@ -60,4 +74,5 @@ class MetricsServer:
         return uvicorn.Config(self._app, **kwargs)
 
     async def stop(self, sig: Optional[int] = None):
+        await stop_metrics(self._settings, os.getpid())
         self._server.handle_exit(sig=sig, frame=None)

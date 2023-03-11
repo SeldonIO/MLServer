@@ -113,7 +113,6 @@ _sym_db.RegisterMessage(RepositoryModelUnloadResponse)
 
 _MODELREPOSITORYSERVICE = DESCRIPTOR.services_by_name["ModelRepositoryService"]
 if _descriptor._USE_C_DESCRIPTORS == False:
-
     DESCRIPTOR._options = None
     _REPOSITORYINDEXREQUEST._serialized_start = 54
     _REPOSITORYINDEXREQUEST._serialized_end = 118

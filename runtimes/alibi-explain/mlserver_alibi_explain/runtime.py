@@ -53,7 +53,6 @@ class AlibiExplainRuntimeBase(MLModel):
     def __init__(
         self, settings: ModelSettings, explainer_settings: AlibiExplainSettings
     ):
-
         self.alibi_explain_settings = explainer_settings
         self._executor = ThreadPoolExecutor()
         super().__init__(settings)

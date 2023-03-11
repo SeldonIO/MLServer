@@ -163,7 +163,6 @@ class PromServerInterceptor(ServerInterceptor):
                     raise e
 
                 finally:
-
                     if not response_streaming:
                         if self._interceptor._legacy:
                             self._interceptor._metrics[

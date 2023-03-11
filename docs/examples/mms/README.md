@@ -1,6 +1,6 @@
 # Multi-Model Serving
 
-MLServer has been built with Multi-Model Serving (MMS) in mind.
+MLServer has been built with [Multi-Model Serving (MMS)](https://www.seldon.io/what-is-multi-model-serving-and-how-does-it-transform-your-ml-infrastructure) in mind.
 This means that, within a single instance of MLServer, you can serve multiple models under different paths.
 This also includes multiple versions of the same model.
 

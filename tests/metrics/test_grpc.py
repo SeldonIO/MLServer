@@ -35,8 +35,7 @@ async def test_grpc_metrics(
     # Get metrics for gRPC server before sending any requests
     metrics = await metrics_client.metrics()
     grpc_server_handled = find_metric(metrics, metric_name)
-    assert grpc_server_handled is not None
-    assert len(grpc_server_handled.samples) == 0
+    assert grpc_server_handled is None
 
     expected_handled = 5
     await asyncio.gather(

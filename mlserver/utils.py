@@ -126,7 +126,7 @@ def install_uvloop_event_loop():
 
     policy = _check_current_event_loop_policy()
 
-    logger.info(f"Using asyncio event-loop policy: {policy}")
+    logger.debug(f"Using asyncio event-loop policy: {policy}")
 
 
 def schedule_with_callback(coro, cb) -> Task:
