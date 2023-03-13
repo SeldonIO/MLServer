@@ -26,7 +26,7 @@ async def get_model_uri(
     if model_uri_components.scheme != "file":
         return model_uri
 
-    full_model_path = _to_absolute_path(settings._source, model_uri_components.path)
+    full_model_path = to_absolute_path(settings, model_uri_components.path)
     if os.path.isfile(full_model_path):
         return full_model_path
 
@@ -44,14 +44,15 @@ async def get_model_uri(
     raise InvalidModelURI(settings.name, full_model_path)
 
 
-def _to_absolute_path(source: Optional[str], model_uri: str) -> str:
+def to_absolute_path(model_settings: ModelSettings, uri: str) -> str:
+    source = model_settings._source
     if source is None:
         # Treat path as either absolute or relative to the working directory of
         # the MLServer instance
-        return model_uri
+        return uri
 
     parent_folder = os.path.dirname(source)
-    unnormalised = os.path.join(parent_folder, model_uri)
+    unnormalised = os.path.join(parent_folder, uri)
     return os.path.normpath(unnormalised)
 
 

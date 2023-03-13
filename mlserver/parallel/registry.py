@@ -3,6 +3,7 @@ import os
 
 from typing import Optional, Dict, List
 
+from ..utils import to_absolute_path
 from ..model import MLModel
 from ..settings import Settings
 from ..env import Environment, compute_hash
@@ -23,10 +24,15 @@ def _get_environment_hash(model: MLModel) -> Optional[str]:
 
 
 def _get_env_tarball(model: MLModel) -> Optional[str]:
-    if model.settings.parameters is None:
+    model_settings = model.settings
+    if model_settings.parameters is None:
         return None
 
-    return model.settings.parameters.environment_tarball
+    env_tarball = model_settings.parameters.environment_tarball
+    if env_tarball is None:
+        return None
+
+    return to_absolute_path(model_settings, env_tarball)
 
 
 class InferencePoolRegistry:
