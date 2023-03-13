@@ -12,7 +12,7 @@ from ..registry import MultiModelRegistry
 from ..utils import install_uvloop_event_loop, schedule_with_callback
 from ..logging import configure_logger
 from ..settings import Settings
-from ..metrics import configure_metrics
+from ..metrics import configure_metrics, model_context
 from ..env import Environment
 
 from .messages import (
@@ -132,7 +132,10 @@ class Worker(Process):
             )
 
             method = getattr(model, request.method_name)
-            return_value = await method(*request.method_args, **request.method_kwargs)
+            with model_context(model.settings):
+                return_value = await method(
+                    *request.method_args, **request.method_kwargs
+                )
             return ModelResponseMessage(id=request.id, return_value=return_value)
         except (Exception, CancelledError) as e:
             logger.exception(

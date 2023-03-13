@@ -3,27 +3,30 @@ import asyncio
 import os
 
 from aiofiles.os import path
-from prometheus_client import Counter
 
+from mlserver import metrics
 from mlserver.server import MLServer
 from mlserver.model import MLModel
 from mlserver.settings import ModelSettings
 from mlserver.types import InferenceRequest, InferenceResponse
+from mlserver.metrics.context import SELDON_MODEL_NAME_LABEL
 
 from ..utils import RESTClient
 from .utils import MetricsClient, find_metric
 
-COUNTER_NAME = "my_custom_counter"
+CUSTOM_METRIC_NAME = "my_custom_metric"
 
 
 class CustomMetricsModel(MLModel):
     async def load(self) -> bool:
-        self.counter = Counter(COUNTER_NAME, "Test custom counter")
+        metrics.register(CUSTOM_METRIC_NAME, "Test custom counter")
         self.ready = True
+        self.reqs = 0
         return self.ready
 
     async def predict(self, req: InferenceRequest) -> InferenceResponse:
-        self.counter.inc()
+        self.reqs += 1
+        metrics.log(my_custom_metric=self.reqs)
         return InferenceResponse(model_name=self.name, outputs=[])
 
 
@@ -36,13 +39,24 @@ async def custom_metrics_model(mlserver: MLServer) -> MLModel:
 
 
 async def test_db_files(
-    custom_metrics_model: MLModel, rest_client: RESTClient, mlserver: MLServer
+    custom_metrics_model: MLModel,
+    rest_client: RESTClient,
+    mlserver: MLServer,
+    inference_request: InferenceRequest,
 ):
+    # Ensure each worker gets a request / response so that it can create the
+    # relevant metric files
     await rest_client.wait_until_ready()
+    await asyncio.gather(
+        *[
+            rest_client.infer(custom_metrics_model.name, inference_request)
+            for _ in range(mlserver._settings.parallel_workers)
+        ]
+    )
 
     assert mlserver._settings.parallel_workers > 0
     for pid in mlserver._inference_pool._workers:
-        db_file = os.path.join(mlserver._settings.metrics_dir, f"counter_{pid}.db")
+        db_file = os.path.join(mlserver._settings.metrics_dir, f"histogram_{pid}.db")
         assert await path.isfile(db_file)
 
 
@@ -55,10 +69,8 @@ async def test_custom_metrics(
     await rest_client.wait_until_ready()
 
     metrics = await metrics_client.metrics()
-    custom_counter = find_metric(metrics, COUNTER_NAME)
-    assert custom_counter is not None
-    assert len(custom_counter.samples) == 1
-    assert custom_counter.samples[0].value == 0
+    custom_counter = find_metric(metrics, CUSTOM_METRIC_NAME)
+    assert custom_counter is None
 
     expected_value = 5
     await asyncio.gather(
@@ -69,7 +81,10 @@ async def test_custom_metrics(
     )
 
     metrics = await metrics_client.metrics()
-    custom_counter = find_metric(metrics, COUNTER_NAME)
-    assert custom_counter is not None
-    assert len(custom_counter.samples) == 1
-    assert custom_counter.samples[0].value == expected_value
+    custom_metric = find_metric(metrics, CUSTOM_METRIC_NAME)
+    assert custom_metric is not None
+
+    last_bucket = custom_metric.samples[-1]
+    assert last_bucket.value == expected_value
+    assert SELDON_MODEL_NAME_LABEL in last_bucket.labels
+    assert last_bucket.labels[SELDON_MODEL_NAME_LABEL] == custom_metrics_model.name

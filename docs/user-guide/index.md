@@ -10,5 +10,6 @@ how to use them.
 ./parallel-inference
 ./adaptive-batching
 ./custom
+./metrics
 ./deployment/index
 ```

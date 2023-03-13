@@ -14,17 +14,17 @@ walks through the process of writing a custom runtime.
 
 MLServer is designed as an easy-to-extend framework, encouraging users to write
 their own custom runtimes easily.
-The starting point for this is the {class}`MLModel <mlserver.model.MLModel>`
+The starting point for this is the {class}`MLModel <mlserver.MLModel>`
 abstract class, whose main methods are:
 
-- {func}`load() <mlserver.model.MLModel.load>`:
+- {func}`load() <mlserver.MLModel.load>`:
   Responsible for loading any artifacts related to a model (e.g. model
   weights, pickle files, etc.).
-- {func}`predict() <mlserver.model.MLModel.predict>`:
+- {func}`predict() <mlserver.MLModel.predict>`:
   Responsible for using a model to perform inference on an incoming data point.
 
 Therefore, the _"one-line version"_ of how to write a custom runtime is to
-write a custom class extending from {class}`MLModel <mlserver.model.MLModel>`,
+write a custom class extending from {class}`MLModel <mlserver.MLModel>`,
 and then overriding those methods with your custom logic.
 
 ```{code-block} python

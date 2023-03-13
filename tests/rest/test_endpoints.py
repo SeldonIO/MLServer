@@ -11,8 +11,6 @@ from mlserver.cloudevents import (
     CLOUDEVENTS_HEADER_SPECVERSION,
 )
 
-from .conftest import delete_registry  # noqa: F401
-
 
 async def test_live(rest_client):
     endpoint = "/v2/health/live"
@@ -130,7 +128,6 @@ async def test_model_repository_unload(rest_client, sum_model_settings):
 
 async def test_model_repository_load(
     rest_client,
-    delete_registry,  # noqa: F811
     sum_model_settings,
 ):
     await rest_client.post(f"/v2/repository/models/{sum_model_settings.name}/unload")

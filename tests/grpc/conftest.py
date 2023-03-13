@@ -13,8 +13,7 @@ from mlserver.registry import MultiModelRegistry
 from mlserver.grpc import dataplane_pb2 as pb
 from mlserver.grpc.dataplane_pb2_grpc import GRPCInferenceServiceStub
 from mlserver.grpc import GRPCServer
-from prometheus_client.registry import REGISTRY, CollectorRegistry
-from starlette_exporter import PrometheusMiddleware
+from prometheus_client.registry import CollectorRegistry
 
 from ..conftest import TESTDATA_PATH
 from ..fixtures import SumModel
@@ -28,31 +27,6 @@ def _read_testdata_pb(payload_path: str, pb_klass):
         json_format.Parse(payload.read(), model_infer_request)
 
     return model_infer_request
-
-
-@pytest.fixture
-def delete_registry() -> CollectorRegistry:
-    """
-    Fixture used to ensure the registry is cleaned on each run.
-    Otherwise, `py-grpc-prometheus` will complain that metrics already exist.
-
-    TODO: Open issue in `py-grpc-prometheus` to check whether a metric exists
-    before creating it.
-    For an example on how to do this, see `starlette_exporter`'s implementation
-
-        https://github.com/stephenhillier/starlette_exporter/blob/947d4d631dd9a6a8c1071b45573c5562acba4834/starlette_exporter/middleware.py#L67
-    """
-    # NOTE: Since the `REGISTRY` object is global, this fixture is NOT
-    # thread-safe!!
-    collectors = list(REGISTRY._collector_to_names.keys())
-    for collector in collectors:
-        REGISTRY.unregister(collector)
-
-    # Clean metrics from `starlette_exporter` as well, as otherwise they won't
-    # get re-created
-    PrometheusMiddleware._metrics.clear()
-
-    yield REGISTRY
 
 
 @pytest.fixture
