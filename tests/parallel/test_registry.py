@@ -93,7 +93,7 @@ async def test_load_creates_pool(
 ):
     assert len(inference_pool_registry._pools) == 0
     env_model = EnvModel(env_model_settings)
-    model = await inference_pool_registry.load_model(env_model)
+    await inference_pool_registry.load_model(env_model)
 
     assert len(inference_pool_registry._pools) == 1
 
@@ -107,7 +107,7 @@ async def test_load_reuses_pool(
     new_model = EnvModel(env_model_settings)
 
     assert len(inference_pool_registry._pools) == 1
-    model = await inference_pool_registry.load_model(new_model)
+    await inference_pool_registry.load_model(new_model)
 
     assert len(inference_pool_registry._pools) == 1
 
@@ -121,7 +121,7 @@ async def test_reload_model_with_env(
     new_model = EnvModel(env_model_settings)
 
     assert len(inference_pool_registry._pools) == 1
-    model = await inference_pool_registry.reload_model(env_model, new_model)
+    await inference_pool_registry.reload_model(env_model, new_model)
 
     assert len(inference_pool_registry._pools) == 1
 

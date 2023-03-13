@@ -255,16 +255,6 @@ def repository_index_response(sum_model_settings) -> types.RepositoryIndexRespon
 
 
 @pytest.fixture
-async def inference_pool(
-    settings: Settings, prometheus_registry: CollectorRegistry
-) -> InferencePool:
-    pool = InferencePool(settings)
-    yield pool
-
-    await pool.close()
-
-
-@pytest.fixture
 def _mlserver_settings(settings: Settings, tmp_path: str):
     """
     This is an indirect fixture used to tweak the standard settings ONLY when
@@ -315,7 +305,9 @@ async def rest_client(mlserver: MLServer, settings: Settings):
 
 
 @pytest.fixture
-async def inference_pool_registry(settings: Settings) -> InferencePoolRegistry:
+async def inference_pool_registry(
+    settings: Settings, prometheus_registry: CollectorRegistry
+) -> InferencePoolRegistry:
     registry = InferencePoolRegistry(settings)
     yield registry
 
