@@ -3,7 +3,8 @@ import os
 import json
 import importlib
 
-from typing import Any, Dict, List, Optional, Union
+from inspect import isclass
+from typing import Any, Dict, List, Optional, Type, Union, TYPE_CHECKING
 from pydantic import BaseSettings, PyObject, Extra, Field
 from contextlib import contextmanager
 
@@ -19,6 +20,9 @@ DEFAULT_PARALLEL_WORKERS = 1
 DEFAULT_ENVIRONMENTS_DIR = os.path.join(os.getcwd(), ".envs")
 DEFAULT_METRICS_DIR = os.path.join(os.getcwd(), ".metrics")
 
+if TYPE_CHECKING:
+    from ..model import MLModel
+
 
 @contextmanager
 def _extra_sys_path(extra_path: str):
@@ -29,8 +33,11 @@ def _extra_sys_path(extra_path: str):
     sys.path.remove(extra_path)
 
 
-def _reload_module(obj: dict):
-    import_path = obj.get("implementation", None)
+def _get_import_path(klass: Type):
+    return f"{klass.__module__}.{klass.__name__}"
+
+
+def _reload_module(import_path: str):
     if not import_path:
         return
 
@@ -231,6 +238,15 @@ class ModelSettings(BaseSettings):
     # Source points to the file where model settings were loaded from
     _source: Optional[str] = None
 
+    def __init__(self, *args, **kwargs):
+        # Ensure we still support inline init, e.g.
+        # ModelSettings(implementation=SumModel)
+        implementation = kwargs.get("implementation", None)
+        if isclass(implementation):
+            kwargs["implementation"] = _get_import_path(implementation)
+
+        super().__init__(*args, **kwargs)
+
     @classmethod
     def parse_file(cls, path: str) -> "ModelSettings":  # type: ignore
         with open(path, "r") as f:
@@ -241,15 +257,47 @@ class ModelSettings(BaseSettings):
     @classmethod
     def parse_obj(cls, obj: Any) -> "ModelSettings":
         source = obj.pop("_source", None)
-        if not source:
-            return super().parse_obj(obj)
-
-        model_folder = os.path.dirname(source)
-        with _extra_sys_path(model_folder):
-            _reload_module(obj)
-            model_settings = super().parse_obj(obj)
+        model_settings = super().parse_obj(obj)
+        if source:
             model_settings._source = source
-            return model_settings
+
+        return model_settings
+
+    def dict(self, by_alias=True, exclude_unset=True, exclude_none=True, **kwargs):
+        """
+        Ensure that aliases are used, and that unset / none fields are ignored.
+        """
+        return super().dict(
+            by_alias=by_alias,
+            exclude_unset=exclude_unset,
+            exclude_none=exclude_none,
+            **kwargs,
+        )
+
+    def json(self, by_alias=True, exclude_unset=True, exclude_none=True, **kwargs):
+        """
+        Ensure that aliases are used, and that unset / none fields are ignored.
+        """
+        return super().json(
+            by_alias=by_alias,
+            exclude_unset=exclude_unset,
+            exclude_none=exclude_none,
+            **kwargs,
+        )
+
+    @property
+    def implementation(self) -> Type["MLModel"]:
+        if not self._source:
+            return PyObject.validate(self.implementation_)
+
+        model_folder = os.path.dirname(self._source)
+        with _extra_sys_path(model_folder):
+            _reload_module(self.implementation_)
+            return PyObject.validate(self.implementation_)
+
+    @implementation.setter
+    def implementation(self, value: Type["MLModel"]):
+        self.implementation_ = _get_import_path(value)
 
     @property
     def version(self) -> Optional[str]:
@@ -300,7 +348,13 @@ class ModelSettings(BaseSettings):
     to wait for enough requests to build a full batch."""
 
     # Custom model class implementation
-    implementation: PyObject
+    # NOTE: The `implementation_` attr will only point to the string import.
+    # The actual import will occur within the `implementation` property - think
+    # of this as a lazy import.
+    # You should always use `model_settings.implementation` and treat
+    # `implementation_` as a private attr (due to Pydantic - we can't just
+    # prefix the attr with `_`).
+    implementation_: str = Field(alias="implementation")
     """*Python path* to the inference runtime to use to serve this model (e.g.
     ``mlserver_sklearn.SKLearnModel``)."""
 

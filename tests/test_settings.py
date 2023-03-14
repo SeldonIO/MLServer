@@ -1,10 +1,13 @@
 import os
 import sys
 import pytest
+import json
 
 from mlserver.settings import CORSSettings, Settings, ModelSettings, ModelParameters
 from mlserver.repository import DEFAULT_MODEL_SETTINGS_FILENAME
+
 from .conftest import TESTDATA_PATH
+from .fixtures import SumModel
 
 
 def test_settings_from_env(monkeypatch):
@@ -72,3 +75,18 @@ def test_model_settings_parse_obj(obj: dict):
 
     assert pre_sys_path == post_sys_path
     assert model_settings.implementation.__name__ == "SumModel"
+
+
+def test_model_settings_serialisation():
+    expected = "tests.fixtures.SumModel"
+    model_settings = ModelSettings(name="foo", implementation=SumModel)
+
+    assert model_settings.implementation == SumModel
+    assert model_settings.implementation_ == expected
+
+    as_dict = model_settings.dict()
+    as_dict["implementation"] == expected
+
+    as_json = model_settings.json()
+    as_dict = json.loads(as_json)
+    as_dict["implementation"] == expected
