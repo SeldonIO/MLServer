@@ -5,7 +5,7 @@ from enum import IntEnum
 from pydantic import BaseModel, Field
 from typing import Any, Dict, List, Optional, Union
 
-from ..utils import get_import_path, generate_uuid
+from ..utils import generate_uuid
 from ..settings import ModelSettings
 
 
@@ -47,9 +47,8 @@ class ModelUpdateMessage(Message):
             if model_settings._source:
                 as_dict["_source"] = model_settings._source
 
-            import_path = get_import_path(model_settings.implementation)
-            as_dict["implementation"] = import_path
             kwargs["serialised_model_settings"] = json.dumps(as_dict)
+
         return super().__init__(*args, **kwargs)
 
     @property
