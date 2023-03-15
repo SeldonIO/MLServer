@@ -1,5 +1,6 @@
 import pytest
 
+from mlserver.env import Environment, compute_hash
 from mlserver.model import MLModel
 from mlserver.settings import Settings, ModelSettings
 from mlserver.types import InferenceRequest
@@ -110,6 +111,22 @@ async def test_load_reuses_pool(
     await inference_pool_registry.load_model(new_model)
 
     assert len(inference_pool_registry._pools) == 1
+
+
+async def test_load_reuses_env_folder(
+    inference_pool_registry: InferencePoolRegistry,
+    env_model_settings: ModelSettings,
+    env_tarball: str,
+):
+    env_model_settings.name = "foo"
+    new_model = EnvModel(env_model_settings)
+
+    # Make sure there's already existing env
+    env_hash = await compute_hash(env_tarball)
+    env_path = inference_pool_registry._get_env_path(env_hash)
+    await Environment.from_tarball(env_tarball, env_path, env_hash)
+
+    await inference_pool_registry.load_model(new_model)
 
 
 async def test_reload_model_with_env(

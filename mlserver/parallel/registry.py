@@ -64,14 +64,21 @@ class InferencePoolRegistry:
         if env_hash in self._pools:
             return self._pools[env_hash]
 
-        env_path = self._get_env_path(env_hash)
-        os.makedirs(env_path)
-        env = await Environment.from_tarball(env_tarball, env_path, env_hash)
+        env = await self._extract_tarball(env_hash, env_tarball)
         pool = InferencePool(
             self._settings, env=env, on_worker_stop=self._on_worker_stop
         )
         self._pools[env_hash] = pool
         return pool
+
+    async def _extract_tarball(self, env_hash: str, env_tarball: str) -> Environment:
+        env_path = self._get_env_path(env_hash)
+        if os.path.isdir(env_path):
+            # If env has already been extracted, use that
+            return Environment(env_path, env_hash)
+
+        os.makedirs(env_path)
+        return await Environment.from_tarball(env_tarball, env_path, env_hash)
 
     def _get_env_path(self, env_hash: str) -> str:
         return os.path.join(self._settings.environments_dir, env_hash)
