@@ -311,12 +311,12 @@ class ModelSettings(BaseSettings):
     @property
     def implementation(self) -> Type["MLModel"]:
         if not self._source:
-            return PyObject.validate(self.implementation_)
+            return PyObject.validate(self.implementation_)  # type: ignore
 
         model_folder = os.path.dirname(self._source)
         with _extra_sys_path(model_folder):
             _reload_module(self.implementation_)
-            return PyObject.validate(self.implementation_)
+            return PyObject.validate(self.implementation_)  # type: ignore
 
     @implementation.setter
     def implementation(self, value: Type["MLModel"]):

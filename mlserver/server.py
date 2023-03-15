@@ -64,20 +64,26 @@ class MLServer:
         on_model_reload = [self.reload_custom_handlers]
         on_model_unload = [self.remove_custom_handlers]
 
-        if self._inference_pool_registry:
-            on_model_load = [
-                self._inference_pool_registry.load_model,
-                self.add_custom_handlers,
-                load_batching,
-            ]
-            on_model_reload = [
-                self._inference_pool_registry.reload_model,  # type: ignore
-                self.reload_custom_handlers,
-            ]
-            on_model_unload = [
-                self._inference_pool_registry.unload_model,  # type: ignore
-                self.remove_custom_handlers,
-            ]
+        if not self._inference_pool_registry:
+            return MultiModelRegistry(
+                on_model_load=on_model_load,  # type: ignore
+                on_model_reload=on_model_reload,  # type: ignore
+                on_model_unload=on_model_unload,  # type: ignore
+            )
+
+        on_model_load = [
+            self._inference_pool_registry.load_model,
+            self.add_custom_handlers,
+            load_batching,
+        ]
+        on_model_reload = [
+            self._inference_pool_registry.reload_model,  # type: ignore
+            self.reload_custom_handlers,
+        ]
+        on_model_unload = [
+            self._inference_pool_registry.unload_model,  # type: ignore
+            self.remove_custom_handlers,
+        ]
 
         return MultiModelRegistry(
             on_model_load=on_model_load,  # type: ignore

@@ -5,7 +5,7 @@ import tarfile
 import glob
 import hashlib
 
-from typing import List
+from typing import List, Optional
 from functools import cached_property
 
 from .logging import logger
@@ -56,7 +56,7 @@ class Environment:
 
     @classmethod
     async def from_tarball(
-        cls, tarball_path: str, env_path: str, env_hash: str = None
+        cls, tarball_path: str, env_path: str, env_hash: Optional[str] = None
     ) -> "Environment":
         """
         Instantiate an Environment object from an environment tarball.

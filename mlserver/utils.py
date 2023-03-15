@@ -4,7 +4,7 @@ import asyncio
 import urllib.parse
 
 from asyncio import Task
-from typing import Callable, Dict, Optional, List, Type
+from typing import Callable, Dict, Optional, List
 
 from .logging import logger
 from .types import InferenceRequest, InferenceResponse, Parameters

@@ -18,7 +18,7 @@ from .pool import InferencePool, InferencePoolHook
 ENV_HASH_ATTR = "__env_hash__"
 
 
-def _set_environment_hash(model: MLModel, env_hash: str):
+def _set_environment_hash(model: MLModel, env_hash: Optional[str]):
     setattr(model, ENV_HASH_ATTR, env_hash)
 
 
@@ -185,7 +185,7 @@ class InferencePoolRegistry:
             *[self._close_pool(env_hash) for env_hash in self._pools],
         )
 
-    async def _close_pool(self, env_hash: str = None):
+    async def _close_pool(self, env_hash: Optional[str] = None):
         pool = self._default_pool
         pool_name = "default inference pool"
         if env_hash:
