@@ -83,6 +83,7 @@ class MLServer:
             on_model_load=on_model_load,  # type: ignore
             on_model_reload=on_model_reload,  # type: ignore
             on_model_unload=on_model_unload,  # type: ignore
+            model_initialiser=self._inference_pool_registry.model_initialiser,
         )
 
     def _configure_logger(self):

@@ -3,10 +3,12 @@ import os
 
 from typing import Optional, Dict, List
 
+from ..settings import ModelSettings
 from ..utils import to_absolute_path
 from ..model import MLModel
 from ..settings import Settings
 from ..env import Environment, compute_hash
+from ..registry import model_initialiser
 
 from .errors import EnvironmentNotFound
 from .logging import logger
@@ -84,8 +86,8 @@ class InferencePoolRegistry:
 
         return self._pools[env_hash]
 
-    def _should_load_model(self, model: MLModel):
-        if model.settings.parallel_workers is not None:
+    def _should_load_model(self, model_settings: ModelSettings):
+        if model_settings.parallel_workers is not None:
             logger.warning(
                 "DEPRECATED!! The `parallel_workers` setting at the model-level "
                 "has now been deprecated and moved "
@@ -103,7 +105,7 @@ class InferencePoolRegistry:
             # workers, where each worker had its own pool.
             # For backwards compatibility, we will respect when a model disables
             # parallel inference.
-            if model.settings.parallel_workers <= 0:
+            if model_settings.parallel_workers <= 0:
                 return False
 
         if not self._settings.parallel_workers:
@@ -111,8 +113,23 @@ class InferencePoolRegistry:
 
         return True
 
+    def model_initialiser(self, model_settings: ModelSettings) -> MLModel:
+        """
+        Used to initialise a model object in the ModelRegistry.
+        """
+        if not self._should_load_model(model_settings):
+            # If parallel inference should not be used, instantiate the model
+            # as normal.
+            return model_initialiser(model_settings)
+
+        # Otherwise, return a dummy model for now and wait for the load_model
+        # hook to create the actual thing.
+        # This avoids instantiating the model's actual class within the
+        # main process.
+        return MLModel(model_settings)
+
     async def load_model(self, model: MLModel) -> MLModel:
-        if not self._should_load_model(model):
+        if not self._should_load_model(model.settings):
             # Skip load if model has disabled parallel workers
             return model
 
@@ -123,7 +140,7 @@ class InferencePoolRegistry:
         return loaded
 
     async def reload_model(self, old_model: MLModel, new_model: MLModel) -> MLModel:
-        if not self._should_load_model(new_model):
+        if not self._should_load_model(new_model.settings):
             # TODO: What would happen if old_model had parallel inference
             # enabled and is disabled in new_model (and viceversa)?
             # Skip reload if model has disabled parallel workers
@@ -141,6 +158,10 @@ class InferencePoolRegistry:
         return loaded
 
     async def unload_model(self, model: MLModel) -> MLModel:
+        if not self._should_load_model(model.settings):
+            # Skip unload if model has disabled parallel workers
+            return model
+
         pool = await self._find(model)
         unloaded = await pool.unload_model(model)
 

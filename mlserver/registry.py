@@ -47,7 +47,7 @@ def _is_newer(a: MLModel, b: MLModel) -> int:
             return 0
 
 
-def _model_initialiser(model_settings: ModelSettings) -> MLModel:
+def model_initialiser(model_settings: ModelSettings) -> MLModel:
     model_class = model_settings.implementation
     return model_class(model_settings)  # type: ignore
 
@@ -63,7 +63,7 @@ class SingleModelRegistry:
         on_model_load: List[ModelRegistryHook] = [],
         on_model_reload: List[ModelReloadHook] = [],
         on_model_unload: List[ModelRegistryHook] = [],
-        model_initialiser: ModelInitialiser = _model_initialiser,
+        model_initialiser: ModelInitialiser = model_initialiser,
     ):
         self._versions: Dict[str, MLModel] = {}
         self._default: Optional[MLModel] = None
@@ -272,7 +272,7 @@ class MultiModelRegistry:
         on_model_load: List[ModelRegistryHook] = [],
         on_model_reload: List[ModelReloadHook] = [],
         on_model_unload: List[ModelRegistryHook] = [],
-        model_initialiser: ModelInitialiser = _model_initialiser,
+        model_initialiser: ModelInitialiser = model_initialiser,
     ):
         self._models: Dict[str, SingleModelRegistry] = {}
         self._on_model_load = on_model_load
