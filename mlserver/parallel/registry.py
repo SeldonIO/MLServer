@@ -174,6 +174,7 @@ class InferencePoolRegistry:
         unloaded = await pool.unload_model(model)
 
         if pool != self._default_pool and pool.empty():
+            logger.info(f"Inference pool with hash '{env_hash} is now empty")
             await self._close_pool(pool.env_hash)
 
         return unloaded
