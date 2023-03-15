@@ -1,4 +1,5 @@
 import pytest
+import os
 
 from mlserver.env import Environment, compute_hash
 from mlserver.model import MLModel
@@ -154,7 +155,11 @@ async def test_unload_model_removes_pool_if_empty(
     assert len(inference_pool_registry._pools) == 1
 
     await inference_pool_registry.unload_model(model)
+
+    env_hash = _get_environment_hash(model)
+    env_path = inference_pool_registry._get_env_path(env_hash)
     assert len(inference_pool_registry._pools) == 0
+    assert not os.path.isdir(env_path)
 
 
 async def test_invalid_env_hash(

@@ -1,5 +1,6 @@
 import asyncio
 import os
+import shutil
 
 from typing import Optional, Dict, List
 
@@ -184,7 +185,6 @@ class InferencePoolRegistry:
         )
 
     async def _close_pool(self, env_hash: str = None):
-        # TODO: Remove env hash folder
         pool = self._default_pool
         pool_name = "default inference pool"
         if env_hash:
@@ -197,3 +197,5 @@ class InferencePoolRegistry:
 
         if env_hash:
             del self._pools[env_hash]
+            env_path = self._get_env_path(env_hash)
+            shutil.rmtree(env_path)

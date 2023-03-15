@@ -16,7 +16,6 @@ from .messages import (
     ModelUpdateMessage,
     ModelUpdateType,
 )
-from .logging import logger
 from .dispatcher import Dispatcher
 
 
@@ -96,12 +95,10 @@ class InferencePool:
         return self._model_count == 0
 
     async def close(self):
-        logger.info("Waiting for inference pool shutdown")
         await self._close_workers()
         await terminate_queue(self._responses)
         self._responses.close()
         await self._dispatcher.stop()
-        logger.info("Inference pool shutdown complete")
 
     async def _close_workers(self):
         # First close down model updates loop
