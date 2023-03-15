@@ -68,10 +68,6 @@ class InferencePool:
         return self._env.env_hash
 
     async def load_model(self, model: MLModel) -> MLModel:
-        if not self._should_load_model(model):
-            # Skip load if model has disabled parallel workers
-            return model
-
         load_message = ModelUpdateMessage(
             update_type=ModelUpdateType.Load,
             model_settings=model.settings,  # type: ignore
@@ -87,10 +83,6 @@ class InferencePool:
         return await self.load_model(new_model)
 
     async def unload_model(self, model: MLModel) -> MLModel:
-        if not self._should_load_model(model):
-            # Skip unload if model has disabled parallel workers
-            return model
-
         unload_message = ModelUpdateMessage(
             update_type=ModelUpdateType.Unload,
             model_settings=model.settings,  # type: ignore
@@ -99,33 +91,6 @@ class InferencePool:
 
         self._model_count -= 1
         return ParallelModel(model, self._dispatcher)
-
-    def _should_load_model(self, model: MLModel):
-        if model.settings.parallel_workers is not None:
-            logger.warning(
-                "DEPRECATED!! The `parallel_workers` setting at the model-level "
-                "has now been deprecated and moved "
-                "to the top-level server "
-                "settings. "
-                "This field will be removed in MLServer 1.2.0. "
-                "To access the new field, you can either update the "
-                "`settings.json` file, or update the `MLSERVER_PARALLEL_WORKERS` "
-                "environment variable. "
-                f"The current value of the server-level's `parallel_workers` field is "
-                f"'{self._settings.parallel_workers}'."
-            )
-
-            # NOTE: This is a remnant from the previous architecture for parallel
-            # workers, where each worker had its own pool.
-            # For backwards compatibility, we will respect when a model disables
-            # parallel inference.
-            if model.settings.parallel_workers <= 0:
-                return False
-
-        if not self._settings.parallel_workers:
-            return False
-
-        return True
 
     def empty(self) -> bool:
         return self._model_count == 0
