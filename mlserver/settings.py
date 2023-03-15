@@ -2,10 +2,10 @@ import sys
 import os
 import json
 import importlib
+import inspect
 
-from inspect import isclass
-from typing import Any, Dict, List, Optional, Type, Union, TYPE_CHECKING
-from pydantic import BaseSettings, PyObject, Extra, Field
+from typing import Any, Dict, List, Optional, Type, Union, no_type_check, TYPE_CHECKING
+from pydantic import PyObject, Extra, Field, BaseSettings as _BaseSettings
 from contextlib import contextmanager
 
 from .version import __version__
@@ -44,6 +44,51 @@ def _reload_module(import_path: str):
     module_path, _, _ = import_path.rpartition(".")
     module = importlib.import_module(module_path)
     importlib.reload(module)
+
+
+class BaseSettings(_BaseSettings):
+    @no_type_check
+    def __setattr__(self, name, value):
+        """
+        Patch __setattr__ to be able to use property setters.
+        From:
+            https://github.com/pydantic/pydantic/issues/1577#issuecomment-790506164
+        """
+        try:
+            super().__setattr__(name, value)
+        except ValueError as e:
+            setters = inspect.getmembers(
+                self.__class__,
+                predicate=lambda x: isinstance(x, property) and x.fset is not None,
+            )
+            for setter_name, func in setters:
+                if setter_name == name:
+                    object.__setattr__(self, name, value)
+                    break
+            else:
+                raise e
+
+    def dict(self, by_alias=True, exclude_unset=True, exclude_none=True, **kwargs):
+        """
+        Ensure that aliases are used, and that unset / none fields are ignored.
+        """
+        return super().dict(
+            by_alias=by_alias,
+            exclude_unset=exclude_unset,
+            exclude_none=exclude_none,
+            **kwargs,
+        )
+
+    def json(self, by_alias=True, exclude_unset=True, exclude_none=True, **kwargs):
+        """
+        Ensure that aliases are used, and that unset / none fields are ignored.
+        """
+        return super().json(
+            by_alias=by_alias,
+            exclude_unset=exclude_unset,
+            exclude_none=exclude_none,
+            **kwargs,
+        )
 
 
 class CORSSettings(BaseSettings):
@@ -242,7 +287,7 @@ class ModelSettings(BaseSettings):
         # Ensure we still support inline init, e.g.
         # ModelSettings(implementation=SumModel)
         implementation = kwargs.get("implementation", None)
-        if isclass(implementation):
+        if inspect.isclass(implementation):
             kwargs["implementation"] = _get_import_path(implementation)
 
         super().__init__(*args, **kwargs)
@@ -262,28 +307,6 @@ class ModelSettings(BaseSettings):
             model_settings._source = source
 
         return model_settings
-
-    def dict(self, by_alias=True, exclude_unset=True, exclude_none=True, **kwargs):
-        """
-        Ensure that aliases are used, and that unset / none fields are ignored.
-        """
-        return super().dict(
-            by_alias=by_alias,
-            exclude_unset=exclude_unset,
-            exclude_none=exclude_none,
-            **kwargs,
-        )
-
-    def json(self, by_alias=True, exclude_unset=True, exclude_none=True, **kwargs):
-        """
-        Ensure that aliases are used, and that unset / none fields are ignored.
-        """
-        return super().json(
-            by_alias=by_alias,
-            exclude_unset=exclude_unset,
-            exclude_none=exclude_none,
-            **kwargs,
-        )
 
     @property
     def implementation(self) -> Type["MLModel"]:
