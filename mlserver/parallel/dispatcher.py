@@ -7,6 +7,7 @@ from concurrent.futures import ThreadPoolExecutor
 from asyncio import Future
 
 from ..utils import schedule_with_callback, generate_uuid
+from ..metrics import REGISTRY
 
 from .worker import Worker
 from .logging import logger
@@ -19,6 +20,8 @@ from .messages import (
 )
 from prometheus_client import Histogram
 
+QUEUE_METRIC_NAME = "parallel_request_queue"
+
 
 class Dispatcher:
     def __init__(self, workers: Dict[int, Worker], responses: Queue):
@@ -29,12 +32,18 @@ class Dispatcher:
         self._process_responses_task = None
         self._executor = ThreadPoolExecutor()
         self._async_responses: Dict[str, Future[ModelResponseMessage]] = {}
-        # TODO: Re-enable with .register / .log
-        #  self.parallel_request_queue_size = Histogram(
-        #  "parallel_request_queue",
-        #  "counter of request queue size for workers",
-        #  ["workerpid"],
-        #  )
+        self.parallel_request_queue_size = self._get_or_create_metric()
+
+    def _get_or_create_metric(self) -> Histogram:
+        if QUEUE_METRIC_NAME in REGISTRY:
+            return REGISTRY[QUEUE_METRIC_NAME]  # type: ignore
+
+        return Histogram(
+            QUEUE_METRIC_NAME,
+            "counter of request queue size for workers",
+            ["workerpid"],
+            registry=REGISTRY,
+        )
 
     def start(self):
         self._active = True
@@ -104,10 +113,9 @@ class Dispatcher:
         """Get metrics from every worker request queue"""
         queue_size = worker._requests.qsize()
 
-        # TODO: Re-enable with .register / .log
-        #  self.parallel_request_queue_size.labels(workerpid=str(worker_pid)).observe(
-        #  float(queue_size)
-        #  )
+        self.parallel_request_queue_size.labels(workerpid=str(worker_pid)).observe(
+            float(queue_size)
+        )
 
     async def dispatch_update(
         self, model_update: ModelUpdateMessage
