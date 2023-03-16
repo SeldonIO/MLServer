@@ -1,12 +1,15 @@
 import pytest
+import os
+import numpy as np
+
+from alibi_detect.cd import TabularDrift
+from alibi_detect.utils.saving import save_detector
+
 from mlserver.settings import ModelSettings, ModelParameters
 from mlserver.types import RequestInput, InferenceRequest
 from mlserver.codecs import CodecError
+
 from mlserver_alibi_detect import AlibiDetectRuntime
-from alibi_detect.cd import TabularDrift
-from alibi_detect.utils.saving import save_detector
-import os
-import numpy as np
 
 P_VAL_THRESHOLD = 0.05
 
