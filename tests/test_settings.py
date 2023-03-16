@@ -7,7 +7,6 @@ from mlserver.settings import CORSSettings, Settings, ModelSettings, ModelParame
 from mlserver.repository import DEFAULT_MODEL_SETTINGS_FILENAME
 
 from .conftest import TESTDATA_PATH
-from .fixtures import SumModel
 
 
 def test_settings_from_env(monkeypatch):
