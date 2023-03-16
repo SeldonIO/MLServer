@@ -12,15 +12,13 @@ from mlserver.types import (
     InferenceResponse,
     RequestInput,
     MetadataModelResponse,
-    Parameters,
     MetadataTensor,
     ResponseOutput,
 )
 from .common import (
-    LLMBaseSettings,
-    import_and_get_class
+    LLMSettings, LLM_CALL_PARAMETERS_TAG
 )
-from .dependency_reference import get_mlmodel_class_as_str
+from .dependency_reference import get_mlmodel_class_as_str, import_and_get_class
 
 
 class LLMRuntimeBase(MLModel):
@@ -29,7 +27,7 @@ class LLMRuntimeBase(MLModel):
     """
 
     def __init__(
-        self, settings: ModelSettings, llm_settings: LLMBaseSettings
+        self, settings: ModelSettings, llm_settings: LLMSettings
     ):
         self.llm_settings = llm_settings
         super().__init__(settings)
@@ -40,7 +38,8 @@ class LLMRuntimeBase(MLModel):
         """
 
         input_data = self.decode_request(payload, default_codec=NumpyRequestCodec)
-        output_data = await self._call_impl(input_data, payload.parameters)
+        call_parameters = _get_predict_parameters(payload)
+        output_data = await self._call_impl(input_data, call_parameters)
 
         return InferenceResponse(
             model_name=self.name,
@@ -49,8 +48,17 @@ class LLMRuntimeBase(MLModel):
         )
 
     async def _call_impl(
-            self, input_data: Any, settings: Optional[Parameters]) -> ResponseOutput:
-        return
+            self, input_data: Any, params: Optional[dict]) -> ResponseOutput:
+        raise NotImplementedError
+
+
+def _get_predict_parameters(payload: InferenceRequest) -> dict:
+    runtime_parameters = dict()
+    if payload.parameters is not None:
+        settings_dict = payload.parameters.dict()
+        if LLM_CALL_PARAMETERS_TAG in settings_dict:
+            runtime_parameters = settings_dict[LLM_CALL_PARAMETERS_TAG]
+    return runtime_parameters
 
 
 class LLMRuntime(MLModel):
