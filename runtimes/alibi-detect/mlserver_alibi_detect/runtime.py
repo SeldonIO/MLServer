@@ -5,7 +5,7 @@ from typing import Optional
 from pydantic import BaseSettings
 from functools import cached_property
 
-from alibi_detect.utils.saving import load_detector
+from alibi_detect.saving import load_detector
 
 from mlserver.types import InferenceRequest, InferenceResponse
 from mlserver.settings import ModelSettings
