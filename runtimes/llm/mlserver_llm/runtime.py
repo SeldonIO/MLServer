@@ -26,10 +26,7 @@ class LLMRuntimeBase(MLModel):
     Base class for LLM models hosted by a provider (e.g. OpenAI)
     """
 
-    def __init__(
-        self, settings: ModelSettings, llm_settings: LLMSettings
-    ):
-        self.llm_settings = llm_settings
+    def __init__(self, settings: ModelSettings):
         super().__init__(settings)
 
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:

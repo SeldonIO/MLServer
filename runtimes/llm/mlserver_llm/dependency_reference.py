@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from importlib import import_module
 from typing import Dict, Union
 
-from common import LLMProviderEnum
+from .common import LLMProviderEnum
 
 
 @dataclass
