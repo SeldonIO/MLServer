@@ -78,6 +78,9 @@ def test_model_settings_parse_obj(obj: dict):
 
 
 def test_model_settings_serialisation():
+    # Module may have been reloaded in a diff test, so let's re-import it
+    from .fixtures import SumModel
+
     expected = "tests.fixtures.SumModel"
     model_settings = ModelSettings(name="foo", implementation=SumModel)
 
