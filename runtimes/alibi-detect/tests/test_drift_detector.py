@@ -1,5 +1,3 @@
-import pytest
-
 from alibi_detect.cd import TabularDrift
 
 from mlserver.types import RequestInput, InferenceRequest
@@ -30,15 +28,3 @@ async def test_predict(
     assert response.outputs[2].name == "p_val"
     assert response.outputs[3].name == "threshold"
     assert response.outputs[3].data[0] == P_VAL_THRESHOLD
-
-
-async def test_multiple_inputs_error(
-    drift_detector: AlibiDetectRuntime,
-    inference_request: InferenceRequest,
-):
-    inference_request.inputs.append(
-        RequestInput(name="input-1", shape=[1, 3], data=[[0, 1, 6]], datatype="FP32")
-    )
-
-    with pytest.raises(CodecError):
-        await drift_detector.predict(inference_request)

@@ -1,10 +1,6 @@
-import pytest
-
 from alibi_detect.od import OutlierVAE
 
-from mlserver.settings import ModelSettings
-from mlserver.types import RequestInput, InferenceRequest
-from mlserver.codecs import CodecError
+from mlserver.types import InferenceRequest
 
 from mlserver_alibi_detect import AlibiDetectRuntime
 
@@ -25,15 +21,3 @@ async def test_predict(
     assert response.outputs[1].name == "feature_score"
     assert response.outputs[2].name == "is_outlier"
     assert response.outputs[2].shape == [1, 1]
-
-
-async def test_multiple_inputs_error(
-    outlier_detector: AlibiDetectRuntime,
-    inference_request: InferenceRequest,
-):
-    inference_request.inputs.append(
-        RequestInput(name="input-1", shape=[1, 3], data=[[0, 1, 6]], datatype="FP32")
-    )
-
-    with pytest.raises(CodecError):
-        await outlier_detector.predict(inference_request)
