@@ -15,6 +15,25 @@ class OpenAIRuntime(LLMRuntimeBase):
     Runtime for OpenAI
     """
 
+    def __init__(self, settings: ModelSettings):
+        # if we are here we are sure that settings.parameters is set,
+        # just helping mypy
+        assert settings.parameters is not None
+        assert settings.parameters.extra is not None
+        config = settings.parameters.extra.config  # type: ignore
+        self._openai_settings = OpenAISettings(**config)  # type: ignore
+        self._model_dependency_reference = get_openai_model_dependency_detail(
+            self._openai_settings.model_id)
+        self._client = import_and_get_class(self._model_dependency_reference.model_id)()
+
+        super().__init__(settings)
+
+    async def load(self) -> bool:
+        openai.api_key = self._openai_settings.api_key
+
+        self.ready = True
+        return self.ready
+
     async def _call_impl(
             self, input_data: Any, params: Optional[dict]) -> ResponseOutput:
         # TODO: make use of static parameters
@@ -30,16 +49,4 @@ class OpenAIRuntime(LLMRuntimeBase):
             model=self._openai_settings.model_id, messages=input_data, **params)
         pass
 
-    def __init__(self, settings: ModelSettings):
-        # if we are here we are sure that settings.parameters is set,
-        # just helping mypy
-        assert settings.parameters is not None
-        assert settings.parameters.extra is not None
-        config = settings.parameters.extra.config  # type: ignore
-        self._openai_settings = OpenAISettings(**config)  # type: ignore
-        self._model_dependency_reference = get_openai_model_dependency_detail(
-            self._openai_settings.model_id)
-        self._client = import_and_get_class(self._model_dependency_reference.model_id)()
-
-        super().__init__(settings)
 
