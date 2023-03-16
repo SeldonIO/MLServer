@@ -1,9 +1,8 @@
 from typing import Any, Optional, List
 
 from mlserver.codecs import (
-    NumpyRequestCodec,
     InputCodecLike,
-    RequestCodecLike,
+    RequestCodecLike, PandasCodec,
 )
 from mlserver.model import MLModel
 from mlserver.settings import ModelSettings
@@ -37,7 +36,7 @@ class LLMRuntimeBase(MLModel):
         This will call the model endpoint for inference
         """
 
-        input_data = self.decode_request(payload, default_codec=NumpyRequestCodec)
+        input_data = self.decode_request(payload, default_codec=PandasCodec)
         call_parameters = _get_predict_parameters(payload)
         output_data = await self._call_impl(input_data, call_parameters)
 
