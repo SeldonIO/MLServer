@@ -50,7 +50,8 @@ class OpenAIRuntime(LLMRuntimeBase):
         assert isinstance(input_data, pd.DataFrame)
         return await openai.ChatCompletion.acreate(
             model=self._openai_settings.model_id,
-            messages=input_data.to_dict(),  # df to list of messages
+            # TODO do df to list of messages
+            messages=input_data.to_dict(),
             **params)
 
 
