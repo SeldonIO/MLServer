@@ -30,6 +30,8 @@ class OpenAIRuntime(LLMRuntimeBase):
 
     async def load(self) -> bool:
         openai.api_key = self._openai_settings.api_key
+        if self._openai_settings.organization:
+            openai.organization = self._openai_settings.organization
 
         self.ready = True
         return self.ready

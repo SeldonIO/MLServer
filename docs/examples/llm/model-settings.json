@@ -1,0 +1,14 @@
+{
+  "name": "openai_chat_model",
+  "implementation": "mlserver_llm.LLMRuntime",
+  "parameters": {
+    "extra": {
+      "provider_id": "openai",
+      "config": {
+        "api_key": "xx",
+        "organization": "yy",
+        "model_id": "gpt-3.5-turbo"
+      }
+    }
+  }
+}

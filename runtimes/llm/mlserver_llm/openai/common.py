@@ -20,4 +20,5 @@ class OpenAISettings(BaseSettings):
 
     api_key: str
     model_id: str
+    organization: Optional[str]
     llm_parameters: Optional[dict]
