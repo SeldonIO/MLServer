@@ -8,7 +8,7 @@ import pytest
 
 from mlserver import ModelSettings
 from mlserver.codecs import NumpyCodec, StringCodec
-from mlserver.types import ResponseOutput, InferenceRequest
+from mlserver.types import ResponseOutput, InferenceRequest, InferenceResponse
 from mlserver_llm.runtime import LLMRuntimeBase
 
 
@@ -42,7 +42,7 @@ async def test_runtime_base__smoke(inference_request: InferenceRequest):
     )
 
     res = await ml.predict(inference_request)
-    # assert isinstance(res, InferenceResponse)
+    assert isinstance(res, InferenceResponse)
 
 
 
