@@ -11,7 +11,7 @@ from mlserver.types import (
     InferenceResponse,
     ResponseOutput,
 )
-from .common import LLM_CALL_PARAMETERS_TAG
+from .common import LLM_CALL_PARAMETERS_TAG, PROVIDER_ID_TAG
 from .dependency_reference import get_mlmodel_class_as_str, import_and_get_class
 
 

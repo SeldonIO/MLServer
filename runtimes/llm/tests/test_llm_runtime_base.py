@@ -15,7 +15,8 @@ from mlserver.types import (
     RequestInput,
     Parameters,
 )
-from mlserver_llm.runtime import LLMRuntimeBase, _get_predict_parameters
+from mlserver_llm.openai.openai_runtime import OpenAIRuntime
+from mlserver_llm.runtime import LLMRuntimeBase, _get_predict_parameters, LLMRuntime
 
 
 @pytest.fixture
@@ -45,10 +46,25 @@ async def test_runtime_base__smoke(inference_request: InferenceRequest):
                 name="foo", datatype="INT32", shape=[1, 1, 1], data=[1]
             )
 
-    ml = _DummyModel(settings=ModelSettings(implementation=str))  # dummy
+    ml = _DummyModel(settings=ModelSettings(implementation=LLMRuntimeBase))  # dummy
 
     res = await ml.predict(inference_request)
     assert isinstance(res, InferenceResponse)
+
+
+async def test_runtime_factory__smoke():
+    ml = LLMRuntime(
+        settings=ModelSettings(
+            implementation=LLMRuntime,
+            parameters={
+                "extra": {
+                    "provider_id": "openai",
+                    "config": {"model_id": "gpt-3.5-turbo", "api_key": "dummy"},
+                }
+            },
+        )
+    )
+    assert isinstance(ml._rt, OpenAIRuntime)
 
 
 @pytest.mark.parametrize(
