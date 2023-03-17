@@ -61,4 +61,6 @@ class OpenAIRuntime(LLMRuntimeBase):
 
 
 def _df_to_messages(df: pd.DataFrame) -> list[dict]:
-    return df.to_dict(orient='records')
+    assert 'role' in df.columns, 'user field not present'
+    assert 'content' in df.columns, 'content field not present'
+    return df[['role', 'content']].to_dict(orient='records')
