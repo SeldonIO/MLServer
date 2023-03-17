@@ -1,8 +1,7 @@
-from typing import Any, Optional, List
+from typing import Any, Optional
 
 from mlserver.codecs import (
-    InputCodecLike,
-    RequestCodecLike, PandasCodec,
+    PandasCodec,
 )
 from mlserver.model import MLModel
 from mlserver.model_wrapper import WrapperMLModel
@@ -10,13 +9,10 @@ from mlserver.settings import ModelSettings
 from mlserver.types import (
     InferenceRequest,
     InferenceResponse,
-    RequestInput,
-    MetadataModelResponse,
-    MetadataTensor,
     ResponseOutput,
 )
 from .common import (
-    LLMSettings, LLM_CALL_PARAMETERS_TAG
+    LLM_CALL_PARAMETERS_TAG
 )
 from .dependency_reference import get_mlmodel_class_as_str, import_and_get_class
 

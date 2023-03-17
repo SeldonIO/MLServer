@@ -8,8 +8,9 @@ import pytest
 
 from mlserver import ModelSettings
 from mlserver.codecs import NumpyCodec, StringCodec
-from mlserver.types import ResponseOutput, InferenceRequest, InferenceResponse
-from mlserver_llm.runtime import LLMRuntimeBase
+from mlserver.types import ResponseOutput, InferenceRequest, InferenceResponse, \
+    RequestInput, Parameters
+from mlserver_llm.runtime import LLMRuntimeBase, _get_predict_parameters
 
 
 @pytest.fixture
@@ -38,11 +39,50 @@ async def test_runtime_base__smoke(inference_request: InferenceRequest):
                 name="foo", datatype="INT32", shape=[1, 1, 1], data=[1])
 
     ml = _DummyModel(
-        settings=ModelSettings(implementation=str)
+        settings=ModelSettings(implementation=str)  # dummy
     )
 
     res = await ml.predict(inference_request)
     assert isinstance(res, InferenceResponse)
+
+
+@pytest.mark.parametrize(
+    "inference_request, expected_dict",
+    [
+        (
+            InferenceRequest(
+                model_name="my-model",
+                inputs=[
+                    RequestInput(name="foo", datatype="INT32", shape=[1], data=[1]),
+                ],
+            ),
+            {}
+        ),
+        (
+            InferenceRequest(
+                model_name="my-model",
+                inputs=[
+                    RequestInput(name="foo", datatype="INT32", shape=[1, 1, 1], data=[1]),
+                ],
+                parameters=Parameters(
+                    llm_parameters={
+                        "threshold": 10,
+                        "temperature": 20
+                    }
+                )
+            ),
+            {
+                "threshold": 10,
+                "temperature": 20
+            }
+        )
+    ],
+)
+def test_get_llm_parameters_from_request(
+        inference_request: InferenceRequest, expected_dict: dict):
+    params = _get_predict_parameters(inference_request)
+    assert params == expected_dict
+
 
 
 
