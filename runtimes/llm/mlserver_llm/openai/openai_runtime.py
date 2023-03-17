@@ -55,7 +55,6 @@ class OpenAIRuntime(LLMRuntimeBase):
         data = _df_to_messages(input_data)
         return await openai.ChatCompletion.acreate(
             model=self._openai_settings.model_id,
-            # TODO do df to list of messages
             messages=data,
             **params)
 
