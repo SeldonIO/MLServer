@@ -29,5 +29,5 @@ def get_mlmodel_class_as_str(tag: Union[LLMProviderEnum, str]) -> str:
 
 def import_and_get_class(class_path: str) -> type:
     last_dot = class_path.rfind(".")
-    klass = getattr(import_module(class_path[:last_dot]), class_path[last_dot + 1:])
+    klass = getattr(import_module(class_path[:last_dot]), class_path[last_dot + 1 :])
     return klass

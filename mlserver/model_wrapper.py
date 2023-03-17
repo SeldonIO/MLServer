@@ -3,8 +3,13 @@ from typing import Optional, List, Any
 from mlserver.codecs import InputCodecLike, RequestCodecLike
 
 from mlserver import MLModel, ModelSettings
-from mlserver.types import MetadataTensor, RequestInput, InferenceRequest, \
-    MetadataModelResponse, InferenceResponse
+from mlserver.types import (
+    MetadataTensor,
+    RequestInput,
+    InferenceRequest,
+    MetadataModelResponse,
+    InferenceResponse,
+)
 
 
 class WrapperMLModel(MLModel):

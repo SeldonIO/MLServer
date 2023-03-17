@@ -11,9 +11,7 @@ from mlserver.types import (
     InferenceResponse,
     ResponseOutput,
 )
-from .common import (
-    LLM_CALL_PARAMETERS_TAG
-)
+from .common import LLM_CALL_PARAMETERS_TAG
 from .dependency_reference import get_mlmodel_class_as_str, import_and_get_class
 
 
@@ -43,7 +41,8 @@ class LLMRuntimeBase(MLModel):
         )
 
     async def _call_impl(
-            self, input_data: Any, params: Optional[dict]) -> ResponseOutput:
+        self, input_data: Any, params: Optional[dict]
+    ) -> ResponseOutput:
         raise NotImplementedError
 
 

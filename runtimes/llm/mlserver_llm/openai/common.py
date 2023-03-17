@@ -15,6 +15,7 @@ class OpenAISettings(BaseSettings):
     """
     OpenAI settings
     """
+
     class Config:
         env_prefix = _ENV_PREFIX_OPENAI_SETTINGS
 

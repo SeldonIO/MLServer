@@ -16,8 +16,7 @@ _BASE_MODULE = "openai"
 
 _TAG_TO_RT_IMPL: Dict[str, OpenAIModelDetail] = {
     "gpt-3.5-turbo": OpenAIModelDetail(
-        model_id="gpt-3.5-turbo",
-        model_type=OpenAIModelTypeEnum.chat
+        model_id="gpt-3.5-turbo", model_type=OpenAIModelTypeEnum.chat
     ),
 }
 

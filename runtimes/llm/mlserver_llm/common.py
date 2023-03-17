@@ -17,6 +17,7 @@ class LLMSettings(BaseSettings):
     """
     LLM base settings
     """
+
     class Config:
         env_prefix = _ENV_PREFIX_LLM_SETTINGS
 

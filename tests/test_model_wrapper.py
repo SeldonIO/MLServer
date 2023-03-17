@@ -23,7 +23,8 @@ def inference_request(input_values: dict) -> InferenceRequest:
 
 
 async def test_model_wrapper(
-        simple_model: MLModel, inference_request: InferenceRequest):
+    simple_model: MLModel, inference_request: InferenceRequest
+):
     """
     Checks that the wrapper returns back the expected valued from the underlying rt
     """
