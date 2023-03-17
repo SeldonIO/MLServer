@@ -1,5 +1,6 @@
 from unittest.mock import patch
 
+import openai
 import pandas as pd
 import pytest
 
@@ -99,3 +100,35 @@ async def test_openai_chat__smoke(chat_result: dict):
 def test_convert_df_to_messages(df: pd.DataFrame, expected_messages: list[dict]):
     messages = _df_to_messages(df)
     assert messages == expected_messages
+
+
+@pytest.mark.parametrize(
+    "api_key, organization",
+    [
+        ("dummy_key", None),
+        ("dummy_key", "dummy_org"),
+    ],
+)
+async def test_api_key_and_org_set(api_key: str, organization: str):
+    model_id = "gpt-3.5-turbo"
+
+    config = {
+        "api_key": api_key,
+        "model_id": model_id
+    }
+    if organization:
+        config["organization"] = organization
+
+    model_settings = ModelSettings(
+        implementation=OpenAIRuntime,
+        parameters={
+            "extra": {
+                "config": config
+            }
+        }
+    )
+    rt = OpenAIRuntime(model_settings)
+    await rt.load()
+
+    assert openai.api_key == api_key
+    assert openai.organization == organization
