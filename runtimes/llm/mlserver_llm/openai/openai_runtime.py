@@ -26,16 +26,10 @@ class OpenAIRuntime(LLMRuntimeBase):
         self._openai_settings = OpenAISettings(**config)  # type: ignore
         self._model_dependency_reference = get_openai_model_detail(
             self._openai_settings.model_id)
+        self._api_key = self._openai_settings.api_key
+        self._organization = self._openai_settings.organization
 
         super().__init__(settings)
-
-    async def load(self) -> bool:
-        openai.api_key = self._openai_settings.api_key
-        if self._openai_settings.organization:
-            openai.organization = self._openai_settings.organization
-
-        self.ready = True
-        return self.ready
 
     async def _call_impl(
             self, input_data: Any, params: Optional[dict]) -> ResponseOutput:
@@ -45,7 +39,7 @@ class OpenAIRuntime(LLMRuntimeBase):
             result = await self._call_chat_impl(input_data, params)
             json_str = json.dumps(result)
             return StringCodec.encode_output(
-                payload=[json_str], name="chat"
+                payload=[json_str], name="output"
             )
         raise TypeError(f"{self._model_dependency_reference.model_type} not supported")
 
@@ -54,6 +48,8 @@ class OpenAIRuntime(LLMRuntimeBase):
         assert isinstance(input_data, pd.DataFrame)
         data = _df_to_messages(input_data)
         return await openai.ChatCompletion.acreate(
+            api_key=self._api_key,
+            organization=self._organization,
             model=self._openai_settings.model_id,
             messages=data,
             **params)

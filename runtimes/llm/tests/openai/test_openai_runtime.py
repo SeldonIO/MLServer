@@ -128,7 +128,10 @@ async def test_api_key_and_org_set(api_key: str, organization: str):
         }
     )
     rt = OpenAIRuntime(model_settings)
-    await rt.load()
 
-    assert openai.api_key == api_key
-    assert openai.organization == organization
+    assert rt._api_key == api_key
+    assert rt._organization == organization
+
+    # check that api_key not set globally
+    assert openai.api_key is None
+    assert openai.organization is None
