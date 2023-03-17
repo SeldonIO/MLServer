@@ -47,11 +47,11 @@ class OpenAIRuntime(LLMRuntimeBase):
         assert isinstance(input_data, pd.DataFrame)
         data = _df_to_messages(input_data)
         return await openai.ChatCompletion.acreate(
-            api_key=self._api_key,
-            organization=self._organization,
+            api_key=self._openai_settings.api_key,
+            organization=self._openai_settings.organization,
             model=self._openai_settings.model_id,
             messages=data,
-            **params,
+            **params,  # type: ignore
         )
 
 

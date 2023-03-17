@@ -230,4 +230,5 @@ async def test_v1_invalid_predict(
     with patch.object(integrated_gradients_runtime._rt, "predict", _mocked_predict):
         request = InferenceRequest(inputs=[])
         with pytest.raises(InvalidExplanationShape):
+            assert isinstance(integrated_gradients_runtime._rt, AlibiExplainRuntimeBase)
             await integrated_gradients_runtime._rt.explain_v1_output(request)

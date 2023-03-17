@@ -165,4 +165,5 @@ class AlibiExplainRuntime(WrapperMLModel):
     # endpoint to `_rt.explain_v1_output`
     @custom_handler(rest_path="/explain")
     async def _explain_v1_output(self, request: InferenceRequest) -> Response:
+        assert isinstance(self._rt, AlibiExplainRuntimeBase)
         return await self._rt.explain_v1_output(request)

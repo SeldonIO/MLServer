@@ -89,7 +89,7 @@ def test_convert_df_to_messages(df: pd.DataFrame, expected_messages: list[dict])
         ("dummy_key", "dummy_org"),
     ],
 )
-async def test_api_key_and_org_set(api_key: str, organization: str):
+async def test_api_key_and_org_not_set(api_key: str, organization: str):
     model_id = "gpt-3.5-turbo"
 
     config = {"api_key": api_key, "model_id": model_id}
@@ -99,10 +99,7 @@ async def test_api_key_and_org_set(api_key: str, organization: str):
     model_settings = ModelSettings(
         implementation=OpenAIRuntime, parameters={"extra": {"config": config}}
     )
-    rt = OpenAIRuntime(model_settings)
-
-    assert rt._api_key == api_key
-    assert rt._organization == organization
+    _ = OpenAIRuntime(model_settings)
 
     # check that api_key not set globally
     assert openai.api_key is None
