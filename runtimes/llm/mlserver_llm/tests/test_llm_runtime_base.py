@@ -62,7 +62,7 @@ async def test_runtime_base__smoke(inference_request: InferenceRequest):
             InferenceRequest(
                 model_name="my-model",
                 inputs=[
-                    RequestInput(name="foo", datatype="INT32", shape=[1, 1, 1], data=[1]),
+                    RequestInput(name="foo", datatype="INT32", shape=[1], data=[1]),
                 ],
                 parameters=Parameters(
                     llm_parameters={
