@@ -1,3 +1,4 @@
+import json
 from typing import Any, Optional
 
 import openai
@@ -21,7 +22,7 @@ class OpenAIRuntime(LLMRuntimeBase):
         # just helping mypy
         assert settings.parameters is not None
         assert settings.parameters.extra is not None
-        config = settings.parameters.extra.config  # type: ignore
+        config = settings.parameters.extra['config']  # type: ignore
         self._openai_settings = OpenAISettings(**config)  # type: ignore
         self._model_dependency_reference = get_openai_model_detail(
             self._openai_settings.model_id)
@@ -41,19 +42,23 @@ class OpenAIRuntime(LLMRuntimeBase):
         # TODO: make use of static parameters
 
         if self._model_dependency_reference.model_type == OpenAIModelTypeEnum.chat:
-            result = await self._call_impl_chat(input_data, params)
+            result = await self._call_chat_impl(input_data, params)
+            json_str = json.dumps(result)
             return StringCodec.encode_output(
-                payload=[result], name="explanation"
+                payload=[json_str], name="chat"
             )
         raise TypeError(f"{self._model_dependency_reference.model_type} not supported")
 
-    async def _call_impl_chat(
-            self, input_data: Any, params: Optional[dict]) -> Any:
+    async def _call_chat_impl(
+            self, input_data: Any, params: Optional[dict]) -> dict:
         assert isinstance(input_data, pd.DataFrame)
+        data = _df_to_messages(input_data)
         return await openai.ChatCompletion.acreate(
             model=self._openai_settings.model_id,
             # TODO do df to list of messages
-            messages=input_data.to_dict(),
+            messages=data,
             **params)
 
 
+def _df_to_messages(df: pd.DataFrame) -> list[dict]:
+    return df.to_dict(orient='records')
