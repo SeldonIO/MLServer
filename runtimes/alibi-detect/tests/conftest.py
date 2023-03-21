@@ -120,7 +120,7 @@ def drift_detector_settings(
         parameters=ModelParameters(
             uri=drift_detector_uri,
             version="v1.2.3",
-            extra={"predict_parameters": {"drift_type": "feature"}},
+            extra={"predict_parameters": {"drift_type": "feature"}, "batch_size": 5},
         ),
     )
 

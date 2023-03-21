@@ -7,6 +7,7 @@ from functools import cached_property
 
 from alibi_detect.saving import load_detector
 
+from mlserver.batching import BatchedRequests
 from mlserver.types import InferenceRequest, InferenceResponse
 from mlserver.settings import ModelSettings
 from mlserver.model import MLModel
@@ -52,6 +53,8 @@ class AlibiDetectRuntime(MLModel):
         else:
             extra = settings.parameters.extra
             self._ad_settings = AlibiDetectSettings(**extra)  # type: ignore
+
+        self._batch = None
         super().__init__(settings)
 
     async def load(self) -> bool:
@@ -73,7 +76,35 @@ class AlibiDetectRuntime(MLModel):
         return self.ready
 
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
-        return self._detect(payload)
+        # If batch is not configured, run the detector and return the output
+        if not self._ad_settings.batch_size:
+            return self._detect(payload)
+
+        # Otherwise, check if we need to extend batch
+        if self._batch is None:
+            self._batch = []
+
+        if len(self._batch) < self._ad_settings.batch_size:
+            self._batch.append(payload)
+
+        if len(self._batch) >= self._ad_settings.batch_size:
+            batched = self._get_batched_request()
+            return self._detect(batched)
+
+        return InferenceResponse(
+            model_name=self.name, model_version=self.version, outputs=[]
+        )
+
+    def _get_batched_request(self) -> InferenceRequest:
+        # Build requests dictionary with mocked IDs.
+        # This is required by the BatchedRequests util.
+        inference_requests = {}
+        for idx, inference_request in enumerate(self._batch):
+            inference_requests[str(idx)] = inference_request
+
+        batched = BatchedRequests(inference_requests)
+        self._batch = None
+        return batched.merged_request
 
     def _detect(self, payload: InferenceRequest) -> InferenceResponse:
         input_data = self.decode_request(payload, default_codec=NumpyRequestCodec)
