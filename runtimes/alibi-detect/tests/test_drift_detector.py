@@ -44,7 +44,7 @@ async def test_predict_batch(drift_detector: AlibiDetectRuntime, mocker):
 
     # For #(batch - 1) requests, outputs should be empty
     batch_size = drift_detector._ad_settings.batch_size
-    expected = np.random.randint(10, size=(batch_size, 3))
+    expected = np.random.randint(10, size=(batch_size, 3))  # type: ignore
     for idx in range(batch_size - 1):  # type: ignore
         inference_request = NumpyRequestCodec.encode_request(expected[idx : idx + 1])
         response = await drift_detector.predict(inference_request)
@@ -53,7 +53,7 @@ async def test_predict_batch(drift_detector: AlibiDetectRuntime, mocker):
         mocked_predict.assert_not_called()
 
     inference_request = NumpyRequestCodec.encode_request(
-        expected[batch_size - 1 : batch_size]
+        expected[batch_size - 1 : batch_size]  # type: ignore
     )
     await drift_detector.predict(inference_request)
 
