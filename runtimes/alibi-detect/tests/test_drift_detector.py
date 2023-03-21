@@ -1,6 +1,9 @@
+import numpy as np
+
 from alibi_detect.cd import TabularDrift
 
 from mlserver.types import InferenceRequest
+from mlserver.codecs import NumpyRequestCodec
 
 from mlserver_alibi_detect import AlibiDetectRuntime
 
@@ -14,7 +17,7 @@ async def test_load_folder(
     assert type(drift_detector._model) == TabularDrift
 
 
-async def test_predict_batch(
+async def test_predict(
     drift_detector: AlibiDetectRuntime,
     inference_request: InferenceRequest,
 ):
@@ -33,3 +36,30 @@ async def test_predict_batch(
     assert response.outputs[2].name == "p_val"
     assert response.outputs[3].name == "threshold"
     assert response.outputs[3].data[0] == P_VAL_THRESHOLD
+
+
+async def test_predict_batch(drift_detector: AlibiDetectRuntime, mocker):
+    # Mock detector
+    mocked_predict = mocker.patch.object(drift_detector._model, "predict")
+    expected = []
+
+    # For #(batch - 1) requests, outputs should be empty
+    batch_size = drift_detector._ad_settings.batch_size
+    for idx in range(batch_size - 1):  # type: ignore
+        req_payload = np.random.randint(10, size=(1, 3))
+        expected.append(req_payload)
+        inference_request = NumpyRequestCodec.encode_request(req_payload)
+        response = await drift_detector.predict(inference_request)
+
+        assert len(response.outputs) == 0
+        mocked_predict.assert_not_called()
+
+    req_payload = np.random.randint(10, size=(1, 3))
+    expected.append(req_payload)
+    inference_request = NumpyRequestCodec.encode_request(req_payload)
+    await drift_detector.predict(inference_request)
+
+    mocked_predict.assert_called_once()
+    payload = mocked_predict.call_args.args[0]
+    assert payload.shape == (batch_size, 3)
+    np.testing.assert_allclose(payload, np.concatenate(expected))
