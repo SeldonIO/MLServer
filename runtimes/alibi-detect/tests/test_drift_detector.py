@@ -41,25 +41,41 @@ async def test_predict(
 async def test_predict_batch(drift_detector: AlibiDetectRuntime, mocker):
     # Mock detector
     mocked_predict = mocker.patch.object(drift_detector._model, "predict")
-    expected = []
 
     # For #(batch - 1) requests, outputs should be empty
     batch_size = drift_detector._ad_settings.batch_size
+    expected = np.random.randint(10, size=(batch_size, 3))
     for idx in range(batch_size - 1):  # type: ignore
-        req_payload = np.random.randint(10, size=(1, 3))
-        expected.append(req_payload)
-        inference_request = NumpyRequestCodec.encode_request(req_payload)
+        inference_request = NumpyRequestCodec.encode_request(expected[idx : idx + 1])
         response = await drift_detector.predict(inference_request)
 
         assert len(response.outputs) == 0
         mocked_predict.assert_not_called()
 
-    req_payload = np.random.randint(10, size=(1, 3))
-    expected.append(req_payload)
-    inference_request = NumpyRequestCodec.encode_request(req_payload)
+    inference_request = NumpyRequestCodec.encode_request(
+        expected[batch_size - 1 : batch_size]
+    )
     await drift_detector.predict(inference_request)
 
     mocked_predict.assert_called_once()
     payload = mocked_predict.call_args.args[0]
-    assert payload.shape == (batch_size, 3)
-    np.testing.assert_allclose(payload, np.concatenate(expected))
+    np.testing.assert_array_equal(payload, expected)
+
+
+async def test_predict_batch_cleared(
+    drift_detector: AlibiDetectRuntime,
+    inference_request: InferenceRequest,
+):
+    # For #(batch - 1) requests, outputs should be empty
+    batch_size = drift_detector._ad_settings.batch_size
+    for _ in range(batch_size - 1):  # type: ignore
+        response = await drift_detector.predict(inference_request)
+        assert len(response.outputs) == 0
+
+    # By request batch_size, drift should run
+    response = await drift_detector.predict(inference_request)
+    assert len(response.outputs) > 0
+
+    # Batch should now be cleared (and started from scratch)
+    response = await drift_detector.predict(inference_request)
+    assert len(response.outputs) == 0
