@@ -1,7 +1,7 @@
 import numpy as np
 
 from pydantic.error_wrappers import ValidationError
-from typing import Optional
+from typing import Optional, List
 from pydantic import BaseSettings
 from functools import cached_property
 
@@ -54,7 +54,7 @@ class AlibiDetectRuntime(MLModel):
             extra = settings.parameters.extra
             self._ad_settings = AlibiDetectSettings(**extra)  # type: ignore
 
-        self._batch = None
+        self._batch: List[InferenceRequest] = []
         super().__init__(settings)
 
     async def load(self) -> bool:
@@ -80,10 +80,6 @@ class AlibiDetectRuntime(MLModel):
         if not self._ad_settings.batch_size:
             return self._detect(payload)
 
-        # Otherwise, check if we need to extend batch
-        if self._batch is None:
-            self._batch = []
-
         if len(self._batch) < self._ad_settings.batch_size:
             self._batch.append(payload)
 
@@ -103,7 +99,7 @@ class AlibiDetectRuntime(MLModel):
             inference_requests[str(idx)] = inference_request
 
         batched = BatchedRequests(inference_requests)
-        self._batch = None
+        self._batch = []
         return batched.merged_request
 
     def _detect(self, payload: InferenceRequest) -> InferenceResponse:

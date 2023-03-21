@@ -1,8 +1,6 @@
 from alibi_detect.cd import TabularDrift
 
-from mlserver.types import RequestInput, InferenceRequest
-from mlserver.settings import ModelSettings
-from mlserver.codecs import CodecError
+from mlserver.types import InferenceRequest
 
 from mlserver_alibi_detect import AlibiDetectRuntime
 
@@ -18,12 +16,11 @@ async def test_load_folder(
 
 async def test_predict_batch(
     drift_detector: AlibiDetectRuntime,
-    drift_detector_settings: ModelSettings,
     inference_request: InferenceRequest,
 ):
     # For #(batch - 1) requests, outputs should be empty
-    batch_size = drift_detector_settings.parameters.extra["batch_size"]
-    for _ in range(batch_size - 1):
+    batch_size = drift_detector._ad_settings.batch_size
+    for _ in range(batch_size - 1):  # type: ignore
         response = await drift_detector.predict(inference_request)
         assert len(response.outputs) == 0
 
