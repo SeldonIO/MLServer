@@ -30,7 +30,7 @@ mypy==1.1.1
 mypy-protobuf==3.1.0
 types-protobuf==4.22.0.0
 types-orjson==3.6.2
-types-aiofiles==22.1.0.9
+types-aiofiles==23.1.0.0
 types-requests==2.28.11.5
 black==23.1.0
 
