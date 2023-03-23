@@ -55,7 +55,8 @@ async def test_db_files(
     )
 
     assert mlserver._settings.parallel_workers > 0
-    for pid in mlserver._inference_pool._workers:
+    default_pool = mlserver._inference_pool_registry._default_pool
+    for pid in default_pool._workers:
         db_file = os.path.join(mlserver._settings.metrics_dir, f"histogram_{pid}.db")
         assert await path.isfile(db_file)
 

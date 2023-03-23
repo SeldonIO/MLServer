@@ -8,7 +8,6 @@ from mlserver.model import MLModel
 from mlserver.repository.repository import DEFAULT_MODEL_SETTINGS_FILENAME
 from mlserver.repository.load import load_model_settings
 from mlserver.settings import ModelSettings
-from mlserver.utils import get_import_path
 
 from ..conftest import TESTDATA_PATH
 
@@ -56,7 +55,6 @@ async def test_name_fallback(
     with open(model_settings_path, "w") as model_settings_file:
         d = sum_model_settings.dict()
         del d["name"]
-        d["implementation"] = get_import_path(d["implementation"])
         json.dump(d, model_settings_file)
 
     model_settings = load_model_settings(model_settings_path)
@@ -72,4 +70,4 @@ async def test_load_custom_module(
 
     assert pre_sys_path == post_sys_path
     assert model_settings.name == sum_model_settings.name
-    assert get_import_path(model_settings.implementation) == "models.SumModel"
+    assert model_settings.implementation_ == "models.SumModel"

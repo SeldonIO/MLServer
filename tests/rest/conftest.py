@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from httpx import AsyncClient
 
 from mlserver.handlers import DataPlane, ModelRepositoryHandlers
-from mlserver.parallel import InferencePool
+from mlserver.parallel import InferencePoolRegistry
 from mlserver.batching import load_batching
 from mlserver.rest import RESTServer
 from mlserver.registry import MultiModelRegistry
@@ -16,12 +16,12 @@ from ..fixtures import SumModel
 
 @pytest.fixture
 async def model_registry(
-    sum_model_settings: ModelSettings, inference_pool: InferencePool
+    sum_model_settings: ModelSettings, inference_pool_registry: InferencePoolRegistry
 ) -> MultiModelRegistry:
     model_registry = MultiModelRegistry(
-        on_model_load=[inference_pool.load_model, load_batching],
-        on_model_reload=[inference_pool.reload_model],
-        on_model_unload=[inference_pool.unload_model],
+        on_model_load=[inference_pool_registry.load_model, load_batching],
+        on_model_reload=[inference_pool_registry.reload_model],
+        on_model_unload=[inference_pool_registry.unload_model],
     )
 
     model_name = sum_model_settings.name

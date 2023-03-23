@@ -47,7 +47,9 @@ async def test_load(
     inference_request: InferenceRequest,
 ):
     sum_model.settings.name = "foo"
+    assert inference_pool._model_count == 0
     model = await inference_pool.load_model(sum_model)
+    assert inference_pool._model_count == 1
 
     # NOTE: This should leverage the worker inference_pool, after wrapping the
     # model
@@ -57,13 +59,18 @@ async def test_load(
     assert inference_response.model_name == sum_model.settings.name
     assert len(inference_response.outputs) == 1
 
+    await inference_pool.unload_model(sum_model)
+    assert inference_pool._model_count == 0
+
 
 async def test_load_error(
     inference_pool: InferencePool,
     load_error_model: MLModel,
 ):
+    assert inference_pool._model_count == 0
     with pytest.raises(MLServerError) as excinfo:
         await inference_pool.load_model(load_error_model)
 
+    assert inference_pool._model_count == 0
     expected_msg = f"mlserver.errors.MLServerError: {ErrorModel.error_message}"
     assert str(excinfo.value) == expected_msg

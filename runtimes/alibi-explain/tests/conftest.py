@@ -19,7 +19,7 @@ from alibi.explainers import AnchorImage
 
 from mlserver import MLModel
 from mlserver.handlers import DataPlane, ModelRepositoryHandlers
-from mlserver.parallel import InferencePool
+from mlserver.parallel import InferencePoolRegistry
 from mlserver.registry import MultiModelRegistry
 
 from mlserver.repository import ModelRepository, SchemalessModelRepository
@@ -71,13 +71,13 @@ def prometheus_registry(
 
 
 @pytest.fixture
-async def inference_pool(
+async def inference_pool_registry(
     settings: Settings, prometheus_registry: CollectorRegistry
-) -> AsyncIterable[InferencePool]:
-    pool = InferencePool(settings)
-    yield pool
+) -> AsyncIterable[InferencePoolRegistry]:
+    registry = InferencePoolRegistry(settings)
+    yield registry
 
-    await pool.close()
+    await registry.close()
 
 
 @pytest.fixture
@@ -109,12 +109,12 @@ def settings() -> Settings:
 
 @pytest.fixture
 async def model_registry(
-    custom_runtime_tf_settings, inference_pool
+    custom_runtime_tf_settings, inference_pool_registry
 ) -> AsyncIterable[MultiModelRegistry]:
     model_registry = MultiModelRegistry(
-        on_model_load=[inference_pool.load_model],
-        on_model_reload=[inference_pool.reload_model],
-        on_model_unload=[inference_pool.unload_model],
+        on_model_load=[inference_pool_registry.load_model],
+        on_model_reload=[inference_pool_registry.reload_model],
+        on_model_unload=[inference_pool_registry.unload_model],
     )
 
     await model_registry.load(custom_runtime_tf_settings)

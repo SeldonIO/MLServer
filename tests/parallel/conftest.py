@@ -22,12 +22,11 @@ from ..fixtures import ErrorModel, EnvModel
 
 
 @pytest.fixture
-async def sum_model(inference_pool: InferencePool, sum_model: MLModel) -> MLModel:
-    parallel_model = await inference_pool.load_model(sum_model)
+async def inference_pool(settings: Settings) -> InferencePool:
+    pool = InferencePool(settings)
+    yield pool
 
-    yield parallel_model
-
-    await inference_pool.unload_model(sum_model)
+    await pool.close()
 
 
 @pytest.fixture
@@ -52,8 +51,9 @@ async def load_error_model() -> MLModel:
 
 
 @pytest.fixture
-def settings(settings: Settings) -> Settings:
+def settings(settings: Settings, tmp_path: str) -> Settings:
     settings.parallel_workers = 2
+    settings.environments_dir = str(tmp_path)
 
     configure_inference_pool(settings)
     return settings
@@ -147,8 +147,12 @@ def custom_request_message(sum_model_settings: ModelSettings) -> ModelRequestMes
 
 
 @pytest.fixture
-def env_model_settings() -> ModelSettings:
-    return ModelSettings(name="env-model", implementation=EnvModel)
+def env_model_settings(env_tarball: str) -> ModelSettings:
+    return ModelSettings(
+        name="env-model",
+        implementation=EnvModel,
+        parameters=ModelParameters(environment_tarball=env_tarball),
+    )
 
 
 @pytest.fixture
