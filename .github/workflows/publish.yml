@@ -1,6 +1,7 @@
 # This GH Action is triggered when a release is 'published' in GitHub.
 # Once that happens, it will re-generate the Changelog (from the GH tag), and
 # update the tag so that it gets picked up by ReadTheDocs.
+name: Publish Version
 
 on:
   release:
