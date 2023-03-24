@@ -36,7 +36,7 @@ from mlserver_alibi_explain.common import (
 from mlserver_alibi_explain.explainers.black_box_runtime import (
     AlibiExplainBlackBoxRuntime,
 )
-from mlserver_alibi_explain.runtime import AlibiExplainRuntime
+from mlserver_alibi_explain.runtime import AlibiExplainRuntime, AlibiExplainRuntimeBase
 from .helpers.run_async import run_sync_as_async
 from .helpers.tf_model import get_tf_mnist_model_uri
 
@@ -74,8 +74,11 @@ async def test_predict_impl(
 
     # [batch, image_x, image_y, channel]
     data = np.random.randn(10, 28, 28, 1) * 255
+    assert isinstance(
+        anchor_image_runtime_with_remote_predict_patch, AlibiExplainBlackBoxRuntime
+    )
     actual_result = await run_sync_as_async(
-        anchor_image_runtime_with_remote_predict_patch._rt._infer_impl, data
+        anchor_image_runtime_with_remote_predict_patch._infer_impl, data
     )
 
     # now we go via the inference model and see if we get the same results
@@ -110,6 +113,9 @@ async def test_end_2_end(
 ):
     # in this test we are getting explanation and making sure that is the same one
     # as returned by alibi directly
+    assert isinstance(
+        anchor_image_runtime_with_remote_predict_patch, AlibiExplainBlackBoxRuntime
+    )
     runtime_result = await anchor_image_runtime_with_remote_predict_patch.predict(
         payload
     )
@@ -136,10 +142,11 @@ async def test_end_2_end_explain_v1_output(
 ):
     # in this test we get raw explanation as opposed to v2
 
-    response = (
-        await anchor_image_runtime_with_remote_predict_patch._rt.explain_v1_output(
-            payload
-        )
+    assert isinstance(
+        anchor_image_runtime_with_remote_predict_patch, AlibiExplainRuntimeBase
+    )
+    response = await anchor_image_runtime_with_remote_predict_patch.explain_v1_output(
+        payload
     )
 
     response_body = json.loads(response.body)
