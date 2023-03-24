@@ -23,6 +23,12 @@ from mlserver_alibi_explain.common import (
     AlibiExplainSettings,
 )
 from mlserver_alibi_explain.errors import InvalidExplanationShape
+from mlserver_alibi_explain.explainers.black_box_runtime import (
+    AlibiExplainBlackBoxRuntime,
+)
+from mlserver_alibi_explain.explainers.integrated_gradients import (
+    IntegratedGradientsWrapper,
+)
 from mlserver_alibi_explain.runtime import AlibiExplainRuntime, AlibiExplainRuntimeBase
 from .helpers.run_async import run_async_as_sync, run_sync_as_async
 
@@ -52,6 +58,7 @@ async def test_integrated_gradients__smoke(
             )
         ],
     )
+    assert isinstance(integrated_gradients_runtime, IntegratedGradientsWrapper)
     response = await integrated_gradients_runtime.predict(inference_request)
     res = convert_from_bytes(response.outputs[0], ty=str)
     res_dict = json.dumps(res)
@@ -80,6 +87,9 @@ async def test_anchors__smoke(
                 datatype="FP32",
             )
         ],
+    )
+    assert isinstance(
+        anchor_image_runtime_with_remote_predict_patch, AlibiExplainBlackBoxRuntime
     )
     response = await anchor_image_runtime_with_remote_predict_patch.predict(
         inference_request

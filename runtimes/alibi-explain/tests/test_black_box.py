@@ -113,6 +113,9 @@ async def test_end_2_end(
 ):
     # in this test we are getting explanation and making sure that is the same one
     # as returned by alibi directly
+    assert isinstance(
+        anchor_image_runtime_with_remote_predict_patch, AlibiExplainBlackBoxRuntime
+    )
     runtime_result = await anchor_image_runtime_with_remote_predict_patch.predict(
         payload
     )

@@ -234,6 +234,7 @@ async def anchor_image_runtime_with_remote_predict_patch(
             ),
         )
     )
+    assert isinstance(rt, MLModel)
     await rt.load()
 
     yield rt
@@ -254,6 +255,7 @@ async def integrated_gradients_runtime() -> AlibiExplainRuntime:
             ),
         )
     )
+    assert isinstance(rt, MLModel)
     await rt.load()
 
     return rt
