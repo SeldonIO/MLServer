@@ -30,6 +30,15 @@ jobs:
           # so we'll need to override it to ensure the tag contains the right
           # changelog.
           push_options: "--force"
+      - name: Tagging release as stable
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Update CHANGELOG.md for ${{ github.event.release.tag_name }}
+          tagging_message: stable
+          # NOTE: The tag will already exist (created by previous releases), so
+          # we'll need to override it to ensure it points to the latest
+          # published release.
+          push_options: "--force"
 
   changelog-master-branch:
     runs-on: ubuntu-latest
