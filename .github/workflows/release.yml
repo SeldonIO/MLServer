@@ -10,7 +10,7 @@ jobs:
   draft-release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Update Version
         run: |
           ./hack/update-version.sh ${{ github.event.inputs.version }}
@@ -37,7 +37,7 @@ jobs:
           remove-haskell: "true"
           remove-android: "true"
           root-reserve-mb: "40960"
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.inputs.version }}
       - name: Set up Python 3.8
@@ -152,7 +152,7 @@ jobs:
           - sklearn
           - xgboost
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.inputs.version }}
       - name: Set up Python 3.8
