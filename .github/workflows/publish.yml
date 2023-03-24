@@ -7,6 +7,8 @@ on:
     types: [published]
 
 jobs:
+  # NOTE: We need to update the CHANGELOG on both the `release/*` and `master`
+  # branches to ensure they are in sync.
   changelog-release-branch:
     runs-on: ubuntu-latest
     steps:
@@ -15,24 +17,31 @@ jobs:
         with:
           file: CHANGELOG.md
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          commit_summary_template: "Update CHANGELOG.md for %s"
-          args: -d=false
-      - name: Bump version tag with latest changes
-        uses: actions-ecosystem/action-push-tag@v1
-        with:
-          tag: ${{ github.event.release.tag_name }}
-
-  changelog-master-branch:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: rhysd/changelog-from-release/action@v3
-        with:
-          file: CHANGELOG.md
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          commit_summary_template: "Update CHANGELOG.md for %s"
+          commit: false
           args: -d=false
       - name: Commiting & Pushing Updated Changelog
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: Bump version to ${{ github.event.inputs.version }}
+          commit_message: Update CHANGELOG.md for ${{ github.event.release.tag_name }}
+          tagging_message: ${{ github.event.release.tag_name }}
+          # NOTE: The tag will already exist (created by the release pipeline),
+          # so we'll need to override it to ensure the tag contains the right
+          # changelog.
+          push_options: "--force"
+
+  changelog-master-branch:
+    runs-on: ubuntu-latest
+    steps:
+      # TODO: Open a PR instead of pushing straight to `master`?
+      - uses: actions/checkout@v3
+        ref: master
+      - uses: rhysd/changelog-from-release/action@v3
+        with:
+          file: CHANGELOG.md
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          commit: false
+          args: -d=false
+      - name: Commiting & Pushing Updated Changelog
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Update CHANGELOG.md for ${{ github.event.release.tag_name }}
