@@ -20,6 +20,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           commit: false
           args: -d=false
+          header: "# Changelog\n"
       - name: Commiting & Pushing Updated Changelog
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
@@ -42,6 +43,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           commit: false
           args: -d=false
+          header: "# Changelog\n\n"
       - name: Commiting & Pushing Updated Changelog
         uses: stefanzweifel/git-auto-commit-action@v4
         with:

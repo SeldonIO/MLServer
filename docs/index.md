@@ -12,6 +12,7 @@ Reference <./reference/index>
 :maxdepth: 1
 
 Examples <./examples/index>
+Changelog <./changelog>
 ```
 
 ```{include} ../README.md
