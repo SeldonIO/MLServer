@@ -1,0 +1,23 @@
+# This GH Action is triggered when a release is 'published' in GitHub.
+# Once that happens, it will re-generate the Changelog (from the GH tag), and
+# update the tag so that it gets picked up by ReadTheDocs.
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: rhysd/changelog-from-release/action@v3
+        with:
+          file: CHANGELOG.md
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          commit_summary_template: "Update CHANGELOG.md for %s"
+          args: -d=false
+      - name: Bump version tag with latest changes
+        uses: actions-ecosystem/action-push-tag@v1
+        with:
+          tag: ${{ github.event.release.tag_name }}
