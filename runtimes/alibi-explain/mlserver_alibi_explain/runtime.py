@@ -16,7 +16,6 @@ from mlserver.codecs import (
 from mlserver.errors import ModelParametersMissing
 from mlserver.handlers import custom_handler
 from mlserver.model import MLModel
-from mlserver.model_wrapper import WrapperMLModel
 from mlserver.rest.responses import Response
 from mlserver.settings import ModelSettings, ModelParameters
 from mlserver.types import (
@@ -51,6 +50,7 @@ class AlibiExplainRuntimeBase(MLModel):
         self._executor = ThreadPoolExecutor()
         super().__init__(settings)
 
+    @custom_handler(rest_path="/explain")
     async def explain_v1_output(self, request: InferenceRequest) -> Response:
         """
         A custom endpoint to return explanation results in plain json format (no v2
@@ -142,10 +142,10 @@ class AlibiExplainRuntimeBase(MLModel):
         raise NotImplementedError
 
 
-class AlibiExplainRuntime(WrapperMLModel):
+class AlibiExplainRuntime:
     """Wrapper / Factory class for specific alibi explain runtimes"""
 
-    def __init__(self, settings: ModelSettings):
+    def __new__(cls, settings: ModelSettings):
         # TODO: we probably want to validate the enum more sanely here
         # we do not want to construct a specific alibi settings here because
         # it might be dependent on type
@@ -159,11 +159,5 @@ class AlibiExplainRuntime(WrapperMLModel):
 
         alibi_class = import_and_get_class(get_alibi_class_as_str(explainer_type))
 
-        self._rt = rt_class(settings, alibi_class)
+        return rt_class(settings, alibi_class)
 
-    # we add _explain_v1_output here to enable the registration and routing of custom
-    # endpoint to `_rt.explain_v1_output`
-    @custom_handler(rest_path="/explain")
-    async def _explain_v1_output(self, request: InferenceRequest) -> Response:
-        assert isinstance(self._rt, AlibiExplainRuntimeBase)
-        return await self._rt.explain_v1_output(request)

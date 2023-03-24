@@ -75,10 +75,10 @@ async def test_predict_impl(
     # [batch, image_x, image_y, channel]
     data = np.random.randn(10, 28, 28, 1) * 255
     assert isinstance(
-        anchor_image_runtime_with_remote_predict_patch._rt, AlibiExplainBlackBoxRuntime
+        anchor_image_runtime_with_remote_predict_patch, AlibiExplainBlackBoxRuntime
     )
     actual_result = await run_sync_as_async(
-        anchor_image_runtime_with_remote_predict_patch._rt._infer_impl, data
+        anchor_image_runtime_with_remote_predict_patch._infer_impl, data
     )
 
     # now we go via the inference model and see if we get the same results
@@ -140,10 +140,10 @@ async def test_end_2_end_explain_v1_output(
     # in this test we get raw explanation as opposed to v2
 
     assert isinstance(
-        anchor_image_runtime_with_remote_predict_patch._rt, AlibiExplainRuntimeBase
+        anchor_image_runtime_with_remote_predict_patch, AlibiExplainRuntimeBase
     )
     response = (
-        await anchor_image_runtime_with_remote_predict_patch._rt.explain_v1_output(
+        await anchor_image_runtime_with_remote_predict_patch.explain_v1_output(
             payload
         )
     )
