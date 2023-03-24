@@ -142,10 +142,8 @@ async def test_end_2_end_explain_v1_output(
     assert isinstance(
         anchor_image_runtime_with_remote_predict_patch, AlibiExplainRuntimeBase
     )
-    response = (
-        await anchor_image_runtime_with_remote_predict_patch.explain_v1_output(
-            payload
-        )
+    response = await anchor_image_runtime_with_remote_predict_patch.explain_v1_output(
+        payload
     )
 
     response_body = json.loads(response.body)

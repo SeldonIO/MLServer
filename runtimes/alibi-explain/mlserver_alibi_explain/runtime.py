@@ -160,4 +160,3 @@ class AlibiExplainRuntime:
         alibi_class = import_and_get_class(get_alibi_class_as_str(explainer_type))
 
         return rt_class(settings, alibi_class)
-
