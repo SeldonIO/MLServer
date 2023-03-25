@@ -55,7 +55,6 @@ class HuggingFaceSettings(BaseSettings):
     pretrained_tokenizer: Optional[str] = None
     optimum_model: bool = False
     device: int = -1
-    batch_size: Optional[int] = None
 
     @property
     def task_name(self):
