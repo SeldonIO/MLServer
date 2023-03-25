@@ -6,6 +6,7 @@ from distutils.util import strtobool
 import numpy as np
 from pydantic import BaseSettings
 from mlserver.errors import MLServerError
+from mlserver.settings import ModelSettings
 
 from transformers.pipelines import pipeline
 from transformers.pipelines.base import Pipeline
@@ -107,7 +108,9 @@ def parse_parameters_from_env() -> Dict:
     return parsed_parameters
 
 
-def load_pipeline_from_settings(hf_settings: HuggingFaceSettings) -> Pipeline:
+def load_pipeline_from_settings(
+    hf_settings: HuggingFaceSettings, settings: ModelSettings
+) -> Pipeline:
     """
     TODO
     """
@@ -136,11 +139,11 @@ def load_pipeline_from_settings(hf_settings: HuggingFaceSettings) -> Pipeline:
         model=model,
         tokenizer=tokenizer,
         device=device,
-        batch_size=hf_settings.batch_size,
+        batch_size=settings.max_batch_size,
     )
 
-    # If batch_size > 0 we need to ensure tokens are padded
-    if hf_settings.batch_size:
+    # If max_batch_size > 0 we need to ensure tokens are padded
+    if settings.max_batch_size:
         pp.tokenizer.pad_token_id = [str(pp.model.config.eos_token_id)]  # type: ignore
 
     return pp
