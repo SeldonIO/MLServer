@@ -133,12 +133,13 @@ def load_pipeline_from_settings(
         # https://github.com/huggingface/optimum/issues/191
         device = -1
 
+    batch_size = 1 if settings.max_batch_size == 0 else settings.max_batch_size
     pp = pipeline(
         hf_settings.task_name,
         model=model,
         tokenizer=tokenizer,
         device=device,
-        batch_size=settings.max_batch_size,
+        batch_size=batch_size,
     )
 
     # If max_batch_size > 0 we need to ensure tokens are padded
