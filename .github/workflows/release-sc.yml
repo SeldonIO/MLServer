@@ -1,4 +1,4 @@
-name: MLServer Release (SC)
+name: Release (SC)
 
 on:
   workflow_dispatch:

@@ -1,4 +1,4 @@
-name: MLServer Benchmarks
+name: Benchmarks
 
 on:
   schedule:

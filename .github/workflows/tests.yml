@@ -1,4 +1,4 @@
-name: MLServer Tests
+name: Tests
 
 on:
   push:
