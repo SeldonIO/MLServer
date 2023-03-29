@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - uses: snyk/actions/setup@master
       - name: Set up Python 3.8
         uses: actions/setup-python@v2
         with:
@@ -30,6 +31,6 @@ jobs:
           # file.
           pip freeze > requirements.txt
       - name: Security Scan
-        uses: snyk/actions/python@master
+        run: snyk test --fail-on=upgradable --severity-threshold=high
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
