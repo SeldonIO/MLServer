@@ -8,7 +8,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  security:
+  # Run scan at the Python level
+  python:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -32,5 +33,32 @@ jobs:
           pip freeze > requirements.txt
       - name: Security Scan
         run: snyk test --fail-on=upgradable --severity-threshold=high
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+  # Run scan at the image level
+  image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@master
+        with:
+          remove-dotnet: "true"
+          remove-haskell: "true"
+          remove-android: "true"
+          root-reserve-mb: "40960"
+      - uses: actions/checkout@v3
+      - name: Build Docker Image
+        run: |
+          DOCKER_BUILDKIT=1 docker build . \
+            --build-arg RUNTIMES=all \
+            -t $MLSERVER_IMAGE
+        env:
+          MLSERVER_IMAGE: seldonio/mlserver:${{ env.GITHUB_SHA }}
+      - name: Scan Docker Image
+        uses: snyk/actions/docker@master
+        with:
+          image: seldonio/mlserver:${{ env.GITHUB_SHA }}
+          args: --fail-on=upgradable --app-vulns --severity-threshold=high --file=Dockerfile
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
