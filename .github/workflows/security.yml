@@ -8,36 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  # Run scan at the Python level
-  python:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: snyk/actions/setup@master
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.8
-      - name: Install dependencies
-        run: |
-          make install-dev
-      - name: Create requirements.txt
-        run: |
-          # Snyk has issues working with complex setup.py files (e.g.
-          # https://github.com/snyk/cli/issues/1367).
-          # To account for this, we set up the environment and then dump it
-          # into a `requirements.txt` - this env includes both production and
-          # development dependencies.
-          # TODO: Once we move into Poetry, this can be replaced for the lock
-          # file.
-          pip freeze > requirements.txt
-      - name: Security Scan
-        run: snyk test --fail-on=upgradable --severity-threshold=high
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-
-  # Run scan at the image level
-  image:
+  scan:
     runs-on: ubuntu-latest
     steps:
       - name: Maximize build space
@@ -57,8 +28,18 @@ jobs:
           MLSERVER_IMAGE: seldonio/mlserver:${{ github.sha }}
       - name: Scan Docker Image
         uses: snyk/actions/docker@master
+        continue-on-error: true
         with:
           image: seldonio/mlserver:${{ github.sha }}
-          args: --fail-on=upgradable --app-vulns --severity-threshold=high --file=Dockerfile
+          args: \
+            --fail-on=upgradable \
+            --app-vulns \
+            --severity-threshold=high \
+            --file=Dockerfile \
+            --sarif-file-output=snyk.sarif
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      - name: Upload result to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: snyk.sarif
