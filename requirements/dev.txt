@@ -17,7 +17,7 @@ aiohttp-retry==2.8.3
 ## Used for FastAPI Async testing
 httpx==0.23.3
 kafka-python==2.0.2
-tenacity==8.2.1
+tenacity==8.2.2
 pyyaml==6.0
 ## Latest version of conda-pack (0.7.0) is not on PyPi
 ## See https://github.com/conda/conda-pack/issues/219
