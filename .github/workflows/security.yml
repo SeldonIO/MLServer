@@ -31,11 +31,10 @@ jobs:
         continue-on-error: true
         with:
           image: seldonio/mlserver:${{ github.sha }}
-          args: \
-            --fail-on=upgradable \
-            --app-vulns \
-            --severity-threshold=high \
-            --file=Dockerfile \
+          args: --fail-on=upgradable
+            --app-vulns
+            --severity-threshold=high
+            --file=Dockerfile
             --sarif-file-output=snyk.sarif
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
