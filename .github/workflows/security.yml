@@ -54,11 +54,11 @@ jobs:
             --build-arg RUNTIMES=all \
             -t $MLSERVER_IMAGE
         env:
-          MLSERVER_IMAGE: seldonio/mlserver:${{ env.GITHUB_SHA }}
+          MLSERVER_IMAGE: seldonio/mlserver:${{ github.sha }}
       - name: Scan Docker Image
         uses: snyk/actions/docker@master
         with:
-          image: seldonio/mlserver:${{ env.GITHUB_SHA }}
+          image: seldonio/mlserver:${{ github.sha }}
           args: --fail-on=upgradable --app-vulns --severity-threshold=high --file=Dockerfile
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
