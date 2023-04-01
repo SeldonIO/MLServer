@@ -53,6 +53,7 @@ class HuggingFaceSettings(BaseSettings):
     task_suffix: str = ""
     pretrained_model: Optional[str] = None
     pretrained_tokenizer: Optional[str] = None
+    framework: Optional[str] = None
     optimum_model: bool = False
     device: int = -1
 
@@ -140,6 +141,7 @@ def load_pipeline_from_settings(
         tokenizer=tokenizer,
         device=device,
         batch_size=batch_size,
+        framework=hf_settings.framework,
     )
 
     # If max_batch_size > 0 we need to ensure tokens are padded
