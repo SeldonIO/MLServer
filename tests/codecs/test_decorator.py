@@ -2,7 +2,7 @@ import pytest
 import numpy as np
 import pandas as pd
 
-from typing import Any, Callable, Dict, Optional, List
+from typing import Any, Callable, Dict, Optional, List, Tuple
 
 from mlserver.types import (
     InferenceRequest,
@@ -13,7 +13,7 @@ from mlserver.types import (
 )
 from mlserver.codecs.base import InputCodec
 from mlserver.codecs.utils import Codec
-from mlserver.codecs.decorator import SignatureCodec
+from mlserver.codecs.decorator import SignatureCodec, _as_list
 from mlserver.codecs.errors import InputsNotFound, OutputNotFound
 from mlserver.codecs.numpy import NumpyCodec, NumpyRequestCodec
 from mlserver.codecs.string import StringCodec
@@ -287,3 +287,13 @@ async def test_decode_args(
 
     res = NumpyRequestCodec.decode_response(inference_response)
     assert res == output_value
+
+
+def test_as_list_typing_tuple():
+    signature_list = _as_list(Tuple[np.ndarray, np.ndarray])
+    assert signature_list == [np.ndarray, np.ndarray]
+
+
+def test_as_list_native_tuple():
+    signature_list = _as_list((np.ndarray, np.ndarray))
+    assert signature_list == [np.ndarray, np.ndarray]
