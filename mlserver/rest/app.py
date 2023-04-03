@@ -116,6 +116,7 @@ def create_app(
         routes=routes,  # type: ignore
         default_response_class=Response,
         exception_handlers=_EXCEPTION_HANDLERS,  # type: ignore
+        docs_url="/v2/docs",
         redoc_url=None,
     )
     app.router.route_class = APIRoute
