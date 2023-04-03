@@ -32,7 +32,7 @@ types-protobuf==4.22.0.0
 types-orjson==3.6.2
 types-aiofiles==23.1.0.1
 types-requests==2.28.11.5
-black==23.1.0
+black==23.3.0
 
 # Pushing to PyPi
 wheel==0.40.0
