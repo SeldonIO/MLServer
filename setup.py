@@ -45,7 +45,7 @@ setup(
         "fastapi >=0.88.0, <=0.89.1, !=0.89.0",
         "python-dotenv",
         "grpcio",
-        "importlib-metadata;python_version<'3.8'",
+        "importlib-resources;python_version<'3.10'",
         "numpy",
         "pandas",
         # Force patch for CVE-2022-1941
