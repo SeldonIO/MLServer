@@ -46,8 +46,7 @@ class XGBoostModel(MLModel):
 
         self._model = _load_sklearn_interface(model_uri)
 
-        self.ready = True
-        return self.ready
+        return True
 
     def _check_request(self, payload: InferenceRequest) -> InferenceRequest:
         if not payload.outputs:

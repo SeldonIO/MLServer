@@ -36,8 +36,7 @@ class SKLearnModel(MLModel):
         )
         self._model = joblib.load(model_uri)
 
-        self.ready = True
-        return self.ready
+        return True
 
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
         payload = self._check_request(payload)

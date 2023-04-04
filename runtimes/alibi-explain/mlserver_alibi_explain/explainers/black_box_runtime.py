@@ -49,8 +49,7 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
         else:
             self._model = await self._load_from_uri(self._infer_impl)
 
-        self.ready = True
-        return self.ready
+        return True
 
     def _explain_impl(self, input_data: Any, explain_parameters: Dict) -> Explanation:
         if not self.alibi_explain_settings.explainer_batch:

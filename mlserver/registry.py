@@ -163,6 +163,7 @@ class SingleModelRegistry:
             # Register model again to ensure we save version modified by hooks
             self._register(model)
             await model.load()
+            model.ready = True
 
             logger.info(f"Loaded model '{model.name}' succesfully.")
         except Exception:
@@ -181,6 +182,7 @@ class SingleModelRegistry:
         # that at least one is available (sort of mimicking a rolling
         # deployment)
         await new_model.load()
+        model.ready = True
         self._register(new_model)
 
         if old_model == self.default:

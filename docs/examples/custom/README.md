@@ -6,7 +6,7 @@ To support this scenario, MLServer makes it really easy to create your own exten
 
 ## Overview
 
-In this example, we will train a [`numpyro` model](http://num.pyro.ai/en/stable/). 
+In this example, we will train a [`numpyro` model](http://num.pyro.ai/en/stable/).
 The `numpyro` library streamlines the implementation of probabilistic models, abstracting away advanced inference and training algorithms.
 
 Out of the box, `mlserver` doesn't provide an inference runtime for `numpyro`.
@@ -18,7 +18,6 @@ The first step will be to train our model.
 This will be a very simple bayesian regression model, based on an example provided in the [`numpyro` docs](https://nbviewer.jupyter.org/github/pyro-ppl/numpyro/blob/master/notebooks/source/bayesian_regression.ipynb).
 
 Since this is a probabilistic model, during training we will compute an approximation to the posterior distribution of our model using MCMC.
-
 
 ```python
 # Original source code and more details can be found in:
@@ -79,7 +78,6 @@ Note that, since this is a probabilistic model, we will only need to save the tr
 
 This will get saved in a `numpyro-divorce.json` file.
 
-
 ```python
 import json
 
@@ -95,7 +93,7 @@ with open(model_file_name, "w") as model_file:
 
 ## Serving
 
-The next step will be to serve our model using `mlserver`. 
+The next step will be to serve our model using `mlserver`.
 For that, we will first implement an extension which serve as the _runtime_ to perform inference using our custom `numpyro` model.
 
 ### Custom inference runtime
@@ -104,8 +102,6 @@ Our custom inference wrapper should be responsible of:
 
 - Loading the model from the set samples we saved previously.
 - Running inference using our model structure, and the posterior approximated from the samples.
-
-
 
 ```python
 # %load models.py
@@ -134,8 +130,7 @@ class NumpyroModel(MLModel):
 
         self._predictive = Predictive(self._model, self._samples)
 
-        self.ready = True
-        return self.ready
+        return True
 
     @decode_args
     async def predict(
@@ -170,13 +165,12 @@ class NumpyroModel(MLModel):
 
 ### Settings files
 
-The next step will be to create 2 configuration files: 
+The next step will be to create 2 configuration files:
 
 - `settings.json`: holds the configuration of our server (e.g. ports, log level, etc.).
 - `model-settings.json`: holds the configuration of our model (e.g. input type, runtime to use, etc.).
 
 #### `settings.json`
-
 
 ```python
 # %load settings.json
@@ -187,7 +181,6 @@ The next step will be to create 2 configuration files:
 ```
 
 #### `model-settings.json`
-
 
 ```python
 # %load model-settings.json
@@ -213,12 +206,10 @@ Since this command will start the server and block the terminal, waiting for req
 
 ### Send test inference request
 
-
 We now have our model being served by `mlserver`.
 To make sure that everything is working as expected, let's send a request from our test set.
 
 For that, we can use the Python types that `mlserver` provides out of box, or we can build our request manually.
-
 
 ```python
 import requests
@@ -245,10 +236,9 @@ response.json()
 Now that we have written and tested our custom model, the next step is to deploy it.
 With that goal in mind, the rough outline of steps will be to first build a custom image containing our code, and then deploy it.
 
-
 ### Specifying requirements
-MLServer will automatically find your requirements.txt file and install necessary python packages
 
+MLServer will automatically find your requirements.txt file and install necessary python packages
 
 ```python
 # %load requirements.txt
@@ -262,15 +252,13 @@ jaxlib==0.3.7
 ### Building a custom image
 
 ```{note}
-This section expects that Docker is available and running in the background. 
+This section expects that Docker is available and running in the background.
 ```
 
 MLServer offers helpers to build a custom Docker image containing your code.
 In this example, we will use the `mlserver build` subcommand to create an image, which we'll be able to deploy later.
 
-
-Note that this section expects that Docker is available and running in the background, as well as a functional cluster with Seldon Core installed and some familiarity with `kubectl`. 
-
+Note that this section expects that Docker is available and running in the background, as well as a functional cluster with Seldon Core installed and some familiarity with `kubectl`.
 
 ```bash
 %%bash
@@ -282,7 +270,6 @@ To ensure that the image is fully functional, we can spin up a container and the
 ```bash
 docker run -it --rm -p 8080:8080 my-custom-numpyro-server:0.1.0
 ```
-
 
 ```python
 import numpy as np
@@ -308,7 +295,7 @@ As we should be able to see, the server running within our Docker image responds
 ### Deploying our custom image
 
 ```{note}
-This section expects access to a functional Kubernetes cluster with Seldon Core installed and some familiarity with `kubectl`. 
+This section expects access to a functional Kubernetes cluster with Seldon Core installed and some familiarity with `kubectl`.
 ```
 
 Now that we've built a custom image and verified that it works as expected, we can move to the next step and deploy it.
@@ -316,12 +303,11 @@ There is a large number of tools out there to deploy images.
 However, for our example, we will focus on deploying it to a cluster running [Seldon Core](https://docs.seldon.io/projects/seldon-core/en/latest/).
 
 ```{note}
-Also consider that depending on your Kubernetes installation Seldon Core might expect to get the container image from a public container registry like [Docker hub](https://hub.docker.com/) or [Google Container Registry](https://cloud.google.com/container-registry). For that you need to do an extra step of pushing the container to the registry using `docker tag <image name> <container registry>/<image name>` and `docker push <container registry>/<image name>` and also updating the `image` section of the yaml file to `<container registry>/<image name>`. 
+Also consider that depending on your Kubernetes installation Seldon Core might expect to get the container image from a public container registry like [Docker hub](https://hub.docker.com/) or [Google Container Registry](https://cloud.google.com/container-registry). For that you need to do an extra step of pushing the container to the registry using `docker tag <image name> <container registry>/<image name>` and `docker push <container registry>/<image name>` and also updating the `image` section of the yaml file to `<container registry>/<image name>`.
 ```
 
 For that, we will need to create a `SeldonDeployment` resource which instructs Seldon Core to deploy a model embedded within our custom image and compliant with the [V2 Inference Protocol](https://github.com/kserve/kserve/tree/master/docs/predict-api/v2).
 This can be achieved by _applying_ (i.e. `kubectl apply`) a `SeldonDeployment` manifest to the cluster, similar to the one below:
-
 
 ```python
 %%writefile seldondeployment.yaml
@@ -342,7 +328,6 @@ spec:
               - name: numpyro-divorce
                 image: my-custom-numpyro-server:0.1.0
 ```
-
 
 ```python
 

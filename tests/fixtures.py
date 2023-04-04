@@ -66,8 +66,7 @@ class ErrorModel(MLModel):
             if load_error:
                 raise MLServerError(self.error_message)
 
-        self.ready = True
-        return self.ready
+        return True
 
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
         raise MLServerError(self.error_message)
@@ -82,8 +81,7 @@ class SimpleModel(MLModel):
 class SlowModel(MLModel):
     async def load(self) -> bool:
         await asyncio.sleep(10)
-        self.ready = True
-        return self.ready
+        return True
 
     async def infer(self, payload: InferenceRequest) -> InferenceResponse:
         await asyncio.sleep(10)
@@ -93,8 +91,7 @@ class SlowModel(MLModel):
 class EnvModel(MLModel):
     async def load(self):
         self._sklearn_version = sklearn.__version__
-        self.ready = True
-        return self.ready
+        return True
 
     async def predict(self, inference_request: InferenceRequest) -> InferenceResponse:
         return InferenceResponse(
