@@ -83,6 +83,23 @@ def create_app(
             "/v2/models/{model_name}/versions/{model_version}",
             endpoints.model_metadata,
         ),
+        # Model docs
+        APIRoute(
+            "/v2/models/{model_name}/docs/dataplane.json",
+            endpoints.model_openapi,
+        ),
+        APIRoute(
+            "/v2/models/{model_name}/versions/{model_version}/docs/dataplane.json",
+            endpoints.model_openapi,
+        ),
+        APIRoute(
+            "/v2/models/{model_name}/docs",
+            endpoints.model_docs,
+        ),
+        APIRoute(
+            "/v2/models/{model_name}/versions/{model_version}/docs",
+            endpoints.model_docs,
+        ),
         # Liveness and readiness
         APIRoute("/v2/health/live", endpoints.live),
         APIRoute("/v2/health/ready", endpoints.ready),

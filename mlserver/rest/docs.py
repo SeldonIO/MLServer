@@ -16,6 +16,14 @@ def get_openapi_schema() -> dict:
     return orjson.loads(openapi_schema_path.read_bytes())
 
 
+def get_model_schema_uri(model_name: str, model_version: Optional[str]) -> str:
+    base = f"/v2/models/{model_name}"
+    if model_version:
+        base = f"{base}/versions/{model_version}"
+
+    return f"{base}/docs/dataplane.json"
+
+
 @lru_cache
 def get_model_schema(model_name: str, model_version: Optional[str]) -> dict:
     openapi_schema = get_openapi_schema()
