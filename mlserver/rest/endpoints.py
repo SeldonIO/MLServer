@@ -16,7 +16,7 @@ from ..types import (
 from ..handlers import DataPlane, ModelRepositoryHandlers
 from ..utils import insert_headers, extract_headers
 
-from .docs import get_model_schema_uri, get_model_schema
+from .openapi import get_model_schema_uri, get_model_schema
 from .utils import to_status_code
 
 

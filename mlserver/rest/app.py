@@ -7,7 +7,7 @@ from fastapi.middleware.gzip import GZipMiddleware
 from starlette_exporter import PrometheusMiddleware
 
 from .endpoints import Endpoints, ModelRepositoryEndpoints
-from .docs import get_openapi_schema
+from .openapi import get_openapi_schema
 from .requests import Request
 from .responses import Response
 from .errors import _EXCEPTION_HANDLERS
