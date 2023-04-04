@@ -26,7 +26,7 @@ def case_no_custom_env(tmp_path: str) -> str:
     """
     Custom model with no custom environment required.
     """
-    to_copy = ["models.py"]
+    to_copy = ["fixtures.py"]
     model_settings = {"name": "no_custom_env", "implementation": "models.SumModel"}
     return _copy_test_files(tmp_path, model_settings, to_copy=to_copy)
 

@@ -16,9 +16,9 @@ from ..conftest import TESTDATA_PATH
 def custom_module_settings_path(
     sum_model_settings: ModelSettings, tmp_path: str
 ) -> str:
-    # Copy models.py, which acts as custom module
-    src = os.path.join(TESTDATA_PATH, "models.py")
-    dst = os.path.join(tmp_path, "models.py")
+    # Copy fixtures.py, which acts as custom module
+    src = os.path.join(TESTDATA_PATH, "fixtures.py")
+    dst = os.path.join(tmp_path, "fixtures.py")
     shutil.copyfile(src, dst)
 
     # Add modified settings, pointing to local module
