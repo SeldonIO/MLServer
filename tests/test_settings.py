@@ -6,7 +6,7 @@ import json
 from mlserver.settings import CORSSettings, Settings, ModelSettings, ModelParameters
 from mlserver.repository import DEFAULT_MODEL_SETTINGS_FILENAME
 
-from .conftest import TESTDATA_PATH
+from .conftest import TESTDATA_PATH, TESTS_PATH
 
 
 def test_settings_from_env(monkeypatch):
@@ -60,9 +60,9 @@ def test_model_settings_from_env(monkeypatch):
         ({"name": "foo", "implementation": "tests.fixtures.SumModel"}),
         (
             {
-                "_source": os.path.join(TESTDATA_PATH, DEFAULT_MODEL_SETTINGS_FILENAME),
+                "_source": os.path.join(TESTS_PATH, DEFAULT_MODEL_SETTINGS_FILENAME),
                 "name": "foo",
-                "implementation": "models.SumModel",
+                "implementation": "fixtures.SumModel",
             }
         ),
     ],

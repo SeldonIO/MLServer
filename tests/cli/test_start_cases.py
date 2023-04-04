@@ -6,7 +6,7 @@ from mlserver.settings import ModelSettings, Settings
 from mlserver.cli.serve import DEFAULT_SETTINGS_FILENAME
 from mlserver.repository import DEFAULT_MODEL_SETTINGS_FILENAME
 
-from ..conftest import TESTDATA_PATH
+from ..conftest import TESTS_PATH, TESTDATA_PATH
 
 
 def _init_mlserver_folder(tmp_path: str, settings: Settings):
@@ -16,7 +16,7 @@ def _init_mlserver_folder(tmp_path: str, settings: Settings):
         settings_file.write(settings.json())
 
     # Copy fixtures.py module
-    src_path = os.path.join(TESTDATA_PATH, "fixtures.py")
+    src_path = os.path.join(TESTS_PATH, "fixtures.py")
     dst_path = os.path.join(tmp_path, "fixtures.py")
     shutil.copy(src_path, dst_path)
 
@@ -25,7 +25,7 @@ def _init_mlserver_folder(tmp_path: str, settings: Settings):
     os.makedirs(model_folder)
     model_settings_path = os.path.join(model_folder, DEFAULT_MODEL_SETTINGS_FILENAME)
     with open(model_settings_path, "w") as model_settings_file:
-        model_settings = {"name": "slow-model", "implementation": "models.SlowModel"}
+        model_settings = {"name": "slow-model", "implementation": "fixtures.SlowModel"}
         model_settings_file.write(json.dumps(model_settings))
 
 
@@ -53,7 +53,7 @@ def case_custom_module(
     os.makedirs(model_folder)
 
     # Copy fixtures.py module
-    src_path = os.path.join(TESTDATA_PATH, "fixtures.py")
+    src_path = os.path.join(TESTS_PATH, "fixtures.py")
     dst_path = os.path.join(model_folder, "custom.py")
     shutil.copy(src_path, dst_path)
 
