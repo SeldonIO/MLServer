@@ -7,7 +7,6 @@ from fastapi.middleware.gzip import GZipMiddleware
 from starlette_exporter import PrometheusMiddleware
 
 from .endpoints import Endpoints, ModelRepositoryEndpoints
-from .openapi import get_openapi_schema
 from .requests import Request
 from .responses import Response
 from .errors import _EXCEPTION_HANDLERS
@@ -103,6 +102,15 @@ def create_app(
         # Liveness and readiness
         APIRoute("/v2/health/live", endpoints.live),
         APIRoute("/v2/health/ready", endpoints.ready),
+        # Server docs
+        APIRoute(
+            "/v2/docs/dataplane.json",
+            endpoints.openapi,
+        ),
+        APIRoute(
+            "/v2/docs",
+            endpoints.docs,
+        ),
         # Server metadata
         APIRoute(
             "/v2",
@@ -134,10 +142,9 @@ def create_app(
         routes=routes,  # type: ignore
         default_response_class=Response,
         exception_handlers=_EXCEPTION_HANDLERS,  # type: ignore
-        docs_url="/v2/docs",
+        docs_url=None,
         redoc_url=None,
     )
-    app.openapi = get_openapi_schema
     app.router.route_class = APIRoute
     app.add_middleware(GZipMiddleware)
     if settings.cors_settings is not None:

@@ -16,7 +16,7 @@ from ..types import (
 from ..handlers import DataPlane, ModelRepositoryHandlers
 from ..utils import insert_headers, extract_headers
 
-from .openapi import get_model_schema_uri, get_model_schema
+from .openapi import get_openapi_schema, get_model_schema_uri, get_model_schema
 from .utils import to_status_code
 
 
@@ -37,6 +37,14 @@ class Endpoints:
     async def ready(self) -> Response:
         is_ready = await self._data_plane.ready()
         return Response(status_code=to_status_code(is_ready))
+
+    async def openapi(self) -> JSONResponse:
+        return get_openapi_schema()
+
+    async def docs(self) -> HTMLResponse:
+        openapi_url = "/v2/docs/dataplane.json"
+        title = f"MLServer API Docs"
+        return get_swagger_ui_html(openapi_url=openapi_url, title=title)
 
     async def model_openapi(
         self, model_name: str, model_version: Optional[str] = None

@@ -46,14 +46,16 @@ async def test_metadata(rest_client):
     assert metadata.extensions == []
 
 
-async def test_docs(rest_client):
+async def test_openapi(rest_client):
     endpoint = "/v2/docs"
     response = await rest_client.get(endpoint)
 
     assert response.status_code == 200
     assert "html" in response.headers["content-type"]
 
-    endpoint = "/openapi.json"
+
+async def test_docs(rest_client):
+    endpoint = "/v2/docs/dataplane.json"
     response = await rest_client.get(endpoint)
 
     assert response.status_code == 200
