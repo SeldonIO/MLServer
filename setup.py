@@ -38,6 +38,7 @@ setup(
     author="Seldon Technologies Ltd.",
     author_email="hello@seldon.io",
     description="ML server",
+    include_package_data=True,
     packages=find_packages(exclude=["tests", "tests.*"]),
     install_requires=[
         "click",
