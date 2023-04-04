@@ -1,10 +1,12 @@
 import orjson
 
 from functools import lru_cache
-from typing import Optional
+from typing import Optional, Tuple
 from importlib_resources import files
 
 OPENAPI_SCHEMA_RELATIVE_PATH = "../openapi/dataplane.json"
+MODEL_NAME_PARAMETER = "model_name"
+MODEL_VERSION_PARAMETER = "model_version"
 
 
 @lru_cache
@@ -12,3 +14,66 @@ def get_openapi_schema() -> dict:
     mlserver_package = __package__.split(".")[0]
     openapi_schema_path = files(mlserver_package).joinpath(OPENAPI_SCHEMA_RELATIVE_PATH)
     return orjson.loads(openapi_schema_path.read_bytes())
+
+
+@lru_cache
+def get_model_schema(model_name: str, model_version: Optional[str]) -> dict:
+    openapi_schema = get_openapi_schema()
+    generic_paths = openapi_schema["paths"]
+    model_paths = {}
+
+    for path_spec in generic_paths.items():
+        filled_path_spec = _fill_path_spec(path_spec, model_name, model_version)
+        if filled_path_spec:
+            model_path, model_spec = filled_path_spec
+            model_paths[model_path] = model_spec
+
+    model_schema = openapi_schema.copy()
+    model_schema["paths"] = model_paths
+    return model_schema
+
+
+def _fill_path_spec(path_spec, model_name, model_version) -> Optional[Tuple[str, dict]]:
+    path, spec = path_spec
+
+    model_name_placeholder = f"{{{MODEL_NAME_PARAMETER}}}"
+    if model_name_placeholder not in path:
+        # If this is not a model endpoint, leave as-is
+        return (path, path_spec)
+
+    model_path = path.replace(model_name_placeholder, model_name)
+
+    model_version_placeholder = f"{{{MODEL_VERSION_PARAMETER}}}"
+    if model_version:
+        if model_version_placeholder not in model_path:
+            # If this is a model endpoint, but it has no version, then it
+            # refers to the default.
+            # Therefore, it can't be included in the schema for a versioned
+            # model.
+            return None
+
+        model_path = model_path.replace(model_version_placeholder, model_version)
+
+    model_spec = spec.copy()
+    parameters = spec.get("parameters", [])
+    model_spec["parameters"] = _remove_prefilled_parameters(
+        parameters, model_name, model_version
+    )
+
+    return (model_path, model_spec)
+
+
+def _remove_prefilled_parameters(
+    parameters: list, model_name: str, model_version: Optional[str]
+) -> list:
+    filtered_parameters = []
+
+    prefilled_parameter_names = [MODEL_NAME_PARAMETER]
+    if model_version:
+        prefilled_parameter_names.append(MODEL_VERSION_PARAMETER)
+
+    for parameter in parameters:
+        if parameter["name"] not in prefilled_parameter_names:
+            filtered_parameters.append(parameter)
+
+    return filtered_parameters
