@@ -46,7 +46,10 @@ setup(
         "fastapi >=0.88.0, <=0.89.1, !=0.89.0",
         "python-dotenv",
         "grpcio",
-        "importlib-resources;python_version<'3.10'",
+        # The importlib-resources backport is required to use some
+        # functionality added in Python 3.10
+        # https://setuptools.pypa.io/en/latest/userguide/datafiles.html#accessing-data-files-at-runtime
+        "importlib-resources",
         "numpy",
         "pandas",
         # Force patch for CVE-2022-1941

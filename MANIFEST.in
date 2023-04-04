@@ -1,1 +1,1 @@
-include openapi/*.yaml
+include openapi/*.json
