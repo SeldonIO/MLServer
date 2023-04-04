@@ -7,6 +7,7 @@ how to use them.
 :titlesonly:
 
 ./content-type
+./openapi
 ./parallel-inference
 ./adaptive-batching
 ./custom

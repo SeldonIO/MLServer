@@ -37,8 +37,26 @@ def get_model_schema(model_name: str, model_version: Optional[str]) -> dict:
             model_paths[model_path] = model_spec
 
     model_schema = openapi_schema.copy()
+    model_schema["info"] = _get_model_info(openapi_schema, model_name, model_version)
     model_schema["paths"] = model_paths
     return model_schema
+
+
+def _get_model_info(
+    openapi_schema: dict, model_name: str, model_version: Optional[str]
+) -> dict:
+    model_title = f"Model {model_name}"
+    if model_version:
+        model_title = f"{model_title} ({model_version})"
+
+    title = f"Data Plane for {model_title}"
+    description = f"REST protocol to interact with {model_title}"
+
+    model_info = openapi_schema["info"].copy()
+    model_info["title"] = title
+    model_info["description"] = description
+
+    return model_info
 
 
 def _fill_path_spec(path_spec, model_name, model_version) -> Optional[Tuple[str, dict]]:
@@ -46,8 +64,8 @@ def _fill_path_spec(path_spec, model_name, model_version) -> Optional[Tuple[str,
 
     model_name_placeholder = f"{{{MODEL_NAME_PARAMETER}}}"
     if model_name_placeholder not in path:
-        # If this is not a model endpoint, leave as-is
-        return (path, path_spec)
+        # If this is not a model endpoint, don't include it
+        return None
 
     model_path = path.replace(model_name_placeholder, model_name)
 
