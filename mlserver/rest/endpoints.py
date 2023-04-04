@@ -1,7 +1,6 @@
 from fastapi.requests import Request
-from fastapi.responses import Response
+from fastapi.responses import Response, HTMLResponse
 from fastapi.openapi.docs import get_swagger_ui_html
-from starlette.responses import HTMLResponse, JSONResponse
 
 from typing import Optional
 
@@ -38,17 +37,17 @@ class Endpoints:
         is_ready = await self._data_plane.ready()
         return Response(status_code=to_status_code(is_ready))
 
-    async def openapi(self) -> JSONResponse:
+    async def openapi(self) -> dict:
         return get_openapi_schema()
 
     async def docs(self) -> HTMLResponse:
         openapi_url = "/v2/docs/dataplane.json"
-        title = f"MLServer API Docs"
+        title = "MLServer API Docs"
         return get_swagger_ui_html(openapi_url=openapi_url, title=title)
 
     async def model_openapi(
         self, model_name: str, model_version: Optional[str] = None
-    ) -> JSONResponse:
+    ) -> dict:
         # NOTE: Right now, we use the `model_metadata` method to check that the
         # model exists.
         # In the future, we will use this metadata to fill in more model
