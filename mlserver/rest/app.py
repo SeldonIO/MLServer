@@ -7,6 +7,7 @@ from fastapi.middleware.gzip import GZipMiddleware
 from starlette_exporter import PrometheusMiddleware
 
 from .endpoints import Endpoints, ModelRepositoryEndpoints
+from .docs import get_openapi_schema
 from .requests import Request
 from .responses import Response
 from .errors import _EXCEPTION_HANDLERS
@@ -119,6 +120,7 @@ def create_app(
         docs_url="/v2/docs",
         redoc_url=None,
     )
+    app.openapi = get_openapi_schema
     app.router.route_class = APIRoute
     app.add_middleware(GZipMiddleware)
     if settings.cors_settings is not None:

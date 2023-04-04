@@ -44,6 +44,20 @@ async def test_metadata(rest_client):
     assert metadata.extensions == []
 
 
+async def test_docs(rest_client):
+    endpoint = "/v2/docs"
+    response = await rest_client.get(endpoint)
+
+    assert response.status_code == 200
+    assert "html" in response.headers["content-type"]
+
+    endpoint = "/openapi.json"
+    response = await rest_client.get(endpoint)
+
+    assert response.status_code == 200
+    assert "openapi" in response.json()
+
+
 async def test_model_metadata(rest_client, sum_model_settings):
     endpoint = f"v2/models/{sum_model_settings.name}"
     response = await rest_client.get(endpoint)
