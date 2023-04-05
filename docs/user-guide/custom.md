@@ -221,7 +221,7 @@ To load a custom environment, [parallel inference](./parallel-inference)
 **must** be enabled.
 ```
 
-If we take the [previous example](#Loading-a-custom-MLServer-runtime) above as
+If we take the [previous example](#loading-a-custom-mlserver-runtime) above as
 a reference, we could extend it to include our custom environment as:
 
 ```bash
@@ -285,23 +285,60 @@ environment file (i.e. named either as `environment.yaml` or `conda.yaml`) and
 These can be used to tell MLServer what Python environment is required in the
 final Docker image.
 
-Additionally, the `mlserver build` subcommand will also treat any
+```{note}
+The environment built by the `mlserver build` will be global to the whole
+MLServer image (i.e. every loaded model will, by default, use that custom
+environment).
+For Multi-Model Serving scenarios, it may be better to use [per-model custom
+environments](#loading-a-custom-python-environment) instead - which will allow
+you to run multiple custom environments at the same time.
+```
+
+### Default Settings
+
+The `mlserver build` subcommand will treat any
 [`settings.json`](../reference/settings) or
 [`model-settings.json`](../reference/model-settings) files present on your root
 folder as the default settings that must be set in your final image.
 Therefore, these files can be used to configure things like the default
-inference runtime to be used, or
-to even include **embedded models** that will always be present within your custom image.
+inference runtime to be used, or to even include **embedded models** that will
+always be present within your custom image.
 
-### Docker-less Environments
+```{note}
+Default setting values can still be overriden by external environment variables
+or model-specific `model-settings.json`.
+```
 
-In some occasions, it may not be possible to access an environment with a
-running Docker daemon.
-This can be the case, for example, on some CI pipelines.
+### Custom Dockerfile
 
-To account for these use cases, MLServer also includes a [`mlserver dockerfile`](../reference/cli)
-subcommand which will just generate a `Dockerfile` (and optionally a
-`.dockerignore` file).
-This `Dockerfile` can be then by used by other _"Docker-less"_ tools, like
+Out-of-the-box, the `mlserver build` subcommand leverages a default
+`Dockerfile` which takes into account a number of requirements, like
+
+- Supporting arbitrary user IDs.
+- Building your [base custom environment](#custom-environment) on the fly.
+- Configure a set of [default setting values](#default-settings).
+
+However, there may be occasions where you need to customise your `Dockerfile`
+even further.
+This may be the case, for example, when you need to provide extra environment
+variables or when you need to customise your Docker build process (e.g. by
+using other _"Docker-less"_ tools, like
 [Kaniko](https://github.com/GoogleContainerTools/kaniko) or
-[Buildah](https://buildah.io/) to build the final image.
+[Buildah](https://buildah.io/)).
+
+To account for these cases, MLServer also includes a [`mlserver
+dockerfile`](../reference/cli) subcommand which will just generate a
+`Dockerfile` (and optionally a `.dockerignore` file) exactly like the one used
+by the `mlserver build` command.
+This `Dockerfile` can then be customised according to your needs.
+
+````{note}
+The base `Dockerfile` requires [Docker's
+Buildkit](https://docs.docker.com/build/buildkit/) to be enabled.
+To ensure BuildKit is used, you can use the `DOCKER_BUILDKIT=1` environment
+variable, e.g.
+
+```bash
+DOCKER_BUILDKIT=1 docker build . -t my-custom-runtime:0.1.0
+```
+````
