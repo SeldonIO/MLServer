@@ -66,8 +66,10 @@ class HuggingFaceSettings(BaseSettings):
 
 def parse_parameters_from_env() -> Dict:
     """
-    TODO
+    This method parses the environment variables injected via SCv1.
     """
+    # TODO: Once support for SCv1 is deprecated, we should remove this method and rely
+    # purely on settings coming via the `model-settings.json` file.
     parameters = json.loads(os.environ.get(PARAMETERS_ENV_NAME, "[]"))
 
     type_dict = {
@@ -130,9 +132,6 @@ def load_pipeline_from_settings(
             from_transformers=True,
         )
         tokenizer = AutoTokenizer.from_pretrained(tokenizer)
-        # Device needs to be set to -1 due to known issue
-        # https://github.com/huggingface/optimum/issues/191
-        device = -1
 
     batch_size = 1 if settings.max_batch_size == 0 else settings.max_batch_size
     pp = pipeline(
