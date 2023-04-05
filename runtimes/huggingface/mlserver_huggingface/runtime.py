@@ -60,30 +60,20 @@ class HuggingFaceRuntime(MLModel):
 
     async def load(self) -> bool:
         # Loading & caching pipeline in asyncio loop to avoid blocking
-        print("=" * 80)
-        print(self.hf_settings.task_name)
-        print("loading model...")
+        logger.info("Loading model for task '{self.hf_settings.task_name}'...")
         await asyncio.get_running_loop().run_in_executor(
             None,
             load_pipeline_from_settings,
             self.hf_settings,
             self.settings,
         )
-        print("(re)loading model...")
+
         # Now we load the cached model which should not block asyncio
         self._model = load_pipeline_from_settings(self.hf_settings, self.settings)
         self._merge_metadata()
-        print("model has been loaded!")
         return True
 
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
-        """
-        TODO
-        """
-
-        # Adding some logging as hard to debug given the many types of input accepted
-        logger.debug("Payload %s", payload)
-
         # TODO: convert and validate?
         kwargs = self.decode_request(payload, default_codec=HuggingfaceRequestCodec)
         args = kwargs.pop("args", [])
@@ -92,8 +82,6 @@ class HuggingFaceRuntime(MLModel):
         if array_inputs:
             args = [list(array_inputs)] + args
         prediction = self._model(*args, **kwargs)
-
-        logger.debug("Prediction %s", prediction)
 
         return self.encode_response(
             payload=prediction, default_codec=HuggingfaceRequestCodec
