@@ -1,6 +1,8 @@
 import pytest
+
 from typing import Dict
-from mlserver_huggingface.common import HuggingFaceSettings
+
+from mlserver_huggingface.settings import HuggingFaceSettings
 
 
 @pytest.mark.parametrize(

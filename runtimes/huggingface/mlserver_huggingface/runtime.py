@@ -9,14 +9,13 @@ from transformers.pipelines import SUPPORTED_TASKS
 
 from mlserver.logging import logger
 
+from .settings import HuggingFaceSettings, parse_parameters_from_env
 from .errors import (
     MissingHuggingFaceSettings,
-    InvalidHugginFaceTask,
+    InvalidHuggingFaceTask,
     InvalidOptimumTask,
 )
 from .common import (
-    HuggingFaceSettings,
-    parse_parameters_from_env,
     load_pipeline_from_settings,
     SUPPORTED_OPTIMUM_TASKS,
 )
@@ -38,7 +37,7 @@ class HuggingFaceRuntime(MLModel):
         self.hf_settings = HuggingFaceSettings(**extra)  # type: ignore
 
         if self.hf_settings.task not in SUPPORTED_TASKS:
-            raise InvalidHugginFaceTask(self.hf_settings.task)
+            raise InvalidHuggingFaceTask(self.hf_settings.task)
 
         if self.hf_settings.optimum_model:
             if self.hf_settings.task not in SUPPORTED_OPTIMUM_TASKS:
