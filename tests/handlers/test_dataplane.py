@@ -98,7 +98,7 @@ async def test_infer(data_plane, sum_model, inference_request):
 
 async def test_infer_error_not_ready(data_plane, sum_model, inference_request):
     sum_model.ready = False
-    with pytest.raises(ModelNotReady) as err:
+    with pytest.raises(ModelNotReady):
         await data_plane.infer(payload=inference_request, name=sum_model.name)
 
     sum_model.ready = True
