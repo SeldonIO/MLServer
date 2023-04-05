@@ -9,10 +9,14 @@ from transformers.pipelines import SUPPORTED_TASKS
 
 from mlserver.logging import logger
 
+from .errors import (
+    MissingHuggingFaceSettings,
+    InvalidHugginFaceTask,
+    InvalidOptimumTask,
+)
 from .common import (
     HuggingFaceSettings,
     parse_parameters_from_env,
-    InvalidTranformerInitialisation,
     load_pipeline_from_settings,
     SUPPORTED_OPTIMUM_TASKS,
 )
@@ -28,33 +32,17 @@ class HuggingFaceRuntime(MLModel):
         if not env_params and (
             not settings.parameters or not settings.parameters.extra
         ):
-            raise InvalidTranformerInitialisation(
-                500,
-                "Settings parameters not provided via config file nor env variables",
-            )
+            raise MissingHuggingFaceSettings()
 
         extra = env_params or settings.parameters.extra  # type: ignore
         self.hf_settings = HuggingFaceSettings(**extra)  # type: ignore
 
         if self.hf_settings.task not in SUPPORTED_TASKS:
-            raise InvalidTranformerInitialisation(
-                500,
-                (
-                    f"Invalid transformer task: {self.hf_settings.task}."
-                    f" Available tasks: {SUPPORTED_TASKS.keys()}"
-                ),
-            )
+            raise InvalidHugginFaceTask(self.hf_settings.task)
 
         if self.hf_settings.optimum_model:
             if self.hf_settings.task not in SUPPORTED_OPTIMUM_TASKS:
-                raise InvalidTranformerInitialisation(
-                    500,
-                    (
-                        f"Invalid transformer task for "
-                        f"OPTIMUM model: {self.hf_settings.task}. "
-                        f"Supported Optimum tasks: {SUPPORTED_OPTIMUM_TASKS.keys()}"
-                    ),
-                )
+                raise InvalidOptimumTask(self.hf_settings.task)
 
         super().__init__(settings)
 
