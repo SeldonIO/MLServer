@@ -4,7 +4,7 @@ import json
 
 from typing import List
 
-from ..conftest import TESTDATA_PATH
+from ..conftest import TESTS_PATH, TESTDATA_PATH
 
 
 def _copy_test_files(
@@ -26,9 +26,12 @@ def case_no_custom_env(tmp_path: str) -> str:
     """
     Custom model with no custom environment required.
     """
-    to_copy = ["models.py"]
-    model_settings = {"name": "no_custom_env", "implementation": "models.SumModel"}
-    return _copy_test_files(tmp_path, model_settings, to_copy=to_copy)
+    src = os.path.join(TESTS_PATH, "fixtures.py")
+    dst = os.path.join(tmp_path, "fixtures.py")
+    shutil.copyfile(src, dst)
+
+    model_settings = {"name": "no_custom_env", "implementation": "fixtures.SumModel"}
+    return _copy_test_files(tmp_path, model_settings, to_copy=[])
 
 
 def case_environment_yml(tmp_path: str) -> str:

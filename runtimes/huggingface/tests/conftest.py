@@ -41,7 +41,7 @@ def model_settings() -> ModelSettings:
 @pytest.fixture(scope="module")
 async def runtime(model_settings: ModelSettings) -> HuggingFaceRuntime:
     runtime = HuggingFaceRuntime(model_settings)
-    await runtime.load()
+    runtime.ready = await runtime.load()
     return runtime
 
 

@@ -20,9 +20,8 @@ CUSTOM_METRIC_NAME = "my_custom_metric"
 class CustomMetricsModel(MLModel):
     async def load(self) -> bool:
         metrics.register(CUSTOM_METRIC_NAME, "Test custom counter")
-        self.ready = True
         self.reqs = 0
-        return self.ready
+        return True
 
     async def predict(self, req: InferenceRequest) -> InferenceResponse:
         self.reqs += 1

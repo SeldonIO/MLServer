@@ -67,8 +67,7 @@ class MLModel:
         **This method should be overriden to implement your custom load
         logic.**
         """
-        self.ready = True
-        return self.ready
+        return True
 
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
         """

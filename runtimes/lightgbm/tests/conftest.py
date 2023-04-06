@@ -50,7 +50,7 @@ def model_settings(model_uri: str) -> ModelSettings:
 @pytest.fixture
 async def model(model_settings: ModelSettings) -> LightGBMModel:
     model = LightGBMModel(model_settings)
-    await model.load()
+    model.ready = await model.load()
 
     return model
 

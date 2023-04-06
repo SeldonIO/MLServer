@@ -9,16 +9,16 @@ from mlserver.repository.repository import DEFAULT_MODEL_SETTINGS_FILENAME
 from mlserver.repository.load import load_model_settings
 from mlserver.settings import ModelSettings
 
-from ..conftest import TESTDATA_PATH
+from ..conftest import TESTS_PATH
 
 
 @pytest.fixture
 def custom_module_settings_path(
     sum_model_settings: ModelSettings, tmp_path: str
 ) -> str:
-    # Copy models.py, which acts as custom module
-    src = os.path.join(TESTDATA_PATH, "models.py")
-    dst = os.path.join(tmp_path, "models.py")
+    # Copy fixtures.py, which acts as custom module
+    src = os.path.join(TESTS_PATH, "fixtures.py")
+    dst = os.path.join(tmp_path, "fixtures.py")
     shutil.copyfile(src, dst)
 
     # Add modified settings, pointing to local module
@@ -26,7 +26,7 @@ def custom_module_settings_path(
     with open(model_settings_path, "w") as f:
         settings_dict = sum_model_settings.dict()
         # Point to local module
-        settings_dict["implementation"] = "models.SumModel"
+        settings_dict["implementation"] = "fixtures.SumModel"
         f.write(json.dumps(settings_dict))
 
     return model_settings_path
@@ -70,4 +70,4 @@ async def test_load_custom_module(
 
     assert pre_sys_path == post_sys_path
     assert model_settings.name == sum_model_settings.name
-    assert model_settings.implementation_ == "models.SumModel"
+    assert model_settings.implementation_ == "fixtures.SumModel"

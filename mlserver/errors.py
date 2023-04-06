@@ -26,6 +26,15 @@ class ModelNotFound(MLServerError):
         super().__init__(msg, status.HTTP_404_NOT_FOUND)
 
 
+class ModelNotReady(MLServerError):
+    def __init__(self, name: str, version: Optional[str] = None):
+        msg = f"Model {name} is not ready yet."
+        if version is not None:
+            msg = f"Model {name} with version {version} is not ready yet."
+
+        super().__init__(msg, status.HTTP_400_BAD_REQUEST)
+
+
 class InferenceError(MLServerError):
     def __init__(self, msg: str):
         super().__init__(msg, status.HTTP_400_BAD_REQUEST)

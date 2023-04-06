@@ -18,8 +18,7 @@ class MLlibModel(MLModel):
 
         self._model = model_load(sc, model_uri)
 
-        self.ready = True
-        return self.ready
+        return True
 
     async def predict(self, payload: types.InferenceRequest) -> types.InferenceResponse:
         payload = self._check_request(payload)

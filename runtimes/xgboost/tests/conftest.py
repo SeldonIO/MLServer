@@ -68,7 +68,7 @@ def model_settings(model_uri: str) -> ModelSettings:
 @pytest.fixture
 async def model(model_settings: ModelSettings) -> XGBoostModel:
     model = XGBoostModel(model_settings)
-    await model.load()
+    model.ready = await model.load()
 
     return model
 
@@ -81,7 +81,7 @@ async def classifier(classifier_uri: str) -> XGBoostModel:
         parameters=ModelParameters(uri=classifier_uri, version="v1.2.3"),
     )
     model = XGBoostModel(model_settings)
-    await model.load()
+    model.ready = await model.load()
 
     return model
 

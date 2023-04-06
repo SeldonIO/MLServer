@@ -4,6 +4,7 @@ from prometheus_client import (
 )
 from typing import Optional
 
+from ..errors import ModelNotReady
 from ..metrics import model_context
 from ..settings import Settings
 from ..registry import MultiModelRegistry
@@ -92,6 +93,8 @@ class DataPlane:
                 payload.id = generate_uuid()
 
             model = await self._model_registry.get_model(name, version)
+            if not model.ready:
+                raise ModelNotReady(name, version)
 
             self._inference_middleware.request_middleware(payload, model.settings)
 

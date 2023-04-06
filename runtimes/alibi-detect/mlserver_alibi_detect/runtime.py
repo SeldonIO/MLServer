@@ -72,8 +72,7 @@ class AlibiDetectRuntime(MLModel):
                 f"Invalid configuration for model {self._settings.name}: {e}"
             ) from e
 
-        self.ready = True
-        return self.ready
+        return True
 
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
         # If batch is not configured, run the detector and return the output

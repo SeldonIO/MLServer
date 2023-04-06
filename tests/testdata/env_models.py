@@ -23,8 +23,7 @@ class DummySKLearnModel(MLModel):
         self._model = DummyClassifier(strategy="prior")
         self._model.fit(X, y)
 
-        self.ready = True
-        return self.ready
+        return True
 
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
         decoded = self.decode_request(payload, default_codec=NumpyRequestCodec)

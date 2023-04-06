@@ -58,7 +58,7 @@ def model_settings(model_uri: str) -> ModelSettings:
 @pytest.fixture
 async def model(model_settings: ModelSettings) -> SKLearnModel:
     model = SKLearnModel(model_settings)
-    await model.load()
+    model.ready = await model.load()
 
     return model
 
@@ -89,7 +89,7 @@ async def regression_model(tmp_path) -> SKLearnModel:
     )
 
     model = SKLearnModel(settings)
-    await model.load()
+    model.ready = await model.load()
 
     return model
 
@@ -140,7 +140,7 @@ def pandas_model_settings(pandas_model_uri: str) -> ModelSettings:
 @pytest.fixture
 async def pandas_model(pandas_model_settings: ModelSettings) -> SKLearnModel:
     model = SKLearnModel(pandas_model_settings)
-    await model.load()
+    model.ready = await model.load()
 
     return model
 
@@ -186,7 +186,7 @@ async def dataframe_model(model_settings: ModelSettings) -> SKLearnModel:
     dummy = DummyDataframeModel()
 
     model = SKLearnModel(model_settings)
-    await model.load()
+    model.ready = await model.load()
 
     # Replace internal model with dummy model
     model._model = dummy
@@ -241,6 +241,6 @@ async def pandas_preprocessor(
     pandas_preprocessor_settings: ModelSettings,
 ) -> SKLearnModel:
     model = SKLearnModel(pandas_preprocessor_settings)
-    await model.load()
+    model.ready = await model.load()
 
     return model

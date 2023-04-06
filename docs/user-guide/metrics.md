@@ -71,7 +71,7 @@ Custom metrics will generally be registered in the {func}`load()
 
 ```{code-block} python
 ---
-emphasize-lines: 1, 8, 13
+emphasize-lines: 1, 8, 12
 ---
 import mlserver
 
@@ -81,8 +81,7 @@ class MyCustomRuntime(mlserver.MLModel):
   async def load(self) -> bool:
     self._model = load_my_custom_model()
     mlserver.register("my_custom_metric", "This is a custom metric example")
-    self.ready = True
-    return self.ready
+    return True
 
   async def predict(self, payload: InferenceRequest) -> InferenceResponse:
     mlserver.log(my_custom_metric=34)

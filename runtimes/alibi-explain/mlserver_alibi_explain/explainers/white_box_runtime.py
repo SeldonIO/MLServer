@@ -39,8 +39,7 @@ class AlibiExplainWhiteBoxRuntime(ABC, AlibiExplainRuntimeBase):
         else:
             self._model = await self._load_from_uri(self._inference_model)
 
-        self.ready = True
-        return self.ready
+        return True
 
     async def _get_inference_model(self) -> Any:
         raise NotImplementedError

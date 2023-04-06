@@ -110,7 +110,7 @@ def model_settings_pytorch_fixed(pytorch_model_uri) -> ModelSettings:
 @pytest.fixture
 async def runtime(model_settings: ModelSettings) -> MLflowRuntime:
     model = MLflowRuntime(model_settings)
-    await model.load()
+    model.ready = await model.load()
 
     return model
 
@@ -118,7 +118,7 @@ async def runtime(model_settings: ModelSettings) -> MLflowRuntime:
 @pytest.fixture
 async def runtime_pytorch(model_settings_pytorch_fixed: ModelSettings) -> MLflowRuntime:
     model = MLflowRuntime(model_settings_pytorch_fixed)
-    await model.load()
+    model.ready = await model.load()
 
     return model
 

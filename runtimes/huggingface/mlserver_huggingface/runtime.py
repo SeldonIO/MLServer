@@ -74,8 +74,7 @@ class HuggingFaceRuntime(MLModel):
         self._model = load_pipeline_from_settings(self.hf_settings, self.settings)
         self._merge_metadata()
         print("model has been loaded!")
-        self.ready = True
-        return self.ready
+        return True
 
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
         """

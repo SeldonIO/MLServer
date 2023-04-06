@@ -105,7 +105,7 @@ async def outlier_detector(
     outlier_detector_settings: ModelSettings,
 ) -> AlibiDetectRuntime:
     model = AlibiDetectRuntime(outlier_detector_settings)
-    await model.load()
+    model.ready = await model.load()
 
     return model
 
@@ -140,6 +140,6 @@ def drift_detector_uri(tmp_path: str) -> str:
 @pytest.fixture
 async def drift_detector(drift_detector_settings: ModelSettings) -> AlibiDetectRuntime:
     model = AlibiDetectRuntime(drift_detector_settings)
-    await model.load()
+    model.ready = await model.load()
 
     return model

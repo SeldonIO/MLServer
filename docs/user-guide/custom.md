@@ -29,7 +29,7 @@ and then overriding those methods with your custom logic.
 
 ```{code-block} python
 ---
-emphasize-lines: 7-8, 13-14
+emphasize-lines: 7-8, 12-13
 ---
 from mlserver import MLModel
 from mlserver.types import InferenceRequest, InferenceResponse
@@ -39,8 +39,7 @@ class MyCustomRuntime(MLModel):
   async def load(self) -> bool:
     # TODO: Replace for custom logic to load a model artifact
     self._model = load_my_custom_model()
-    self.ready = True
-    return self.ready
+    return True
 
   async def predict(self, payload: InferenceRequest) -> InferenceResponse:
     # TODO: Replace for custom logic to run inference
@@ -86,7 +85,7 @@ following custom runtime:
 
 ```{code-block} python
 ---
-emphasize-lines: 2, 12-13
+emphasize-lines: 2, 11-12
 ---
 from mlserver import MLModel
 from mlserver.codecs import decode_args
@@ -96,8 +95,7 @@ class MyCustomRuntime(MLModel):
   async def load(self) -> bool:
     # TODO: Replace for custom logic to load a model artifact
     self._model = load_my_custom_model()
-    self.ready = True
-    return self.ready
+    return True
 
   @decode_args
   async def predict(self, questions: List[str], context: List[str]) -> np.ndarray:
