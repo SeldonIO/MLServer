@@ -5,6 +5,8 @@ from typing import Optional, Dict
 from pydantic import BaseSettings
 from distutils.util import strtobool
 
+from .errors import InvalidModelParameter, InvalidModelParameterType
+
 ENV_PREFIX_HUGGINGFACE_SETTINGS = "MLSERVER_MODEL_HUGGINGFACE_"
 PARAMETERS_ENV_NAME = "PREDICTIVE_UNIT_PARAMETERS"
 
@@ -26,7 +28,7 @@ class HuggingFaceSettings(BaseSettings):
 
     - `Optimum Tasks <https://huggingface.co/docs/optimum/onnxruntime/usage_guides/pipelines#inference-pipelines-with-the-onnx-runtime-accelerator>`_
     - `Transformer Tasks <https://huggingface.co/docs/transformers/task_summary>`_
-    """
+    """  # noqa: E501
 
     task_suffix: str = ""
     """
@@ -98,20 +100,7 @@ def parse_parameters_from_env() -> Dict:
             try:
                 parsed_parameters[name] = type_dict[type_](value)
             except ValueError:
-                raise InvalidTranformerInitialisation(
-                    "Bad model parameter: "
-                    + name
-                    + " with value "
-                    + value
-                    + " can't be parsed as a "
-                    + type_,
-                    reason="MICROSERVICE_BAD_PARAMETER",
-                )
+                raise InvalidModelParameter(name, value, type_)
             except KeyError:
-                raise InvalidTranformerInitialisation(
-                    "Bad model parameter type: "
-                    + type_
-                    + " valid are INT, FLOAT, DOUBLE, STRING, BOOL",
-                    reason="MICROSERVICE_BAD_PARAMETER",
-                )
+                raise InvalidModelParameterType(type_)
     return parsed_parameters
