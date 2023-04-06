@@ -27,7 +27,6 @@ We will show how to add share a task
 {
     "name": "transformer",
     "implementation": "mlserver_huggingface.HuggingFaceRuntime",
-    "parallel_workers": 0,
     "parameters": {
         "extra": {
             "task": "text-generation",
@@ -76,7 +75,6 @@ We can download pretrained optimized models from the hub if available by enablin
 {
     "name": "transformer",
     "implementation": "mlserver_huggingface.HuggingFaceRuntime",
-    "parallel_workers": 0,
     "parameters": {
         "extra": {
             "task": "text-generation",
@@ -127,7 +125,6 @@ We can support multiple other transformers other than just text generation, belo
 {
     "name": "transformer",
     "implementation": "mlserver_huggingface.HuggingFaceRuntime",
-    "parallel_workers": 0,
     "parameters": {
         "extra": {
             "task": "question-answering"
@@ -172,7 +169,6 @@ requests.post("http://localhost:8080/v2/models/transformer/infer", json=inferenc
 {
     "name": "transformer",
     "implementation": "mlserver_huggingface.HuggingFaceRuntime",
-    "parallel_workers": 0,
     "parameters": {
         "extra": {
             "task": "text-classification"
@@ -217,7 +213,6 @@ We first test the time taken with the device=-1 which configures CPU by default
 {
     "name": "transformer",
     "implementation": "mlserver_huggingface.HuggingFaceRuntime",
-    "parallel_workers": 0,
     "max_batch_size": 128,
     "max_batch_time": 1,
     "parameters": {
@@ -271,7 +266,6 @@ Now we'll run the benchmark with GPU configured, which we can do by setting `dev
 {
     "name": "transformer",
     "implementation": "mlserver_huggingface.HuggingFaceRuntime",
-    "parallel_workers": 0,
     "parameters": {
         "extra": {
             "task": "text-generation",
@@ -319,7 +313,6 @@ We will also configure `max_batch_time` which specifies` the maximum amount of t
 {
     "name": "transformer",
     "implementation": "mlserver_huggingface.HuggingFaceRuntime",
-    "parallel_workers": 0,
     "max_batch_size": 128,
     "max_batch_time": 1,
     "parameters": {
