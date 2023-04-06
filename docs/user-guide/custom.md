@@ -219,6 +219,13 @@ To load a custom environment, [parallel inference](./parallel-inference)
 **must** be enabled.
 ```
 
+```{warning}
+When loading custom environments, MLServer will always use the same Python
+interpreter that is used to run the main process.
+In other words, all custom environments will use the same version of Python
+than the main MLServer process.
+```
+
 If we take the [previous example](#loading-a-custom-mlserver-runtime) above as
 a reference, we could extend it to include our custom environment as:
 
@@ -247,7 +254,7 @@ Note that, in the folder layout above, we are assuming that:
     "model": "sum-model",
     "implementation": "models.MyCustomRuntime",
     "parameters": {
-      "tarball_path": "./environment.tar.gz"
+      "environment_tarball": "./environment.tar.gz"
     }
   }
   ```
