@@ -70,6 +70,8 @@ COPY --from=wheel-builder /opt/mlserver/dist ./dist
 # NOTE: Temporarily excluding mllib from the main image due to:
 #   CVE-2022-25168
 #   CVE-2022-42889
+# NOTE: Removing explicitly requirements.txt file from spaCy's test
+# dependencies causing false positives in Snyk.
 RUN . $CONDA_PATH/etc/profile.d/conda.sh && \
     pip install --upgrade pip wheel setuptools && \
     if [[ $RUNTIMES == "all" ]]; then \
@@ -87,7 +89,8 @@ RUN . $CONDA_PATH/etc/profile.d/conda.sh && \
             pip install $_wheel; \
         done \
     fi && \
-    pip install $(ls "./dist/mlserver-"*.whl)
+    pip install $(ls "./dist/mlserver-"*.whl) && \
+    rm -f /opt/conda/lib/python3.8/site-packages/spacy/tests/package/requirements.txt
 
 COPY ./licenses/license.txt .
 COPY ./licenses/license.txt /licenses/
