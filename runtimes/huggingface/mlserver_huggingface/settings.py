@@ -4,8 +4,27 @@ import orjson
 from typing import Optional, Dict
 from pydantic import BaseSettings
 from distutils.util import strtobool
+from transformers.pipelines import SUPPORTED_TASKS
 
-from .errors import InvalidModelParameter, InvalidModelParameterType
+try:
+    # Optimum 1.7 changed the import name from `SUPPORTED_TASKS` to
+    # `ORT_SUPPORTED_TASKS`.
+    # We'll try to import the more recent one, falling back to the previous
+    # import name if not present.
+    # https://github.com/huggingface/optimum/blob/987b02e4f6e2a1c9325b364ff764da2e57e89902/optimum/pipelines/__init__.py#L18
+    from optimum.pipelines import ORT_SUPPORTED_TASKS as SUPPORTED_OPTIMUM_TASKS
+except ImportError:
+    from optimum.pipelines import SUPPORTED_TASKS as SUPPORTED_OPTIMUM_TASKS
+
+from mlserver.settings import ModelSettings
+
+from .errors import (
+    MissingHuggingFaceSettings,
+    InvalidTransformersTask,
+    InvalidOptimumTask,
+    InvalidModelParameter,
+    InvalidModelParameterType,
+)
 
 ENV_PREFIX_HUGGINGFACE_SETTINGS = "MLSERVER_MODEL_HUGGINGFACE_"
 PARAMETERS_ENV_NAME = "PREDICTIVE_UNIT_PARAMETERS"
@@ -104,3 +123,23 @@ def parse_parameters_from_env() -> Dict:
             except KeyError:
                 raise InvalidModelParameterType(type_)
     return parsed_parameters
+
+
+def get_huggingface_settings(model_settings: ModelSettings) -> HuggingFaceSettings:
+    env_params = parse_parameters_from_env()
+    if not env_params and (
+        not model_settings.parameters or not model_settings.parameters.extra
+    ):
+        raise MissingHuggingFaceSettings()
+
+    extra = env_params or model_settings.parameters.extra  # type: ignore
+    hf_settings = HuggingFaceSettings(**extra)  # type: ignore
+
+    if hf_settings.task not in SUPPORTED_TASKS:
+        raise InvalidTransformersTask(hf_settings.task, SUPPORTED_TASKS.keys())
+
+    if hf_settings.optimum_model:
+        if hf_settings.task not in SUPPORTED_OPTIMUM_TASKS:
+            raise InvalidOptimumTask(hf_settings.task, SUPPORTED_OPTIMUM_TASKS.keys())
+
+    return hf_settings

@@ -1,24 +1,15 @@
 import asyncio
+
 from mlserver.model import MLModel
 from mlserver.settings import ModelSettings
+from mlserver.logging import logger
 from mlserver.types import (
     InferenceRequest,
     InferenceResponse,
 )
-from transformers.pipelines import SUPPORTED_TASKS
 
-from mlserver.logging import logger
-
-from .settings import HuggingFaceSettings, parse_parameters_from_env
-from .errors import (
-    MissingHuggingFaceSettings,
-    InvalidHuggingFaceTask,
-    InvalidOptimumTask,
-)
-from .common import (
-    load_pipeline_from_settings,
-    SUPPORTED_OPTIMUM_TASKS,
-)
+from .settings import get_huggingface_settings
+from .common import load_pipeline_from_settings
 from .codecs import HuggingfaceRequestCodec
 from .metadata import METADATA
 
@@ -27,22 +18,7 @@ class HuggingFaceRuntime(MLModel):
     """Runtime class for specific Huggingface models"""
 
     def __init__(self, settings: ModelSettings):
-        env_params = parse_parameters_from_env()
-        if not env_params and (
-            not settings.parameters or not settings.parameters.extra
-        ):
-            raise MissingHuggingFaceSettings()
-
-        extra = env_params or settings.parameters.extra  # type: ignore
-        self.hf_settings = HuggingFaceSettings(**extra)  # type: ignore
-
-        if self.hf_settings.task not in SUPPORTED_TASKS:
-            raise InvalidHuggingFaceTask(self.hf_settings.task)
-
-        if self.hf_settings.optimum_model:
-            if self.hf_settings.task not in SUPPORTED_OPTIMUM_TASKS:
-                raise InvalidOptimumTask(self.hf_settings.task)
-
+        self.hf_settings = get_huggingface_settings(settings)
         super().__init__(settings)
 
     async def load(self) -> bool:

@@ -9,20 +9,6 @@ from optimum.pipelines import pipeline as opt_pipeline
 from transformers.pipelines import pipeline as trf_pipeline
 from transformers.pipelines.base import Pipeline
 
-try:
-    # Optimum 1.7 changed the import name from `SUPPORTED_TASKS` to
-    # `ORT_SUPPORTED_TASKS`.
-    # We'll try to import the more recent one, falling back to the previous
-    # import name if not present.
-    # https://github.com/huggingface/optimum/blob/987b02e4f6e2a1c9325b364ff764da2e57e89902/optimum/pipelines/__init__.py#L18
-    from optimum.pipelines import (  # noqa: F401
-        ORT_SUPPORTED_TASKS as SUPPORTED_OPTIMUM_TASKS,
-    )
-except ImportError:
-    from optimum.pipelines import (  # noqa: F401
-        SUPPORTED_TASKS as SUPPORTED_OPTIMUM_TASKS,
-    )
-
 from .settings import HuggingFaceSettings
 
 
