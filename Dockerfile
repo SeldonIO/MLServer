@@ -90,7 +90,7 @@ RUN . $CONDA_PATH/etc/profile.d/conda.sh && \
         done \
     fi && \
     pip install $(ls "./dist/mlserver-"*.whl) && \
-    rm /opt/conda/lib/python3.8/site-packages/spacy/tests/package/requirements.txt
+    rm -f /opt/conda/lib/python3.8/site-packages/spacy/tests/package/requirements.txt
 
 COPY ./licenses/license.txt .
 COPY ./licenses/license.txt /licenses/
