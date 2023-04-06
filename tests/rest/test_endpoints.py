@@ -1,5 +1,7 @@
 import pytest
 
+from typing import Optional
+
 from mlserver import __version__
 from mlserver.types import (
     InferenceResponse,
@@ -44,6 +46,22 @@ async def test_metadata(rest_client):
     assert metadata.extensions == []
 
 
+async def test_openapi(rest_client):
+    endpoint = "/v2/docs"
+    response = await rest_client.get(endpoint)
+
+    assert response.status_code == 200
+    assert "html" in response.headers["content-type"]
+
+
+async def test_docs(rest_client):
+    endpoint = "/v2/docs/dataplane.json"
+    response = await rest_client.get(endpoint)
+
+    assert response.status_code == 200
+    assert "openapi" in response.json()
+
+
 async def test_model_metadata(rest_client, sum_model_settings):
     endpoint = f"v2/models/{sum_model_settings.name}"
     response = await rest_client.get(endpoint)
@@ -54,6 +72,36 @@ async def test_model_metadata(rest_client, sum_model_settings):
     assert metadata.platform == sum_model_settings.platform
     assert metadata.versions == sum_model_settings.versions
     assert metadata.inputs == sum_model_settings.inputs
+
+
+@pytest.mark.parametrize(
+    "model_name,model_version", [("sum-model", "v1.2.3"), ("sum-model", None)]
+)
+async def test_model_openapi(
+    rest_client, model_name: str, model_version: Optional[str]
+):
+    endpoint = f"/v2/models/{model_name}/docs/dataplane.json"
+    if model_version is not None:
+        endpoint = (
+            f"/v2/models/{model_name}/versions/{model_version}/docs/dataplane.json"
+        )
+    response = await rest_client.get(endpoint)
+
+    assert response.status_code == 200
+    assert "openapi" in response.json()
+
+
+@pytest.mark.parametrize(
+    "model_name,model_version", [("sum-model", "v1.2.3"), ("sum-model", None)]
+)
+async def test_model_docs(rest_client, model_name: str, model_version: Optional[str]):
+    endpoint = f"/v2/models/{model_name}/docs"
+    if model_version is not None:
+        endpoint = f"/v2/models/{model_name}/versions/{model_version}/docs"
+    response = await rest_client.get(endpoint)
+
+    assert response.status_code == 200
+    assert "html" in response.headers["content-type"]
 
 
 @pytest.mark.parametrize(
