@@ -19,15 +19,50 @@ class HuggingFaceSettings(BaseSettings):
 
     # TODO: Document fields
     task: str = ""
-    # Why need this filed?
-    # for translation task, required a suffix to specify source and target
-    # related issue: https://github.com/SeldonIO/MLServer/issues/947
+    """
+    Pipeline task to load.
+    You can see the available Optimum and Transformers tasks available in the
+    links below:
+
+    - `Optimum Tasks <https://huggingface.co/docs/optimum/onnxruntime/usage_guides/pipelines#inference-pipelines-with-the-onnx-runtime-accelerator>`_
+    - `Transformer Tasks <https://huggingface.co/docs/transformers/task_summary>`_
+    """
+
     task_suffix: str = ""
+    """
+    Suffix to append to the base task name.
+    Useful for, e.g. translation tasks which require a suffix on the task name
+    to specify source and target.
+    """
+
     pretrained_model: Optional[str] = None
+    """
+    Name of the model that should be loaded in the pipeline.
+    """
+
     pretrained_tokenizer: Optional[str] = None
+    """
+    Name of the tokenizer that should be loaded in the pipeline.
+    """
+
     framework: Optional[str] = None
+    """
+    The framework to use, either "pt" for PyTorch or "tf" for TensorFlow.
+    """
+
     optimum_model: bool = False
+    """
+    Flag to decide whether the pipeline should use a Optimum-optimised model or
+    the standard Transformers model.
+    Under the hood, this will enable the model to use the optimised ONNX
+    runtime.
+    """
+
     device: int = -1
+    """
+    Device in which this pipeline will be loaded (e.g., "cpu", "cuda:1", "mps",
+    or a GPU ordinal rank like 1).
+    """
 
     @property
     def task_name(self):
