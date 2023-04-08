@@ -85,7 +85,7 @@ class HuggingFaceSettings(BaseSettings):
     or a GPU ordinal rank like 1).
     """
 
-    inter_op_threads: int = None
+    inter_op_threads: Optional[int] = None
     """
     Threads used for parallelism between independent operations.
     PyTorch:
@@ -94,7 +94,7 @@ class HuggingFaceSettings(BaseSettings):
     https://www.tensorflow.org/api_docs/python/tf/config/threading/set_intra_op_parallelism_threads
     """
 
-    intera_op_threads: int = None
+    intera_op_threads: Optional[int] = None
     """
     Threads used within an individual op for parallelism.
     PyTorch:
