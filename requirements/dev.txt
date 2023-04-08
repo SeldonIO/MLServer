@@ -42,5 +42,5 @@ twine==4.0.2
 pip-licenses==4.1.0
 
 # For huggingface tests
-torch==1.13.1
-tensorflow==2.10.1
+torch
+tensorflow
