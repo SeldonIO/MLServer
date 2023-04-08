@@ -86,10 +86,14 @@ class HuggingFaceSettings(BaseSettings):
     """
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     inter_op_threads: Optional[int] = None
 =======
     inter_op_threads: int = None
 >>>>>>> added intera and inter op parallelism parameters to the hugggingface runtime
+=======
+    inter_op_threads: Optional[int] = None
+>>>>>>> optional config values typing
     """
     Threads used for parallelism between independent operations.
     PyTorch:
@@ -99,10 +103,14 @@ class HuggingFaceSettings(BaseSettings):
     """
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     intera_op_threads: Optional[int] = None
 =======
     intera_op_threads: int = None
 >>>>>>> added intera and inter op parallelism parameters to the hugggingface runtime
+=======
+    intera_op_threads: Optional[int] = None
+>>>>>>> optional config values typing
     """
     Threads used within an individual op for parallelism.
     PyTorch:
