@@ -1,6 +1,6 @@
 Sphinx==5.3.0
 sphinx_material==0.0.35
-readthedocs-sphinx-search==0.2.0
+readthedocs-sphinx-search==0.3.1
 myst-parser==1.0.0
 sphinxcontrib-bibtex==2.5.0
 autodoc_pydantic==1.8.0
