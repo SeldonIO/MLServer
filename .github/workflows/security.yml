@@ -13,13 +13,6 @@ jobs:
   scan:
     runs-on: ubuntu-latest
     steps:
-      - name: Maximize build space
-        uses: easimon/maximize-build-space@master
-        with:
-          remove-dotnet: "true"
-          remove-haskell: "true"
-          remove-android: "true"
-          root-reserve-mb: "46080"
       - uses: actions/checkout@v3
       - name: Build Docker Image
         run: |

@@ -30,8 +30,6 @@ jobs:
     needs: draft-release
     runs-on: ubuntu-latest
     steps:
-      - name: Space Check
-        run: df -h
       - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.inputs.version }}
@@ -62,8 +60,6 @@ jobs:
             -t $MLSERVER_IMAGE
         env:
           MLSERVER_IMAGE: seldonio/mlserver:${{ github.event.inputs.version }}
-      - name: Space Check
-        run: df -h
       - name: Scan Docker Image
         uses: snyk/actions/docker@master
         env:
