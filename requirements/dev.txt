@@ -26,7 +26,7 @@ git+https://github.com/conda/conda-pack@0.7.0
 # Linting and formatting
 flake8==6.0.0
 flake8-black==0.3.6
-mypy==1.1.1
+mypy==1.2.0
 mypy-protobuf==3.1.0
 types-protobuf==4.22.0.2
 types-orjson==3.6.2
