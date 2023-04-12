@@ -19,7 +19,7 @@ jobs:
           remove-dotnet: "true"
           remove-haskell: "true"
           remove-android: "true"
-          root-reserve-mb: "40960"
+          root-reserve-mb: "51200"
       - uses: actions/checkout@v3
       - name: Build Docker Image
         run: |
