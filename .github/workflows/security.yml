@@ -25,6 +25,10 @@ jobs:
       - name: Scan Docker Image
         continue-on-error: true
         run: |
+          (while true; do 
+              df -h
+              sleep 5
+              done) &
           snyk container test \
             seldonio/mlserver:${{ github.sha }} \
             --fail-on=upgradable \
