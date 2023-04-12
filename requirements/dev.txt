@@ -28,7 +28,7 @@ flake8==6.0.0
 flake8-black==0.3.6
 mypy==1.1.1
 mypy-protobuf==3.1.0
-types-protobuf==4.22.0.0
+types-protobuf==4.22.0.2
 types-orjson==3.6.2
 types-aiofiles==23.1.0.1
 types-requests==2.28.11.5
