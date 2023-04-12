@@ -21,15 +21,16 @@ jobs:
             -t $MLSERVER_IMAGE
         env:
           MLSERVER_IMAGE: seldonio/mlserver:${{ github.sha }}
+      - uses: snyk/actions/setup@master
       - name: Scan Docker Image
-        uses: snyk/actions/docker@master
         continue-on-error: true
-        with:
-          image: seldonio/mlserver:${{ github.sha }}
-          args: --fail-on=upgradable
-            --app-vulns
-            --severity-threshold=high
-            --file=Dockerfile
+        run: |
+          snyk container test \
+            seldonio/mlserver:${{ github.sha }} \
+            --fail-on=upgradable \
+            --app-vulns \
+            --severity-threshold=high \
+            --file=Dockerfile \
             --sarif-file-output=snyk.sarif
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
