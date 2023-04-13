@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  scan:
+  scan-code:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -37,10 +37,38 @@ jobs:
         run: snyk test \
           --fail-on=upgradable \
           --severity-threshold=high \
-          --sarif-file-output=snyk.sarif
+          --sarif-file-output=snyk-code.sarif
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       - name: Upload result to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v2
         with:
-          sarif_file: snyk.sarif
+          sarif_file: snyk-code.sarif
+
+  scan-image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build Docker Image
+        run: |
+          DOCKER_BUILDKIT=1 docker build . \
+            --build-arg RUNTIMES=all \
+            -t $MLSERVER_IMAGE
+        env:
+          MLSERVER_IMAGE: seldonio/mlserver:${{ github.sha }}
+      - name: Scan Docker Image
+        uses: snyk/actions/docker@master
+        continue-on-error: true
+        with:
+          image: seldonio/mlserver:${{ github.sha }}
+          args: --fail-on=upgradable
+            --app-vulns
+            --severity-threshold=high
+            --file=Dockerfile
+            --sarif-file-output=snyk-image.sarif
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      - name: Upload result to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: snyk-image.sarif
