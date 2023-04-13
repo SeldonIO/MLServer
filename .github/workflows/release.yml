@@ -26,7 +26,7 @@ jobs:
           draft: true
           tag_name: ${{ github.event.inputs.version }}
 
-  mlserver-python:
+  mlserver:
     needs: draft-release
     runs-on: ubuntu-latest
     steps:
@@ -50,11 +50,6 @@ jobs:
           TWINE_NON_INTERACTIVE: 1
           TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
           TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
-
-  mlserver-docker:
-    needs: draft-release
-    runs-on: ubuntu-latest
-    steps:
       - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.inputs.version }}
@@ -68,20 +63,6 @@ jobs:
             -t $MLSERVER_IMAGE
         env:
           MLSERVER_IMAGE: seldonio/mlserver:${{ github.event.inputs.version }}
-      - name: Scan Docker Image
-        uses: snyk/actions/docker@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          image: seldonio/mlserver:${{ github.event.inputs.version }}
-          args: --fail-on=upgradable --app-vulns --severity-threshold=high --file=Dockerfile
-      - name: Scan Docker Slim Image
-        uses: snyk/actions/docker@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          image: seldonio/mlserver:${{ github.event.inputs.version }}-slim
-          args: --fail-on=upgradable --app-vulns --severity-threshold=high --file=Dockerfile
       - name: Login to DockerHub
         uses: docker/login-action@v2
         with:
@@ -136,6 +117,31 @@ jobs:
           PYXIS_API_TOKEN: ${{ secrets.PYXIS_API_TOKEN }}
           PROJECT_ID: 63566bb9822ce8cef9ba27fc
           QUAY_MLSERVER_IMAGE: quay.io/redhat-isv-containers/63566bb9822ce8cef9ba27fc:${{ github.event.inputs.version }}
+
+  mlserver-scan:
+    # NOTE: Scanning the full image after building it makes the worker run out
+    # of space, so we'll scan them after building and pushing to Docker Hub in
+    # a separate job.
+    needs: mlserver
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.version }}
+      - name: Scan Docker Image
+        uses: snyk/actions/docker@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          image: seldonio/mlserver:${{ github.event.inputs.version }}
+          args: --fail-on=upgradable --app-vulns --severity-threshold=high --file=Dockerfile
+      - name: Scan Docker Slim Image
+        uses: snyk/actions/docker@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          image: seldonio/mlserver:${{ github.event.inputs.version }}-slim
+          args: --fail-on=upgradable --app-vulns --severity-threshold=high --file=Dockerfile
 
   runtimes:
     needs: draft-release
