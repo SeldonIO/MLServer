@@ -30,6 +30,13 @@ jobs:
     needs: draft-release
     runs-on: ubuntu-latest
     steps:
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@master
+        with:
+          remove-dotnet: "true"
+          remove-haskell: "true"
+          remove-android: "true"
+          root-reserve-mb: "40960"
       - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.inputs.version }}
@@ -50,9 +57,6 @@ jobs:
           TWINE_NON_INTERACTIVE: 1
           TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
           TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
-      - uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.inputs.version }}
       - name: Build Docker Image
         run: |
           DOCKER_BUILDKIT=1 docker build . \
