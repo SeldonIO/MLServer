@@ -148,7 +148,9 @@ jobs:
     # NOTE: Scanning the full image after building it makes the worker run out
     # of space, so we'll scan them after building and pushing to Docker Hub in
     # a separate job.
-    needs: draft-release
+    needs:
+      - mlserver-sc
+      - mlserver-sc-slim
     runs-on: ubuntu-latest
     steps:
       - name: Scan Docker Image
