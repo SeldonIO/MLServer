@@ -39,8 +39,4 @@ wheel==0.40.0
 twine==4.0.2
 
 # Fetch licenses
-pip-licenses==4.2.0
-
-# For huggingface tests
-torch
-tensorflow
+pip-licenses==4.1.0
