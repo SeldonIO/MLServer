@@ -6,7 +6,7 @@ from functools import partial
 from mlserver.settings import ModelSettings
 
 import torch
-import tensorflow as tf
+# import tensorflow as tf
 
 from optimum.pipelines import pipeline as opt_pipeline
 from transformers.pipelines import pipeline as trf_pipeline
