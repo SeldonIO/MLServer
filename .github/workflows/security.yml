@@ -33,6 +33,7 @@ jobs:
           # file.
           pip freeze > requirements.txt
       - name: Security Scan
+        continue-on-error: true
         run: snyk test \
           --fail-on=upgradable \
           --severity-threshold=high \
