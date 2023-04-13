@@ -16,6 +16,7 @@ install-dev:
 		fi \
 	done
 	pip install --editable .
+	pip install ./requirements/docker.txt
 
 _generate: # "private" target to call `fmt` after `generate`
 	./hack/generate-types.sh
