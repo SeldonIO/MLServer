@@ -1,1 +1,1 @@
-include openapi/*.json
+include mlserver/rest/openapi/*.json
