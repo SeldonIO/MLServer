@@ -52,9 +52,7 @@ setup(
         "importlib-resources",
         "numpy",
         "pandas",
-        # Force patch for CVE-2022-1941
-        # https://github.com/huggingface/optimum/issues/733
-        "protobuf == 3.20.3",
+        "protobuf",
         "uvicorn",
         "starlette_exporter",
         "py-grpc-prometheus",
