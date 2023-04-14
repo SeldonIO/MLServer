@@ -4,9 +4,9 @@ import numpy as np
 from typing import Callable
 from functools import partial
 from mlserver.settings import ModelSettings
+from mlserver.logging import logger
 
 import torch
-# import tensorflow as tf
 
 from optimum.pipelines import pipeline as opt_pipeline
 from transformers.pipelines import pipeline as trf_pipeline
@@ -36,12 +36,9 @@ def load_pipeline_from_settings(
         tokenizer = hf_settings.pretrained_model
     if hf_settings.framework == "tf":
         if hf_settings.inter_op_threads is not None:
-            tf.config.threading.set_inter_op_parallelism_threads(
-                hf_settings.inter_op_threads
-            )
-        if hf_settings.intera_op_threads is not None:
-            tf.config.threading.set_intra_op_parallelism_threads(
-                hf_settings.intera_op_threads
+            logger.warning(
+                "Threading options are not supported for tensorflow"
+                " backend, ignoring threading options"
             )
     elif hf_settings.framework == "pt":
         if hf_settings.inter_op_threads is not None:
