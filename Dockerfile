@@ -3,6 +3,7 @@ SHELL ["/bin/bash", "-l", "-c"]
 
 COPY ./hack/build-wheels.sh ./hack/build-wheels.sh
 COPY ./mlserver ./mlserver
+COPY ./openapi ./openapi
 COPY ./runtimes ./runtimes
 COPY \
     setup.py \
