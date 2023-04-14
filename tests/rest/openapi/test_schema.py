@@ -2,7 +2,7 @@ import pytest
 
 from typing import Optional
 
-from mlserver.rest.openapi import (
+from mlserver.rest.openapi.schema import (
     get_openapi_schema,
     get_model_schema,
     MODEL_VERSION_PARAMETER,

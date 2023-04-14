@@ -4,15 +4,13 @@ from functools import lru_cache
 from typing import Optional, Tuple
 from importlib_resources import files
 
-OPENAPI_SCHEMA_RELATIVE_PATH = "../openapi/dataplane.json"
 MODEL_NAME_PARAMETER = "model_name"
 MODEL_VERSION_PARAMETER = "model_version"
 
 
 @lru_cache
 def get_openapi_schema() -> dict:
-    mlserver_package = __package__.split(".")[0]
-    openapi_schema_path = files(mlserver_package).joinpath(OPENAPI_SCHEMA_RELATIVE_PATH)
+    openapi_schema_path = files(__package__).joinpath("dataplane.json")
     return orjson.loads(openapi_schema_path.read_bytes())
 
 
