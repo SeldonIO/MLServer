@@ -65,6 +65,7 @@ RUN useradd -u 1000 -s /bin/bash mlserver -d $MLSERVER_PATH && \
     chmod -R 776 $MLSERVER_PATH
 
 COPY --from=wheel-builder /opt/mlserver/dist ./dist
+COPY ./requirements/docker.txt ./requirements/docker.txt
 # NOTE: if runtime is "all" we install mlserver-<version>-py3-none-any.whl
 # we have to use this syntax to return the correct file: $(ls ./dist/mlserver-*.whl)
 # NOTE: Temporarily excluding mllib from the main image due to:
@@ -90,6 +91,7 @@ RUN . $CONDA_PATH/etc/profile.d/conda.sh && \
         done \
     fi && \
     pip install $(ls "./dist/mlserver-"*.whl) && \
+    pip install -r ./requirements/docker.txt && \
     rm -f /opt/conda/lib/python3.8/site-packages/spacy/tests/package/requirements.txt && \
     rm -rf /root/.cache/pip
 
