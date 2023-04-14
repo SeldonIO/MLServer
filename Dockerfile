@@ -6,6 +6,7 @@ COPY ./mlserver ./mlserver
 COPY ./runtimes ./runtimes
 COPY \
     setup.py \
+    MANIFEST.in \
     README.md \
     .
 
