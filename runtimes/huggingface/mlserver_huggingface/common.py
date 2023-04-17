@@ -4,9 +4,6 @@ import numpy as np
 from typing import Callable
 from functools import partial
 from mlserver.settings import ModelSettings
-from mlserver.logging import logger
-
-import torch
 
 import torch
 import tensorflow as tf
