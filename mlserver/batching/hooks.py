@@ -57,7 +57,7 @@ async def load_batching(model: MLModel) -> MLModel:
         logger.warning(
             "Setting max_batch_time equal to zero will result"
             " in batching having no effect, if you intend to "
-            "used batching try setting it to a value > 0 for"
+            "use batching try setting it to a value > 0 for"
             " batching to take effect"
         )
 
