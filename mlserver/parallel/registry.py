@@ -130,6 +130,12 @@ class InferencePoolRegistry:
             # as normal.
             return model_initialiser(model_settings)
 
+        parameters = model_settings.parameters
+        if not parameters or not parameters.environment_tarball:
+            # If model is not using a custom environment, instantiate the model
+            # as normal.
+            return model_initialiser(model_settings)
+
         # Otherwise, return a dummy model for now and wait for the load_model
         # hook to create the actual thing.
         # This avoids instantiating the model's actual class within the
