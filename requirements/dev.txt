@@ -6,7 +6,7 @@ grpcio-tools==1.48.1
 tritonclient[http]==2.31.0
 
 # Testing
-pytest==7.3.0
+pytest==7.3.1
 pytest-asyncio==0.21.0
 pytest-mock==3.10.0
 pytest-cases==3.6.14
