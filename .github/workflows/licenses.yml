@@ -8,6 +8,7 @@ on:
 jobs:
   licenses:
     runs-on: ubuntu-latest
+    if: github.repository == 'SeldonIO/MLServer' # Do not run this on forks.
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python 3.8
