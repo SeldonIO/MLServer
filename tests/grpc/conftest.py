@@ -37,6 +37,7 @@ async def model_registry(
         on_model_load=[inference_pool_registry.load_model, load_batching],
         on_model_reload=[inference_pool_registry.reload_model],
         on_model_unload=[inference_pool_registry.unload_model],
+        model_initialiser=inference_pool_registry.model_initialiser,
     )
 
     model_name = sum_model_settings.name
