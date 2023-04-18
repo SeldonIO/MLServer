@@ -36,11 +36,12 @@ jobs:
           branch-suffix: timestamp
           delete-branch: true
           title: Re-generate License Info
-          body: |
-            There was a license change detected.
+          body: "
+            # License Change Detected :warning:
+            There was a license change detected.\n
             Most likely, this has been triggered due to a licensing change in
             one of our subdependencies, or the introducing of a new
-            subdependency.
+            subdependency.\n
             This automated PR re-generates the licenses to keep them up to
-            date.
+            date."
           reviewers: adriangonz
