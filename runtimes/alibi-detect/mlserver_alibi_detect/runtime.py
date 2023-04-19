@@ -2,7 +2,7 @@ import os
 import numpy as np
 
 from pydantic.error_wrappers import ValidationError
-from typing import Optional, List, Union
+from typing import Optional, List
 from pydantic import BaseSettings, Field
 from functools import cached_property
 
@@ -75,11 +75,11 @@ class AlibiDetectRuntime(MLModel):
             else:
                 self._ad_settings.state_save_freq = None
         except (
-                ValueError,
-                FileNotFoundError,
-                EOFError,
-                NotImplementedError,
-                ValidationError,
+            ValueError,
+            FileNotFoundError,
+            EOFError,
+            NotImplementedError,
+            ValidationError,
         ) as e:
             raise MLServerError(
                 f"Invalid configuration for model {self._settings.name}: {e}"
@@ -160,7 +160,15 @@ class AlibiDetectRuntime(MLModel):
         )
 
     @staticmethod
-    def _postproc_pred(pred: Union[dict, List[dict]]) -> dict:
+    def _postproc_pred(pred: List[dict]) -> dict:
+        """
+        Postprocess the detector's prediction(s) to return a single results dictionary.
+
+        - If a single instance (or batch of instances) was run, the predictions will be a length 1 list containing one
+        dictionary, which is returned as is.
+        - If N instances were run in an online fashion, the predictions will be a length N list of results dictionaries,
+        which are merged into a single dictionary containing data lists of length N.
+        """
         data = {key: [] for key in pred[0]['data'].keys()}
         for i, pred_i in enumerate(pred):
             for key in data:
