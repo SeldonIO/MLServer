@@ -144,7 +144,7 @@ class AlibiDetectRuntime(MLModel):
             )
 
         # Add headers
-        y["meta"]["headers"] = {  # TODO - if we want to viz the sliding windows, where should we store window size?
+        y["meta"]["headers"] = {
             "x-seldon-alibi-type": self.alibi_type,
             "x-seldon-alibi-method": self.alibi_method,
         }
