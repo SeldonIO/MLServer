@@ -3,7 +3,7 @@ import numpy as np
 
 from pydantic.error_wrappers import ValidationError
 from typing import Optional, List, Union
-from pydantic import BaseSettings
+from pydantic import BaseSettings, Field
 from functools import cached_property
 
 from alibi_detect.saving import load_detector
@@ -42,7 +42,7 @@ class AlibiDetectSettings(BaseSettings):
     inference runs for all of them).
     """
 
-    state_save_freq: Optional[int] = 100  # TODO - need to check != 0
+    state_save_freq: Optional[int] = Field(100, gt=0)
     """
     Save the detector state after every `state_save_freq` predictions.
     Only applicable to detectors with a `save_state` method.
