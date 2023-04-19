@@ -1,7 +1,8 @@
+import os
 import numpy as np
 
 from pydantic.error_wrappers import ValidationError
-from typing import Optional, List
+from typing import Optional, List, Union
 from pydantic import BaseSettings
 from functools import cached_property
 
@@ -41,6 +42,12 @@ class AlibiDetectSettings(BaseSettings):
     inference runs for all of them).
     """
 
+    state_save_freq: Optional[int] = 100  # TODO - need to check != 0
+    """
+    Save the detector state after every `state_save_freq` predictions.
+    Only applicable to detectors with a `save_state` method.
+    """
+
 
 class AlibiDetectRuntime(MLModel):
     """
@@ -58,15 +65,21 @@ class AlibiDetectRuntime(MLModel):
         super().__init__(settings)
 
     async def load(self) -> bool:
-        model_uri = await get_model_uri(self._settings)
+        self._model_uri = await get_model_uri(self._settings)
         try:
-            self._model = load_detector(model_uri)
+            self._model = load_detector(self._model_uri)
+            # Update AlibiDetectSettings according to whether an online drift detector (i.e. has a save_state method)
+            # TODO - in future we may use self._model.meta['online'] here, but must reconsider outlier detectors first
+            if hasattr(self._model, 'save_state'):
+                self._ad_settings.batch_size = None
+            else:
+                self._ad_settings.state_save_freq = None
         except (
-            ValueError,
-            FileNotFoundError,
-            EOFError,
-            NotImplementedError,
-            ValidationError,
+                ValueError,
+                FileNotFoundError,
+                EOFError,
+                NotImplementedError,
+                ValidationError,
         ) as e:
             raise MLServerError(
                 f"Invalid configuration for model {self._settings.name}: {e}"
@@ -105,23 +118,37 @@ class AlibiDetectRuntime(MLModel):
         input_data = self.decode_request(payload, default_codec=NumpyRequestCodec)
         predict_kwargs = self._ad_settings.predict_parameters
 
-        try:
-            y = self._model.predict(np.array(input_data), **predict_kwargs)
-            return self._encode_response(y)
-        except (ValueError, IndexError) as e:
-            raise InferenceError(
-                f"Invalid predict parameters for model {self._settings.name}: {e}"
-            ) from e
+        # If batch is configured, wrap X in a list so that it is not unpacked
+        X = np.array(input_data)
+        if self._ad_settings.batch_size:
+            X = [X]
+
+        # Run detector inference
+        pred = []
+        for x in X:
+            # Prediction
+            try:
+                pred.append(self._model.predict(x, **predict_kwargs))
+            except (ValueError, IndexError) as e:
+                raise InferenceError(
+                    f"Invalid predict parameters for model {self._settings.name}: {e}"
+                ) from e
+            # Save state if necessary
+            if self._ad_settings.state_save_freq and \
+                    self._model.t % self._ad_settings.state_save_freq == 0 and self._model.t > 0:
+                self._model.save_state(os.path.join(self._model_uri, 'state'))
+
+        return self._encode_response(self._postproc_pred(pred))
 
     def _encode_response(self, y: dict) -> InferenceResponse:
         outputs = []
         for key in y["data"]:
             outputs.append(
-                NumpyCodec.encode_output(name=key, payload=np.array([y["data"][key]]))
+                NumpyCodec.encode_output(name=key, payload=np.array(y["data"][key]))
             )
 
         # Add headers
-        y["meta"]["headers"] = {
+        y["meta"]["headers"] = {  # TODO - if we want to viz the sliding windows, where should we store window size?
             "x-seldon-alibi-type": self.alibi_type,
             "x-seldon-alibi-method": self.alibi_method,
         }
@@ -131,6 +158,15 @@ class AlibiDetectRuntime(MLModel):
             parameters=y["meta"],
             outputs=outputs,
         )
+
+    @staticmethod
+    def _postproc_pred(pred: Union[dict, List[dict]]) -> dict:
+        data = {key: [] for key in pred[0]['data'].keys()}
+        for i, pred_i in enumerate(pred):
+            for key in data:
+                data[key].append(pred_i['data'][key])
+        y = {'data': data, 'meta': pred[0]['meta']}
+        return y
 
     @cached_property
     def alibi_method(self) -> str:
