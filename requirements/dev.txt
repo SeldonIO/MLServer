@@ -1,16 +1,16 @@
 # Code generation
-datamodel-code-generator==0.17.2
+datamodel-code-generator==0.18.0
 
 grpcio-tools==1.48.1
 
-tritonclient[http]==2.31.0
+tritonclient[http]==2.32.0
 
 # Testing
-pytest==7.3.0
+pytest==7.3.1
 pytest-asyncio==0.21.0
 pytest-mock==3.10.0
 pytest-cases==3.6.14
-tox==4.4.11
+tox==4.4.12
 docker==6.0.1
 aiohttp==3.8.4
 aiohttp-retry==2.8.3
@@ -39,5 +39,5 @@ wheel==0.40.0
 twine==4.0.2
 
 # Fetch licenses
-pip-licenses==4.1.0
+pip-licenses==4.2.0
 

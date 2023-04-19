@@ -6,6 +6,7 @@ from ..model import MLModel
 from ..types import InferenceRequest, InferenceResponse
 from ..utils import get_wrapped_method
 from .adaptive import AdaptiveBatcher
+from ..logging import logger
 
 _AdaptiveBatchingAttr = "__adaptive_batching__"
 
@@ -51,6 +52,14 @@ async def load_batching(model: MLModel) -> MLModel:
 
     if model.settings.max_batch_time <= 0:
         return model
+
+    if model.settings.max_batch_size > 1 and model.settings.max_batch_time <= 0:
+        logger.warning(
+            "Setting max_batch_time equal to zero will result"
+            " in batching having no effect, if you intend to "
+            "use batching try setting it to a value > 0 for"
+            " batching to take effect"
+        )
 
     batcher = AdaptiveBatcher(model)
     setattr(model, _AdaptiveBatchingAttr, batcher)

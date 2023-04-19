@@ -1,0 +1,46 @@
+name: Licenses
+
+on:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron: "23 18 * * *"
+  workflow_dispatch:
+
+jobs:
+  licenses:
+    runs-on: ubuntu-latest
+    if: github.repository == 'SeldonIO/MLServer' # Do not run this on forks.
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Install Dependencies
+        run: |
+          make install-dev
+      - name: Generate Licenses
+        run: |
+          make licenses
+          git \
+            --no-pager diff \
+            --exit-code \
+            ./licenses/license_info.no_versions.csv
+      - name: Open PR with License Changes
+        if: ${{ failure() }}
+        uses: peter-evans/create-pull-request@v5
+        with:
+          add-paths: ./licenses
+          commit-message: Re-generate license info
+          branch: licenses/license-change
+          branch-suffix: timestamp
+          delete-branch: true
+          title: Re-generate License Info
+          body: |
+            There was a license change detected.
+            Most likely, this has been triggered due to a licensing change in
+            one of our subdependencies, or the introducing of a new
+            subdependency.
+            This automated PR re-generates the licenses to keep them up to
+            date.
+          reviewers: adriangonz
