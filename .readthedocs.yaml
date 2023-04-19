@@ -17,13 +17,13 @@ formats:
 python:
   version: 3.8
   install:
-    - method: pip
-      path: .
     # NOTE: Both the Alibi-Detect and Huggingface runtimes show a generated
     # reference of the available settings - therefore, they need to be
     # available on the environment.
     - method: pip
+      path: runtimes/huggingface
+    - method: pip
       path: runtimes/alibi-detect
     - method: pip
-      path: runtimes/huggingface
+      path: .
     - requirements: docs/requirements.txt
