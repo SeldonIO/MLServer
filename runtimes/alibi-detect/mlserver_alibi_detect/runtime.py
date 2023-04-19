@@ -68,12 +68,8 @@ class AlibiDetectRuntime(MLModel):
         self._model_uri = await get_model_uri(self._settings)
         try:
             self._model = load_detector(self._model_uri)
-            # Update AlibiDetectSettings according to whether an online drift detector (i.e. has a save_state method)
-            # TODO - in future we may use self._model.meta['online'] here, but must reconsider outlier detectors first
-            if hasattr(self._model, 'save_state'):
-                self._ad_settings.batch_size = None
-            else:
-                self._ad_settings.state_save_freq = None
+            # Check whether an online drift detector (i.e. has a save_state method)
+            self._online = True if hasattr(self._model, 'save_state') else False
         except (
             ValueError,
             FileNotFoundError,
@@ -89,7 +85,7 @@ class AlibiDetectRuntime(MLModel):
 
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
         # If batch is not configured, run the detector and return the output
-        if not self._ad_settings.batch_size:
+        if self._online or not self._ad_settings.batch_size:
             return self._detect(payload)
 
         if len(self._batch) < self._ad_settings.batch_size:
@@ -120,7 +116,7 @@ class AlibiDetectRuntime(MLModel):
 
         # If batch is configured, wrap X in a list so that it is not unpacked
         X = np.array(input_data)
-        if self._ad_settings.batch_size:
+        if not self._online:
             X = [X]
 
         # Run detector inference
@@ -134,7 +130,7 @@ class AlibiDetectRuntime(MLModel):
                     f"Invalid predict parameters for model {self._settings.name}: {e}"
                 ) from e
             # Save state if necessary
-            if self._ad_settings.state_save_freq and \
+            if self._online and \
                     self._model.t % self._ad_settings.state_save_freq == 0 and self._model.t > 0:
                 self._model.save_state(os.path.join(self._model_uri, 'state'))
 
