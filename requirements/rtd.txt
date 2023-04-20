@@ -1,0 +1,14 @@
+# NOTE: This requirements.txt file is required to set up our RTD environment.
+# Therefore, it follows a couple weird conventions that are required by RTD
+# which also make it hard to use locally (thus why it's split in two
+# requirements.txt files).
+# For example, it must be called from the top-level folder to # align with how
+# RTD works (except for `-r` lines, which get converted to relative on-the-fly
+# by RTD).
+
+.
+# NOTE: Both the Alibi-Detect and Huggingface runtimes show a generated
+# reference of the available settings - therefore, they need to be
+# available on the environment.
+./runtimes/alibi-detect
+./runtimes/huggingface
