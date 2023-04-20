@@ -23,5 +23,4 @@ start:
 	sphinx-autobuild . ./_build/html
 
 install-dev:
-	pip install -e ../
-	pip install -r ./requirements.txt
+	cd .. && pip install -r ./docs/requirements.txt

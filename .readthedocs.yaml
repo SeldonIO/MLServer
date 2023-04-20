@@ -13,17 +13,9 @@ sphinx:
 formats:
   - pdf
 
-# Optionally set the version of Python and requirements required to build your docs
+# Optionally set the version of Python and requirements required to build your
+# docs
 python:
   version: 3.8
   install:
-    # NOTE: Both the Alibi-Detect and Huggingface runtimes show a generated
-    # reference of the available settings - therefore, they need to be
-    # available on the environment.
-    - method: pip
-      path: runtimes/huggingface
-    - method: pip
-      path: runtimes/alibi-detect
-    - method: pip
-      path: .
     - requirements: docs/requirements.txt
