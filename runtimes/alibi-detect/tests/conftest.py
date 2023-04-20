@@ -136,7 +136,7 @@ def online_drift_detector_settings(
         implementation=AlibiDetectRuntime,
         parameters=ModelParameters(
             uri=online_drift_detector_uri,
-            version="v1.2.3",  # TODO - should this match version.py?
+            version="v1.2.3",
             extra={
                 "batch_size": 50,
                 "state_save_freq": 10,
