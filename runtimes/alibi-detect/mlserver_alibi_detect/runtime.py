@@ -2,7 +2,7 @@ import os
 import numpy as np
 
 from pydantic.error_wrappers import ValidationError
-from typing import Optional, List
+from typing import Optional, List, Dict
 from pydantic import BaseSettings, Field
 from functools import cached_property
 
@@ -118,7 +118,7 @@ class AlibiDetectRuntime(MLModel):
         # If batch is configured or X has length 1, wrap X in a list to avoid unpacking
         X = np.array(input_data)
         if not self._online or len(input_data) == 1:
-            X = [X]
+            X = [X]  # type: ignore[assignment]
 
         # Run detector inference
         pred = []
@@ -166,7 +166,7 @@ class AlibiDetectRuntime(MLModel):
         length N list of results dictionaries, which are merged into a single
         dictionary containing data lists of length N.
         """
-        data = {key: [] for key in pred[0]["data"].keys()}
+        data: Dict[str, list] = {key: [] for key in pred[0]["data"].keys()}
         for i, pred_i in enumerate(pred):
             for key in data:
                 data[key].append(pred_i["data"][key])
