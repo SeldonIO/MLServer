@@ -15,6 +15,6 @@ sphinx-autobuild==2021.3.14
 # reference of the available settings - therefore, they need to be
 # available on the environment.
 ./runtimes/alibi-detect
-./runtimes/alibi-detect/requirements/dev.txt
+-r ./runtimes/alibi-detect/requirements/dev.txt
 ./runtimes/huggingface
 .
