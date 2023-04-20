@@ -1,8 +1,9 @@
+import os
 import numpy as np
 
 from pydantic.error_wrappers import ValidationError
-from typing import Optional, List
-from pydantic import BaseSettings
+from typing import Optional, List, Dict
+from pydantic import BaseSettings, Field
 from functools import cached_property
 
 from alibi_detect.saving import load_detector
@@ -14,6 +15,7 @@ from mlserver.model import MLModel
 from mlserver.codecs import NumpyCodec, NumpyRequestCodec
 from mlserver.utils import get_model_uri
 from mlserver.errors import MLServerError, InferenceError
+from mlserver.logging import logger
 
 ENV_PREFIX_ALIBI_DETECT_SETTINGS = "MLSERVER_MODEL_ALIBI_DETECT_"
 
@@ -41,6 +43,12 @@ class AlibiDetectSettings(BaseSettings):
     inference runs for all of them).
     """
 
+    state_save_freq: Optional[int] = Field(100, gt=0)
+    """
+    Save the detector state after every `state_save_freq` predictions.
+    Only applicable to detectors with a `save_state` method.
+    """
+
 
 class AlibiDetectRuntime(MLModel):
     """
@@ -58,9 +66,11 @@ class AlibiDetectRuntime(MLModel):
         super().__init__(settings)
 
     async def load(self) -> bool:
-        model_uri = await get_model_uri(self._settings)
+        self._model_uri = await get_model_uri(self._settings)
         try:
-            self._model = load_detector(model_uri)
+            self._model = load_detector(self._model_uri)
+            # Check whether an online drift detector (i.e. has a save_state method)
+            self._online = True if hasattr(self._model, "save_state") else False
         except (
             ValueError,
             FileNotFoundError,
@@ -76,7 +86,7 @@ class AlibiDetectRuntime(MLModel):
 
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
         # If batch is not configured, run the detector and return the output
-        if not self._ad_settings.batch_size:
+        if self._online or not self._ad_settings.batch_size:
             return self._detect(payload)
 
         if len(self._batch) < self._ad_settings.batch_size:
@@ -105,19 +115,32 @@ class AlibiDetectRuntime(MLModel):
         input_data = self.decode_request(payload, default_codec=NumpyRequestCodec)
         predict_kwargs = self._ad_settings.predict_parameters
 
-        try:
-            y = self._model.predict(np.array(input_data), **predict_kwargs)
-            return self._encode_response(y)
-        except (ValueError, IndexError) as e:
-            raise InferenceError(
-                f"Invalid predict parameters for model {self._settings.name}: {e}"
-            ) from e
+        # If batch is configured or X has length 1, wrap X in a list to avoid unpacking
+        X = np.array(input_data)
+        if not self._online or len(input_data) == 1:
+            X = [X]  # type: ignore[assignment]
+
+        # Run detector inference
+        pred = []
+        for x in X:
+            # Prediction
+            try:
+                pred.append(self._model.predict(x, **predict_kwargs))
+            except (ValueError, IndexError) as e:
+                raise InferenceError(
+                    f"Invalid predict parameters for model {self._settings.name}: {e}"
+                ) from e
+            # Save state if necessary
+            if self._should_save_state:
+                self._save_state()
+
+        return self._encode_response(self._postproc_pred(pred))
 
     def _encode_response(self, y: dict) -> InferenceResponse:
         outputs = []
         for key in y["data"]:
             outputs.append(
-                NumpyCodec.encode_output(name=key, payload=np.array([y["data"][key]]))
+                NumpyCodec.encode_output(name=key, payload=np.array(y["data"][key]))
             )
 
         # Add headers
@@ -131,6 +154,47 @@ class AlibiDetectRuntime(MLModel):
             parameters=y["meta"],
             outputs=outputs,
         )
+
+    @staticmethod
+    def _postproc_pred(pred: List[dict]) -> dict:
+        """
+        Postprocess the detector's prediction(s) to return a single results dictionary.
+
+        - If a single instance (or batch of instances) was run, the predictions will be
+        a length 1 list containing one dictionary, which is returned as is.
+        - If N instances were run in an online fashion, the predictions will be a
+        length N list of results dictionaries, which are merged into a single
+        dictionary containing data lists of length N.
+        """
+        data: Dict[str, list] = {key: [] for key in pred[0]["data"].keys()}
+        for i, pred_i in enumerate(pred):
+            for key in data:
+                data[key].append(pred_i["data"][key])
+        y = {"data": data, "meta": pred[0]["meta"]}
+        return y
+
+    @property
+    def _should_save_state(self) -> bool:
+        return (
+            self._online
+            and self._model.t % self._ad_settings.state_save_freq == 0
+            and self._model.t > 0
+        )
+
+    def _save_state(self) -> None:
+        # The detector should have a save_state method, but double-check...
+        if hasattr(self._model, "save_state"):
+            try:
+                self._model.save_state(os.path.join(self._model_uri, "state"))
+            except Exception as e:
+                raise MLServerError(
+                    f"Error whilst attempting to save state for model "
+                    f"{self._settings.name}: {e}"
+                ) from e
+        else:
+            logger.warning(
+                "Attempting to save state but detector doesn't have save_state method."
+            )
 
     @cached_property
     def alibi_method(self) -> str:
