@@ -9,10 +9,10 @@
 # Add docs-specific requirements (e.g. Sphinx, etc.)
 -r ../docs/requirements.txt
 
+.
 # NOTE: Both the Alibi-Detect and Huggingface runtimes show a generated
 # reference of the available settings - therefore, they need to be
 # available on the environment.
 ./runtimes/alibi-detect
 -r ../runtimes/alibi-detect/requirements/dev.txt
 ./runtimes/huggingface
-.
