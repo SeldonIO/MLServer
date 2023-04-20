@@ -5,7 +5,7 @@ import numpy as np
 import tensorflow as tf
 
 from tensorflow.keras.layers import Dense, InputLayer
-from alibi_detect.cd import TabularDrift
+from alibi_detect.cd import TabularDrift, CVMDriftOnline
 from alibi_detect.od import OutlierVAE
 from alibi_detect.saving import save_detector
 
@@ -18,6 +18,8 @@ from mlserver_alibi_detect import AlibiDetectRuntime
 tf.keras.backend.clear_session()
 
 P_VAL_THRESHOLD = 0.05
+ERT = 50
+WINDOW_SIZES = [10]
 
 TESTS_PATH = os.path.dirname(__file__)
 TESTDATA_PATH = os.path.join(TESTS_PATH, "testdata")
@@ -126,6 +128,24 @@ def drift_detector_settings(
 
 
 @pytest.fixture
+def online_drift_detector_settings(
+    online_drift_detector_uri: str,
+) -> ModelSettings:
+    return ModelSettings(
+        name="alibi-detect-model",
+        implementation=AlibiDetectRuntime,
+        parameters=ModelParameters(
+            uri=online_drift_detector_uri,
+            version="v1.2.3",
+            extra={
+                "batch_size": 50,
+                "state_save_freq": 10,
+            },  # spec batch_size to check that it is ignored
+        ),
+    )
+
+
+@pytest.fixture
 def drift_detector_uri(tmp_path: str) -> str:
     X_ref = np.array([[1, 2, 3]])
 
@@ -138,8 +158,30 @@ def drift_detector_uri(tmp_path: str) -> str:
 
 
 @pytest.fixture
+def online_drift_detector_uri(tmp_path: str) -> str:
+    X_ref = np.ones((10, 3))
+
+    cd = CVMDriftOnline(X_ref, ert=ERT, window_sizes=WINDOW_SIZES)
+
+    detector_uri = os.path.join(tmp_path, "alibi-detector-artifacts")
+    save_detector(cd, detector_uri)
+
+    return detector_uri
+
+
+@pytest.fixture
 async def drift_detector(drift_detector_settings: ModelSettings) -> AlibiDetectRuntime:
     model = AlibiDetectRuntime(drift_detector_settings)
+    model.ready = await model.load()
+
+    return model
+
+
+@pytest.fixture
+async def online_drift_detector(
+    online_drift_detector_settings: ModelSettings,
+) -> AlibiDetectRuntime:
+    model = AlibiDetectRuntime(online_drift_detector_settings)
     model.ready = await model.load()
 
     return model
