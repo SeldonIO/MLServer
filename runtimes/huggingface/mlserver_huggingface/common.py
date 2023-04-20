@@ -39,15 +39,15 @@ def load_pipeline_from_settings(
             tf.config.threading.set_inter_op_parallelism_threads(
                 hf_settings.inter_op_threads
             )
-        if hf_settings.intera_op_threads is not None:
+        if hf_settings.intra_op_threads is not None:
             tf.config.threading.set_intra_op_parallelism_threads(
-                hf_settings.intera_op_threads
+                hf_settings.intra_op_threads
             )
     elif hf_settings.framework == "pt":
         if hf_settings.inter_op_threads is not None:
             torch.set_num_interop_threads(hf_settings.inter_op_threads)
-        if hf_settings.intera_op_threads is not None:
-            torch.set_num_threads(hf_settings.intera_op_threads)
+        if hf_settings.intra_op_threads is not None:
+            torch.set_num_threads(hf_settings.intra_op_threads)
 
     hf_pipeline = pipeline(
         hf_settings.task_name,
