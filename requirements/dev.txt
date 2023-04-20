@@ -40,4 +40,3 @@ twine==4.0.2
 
 # Fetch licenses
 pip-licenses==4.2.0
-

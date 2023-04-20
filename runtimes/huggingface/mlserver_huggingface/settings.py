@@ -85,6 +85,24 @@ class HuggingFaceSettings(BaseSettings):
     or a GPU ordinal rank like 1).
     """
 
+    inter_op_threads: Optional[int] = None
+    """
+    Threads used for parallelism between independent operations.
+    PyTorch:
+    https://pytorch.org/docs/stable/notes/cpu_threading_torchscript_inference.html
+    Tensorflow:
+    https://www.tensorflow.org/api_docs/python/tf/config/threading/set_inter_op_parallelism_threads
+    """
+
+    intra_op_threads: Optional[int] = None
+    """
+    Threads used within an individual op for parallelism.
+    PyTorch:
+    https://pytorch.org/docs/stable/notes/cpu_threading_torchscript_inference.html
+    Tensorflow:
+    https://www.tensorflow.org/api_docs/python/tf/config/threading/set_intra_op_parallelism_threads
+    """
+
     @property
     def task_name(self):
         if self.task == "translation":
