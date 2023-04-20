@@ -70,7 +70,7 @@ class AlibiDetectRuntime(MLModel):
         try:
             self._model = load_detector(self._model_uri)
             # Check whether an online drift detector (i.e. has a save_state method)
-            self._online = True if hasattr(self._model, 'save_state') else False
+            self._online = True if hasattr(self._model, "save_state") else False
         except (
             ValueError,
             FileNotFoundError,
@@ -115,7 +115,7 @@ class AlibiDetectRuntime(MLModel):
         input_data = self.decode_request(payload, default_codec=NumpyRequestCodec)
         predict_kwargs = self._ad_settings.predict_parameters
 
-        # If batch is configured or X has length 1, wrap X in a list so that it is not unpacked
+        # If batch is configured or X has length 1, wrap X in a list to avoid unpacking
         X = np.array(input_data)
         if not self._online or len(input_data) == 1:
             X = [X]
@@ -160,33 +160,41 @@ class AlibiDetectRuntime(MLModel):
         """
         Postprocess the detector's prediction(s) to return a single results dictionary.
 
-        - If a single instance (or batch of instances) was run, the predictions will be a length 1 list containing one
-        dictionary, which is returned as is.
-        - If N instances were run in an online fashion, the predictions will be a length N list of results dictionaries,
-        which are merged into a single dictionary containing data lists of length N.
+        - If a single instance (or batch of instances) was run, the predictions will be
+        a length 1 list containing one dictionary, which is returned as is.
+        - If N instances were run in an online fashion, the predictions will be a
+        length N list of results dictionaries, which are merged into a single
+        dictionary containing data lists of length N.
         """
-        data = {key: [] for key in pred[0]['data'].keys()}
+        data = {key: [] for key in pred[0]["data"].keys()}
         for i, pred_i in enumerate(pred):
             for key in data:
-                data[key].append(pred_i['data'][key])
-        y = {'data': data, 'meta': pred[0]['meta']}
+                data[key].append(pred_i["data"][key])
+        y = {"data": data, "meta": pred[0]["meta"]}
         return y
 
     @property
     def _should_save_state(self) -> bool:
-        return self._online and self._model.t % self._ad_settings.state_save_freq == 0 and self._model.t > 0
+        return (
+            self._online
+            and self._model.t % self._ad_settings.state_save_freq == 0
+            and self._model.t > 0
+        )
 
     def _save_state(self) -> None:
         # The detector should have a save_state method, but double-check...
-        if hasattr(self._model, 'save_state'):
+        if hasattr(self._model, "save_state"):
             try:
-                self._model.save_state(os.path.join(self._model_uri, 'state'))
+                self._model.save_state(os.path.join(self._model_uri, "state"))
             except Exception as e:
                 raise MLServerError(
-                    f"Error whilst attempting to save state for model {self._settings.name}: {e}"
+                    f"Error whilst attempting to save state for model "
+                    f"{self._settings.name}: {e}"
                 ) from e
         else:
-            logger.warning("Attempting to save state but detector doesn't have a save_state method.")
+            logger.warning(
+                "Attempting to save state but detector doesn't have save_state method."
+            )
 
     @cached_property
     def alibi_method(self) -> str:

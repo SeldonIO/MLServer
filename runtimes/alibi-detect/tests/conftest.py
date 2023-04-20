@@ -137,7 +137,10 @@ def online_drift_detector_settings(
         parameters=ModelParameters(
             uri=online_drift_detector_uri,
             version="v1.2.3",  # TODO - should this match version.py?
-            extra={"batch_size": 50, "state_save_freq": 10},  # spec batch_size to check that it is ignored
+            extra={
+                "batch_size": 50,
+                "state_save_freq": 10,
+            },  # spec batch_size to check that it is ignored
         ),
     )
 
@@ -175,7 +178,9 @@ async def drift_detector(drift_detector_settings: ModelSettings) -> AlibiDetectR
 
 
 @pytest.fixture
-async def online_drift_detector(online_drift_detector_settings: ModelSettings) -> AlibiDetectRuntime:
+async def online_drift_detector(
+    online_drift_detector_settings: ModelSettings,
+) -> AlibiDetectRuntime:
     model = AlibiDetectRuntime(online_drift_detector_settings)
     model.ready = await model.load()
 

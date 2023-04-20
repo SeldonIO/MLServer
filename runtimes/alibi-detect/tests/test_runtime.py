@@ -24,7 +24,7 @@ async def test_saving_state(
     inference_request: InferenceRequest,
 ):
     save_freq = online_drift_detector._ad_settings.state_save_freq
-    state_uri = os.path.join(online_drift_detector._model_uri, 'state')
+    state_uri = os.path.join(online_drift_detector._model_uri, "state")
 
     # Check nothing written after (save_freq -1) requests
     for _ in range(save_freq - 1):  # type: ignore

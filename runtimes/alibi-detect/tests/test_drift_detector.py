@@ -2,11 +2,7 @@ import numpy as np
 
 from alibi_detect.cd import TabularDrift, CVMDriftOnline
 
-from mlserver.types import (
-    InferenceRequest,
-    Parameters,
-    RequestInput
-)
+from mlserver.types import InferenceRequest, Parameters, RequestInput
 
 from mlserver.codecs import NumpyCodec, NumpyRequestCodec
 
@@ -113,9 +109,7 @@ async def test_predict_online(
     assert response.outputs[6].shape == [1, 1, 3]
 
 
-async def test_predict_batch_online(
-    online_drift_detector: AlibiDetectRuntime
-):
+async def test_predict_batch_online(online_drift_detector: AlibiDetectRuntime):
     # Send a batch request, the drift detector should run on one instance at a time
     batch_size = 50
     data = np.random.normal(size=(batch_size, 3))
