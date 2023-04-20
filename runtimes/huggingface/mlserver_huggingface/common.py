@@ -5,6 +5,9 @@ from typing import Callable
 from functools import partial
 from mlserver.settings import ModelSettings
 
+import torch
+import tensorflow as tf
+
 from optimum.pipelines import pipeline as opt_pipeline
 from transformers.pipelines import pipeline as trf_pipeline
 from transformers.pipelines.base import Pipeline
@@ -31,6 +34,20 @@ def load_pipeline_from_settings(
     tokenizer = hf_settings.pretrained_tokenizer
     if not tokenizer:
         tokenizer = hf_settings.pretrained_model
+    if hf_settings.framework == "tf":
+        if hf_settings.inter_op_threads is not None:
+            tf.config.threading.set_inter_op_parallelism_threads(
+                hf_settings.inter_op_threads
+            )
+        if hf_settings.intra_op_threads is not None:
+            tf.config.threading.set_intra_op_parallelism_threads(
+                hf_settings.intra_op_threads
+            )
+    elif hf_settings.framework == "pt":
+        if hf_settings.inter_op_threads is not None:
+            torch.set_num_interop_threads(hf_settings.inter_op_threads)
+        if hf_settings.intra_op_threads is not None:
+            torch.set_num_threads(hf_settings.intra_op_threads)
 
     hf_pipeline = pipeline(
         hf_settings.task_name,
