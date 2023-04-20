@@ -8,10 +8,3 @@ sphinx-click==4.4.0
 sphinx_design==0.3.0
 sphinx-autobuild==2021.3.14
 
-# NOTE: Both the Alibi-Detect and Huggingface runtimes show a generated
-# reference of the available settings - therefore, they need to be
-# available on the environment.
--e ../runtimes/alibi-detect
--r ../runtimes/alibi-detect/requirements/dev.txt
--e ../runtimes/huggingface
--e ..
