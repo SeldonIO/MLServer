@@ -15,6 +15,7 @@ from mlserver.model import MLModel
 from mlserver.codecs import NumpyCodec, NumpyRequestCodec
 from mlserver.utils import get_model_uri
 from mlserver.errors import MLServerError, InferenceError
+from mlserver.logging import logger
 
 ENV_PREFIX_ALIBI_DETECT_SETTINGS = "MLSERVER_MODEL_ALIBI_DETECT_"
 
@@ -114,9 +115,9 @@ class AlibiDetectRuntime(MLModel):
         input_data = self.decode_request(payload, default_codec=NumpyRequestCodec)
         predict_kwargs = self._ad_settings.predict_parameters
 
-        # If batch is configured, wrap X in a list so that it is not unpacked
+        # If batch is configured or X has length 1, wrap X in a list so that it is not unpacked
         X = np.array(input_data)
-        if not self._online:
+        if not self._online or len(input_data) == 1:
             X = [X]
 
         # Run detector inference
@@ -130,9 +131,8 @@ class AlibiDetectRuntime(MLModel):
                     f"Invalid predict parameters for model {self._settings.name}: {e}"
                 ) from e
             # Save state if necessary
-            if self._online and \
-                    self._model.t % self._ad_settings.state_save_freq == 0 and self._model.t > 0:
-                self._model.save_state(os.path.join(self._model_uri, 'state'))
+            if self._should_save_state:
+                self._save_state()
 
         return self._encode_response(self._postproc_pred(pred))
 
@@ -171,6 +171,22 @@ class AlibiDetectRuntime(MLModel):
                 data[key].append(pred_i['data'][key])
         y = {'data': data, 'meta': pred[0]['meta']}
         return y
+
+    @property
+    def _should_save_state(self) -> bool:
+        return self._online and self._model.t % self._ad_settings.state_save_freq == 0 and self._model.t > 0
+
+    def _save_state(self) -> None:
+        # The detector should have a save_state method, but double-check...
+        if hasattr(self._model, 'save_state'):
+            try:
+                self._model.save_state(os.path.join(self._model_uri, 'state'))
+            except Exception as e:
+                raise MLServerError(
+                    f"Error whilst attempting to save state for model {self._settings.name}: {e}"
+                ) from e
+        else:
+            logger.warning("Attempting to save state but detector doesn't have a save_state method.")
 
     @cached_property
     def alibi_method(self) -> str:
