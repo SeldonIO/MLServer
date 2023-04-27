@@ -21,7 +21,7 @@ jobs:
           file: CHANGELOG.md
           github_token: ${{ secrets.GITHUB_TOKEN }}
           commit: false
-          args: -d=false
+          args: -d=false -l=2
           header: "# Changelog\n"
       - name: Commiting & Pushing Updated Changelog
         uses: stefanzweifel/git-auto-commit-action@v4
@@ -54,7 +54,7 @@ jobs:
           file: CHANGELOG.md
           github_token: ${{ secrets.GITHUB_TOKEN }}
           commit: false
-          args: -d=false
+          args: -d=false -l=2
           header: "# Changelog\n\n"
       - name: Open PR with Changelog changes
         uses: peter-evans/create-pull-request@v5
