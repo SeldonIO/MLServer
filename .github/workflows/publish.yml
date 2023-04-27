@@ -6,12 +6,14 @@ name: Publish Version
 on:
   release:
     types: [published]
+  workflow_dispatch:
 
 jobs:
   # NOTE: We need to update the CHANGELOG on both the `release/*` and `master`
   # branches to ensure they are in sync.
   changelog-release-branch:
     runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'release' }}
     steps:
       - uses: actions/checkout@v3
       - uses: rhysd/changelog-from-release/action@v3
@@ -45,7 +47,8 @@ jobs:
     steps:
       # TODO: Open a PR instead of pushing straight to `master`?
       - uses: actions/checkout@v3
-        ref: master
+        with:
+          ref: master
       - uses: rhysd/changelog-from-release/action@v3
         with:
           file: CHANGELOG.md
@@ -53,7 +56,17 @@ jobs:
           commit: false
           args: -d=false
           header: "# Changelog\n\n"
-      - name: Commiting & Pushing Updated Changelog
-        uses: stefanzweifel/git-auto-commit-action@v4
+      - name: Open PR with Changelog changes
+        uses: peter-evans/create-pull-request@v5
         with:
-          commit_message: Update CHANGELOG.md for ${{ github.event.release.tag_name }}
+          add-paths: ./CHANGELOG.md
+          commit-message: Update Changelog
+          branch: update-changelog
+          branch-suffix: timestamp
+          delete-branch: true
+          title: Update CHANGELOG
+          body: "
+            # Updated CHANGELOG\n
+            This automated PR re-generates the changelog to keep it up to
+            date."
+          reviewers: adriangonz
