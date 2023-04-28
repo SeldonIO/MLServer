@@ -20,5 +20,4 @@ python:
   install:
     - requirements: docs/requirements.txt
     - requirements: requirements/rtd.txt
-    - requirements: runtimes/alibi-detect/requirements/dev.txt
     - requirements: requirements/docker.txt
