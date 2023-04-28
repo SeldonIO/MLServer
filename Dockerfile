@@ -23,11 +23,16 @@ ARG CONDA_VERSION=22.11.1
 ARG MINIFORGE_VERSION=${CONDA_VERSION}-4
 ARG RUNTIMES="all"
 
+# Set a few default environment variables, including `LD_LIBRARY_PATH`
+# (required to use GKE's injected CUDA libraries).
+# NOTE: When updating between major Python versions make sure you update the
+# `/opt/conda` path within `LD_LIBRARY_PATH`.
 ENV MLSERVER_MODELS_DIR=/mnt/models \
     MLSERVER_ENV_TARBALL=/mnt/models/environment.tar.gz \
     MLSERVER_PATH=/opt/mlserver \
     CONDA_PATH=/opt/conda \
-    PATH=/opt/mlserver/.local/bin:/opt/conda/bin:$PATH
+    PATH=/opt/mlserver/.local/bin:/opt/conda/bin:$PATH \
+    LD_LIBRARY_PATH=/usr/local/nvidia/lib64:/opt/conda/lib/python3.8/site-packages/nvidia/cuda_runtime/lib:$LD_LIBRARY_PATH
 
 # Install some base dependencies required for some libraries
 RUN microdnf update -y && \
