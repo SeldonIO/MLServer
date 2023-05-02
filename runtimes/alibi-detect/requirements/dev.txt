@@ -1,0 +1,3 @@
+# Force tests to use TF 2.10 - otherwise, it may fallback to TF 2.9 (due to the
+# incompatibility with `protobuf>=3.20.2`)
+tensorflow==2.10.1
