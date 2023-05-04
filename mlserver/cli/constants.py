@@ -78,6 +78,10 @@ Dockerignore = """
 *.pyd
 bin
 
+# MLServer folders
+.metrics
+.envs
+
 # Mac file system
 **/.DS_Store
 
