@@ -16,9 +16,13 @@ formats:
 # Optionally set the version of Python and requirements required to build your
 # docs
 python:
-  version: 3.8
   install:
     - requirements: docs/requirements.txt
     - requirements: requirements/rtd.txt
     - requirements: runtimes/alibi-detect/requirements/dev.txt
     - requirements: requirements/docker.txt
+
+build:
+  os: ubuntu-22.04
+  tools:
+    python: "3.8"
