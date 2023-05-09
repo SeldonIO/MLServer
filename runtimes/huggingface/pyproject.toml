@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "mlserver-huggingface"
+version = "1.4.0.dev1"
+description = "HuggingFace runtime for MLServer"
+authors = ["Seldon Technologies Ltd. <hello@seldon.io>"]
+license = "Apache 2.0"
+readme = "README.md"
+packages = [{include = "mlserver_huggingface"}]
+
+[tool.poetry.dependencies]
+python = "^3.8.1,<3.12"
+mlserver = "^1.3.1"
+tensorflow = "^2.12.0"
+pillow = "^9.5.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
