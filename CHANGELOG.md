@@ -1,6 +1,28 @@
 # Changelog
 
 
+<a name="1.3.2"></a>
+## [1.3.2](https://github.com/SeldonIO/MLServer/releases/tag/1.3.2) - 10 May 2023
+
+<!-- Release notes generated using configuration in .github/release.yml at 1.4.0.dev2 -->
+
+### What's Changed
+* Use default initialiser if not using a custom env by [@adriangonz](https://github.com/adriangonz) in https://github.com/SeldonIO/MLServer/pull/1104
+* Add support for online drift detectors by [@ascillitoe](https://github.com/ascillitoe) in https://github.com/SeldonIO/MLServer/pull/1108
+* added intera and inter op parallelism parameters to the hugggingface … by [@saeid93](https://github.com/saeid93) in https://github.com/SeldonIO/MLServer/pull/1081
+* Fix settings reference in runtime docs by [@adriangonz](https://github.com/adriangonz) in https://github.com/SeldonIO/MLServer/pull/1109
+* Bump Alibi libs requirements by [@adriangonz](https://github.com/adriangonz) in https://github.com/SeldonIO/MLServer/pull/1121
+* Add default LD_LIBRARY_PATH env var by [@adriangonz](https://github.com/adriangonz) in https://github.com/SeldonIO/MLServer/pull/1120
+* Ignore both .metrics and .envs folders by [@adriangonz](https://github.com/adriangonz) in https://github.com/SeldonIO/MLServer/pull/1132
+
+### New Contributors
+* [@ascillitoe](https://github.com/ascillitoe) made their first contribution in https://github.com/SeldonIO/MLServer/pull/1108
+
+**Full Changelog**: https://github.com/SeldonIO/MLServer/compare/1.3.1...1.3.2
+
+[Changes][1.3.2]
+
+
 <a name="1.3.1"></a>
 ## [1.3.1](https://github.com/SeldonIO/MLServer/releases/tag/1.3.1) - 27 Apr 2023
 
@@ -258,6 +280,7 @@ To learn more about how to use MLServer directly from the MLflow CLI, check out 
 [Changes][1.1.0]
 
 
+[1.3.2]: https://github.com/SeldonIO/MLServer/compare/1.3.1...1.3.2
 [1.3.1]: https://github.com/SeldonIO/MLServer/compare/1.3.0...1.3.1
 [1.3.0]: https://github.com/SeldonIO/MLServer/compare/1.2.4...1.3.0
 [1.2.4]: https://github.com/SeldonIO/MLServer/compare/1.2.3...1.2.4
