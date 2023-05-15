@@ -1,6 +1,6 @@
 # Force patch for CVE-2022-1941
 # Otherwise, onnxruntime or TF <2.12 will force a vulnerable version of `protobuf`
-protobuf==3.20.3
+protobuf==4.23.0
 
 # Force patch for CVE-2023-25668 (and a few others)
 # Otherwise, onnxruntime will drop TF to 2.9 (because of clash in protobuf)
