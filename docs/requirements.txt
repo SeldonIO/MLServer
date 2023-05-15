@@ -1,4 +1,4 @@
-Sphinx==6.2.1
+Sphinx==7.0.1
 sphinx_material==0.0.35
 readthedocs-sphinx-search==0.3.1
 myst-parser==1.0.0
