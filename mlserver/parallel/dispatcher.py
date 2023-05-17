@@ -154,8 +154,6 @@ class Dispatcher:
         finally:
             del self._async_responses[internal_id]
 
-        return await async_response
-
     async def stop(self):
         self._executor.shutdown()
         if self._process_responses_task is not None:
