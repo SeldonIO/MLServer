@@ -5,6 +5,10 @@ description = "MLServer"
 authors = ["Seldon Technologies Ltd. <hello@seldon.io>"]
 license = "Apache 2.0"
 readme = "README.md"
+classifiers = [
+    "Operating System :: POSIX",
+    "Operating System :: MacOS"
+]
 
 [tool.poetry.dependencies]
 python = "^3.8.1,<3.12"
