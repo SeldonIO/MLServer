@@ -6,17 +6,7 @@ IMAGE_NAME := seldonio/mlserver
 	push-test push test lint fmt version clean licenses
 
 install-dev:
-	pip install -r requirements/dev.txt
-	for _runtime in ./runtimes/*; \
-	do \
-		pip install --editable $$_runtime; \
-		if [[ -f $$_runtime/requirements/dev.txt ]]; \
-		then \
-			pip install -r $$_runtime/requirements/dev.txt; \
-		fi \
-	done
-	pip install --editable .
-	pip install -r ./requirements/docker.txt
+	poetry install --sync --with all-runtimes
 
 _generate: # "private" target to call `fmt` after `generate`
 	./hack/generate-types.sh
