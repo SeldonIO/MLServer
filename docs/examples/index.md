@@ -61,3 +61,17 @@ serving), check out the examples below.
 ./custom-json/README.md
 ./kafka/README.md
 ```
+
+## Tutorials
+
+Tutorials are designed to be *beginner-friendly* and walk through accomplishing a series of tasks using MLServer (and other tools). 
+
+- [Deploying a Custom Tensorflow Model with MLServer and Seldon Core](./cassava/README.md)
+
+```{toctree}
+:caption: Tutorials
+:titlesonly:
+:hidden:
+
+./cassava/README.md
+```
