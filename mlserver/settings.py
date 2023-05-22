@@ -92,7 +92,6 @@ class BaseSettings(_BaseSettings):
 
 
 class CORSSettings(BaseSettings):
-
     class Config:
         env_file = ENV_FILE_SETTINGS
         env_prefix = ENV_PREFIX_SETTINGS
@@ -190,9 +189,6 @@ class Settings(BaseSettings):
 
     grpc_max_message_length: Optional[int] = None
     """Maximum length (i.e. size) of gRPC payloads."""
-
-    grpc_response_latency_histogram : bool = False
-    """Enables/Disables the use of a histogram to measure the grpc response latency. This enables a feature of the library used for prometheus grpc instrumentation (https://github.com/lchenn/py-grpc-prometheus#histograms)"""
 
     # CORS settings
     cors_settings: Optional[CORSSettings] = None

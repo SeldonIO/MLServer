@@ -43,9 +43,7 @@ class GRPCServer:
 
         if self._settings.metrics_endpoint:
             interceptors.append(
-                PromServerInterceptor(
-                    enable_handling_time_histogram=self._settings.grpc_response_latency_histogram
-                )
+                PromServerInterceptor(enable_handling_time_histogram=True)
             )
 
         self._server = aio.server(
