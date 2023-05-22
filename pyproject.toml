@@ -84,13 +84,10 @@ mlserver-huggingface = {path = "./runtimes/huggingface", develop = true}
 mlserver-alibi-explain = {path = "./runtimes/alibi-explain", develop = true}
 mlserver-alibi-detect = {path = "./runtimes/alibi-detect", develop = true}
 
-# tensorflow = "^2.12.0"
-# pillow = "^9.5.0"
-# optimum = {extras = ["onnxruntime"], version = "^1.8.5"}
-## NOTE: Installing `main` until this PR makes it to `4.30.0`
-## https://github.com/huggingface/transformers/pull/22759
-# transformers = {git = "https://github.com/huggingface/transformers.git", branch = "main", rev = "0c65fb7cfa1258fb5946c5ae4d13f5a2a88a2f56"}
+[tool.poetry.group.all-runtimes-dev]
+optional = true
 
+[tool.poetry.group.all-runtimes-dev.dependencies]
 ## Dev dependencies from Alibi-Explain
 requests-mock = "~1.10.0"
 types-requests = "~2.28.11.5"
@@ -99,11 +96,11 @@ types-requests = "~2.28.11.5"
 tensorflow = "~2.12.0"
 
 ## Dev dependencies from MLflow
-torch = "~2.0.1"
-pytorch-lightning = "~2.0.2"
-torchmetrics = "~0.11.4"
-torchvision = "~0.15.2"
-mlflow = "~2.3.1"
+torch = "1.13.1"
+pytorch-lightning = "1.8.0.post1"
+torchmetrics = "0.10.2"
+torchvision = "0.14.1"
+mlflow = "2.3.1"
 
 [build-system]
 requires = ["poetry-core"]
