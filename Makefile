@@ -22,12 +22,14 @@ build: clean
 	./hack/build-wheels.sh ./dist
 
 clean:
-	rm -rf ./dist ./build *.egg-info
+	rm -rf ./dist ./build *.egg-info .tox
 	for _runtime in ./runtimes/*; \
 	do \
-		rm -rf $$_runtime/dist; \
-		rm -rf $$_runtime/build; \
-		rm -rf $$_runtime/*.egg-info; \
+		rm -rf \
+			$$_runtime/dist \
+			$$_runtime/build \
+			$$_runtime/*.egg-info \
+			$$_runtime/.tox; \
 	done
 
 push-test:
