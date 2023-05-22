@@ -3,7 +3,8 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 
 
-# Plotting function, shows the datapoints as a grid of images (with labels and predictions)
+# Plotting function, shows the datapoints as a grid of images 
+# (with labels and predictions)
 def plot(examples, class_names, predictions=None):
   # Label mapping
   name_map = dict(
