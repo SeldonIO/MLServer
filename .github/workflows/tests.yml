@@ -71,7 +71,7 @@ jobs:
           virtualenvs-create: false
       - name: Install Dependencies
         run: |
-          poetry --sync --only dev
+          poetry install --sync --only dev
       - name: Test
         run: |
           tox -e mlserver
@@ -114,7 +114,7 @@ jobs:
           virtualenvs-create: false
       - name: Install Dependencies
         run: |
-          poetry --sync --only dev
+          poetry install --sync --only dev
       - name: Test
         run: |
           tox -C ./runtimes/${{ matrix.tox-environment }}
@@ -163,7 +163,7 @@ jobs:
           virtualenvs-create: false
       - name: Install Dependencies
         run: |
-          poetry --sync --only dev
+          poetry install --sync --only dev
       - name: Test
         run: |
           tox -e all-runtimes
