@@ -84,6 +84,7 @@ def test_encode_response_output(
             InferenceResponse(
                 model_name="sum-model",
                 model_version="v1.2.3",
+                parameters=Parameters(content_type=PandasCodec.ContentType),
                 outputs=[
                     ResponseOutput(
                         name="a", datatype="INT64", shape=[3, 1], data=[1, 2, 3]
@@ -93,6 +94,7 @@ def test_encode_response_output(
                         datatype="BYTES",
                         shape=[3, 1],
                         data=[b"a", b"b", b"c"],
+                        parameters=Parameters(content_type=StringCodec.ContentType),
                     ),
                 ],
             ),

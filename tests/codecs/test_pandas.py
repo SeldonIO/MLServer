@@ -5,6 +5,7 @@ import numpy as np
 from typing import Any
 
 from mlserver.codecs.pandas import PandasCodec, _to_response_output
+from mlserver.codecs.string import StringCodec
 from mlserver.types import (
     InferenceRequest,
     InferenceResponse,
@@ -32,14 +33,22 @@ def test_can_encode(payload: Any, expected: bool):
             pd.Series(data=["hey", "abc"], name="foo"),
             True,
             ResponseOutput(
-                name="foo", shape=[2, 1], data=[b"hey", b"abc"], datatype="BYTES"
+                name="foo",
+                shape=[2, 1],
+                data=[b"hey", b"abc"],
+                datatype="BYTES",
+                parameters=Parameters(content_type=StringCodec.ContentType),
             ),
         ),
         (
             pd.Series(data=["hey", "abc"], name="foo"),
             False,
             ResponseOutput(
-                name="foo", shape=[2, 1], data=["hey", "abc"], datatype="BYTES"
+                name="foo",
+                shape=[2, 1],
+                data=["hey", "abc"],
+                datatype="BYTES",
+                parameters=Parameters(content_type=StringCodec.ContentType),
             ),
         ),
         (
@@ -82,15 +91,20 @@ def test_to_response_output(series, use_bytes, expected):
             True,
             InferenceResponse(
                 model_name="my-model",
+                parameters=Parameters(content_type=PandasCodec.ContentType),
                 outputs=[
                     ResponseOutput(
-                        name="a", shape=[3, 1], datatype="INT64", data=[1, 2, 3]
+                        name="a",
+                        shape=[3, 1],
+                        datatype="INT64",
+                        data=[1, 2, 3],
                     ),
                     ResponseOutput(
                         name="b",
                         shape=[3, 1],
                         datatype="BYTES",
                         data=[b"A", b"B", b"C"],
+                        parameters=Parameters(content_type=StringCodec.ContentType),
                     ),
                 ],
             ),
@@ -105,12 +119,17 @@ def test_to_response_output(series, use_bytes, expected):
             False,
             InferenceResponse(
                 model_name="my-model",
+                parameters=Parameters(content_type=PandasCodec.ContentType),
                 outputs=[
                     ResponseOutput(
                         name="a", shape=[3, 1], datatype="INT64", data=[1, 2, 3]
                     ),
                     ResponseOutput(
-                        name="b", shape=[3, 1], datatype="BYTES", data=["A", "B", "C"]
+                        name="b",
+                        shape=[3, 1],
+                        datatype="BYTES",
+                        data=["A", "B", "C"],
+                        parameters=Parameters(content_type=StringCodec.ContentType),
                     ),
                 ],
             ),
@@ -219,6 +238,7 @@ def test_decode_response(response: InferenceResponse, expected: pd.DataFrame):
             ),
             True,
             InferenceRequest(
+                parameters=Parameters(content_type=PandasCodec.ContentType),
                 inputs=[
                     RequestInput(
                         name="a", shape=[3, 1], datatype="INT64", data=[1, 2, 3]
@@ -228,6 +248,7 @@ def test_decode_response(response: InferenceResponse, expected: pd.DataFrame):
                         shape=[3, 1],
                         datatype="BYTES",
                         data=[b"A", b"B", b"C"],
+                        parameters=Parameters(content_type=StringCodec.ContentType),
                     ),
                 ],
             ),
@@ -241,12 +262,17 @@ def test_decode_response(response: InferenceResponse, expected: pd.DataFrame):
             ),
             False,
             InferenceRequest(
+                parameters=Parameters(content_type=PandasCodec.ContentType),
                 inputs=[
                     RequestInput(
                         name="a", shape=[3, 1], datatype="INT64", data=[1, 2, 3]
                     ),
                     RequestInput(
-                        name="b", shape=[3, 1], datatype="BYTES", data=["A", "B", "C"]
+                        name="b",
+                        shape=[3, 1],
+                        datatype="BYTES",
+                        data=["A", "B", "C"],
+                        parameters=Parameters(content_type=StringCodec.ContentType),
                     ),
                 ],
             ),
