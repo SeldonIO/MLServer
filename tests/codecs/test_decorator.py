@@ -152,6 +152,7 @@ def test_decode_request_not_found(
                     datatype="INT64",
                     shape=[1, 1],
                     data=[2],
+                    parameters=Parameters(content_type=NumpyCodec.ContentType),
                 )
             ],
         ),
@@ -177,6 +178,7 @@ def test_decode_request_not_found(
                     datatype="INT64",
                     shape=[1, 1],
                     data=[2],
+                    parameters=Parameters(content_type=NumpyCodec.ContentType),
                 ),
                 ResponseOutput(
                     name="output-1",
@@ -203,6 +205,7 @@ def test_decode_request_not_found(
                     datatype="INT64",
                     shape=[1, 1],
                     data=[2],
+                    parameters=Parameters(content_type=NumpyCodec.ContentType),
                 ),
             ],
         ),
@@ -250,6 +253,7 @@ def test_decode_request_not_found(
                     datatype="INT64",
                     shape=[1, 1],
                     data=[3],
+                    parameters=Parameters(content_type=NumpyCodec.ContentType),
                 ),
                 ResponseOutput(name="a", datatype="INT64", shape=[1, 1], data=[2]),
                 ResponseOutput(

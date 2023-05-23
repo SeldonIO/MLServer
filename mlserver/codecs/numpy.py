@@ -119,6 +119,7 @@ class NumpyCodec(InputCodec):
             datatype=datatype,
             shape=shape,
             data=_encode_data(payload, datatype),
+            parameters=Parameters(content_type=cls.ContentType),
         )
 
     @classmethod

@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Any
 
 from mlserver.codecs import DatetimeCodec
-from mlserver.types import RequestInput, ResponseOutput
+from mlserver.types import RequestInput, ResponseOutput, Parameters
 
 TestDatetimeIso = "2021-08-24T15:01:19"
 TestDatetimeIsoB = b"2021-08-24T15:01:19"
@@ -39,6 +39,7 @@ def test_can_encode(payload: Any, expected: bool):
                 shape=[1, 1],
                 datatype="BYTES",
                 data=[TestDatetimeIsoB],
+                parameters=Parameters(content_type=DatetimeCodec.ContentType),
             ),
         ),
         (
@@ -50,6 +51,7 @@ def test_can_encode(payload: Any, expected: bool):
                 shape=[2, 1],
                 datatype="BYTES",
                 data=[TestDatetimeIsoB, TestDatetimeIsoB],
+                parameters=Parameters(content_type=DatetimeCodec.ContentType),
             ),
         ),
         (
@@ -61,6 +63,7 @@ def test_can_encode(payload: Any, expected: bool):
                 shape=[1, 1],
                 datatype="BYTES",
                 data=[TestDatetimeIsoB],
+                parameters=Parameters(content_type=DatetimeCodec.ContentType),
             ),
         ),
         (
@@ -72,6 +75,7 @@ def test_can_encode(payload: Any, expected: bool):
                 shape=[1, 1],
                 datatype="BYTES",
                 data=[TestTzDatetimeIsoB],
+                parameters=Parameters(content_type=DatetimeCodec.ContentType),
             ),
         ),
         (
@@ -83,6 +87,7 @@ def test_can_encode(payload: Any, expected: bool):
                 shape=[1, 1],
                 datatype="BYTES",
                 data=[TestTzDatetimeIso],
+                parameters=Parameters(content_type=DatetimeCodec.ContentType),
             ),
         ),
     ],
@@ -168,6 +173,7 @@ def test_decode_output(encoded, expected):
                 shape=[1, 1],
                 datatype="BYTES",
                 data=[TestDatetimeIsoB],
+                parameters=Parameters(content_type=DatetimeCodec.ContentType),
             ),
         ),
         (
@@ -179,6 +185,7 @@ def test_decode_output(encoded, expected):
                 shape=[2, 1],
                 datatype="BYTES",
                 data=[TestDatetimeIsoB, TestDatetimeIsoB],
+                parameters=Parameters(content_type=DatetimeCodec.ContentType),
             ),
         ),
         (
@@ -190,6 +197,7 @@ def test_decode_output(encoded, expected):
                 shape=[1, 1],
                 datatype="BYTES",
                 data=[TestDatetimeIsoB],
+                parameters=Parameters(content_type=DatetimeCodec.ContentType),
             ),
         ),
         (
@@ -201,6 +209,7 @@ def test_decode_output(encoded, expected):
                 shape=[1, 1],
                 datatype="BYTES",
                 data=[TestTzDatetimeIsoB],
+                parameters=Parameters(content_type=DatetimeCodec.ContentType),
             ),
         ),
         (
@@ -212,6 +221,7 @@ def test_decode_output(encoded, expected):
                 shape=[1, 1],
                 datatype="BYTES",
                 data=[TestTzDatetimeIso],
+                parameters=Parameters(content_type=DatetimeCodec.ContentType),
             ),
         ),
     ],

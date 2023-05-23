@@ -4,7 +4,7 @@ import pandas as pd
 
 from typing import Any
 
-from mlserver.codecs import NumpyCodec, PandasCodec
+from mlserver.codecs import NumpyCodec, PandasCodec, StringCodec
 from mlserver.types import (
     InferenceRequest,
     Parameters,
@@ -122,6 +122,7 @@ async def test_predict_pytorch(runtime_pytorch: MLflowRuntime):
             pd.DataFrame({"foo": np.array([1, 2, 3]), "bar": ["A", "B", "C"]}),
             InferenceResponse(
                 model_name="mlflow-model",
+                parameters=Parameters(content_type=PandasCodec.ContentType),
                 outputs=[
                     ResponseOutput(
                         name="foo", datatype="INT64", shape=[3, 1], data=[1, 2, 3]
@@ -131,6 +132,7 @@ async def test_predict_pytorch(runtime_pytorch: MLflowRuntime):
                         datatype="BYTES",
                         shape=[3, 1],
                         data=[b"A", b"B", b"C"],
+                        parameters=Parameters(content_type=StringCodec.ContentType),
                     ),
                 ],
             ),

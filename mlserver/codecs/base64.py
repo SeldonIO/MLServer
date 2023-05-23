@@ -4,7 +4,7 @@ import binascii
 from typing import Any, List, Union
 from functools import partial
 
-from ..types import RequestInput, ResponseOutput
+from ..types import RequestInput, ResponseOutput, Parameters
 from .lists import is_list_of
 from .base import InputCodec, register_input_codec
 from .lists import as_list, ListElement
@@ -64,6 +64,7 @@ class Base64Codec(InputCodec):
             datatype="BYTES",
             shape=shape,
             data=list(packed),
+            parameters=Parameters(content_type=cls.ContentType),
         )
 
     @classmethod
@@ -82,6 +83,7 @@ class Base64Codec(InputCodec):
             datatype=output.datatype,
             shape=output.shape,
             data=output.data,
+            parameters=Parameters(content_type=cls.ContentType),
         )
 
     @classmethod
