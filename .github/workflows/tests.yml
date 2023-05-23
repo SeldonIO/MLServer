@@ -117,7 +117,7 @@ jobs:
           poetry install --sync --only dev
       - name: Test
         run: |
-          tox -C ./runtimes/${{ matrix.tox-environment }}
+          tox -c ./runtimes/${{ matrix.tox-environment }}
 
   all-runtimes:
     if: github.event_name == 'push'

@@ -47,6 +47,10 @@ push:
 
 test:
 	tox
+	for _runtime in ./runtimes/*; \
+	do \
+		tox -c $$_runtime; \
+	done
 
 lint: generate
 	flake8 .
