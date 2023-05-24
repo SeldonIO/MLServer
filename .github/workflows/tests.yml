@@ -38,28 +38,28 @@ jobs:
           - huggingface
           - alibi-explain
           - alibi-detect
-    runs-on: ${{ matrix.os }}
-      - name: Setup docker (missing on MacOS)
-        if: runner.os == 'macos-latest'
-        run: |
-          brew install docker
-          colima start
-      - uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.python-version }}
-      - uses: conda-incubator/setup-miniconda@v2
-        with:
-          auto-update-conda: true
-          auto-activate-base: false
-
-      - name: Install dependencies
-        run: |
-          pip install -r requirements/dev.txt
-      - name: Test
-        run: |
-          tox -e ${{ matrix.tox-environment }}
+      runs-on: ${{ matrix.os }}
+      steps:
+        - name: Setup docker (missing on MacOS)
+          if: runner.os == 'macos-latest'
+          run: |
+            brew install docker
+            colima start
+        - uses: actions/checkout@v3
+        - name: Set up Python ${{ matrix.python-version }}
+          uses: actions/setup-python@v2
+          with:
+            python-version: ${{ matrix.python-version }}
+        - uses: conda-incubator/setup-miniconda@v2
+          with:
+            auto-update-conda: true
+            auto-activate-base: false
+        - name: Install dependencies
+          run: |
+            pip install -r requirements/dev.txt
+        - name: Test
+          run: |
+            tox -e ${{ matrix.tox-environment }}
 
   all-runtimes:
     if: github.event_name == 'push'
