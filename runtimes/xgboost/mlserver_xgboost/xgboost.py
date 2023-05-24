@@ -18,7 +18,7 @@ PREDICT_OUTPUT = "predict"
 PREDICT_PROBA_OUTPUT = "predict_proba"
 VALID_OUTPUTS = [PREDICT_OUTPUT, PREDICT_PROBA_OUTPUT]
 
-WELLKNOWN_MODEL_FILENAMES = ["model.bst", "model.json"]
+WELLKNOWN_MODEL_FILENAMES = ["model.bst", "model.json", "model.ubj"]
 
 
 def _load_sklearn_interface(model_uri: str) -> XGBModel:
