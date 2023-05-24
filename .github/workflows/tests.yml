@@ -25,9 +25,9 @@ jobs:
           make lint
 
   tests:
-    runs-on: ubuntu-latest
     strategy:
       matrix:
+        os: [ubuntu-latest, macos-latest]
         python-version: ["3.8", "3.9", "3.10"]
         tox-environment:
           - mlserver
@@ -38,6 +38,7 @@ jobs:
           - huggingface
           - alibi-explain
           - alibi-detect
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
@@ -56,11 +57,12 @@ jobs:
           tox -e ${{ matrix.tox-environment }}
 
   all-runtimes:
-    runs-on: ubuntu-latest
     if: github.event_name == 'push'
     strategy:
       matrix:
+        os: [ubuntu-latest, macos-latest]
         python-version: ["3.8", "3.9", "3.10"]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
