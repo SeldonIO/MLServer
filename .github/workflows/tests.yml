@@ -43,7 +43,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Setup docker (missing on MacOS)
-        if: runner.os == 'macos-latest'
+        if: runner.os == 'macos'
         run: |
           # From https://github.com/actions/runner-images/issues/17#issuecomment-1537238473
           brew install docker
