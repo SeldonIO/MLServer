@@ -37,6 +37,7 @@ setup(
     url="https://github.com/SeldonIO/MLServer.git",
     author="Seldon Technologies Ltd.",
     author_email="hello@seldon.io",
+    classifiers=["Operating System :: POSIX", "Operating System :: MacOS"],
     description="ML server",
     include_package_data=True,
     packages=find_packages(exclude=["tests", "tests.*"]),
