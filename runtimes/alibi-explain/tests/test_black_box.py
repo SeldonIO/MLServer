@@ -325,7 +325,7 @@ def test_encode_inference_request__as_expected(
     "batch",
     [True, False, None],
 )
-async def test_backbox_explain_with_batch(batch):
+async def test_blackbox_explain_with_batch(batch):
     data_np = np.array([[1.0, 2.0], [3.0, 4.0]])
 
     def _explain_impl(input_data: np.ndarray) -> Explanation:
