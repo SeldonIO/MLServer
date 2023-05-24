@@ -65,10 +65,9 @@ jobs:
             --app-vulns
             --severity-threshold=high
             --file=Dockerfile
-            --sarif-file-output=snyk-image.sarif
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       - name: Upload result to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v2
         with:
-          sarif_file: snyk-image.sarif
+          sarif_file: snyk.sarif
