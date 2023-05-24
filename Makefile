@@ -3,7 +3,7 @@ VERSION := $(shell sed 's/^__version__ = "\(.*\)"/\1/' ./mlserver/version.py)
 IMAGE_NAME := seldonio/mlserver
 
 .PHONY: install-dev _generate generate run build \
-	push test lint fmt version clean licenses
+	push-test push test lint fmt version clean licenses
 
 install-dev:
 	poetry install --sync --with all-runtimes
@@ -32,6 +32,14 @@ clean:
 			$$_runtime/.tox; \
 	done
 
+push-test:
+	poetry config repositories.pypi-test https://test.pypi.org/legacy/
+	poetry publish -r pypi-test
+	for _runtime in ./runtimes/*; \
+	do \
+		poetry publish -C $$_runtime -r pypi-test; \
+	done
+
 push:
 	poetry publish
 	docker push ${IMAGE_NAME}:${VERSION}
@@ -39,7 +47,7 @@ push:
 	for _runtime in ./runtimes/*; \
 	do \
 	  _runtimeName=$$(basename $$_runtime); \
-		poetry publish -C $_runtime; \
+		poetry publish -C $$_runtime; \
 		docker push ${IMAGE_NAME}:${VERSION}-$$_runtimeName; \
 	done
 
