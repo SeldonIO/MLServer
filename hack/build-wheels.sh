@@ -22,7 +22,7 @@ _buildWheel() {
   # https://github.com/python-poetry/poetry/issues/3586
   pushd $_srcPath
   poetry build
-  mv ./dist/* $_outputPath
+  cp ./dist/* $_outputPath
   popd
 }
 
