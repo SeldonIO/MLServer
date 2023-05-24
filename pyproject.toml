@@ -9,6 +9,7 @@ classifiers = [
     "Operating System :: POSIX",
     "Operating System :: MacOS"
 ]
+include =  ["mlserver/rest/openapi/*.json"]
 
 [tool.poetry.scripts]
 mlserver = 'mlserver.cli:main'
