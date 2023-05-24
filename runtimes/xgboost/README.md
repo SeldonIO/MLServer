@@ -52,3 +52,42 @@ request or metadata, the XGBoost runtime will try to decode the payload as a
 To avoid this, either send a different content type explicitly, or define the
 correct one as part of your [model's
 metadata](../../docs/reference/model-settings).
+
+## Model Outputs
+
+The XGBoost inference runtime exposes a number of outputs depending on the
+model type.
+These outputs match to the `predict` and `predict_proba` methods of the XGBoost
+model.
+
+| Output          | Returned By Default | Availability                                                          |
+| --------------- | ------------------- | --------------------------------------------------------------------- |
+| `predict`       | ✅                  | Available on all XGBoost models.                                      |
+| `predict_proba` | ❌                  | Only available on non-regressor models (i.e. `XGBClassifier` models). |
+
+By default, the runtime will only return the output of `predict`.
+However, you are able to control which outputs you want back through the
+`outputs` field of your {class}`InferenceRequest
+<mlserver.types.InferenceRequest>` payload.
+
+For example, to only return the model's `predict_proba` output, you could
+define a payload such as:
+
+```{code-block} json
+---
+emphasize-lines: 10-12
+---
+{
+  "inputs": [
+    {
+      "name": "my-input",
+      "datatype": "INT32",
+      "shape": [2, 2],
+      "data": [1, 2, 3, 4]
+    }
+  ],
+  "outputs": [
+    { "name": "predict_proba" }
+  ]
+}
+```
