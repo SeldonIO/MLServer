@@ -38,10 +38,18 @@ def test_encode_response():
     assert inference_response.model_name == model_name
     assert len(inference_response.outputs) == 2
     assert inference_response.outputs[0] == ResponseOutput(
-        name="foo", datatype="INT64", shape=[3, 1], data=[1, 2, 3]
+        name="foo",
+        datatype="INT64",
+        shape=[3, 1],
+        data=[1, 2, 3],
+        parameters=Parameters(content_type=NumpyCodec.ContentType),
     )
     assert inference_response.outputs[1] == ResponseOutput(
-        name="bar", datatype="FP64", shape=[2, 1], data=[2.3, 4.5]
+        name="bar",
+        datatype="FP64",
+        shape=[2, 1],
+        data=[2.3, 4.5],
+        parameters=Parameters(content_type=NumpyCodec.ContentType),
     )
 
 
