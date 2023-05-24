@@ -3,7 +3,7 @@ import pytest
 from typing import Any
 
 from mlserver.codecs import Base64Codec
-from mlserver.types import RequestInput, ResponseOutput
+from mlserver.types import RequestInput, ResponseOutput, Parameters
 
 
 @pytest.mark.parametrize(
@@ -31,6 +31,7 @@ def test_can_encode(payload: Any, expected: bool):
                 shape=[1, 1],
                 datatype="BYTES",
                 data=[b"UHl0aG9uIGlzIGZ1bg=="],
+                parameters=Parameters(content_type=Base64Codec.ContentType),
             ),
         ),
         (
@@ -42,6 +43,7 @@ def test_can_encode(payload: Any, expected: bool):
                 shape=[1, 1],
                 datatype="BYTES",
                 data=[b"UHl0aG9uIGlzIGZ1bg=="],
+                parameters=Parameters(content_type=Base64Codec.ContentType),
             ),
         ),
         (
@@ -53,6 +55,7 @@ def test_can_encode(payload: Any, expected: bool):
                 shape=[2, 1],
                 datatype="BYTES",
                 data=[b"UHl0aG9uIGlzIGZ1bg==", b"UHl0aG9uIGlzIGZ1bg=="],
+                parameters=Parameters(content_type=Base64Codec.ContentType),
             ),
         ),
         (
@@ -64,6 +67,7 @@ def test_can_encode(payload: Any, expected: bool):
                 shape=[2, 1],
                 datatype="BYTES",
                 data=["UHl0aG9uIGlzIGZ1bg==", "UHl0aG9uIGlzIGZ1bg=="],
+                parameters=Parameters(content_type=Base64Codec.ContentType),
             ),
         ),
     ],
@@ -139,6 +143,7 @@ def test_decode_output(encoded, expected):
                 shape=[1, 1],
                 datatype="BYTES",
                 data=[b"UHl0aG9uIGlzIGZ1bg=="],
+                parameters=Parameters(content_type=Base64Codec.ContentType),
             ),
         ),
         (
@@ -150,6 +155,7 @@ def test_decode_output(encoded, expected):
                 shape=[1, 1],
                 datatype="BYTES",
                 data=[b"UHl0aG9uIGlzIGZ1bg=="],
+                parameters=Parameters(content_type=Base64Codec.ContentType),
             ),
         ),
         (
@@ -161,6 +167,7 @@ def test_decode_output(encoded, expected):
                 shape=[2, 1],
                 datatype="BYTES",
                 data=[b"UHl0aG9uIGlzIGZ1bg==", b"UHl0aG9uIGlzIGZ1bg=="],
+                parameters=Parameters(content_type=Base64Codec.ContentType),
             ),
         ),
         (
@@ -172,6 +179,7 @@ def test_decode_output(encoded, expected):
                 shape=[2, 1],
                 datatype="BYTES",
                 data=["UHl0aG9uIGlzIGZ1bg==", "UHl0aG9uIGlzIGZ1bg=="],
+                parameters=Parameters(content_type=Base64Codec.ContentType),
             ),
         ),
     ],

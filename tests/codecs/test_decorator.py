@@ -152,6 +152,7 @@ def test_decode_request_not_found(
                     datatype="INT64",
                     shape=[1, 1],
                     data=[2],
+                    parameters=Parameters(content_type=NumpyCodec.ContentType),
                 )
             ],
         ),
@@ -177,6 +178,7 @@ def test_decode_request_not_found(
                     datatype="INT64",
                     shape=[1, 1],
                     data=[2],
+                    parameters=Parameters(content_type=NumpyCodec.ContentType),
                 ),
                 ResponseOutput(
                     name="output-1",
@@ -203,6 +205,7 @@ def test_decode_request_not_found(
                     datatype="INT64",
                     shape=[1, 1],
                     data=[2],
+                    parameters=Parameters(content_type=NumpyCodec.ContentType),
                 ),
             ],
         ),
@@ -211,7 +214,13 @@ def test_decode_request_not_found(
             [PandasCodec],
             [
                 ResponseOutput(name="a", datatype="INT64", shape=[1, 1], data=[2]),
-                ResponseOutput(name="b", datatype="BYTES", shape=[1, 1], data=[b"foo"]),
+                ResponseOutput(
+                    name="b",
+                    datatype="BYTES",
+                    shape=[1, 1],
+                    data=[b"foo"],
+                    parameters=Parameters(content_type=StringCodec.ContentType),
+                ),
             ],
         ),
         (
@@ -219,7 +228,13 @@ def test_decode_request_not_found(
             [PandasCodec, StringCodec],
             [
                 ResponseOutput(name="a", datatype="INT64", shape=[1, 1], data=[2]),
-                ResponseOutput(name="b", datatype="BYTES", shape=[1, 1], data=[b"foo"]),
+                ResponseOutput(
+                    name="b",
+                    datatype="BYTES",
+                    shape=[1, 1],
+                    data=[b"foo"],
+                    parameters=Parameters(content_type=StringCodec.ContentType),
+                ),
                 ResponseOutput(
                     name="output-1",
                     datatype="BYTES",
@@ -238,9 +253,16 @@ def test_decode_request_not_found(
                     datatype="INT64",
                     shape=[1, 1],
                     data=[3],
+                    parameters=Parameters(content_type=NumpyCodec.ContentType),
                 ),
                 ResponseOutput(name="a", datatype="INT64", shape=[1, 1], data=[2]),
-                ResponseOutput(name="b", datatype="BYTES", shape=[1, 1], data=[b"foo"]),
+                ResponseOutput(
+                    name="b",
+                    datatype="BYTES",
+                    shape=[1, 1],
+                    data=[b"foo"],
+                    parameters=Parameters(content_type=StringCodec.ContentType),
+                ),
             ],
         ),
     ],

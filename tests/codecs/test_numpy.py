@@ -4,7 +4,7 @@ import numpy as np
 from typing import Any
 
 from mlserver.codecs.numpy import NumpyCodec, to_datatype
-from mlserver.types import RequestInput, ResponseOutput
+from mlserver.types import RequestInput, ResponseOutput, Parameters
 
 
 @pytest.mark.parametrize(
@@ -20,34 +20,62 @@ def test_can_encode(payload: Any, expected: bool):
     [
         (
             np.array([1, 2, 3]),
-            ResponseOutput(name="foo", shape=[3, 1], data=[1, 2, 3], datatype="INT64"),
+            ResponseOutput(
+                name="foo",
+                shape=[3, 1],
+                data=[1, 2, 3],
+                datatype="INT64",
+                parameters=Parameters(content_type=NumpyCodec.ContentType),
+            ),
         ),
         (
             np.array([[1, 2], [3, 4]]),
             ResponseOutput(
-                name="foo", shape=[2, 2], data=[1, 2, 3, 4], datatype="INT64"
+                name="foo",
+                shape=[2, 2],
+                data=[1, 2, 3, 4],
+                datatype="INT64",
+                parameters=Parameters(content_type=NumpyCodec.ContentType),
             ),
         ),
         (
             np.array([[1, 2], [3, 4]], dtype=np.int32),
             ResponseOutput(
-                name="foo", shape=[2, 2], data=[1, 2, 3, 4], datatype="INT32"
+                name="foo",
+                shape=[2, 2],
+                data=[1, 2, 3, 4],
+                datatype="INT32",
+                parameters=Parameters(content_type=NumpyCodec.ContentType),
             ),
         ),
         (
             np.array([1.0, 2.0]),
-            ResponseOutput(name="foo", shape=[2, 1], data=[1, 2], datatype="FP64"),
+            ResponseOutput(
+                name="foo",
+                shape=[2, 1],
+                data=[1, 2],
+                datatype="FP64",
+                parameters=Parameters(content_type=NumpyCodec.ContentType),
+            ),
         ),
         (
             np.array([[b"\x01"], [b"\x02"]], dtype=bytes),
             ResponseOutput(
-                name="foo", shape=[2, 1], data=[b"\x01\x02"], datatype="BYTES"
+                name="foo",
+                shape=[2, 1],
+                data=[b"\x01\x02"],
+                datatype="BYTES",
+                parameters=Parameters(content_type=NumpyCodec.ContentType),
             ),
         ),
         (
             np.array(["foo", "bar"], dtype=str),
             ResponseOutput(
-                name="foo", shape=[2, 1], data=[b"foo", b"bar"], datatype="BYTES"
+                name="foo",
+                shape=[2, 1],
+                data=[b"foo", b"bar"],
+                datatype="BYTES",
+                parameters=Parameters(content_type=NumpyCodec.ContentType),
             ),
         ),
     ],
