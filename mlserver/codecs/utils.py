@@ -202,7 +202,10 @@ class SingleInputRequestCodec(RequestCodec):
             f"{DefaultOutputPrefix}1", payload, **kwargs
         )
         return InferenceResponse(
-            model_name=model_name, model_version=model_version, outputs=[output]
+            model_name=model_name,
+            model_version=model_version,
+            parameters=Parameters(content_type=cls.ContentType),
+            outputs=[output],
         )
 
     @classmethod
@@ -228,7 +231,9 @@ class SingleInputRequestCodec(RequestCodec):
             )
 
         inp = cls.InputCodec.encode_input(f"{DefaultInputPrefix}1", payload, **kwargs)
-        return InferenceRequest(inputs=[inp])
+        return InferenceRequest(
+            inputs=[inp], parameters=Parameters(content_type=cls.ContentType)
+        )
 
     @classmethod
     def decode_request(cls, request: InferenceRequest) -> Any:
