@@ -4,7 +4,6 @@ import json
 
 from typing import Any
 
-from mlserver.types import Parameters
 from mlserver.codecs import NumpyCodec, StringCodec, InputCodec, Base64Codec
 from mlserver.rest.responses import Response
 
@@ -41,7 +40,6 @@ from mlserver.rest.responses import Response
                 "name": "output-0",
                 "datatype": "BYTES",
                 "shape": [3, 1],
-                "parameters": Parameters(content_type=StringCodec.ContentType),
                 "data": ["hey", "what's", "up"],
                 "parameters": {"content_type": StringCodec.ContentType},
             },

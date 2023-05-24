@@ -56,13 +56,13 @@ def _to_response_output(series: pd.Series, use_bytes: bool = True) -> ResponseOu
 
 def _process_bytes(
     data: List[ListElement], use_bytes: bool = True
-) -> Tuple[List[ListElement], bool]:
+) -> Tuple[List[ListElement], Optional[str]]:
     # To ensure that "string" columns can be encoded in gRPC, we need to
     # encode them as bytes.
     # We'll also keep track of whether the list should be treated in the
     # future as a list of strings.
     processed = []
-    content_type = StringCodec.ContentType
+    content_type: Optional[str] = StringCodec.ContentType
     for elem in data:
         converted = elem
         if not isinstance(elem, str):
