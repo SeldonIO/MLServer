@@ -102,6 +102,20 @@ torchmetrics = "0.10.2"
 torchvision = "0.14.1"
 mlflow = "2.3.1"
 
+[tool.poetry.group.docs]
+optional = true
+
+[tool.poetry.group.docs.dependencies]
+Sphinx = "6.2.1"
+sphinx_material = "0.0.35"
+readthedocs-sphinx-search = "0.3.1"
+myst-parser = "1.0.0"
+sphinxcontrib-bibtex = "2.5.0"
+autodoc_pydantic = "1.8.0"
+sphinx-click = "4.4.0"
+sphinx_design = "0.4.1"
+sphinx-autobuild = "2021.3.14"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
