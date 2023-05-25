@@ -29,4 +29,4 @@ build:
     post_install:
       # Install dependencies with 'docs' dependency group
       # https://python-poetry.org/docs/managing-dependencies/#dependency-groups
-      - poetry install --with docs --with all-runtimes
+      - poetry install --without dev --with docs --with all-runtimes --with all-runtimes-dev
