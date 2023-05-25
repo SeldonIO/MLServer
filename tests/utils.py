@@ -120,12 +120,7 @@ class RESTClient:
             attempts=10,
             start_timeout=0.5,
             statuses=[400],
-            exceptions={
-                ClientConnectorError,
-                ClientOSError,
-                ServerDisconnectedError,
-                ConnectionRefusedError,
-            },
+            exceptions={ClientConnectorError, ClientOSError, ServerDisconnectedError},
         )
         retry_client = RetryClient(raise_for_status=True, retry_options=retry_options)
 
