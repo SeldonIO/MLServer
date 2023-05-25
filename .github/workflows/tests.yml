@@ -26,6 +26,7 @@ jobs:
 
   tests:
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
         python-version: ["3.8", "3.9", "3.10"]
@@ -69,6 +70,7 @@ jobs:
   all-runtimes:
     if: github.event_name == 'push'
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
         python-version: ["3.8", "3.9", "3.10"]
