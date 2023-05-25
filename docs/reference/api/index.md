@@ -1,6 +1,6 @@
 # Python API
 
-MLServer can be installed as a Python packaged, which exposes a public
+MLServer can be installed as a Python package, which exposes a public
 framework which can be used to build [custom inference
 runtimes](../../user-guide/custom) and [codecs](../../user-guide/content-type).
 
