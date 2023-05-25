@@ -57,6 +57,10 @@ def custom_runtime_server(
 
     yield f"127.0.0.1:{host_http_port}", f"127.0.0.1:{host_grpc_port}"
 
+    # get container logs
+    logs = container.logs()
+    print(logs)
+
     container.remove(force=True)
 
 
