@@ -25,9 +25,10 @@ jobs:
           make lint
 
   tests:
-    runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
+        os: [ubuntu-latest, macos-latest]
         python-version: ["3.8", "3.9", "3.10"]
         tox-environment:
           - mlserver
@@ -38,7 +39,18 @@ jobs:
           - huggingface
           - alibi-explain
           - alibi-detect
+    runs-on: ${{ matrix.os }}
     steps:
+      - name: Setup docker (missing on MacOS)
+        if: runner.os == 'macos'
+        run: |
+          # From https://github.com/actions/runner-images/issues/17#issuecomment-1537238473
+          # From https://github.com/abiosoft/colima/discussions/273#discussioncomment-4959736
+          brew install docker docker-buildx
+          mkdir -p $HOME/.docker/cli-plugins
+          ln -sfn $(which docker-buildx) $HOME/.docker/cli-plugins/docker-buildx
+          colima start --memory 4
+          sudo ln -sf $HOME/.colima/default/docker.sock /var/run/docker.sock
       - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
@@ -56,12 +68,24 @@ jobs:
           tox -e ${{ matrix.tox-environment }}
 
   all-runtimes:
-    runs-on: ubuntu-latest
     if: github.event_name == 'push'
     strategy:
+      fail-fast: false
       matrix:
+        os: [ubuntu-latest, macos-latest]
         python-version: ["3.8", "3.9", "3.10"]
+    runs-on: ${{ matrix.os }}
     steps:
+      - name: Setup docker (missing on MacOS)
+        if: runner.os == 'macos'
+        run: |
+          # From https://github.com/actions/runner-images/issues/17#issuecomment-1537238473
+          # From https://github.com/abiosoft/colima/discussions/273#discussioncomment-4959736
+          brew install docker docker-buildx
+          mkdir -p $HOME/.docker/cli-plugins
+          ln -sfn $(which docker-buildx) $HOME/.docker/cli-plugins/docker-buildx
+          colima start --memory 4
+          sudo ln -sf $HOME/.colima/default/docker.sock /var/run/docker.sock
       - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
