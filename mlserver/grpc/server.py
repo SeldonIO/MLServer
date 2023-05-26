@@ -42,7 +42,9 @@ class GRPCServer:
             interceptors = [LoggingInterceptor()]
 
         if self._settings.metrics_endpoint:
-            interceptors.append(PromServerInterceptor())
+            interceptors.append(
+                PromServerInterceptor(enable_handling_time_histogram=True)
+            )
 
         self._server = aio.server(
             ThreadPoolExecutor(max_workers=DefaultGrpcWorkers),
