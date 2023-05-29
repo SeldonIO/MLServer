@@ -39,4 +39,4 @@ wheel==0.40.0
 twine==4.0.2
 
 # Fetch licenses
-pip-licenses==4.3.1
+pip-licenses==4.3.2
