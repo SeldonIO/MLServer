@@ -68,14 +68,14 @@ jobs:
       - name: Check Runtime Changes
         id: changes
         run: |
-          _runtimes=$(ls runtimes)
+          _runtimes=$(ls runtimes | sed 's/\(.*\)/"\1"/g' | paste -s -d ',')
           echo "all runtimes: $_runtimes"
           if [[ '${{ github.event_name }}' == 'push' ]]; then
             # If change was on `master` or ` release/*` branch, run all of them
-            echo "runtimes=$_runtimes" >> "$GITHUB_OUTPUT"
+            echo "runtimes=[$_runtimes]" >> "$GITHUB_OUTPUT"
             break
           fi
-          echo "runtimes=$_runtimes" >> "$GITHUB_OUTPUT"
+          echo "runtimes=[$_runtimes]" >> "$GITHUB_OUTPUT"
 
   runtimes:
     needs: check-runtimes
@@ -84,7 +84,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest]
         python-version: ["3.8", "3.9", "3.10"]
-        tox-environment: ${{ needs.check-runtimes.outputs.runtimes }}
+        tox-environment: ${{ fromJson(needs.check-runtimes.outputs.runtimes) }}
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
