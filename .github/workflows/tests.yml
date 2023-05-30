@@ -24,21 +24,12 @@ jobs:
         run: |
           make lint
 
-  tests:
+  mlserver:
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
         python-version: ["3.8", "3.9", "3.10"]
-        tox-environment:
-          - mlserver
-          - sklearn
-          - xgboost
-          - lightgbm
-          - mlflow
-          - huggingface
-          - alibi-explain
-          - alibi-detect
     runs-on: ${{ matrix.os }}
     steps:
       - name: Setup docker (missing on MacOS)
@@ -51,6 +42,50 @@ jobs:
           ln -sfn $(which docker-buildx) $HOME/.docker/cli-plugins/docker-buildx
           colima start --memory 4
           sudo ln -sf $HOME/.colima/default/docker.sock /var/run/docker.sock
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          auto-activate-base: false
+      - name: Install dependencies
+        run: |
+          pip install -r requirements/dev.txt
+      - name: Test
+        run: |
+          tox -e mlserver
+
+  check-runtimes:
+    outputs:
+      runtimes: ${{ steps.generate-matrix.changes.runtimes }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Check Runtime Changes
+        id: changes
+        run: |
+          runtimes=$(ls runtimes)
+          if [[ '${{ github.event_name }}' == 'push' ]]; then
+            # If change was on `master` or ` release/*` branch, run all of them
+            echo "::set-output runtimes=run_job::false"
+            echo "runtimes=$_runtimes" >> "$GITHUB_OUTPUT"
+            break
+          fi
+
+  runtimes:
+    needs: check-runtimes
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python-version: ["3.8", "3.9", "3.10"]
+        tox-environment: ${{ needs.check-runtimes.outputs.runtimes }}
+    runs-on: ${{ matrix.os }}
+    steps:
       - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
