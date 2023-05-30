@@ -68,13 +68,14 @@ jobs:
       - name: Check Runtime Changes
         id: changes
         run: |
-          runtimes=$(ls runtimes)
+          _runtimes=$(ls runtimes)
+          echo "all runtimes: $_runtimes"
           if [[ '${{ github.event_name }}' == 'push' ]]; then
             # If change was on `master` or ` release/*` branch, run all of them
-            echo "::set-output runtimes=run_job::false"
             echo "runtimes=$_runtimes" >> "$GITHUB_OUTPUT"
             break
           fi
+          echo "runtimes=$_runtimes" >> "$GITHUB_OUTPUT"
 
   runtimes:
     needs: check-runtimes
