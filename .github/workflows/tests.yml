@@ -39,7 +39,8 @@ jobs:
           - huggingface
           - alibi-explain
           - alibi-detect
-        is-pr: ${{ github.event_name == 'pull_request' }}
+        is-pr:
+          - ${{ github.event_name == 'pull_request' }}
         exclude:
           # MacOS tests take a lot of time, so we will run them only on merge
           # From https://github.com/orgs/community/discussions/26253
