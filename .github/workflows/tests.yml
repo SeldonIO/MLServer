@@ -80,6 +80,7 @@ jobs:
               # If change was on a PR branch, only run tests on modified runtimes
               _modified=false
               while IFS= read -r file; do
+                echo  "[DEBUG] modified file = $file"
                 if [[ $file == "./runtimes/$_runtime"/* ]]; then
                   # PR contains changes for runtime, so let's flag it
                   _modified=true
