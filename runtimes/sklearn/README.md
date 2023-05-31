@@ -4,7 +4,7 @@ This package provides a MLServer runtime compatible with Scikit-Learn.
 
 ## Usage
 
-You can install the inference runtime, alongside `mlserver`, as:
+You can install the runtime, alongside `mlserver`, as:
 
 ```bash
 pip install mlserver mlserver-sklearn
