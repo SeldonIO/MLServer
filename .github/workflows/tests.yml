@@ -77,9 +77,9 @@ jobs:
             
             # Append to _runtimes list
             if [ -z "$_runtimes" ]; then
-              $_runtimes="\"$_runtime\""
+              _runtimes="\"$_runtime\""
             else
-              $_runtimes="$_runtimes,\"$_runtime\""
+              _runtimes="$_runtimes,\"$_runtime\""
             fi
           done
           echo "runtimes=[$_runtimes]" >> "$GITHUB_OUTPUT"
