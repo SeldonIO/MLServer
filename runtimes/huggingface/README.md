@@ -4,7 +4,7 @@ This package provides a MLServer runtime compatible with HuggingFace Transformer
 
 ## Usage
 
-You can install the runtime, alongside `mlserver`, as:
+You can install the inference runtime, alongside `mlserver`, as:
 
 ```bash
 pip install mlserver mlserver-huggingface
