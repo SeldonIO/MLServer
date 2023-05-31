@@ -74,11 +74,11 @@ jobs:
             echo "here we'll select runtimes based on diff"
           fi
           echo "runtimes=$_runtimes"
-          _withsed=$(echo $_runtimes | sed 's/\(.*\)/"\1"/g')
+          _withsed=$(echo $_runtimes | sed 's/^\(.*\)$/"\1"/g')
           echo "withsed=$_withsed"
-          _withpaste=$(echo $_runtimes | sed 's/\(.*\)/"\1"/g' | paste -s -d ',')
+          _withpaste=$(echo $_runtimes | sed 's/^\(.*\)$/"\1"/g' | paste -s -d ',')
           echo "withpaste=$_withpaste"
-          _asJson=$(echo $_runtimes | sed 's/\(.*\)/"\1"/g' | paste -s -d ',')
+          _asJson=$(echo $_runtimes | sed 's/^\(.*\)$/"\1"/g' | paste -s -d ',')
           echo "runtimes=[$_asJson]" >> "$GITHUB_OUTPUT"
           cat $GITHUB_OUTPUT
 
