@@ -40,10 +40,11 @@ jobs:
           - alibi-explain
           - alibi-detect
         is-pr: ${{ github.event_name == 'pull_request' }}
-      exclude:
-        # MacOS tests take a lot of time, so we will run them only on merge
-        - is-pr: true
-          os: macos-latest
+        exclude:
+          # MacOS tests take a lot of time, so we will run them only on merge
+          # From https://github.com/orgs/community/discussions/26253
+          - is-pr: true
+            os: macos-latest
     runs-on: ${{ matrix.os }}
     steps:
       - name: Setup docker (missing on MacOS)
