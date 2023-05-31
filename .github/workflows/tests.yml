@@ -73,6 +73,7 @@ jobs:
             if [[ '${{ github.event_name }}' == 'pull_request' ]]; then
               # If change was on a PR branch, only run tests on modified runtimes
               echo "here we'll select runtimes based on diff"
+              echo $GITHUB_SHA
             fi 
             
             # Append to _runtimes list
