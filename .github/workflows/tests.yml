@@ -69,7 +69,7 @@ jobs:
           tox -e ${{ matrix.tox-environment }}
 
   all-runtimes:
-    if: github.event_name == 'push'
+    # if: github.event_name == 'push'
     strategy:
       fail-fast: false
       matrix:
