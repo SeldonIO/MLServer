@@ -69,7 +69,7 @@ jobs:
         id: changes
         run: |
           _runtimes=""
-          for _runtime in "./runtimes/"*; do
+          for _runtime in $(ls ./runtimes); do
             if [[ '${{ github.event_name }}' == 'pull_request' ]]; then
               # If change was on a PR branch, only run tests on modified runtimes
               echo "here we'll select runtimes based on diff"
