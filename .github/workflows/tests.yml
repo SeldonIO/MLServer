@@ -60,7 +60,7 @@ jobs:
 
   check-runtimes:
     outputs:
-      runtimes: ${{ steps.generate-matrix.changes.runtimes }}
+      runtimes: ${{ steps.changes.outputs.runtimes }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
