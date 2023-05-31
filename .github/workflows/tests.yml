@@ -51,6 +51,7 @@ jobs:
           ln -sfn $(which docker-buildx) $HOME/.docker/cli-plugins/docker-buildx
           colima start --memory 4
           sudo ln -sf $HOME/.colima/default/docker.sock /var/run/docker.sock
+
       - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
@@ -86,6 +87,16 @@ jobs:
           ln -sfn $(which docker-buildx) $HOME/.docker/cli-plugins/docker-buildx
           colima start --memory 4
           sudo ln -sf $HOME/.colima/default/docker.sock /var/run/docker.sock
+      - name: Downgrade OpenMP (in MacOS)
+        if: runner.os == 'macos'
+        run: |
+          # Recent versions of OpenMP cause segfaults in MacOS when training
+          # LightGBM / XGBoost models (but only when Torch is present)
+          # https://github.com/microsoft/LightGBM/issues/4229
+          # https://github.com/autogluon/autogluon/issues/1442
+          wget https://raw.githubusercontent.com/Homebrew/homebrew-core/fb8323f2b170bd4ae97e1bac9bf3e2983af3fdb0/Formula/libomp.rb
+          brew unlink libomp
+          brew install libomp.rb
       - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
