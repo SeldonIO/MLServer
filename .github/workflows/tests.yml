@@ -13,10 +13,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Set up Python 3.11
+      - name: Set up Python 3.10
         uses: actions/setup-python@v2
         with:
-          python-version: 3.11
+          python-version: 3.10
       - name: Install dependencies
         run: |
           make install-dev
@@ -29,7 +29,9 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        python-version: ["3.9", "3.10", "3.11"]
+        # NOTE: There's no pre-built `grpcio` wheel for Python 3.11 yet
+        # https://github.com/grpc/grpc/issues/32454
+        python-version: ["3.8", "3.9", "3.10"]
         tox-environment:
           - mlserver
           - sklearn
