@@ -68,14 +68,14 @@ jobs:
       - name: Check Runtime Changes
         id: changes
         run: |
-          _runtimes=$(ls runtimes | sed 's/\(.*\)/"\1"/g' | paste -s -d ',')
-          echo "all runtimes: $_runtimes"
-          if [[ '${{ github.event_name }}' == 'push' ]]; then
-            # If change was on `master` or ` release/*` branch, run all of them
-            echo "runtimes=[$_runtimes]" >> "$GITHUB_OUTPUT"
-            break
+          _runtimes=$(ls runtimes)
+          if [[ '${{ github.event_name }}' == 'pull_request' ]]; then
+            # If change was on a PR branch, only run tests on modified runtimes
+            echo "here we'll select runtimes based on diff"
           fi
-          echo "runtimes=[$_runtimes]" >> "$GITHUB_OUTPUT"
+          _asJson=$(echo $_runtimes | sed 's/\(.*\)/"\1"/g' | paste -s -d ',')
+          echo "runtimes=[$_asJson]" >> "$GITHUB_OUTPUT"
+          cat $GITHUB_OUTPUT
 
   runtimes:
     needs: check-runtimes
