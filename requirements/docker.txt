@@ -5,6 +5,3 @@ protobuf==3.20.3
 # Force patch for CVE-2023-25668 (and a few others)
 # Otherwise, onnxruntime will drop TF to 2.9 (because of clash in protobuf)
 tensorflow>=2.12.0
-
-# Workaround for https://github.com/SeldonIO/alibi-detect/issues/796
-typing-extensions==4.5.0
