@@ -65,15 +65,32 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
       - name: Check Runtime Changes
         id: changes
         run: |
+          # Get diff for later
+          git diff --name-only HEAD^ HEAD > modified-files.txt
+
+          # Iterate through runtime folders to compare against diff
           _runtimes=""
           for _runtime in $(ls ./runtimes); do
             if [[ '${{ github.event_name }}' == 'pull_request' ]]; then
               # If change was on a PR branch, only run tests on modified runtimes
-              echo "here we'll select runtimes based on diff"
-              echo $GITHUB_SHA
+              _modified=false
+              while IFS= read -r file; do
+                if [[ $file == "./runtimes/$_runtime"/* ]]; then
+                  # PR contains changes for runtime, so let's flag it
+                  _modified=true
+                  break
+                fi
+              done < modified-files.txt
+
+              # If runtime folder has not been modified, ignore it
+              if ! $_modified; then
+                continue
+              fi
             fi 
             
             # Append to _runtimes list
@@ -83,6 +100,8 @@ jobs:
               _runtimes="$_runtimes,\"$_runtime\""
             fi
           done
+
+          # Output final list of runtimes
           echo "runtimes=[$_runtimes]" >> "$GITHUB_OUTPUT"
           cat $GITHUB_OUTPUT
 
