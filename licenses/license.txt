@@ -981,7 +981,7 @@ the FAQ for more information on the distribution of modified source versions.
 
 
 PyJWT
-2.6.0
+2.7.0
 MIT License
 The MIT License (MIT)
 
@@ -1113,7 +1113,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 SQLAlchemy
-2.0.12
+2.0.15
 MIT License
 Copyright 2005-2023 SQLAlchemy authors and contributors <see AUTHORS file>.
 
@@ -1167,7 +1167,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 Werkzeug
-2.3.3
+2.3.4
 BSD License
 Copyright 2007 Pallets
 
@@ -1645,7 +1645,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 aiokafka
-0.8.0
+0.8.1
 Apache Software License
 
                                  Apache License
@@ -2057,7 +2057,7 @@ Apache License
 
 
 alembic
-1.10.4
+1.11.1
 MIT License
 Copyright 2009-2023 Michael Bayer.
 
@@ -2492,7 +2492,7 @@ Apache Software License
 
 
 anyio
-3.6.2
+3.7.0
 MIT License
 The MIT License (MIT)
 
@@ -2930,7 +2930,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 cachetools
-5.3.0
+5.3.1
 MIT License
 The MIT License (MIT)
 
@@ -2981,7 +2981,7 @@ SOFTWARE.
 
 
 certifi
-2022.12.7
+2023.5.7
 Mozilla Public License 2.0 (MPL 2.0)
 This package contains a modified version of ca-bundle.crt:
 
@@ -3985,14 +3985,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 cryptography
-40.0.2
+41.0.1
 Apache Software License; BSD License
 This software is made available under the terms of *either* of the licenses
 found in LICENSE.APACHE or LICENSE.BSD. Contributions to cryptography are made
 under the terms of *both* these licenses.
-
-The code used in the OS random engine is derived from CPython, and is licensed
-under the terms of the PSF License Agreement.
 
 
 cycler
@@ -4053,12 +4050,12 @@ THE SOFTWARE.
 
 
 databricks-cli
-0.17.6
+0.17.7
 Apache Software License
 UNKNOWN
 
 datamodel-code-generator
-0.18.0
+0.19.0
 MIT License
 MIT License
 
@@ -4932,7 +4929,7 @@ OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
 docker
-6.0.1
+6.1.2
 Apache Software License
 
                                  Apache License
@@ -5128,22 +5125,24 @@ Apache Software License
 
 
 docutils
-0.19
+0.20.1
 BSD License; GNU General Public License (GPL); Public Domain; Python Software Foundation License
+.. include:: docs/header0.txt
+
 ==================
  Copying Docutils
 ==================
 
 :Author: David Goodger
 :Contact: goodger@python.org
-:Date: $Date: 2022-05-30 18:54:46 +0200 (Mo, 30. Mai 2022) $
+:Date: $Date: 2022-11-29 00:55:25 +0100 (Di, 29. Nov 2022) $
 :Web site: https://docutils.sourceforge.io/
 :Copyright: This document has been placed in the public domain.
 
 Most of the files included in this project have been placed in the
 public domain, and therefore have no license requirements and no
 restrictions on copying or usage; see the `Public Domain Dedication`_
-below.  There are a few exceptions_, listed below.
+below.  There are exceptions_, listed below.
 Files in the Sandbox_ are not distributed with Docutils releases and
 may have different license terms.
 
@@ -5219,8 +5218,8 @@ The exceptions to the `Public Domain Dedication`_ above are:
   Released under the terms of the `BSD 2-Clause License`_
   (`local copy <licenses/BSD-2-Clause.txt>`__).
 
-* docutils/utils/math/math2html.py,
-  docutils/writers/html5_polyglot/math.css
+* | docutils/utils/math/math2html.py,
+  | docutils/writers/html5_polyglot/math.css
 
   Copyright © 2009,2010 Alex Fernández; 2021 Günter Milde
 
@@ -5231,28 +5230,28 @@ The exceptions to the `Public Domain Dedication`_ above are:
 
   .. _eLyXer: https://github.com/alexfernandez/elyxer
 
-* docutils/__main__.py,
-  docutils/parsers/commonmark_wrapper.py,
-  docutils/parsers/recommonmark_wrapper.py,
-  docutils/utils/error_reporting.py,
-  docutils/utils/math/__init__.py,
-  docutils/utils/math/latex2mathml.py,
-  docutils/utils/math/tex2mathml_extern.py,
-  docutils/utils/punctuation_chars.py,
-  docutils/utils/smartquotes.py,
-  docutils/writers/html5_polyglot/__init__.py,
-  docutils/writers/html5_polyglot/*.css,
-  docutils/writers/latex2e/docutils.sty,
-  docutils/writers/xetex/__init__.py,
-  test/test_parsers/test_recommonmark/\*.py,
-  test/test_parsers/test_rst/test_directives/test__init__.py,
-  test/test_parsers/test_rst/test_directives/test_code_parsing.py,
-  test/test_parsers/test_rst/test_line_length_limit_default.py,
-  test/test_parsers/test_rst/test_line_length_limit.py,
-  test/test_writers/test_latex2e_misc.py,
-  test/transforms/test_smartquotes.py,
-  tools/docutils-cli.py,
-  tools/rst2html5.py
+* | docutils/__main__.py,
+  | docutils/parsers/commonmark_wrapper.py,
+  | docutils/parsers/recommonmark_wrapper.py,
+  | docutils/utils/error_reporting.py,
+  | docutils/utils/math/__init__.py,
+  | docutils/utils/math/latex2mathml.py,
+  | docutils/utils/math/tex2mathml_extern.py,
+  | docutils/utils/punctuation_chars.py,
+  | docutils/utils/smartquotes.py,
+  | docutils/writers/html5_polyglot/__init__.py,
+  | docutils/writers/html5_polyglot/\*.css,
+  | docutils/writers/latex2e/docutils.sty,
+  | docutils/writers/xetex/__init__.py,
+  | test/test_parsers/test_recommonmark/\*.py,
+  | test/test_parsers/test_rst/test_directives/test__init__.py,
+  | test/test_parsers/test_rst/test_directives/test_code_parsing.py,
+  | test/test_parsers/test_rst/test_line_length_limit_default.py,
+  | test/test_parsers/test_rst/test_line_length_limit.py,
+  | test/test_writers/test_latex2e_misc.py,
+  | test/transforms/test_smartquotes.py,
+  | tools/docutils-cli.py,
+  | tools/rst2html5.py
 
   Copyright © Günter Milde.
   Released under the terms of the `BSD 2-Clause License`_
@@ -5851,12 +5850,12 @@ SOFTWARE.
 
 
 flatbuffers
-23.3.3
+23.5.26
 Apache Software License
 UNKNOWN
 
 fonttools
-4.39.3
+4.39.4
 MIT License
 MIT License
 
@@ -6088,7 +6087,7 @@ Apache License
 
 
 fsspec
-2023.4.0
+2023.5.0
 BSD License
 BSD 3-Clause License
 
@@ -6291,7 +6290,7 @@ in the distribution package.
 
 
 google-auth
-2.17.3
+2.19.0
 Apache Software License
                                  Apache License
                            Version 2.0, January 2004
@@ -6945,7 +6944,7 @@ THE SOFTWARE.
 
 
 grpcio
-1.54.0
+1.54.2
 Apache Software License
 
                                  Apache License
@@ -7655,7 +7654,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 httpcore
-0.17.0
+0.17.2
 BSD License
 Copyright © 2020, [Encode OSS Ltd](https://www.encode.io/).
 All rights reserved.
@@ -7687,7 +7686,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 httpx
-0.24.0
+0.24.1
 BSD License
 Copyright © 2019, [Encode OSS Ltd](https://www.encode.io/).
 All rights reserved.
@@ -7704,7 +7703,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 
 huggingface-hub
-0.14.1
+0.15.1
 Apache Software License
                                  Apache License
                            Version 2.0, January 2004
@@ -7969,7 +7968,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 imageio
-2.28.1
+2.30.0
 BSD License
 Copyright (c) 2014-2022, imageio developers
 All rights reserved.
@@ -8543,7 +8542,7 @@ IN THE SOFTWARE.
 
 
 jax
-0.4.8
+0.4.11
 Apache-2.0
 
                                  Apache License
@@ -10303,7 +10302,7 @@ Apache-2.0
 
 
 lit
-16.0.2
+16.0.5
 Apache Software License
 UNKNOWN
 
@@ -10788,7 +10787,7 @@ Apache Software License
 
 
 mlflow
-2.2.2
+2.3.1
 Apache License 2.0
 Copyright 2018 Databricks, Inc.  All rights reserved.
 
@@ -10995,7 +10994,7 @@ Copyright 2018 Databricks, Inc.  All rights reserved.
 
 
 mlserver
-1.3.0.dev15
+1.4.0.dev2
 Apache 2.0
                                  Apache License
                            Version 2.0, January 2004
@@ -11201,7 +11200,7 @@ Apache 2.0
 
 
 mlserver-alibi-detect
-1.3.0.dev15
+1.4.0.dev2
 Apache 2.0
                                  Apache License
                            Version 2.0, January 2004
@@ -11407,7 +11406,7 @@ Apache 2.0
 
 
 mlserver-alibi-explain
-1.3.0.dev15
+1.4.0.dev2
 Apache 2.0
                                  Apache License
                            Version 2.0, January 2004
@@ -11613,7 +11612,7 @@ Apache 2.0
 
 
 mlserver-huggingface
-1.3.0.dev15
+1.4.0.dev2
 Apache 2.0
                                  Apache License
                            Version 2.0, January 2004
@@ -11819,7 +11818,7 @@ Apache 2.0
 
 
 mlserver-lightgbm
-1.3.0.dev15
+1.4.0.dev2
 Apache 2.0
                                  Apache License
                            Version 2.0, January 2004
@@ -12025,7 +12024,7 @@ Apache 2.0
 
 
 mlserver-mlflow
-1.3.0.dev15
+1.4.0.dev2
 Apache 2.0
                                  Apache License
                            Version 2.0, January 2004
@@ -12231,7 +12230,7 @@ Apache 2.0
 
 
 mlserver-mllib
-1.3.0.dev15
+1.4.0.dev2
 Apache 2.0
                                  Apache License
                            Version 2.0, January 2004
@@ -12437,7 +12436,7 @@ Apache 2.0
 
 
 mlserver-sklearn
-1.3.0.dev15
+1.4.0.dev2
 Apache 2.0
                                  Apache License
                            Version 2.0, January 2004
@@ -12643,7 +12642,7 @@ Apache 2.0
 
 
 mlserver-xgboost
-1.3.0.dev15
+1.4.0.dev2
 Apache 2.0
                                  Apache License
                            Version 2.0, January 2004
@@ -14528,7 +14527,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 onnx
-1.13.1
+1.14.0
 Apache License v2.0
 
                                  Apache License
@@ -14735,7 +14734,7 @@ Apache License v2.0
 
 
 onnxruntime
-1.14.1
+1.15.0
 MIT License
 MIT License
 
@@ -17695,7 +17694,7 @@ Apache Software License
 
 
 orjson
-3.8.11
+3.9.0
 Apache Software License; MIT License
                               Apache License
                         Version 2.0, January 2004
@@ -18760,88 +18759,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
-pkgutil_resolve_name
-1.3.10
-MIT License
-The MIT License (MIT)
-
-Copyright (c) 2020 Thomas Grainger.
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-
-Portions of this pkgutil-resolve-name Software may utilize the following copyrighted material, the use of which is hereby acknowledged.
-
-cpython: https://github.com/python/cpython/tree/1ed61617a4a6632905ad6a0b440cd2cafb8b6414
-
-
-PYTHON SOFTWARE FOUNDATION LICENSE VERSION 2
---------------------------------------------
-
-1. This LICENSE AGREEMENT is between the Python Software Foundation
-("PSF"), and the Individual or Organization ("Licensee") accessing and
-otherwise using this software ("Python") in source or binary form and
-its associated documentation.
-
-2. Subject to the terms and conditions of this License Agreement, PSF hereby
-grants Licensee a nonexclusive, royalty-free, world-wide license to reproduce,
-analyze, test, perform and/or display publicly, prepare derivative works,
-distribute, and otherwise use Python alone or in any derivative version,
-provided, however, that PSF's License Agreement and PSF's notice of copyright,
-i.e., "Copyright (c) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010,
-2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020 Python Software Foundation;
-All Rights Reserved" are retained in Python alone or in any derivative version
-prepared by Licensee.
-
-3. In the event Licensee prepares a derivative work that is based on
-or incorporates Python or any part thereof, and wants to make
-the derivative work available to others as provided herein, then
-Licensee hereby agrees to include in any such work a brief summary of
-the changes made to Python.
-
-4. PSF is making Python available to Licensee on an "AS IS"
-basis.  PSF MAKES NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR
-IMPLIED.  BY WAY OF EXAMPLE, BUT NOT LIMITATION, PSF MAKES NO AND
-DISCLAIMS ANY REPRESENTATION OR WARRANTY OF MERCHANTABILITY OR FITNESS
-FOR ANY PARTICULAR PURPOSE OR THAT THE USE OF PYTHON WILL NOT
-INFRINGE ANY THIRD PARTY RIGHTS.
-
-5. PSF SHALL NOT BE LIABLE TO LICENSEE OR ANY OTHER USERS OF PYTHON
-FOR ANY INCIDENTAL, SPECIAL, OR CONSEQUENTIAL DAMAGES OR LOSS AS
-A RESULT OF MODIFYING, DISTRIBUTING, OR OTHERWISE USING PYTHON,
-OR ANY DERIVATIVE THEREOF, EVEN IF ADVISED OF THE POSSIBILITY THEREOF.
-
-6. This License Agreement will automatically terminate upon a material
-breach of its terms and conditions.
-
-7. Nothing in this License Agreement shall be deemed to create any
-relationship of agency, partnership, or joint venture between PSF and
-Licensee.  This License Agreement does not grant permission to use PSF
-trademarks or trade name in a trademark sense to endorse or promote
-products or services of Licensee, or any third party.
-
-8. By copying, installing or otherwise using Python, Licensee
-agrees to be bound by the terms and conditions of this License
-Agreement.
-
-
 platformdirs
-3.5.0
+3.5.1
 MIT License
 MIT License
 
@@ -18933,7 +18852,7 @@ THE SOFTWARE.
 
 
 prometheus-client
-0.16.0
+0.17.0
 Apache Software License
                                  Apache License
                            Version 2.0, January 2004
@@ -21844,7 +21763,7 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 pydantic
-1.10.7
+1.10.8
 MIT License
 The MIT License (MIT)
 
@@ -22609,7 +22528,7 @@ Apache Software License
 
 
 pytz
-2022.7.1
+2023.3
 MIT License
 Copyright (c) 2003-2019 Stuart Bishop <stuart@stuartbishop.net>
 
@@ -22836,7 +22755,7 @@ TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
 
 
 regex
-2023.5.4
+2023.5.5
 Apache Software License
 This work was derived from the 're' module of CPython 2.6 and CPython 3.1,
 copyright (c) 1998-2001 by Secret Labs AB and licensed under CNRI's Python 1.6
@@ -23049,7 +22968,7 @@ All additions and alterations are licensed under the Apache 2.0 License.
 
 
 requests
-2.29.0
+2.31.0
 Apache Software License
 
                                  Apache License
@@ -23676,7 +23595,7 @@ limitations under the License.
 
 
 rich
-13.3.5
+13.4.1
 MIT License
 Copyright (c) 2020 Will McGugan
 
@@ -23718,7 +23637,7 @@ limitations under the License.
 
 
 ruamel.yaml
-0.17.22
+0.17.31
 MIT License
  The MIT License (MIT)
 
@@ -24955,7 +24874,7 @@ made under the terms of *both* these licenses.
 
 
 spacy
-3.5.2
+3.5.3
 MIT License
 The MIT License (MIT)
 
@@ -25147,7 +25066,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 starlette-exporter
-0.15.1
+0.16.0
 Apache License 2.0
                                  Apache License
                            Version 2.0, January 2004
@@ -25353,9 +25272,9 @@ Apache License 2.0
 
 
 sympy
-1.11.1
+1.12
 BSD License
-Copyright (c) 2006-2022 SymPy Development Team
+Copyright (c) 2006-2023 SymPy Development Team
 
 All rights reserved.
 
@@ -25390,7 +25309,7 @@ Patches that were taken from the Diofant project (https://github.com/diofant/dio
 are licensed as:
 
 Copyright (c) 2006-2018 SymPy Development Team,
-              2013-2022 Sergey B Kirpichev
+              2013-2023 Sergey B Kirpichev
 
 All rights reserved.
 
@@ -25458,7 +25377,7 @@ DAMAGE.
 The files under the directory sympy/parsing/autolev/tests/pydy-example-repo
 are directly copied from PyDy project and are licensed as:
 
-Copyright (c) 2009-2022, PyDy Authors
+Copyright (c) 2009-2023, PyDy Authors
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -25742,7 +25661,7 @@ Apache Software License
    limitations under the License.
 
 tensorboard
-2.12.2
+2.12.3
 Apache Software License
 # TensorBoard License
 
@@ -26819,7 +26738,7 @@ THE SOFTWARE.
 
 
 thinc
-8.1.9
+8.1.10
 MIT License
 The MIT License (MIT)
 
@@ -33038,7 +32957,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 tox
-4.4.12
+4.5.1
 MIT License
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the
@@ -33115,7 +33034,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 transformers
-4.28.1
+4.29.2
 Apache Software License
 Copyright 2018- The Hugging Face team. All rights reserved.
 
@@ -33328,7 +33247,7 @@ MIT License
 UNKNOWN
 
 tritonclient
-2.32.0
+2.33.0
 BSD License
 # Copyright (c) 2020, NVIDIA CORPORATION. All rights reserved.
 #
@@ -33563,7 +33482,7 @@ THE SOFTWARE.
 
 
 types-aiofiles
-23.1.0.1
+23.1.0.3
 Apache Software License
 UNKNOWN
 
@@ -33573,7 +33492,7 @@ Apache Software License
 UNKNOWN
 
 types-protobuf
-4.22.0.2
+4.23.0.1
 Apache Software License
 UNKNOWN
 
@@ -33583,12 +33502,12 @@ Apache Software License
 UNKNOWN
 
 types-urllib3
-1.26.25.12
+1.26.25.13
 Apache Software License
 UNKNOWN
 
 typing_extensions
-4.5.0
+4.6.2
 Python Software Foundation License
 A. HISTORY OF THE SOFTWARE
 ==========================
@@ -33847,7 +33766,7 @@ OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
 urllib3
-1.26.15
+1.26.16
 MIT License
 MIT License
 
@@ -34169,7 +34088,7 @@ BSD License
 UNKNOWN
 
 websocket-client
-1.5.1
+1.5.2
 Apache Software License
 
                                  Apache License
