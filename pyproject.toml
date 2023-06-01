@@ -44,21 +44,21 @@ addopts = "--import-mode=importlib"
 
 [tool.poetry.dependencies]
 python = "^3.8.1,<3.12"
-click = "^8.1.3"
-fastapi = "^0.95"
-python-dotenv = "^1.0.0"
-grpcio = "^1.54.0"
-numpy = "~1.23.0"
-pandas = "^2.0.1"
-protobuf = "^3.20.2"
-uvicorn = "^0.22.0"
-starlette-exporter = "^0.15.1"
-py-grpc-prometheus = "^0.7.0"
-aiokafka = "^0.8.0"
+click = "*"
+fastapi = ">=0.88.0, !=0.89.0, <=0.95"
+python-dotenv = "*"
+grpcio = "*"
+numpy = "*"
+pandas = "*"
+protobuf = "*"
+uvicorn = "*"
+starlette-exporter = "*"
+py-grpc-prometheus = "*"
+aiokafka = "*"
 tritonclient = {version = "^2.24", extras = ["http"]}
-aiofiles = "^23.1.0"
-orjson = "^3.8.12"
-uvloop = {version = "^0.17.0", markers = "sys_platform != 'win32' and (sys_platform != 'cygwin' and platform_python_implementation != 'PyPy')"}
+aiofiles = "*"
+orjson = "*"
+uvloop = {version = "*", markers = "sys_platform != 'win32' and (sys_platform != 'cygwin' and platform_python_implementation != 'PyPy')"}
 
 ## The importlib-resources backport is required to use some
 ## functionality added in Python 3.10
