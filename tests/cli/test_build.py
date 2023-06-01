@@ -22,7 +22,7 @@ def custom_image(
     dockerfile = generate_dockerfile()
     current_case = current_cases["custom_image"]["custom_runtime_path"]
     image_name = f"{current_case.id}:0.1.0"
-    build_image(custom_runtime_path, dockerfile, image_name)
+    build_image(custom_runtime_path, dockerfile, image_name, no_cache=True)
 
     yield image_name
 
