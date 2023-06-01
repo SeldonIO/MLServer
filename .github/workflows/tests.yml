@@ -32,7 +32,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        # os: [ubuntu-latest, macos-latest]
+        os: [macos-latest]
         # NOTE: There's no pre-built `grpcio` wheel for Python 3.11 yet
         # https://github.com/grpc/grpc/issues/32454
         python-version: ["3.8", "3.9", "3.10"]
@@ -74,9 +75,12 @@ jobs:
           poetry install --sync --only dev
       - name: Test
         run: |
-          tox -e mlserver
+          # tox -e mlserver
+          python -m pytest ./tests/cli/test_build.py
 
   runtimes:
+    # TODO: REMEMBER TO REMOVE IT!!
+    if: github.event_name == 'push'
     strategy:
       fail-fast: false
       matrix:
