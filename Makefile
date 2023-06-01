@@ -79,8 +79,7 @@ licenses:
 		> ./licenses/license_info.no_versions.csv
 
 fmt:
-	black . \
-		--exclude "/(\.tox.*|mlserver/grpc/dataplane_pb2.*|venv.*)/"
+	black .
 
 version:
 	@echo ${VERSION}
