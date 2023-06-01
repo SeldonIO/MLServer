@@ -16,16 +16,27 @@ mlserver = 'mlserver.cli:main'
 
 [tool.black]
 exclude = '''
-/(
-  | \.tox.*
-  | mlserver/grpc/dataplane_pb2.*
-  | venv.*
-)/
+(
+  mlserver\.egg-info
+  | \.mypy_cache
+  | \.git
+  | \.tox
+  | dist
+  | venv
+)
 '''
 
 [tool.mypy]
 ignore_missing_imports = true
 plugins = "pydantic.mypy"
+exclude = [
+  'mlserver\.egg-info',
+  '\.mypy_cache',
+  '\.git',
+  '\.tox',
+  'dist',
+  'venv',
+]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"

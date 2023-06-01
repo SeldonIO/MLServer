@@ -59,6 +59,7 @@ test:
 	done
 
 lint: generate
+	black --check .
 	flake8 .
 	mypy ./mlserver
 	for _runtime in ./runtimes/*; \
