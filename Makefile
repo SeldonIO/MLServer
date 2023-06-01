@@ -6,7 +6,7 @@ IMAGE_NAME := seldonio/mlserver
 	push-test push test lint fmt version clean licenses
 
 install-dev:
-	poetry install --sync --with all-runtimes
+	poetry install --sync --with all-runtimes --with all-runtimes-dev
 
 _generate: # "private" target to call `fmt` after `generate`
 	./hack/generate-types.sh
