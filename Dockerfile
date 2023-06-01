@@ -1,4 +1,4 @@
-FROM python:3.8-slim AS wheel-builder
+FROM python:3.10-slim AS wheel-builder
 SHELL ["/bin/bash", "-l", "-c"]
 
 COPY ./hack/build-wheels.sh ./hack/build-wheels.sh
@@ -18,9 +18,9 @@ RUN ./hack/build-wheels.sh /opt/mlserver/dist
 FROM registry.access.redhat.com/ubi9/ubi-minimal
 SHELL ["/bin/bash", "-c"]
 
-ARG PYTHON_VERSION=3.8.16
-ARG CONDA_VERSION=22.11.1
-ARG MINIFORGE_VERSION=${CONDA_VERSION}-4
+ARG PYTHON_VERSION=3.10.11
+ARG CONDA_VERSION=23.1.0
+ARG MINIFORGE_VERSION=${CONDA_VERSION}-1
 ARG RUNTIMES="all"
 
 # Set a few default environment variables, including `LD_LIBRARY_PATH`
@@ -32,7 +32,7 @@ ENV MLSERVER_MODELS_DIR=/mnt/models \
     MLSERVER_PATH=/opt/mlserver \
     CONDA_PATH=/opt/conda \
     PATH=/opt/mlserver/.local/bin:/opt/conda/bin:$PATH \
-    LD_LIBRARY_PATH=/usr/local/nvidia/lib64:/opt/conda/lib/python3.8/site-packages/nvidia/cuda_runtime/lib:$LD_LIBRARY_PATH \
+    LD_LIBRARY_PATH=/usr/local/nvidia/lib64:/opt/conda/lib/python3.10/site-packages/nvidia/cuda_runtime/lib:$LD_LIBRARY_PATH \
     TRANSFORMERS_CACHE=/opt/mlserver/.cache \
     NUMBA_CACHE_DIR=/opt/mlserver/.cache
 
@@ -46,7 +46,7 @@ RUN microdnf update -y && \
         glib2-devel \
         shadow-utils
 
-# Install Conda, Python 3.8 and FFmpeg
+# Install Conda, Python 3.10 and FFmpeg
 RUN microdnf install -y wget && \
     wget "https://github.com/conda-forge/miniforge/releases/download/${MINIFORGE_VERSION}/Miniforge3-${MINIFORGE_VERSION}-Linux-x86_64.sh" \
         -O miniforge3.sh && \
@@ -101,7 +101,7 @@ RUN . $CONDA_PATH/etc/profile.d/conda.sh && \
     fi && \
     pip install $(ls "./dist/mlserver-"*.whl) && \
     pip install -r ./requirements/docker.txt && \
-    rm -f /opt/conda/lib/python3.8/site-packages/spacy/tests/package/requirements.txt && \
+    rm -f /opt/conda/lib/python3.10/site-packages/spacy/tests/package/requirements.txt && \
     rm -rf /root/.cache/pip
 
 COPY ./licenses/license.txt .
