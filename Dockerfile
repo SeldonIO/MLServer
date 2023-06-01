@@ -19,8 +19,8 @@ FROM registry.access.redhat.com/ubi9/ubi-minimal
 SHELL ["/bin/bash", "-c"]
 
 ARG PYTHON_VERSION=3.10.11
-ARG CONDA_VERSION=23.3.1
-ARG MINIFORGE_VERSION=${CONDA_VERSION}-4
+ARG CONDA_VERSION=23.1.0
+ARG MINIFORGE_VERSION=${CONDA_VERSION}-1
 ARG RUNTIMES="all"
 
 # Set a few default environment variables, including `LD_LIBRARY_PATH`
