@@ -72,7 +72,8 @@ jobs:
           virtualenvs-create: false
       - name: Install Dependencies
         run: |
-          poetry install --sync --only dev
+          # poetry install --sync --only dev
+          poetry install --sync
       - name: Test
         run: |
           # tox -e mlserver
