@@ -6,7 +6,7 @@
 
 <!-- Release notes generated using configuration in .github/release.yml at 1.3.3 -->
 
-## What's Changed
+### What's Changed
 
 * Add default LD_LIBRARY_PATH env var by [@adriangonz](https://github.com/adriangonz) in https://github.com/SeldonIO/MLServer/pull/1120
 * Adding cassava tutorial (mlserver + seldon core) by [@edshee](https://github.com/edshee) in https://github.com/SeldonIO/MLServer/pull/1156
@@ -21,7 +21,7 @@
 * Fix small typo in Python API docs by [@krishanbhasin-gc](https://github.com/krishanbhasin-gc)  in https://github.com/SeldonIO/MLServer/pull/1174
 * Fix star import in `mlserver.codecs.*` by [@adriangonz](https://github.com/adriangonz) in https://github.com/SeldonIO/MLServer/pull/1172
 
-## New Contributors
+### New Contributors
 * [@cristiancl25](https://github.com/cristiancl25) made their first contribution in https://github.com/SeldonIO/MLServer/pull/1143
 * [@krishanbhasin-gc](https://github.com/krishanbhasin-gc) made their first contribution in https://github.com/SeldonIO/MLServer/pull/1174
 
