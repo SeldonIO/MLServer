@@ -1,6 +1,35 @@
 # Changelog
 
 
+<a name="1.3.3"></a>
+## [1.3.3](https://github.com/SeldonIO/MLServer/releases/tag/1.3.3) - 05 Jun 2023
+
+<!-- Release notes generated using configuration in .github/release.yml at 1.3.3 -->
+
+## What's Changed
+
+* Add default LD_LIBRARY_PATH env var by [@adriangonz](https://github.com/adriangonz) in https://github.com/SeldonIO/MLServer/pull/1120
+* Adding cassava tutorial (mlserver + seldon core) by [@edshee](https://github.com/edshee) in https://github.com/SeldonIO/MLServer/pull/1156
+* Add docs around converting to / from JSON by [@adriangonz](https://github.com/adriangonz) in https://github.com/SeldonIO/MLServer/pull/1165
+* Document SKLearn available outputs by [@adriangonz](https://github.com/adriangonz) in https://github.com/SeldonIO/MLServer/pull/1167 
+* Fix minor typo in `alibi-explain` tests by [@ascillitoe](https://github.com/ascillitoe) in https://github.com/SeldonIO/MLServer/pull/1170
+* Add support for `.ubj` models and improve XGBoost docs by [@adriangonz](https://github.com/adriangonz) in  https://github.com/SeldonIO/MLServer/pull/1168
+* Fix content type annotations for pandas codecs by [@adriangonz](https://github.com/adriangonz) in  https://github.com/SeldonIO/MLServer/pull/1162
+* Added option to configure the grpc histogram by [@cristiancl25](https://github.com/cristiancl25) in https://github.com/SeldonIO/MLServer/pull/1143
+* Add OS classifiers to project's metadata by [@adriangonz](https://github.com/adriangonz) in https://github.com/SeldonIO/MLServer/pull/1171
+* Don't use `qsize` for parallel worker queue by [@adriangonz](https://github.com/adriangonz) in https://github.com/SeldonIO/MLServer/pull/1169
+* Fix small typo in Python API docs by [@krishanbhasin-gc](https://github.com/krishanbhasin-gc)  in https://github.com/SeldonIO/MLServer/pull/1174
+* Fix star import in `mlserver.codecs.*` by [@adriangonz](https://github.com/adriangonz) in https://github.com/SeldonIO/MLServer/pull/1172
+
+## New Contributors
+* [@cristiancl25](https://github.com/cristiancl25) made their first contribution in https://github.com/SeldonIO/MLServer/pull/1143
+* [@krishanbhasin-gc](https://github.com/krishanbhasin-gc) made their first contribution in https://github.com/SeldonIO/MLServer/pull/1174
+
+**Full Changelog**: https://github.com/SeldonIO/MLServer/compare/1.3.2...1.3.3
+
+[Changes][1.3.3]
+
+
 <a name="1.3.2"></a>
 ## [1.3.2](https://github.com/SeldonIO/MLServer/releases/tag/1.3.2) - 10 May 2023
 
@@ -280,6 +309,7 @@ To learn more about how to use MLServer directly from the MLflow CLI, check out 
 [Changes][1.1.0]
 
 
+[1.3.3]: https://github.com/SeldonIO/MLServer/compare/1.3.2...1.3.3
 [1.3.2]: https://github.com/SeldonIO/MLServer/compare/1.3.1...1.3.2
 [1.3.1]: https://github.com/SeldonIO/MLServer/compare/1.3.0...1.3.1
 [1.3.0]: https://github.com/SeldonIO/MLServer/compare/1.2.4...1.3.0
