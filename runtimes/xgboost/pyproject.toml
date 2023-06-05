@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "mlserver-xgboost"
+version = "1.4.0.dev2"
+description = "XGBoost runtime for MLServer"
+authors = ["Seldon Technologies Ltd. <hello@seldon.io>"]
+license = "Apache 2.0"
+readme = "README.md"
+packages = [{include = "mlserver_xgboost"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+mlserver = "*"
+xgboost = {extras = ["scikit-learn"], version = "*"}
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

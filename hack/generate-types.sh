@@ -21,6 +21,7 @@ _generatePydantic() {
 
   datamodel-codegen \
     --input "${ROOT_FOLDER}/openapi/$apiName.yaml" \
+    --input-file-type openapi \
     --output "${ROOT_FOLDER}/mlserver/types/$apiName.py" \
     --custom-template-dir "${ROOT_FOLDER}/hack/templates" \
     --base-class ".base.BaseModel" \

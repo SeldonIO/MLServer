@@ -23,4 +23,4 @@ start:
 	sphinx-autobuild . ./_build/html
 
 install-dev:
-	pip install -r ./requirements.txt
+	poetry install -C .. --with docs --with all-runtimes --with all-runtimes-dev

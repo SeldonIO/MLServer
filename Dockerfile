@@ -1,19 +1,23 @@
 FROM python:3.10-slim AS wheel-builder
 SHELL ["/bin/bash", "-l", "-c"]
 
+ARG POETRY_VERSION="1.4.2"
+
 COPY ./hack/build-wheels.sh ./hack/build-wheels.sh
 COPY ./mlserver ./mlserver
-COPY ./openapi ./openapi
 COPY ./runtimes ./runtimes
 COPY \
-    setup.py \
-    MANIFEST.in \
+    pyproject.toml \
+    poetry.lock \
     README.md \
     .
 
-# This will build the wheels and place will place them in the
-# /opt/mlserver/dist folder
-RUN ./hack/build-wheels.sh /opt/mlserver/dist
+# Install Poetry, build wheels and export constraints
+RUN pip install poetry==$POETRY_VERSION && \
+    ./hack/build-wheels.sh /opt/mlserver/dist && \
+    poetry export --with all-runtimes \
+        --format constraints.txt \
+        -o /opt/mlserver/dist/constraints.txt
 
 FROM registry.access.redhat.com/ubi9/ubi-minimal
 SHELL ["/bin/bash", "-c"]
@@ -74,7 +78,6 @@ RUN useradd -u 1000 -s /bin/bash mlserver -d $MLSERVER_PATH && \
     chmod -R 776 $MLSERVER_PATH
 
 COPY --from=wheel-builder /opt/mlserver/dist ./dist
-COPY ./requirements/docker.txt ./requirements/docker.txt
 # NOTE: if runtime is "all" we install mlserver-<version>-py3-none-any.whl
 # we have to use this syntax to return the correct file: $(ls ./dist/mlserver-*.whl)
 # NOTE: Temporarily excluding mllib from the main image due to:
@@ -88,7 +91,7 @@ RUN . $CONDA_PATH/etc/profile.d/conda.sh && \
         for _wheel in "./dist/mlserver_"*.whl; do \
             if [[ ! $_wheel == *"mllib"* ]]; then \
                 echo "--> Installing $_wheel..."; \
-                pip install $_wheel; \
+                pip install $_wheel --constraints ./dist/constraints.txt; \
             fi \
         done \
     else \
@@ -96,11 +99,10 @@ RUN . $CONDA_PATH/etc/profile.d/conda.sh && \
             _wheelName=$(echo $_runtime | tr '-' '_'); \
             _wheel="./dist/$_wheelName-"*.whl; \
             echo "--> Installing $_wheel..."; \
-            pip install $_wheel; \
+            pip install $_wheel --constraints ./dist/constraints.txt; \
         done \
     fi && \
-    pip install $(ls "./dist/mlserver-"*.whl) && \
-    pip install -r ./requirements/docker.txt && \
+    pip install $(ls "./dist/mlserver-"*.whl) --constraints ./dist/constraints.txt && \
     rm -f /opt/conda/lib/python3.10/site-packages/spacy/tests/package/requirements.txt && \
     rm -rf /root/.cache/pip
 
