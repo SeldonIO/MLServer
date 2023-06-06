@@ -19,8 +19,8 @@ jobs:
         continue-on-error: true
         with:
           args: --fail-on=upgradable
-          --severity-threshold=high
-          --sarif-file-output=snyk-code.sarif
+            --severity-threshold=high
+            --sarif-file-output=snyk-code.sarif
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       - name: Upload result to GitHub Code Scanning
