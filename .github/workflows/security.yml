@@ -20,6 +20,8 @@ jobs:
         with:
           args: --fail-on=upgradable
             --severity-threshold=high
+            --all-projects
+            --exclude=tests,docs
             --sarif-file-output=snyk-code.sarif
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
@@ -45,8 +47,8 @@ jobs:
         with:
           image: seldonio/mlserver:${{ github.sha }}
           args: --fail-on=upgradable
-            --app-vulns
             --severity-threshold=high
+            --app-vulns
             --file=Dockerfile
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
