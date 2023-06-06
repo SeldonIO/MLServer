@@ -42,10 +42,9 @@ jobs:
           title: Re-generate License Info
           body: "
             # License Change Detected :warning:\n
-            There was a license change detected.\n
             Most likely, this has been triggered due to a licensing change in
-            one of our subdependencies, or the introducing of a new
-            subdependency.\n
-            This automated PR re-generates the licenses to keep them up to
+            one of our subdependencies, or the introduction of a new
+            subdependency.
+            This automated PR will re-generate the licenses to keep them up to
             date."
           reviewers: adriangonz
