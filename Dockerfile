@@ -12,12 +12,17 @@ COPY \
     README.md \
     .
 
-# Install Poetry, build wheels and export constraints
+# Install Poetry, build wheels and export constraints.txt file
+# NOTE: Poetry outputs extras within the constraints, which are not supported
+# by pip:
+# https://github.com/python-poetry/poetry-plugin-export/issues/210
 RUN pip install poetry==$POETRY_VERSION && \
     ./hack/build-wheels.sh /opt/mlserver/dist && \
     poetry export --with all-runtimes \
+        --without-hashes \
         --format constraints.txt \
-        -o /opt/mlserver/dist/constraints.txt
+        -o /opt/mlserver/dist/constraints.txt && \
+    sed -i 's/\[.*\]//g' /opt/mlserver/dist/constraints.txt
 
 FROM registry.access.redhat.com/ubi9/ubi-minimal
 SHELL ["/bin/bash", "-c"]
@@ -91,7 +96,7 @@ RUN . $CONDA_PATH/etc/profile.d/conda.sh && \
         for _wheel in "./dist/mlserver_"*.whl; do \
             if [[ ! $_wheel == *"mllib"* ]]; then \
                 echo "--> Installing $_wheel..."; \
-                pip install $_wheel --constraints ./dist/constraints.txt; \
+                pip install $_wheel --constraint ./dist/constraints.txt; \
             fi \
         done \
     else \
@@ -99,10 +104,10 @@ RUN . $CONDA_PATH/etc/profile.d/conda.sh && \
             _wheelName=$(echo $_runtime | tr '-' '_'); \
             _wheel="./dist/$_wheelName-"*.whl; \
             echo "--> Installing $_wheel..."; \
-            pip install $_wheel --constraints ./dist/constraints.txt; \
+            pip install $_wheel --constraint ./dist/constraints.txt; \
         done \
     fi && \
-    pip install $(ls "./dist/mlserver-"*.whl) --constraints ./dist/constraints.txt && \
+    pip install $(ls "./dist/mlserver-"*.whl) --constraint ./dist/constraints.txt && \
     rm -f /opt/conda/lib/python3.10/site-packages/spacy/tests/package/requirements.txt && \
     rm -rf /root/.cache/pip
 

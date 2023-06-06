@@ -32,10 +32,11 @@ _main() {
   if ! [[ "$_outputPath" = /* ]]; then
     _outputPath="$PWD/$_outputPath"
   fi
+  mkdir -p $_outputPath
 
   # Build MLServer
   echo "---> Building MLServer wheel"
-  poetry build
+  _buildWheel . $_outputPath
 
   for _runtime in "$ROOT_FOLDER/runtimes/"*; do
     echo "---> Building MLServer runtime: '$_runtime'"
