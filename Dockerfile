@@ -91,7 +91,7 @@ RUN . $CONDA_PATH/etc/profile.d/conda.sh && \
         for _wheel in "./dist/mlserver_"*.whl; do \
             if [[ ! $_wheel == *"mllib"* ]]; then \
                 echo "--> Installing $_wheel..."; \
-                pip install $_wheel --constraints ./dist/constraints.txt; \
+                pip install $_wheel --constraint ./dist/constraints.txt; \
             fi \
         done \
     else \
@@ -99,10 +99,10 @@ RUN . $CONDA_PATH/etc/profile.d/conda.sh && \
             _wheelName=$(echo $_runtime | tr '-' '_'); \
             _wheel="./dist/$_wheelName-"*.whl; \
             echo "--> Installing $_wheel..."; \
-            pip install $_wheel --constraints ./dist/constraints.txt; \
+            pip install $_wheel --constraint ./dist/constraints.txt; \
         done \
     fi && \
-    pip install $(ls "./dist/mlserver-"*.whl) --constraints ./dist/constraints.txt && \
+    pip install $(ls "./dist/mlserver-"*.whl) --constraint ./dist/constraints.txt && \
     rm -f /opt/conda/lib/python3.10/site-packages/spacy/tests/package/requirements.txt && \
     rm -rf /root/.cache/pip
 
