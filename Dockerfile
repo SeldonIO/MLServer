@@ -12,12 +12,17 @@ COPY \
     README.md \
     .
 
-# Install Poetry, build wheels and export constraints
+# Install Poetry, build wheels and export constraints.txt file
+# NOTE: Poetry outputs extras within the constraints, which are not supported
+# by pip:
+# https://github.com/python-poetry/poetry-plugin-export/issues/210
 RUN pip install poetry==$POETRY_VERSION && \
     ./hack/build-wheels.sh /opt/mlserver/dist && \
     poetry export --with all-runtimes \
+        --without-hashes \
         --format constraints.txt \
-        -o /opt/mlserver/dist/constraints.txt
+        -o /opt/mlserver/dist/constraints.txt && \
+    sed -i 's/\[.*\]//g' /opt/mlserver/dist/constraints.txt
 
 FROM registry.access.redhat.com/ubi9/ubi-minimal
 SHELL ["/bin/bash", "-c"]
