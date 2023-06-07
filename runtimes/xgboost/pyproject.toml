@@ -3,7 +3,7 @@ name = "mlserver-xgboost"
 version = "1.4.0.dev2"
 description = "XGBoost runtime for MLServer"
 authors = ["Seldon Technologies Ltd. <hello@seldon.io>"]
-license = "Apache 2.0"
+license = "Apache-2.0"
 readme = "README.md"
 packages = [{include = "mlserver_xgboost"}]
 

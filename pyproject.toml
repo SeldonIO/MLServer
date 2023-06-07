@@ -3,7 +3,7 @@ name = "mlserver"
 version = "1.4.0.dev2"
 description = "MLServer"
 authors = ["Seldon Technologies Ltd. <hello@seldon.io>"]
-license = "Apache 2.0"
+license = "Apache-2.0"
 readme = "README.md"
 classifiers = [
     "Operating System :: POSIX",
