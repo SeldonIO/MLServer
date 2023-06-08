@@ -55,7 +55,7 @@ def custom_runtime_server(
         user=random_user_id,
     )
 
-    yield container, f"127.0.0.1:{host_http_port}", f"127.0.0.1:{host_grpc_port}"
+    yield f"127.0.0.1:{host_http_port}", f"127.0.0.1:{host_grpc_port}"
 
     container.remove(force=True)
 
@@ -75,13 +75,9 @@ async def test_infer_custom_runtime(
     custom_runtime_server: Tuple[str, str],
     inference_request: InferenceRequest,
 ):
-    container, http_server, _ = custom_runtime_server
+    http_server, _ = custom_runtime_server
     rest_client = RESTClient(http_server)
-    try:
-        await rest_client.wait_until_ready()
-    except Exception:
-        logs = container.logs()
-        print(logs)
+    await rest_client.wait_until_ready()
 
     loaded_models = await rest_client.list_models()
     assert len(loaded_models) == 1

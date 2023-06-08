@@ -32,18 +32,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # os: [ubuntu-latest, macos-latest]
-        os: [macos-latest]
+        os: [ubuntu-latest, macos-latest]
         # NOTE: There's no pre-built `grpcio` wheel for Python 3.11 yet
         # https://github.com/grpc/grpc/issues/32454
         python-version: ["3.8", "3.9", "3.10"]
         is-pr:
           - ${{ github.event_name == 'pull_request' }}
-        # exclude:
-        # # MacOS tests take a lot of time, so we will run them only on merge
-        # # From https://github.com/orgs/community/discussions/26253
-        # - is-pr: true
-        # os: macos-latest
+        exclude:
+          # MacOS tests take a lot of time, so we will run them only on merge
+          # From https://github.com/orgs/community/discussions/26253
+          - is-pr: true
+            os: macos-latest
     runs-on: ${{ matrix.os }}
     steps:
       - name: Setup docker (missing on MacOS)
@@ -56,6 +55,7 @@ jobs:
           ln -sfn $(which docker-buildx) $HOME/.docker/cli-plugins/docker-buildx
           colima start --memory 5
           sudo ln -sf $HOME/.colima/default/docker.sock /var/run/docker.sock
+
       - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
@@ -71,16 +71,12 @@ jobs:
           virtualenvs-create: false
       - name: Install Dependencies
         run: |
-          # poetry install --sync --only dev
-          poetry install --sync
+          poetry install --sync --only dev
       - name: Test
         run: |
-          # tox -e mlserver
-          python -m pytest ./tests/cli/test_build.py
+          tox -e mlserver
 
   runtimes:
-    # TODO: REMEMBER TO REMOVE IT!!
-    if: github.event_name == 'push'
     strategy:
       fail-fast: false
       matrix:
