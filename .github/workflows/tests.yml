@@ -53,7 +53,7 @@ jobs:
           brew install docker docker-buildx
           mkdir -p $HOME/.docker/cli-plugins
           ln -sfn $(which docker-buildx) $HOME/.docker/cli-plugins/docker-buildx
-          colima start --memory 4
+          colima start --memory 5
           sudo ln -sf $HOME/.colima/default/docker.sock /var/run/docker.sock
 
       - uses: actions/checkout@v3
