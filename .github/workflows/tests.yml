@@ -50,7 +50,7 @@ jobs:
         run: |
           # From https://github.com/actions/runner-images/issues/17#issuecomment-1537238473
           # From https://github.com/abiosoft/colima/discussions/273#discussioncomment-4959736
-          # NOTE: User the `slirp` driver rather than the default to avoid
+          # NOTE: Use the `slirp` driver rather than the default to avoid
           # random connection errors.
           # From https://github.com/abiosoft/colima/issues/577
           brew install docker docker-buildx
@@ -120,4 +120,56 @@ jobs:
           poetry install --sync --only dev
       - name: Test
         run: |
-          tox -c ./runtimes/${{ matrix.tox-environment }}
+          tox -c ./run
+
+  all-runtimes:
+    if: github.event_name == 'push'
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python-version: ["3.8", "3.9", "3.10"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Setup docker (missing on MacOS)
+        if: runner.os == 'macos'
+        run: |
+          # From https://github.com/actions/runner-images/issues/17#issuecomment-1537238473
+          # From https://github.com/abiosoft/colima/discussions/273#discussioncomment-4959736
+          # NOTE: Use the `slirp` driver rather than the default to avoid
+          # random connection errors.
+          # From https://github.com/abiosoft/colima/issues/577
+          brew install docker docker-buildx
+          mkdir -p $HOME/.docker/cli-plugins
+          ln -sfn $(which docker-buildx) $HOME/.docker/cli-plugins/docker-buildx
+          colima start --memory 5 --network-driver slirp
+          sudo ln -sf $HOME/.colima/default/docker.sock /var/run/docker.sock
+      - name: Downgrade OpenMP (in MacOS)
+        if: runner.os == 'macos'
+        run: |
+          # Recent versions of OpenMP cause segfaults in MacOS when training
+          # LightGBM / XGBoost models (but only when Torch is present)
+          # https://github.com/microsoft/LightGBM/issues/4229
+          # https://github.com/autogluon/autogluon/issues/1442
+          wget https://raw.githubusercontent.com/Homebrew/homebrew-core/fb8323f2b170bd4ae97e1bac9bf3e2983af3fdb0/Formula/libomp.rb
+          brew unlink libomp
+          brew install libomp.rb
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          auto-activate-base: false
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: false
+      - name: Install Dependencies
+        run: |
+          poetry install --sync --only dev
+      - name: Test
+        run: |
+          tox -e all-runtimestimes/${{ matrix.tox-environment }}
