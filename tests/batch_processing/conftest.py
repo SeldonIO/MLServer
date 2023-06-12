@@ -10,6 +10,11 @@ def single_input():
 
 
 @pytest.fixture()
+def bytes_input():
+    return os.path.join(TESTDATA_PATH, "batch_processing", "bytes.txt")
+
+
+@pytest.fixture()
 def invalid_input():
     return os.path.join(TESTDATA_PATH, "batch_processing", "invalid.txt")
 

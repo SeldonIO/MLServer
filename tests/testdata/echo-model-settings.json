@@ -1,0 +1,7 @@
+{
+    "name": "echo-model",
+
+    "implementation": "tests.fixtures.EchoModel",
+    "versions": ["echo-model/v1.2.3"],
+    "platform": "mlserver"
+}
