@@ -5,7 +5,7 @@ import pytest
 
 from mlserver.batch_processing import process_batch
 from mlserver.settings import Settings
-
+from mlserver import MLModel
 
 from ..utils import RESTClient
 
@@ -55,11 +55,12 @@ async def test_single(
 
 async def test_bytes(
     tmp_path: str,
-    echo_rest_client: RESTClient,
+    echo_model: MLModel,
+    rest_client: RESTClient,
     settings: Settings,
     bytes_input: str,
 ):
-    await echo_rest_client.wait_until_ready()
+    await rest_client.wait_until_ready()
     model_name = "echo-model"
     url = f"{settings.host}:{settings.http_port}"
     output_file = os.path.join(tmp_path, "output.txt")

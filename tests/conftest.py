@@ -30,7 +30,6 @@ from .utils import RESTClient, get_available_ports, _pack, _get_tarball_name
 TESTS_PATH = os.path.dirname(__file__)
 TESTDATA_PATH = os.path.join(TESTS_PATH, "testdata")
 TESTDATA_CACHE_PATH = os.path.join(TESTDATA_PATH, ".cache")
-ECHO_MODEL_SETTINGS_FILENAME = "echo-model-settings.json"
 
 
 def assert_not_called_with(self, *args, **kwargs):
@@ -120,12 +119,6 @@ def event_loop():
 @pytest.fixture
 def sum_model_settings() -> ModelSettings:
     model_settings_path = os.path.join(TESTDATA_PATH, DEFAULT_MODEL_SETTINGS_FILENAME)
-    return ModelSettings.parse_file(model_settings_path)
-
-
-@pytest.fixture
-def echo_model_settings() -> ModelSettings:
-    model_settings_path = os.path.join(TESTDATA_PATH, ECHO_MODEL_SETTINGS_FILENAME)
     return ModelSettings.parse_file(model_settings_path)
 
 
@@ -302,41 +295,7 @@ async def mlserver(
 
 
 @pytest.fixture
-async def echo_mlserver(
-    _mlserver_settings: Settings,
-    echo_model_settings: ModelSettings,
-    prometheus_registry: CollectorRegistry,
-):
-    server = MLServer(_mlserver_settings)
-
-    # Start server without blocking, and cancel afterwards
-    server_task = asyncio.create_task(server.start())
-
-    # Load sample model
-    await server._model_registry.load(echo_model_settings)
-
-    yield server
-
-    await server.stop()
-    await server_task
-
-    pattern = os.path.join(_mlserver_settings.metrics_dir, "*.db")
-    prom_files = glob.glob(pattern)
-    assert not prom_files
-
-
-@pytest.fixture
 async def rest_client(mlserver: MLServer, settings: Settings):
-    http_server = f"{settings.host}:{settings.http_port}"
-    client = RESTClient(http_server)
-
-    yield client
-
-    await client.close()
-
-
-@pytest.fixture
-async def echo_rest_client(echo_mlserver: MLServer, settings: Settings):
     http_server = f"{settings.host}:{settings.http_port}"
     client = RESTClient(http_server)
 
