@@ -4,7 +4,7 @@ import pandas as pd
 
 from typing import Any
 
-from mlserver.codecs import NumpyCodec, PandasCodec
+from mlserver.codecs import NumpyCodec, PandasCodec, StringCodec
 from mlserver.types import (
     InferenceRequest,
     Parameters,
@@ -16,6 +16,7 @@ from mlflow.pyfunc import PyFuncModel
 from mlflow.models.signature import ModelSignature
 
 from mlserver_mlflow import MLflowRuntime
+from mlserver_mlflow.codecs import TensorDictCodec
 
 
 def test_load(runtime: MLflowRuntime):
@@ -62,13 +63,14 @@ async def test_predict_pytorch(runtime_pytorch: MLflowRuntime):
             ["foo"],
             InferenceResponse(
                 model_name="mlflow-model",
+                parameters=Parameters(content_type=StringCodec.ContentType),
                 outputs=[
                     ResponseOutput(
                         name="output-1",
                         datatype="BYTES",
                         shape=[1, 1],
                         data=[b"foo"],
-                        parameters=Parameters(content_type="str"),
+                        parameters=Parameters(content_type=StringCodec.ContentType),
                     )
                 ],
             ),
@@ -77,12 +79,14 @@ async def test_predict_pytorch(runtime_pytorch: MLflowRuntime):
             np.array([[1, 2], [3, 4]], dtype=np.float32),
             InferenceResponse(
                 model_name="mlflow-model",
+                parameters=Parameters(content_type=NumpyCodec.ContentType),
                 outputs=[
                     ResponseOutput(
                         name="output-1",
                         datatype="FP32",
                         shape=[2, 2],
                         data=[1, 2, 3, 4],
+                        parameters=Parameters(content_type=NumpyCodec.ContentType),
                     )
                 ],
             ),
@@ -91,12 +95,21 @@ async def test_predict_pytorch(runtime_pytorch: MLflowRuntime):
             {"foo": np.array([1, 2, 3]), "bar": np.array([1.2])},
             InferenceResponse(
                 model_name="mlflow-model",
+                parameters=Parameters(content_type=TensorDictCodec.ContentType),
                 outputs=[
                     ResponseOutput(
-                        name="foo", datatype="INT64", shape=[3, 1], data=[1, 2, 3]
+                        name="foo",
+                        datatype="INT64",
+                        shape=[3, 1],
+                        data=[1, 2, 3],
+                        parameters=Parameters(content_type=NumpyCodec.ContentType),
                     ),
                     ResponseOutput(
-                        name="bar", datatype="FP64", shape=[1, 1], data=[1.2]
+                        name="bar",
+                        datatype="FP64",
+                        shape=[1, 1],
+                        data=[1.2],
+                        parameters=Parameters(content_type=NumpyCodec.ContentType),
                     ),
                 ],
             ),
@@ -105,15 +118,21 @@ async def test_predict_pytorch(runtime_pytorch: MLflowRuntime):
             {"foo": np.array([1, 2, 3]), "bar": np.array(["hello", "world"])},
             InferenceResponse(
                 model_name="mlflow-model",
+                parameters=Parameters(content_type=TensorDictCodec.ContentType),
                 outputs=[
                     ResponseOutput(
-                        name="foo", datatype="INT64", shape=[3, 1], data=[1, 2, 3]
+                        name="foo",
+                        datatype="INT64",
+                        shape=[3, 1],
+                        data=[1, 2, 3],
+                        parameters=Parameters(content_type=NumpyCodec.ContentType),
                     ),
                     ResponseOutput(
                         name="bar",
                         datatype="BYTES",
                         shape=[2, 1],
                         data=[b"hello", b"world"],
+                        parameters=Parameters(content_type=NumpyCodec.ContentType),
                     ),
                 ],
             ),
@@ -122,15 +141,20 @@ async def test_predict_pytorch(runtime_pytorch: MLflowRuntime):
             pd.DataFrame({"foo": np.array([1, 2, 3]), "bar": ["A", "B", "C"]}),
             InferenceResponse(
                 model_name="mlflow-model",
+                parameters=Parameters(content_type=PandasCodec.ContentType),
                 outputs=[
                     ResponseOutput(
-                        name="foo", datatype="INT64", shape=[3, 1], data=[1, 2, 3]
+                        name="foo",
+                        datatype="INT64",
+                        shape=[3, 1],
+                        data=[1, 2, 3],
                     ),
                     ResponseOutput(
                         name="bar",
                         datatype="BYTES",
                         shape=[3, 1],
                         data=[b"A", b"B", b"C"],
+                        parameters=Parameters(content_type=StringCodec.ContentType),
                     ),
                 ],
             ),

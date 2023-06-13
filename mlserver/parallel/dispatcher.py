@@ -1,12 +1,13 @@
 import asyncio
 
-from typing import Dict, List
+from typing import Dict, List, Tuple
 from itertools import cycle
 from multiprocessing import Queue
 from concurrent.futures import ThreadPoolExecutor
 from asyncio import Future
 
 from ..utils import schedule_with_callback, generate_uuid
+from ..metrics import REGISTRY
 
 from .worker import Worker
 from .logging import logger
@@ -17,6 +18,9 @@ from .messages import (
     ModelRequestMessage,
     ModelResponseMessage,
 )
+from prometheus_client import Histogram
+
+QUEUE_METRIC_NAME = "parallel_request_queue"
 
 
 class Dispatcher:
@@ -28,6 +32,17 @@ class Dispatcher:
         self._process_responses_task = None
         self._executor = ThreadPoolExecutor()
         self._async_responses: Dict[str, Future[ModelResponseMessage]] = {}
+        self.parallel_request_queue_size = self._get_or_create_metric()
+
+    def _get_or_create_metric(self) -> Histogram:
+        if QUEUE_METRIC_NAME in REGISTRY:
+            return REGISTRY[QUEUE_METRIC_NAME]  # type: ignore
+
+        return Histogram(
+            QUEUE_METRIC_NAME,
+            "counter of request queue size for workers",
+            registry=REGISTRY,
+        )
 
     def start(self):
         self._active = True
@@ -79,18 +94,18 @@ class Dispatcher:
     async def dispatch_request(
         self, request_message: ModelRequestMessage
     ) -> ModelResponseMessage:
-        worker = self._get_worker()
+        worker, wpid = self._get_worker()
         worker.send_request(request_message)
 
         return await self._dispatch(request_message)
 
-    def _get_worker(self) -> Worker:
+    def _get_worker(self) -> Tuple[Worker, int]:
         """
         Get next available worker.
         By default, this is just a round-robin through all the workers.
         """
         worker_pid = next(self._workers_round_robin)
-        return self._workers[worker_pid]
+        return self._workers[worker_pid], worker_pid
 
     async def dispatch_update(
         self, model_update: ModelUpdateMessage
@@ -118,6 +133,8 @@ class Dispatcher:
         internal_id = message.id
         self._async_responses[internal_id] = async_response
 
+        # Monitor current in-flight requests
+        self.parallel_request_queue_size.observe(len(self._async_responses))
         return await self._wait_response(internal_id)
 
     async def _wait_response(self, internal_id: str) -> ModelResponseMessage:
@@ -128,8 +145,6 @@ class Dispatcher:
             return inference_response
         finally:
             del self._async_responses[internal_id]
-
-        return await async_response
 
     async def stop(self):
         self._executor.shutdown()

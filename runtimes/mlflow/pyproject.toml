@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "mlserver-mlflow"
+version = "1.4.0.dev2"
+description = "MLflow runtime for MLServer"
+authors = ["Seldon Technologies Ltd. <hello@seldon.io>"]
+license = "Apache-2.0"
+readme = "README.md"
+packages = [{include = "mlserver_mlflow"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+mlserver = "*"
+mlflow = "*"
+
+
+[tool.poetry.group.dev.dependencies]
+torch = "1.13.1"
+pytorch-lightning = "1.8.0.post1"
+torchmetrics = "0.10.2"
+torchvision = "0.14.1"
+mlflow = "2.3.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

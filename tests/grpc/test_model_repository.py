@@ -83,7 +83,9 @@ async def test_model_repository_unload(
 
 
 async def test_model_repository_load(
-    inference_service_stub, model_repository_service_stub, sum_model_settings
+    inference_service_stub,
+    model_repository_service_stub,
+    sum_model_settings,
 ):
     await model_repository_service_stub.RepositoryModelUnload(
         mr_pb.RepositoryModelLoadRequest(model_name=sum_model_settings.name)
@@ -100,7 +102,9 @@ async def test_model_repository_load(
 
 
 async def test_model_repository_load_error(
-    inference_service_stub, model_repository_service_stub, sum_model_settings
+    inference_service_stub,
+    model_repository_service_stub,
+    sum_model_settings,
 ):
     with pytest.raises(grpc.RpcError) as err:
         load_request = mr_pb.RepositoryModelLoadRequest(model_name="my-model")

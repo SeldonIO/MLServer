@@ -1,6 +1,14 @@
+import asyncio
 import aiohttp
 import socket
+import yaml
 
+import sys
+import os
+
+from itertools import filterfalse
+
+from asyncio import subprocess
 from typing import List
 
 from aiohttp.client_exceptions import (
@@ -10,6 +18,7 @@ from aiohttp.client_exceptions import (
 )
 from aiohttp_retry import RetryClient, ExponentialRetry
 
+from mlserver.utils import generate_uuid
 from mlserver.types import RepositoryIndexResponse, InferenceRequest, InferenceResponse
 
 
@@ -28,6 +37,76 @@ def get_available_ports(n: int = 1) -> List[int]:
     return list(ports)
 
 
+async def _run(cmd):
+    process = await asyncio.create_subprocess_shell(
+        cmd,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+
+    return_code = await process.wait()
+    if return_code != 0:
+        raise Exception(f"Command '{cmd}' failed with code '{return_code}'")
+
+
+def _read_env(env_yml) -> dict:
+    with open(env_yml, "r") as env_file:
+        return yaml.safe_load(env_file.read())
+
+
+def _write_env(env: dict, env_yml: str):
+    with open(env_yml, "w") as env_file:
+        env_file.write(yaml.dump(env))
+
+
+def _is_python(dep: str) -> bool:
+    return "python" in dep
+
+
+def _inject_python_version(env_yml: str, tarball_path: str) -> str:
+    """
+    To ensure the same environment.yml fixture we've got works across
+    environments, we inject dynamically the current Python version.
+    That way, we ensure tests using the tarball to load a dynamic custom
+    environment are using the same Python version used to run the tests.
+    """
+    env = _read_env(env_yml)
+
+    v = sys.version_info
+    without_python = list(filterfalse(_is_python, env["dependencies"]))
+    with_env_python = [f"python == {v.major}.{v.minor}", *without_python]
+    env["dependencies"] = with_env_python
+
+    dst_folder = os.path.dirname(tarball_path)
+    new_env_yml = os.path.join(dst_folder, f"environment-py{v.major}{v.minor}.yml")
+    _write_env(env, new_env_yml)
+    return new_env_yml
+
+
+async def _pack(env_yml: str, tarball_path: str):
+    uuid = generate_uuid()
+    fixed_env_yml = _inject_python_version(env_yml, tarball_path)
+    env_name = f"mlserver-{uuid}"
+    try:
+        await _run(f"conda env create -n {env_name} -f {fixed_env_yml}")
+        # NOTE: We exclude Python's symlink into 3.1 for >=3.10
+        # See https://github.com/conda/conda-pack/issues/244#issuecomment-1361094094
+        await _run(
+            "conda-pack"
+            " --ignore-missing-files "
+            " --exclude lib/python3.1"
+            f" -n {env_name}"
+            f" -o {tarball_path}"
+        )
+    finally:
+        await _run(f"conda env remove -n {env_name}")
+
+
+def _get_tarball_name() -> str:
+    v = sys.version_info
+    return f"environment-py{v.major}{v.minor}.tar.gz"
+
+
 class RESTClient:
     def __init__(self, http_server: str):
         self._session = aiohttp.ClientSession(raise_for_status=True)
@@ -41,7 +120,12 @@ class RESTClient:
             attempts=10,
             start_timeout=0.5,
             statuses=[400],
-            exceptions={ClientConnectorError, ClientOSError, ServerDisconnectedError},
+            exceptions={
+                ClientConnectorError,
+                ClientOSError,
+                ServerDisconnectedError,
+                ConnectionRefusedError,
+            },
         )
         retry_client = RetryClient(raise_for_status=True, retry_options=retry_options)
 

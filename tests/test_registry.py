@@ -67,6 +67,7 @@ async def test_get_model_not_found(model_registry, name, version):
 )
 async def test_get_model(model_registry, sum_model, name, version):
     found_model = await model_registry.get_model(name, version)
+    assert found_model.ready
     assert found_model == sum_model
 
 
@@ -76,6 +77,8 @@ async def test_model_hooks(
     sum_model_settings.name = "sum-model-2"
 
     sum_model = await model_registry.load(sum_model_settings)
+    assert sum_model.ready
+
     for callback in model_registry._on_model_load:
         callback.assert_called_once_with(sum_model)
 
@@ -93,6 +96,7 @@ async def test_reload_model(
     reloaded_model = await model_registry.get_model(sum_model_settings.name)
     assert new_model != existing_model
     assert new_model == reloaded_model
+    assert reloaded_model.ready
 
     for callback in model_registry._on_model_load:
         callback.assert_not_called()
@@ -114,6 +118,7 @@ async def test_load_multi_version(
     new_model_settings = sum_model_settings.copy(deep=True)
     new_model_settings.parameters.version = "v2.0.0"
     new_model = await model_registry.load(new_model_settings)
+    assert new_model.ready
 
     # Ensure latest model is now the default one
     default_model = await model_registry.get_model(sum_model_settings.name)

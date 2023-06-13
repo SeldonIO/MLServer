@@ -9,6 +9,7 @@ from .errors import ModelNotFound
 from .logging import logger
 from .settings import ModelSettings
 
+ModelInitialiser = Callable[[ModelSettings], MLModel]
 ModelRegistryHook = Callable[[MLModel], Awaitable[MLModel]]
 ModelReloadHook = Callable[[MLModel, MLModel], Awaitable[MLModel]]
 
@@ -46,6 +47,11 @@ def _is_newer(a: MLModel, b: MLModel) -> int:
             return 0
 
 
+def model_initialiser(model_settings: ModelSettings) -> MLModel:
+    model_class = model_settings.implementation
+    return model_class(model_settings)  # type: ignore
+
+
 class SingleModelRegistry:
     """
     Registry for a single model with multiple versions.
@@ -57,6 +63,7 @@ class SingleModelRegistry:
         on_model_load: List[ModelRegistryHook] = [],
         on_model_reload: List[ModelReloadHook] = [],
         on_model_unload: List[ModelRegistryHook] = [],
+        model_initialiser: ModelInitialiser = model_initialiser,
     ):
         self._versions: Dict[str, MLModel] = {}
         self._default: Optional[MLModel] = None
@@ -65,6 +72,7 @@ class SingleModelRegistry:
         self._on_model_load = on_model_load
         self._on_model_reload = on_model_reload
         self._on_model_unload = on_model_unload
+        self._model_initialiser = model_initialiser
 
     @property
     def default(self) -> Optional[MLModel]:
@@ -132,8 +140,7 @@ class SingleModelRegistry:
         previous_version = _get_version(model_settings)
         previous_loaded_model = self._find_model(previous_version)
 
-        model_class = model_settings.implementation
-        new_model = model_class(model_settings)  # type: ignore
+        new_model = self._model_initialiser(model_settings)
 
         if previous_loaded_model:
             await self._reload_model(previous_loaded_model, new_model)
@@ -155,7 +162,7 @@ class SingleModelRegistry:
 
             # Register model again to ensure we save version modified by hooks
             self._register(model)
-            await model.load()
+            model.ready = await model.load()
 
             logger.info(f"Loaded model '{model.name}' succesfully.")
         except Exception:
@@ -173,7 +180,7 @@ class SingleModelRegistry:
         # Loading the model before unloading the old one - this will ensure
         # that at least one is available (sort of mimicking a rolling
         # deployment)
-        await new_model.load()
+        new_model.ready = await new_model.load()
         self._register(new_model)
 
         if old_model == self.default:
@@ -265,11 +272,13 @@ class MultiModelRegistry:
         on_model_load: List[ModelRegistryHook] = [],
         on_model_reload: List[ModelReloadHook] = [],
         on_model_unload: List[ModelRegistryHook] = [],
+        model_initialiser: ModelInitialiser = model_initialiser,
     ):
         self._models: Dict[str, SingleModelRegistry] = {}
         self._on_model_load = on_model_load
         self._on_model_reload = on_model_reload
         self._on_model_unload = on_model_unload
+        self._model_initialiser = model_initialiser
 
     async def load(self, model_settings: ModelSettings) -> MLModel:
         if model_settings.name not in self._models:
@@ -278,6 +287,7 @@ class MultiModelRegistry:
                 on_model_load=self._on_model_load,
                 on_model_reload=self._on_model_reload,
                 on_model_unload=self._on_model_unload,
+                model_initialiser=self._model_initialiser,
             )
 
         return await self._models[model_settings.name].load(model_settings)

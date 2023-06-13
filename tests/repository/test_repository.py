@@ -1,5 +1,4 @@
 import os
-import json
 import pytest
 
 from mlserver.repository import (
@@ -8,7 +7,6 @@ from mlserver.repository import (
     DEFAULT_MODEL_SETTINGS_FILENAME,
 )
 from mlserver.settings import ModelSettings, ENV_PREFIX_MODEL_SETTINGS
-from mlserver.utils import get_import_path
 
 
 @pytest.fixture
@@ -32,11 +30,8 @@ def multi_model_folder(model_folder: str, sum_model_settings: ModelSettings) -> 
             model_version_folder, DEFAULT_MODEL_SETTINGS_FILENAME
         )
         with open(model_settings_path, "w") as f:
-            settings_dict = sum_model_settings.dict()
-            settings_dict["implementation"] = get_import_path(
-                sum_model_settings.implementation
-            )
-            f.write(json.dumps(settings_dict))
+            settings_json = sum_model_settings.json()
+            f.write(settings_json)
 
     return model_folder
 
@@ -94,7 +89,7 @@ async def test_list_fallback(
     )
     monkeypatch.setenv(
         f"{ENV_PREFIX_MODEL_SETTINGS}IMPLEMENTATION",
-        get_import_path(sum_model_settings.implementation),  # type: ignore
+        sum_model_settings.implementation_,  # type: ignore
     )
 
     model_settings_path = os.path.join(model_folder, DEFAULT_MODEL_SETTINGS_FILENAME)

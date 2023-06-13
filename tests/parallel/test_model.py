@@ -5,8 +5,18 @@ from mlserver.handlers.custom import get_custom_handlers
 from mlserver.types import InferenceRequest, MetadataModelResponse
 from mlserver.model import MLModel
 from mlserver.settings import ModelSettings
+from mlserver.parallel.pool import InferencePool
 
 from ..fixtures import ErrorModel
+
+
+@pytest.fixture
+async def sum_model(inference_pool: InferencePool, sum_model: MLModel) -> MLModel:
+    parallel_model = await inference_pool.load_model(sum_model)
+
+    yield parallel_model
+
+    await inference_pool.unload_model(sum_model)
 
 
 async def test_predict(

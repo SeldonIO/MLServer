@@ -17,12 +17,12 @@ _buildWheel() {
   local _outputPath=$2
   local _currentDir=$PWD
 
-  # Python really expects the `setup.py` to be on the current folder, so we'll
-  # move into the source folder and then go back again.
+  # Poetry doesn't let us send the output to a separate folder so we'll `cd`
+  # into the folder and them move the wheels out
+  # https://github.com/python-poetry/poetry/issues/3586
   pushd $_srcPath
-  python setup.py \
-    sdist -d $_outputPath \
-    bdist_wheel -d $_outputPath
+  poetry build
+  cp ./dist/* $_outputPath
   popd
 }
 
@@ -32,10 +32,11 @@ _main() {
   if ! [[ "$_outputPath" = /* ]]; then
     _outputPath="$PWD/$_outputPath"
   fi
+  mkdir -p $_outputPath
 
   # Build MLServer
   echo "---> Building MLServer wheel"
-  _buildWheel $ROOT_FOLDER $_outputPath
+  _buildWheel . $_outputPath
 
   for _runtime in "$ROOT_FOLDER/runtimes/"*; do
     echo "---> Building MLServer runtime: '$_runtime'"

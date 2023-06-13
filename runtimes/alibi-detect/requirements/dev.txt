@@ -1,0 +1,2 @@
+# Force tests to use TF >=2.12 (this will match the Docker image environment)
+tensorflow>=2.12.0

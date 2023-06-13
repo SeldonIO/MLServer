@@ -1,10 +1,12 @@
 import os
 import sys
 import pytest
+import json
 
 from mlserver.settings import CORSSettings, Settings, ModelSettings, ModelParameters
 from mlserver.repository import DEFAULT_MODEL_SETTINGS_FILENAME
-from .conftest import TESTDATA_PATH
+
+from .conftest import TESTDATA_PATH, TESTS_PATH
 
 
 def test_settings_from_env(monkeypatch):
@@ -58,9 +60,9 @@ def test_model_settings_from_env(monkeypatch):
         ({"name": "foo", "implementation": "tests.fixtures.SumModel"}),
         (
             {
-                "_source": os.path.join(TESTDATA_PATH, DEFAULT_MODEL_SETTINGS_FILENAME),
+                "_source": os.path.join(TESTS_PATH, DEFAULT_MODEL_SETTINGS_FILENAME),
                 "name": "foo",
-                "implementation": "models.SumModel",
+                "implementation": "fixtures.SumModel",
             }
         ),
     ],
@@ -72,3 +74,21 @@ def test_model_settings_parse_obj(obj: dict):
 
     assert pre_sys_path == post_sys_path
     assert model_settings.implementation.__name__ == "SumModel"
+
+
+def test_model_settings_serialisation():
+    # Module may have been reloaded in a diff test, so let's re-import it
+    from .fixtures import SumModel
+
+    expected = "tests.fixtures.SumModel"
+    model_settings = ModelSettings(name="foo", implementation=SumModel)
+
+    assert model_settings.implementation == SumModel
+    assert model_settings.implementation_ == expected
+
+    as_dict = model_settings.dict()
+    as_dict["implementation"] == expected
+
+    as_json = model_settings.json()
+    as_dict = json.loads(as_json)
+    as_dict["implementation"] == expected

@@ -14,22 +14,22 @@ walks through the process of writing a custom runtime.
 
 MLServer is designed as an easy-to-extend framework, encouraging users to write
 their own custom runtimes easily.
-The starting point for this is the `mlserver.MLModel` abstract class, whose
-main methods are:
+The starting point for this is the {class}`MLModel <mlserver.MLModel>`
+abstract class, whose main methods are:
 
-- `load(self) -> bool`:
+- {func}`load() <mlserver.MLModel.load>`:
   Responsible for loading any artifacts related to a model (e.g. model
   weights, pickle files, etc.).
-- `predict(self, payload: InferenceRequest) -> InferenceResponse`:
+- {func}`predict() <mlserver.MLModel.predict>`:
   Responsible for using a model to perform inference on an incoming data point.
 
 Therefore, the _"one-line version"_ of how to write a custom runtime is to
-write a custom class extending from `mlserver.MLModel`, and then overriding
-those methods with your custom logic.
+write a custom class extending from {class}`MLModel <mlserver.MLModel>`,
+and then overriding those methods with your custom logic.
 
 ```{code-block} python
 ---
-emphasize-lines: 7-8, 13-14
+emphasize-lines: 7-8, 12-13
 ---
 from mlserver import MLModel
 from mlserver.types import InferenceRequest, InferenceResponse
@@ -39,8 +39,7 @@ class MyCustomRuntime(MLModel):
   async def load(self) -> bool:
     # TODO: Replace for custom logic to load a model artifact
     self._model = load_my_custom_model()
-    self.ready = True
-    return self.ready
+    return True
 
   async def predict(self, payload: InferenceRequest) -> InferenceResponse:
     # TODO: Replace for custom logic to run inference
@@ -52,9 +51,9 @@ class MyCustomRuntime(MLModel):
 MLServer exposes an alternative _"simplified" interface_ which can be used to
 write custom runtimes.
 This interface can be enabled by decorating your `predict()` method with the
-`mlserver.codecs.decode_args` decorator, and it lets you specify in the method
-signature both how you want your request payload to be decoded and how to
-encode the response back.
+`mlserver.codecs.decode_args` decorator.
+This will let you specify in the method signature both how you want your
+request payload to be decoded and how to encode the response back.
 
 Based on the information provided in the method signature, MLServer will
 automatically decode the request payload into the different inputs specified as
@@ -86,7 +85,7 @@ following custom runtime:
 
 ```{code-block} python
 ---
-emphasize-lines: 2, 12-13
+emphasize-lines: 2, 11-12
 ---
 from mlserver import MLModel
 from mlserver.codecs import decode_args
@@ -96,8 +95,7 @@ class MyCustomRuntime(MLModel):
   async def load(self) -> bool:
     # TODO: Replace for custom logic to load a model artifact
     self._model = load_my_custom_model()
-    self.ready = True
-    return self.ready
+    return True
 
   @decode_args
   async def predict(self, questions: List[str], context: List[str]) -> np.ndarray:
@@ -172,15 +170,6 @@ class CustomHeadersRuntime(MLModel):
 
 ## Loading a custom MLServer runtime
 
-```{note}
-When following this approach, custom runtimes will get loaded into a "vanilla"
-MLServer instance, which may be missing some of the dependencies of your custom
-environment.
-If you need to load a custom set of dependencies, we recommend to either build
-a [custom MLServer image](#building-a-custom-mlserver-image) or to prepare a
-[custom environment tarball](../examples/conda/README).
-```
-
 MLServer lets you load custom runtimes dynamically into a running instance of
 MLServer.
 Once you have your custom runtime ready, all you need to is to move it to your
@@ -203,6 +192,72 @@ Note that, from the example above, we are assuming that:
 - The `implementation` field of your `model-settings.json` configuration file
   contains the import path of your custom runtime (e.g.
   `models.MyCustomRuntime`).
+
+  ```{code-block} json
+  ---
+  emphasize-lines: 3
+  ---
+  {
+    "model": "sum-model",
+    "implementation": "models.MyCustomRuntime"
+  }
+  ```
+
+### Loading a custom Python environment
+
+More often that not, your custom runtimes will depend on external 3rd party
+dependencies which are not included within the main MLServer package.
+In these cases, to load your custom runtime, MLServer will need access to these
+dependencies.
+
+It is possible to load this custom set of dependencies by providing them
+through an [environment tarball](../examples/conda/README), whose path can be
+specified within your `model-settings.json` file.
+
+```{warning}
+To load a custom environment, [parallel inference](./parallel-inference)
+**must** be enabled.
+```
+
+```{warning}
+When loading custom environments, MLServer will always use the same Python
+interpreter that is used to run the main process.
+In other words, all custom environments will use the same version of Python
+than the main MLServer process.
+```
+
+If we take the [previous example](#loading-a-custom-mlserver-runtime) above as
+a reference, we could extend it to include our custom environment as:
+
+```bash
+.
+└── models
+    └── sum-model
+        ├── environment.tar.gz
+        ├── model-settings.json
+        ├── models.py
+```
+
+Note that, in the folder layout above, we are assuming that:
+
+- The `environment.tar.gz` tarball contains a pre-packaged version of your
+  custom environment.
+- The `environment_tarball` field of your `model-settings.json` configuration file
+  points to your pre-packaged custom environment (i.e.
+  `./environment.tar.gz`).
+
+  ```{code-block} json
+  ---
+  emphasize-lines: 5
+  ---
+  {
+    "model": "sum-model",
+    "implementation": "models.MyCustomRuntime",
+    "parameters": {
+      "environment_tarball": "./environment.tar.gz"
+    }
+  }
+  ```
 
 ## Building a custom MLServer image
 
@@ -235,23 +290,60 @@ environment file (i.e. named either as `environment.yaml` or `conda.yaml`) and
 These can be used to tell MLServer what Python environment is required in the
 final Docker image.
 
-Additionally, the `mlserver build` subcommand will also treat any
+```{note}
+The environment built by the `mlserver build` will be global to the whole
+MLServer image (i.e. every loaded model will, by default, use that custom
+environment).
+For Multi-Model Serving scenarios, it may be better to use [per-model custom
+environments](#loading-a-custom-python-environment) instead - which will allow
+you to run multiple custom environments at the same time.
+```
+
+### Default Settings
+
+The `mlserver build` subcommand will treat any
 [`settings.json`](../reference/settings) or
 [`model-settings.json`](../reference/model-settings) files present on your root
 folder as the default settings that must be set in your final image.
 Therefore, these files can be used to configure things like the default
-inference runtime to be used, or
-to even include **embedded models** that will always be present within your custom image.
+inference runtime to be used, or to even include **embedded models** that will
+always be present within your custom image.
 
-### Docker-less Environments
+```{note}
+Default setting values can still be overriden by external environment variables
+or model-specific `model-settings.json`.
+```
 
-In some occasions, it may not be possible to access an environment with a
-running Docker daemon.
-This can be the case, for example, on some CI pipelines.
+### Custom Dockerfile
 
-To account for these use cases, MLServer also includes a [`mlserver dockerfile`](../reference/cli)
-subcommand which will just generate a `Dockerfile` (and optionally a
-`.dockerignore` file).
-This `Dockerfile` can be then by used by other _"Docker-less"_ tools, like
+Out-of-the-box, the `mlserver build` subcommand leverages a default
+`Dockerfile` which takes into account a number of requirements, like
+
+- Supporting arbitrary user IDs.
+- Building your [base custom environment](#custom-environment) on the fly.
+- Configure a set of [default setting values](#default-settings).
+
+However, there may be occasions where you need to customise your `Dockerfile`
+even further.
+This may be the case, for example, when you need to provide extra environment
+variables or when you need to customise your Docker build process (e.g. by
+using other _"Docker-less"_ tools, like
 [Kaniko](https://github.com/GoogleContainerTools/kaniko) or
-[Buildah](https://buildah.io/) to build the final image.
+[Buildah](https://buildah.io/)).
+
+To account for these cases, MLServer also includes a [`mlserver
+dockerfile`](../reference/cli) subcommand which will just generate a
+`Dockerfile` (and optionally a `.dockerignore` file) exactly like the one used
+by the `mlserver build` command.
+This `Dockerfile` can then be customised according to your needs.
+
+````{note}
+The base `Dockerfile` requires [Docker's
+Buildkit](https://docs.docker.com/build/buildkit/) to be enabled.
+To ensure BuildKit is used, you can use the `DOCKER_BUILDKIT=1` environment
+variable, e.g.
+
+```bash
+DOCKER_BUILDKIT=1 docker build . -t my-custom-runtime:0.1.0
+```
+````

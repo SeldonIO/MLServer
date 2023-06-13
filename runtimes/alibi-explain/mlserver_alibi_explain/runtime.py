@@ -1,18 +1,17 @@
-import json
 import asyncio
-import numpy as np
 import functools
+import json
+from concurrent.futures import ThreadPoolExecutor
+from typing import Any, Optional, Dict
 
-from typing import Any, Optional, List, Dict
+import numpy as np
+import pandas as pd
 from alibi.api.interfaces import Explanation, Explainer
 from alibi.saving import load_explainer
-from concurrent.futures import ThreadPoolExecutor
 
 from mlserver.codecs import (
     NumpyRequestCodec,
-    InputCodecLike,
     StringCodec,
-    RequestCodecLike,
 )
 from mlserver.errors import ModelParametersMissing
 from mlserver.handlers import custom_handler
@@ -22,14 +21,10 @@ from mlserver.settings import ModelSettings, ModelParameters
 from mlserver.types import (
     InferenceRequest,
     InferenceResponse,
-    RequestInput,
-    MetadataModelResponse,
     Parameters,
-    MetadataTensor,
     ResponseOutput,
 )
 from mlserver.utils import get_model_uri
-
 from mlserver_alibi_explain.alibi_dependency_reference import (
     get_mlmodel_class_as_str,
     get_alibi_class_as_str,
@@ -51,11 +46,11 @@ class AlibiExplainRuntimeBase(MLModel):
     def __init__(
         self, settings: ModelSettings, explainer_settings: AlibiExplainSettings
     ):
-
         self.alibi_explain_settings = explainer_settings
         self._executor = ThreadPoolExecutor()
         super().__init__(settings)
 
+    @custom_handler(rest_path="/explain")
     async def explain_v1_output(self, request: InferenceRequest) -> Response:
         """
         A custom endpoint to return explanation results in plain json format (no v2
@@ -86,9 +81,9 @@ class AlibiExplainRuntimeBase(MLModel):
 
         # TODO: convert and validate?
         input_data = self.decode_request(payload, default_codec=NumpyRequestCodec)
-        output_data = await self._async_explain_impl(
-            np.array(input_data), payload.parameters
-        )
+        if isinstance(input_data, pd.DataFrame):
+            input_data = np.array(input_data)
+        output_data = await self._async_explain_impl(input_data, payload.parameters)
 
         return InferenceResponse(
             model_name=self.name,
@@ -147,10 +142,10 @@ class AlibiExplainRuntimeBase(MLModel):
         raise NotImplementedError
 
 
-class AlibiExplainRuntime(MLModel):
+class AlibiExplainRuntime:
     """Wrapper / Factory class for specific alibi explain runtimes"""
 
-    def __init__(self, settings: ModelSettings):
+    def __new__(cls, settings: ModelSettings):
         # TODO: we probably want to validate the enum more sanely here
         # we do not want to construct a specific alibi settings here because
         # it might be dependent on type
@@ -164,69 +159,4 @@ class AlibiExplainRuntime(MLModel):
 
         alibi_class = import_and_get_class(get_alibi_class_as_str(explainer_type))
 
-        self._rt = rt_class(settings, alibi_class)
-
-    @property
-    def name(self) -> str:
-        return self._rt.name
-
-    @property
-    def version(self) -> Optional[str]:
-        return self._rt.version
-
-    @property
-    def settings(self) -> ModelSettings:
-        return self._rt.settings
-
-    @property
-    def inputs(self) -> Optional[List[MetadataTensor]]:
-        return self._rt.inputs
-
-    @inputs.setter
-    def inputs(self, value: List[MetadataTensor]):
-        self._rt.inputs = value
-
-    @property
-    def outputs(self) -> Optional[List[MetadataTensor]]:
-        return self._rt.outputs
-
-    @outputs.setter
-    def outputs(self, value: List[MetadataTensor]):
-        self._rt.outputs = value
-
-    @property  # type: ignore
-    def ready(self) -> bool:  # type: ignore
-        return self._rt.ready
-
-    @ready.setter
-    def ready(self, value: bool):
-        self._rt.ready = value
-
-    def decode(
-        self,
-        request_input: RequestInput,
-        default_codec: Optional[InputCodecLike] = None,
-    ) -> Any:
-        return self._rt.decode(request_input, default_codec)
-
-    def decode_request(
-        self,
-        inference_request: InferenceRequest,
-        default_codec: Optional[RequestCodecLike] = None,
-    ) -> Any:
-        return self._rt.decode_request(inference_request, default_codec)
-
-    async def metadata(self) -> MetadataModelResponse:
-        return await self._rt.metadata()
-
-    async def load(self) -> bool:
-        return await self._rt.load()
-
-    async def predict(self, payload: InferenceRequest) -> InferenceResponse:
-        return await self._rt.predict(payload)
-
-    # we add _explain_v1_output here to enable the registration and routing of custom
-    # endpoint to `_rt.explain_v1_output`
-    @custom_handler(rest_path="/explain")
-    async def _explain_v1_output(self, request: InferenceRequest) -> Response:
-        return await self._rt.explain_v1_output(request)
+        return rt_class(settings, alibi_class)

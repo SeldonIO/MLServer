@@ -41,7 +41,6 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
         super().__init__(settings, explainer_settings)
 
     async def load(self) -> bool:
-
         # TODO: use init explainer field instead?
         if self.alibi_explain_settings.init_parameters is not None:
             init_parameters = self.alibi_explain_settings.init_parameters
@@ -50,17 +49,17 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
         else:
             self._model = await self._load_from_uri(self._infer_impl)
 
-        self.ready = True
-        return self.ready
+        return True
 
     def _explain_impl(self, input_data: Any, explain_parameters: Dict) -> Explanation:
-
-        # if we get a list of strings, we can only explain the first elem and there
-        # is no way of just sending a plain string in v2, it has to be in a list
-        # as the encoding is List[str] with content_type "BYTES"
-        # we also assume that the explain data will contain a batch dimension, and in
-        # current implementation we will only explain the first data element.
-        input_data = input_data[0]
+        if not self.alibi_explain_settings.explainer_batch:
+            # if we get a list of strings, we can only explain the first elem and there
+            # is no way of just sending a plain string in v2, it has to be in a list
+            # as the encoding is List[str] with content_type "BYTES"
+            # we also assume that the explain data will contain a batch dimension,
+            # and in current implementation we will only explain the first data element.
+            # this is for explainers that do not support batch, e.g. anchors
+            input_data = input_data[0]
 
         return self._model.explain(input_data, **explain_parameters)
 
@@ -76,7 +75,11 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
                 meta_url, ssl_verify_path=self.ssl_verify_path
             )
 
-        v2_request = to_v2_inference_request(input_data, self.infer_metadata)
+        v2_request = to_v2_inference_request(
+            input_data=input_data,
+            metadata=self.infer_metadata,
+            output=self.alibi_explain_settings.infer_output,
+        )
         v2_response = remote_predict(
             v2_payload=v2_request,
             predictor_url=self.infer_uri,

@@ -27,7 +27,6 @@ We will show how to add share a task
 {
     "name": "transformer",
     "implementation": "mlserver_huggingface.HuggingFaceRuntime",
-    "parallel_workers": 0,
     "parameters": {
         "extra": {
             "task": "text-generation",
@@ -36,9 +35,6 @@ We will show how to add share a task
     }
 }
 ```
-
-    Overwriting ./model-settings.json
-
 
 Now that we have our config in-place, we can start the server by running `mlserver start .`. This needs to either be ran from the same directory where our config files are or pointing to the folder where they are.
 
@@ -67,21 +63,6 @@ inference_request = {
 requests.post("http://localhost:8080/v2/models/transformer/infer", json=inference_request).json()
 ```
 
-
-
-
-    {'model_name': 'transformer',
-     'model_version': None,
-     'id': '9b24304e-730f-4a98-bfde-8949851388a9',
-     'parameters': None,
-     'outputs': [{'name': 'output',
-       'shape': [1],
-       'datatype': 'BYTES',
-       'parameters': None,
-       'data': ['[{"generated_text": "this is a test-case where you\'re checking if someone\'s going to have an encrypted file that they like to open, or whether their file has a hidden contents if their file is not opened. If it\'s the same file, when all the"}]']}]}
-
-
-
 ### Using Optimum Optimized Models
 
 We can also leverage the Optimum library that allows us to access quantized and optimized models. 
@@ -94,7 +75,6 @@ We can download pretrained optimized models from the hub if available by enablin
 {
     "name": "transformer",
     "implementation": "mlserver_huggingface.HuggingFaceRuntime",
-    "parallel_workers": 0,
     "parameters": {
         "extra": {
             "task": "text-generation",
@@ -104,9 +84,6 @@ We can download pretrained optimized models from the hub if available by enablin
     }
 }
 ```
-
-    Overwriting ./model-settings.json
-
 
 Once again, you are able to run the model using the MLServer CLI. As before this needs to either be ran from the same directory where our config files are or pointing to the folder where they are.
 
@@ -134,21 +111,6 @@ inference_request = {
 requests.post("http://localhost:8080/v2/models/transformer/infer", json=inference_request).json()
 ```
 
-
-
-
-    {'model_name': 'transformer',
-     'model_version': None,
-     'id': '296ea44e-7696-4584-af5a-148a7083b2e7',
-     'parameters': None,
-     'outputs': [{'name': 'output',
-       'shape': [1],
-       'datatype': 'BYTES',
-       'parameters': None,
-       'data': ['[{"generated_text": "this is a test that allows us to define the value type, and a function is defined directly with these variables.\\n\\n\\nThe function is defined for a parameter with type\\nIn this example,\\nif you pass a message function like\\ntype"}]']}]}
-
-
-
 ## Testing Supported Tasks
 
 We can support multiple other transformers other than just text generation, below includes examples for a few other tasks supported.
@@ -163,7 +125,6 @@ We can support multiple other transformers other than just text generation, belo
 {
     "name": "transformer",
     "implementation": "mlserver_huggingface.HuggingFaceRuntime",
-    "parallel_workers": 0,
     "parameters": {
         "extra": {
             "task": "question-answering"
@@ -171,9 +132,6 @@ We can support multiple other transformers other than just text generation, belo
     }
 }
 ```
-
-    Overwriting ./model-settings.json
-
 
 Once again, you are able to run the model using the MLServer CLI.
 
@@ -203,21 +161,6 @@ inference_request = {
 requests.post("http://localhost:8080/v2/models/transformer/infer", json=inference_request).json()
 ```
 
-
-
-
-    {'model_name': 'gpt2-model',
-     'model_version': None,
-     'id': '204ad4e7-79ea-40b4-8efb-aed16dedf7ed',
-     'parameters': None,
-     'outputs': [{'name': 'output',
-       'shape': [1],
-       'datatype': 'BYTES',
-       'parameters': None,
-       'data': ['{"score": 0.9869922995567322, "start": 12, "end": 18, "answer": "Seldon"}']}]}
-
-
-
 ### Sentiment Analysis
 
 
@@ -226,7 +169,6 @@ requests.post("http://localhost:8080/v2/models/transformer/infer", json=inferenc
 {
     "name": "transformer",
     "implementation": "mlserver_huggingface.HuggingFaceRuntime",
-    "parallel_workers": 0,
     "parameters": {
         "extra": {
             "task": "text-classification"
@@ -234,9 +176,6 @@ requests.post("http://localhost:8080/v2/models/transformer/infer", json=inferenc
     }
 }
 ```
-
-    Overwriting ./model-settings.json
-
 
 Once again, you are able to run the model using the MLServer CLI.
 
@@ -260,21 +199,6 @@ inference_request = {
 requests.post("http://localhost:8080/v2/models/transformer/infer", json=inference_request).json()
 ```
 
-
-
-
-    {'model_name': 'transformer',
-     'model_version': None,
-     'id': '463ceddb-f426-4815-9c46-9fa9fc5272b1',
-     'parameters': None,
-     'outputs': [{'name': 'output',
-       'shape': [1],
-       'datatype': 'BYTES',
-       'parameters': None,
-       'data': ['[{"label": "NEGATIVE", "score": 0.9996137022972107}]']}]}
-
-
-
 ## GPU Acceleration
 
 We can also evaluate GPU acceleration, we can test the speed on CPU vs GPU using the following parameters
@@ -289,19 +213,16 @@ We first test the time taken with the device=-1 which configures CPU by default
 {
     "name": "transformer",
     "implementation": "mlserver_huggingface.HuggingFaceRuntime",
-    "parallel_workers": 0,
+    "max_batch_size": 128,
+    "max_batch_time": 1,
     "parameters": {
         "extra": {
             "task": "text-generation",
-            "device": -1,
-            "batch_size": 128
+            "device": -1
         }
     }
 }
 ```
-
-    Overwriting ./model-settings.json
-
 
 Once again, you are able to run the model using the MLServer CLI.
 
@@ -331,9 +252,6 @@ requests.post("http://localhost:8080/v2/models/transformer/infer", json=inferenc
 print(f"Elapsed time: {time.monotonic() - start_time}")
 ```
 
-    Elapsed time: 81.57849169999827
-
-
 We can see that it takes 81 seconds which is 8 times longer than the gpu example below.
 
 ### Testing with GPU
@@ -348,19 +266,14 @@ Now we'll run the benchmark with GPU configured, which we can do by setting `dev
 {
     "name": "transformer",
     "implementation": "mlserver_huggingface.HuggingFaceRuntime",
-    "parallel_workers": 0,
     "parameters": {
         "extra": {
             "task": "text-generation",
-            "device": 0,
-            "batch_size": 128
+            "device": 0
         }
     }
 }
 ```
-
-    Overwriting ./model-settings.json
-
 
 
 ```python
@@ -384,9 +297,6 @@ requests.post("http://localhost:8080/v2/models/transformer/infer", json=inferenc
 print(f"Elapsed time: {time.monotonic() - start_time}")
 ```
 
-    Elapsed time: 11.27933280000434
-
-
 We can see that the elapsed time is 8 times less than the CPU version!
 
 ### Adaptive Batching with GPU
@@ -409,15 +319,11 @@ We will also configure `max_batch_time` which specifies` the maximum amount of t
         "extra": {
             "task": "text-generation",
             "pretrained_model": "distilgpt2",
-            "device": 0,
-            "batch_size": 128
+            "device": 0
         }
     }
 }
 ```
-
-    Overwriting ./model-settings.json
-
 
 In order to achieve the throughput required of 50 requests per second, we will use the tool `vegeta` which performs load testing.
 
@@ -437,16 +343,6 @@ jq -ncM '{"method": "POST", "header": {"Content-Type": ["application/json"] }, "
                 report \
                 -type=text
 ```
-
-    Requests      [total, rate, throughput]         150, 50.34, 22.28
-    Duration      [total, attack, wait]             6.732s, 2.98s, 3.753s
-    Latencies     [min, mean, 50, 90, 95, 99, max]  1.975s, 3.168s, 3.22s, 4.065s, 4.183s, 4.299s, 4.318s
-    Bytes In      [total, mean]                     60978, 406.52
-    Bytes Out     [total, mean]                     12300, 82.00
-    Success       [ratio]                           100.00%
-    Status Codes  [code:count]                      200:150  
-    Error Set:
-
 
 
 ```python

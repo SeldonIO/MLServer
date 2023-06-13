@@ -1,4 +1,4 @@
-name: MLServer Tests
+name: Tests
 
 on:
   push:
@@ -12,11 +12,15 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v2
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v4
         with:
-          python-version: 3.8
+          python-version: "3.10"
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: false
       - name: Install dependencies
         run: |
           make install-dev
@@ -24,13 +28,64 @@ jobs:
         run: |
           make lint
 
-  tests:
-    runs-on: ubuntu-latest
+  mlserver:
     strategy:
+      fail-fast: false
       matrix:
+        os: [ubuntu-latest, macos-latest]
+        # NOTE: There's no pre-built `grpcio` wheel for Python 3.11 yet
+        # https://github.com/grpc/grpc/issues/32454
+        python-version: ["3.8", "3.9", "3.10"]
+        is-pr:
+          - ${{ github.event_name == 'pull_request' }}
+        exclude:
+          # MacOS tests take a lot of time, so we will run them only on merge
+          # From https://github.com/orgs/community/discussions/26253
+          - is-pr: true
+            os: macos-latest
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Setup docker (missing on MacOS)
+        if: runner.os == 'macos'
+        run: |
+          # From https://github.com/actions/runner-images/issues/17#issuecomment-1537238473
+          # From https://github.com/abiosoft/colima/discussions/273#discussioncomment-4959736
+          # NOTE: Use the `slirp` driver rather than the default to avoid
+          # random connection errors.
+          # From https://github.com/abiosoft/colima/issues/577
+          brew install docker docker-buildx
+          mkdir -p $HOME/.docker/cli-plugins
+          ln -sfn $(which docker-buildx) $HOME/.docker/cli-plugins/docker-buildx
+          colima start --memory 5 --network-driver slirp
+          sudo ln -sf $HOME/.colima/default/docker.sock /var/run/docker.sock
+
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          auto-activate-base: false
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: false
+      - name: Install Dependencies
+        run: |
+          poetry install --sync --only dev
+      - name: Test
+        run: |
+          tox -e mlserver
+
+  runtimes:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
         python-version: ["3.8", "3.9", "3.10"]
         tox-environment:
-          - mlserver
           - sklearn
           - xgboost
           - lightgbm
@@ -38,34 +93,83 @@ jobs:
           - huggingface
           - alibi-explain
           - alibi-detect
+        is-pr:
+          - ${{ github.event_name == 'pull_request' }}
+        exclude:
+          # MacOS tests take a lot of time, so we will run them only on merge
+          # From https://github.com/orgs/community/discussions/26253
+          - is-pr: true
+            os: macos-latest
+    runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install dependencies
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          auto-activate-base: false
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: false
+      - name: Install Dependencies
         run: |
-          pip install -r requirements/dev.txt
+          poetry install --sync --only dev
       - name: Test
         run: |
-          tox -e ${{ matrix.tox-environment }}
+          tox -c ./runtimes/${{ matrix.tox-environment }}
 
   all-runtimes:
-    runs-on: ubuntu-latest
     if: github.event_name == 'push'
     strategy:
+      fail-fast: false
       matrix:
+        os: [ubuntu-latest, macos-latest]
         python-version: ["3.8", "3.9", "3.10"]
+    runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v2
+      - name: Setup docker (missing on MacOS)
+        if: runner.os == 'macos'
+        run: |
+          # From https://github.com/actions/runner-images/issues/17#issuecomment-1537238473
+          # From https://github.com/abiosoft/colima/discussions/273#discussioncomment-4959736
+          # NOTE: Use the `slirp` driver rather than the default to avoid
+          # random connection errors.
+          # From https://github.com/abiosoft/colima/issues/577
+          brew install docker docker-buildx
+          mkdir -p $HOME/.docker/cli-plugins
+          ln -sfn $(which docker-buildx) $HOME/.docker/cli-plugins/docker-buildx
+          colima start --memory 5 --network-driver slirp
+          sudo ln -sf $HOME/.colima/default/docker.sock /var/run/docker.sock
+      - name: Downgrade OpenMP (in MacOS)
+        if: runner.os == 'macos'
+        run: |
+          # Recent versions of OpenMP cause segfaults in MacOS when training
+          # LightGBM / XGBoost models (but only when Torch is present)
+          # https://github.com/microsoft/LightGBM/issues/4229
+          # https://github.com/autogluon/autogluon/issues/1442
+          wget https://raw.githubusercontent.com/Homebrew/homebrew-core/fb8323f2b170bd4ae97e1bac9bf3e2983af3fdb0/Formula/libomp.rb
+          brew unlink libomp
+          brew install libomp.rb
+      - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install dependencies
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          auto-activate-base: false
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: false
+      - name: Install Dependencies
         run: |
-          pip install -r requirements/dev.txt
+          poetry install --sync --only dev
       - name: Test
         run: |
           tox -e all-runtimes

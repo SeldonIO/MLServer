@@ -42,8 +42,8 @@ def _generate_metadata_index(
 
 class MLModel:
     """
-    Abstract class which serves as the main interface to interact with ML
-    models.
+    Abstract inference runtime which exposes the main interface to interact
+    with ML models.
     """
 
     def __init__(self, settings: ModelSettings):
@@ -55,20 +55,59 @@ class MLModel:
 
         self.ready = False
 
+    async def load(self) -> bool:
+        """
+        Method responsible for loading the model from a model artefact.
+        This method will be called on each of the parallel workers (when
+        :doc:`parallel inference </user-guide/parallel-inference>`) is
+        enabled).
+        Its return value will represent the model's readiness status.
+        A return value of ``True`` will mean the model is ready.
+
+        **This method should be overriden to implement your custom load
+        logic.**
+        """
+        return True
+
+    async def predict(self, payload: InferenceRequest) -> InferenceResponse:
+        """
+        Method responsible for running inference on the model.
+
+
+        **This method should be overriden to implement your custom inference
+        logic.**
+        """
+        raise NotImplementedError("predict() method not implemented")
+
     @property
     def name(self) -> str:
+        """
+        Model name, from the model settings.
+        """
         return self._settings.name
 
     @property
     def version(self) -> Optional[str]:
+        """
+        Model version, from the model settings.
+        """
         return self._settings.version
 
     @property
     def settings(self) -> ModelSettings:
+        """
+        Model settings.
+        """
         return self._settings
 
     @property
     def inputs(self) -> Optional[List[MetadataTensor]]:
+        """
+        Expected model inputs, from the model settings.
+
+        Note that this property can also be modified at model's load time to
+        inject any inputs metadata.
+        """
         return self._settings.inputs
 
     @inputs.setter
@@ -78,6 +117,12 @@ class MLModel:
 
     @property
     def outputs(self) -> Optional[List[MetadataTensor]]:
+        """
+        Expected model outputs, from the model settings.
+
+        Note that this property can also be modified at model's load time to
+        inject any outputs metadata.
+        """
         return self._settings.outputs
 
     @outputs.setter
@@ -90,6 +135,15 @@ class MLModel:
         request_input: RequestInput,
         default_codec: Optional[InputCodecLike] = None,
     ) -> Any:
+        """
+        Helper to decode a **request input** into its corresponding high-level
+        Python object.
+        This method will find the most appropiate :doc:`input codec
+        </user-guide/content-type>` based on the model's metadata and the
+        input's content type.
+        Otherwise, it will fall back to the codec specified in the
+        ``default_codec`` kwarg.
+        """
         decode_request_input(request_input, self._inputs_index)
 
         if has_decoded(request_input):
@@ -105,6 +159,15 @@ class MLModel:
         inference_request: InferenceRequest,
         default_codec: Optional[RequestCodecLike] = None,
     ) -> Any:
+        """
+        Helper to decode an **inference request** into its corresponding
+        high-level Python object.
+        This method will find the most appropiate :doc:`request codec
+        </user-guide/content-type>` based on the model's metadata and the
+        requests's content type.
+        Otherwise, it will fall back to the codec specified in the
+        ``default_codec`` kwarg.
+        """
         decode_inference_request(inference_request, self._settings, self._inputs_index)
 
         if has_decoded(inference_request):
@@ -120,6 +183,14 @@ class MLModel:
         payload: Any,
         default_codec: Optional[RequestCodecLike] = None,
     ) -> InferenceResponse:
+        """
+        Helper to encode a high-level Python object into its corresponding
+        **inference response**.
+        This method will find the most appropiate :doc:`request codec
+        </user-guide/content-type>` based on the payload's type.
+        Otherwise, it will fall back to the codec specified in the
+        ``default_codec`` kwarg.
+        """
         inference_response = encode_inference_response(payload, self._settings)
 
         if inference_response:
@@ -137,6 +208,15 @@ class MLModel:
         request_output: RequestOutput,
         default_codec: Optional[InputCodecLike] = None,
     ) -> ResponseOutput:
+        """
+        Helper to encode a high-level Python object into its corresponding
+        **response output**.
+        This method will find the most appropiate :doc:`input codec
+        </user-guide/content-type>` based on the model's metadata, request
+        output's content type or payload's type.
+        Otherwise, it will fall back to the codec specified in the
+        ``default_codec`` kwarg.
+        """
         response_output = encode_response_output(
             payload, request_output, self._outputs_index
         )
@@ -164,10 +244,3 @@ class MLModel:
             )
 
         return model_metadata
-
-    async def load(self) -> bool:
-        self.ready = True
-        return self.ready
-
-    async def predict(self, payload: InferenceRequest) -> InferenceResponse:
-        raise NotImplementedError("predict() method not implemented")

@@ -24,7 +24,7 @@ async def test_load_folder(fname, model_uri: str, model_settings: ModelSettings)
     model_settings.parameters.uri = model_path  # type: ignore
 
     model = LightGBMModel(model_settings)
-    await model.load()
+    model.ready = await model.load()
 
     assert model.ready
     assert type(model._model) == lgb.Booster

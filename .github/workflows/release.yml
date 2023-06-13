@@ -1,4 +1,4 @@
-name: MLServer Release
+name: Release
 
 on:
   workflow_dispatch:
@@ -10,7 +10,7 @@ jobs:
   draft-release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Update Version
         run: |
           ./hack/update-version.sh ${{ github.event.inputs.version }}
@@ -30,20 +30,13 @@ jobs:
     needs: draft-release
     runs-on: ubuntu-latest
     steps:
-      - name: Maximize build space
-        uses: easimon/maximize-build-space@master
-        with:
-          remove-dotnet: "true"
-          remove-haskell: "true"
-          remove-android: "true"
-          root-reserve-mb: "40960"
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.inputs.version }}
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v2
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v4
         with:
-          python-version: 3.8
+          python-version: "3.10"
       - name: Install dependencies
         run: |
           pip install -r ./requirements/dev.txt
@@ -67,6 +60,20 @@ jobs:
             -t $MLSERVER_IMAGE
         env:
           MLSERVER_IMAGE: seldonio/mlserver:${{ github.event.inputs.version }}
+      - name: Scan Docker Image
+        uses: snyk/actions/docker@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          image: seldonio/mlserver:${{ github.event.inputs.version }}
+          args: --fail-on=upgradable --app-vulns --severity-threshold=high --file=Dockerfile
+      - name: Scan Docker Slim Image
+        uses: snyk/actions/docker@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          image: seldonio/mlserver:${{ github.event.inputs.version }}-slim
+          args: --fail-on=upgradable --app-vulns --severity-threshold=high --file=Dockerfile
       - name: Login to DockerHub
         uses: docker/login-action@v2
         with:
@@ -126,6 +133,7 @@ jobs:
     needs: draft-release
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         runtime:
           - alibi-detect
@@ -137,13 +145,13 @@ jobs:
           - sklearn
           - xgboost
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.inputs.version }}
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v2
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v4
         with:
-          python-version: 3.8
+          python-version: "3.10"
       - name: Install dependencies
         run: |
           pip install -r ./requirements/dev.txt
@@ -165,6 +173,13 @@ jobs:
             -t $RUNTIME_IMAGE
         env:
           RUNTIME_IMAGE: seldonio/mlserver:${{ github.event.inputs.version }}-${{ matrix.runtime }}
+      - name: Scan Docker Image
+        uses: snyk/actions/docker@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          image: seldonio/mlserver:${{ github.event.inputs.version }}-${{ matrix.runtime }}
+          args: --fail-on=upgradable --app-vulns --severity-threshold=high --file=Dockerfile
       - name: Login to DockerHub
         uses: docker/login-action@v2
         with:

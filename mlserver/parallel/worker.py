@@ -5,11 +5,15 @@ import signal
 from asyncio import Task, CancelledError
 from multiprocessing import Process, Queue
 from concurrent.futures import ThreadPoolExecutor
+from contextlib import nullcontext
+from typing import Optional
 
 from ..registry import MultiModelRegistry
 from ..utils import install_uvloop_event_loop, schedule_with_callback
 from ..logging import configure_logger
 from ..settings import Settings
+from ..metrics import configure_metrics, model_context
+from ..env import Environment
 
 from .messages import (
     ModelRequestMessage,
@@ -29,12 +33,15 @@ def _noop():
 
 
 class Worker(Process):
-    def __init__(self, settings: Settings, responses: Queue):
+    def __init__(
+        self, settings: Settings, responses: Queue, env: Optional[Environment] = None
+    ):
         super().__init__()
         self._settings = settings
         self._responses = responses
         self._requests: Queue[ModelRequestMessage] = Queue()
         self._model_updates: Queue[ModelUpdateMessage] = Queue()
+        self._env = env
 
         self.__executor = None
 
@@ -51,10 +58,16 @@ class Worker(Process):
         return self.__executor
 
     def run(self):
-        install_uvloop_event_loop()
-        configure_logger(self._settings)
-        self._ignore_signals()
-        asyncio.run(self.coro_run())
+        ctx = nullcontext()
+        if self._env:
+            ctx = self._env
+
+        with ctx:
+            install_uvloop_event_loop()
+            configure_logger(self._settings)
+            configure_metrics(self._settings)
+            self._ignore_signals()
+            asyncio.run(self.coro_run())
 
     def _ignore_signals(self):
         """
@@ -119,7 +132,10 @@ class Worker(Process):
             )
 
             method = getattr(model, request.method_name)
-            return_value = await method(*request.method_args, **request.method_kwargs)
+            with model_context(model.settings):
+                return_value = await method(
+                    *request.method_args, **request.method_kwargs
+                )
             return ModelResponseMessage(id=request.id, return_value=return_value)
         except (Exception, CancelledError) as e:
             logger.exception(

@@ -1,8 +1,10 @@
 import pytest
 
 from pytest_cases import parametrize_with_cases, fixture
-from mlserver import Settings
 from aiohttp.client_exceptions import ClientConnectorError
+
+from mlserver import Settings, MLModel
+from mlserver.types import InferenceRequest
 
 from ..utils import RESTClient
 from .utils import MetricsClient
@@ -15,8 +17,14 @@ def settings(settings: Settings, metrics_endpoint: str) -> Settings:
     return settings
 
 
-async def test_metrics(rest_client: RESTClient, metrics_client: MetricsClient):
+async def test_metrics(
+    rest_client: RESTClient,
+    metrics_client: MetricsClient,
+    inference_request: InferenceRequest,
+    sum_model: MLModel,
+):
     await rest_client.wait_until_ready()
+    await rest_client.infer(sum_model.name, inference_request)
 
     if metrics_client._metrics_endpoint is None:
         # Assert metrics are disabled
@@ -34,6 +42,8 @@ async def test_metrics(rest_client: RESTClient, metrics_client: MetricsClient):
             "rest_server_",
             "grpc_server_",
             "model_infer_",
+            "batch_request_",
+            "parallel_request_",
         )
         metrics_list = list(iter(metrics))
         assert len(metrics_list) > 0

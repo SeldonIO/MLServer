@@ -1,9 +1,7 @@
-torch==1.13.0
+torch==1.13.1
 pytorch-lightning==1.8.0.post1
 # Pin torchmetrics to a version older than 0.5.0 to avoid this issue:
 # https://github.com/PyTorchLightning/pytorch-lightning/issues/10233
 torchmetrics==0.10.2
-torchvision==0.14.0
-
-# Force local tests to use MLflow 2.x
-mlflow >= 2.0.0rc0
+torchvision==0.14.1
+mlflow==2.3.1

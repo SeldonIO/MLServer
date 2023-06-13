@@ -1,6 +1,7 @@
 import pytest
 import uuid
 
+from mlserver.errors import ModelNotReady
 from mlserver.settings import ModelSettings, ModelParameters
 from mlserver.types import MetadataTensor
 
@@ -93,6 +94,16 @@ async def test_infer(data_plane, sum_model, inference_request):
 
     assert len(prediction.outputs) == 1
     assert prediction.outputs[0].data.__root__ == [6]
+
+
+async def test_infer_error_not_ready(data_plane, sum_model, inference_request):
+    sum_model.ready = False
+    with pytest.raises(ModelNotReady):
+        await data_plane.infer(payload=inference_request, name=sum_model.name)
+
+    sum_model.ready = True
+    prediction = await data_plane.infer(payload=inference_request, name=sum_model.name)
+    assert len(prediction.outputs) == 1
 
 
 async def test_infer_generates_uuid(data_plane, sum_model, inference_request):

@@ -2,7 +2,7 @@ import numpy as np
 
 from typing import Optional, Dict
 
-from mlserver.types import InferenceRequest, InferenceResponse
+from mlserver.types import InferenceRequest, InferenceResponse, Parameters
 from mlserver.codecs import (
     NumpyCodec,
     RequestCodec,
@@ -46,7 +46,10 @@ class TensorDictCodec(RequestCodec):
         ]
 
         return InferenceResponse(
-            model_name=model_name, model_version=model_version, outputs=outputs
+            model_name=model_name,
+            model_version=model_version,
+            outputs=outputs,
+            parameters=Parameters(content_type=cls.ContentType),
         )
 
     @classmethod
@@ -63,7 +66,9 @@ class TensorDictCodec(RequestCodec):
             for name, value in payload.items()
         ]
 
-        return InferenceRequest(inputs=inputs)
+        return InferenceRequest(
+            inputs=inputs, parameters=Parameters(content_type=cls.ContentType)
+        )
 
     @classmethod
     def decode_request(cls, request: InferenceRequest) -> TensorDict:

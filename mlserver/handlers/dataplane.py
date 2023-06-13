@@ -1,3 +1,11 @@
+from prometheus_client import (
+    Counter,
+    Summary,
+)
+from typing import Optional
+
+from ..errors import ModelNotReady
+from ..metrics import model_context
 from ..settings import Settings
 from ..registry import MultiModelRegistry
 from ..types import (
@@ -9,26 +17,6 @@ from ..types import (
 from ..middleware import InferenceMiddlewares
 from ..cloudevents import CloudEventsMiddleware
 from ..utils import generate_uuid
-from prometheus_client import (
-    Counter,
-    Summary,
-)
-from typing import Optional
-
-
-_ModelInferRequestSuccess = Counter(
-    "model_infer_request_success",
-    "Model infer request success count",
-    ["model", "version"],
-)
-_ModelInferRequestFailure = Counter(
-    "model_infer_request_failure",
-    "Model infer request failure count",
-    ["model", "version"],
-)
-_ModelInferRequestDuration = Summary(
-    "model_infer_request_duration", "Model infer request duration", ["model", "version"]
-)
 
 
 class DataPlane:
@@ -43,6 +31,23 @@ class DataPlane:
 
         self._inference_middleware = InferenceMiddlewares(
             CloudEventsMiddleware(settings)
+        )
+
+        # TODO: Update to standardised set of labels
+        self._ModelInferRequestSuccess = Counter(
+            "model_infer_request_success",
+            "Model infer request success count",
+            ["model", "version"],
+        )
+        self._ModelInferRequestFailure = Counter(
+            "model_infer_request_failure",
+            "Model infer request failure count",
+            ["model", "version"],
+        )
+        self._ModelInferRequestDuration = Summary(
+            "model_infer_request_duration",
+            "Model infer request duration",
+            ["model", "version"],
         )
 
     async def live(self) -> bool:
@@ -76,28 +81,32 @@ class DataPlane:
         name: str,
         version: Optional[str] = None,
     ) -> InferenceResponse:
-
-        with _ModelInferRequestDuration.labels(
+        infer_duration = self._ModelInferRequestDuration.labels(
             model=name, version=version
-        ).time(), _ModelInferRequestFailure.labels(
+        ).time()
+        infer_errors = self._ModelInferRequestFailure.labels(
             model=name, version=version
-        ).count_exceptions():
+        ).count_exceptions()
 
+        with infer_duration, infer_errors:
             if payload.id is None:
                 payload.id = generate_uuid()
 
             model = await self._model_registry.get_model(name, version)
+            if not model.ready:
+                raise ModelNotReady(name, version)
 
             self._inference_middleware.request_middleware(payload, model.settings)
 
             # TODO: Make await optional for sync methods
-            prediction = await model.predict(payload)
+            with model_context(model.settings):
+                prediction = await model.predict(payload)
 
             # Ensure ID matches
             prediction.id = payload.id
 
             self._inference_middleware.response_middleware(prediction, model.settings)
 
-            _ModelInferRequestSuccess.labels(model=name, version=version).inc()
+            self._ModelInferRequestSuccess.labels(model=name, version=version).inc()
 
             return prediction

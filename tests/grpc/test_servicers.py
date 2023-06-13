@@ -1,6 +1,7 @@
 import pytest
 import grpc
 
+
 from mlserver.cloudevents import (
     CLOUDEVENTS_HEADER_SPECVERSION_DEFAULT,
     CLOUDEVENTS_HEADER_SPECVERSION,
@@ -60,7 +61,10 @@ async def test_model_metadata(inference_service_stub, sum_model_settings):
     "model_name,model_version", [("sum-model", "v1.2.3"), ("sum-model", None)]
 )
 async def test_model_infer(
-    inference_service_stub, model_infer_request, model_name, model_version
+    inference_service_stub,
+    model_infer_request,
+    model_name,
+    model_version,
 ):
     model_infer_request.model_name = model_name
     if model_version is not None:
@@ -104,7 +108,9 @@ async def test_model_infer_raw_contents(inference_service_stub, model_infer_requ
 
 
 async def test_model_infer_headers(
-    inference_service_stub, model_infer_request, sum_model_settings
+    inference_service_stub,
+    model_infer_request,
+    sum_model_settings,
 ):
     model_infer_request.model_name = sum_model_settings.name
     model_infer_request.ClearField("model_version")
@@ -136,7 +142,8 @@ async def test_model_infer_error(inference_service_stub, model_infer_request):
 
 
 async def test_model_repository_index(
-    inference_service_stub, grpc_repository_index_request
+    inference_service_stub,
+    grpc_repository_index_request,
 ):
     index = await inference_service_stub.RepositoryIndex(grpc_repository_index_request)
 
@@ -153,11 +160,13 @@ async def test_model_repository_unload(inference_service_stub, sum_model_setting
         )
 
 
-async def test_model_repository_load(inference_service_stub, sum_model_settings):
+async def test_model_repository_load(
+    inference_service_stub,
+    sum_model_settings,
+):
     await inference_service_stub.RepositoryModelUnload(
         pb.RepositoryModelLoadRequest(model_name=sum_model_settings.name)
     )
-
     load_request = pb.RepositoryModelLoadRequest(model_name=sum_model_settings.name)
     await inference_service_stub.RepositoryModelLoad(load_request)
 

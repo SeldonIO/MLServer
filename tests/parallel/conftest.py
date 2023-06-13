@@ -3,30 +3,30 @@ import pytest
 
 from multiprocessing import Queue
 
-from mlserver.settings import ModelSettings, ModelParameters
+from mlserver.settings import Settings, ModelSettings, ModelParameters
 from mlserver.types import InferenceRequest
 from mlserver.utils import generate_uuid
 from mlserver.model import MLModel
+from mlserver.env import Environment
 from mlserver.parallel.model import ModelMethods
 from mlserver.parallel.pool import InferencePool
 from mlserver.parallel.worker import Worker
-from mlserver.parallel.utils import cancel_task
+from mlserver.parallel.utils import configure_inference_pool, cancel_task
 from mlserver.parallel.messages import (
     ModelUpdateMessage,
     ModelUpdateType,
     ModelRequestMessage,
 )
 
-from ..fixtures import ErrorModel
+from ..fixtures import ErrorModel, EnvModel
 
 
 @pytest.fixture
-async def sum_model(inference_pool: InferencePool, sum_model: MLModel) -> MLModel:
-    parallel_model = await inference_pool.load_model(sum_model)
+async def inference_pool(settings: Settings) -> InferencePool:
+    pool = InferencePool(settings)
+    yield pool
 
-    yield parallel_model
-
-    await inference_pool.unload_model(sum_model)
+    await pool.close()
 
 
 @pytest.fixture
@@ -51,7 +51,19 @@ async def load_error_model() -> MLModel:
 
 
 @pytest.fixture
-async def responses() -> Queue:
+def settings(settings: Settings, tmp_path: str) -> Settings:
+    settings.parallel_workers = 2
+    settings.environments_dir = str(tmp_path)
+
+    configure_inference_pool(settings)
+    return settings
+
+
+@pytest.fixture
+async def responses(settings: Settings) -> Queue:
+    # NOTE: This fixture depends on settings to ensure the multiprocessing
+    # context has been set ahead of time to `spawn` (handled in the
+    # configure_inference_pool method)
     q = Queue()
     yield q
 
@@ -60,8 +72,8 @@ async def responses() -> Queue:
 
 @pytest.fixture
 async def worker(
-    settings,
-    event_loop,
+    settings: Settings,
+    event_loop: asyncio.AbstractEventLoop,
     responses: Queue,
     load_message: ModelUpdateMessage,
 ) -> Worker:
@@ -132,3 +144,36 @@ def custom_request_message(sum_model_settings: ModelSettings) -> ModelRequestMes
         method_name="my_payload",
         method_kwargs={"payload": [1, 2, 3]},
     )
+
+
+@pytest.fixture
+def env_model_settings(env_tarball: str) -> ModelSettings:
+    return ModelSettings(
+        name="env-model",
+        implementation=EnvModel,
+        parameters=ModelParameters(environment_tarball=env_tarball),
+    )
+
+
+@pytest.fixture
+async def worker_with_env(
+    settings: Settings,
+    responses: Queue,
+    env: Environment,
+    env_model_settings: ModelSettings,
+):
+    # NOTE: This fixture will start an actual worker running on a separate
+    # process.
+    worker = Worker(settings, responses, env)
+
+    worker.start()
+
+    load_message = ModelUpdateMessage(
+        update_type=ModelUpdateType.Load, model_settings=env_model_settings
+    )
+    worker.send_update(load_message)
+    responses.get()
+
+    yield worker
+
+    await worker.stop()

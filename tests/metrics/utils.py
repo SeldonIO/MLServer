@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from prometheus_client import Metric
+from prometheus_client import Metric, CollectorRegistry
 from prometheus_client.parser import text_string_to_metric_families
 
 from ..utils import RESTClient
@@ -29,3 +29,11 @@ def find_metric(metrics: List[Metric], name: str) -> Optional[Metric]:
             return metric
 
     return None
+
+
+def unregister_metrics(registry: CollectorRegistry):
+    # NOTE: Since `REGISTRY` objects are usually global, this method is NOT
+    # thread-safe!!
+    collectors = list(registry._collector_to_names.keys())
+    for collector in collectors:
+        registry.unregister(collector)

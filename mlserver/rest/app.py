@@ -82,9 +82,35 @@ def create_app(
             "/v2/models/{model_name}/versions/{model_version}",
             endpoints.model_metadata,
         ),
+        # Model docs
+        APIRoute(
+            "/v2/models/{model_name}/docs/dataplane.json",
+            endpoints.model_openapi,
+        ),
+        APIRoute(
+            "/v2/models/{model_name}/versions/{model_version}/docs/dataplane.json",
+            endpoints.model_openapi,
+        ),
+        APIRoute(
+            "/v2/models/{model_name}/docs",
+            endpoints.model_docs,
+        ),
+        APIRoute(
+            "/v2/models/{model_name}/versions/{model_version}/docs",
+            endpoints.model_docs,
+        ),
         # Liveness and readiness
         APIRoute("/v2/health/live", endpoints.live),
         APIRoute("/v2/health/ready", endpoints.ready),
+        # Server docs
+        APIRoute(
+            "/v2/docs/dataplane.json",
+            endpoints.openapi,
+        ),
+        APIRoute(
+            "/v2/docs",
+            endpoints.docs,
+        ),
         # Server metadata
         APIRoute(
             "/v2",
@@ -116,8 +142,10 @@ def create_app(
         routes=routes,  # type: ignore
         default_response_class=Response,
         exception_handlers=_EXCEPTION_HANDLERS,  # type: ignore
+        docs_url=None,
+        redoc_url=None,
     )
-
+    app.router.route_class = APIRoute
     app.add_middleware(GZipMiddleware)
     if settings.cors_settings is not None:
         app.add_middleware(

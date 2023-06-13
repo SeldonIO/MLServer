@@ -125,15 +125,15 @@ represents a high-level Python datatype (e.g. a Pandas Dataframe, a Numpy
 Array, etc.):
 
 - **Request Codecs**
-  - `encode_request(payload: Any) -> InferenceRequest`
-  - `decode_request(request: InferenceRequest) -> Any`
-  - `encode_response(model_name: str, payload: Any, model_version: str) -> InferenceResponse`
-  - `decode_response(response: InferenceResponse) -> Any`
+  - {func}`encode_request() <mlserver.codecs.RequestCodec.encode_request>`
+  - {func}`decode_request() <mlserver.codecs.RequestCodec.decode_request>`
+  - {func}`encode_response() <mlserver.codecs.RequestCodec.encode_response>`
+  - {func}`decode_response() <mlserver.codecs.RequestCodec.decode_response>`
 - **Input Codecs**
-  - `encode_input(name: str, payload: Any) -> RequestInput`
-  - `decode_input(request_input: RequestInput) -> Any`
-  - `encode_output(name: str, payload: Any) -> ResponseOutput`
-  - `decode_output(response_output: ResponseOutput) -> Any`
+  - {func}`encode_input() <mlserver.codecs.InputCodec.encode_input>`
+  - {func}`decode_input() <mlserver.codecs.InputCodec.decode_input>`
+  - {func}`encode_output() <mlserver.codecs.InputCodec.encode_output>`
+  - {func}`decode_output() <mlserver.codecs.InputCodec.decode_output>`
 
 Note that, these methods can also be used as helpers to **encode requests and
 decode responses on the client side**.
@@ -150,13 +150,57 @@ from mlserver.codecs import PandasCodec
 
 dataframe = pd.DataFrame({'First Name': ["Joanne", "Michael"], 'Age': [34, 22]})
 
-v2_request = PandasCodec.encode_request(dataframe)
-print(v2_request)
+inference_request = PandasCodec.encode_request(dataframe)
+print(inference_request)
 ```
 
 For a full end-to-end example on how content types and codecs work under the
 hood, feel free to check out this [Content Type Decoding
 example](../examples/content-type/README.md).
+
+#### Converting to / from JSON
+
+When using MLServer's request codecs, the output of encoding payloads will
+always be one of the classes within the `mlserver.types` package (i.e.
+{class}`InferenceRequest <mlserver.types.InferenceRequest>` or
+{class}`InferenceResponse <mlserver.types.InferenceResponse>`).
+Therefore, if you want to use them with `requests` (or other package outside of
+MLServer) you will need to **convert them to a Python dict or a JSON string**.
+
+Luckily, these classes leverage [Pydantic](https://docs.pydantic.dev/latest/)
+under the hood.
+Therefore you can just call the `.dict()` or `.json()` method to convert them.
+Likewise, to read them back from JSON, we can always pass the JSON fields as
+kwargs to the class' constructor (or use any of the [other
+methods](https://docs.pydantic.dev/latest/usage/models/#model-properties)
+available within Pydantic).
+
+For example, if we want to send an inference request to model `foo`, we could
+do something along the following lines:
+
+```{code-block} python
+---
+emphasize-lines: 10-11, 15-18
+---
+import pandas as pd
+import requests
+
+from mlserver.codecs import PandasCodec
+
+dataframe = pd.DataFrame({'First Name': ["Joanne", "Michael"], 'Age': [34, 22]})
+
+inference_request = PandasCodec.encode_request(dataframe)
+
+# raw_request will be a Python dictionary compatible with `requests`'s `json` kwarg
+raw_request = inference_request.dict()
+
+response = requests.post("localhost:8080/v2/models/foo/infer", json=raw_request)
+
+# raw_response will be a dictionary (loaded from the response's JSON),
+# therefore we can pass it as the InferenceResponse constructors' kwargs
+raw_response = response.json()
+inference_response = InferenceResponse(**raw_response)
+```
 
 ### Model Metadata
 
@@ -292,7 +336,7 @@ emphasize-lines: 1,4
 from mlserver.codecs import NumpyRequestCodec
 
 # Encode an entire V2 request
-v2_request = NumpyRequestCodec.encode_request(foo)
+inference_request = NumpyRequestCodec.encode_request(foo)
 ```
 ````
 
@@ -306,7 +350,7 @@ from mlserver.codecs import NumpyCodec
 
 # We can use the `NumpyCodec` to encode a single input head with name `foo`
 # within a larger request
-v2_request = InferenceRequest(
+inference_request = InferenceRequest(
   inputs=[
     NumpyCodec.encode_input("foo", foo)
   ]
@@ -400,7 +444,7 @@ foo = pd.DataFrame({
   "C": ["c1", "c2", "c3", "c4"]
 })
 
-v2_request = PandasCodec.encode_request(foo)
+inference_request = PandasCodec.encode_request(foo)
 ```
 ````
 `````
@@ -453,7 +497,7 @@ emphasize-lines: 1,4
 from mlserver.codecs.string import StringRequestCodec
 
 # Encode an entire V2 request
-v2_request = StringRequestCodec.encode_request(foo, use_bytes=False)
+inference_request = StringRequestCodec.encode_request(foo, use_bytes=False)
 ```
 ````
 
@@ -467,7 +511,7 @@ from mlserver.codecs import StringCodec
 
 # We can use the `StringCodec` to encode a single input head with name `foo`
 # within a larger request
-v2_request = InferenceRequest(
+inference_request = InferenceRequest(
   inputs=[
     StringCodec.encode_input("foo", foo, use_bytes=False)
   ]
@@ -532,7 +576,7 @@ from mlserver.codecs import Base64Codec
 
 # We can use the `Base64Codec` to encode a single input head with name `foo`
 # within a larger request
-v2_request = InferenceRequest(
+inference_request = InferenceRequest(
   inputs=[
     Base64Codec.encode_input("foo", foo, use_bytes=False)
   ]
@@ -597,7 +641,7 @@ from mlserver.codecs import DatetimeCodec
 
 # We can use the `DatetimeCodec` to encode a single input head with name `foo`
 # within a larger request
-v2_request = InferenceRequest(
+inference_request = InferenceRequest(
   inputs=[
     DatetimeCodec.encode_input("foo", foo, use_bytes=False)
   ]

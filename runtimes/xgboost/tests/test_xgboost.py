@@ -11,7 +11,6 @@ from mlserver.types import RequestOutput, RequestInput, InferenceRequest
 
 from mlserver_xgboost import XGBoostModel
 from mlserver_xgboost.xgboost import (
-    WELLKNOWN_MODEL_FILENAMES,
     PREDICT_OUTPUT,
     PREDICT_PROBA_OUTPUT,
 )
@@ -27,16 +26,18 @@ def test_load_classifier(classifier: XGBoostModel):
     assert type(classifier._model) == xgb.XGBClassifier
 
 
-@pytest.mark.parametrize("fname", WELLKNOWN_MODEL_FILENAMES)
-async def test_load_folder(fname, model_uri: str, model_settings: ModelSettings):
+async def test_load_folder(model_uri: str, model_settings: ModelSettings):
+    # Rename `xgboost-model.[ext]` to `model.[ext]`
+    _, ext = os.path.splitext(model_uri)
+    fname = f"model{ext}"
     model_folder = os.path.dirname(model_uri)
     model_path = os.path.join(model_folder, fname)
     os.rename(model_uri, model_path)
 
-    model_settings.parameters.uri = model_path  # type: ignore
+    model_settings.parameters.uri = model_folder  # type: ignore
 
     model = XGBoostModel(model_settings)
-    await model.load()
+    model.ready = await model.load()
 
     assert model.ready
     assert type(model._model) == xgb.XGBRegressor

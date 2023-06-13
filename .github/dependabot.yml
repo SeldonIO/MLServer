@@ -3,7 +3,62 @@ version: 2
 updates:
   - package-ecosystem: "pip"
     directory: "/"
-    # Check the npm registry for updates every day (weekdays)
+    schedule:
+      interval: "weekly"
+    reviewers:
+      - adriangonz
+
+  - package-ecosystem: "pip"
+    directory: "/runtimes/alibi-detect"
+    schedule:
+      interval: "weekly"
+    reviewers:
+      - adriangonz
+
+  - package-ecosystem: "pip"
+    directory: "/runtimes/alibi-explain"
+    schedule:
+      interval: "weekly"
+    reviewers:
+      - adriangonz
+
+  - package-ecosystem: "pip"
+    directory: "/runtimes/huggingface"
+    schedule:
+      interval: "weekly"
+    reviewers:
+      - adriangonz
+
+  - package-ecosystem: "pip"
+    directory: "/runtimes/lightgbm"
+    schedule:
+      interval: "weekly"
+    reviewers:
+      - adriangonz
+
+  - package-ecosystem: "pip"
+    directory: "/runtimes/mlflow"
+    schedule:
+      interval: "weekly"
+    reviewers:
+      - adriangonz
+
+  - package-ecosystem: "pip"
+    directory: "/runtimes/mllib"
+    schedule:
+      interval: "weekly"
+    reviewers:
+      - adriangonz
+
+  - package-ecosystem: "pip"
+    directory: "/runtimes/sklearn"
+    schedule:
+      interval: "weekly"
+    reviewers:
+      - adriangonz
+
+  - package-ecosystem: "pip"
+    directory: "/runtimes/xgboost"
     schedule:
       interval: "weekly"
     reviewers:

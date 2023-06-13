@@ -1,131 +1,77 @@
-import os
 import json
-from typing import Optional, Dict
-from distutils.util import strtobool
-
 import numpy as np
-from pydantic import BaseSettings
-from mlserver.errors import MLServerError
 
-from transformers.pipelines import pipeline
+from typing import Callable
+from functools import partial
+from mlserver.settings import ModelSettings
+
+import torch
+import tensorflow as tf
+
+from optimum.pipelines import pipeline as opt_pipeline
+from transformers.pipelines import pipeline as trf_pipeline
 from transformers.pipelines.base import Pipeline
-from transformers.models.auto.tokenization_auto import AutoTokenizer
 
-from optimum.pipelines import SUPPORTED_TASKS as SUPPORTED_OPTIMUM_TASKS
-
-
-HUGGINGFACE_TASK_TAG = "task"
-
-ENV_PREFIX_HUGGINGFACE_SETTINGS = "MLSERVER_MODEL_HUGGINGFACE_"
-HUGGINGFACE_PARAMETERS_TAG = "huggingface_parameters"
-PARAMETERS_ENV_NAME = "PREDICTIVE_UNIT_PARAMETERS"
+from .settings import HuggingFaceSettings
 
 
-class InvalidTranformerInitialisation(MLServerError):
-    def __init__(self, code: int, reason: str):
-        super().__init__(
-            f"Huggingface server failed with {code}, {reason}",
-            status_code=code,
-        )
+OPTIMUM_ACCELERATOR = "ort"
+
+_PipelineConstructor = Callable[..., Pipeline]
 
 
-class HuggingFaceSettings(BaseSettings):
-    """
-    Parameters that apply only to alibi huggingface models
-    """
-
-    class Config:
-        env_prefix = ENV_PREFIX_HUGGINGFACE_SETTINGS
-
-    task: str = ""
-    pretrained_model: Optional[str] = None
-    pretrained_tokenizer: Optional[str] = None
-    optimum_model: bool = False
-    device: int = -1
-    batch_size: Optional[int] = None
-
-
-def parse_parameters_from_env() -> Dict:
-    """
-    TODO
-    """
-    parameters = json.loads(os.environ.get(PARAMETERS_ENV_NAME, "[]"))
-
-    type_dict = {
-        "INT": int,
-        "FLOAT": float,
-        "DOUBLE": float,
-        "STRING": str,
-        "BOOL": bool,
-    }
-
-    parsed_parameters = {}
-    for param in parameters:
-        name = param.get("name")
-        value = param.get("value")
-        type_ = param.get("type")
-        if type_ == "BOOL":
-            parsed_parameters[name] = bool(strtobool(value))
-        else:
-            try:
-                parsed_parameters[name] = type_dict[type_](value)
-            except ValueError:
-                raise InvalidTranformerInitialisation(
-                    "Bad model parameter: "
-                    + name
-                    + " with value "
-                    + value
-                    + " can't be parsed as a "
-                    + type_,
-                    reason="MICROSERVICE_BAD_PARAMETER",
-                )
-            except KeyError:
-                raise InvalidTranformerInitialisation(
-                    "Bad model parameter type: "
-                    + type_
-                    + " valid are INT, FLOAT, DOUBLE, STRING, BOOL",
-                    reason="MICROSERVICE_BAD_PARAMETER",
-                )
-    return parsed_parameters
-
-
-def load_pipeline_from_settings(hf_settings: HuggingFaceSettings) -> Pipeline:
-    """
-    TODO
-    """
+def load_pipeline_from_settings(
+    hf_settings: HuggingFaceSettings, settings: ModelSettings
+) -> Pipeline:
     # TODO: Support URI for locally downloaded artifacts
     # uri = model_parameters.uri
-    model = hf_settings.pretrained_model
+    pipeline = _get_pipeline_class(hf_settings)
+
+    batch_size = 1
+    if settings.max_batch_size:
+        batch_size = settings.max_batch_size
+
     tokenizer = hf_settings.pretrained_tokenizer
-    device = hf_settings.device
+    if not tokenizer:
+        tokenizer = hf_settings.pretrained_model
+    if hf_settings.framework == "tf":
+        if hf_settings.inter_op_threads is not None:
+            tf.config.threading.set_inter_op_parallelism_threads(
+                hf_settings.inter_op_threads
+            )
+        if hf_settings.intra_op_threads is not None:
+            tf.config.threading.set_intra_op_parallelism_threads(
+                hf_settings.intra_op_threads
+            )
+    elif hf_settings.framework == "pt":
+        if hf_settings.inter_op_threads is not None:
+            torch.set_num_interop_threads(hf_settings.inter_op_threads)
+        if hf_settings.intra_op_threads is not None:
+            torch.set_num_threads(hf_settings.intra_op_threads)
 
-    if model and not tokenizer:
-        tokenizer = model
-
-    if hf_settings.optimum_model:
-        optimum_class = SUPPORTED_OPTIMUM_TASKS[hf_settings.task]["class"][0]
-        model = optimum_class.from_pretrained(
-            hf_settings.pretrained_model,
-            from_transformers=True,
-        )
-        tokenizer = AutoTokenizer.from_pretrained(tokenizer)
-        # Device needs to be set to -1 due to known issue
-        # https://github.com/huggingface/optimum/issues/191
-        device = -1
-
-    pp = pipeline(
-        hf_settings.task,
-        model=model,
+    hf_pipeline = pipeline(
+        hf_settings.task_name,
+        model=hf_settings.pretrained_model,
         tokenizer=tokenizer,
-        device=device,
-        batch_size=hf_settings.batch_size,
+        device=hf_settings.device,
+        batch_size=batch_size,
+        framework=hf_settings.framework,
     )
 
-    # If batch_size > 0 we need to ensure tokens are padded
-    if hf_settings.batch_size:
-        pp.tokenizer.pad_token_id = [str(pp.model.config.eos_token_id)]  # type: ignore
+    # If max_batch_size > 0 we need to ensure tokens are padded
+    if settings.max_batch_size:
+        model = hf_pipeline.model
+        eos_token_id = model.config.eos_token_id
+        hf_pipeline.tokenizer.pad_token_id = [str(eos_token_id)]  # type: ignore
 
-    return pp
+    return hf_pipeline
+
+
+def _get_pipeline_class(hf_settings: HuggingFaceSettings) -> _PipelineConstructor:
+    if hf_settings.optimum_model:
+        return partial(opt_pipeline, accelerator=OPTIMUM_ACCELERATOR)
+
+    return trf_pipeline
 
 
 class NumpyEncoder(json.JSONEncoder):

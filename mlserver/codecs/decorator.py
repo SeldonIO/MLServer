@@ -38,6 +38,10 @@ def _as_list(a: Optional[Union[Any, Tuple[Any]]]) -> List[Any]:
         # Split into components
         return list(a)
 
+    if get_origin(a) is tuple:
+        # Convert type arguments into list
+        return list(get_args(a))
+
     # Otherwise, assume it's a single element
     return [a]
 

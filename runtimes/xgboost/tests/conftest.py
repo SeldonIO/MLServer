@@ -9,6 +9,7 @@ from mlserver.types import InferenceRequest
 from mlserver.utils import install_uvloop_event_loop
 
 from mlserver_xgboost import XGBoostModel
+from mlserver_xgboost.xgboost import WELLKNOWN_MODEL_FILENAMES
 
 TESTS_PATH = os.path.dirname(__file__)
 TESTDATA_PATH = os.path.join(TESTS_PATH, "testdata")
@@ -23,15 +24,16 @@ def event_loop():
     loop.close()
 
 
-@pytest.fixture
-def model_uri(tmp_path) -> str:
+@pytest.fixture(params=WELLKNOWN_MODEL_FILENAMES)
+def model_uri(request, tmp_path) -> str:
     n = 4
     d = 3
 
     dtrain = xgb.DMatrix(data=np.random.rand(n, d), label=np.random.rand(n))
     bst = xgb.train(params={}, dtrain=dtrain)
 
-    model_uri = os.path.join(tmp_path, "xgboost-model.json")
+    _, ext = os.path.splitext(request.param)
+    model_uri = os.path.join(tmp_path, f"xgboost-model{ext}")
     bst.save_model(model_uri)
 
     return model_uri
@@ -68,7 +70,7 @@ def model_settings(model_uri: str) -> ModelSettings:
 @pytest.fixture
 async def model(model_settings: ModelSettings) -> XGBoostModel:
     model = XGBoostModel(model_settings)
-    await model.load()
+    model.ready = await model.load()
 
     return model
 
@@ -81,7 +83,7 @@ async def classifier(classifier_uri: str) -> XGBoostModel:
         parameters=ModelParameters(uri=classifier_uri, version="v1.2.3"),
     )
     model = XGBoostModel(model_settings)
-    await model.load()
+    model.ready = await model.load()
 
     return model
 

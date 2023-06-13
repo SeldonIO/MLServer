@@ -7,19 +7,54 @@ This document discusses the release process for MLServer.
 > The process may change. Please, always check this document before conducting
 > a release and verify if everything goes as expected.
 
+**Before releasing a new version of MLServer, please read this page
+carefully and make sure you understand the different parts of the process.**
+
 ## Process Summary
 
-1. Trigger a `MLServer Release` from Github Actions.
+1. If this is a new **major or minor official release**, create a [release
+   branch](#release-branches) from `master`.
+   Alternatively, if this is a **patch official release**, checkout the
+   existing [release branch](#release-branches) and cherry-pick any relevant
+   commits into it.
+
+   Note that, for **dev releases**, the above is not needed and you can trigger
+   the `MLServer Release` action straight from `master`.
+
+2. Trigger a `MLServer Release` from Github Actions.
 
    1. Provide the [version tag](versioning-scheme) that you want to release.
       ![MLServer Release](./docs/assets/mlserver-release.png)
 
-2. Monitor the triggered workflow, until it's finished.
+3. Monitor the triggered workflow, until it's finished.
 
    1. Once it's done, all the [release artifacts](release-artifacts) will be
       pushed to Docker Hub and PyPI.
    2. Additionally, a release draft will get created in the repository
       [Releases section](https://github.com/SeldonIO/MLServer/releases).
+
+4. For **official releases**, update the release draft (created in step `3.2`)
+   in the [Releases section](https://github.com/SeldonIO/MLServer/releases) of
+   the repository.
+
+   1. Once you are happy with the draft, click `Publish`.
+
+## Release Branches
+
+For official releases, MLServer uses long-lived release branches.
+These branches will always follow the `release/<major>.<minor>.x` pattern (e.g.
+`release/1.2.x`) and will be used for every `<major>.<minor>.x` [official
+release](#versioning-scheme) (e.g. the `release/1.2.x` will be used for
+`1.2.0`, `1.2.1`, etc.).
+Note that these branches will always be pushed straight to the main
+`github.com/SeldonIO/MLServer` and not to a fork and will never get merged with
+`master`.
+
+Therefore, when starting a new **major or minor official release** please
+create a `release/<major>.<minor>.x` branch.
+Alternatively, when preparing a **patch official release**, please
+_cherry-pick_ all relevant merged PRs from `master` into the existing
+`release/<major>.<minor>.x` branch.
 
 ## Versioning Scheme
 

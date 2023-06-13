@@ -2,9 +2,10 @@ import sys
 import os
 import json
 import importlib
+import inspect
 
-from typing import Any, Dict, List, Optional, Union
-from pydantic import BaseSettings, PyObject, Extra, Field
+from typing import Any, Dict, List, Optional, Type, Union, no_type_check, TYPE_CHECKING
+from pydantic import PyObject, Extra, Field, BaseSettings as _BaseSettings
 from contextlib import contextmanager
 
 from .version import __version__
@@ -16,6 +17,12 @@ ENV_PREFIX_MODEL_SETTINGS = "MLSERVER_MODEL_"
 
 DEFAULT_PARALLEL_WORKERS = 1
 
+DEFAULT_ENVIRONMENTS_DIR = os.path.join(os.getcwd(), ".envs")
+DEFAULT_METRICS_DIR = os.path.join(os.getcwd(), ".metrics")
+
+if TYPE_CHECKING:
+    from ..model import MLModel
+
 
 @contextmanager
 def _extra_sys_path(extra_path: str):
@@ -26,14 +33,62 @@ def _extra_sys_path(extra_path: str):
     sys.path.remove(extra_path)
 
 
-def _reload_module(obj: dict):
-    import_path = obj.get("implementation", None)
+def _get_import_path(klass: Type):
+    return f"{klass.__module__}.{klass.__name__}"
+
+
+def _reload_module(import_path: str):
     if not import_path:
         return
 
     module_path, _, _ = import_path.rpartition(".")
     module = importlib.import_module(module_path)
     importlib.reload(module)
+
+
+class BaseSettings(_BaseSettings):
+    @no_type_check
+    def __setattr__(self, name, value):
+        """
+        Patch __setattr__ to be able to use property setters.
+        From:
+            https://github.com/pydantic/pydantic/issues/1577#issuecomment-790506164
+        """
+        try:
+            super().__setattr__(name, value)
+        except ValueError as e:
+            setters = inspect.getmembers(
+                self.__class__,
+                predicate=lambda x: isinstance(x, property) and x.fset is not None,
+            )
+            for setter_name, func in setters:
+                if setter_name == name:
+                    object.__setattr__(self, name, value)
+                    break
+            else:
+                raise e
+
+    def dict(self, by_alias=True, exclude_unset=True, exclude_none=True, **kwargs):
+        """
+        Ensure that aliases are used, and that unset / none fields are ignored.
+        """
+        return super().dict(
+            by_alias=by_alias,
+            exclude_unset=exclude_unset,
+            exclude_none=exclude_none,
+            **kwargs,
+        )
+
+    def json(self, by_alias=True, exclude_unset=True, exclude_none=True, **kwargs):
+        """
+        Ensure that aliases are used, and that unset / none fields are ignored.
+        """
+        return super().json(
+            by_alias=by_alias,
+            exclude_unset=exclude_unset,
+            exclude_none=exclude_none,
+            **kwargs,
+        )
 
 
 class CORSSettings(BaseSettings):
@@ -85,6 +140,13 @@ class Settings(BaseSettings):
 
     parallel_workers_timeout: int = 5
     """Grace timeout to wait until the workers shut down when stopping MLServer."""
+
+    environments_dir: str = DEFAULT_ENVIRONMENTS_DIR
+    """
+    Directory used to store custom environments.
+    By default, the `.envs` folder of the current working directory will be
+    used.
+    """
 
     # Custom model repository class implementation
     model_repository_implementation: Optional[PyObject] = None
@@ -148,6 +210,16 @@ class Settings(BaseSettings):
     Metrics rest server string prefix to be exported.
     """
 
+    metrics_dir: str = DEFAULT_METRICS_DIR
+    """
+    Directory used to share metrics across parallel workers.
+    Equivalent to the `PROMETHEUS_MULTIPROC_DIR` env var in
+    `prometheus-client`.
+    Note that this won't be used if the `parallel_workers` flag is disabled.
+    By default, the `.metrics` folder of the current working directory will be
+    used.
+    """
+
     # Logging settings
     logging_settings: Optional[Union[str, Dict]] = None
     """Path to logging config file or dictionary configuration."""
@@ -187,6 +259,10 @@ class ModelParameters(BaseSettings):
     version: Optional[str] = None
     """Version of the model."""
 
+    environment_tarball: Optional[str] = None
+    """Path to the environment tarball which should be used to load this
+    model."""
+
     format: Optional[str] = None
     """Format of the model (only available on certain runtimes)."""
 
@@ -207,6 +283,15 @@ class ModelSettings(BaseSettings):
     # Source points to the file where model settings were loaded from
     _source: Optional[str] = None
 
+    def __init__(self, *args, **kwargs):
+        # Ensure we still support inline init, e.g.
+        # ModelSettings(implementation=SumModel)
+        implementation = kwargs.get("implementation", None)
+        if inspect.isclass(implementation):
+            kwargs["implementation"] = _get_import_path(implementation)
+
+        super().__init__(*args, **kwargs)
+
     @classmethod
     def parse_file(cls, path: str) -> "ModelSettings":  # type: ignore
         with open(path, "r") as f:
@@ -217,15 +302,25 @@ class ModelSettings(BaseSettings):
     @classmethod
     def parse_obj(cls, obj: Any) -> "ModelSettings":
         source = obj.pop("_source", None)
-        if not source:
-            return super().parse_obj(obj)
-
-        model_folder = os.path.dirname(source)
-        with _extra_sys_path(model_folder):
-            _reload_module(obj)
-            model_settings = super().parse_obj(obj)
+        model_settings = super().parse_obj(obj)
+        if source:
             model_settings._source = source
-            return model_settings
+
+        return model_settings
+
+    @property
+    def implementation(self) -> Type["MLModel"]:
+        if not self._source:
+            return PyObject.validate(self.implementation_)  # type: ignore
+
+        model_folder = os.path.dirname(self._source)
+        with _extra_sys_path(model_folder):
+            _reload_module(self.implementation_)
+            return PyObject.validate(self.implementation_)  # type: ignore
+
+    @implementation.setter
+    def implementation(self, value: Type["MLModel"]):
+        self.implementation_ = _get_import_path(value)
 
     @property
     def version(self) -> Optional[str]:
@@ -276,7 +371,15 @@ class ModelSettings(BaseSettings):
     to wait for enough requests to build a full batch."""
 
     # Custom model class implementation
-    implementation: PyObject
+    # NOTE: The `implementation_` attr will only point to the string import.
+    # The actual import will occur within the `implementation` property - think
+    # of this as a lazy import.
+    # You should always use `model_settings.implementation` and treat
+    # `implementation_` as a private attr (due to Pydantic - we can't just
+    # prefix the attr with `_`).
+    implementation_: str = Field(
+        alias="implementation", env="MLSERVER_MODEL_IMPLEMENTATION"
+    )
     """*Python path* to the inference runtime to use to serve this model (e.g.
     ``mlserver_sklearn.SKLearnModel``)."""
 

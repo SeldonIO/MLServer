@@ -1,15 +1,14 @@
 import json
-
-import alibi.explainers.anchors.anchor_tabular
-import pytest
-import numpy as np
-
 from typing import Any, Dict
 from unittest.mock import patch
+
+import alibi.explainers.anchors.anchor_tabular
+import numpy as np
+import pytest
 from alibi.api.interfaces import Explanation
 from numpy.testing import assert_array_equal
 
-from mlserver import ModelSettings, MLModel
+from mlserver import ModelSettings
 from mlserver.codecs import NumpyCodec
 from mlserver.types import (
     InferenceRequest,
@@ -17,16 +16,20 @@ from mlserver.types import (
     Parameters,
     RequestInput,
     ResponseOutput,
-    MetadataTensor,
 )
 from mlserver_alibi_explain.common import (
     convert_from_bytes,
     remote_predict,
     AlibiExplainSettings,
 )
-from mlserver_alibi_explain.runtime import AlibiExplainRuntime, AlibiExplainRuntimeBase
 from mlserver_alibi_explain.errors import InvalidExplanationShape
-
+from mlserver_alibi_explain.explainers.black_box_runtime import (
+    AlibiExplainBlackBoxRuntime,
+)
+from mlserver_alibi_explain.explainers.integrated_gradients import (
+    IntegratedGradientsWrapper,
+)
+from mlserver_alibi_explain.runtime import AlibiExplainRuntime, AlibiExplainRuntimeBase
 from .helpers.run_async import run_async_as_sync, run_sync_as_async
 
 """
@@ -55,6 +58,7 @@ async def test_integrated_gradients__smoke(
             )
         ],
     )
+    assert isinstance(integrated_gradients_runtime, IntegratedGradientsWrapper)
     response = await integrated_gradients_runtime.predict(inference_request)
     res = convert_from_bytes(response.outputs[0], ty=str)
     res_dict = json.dumps(res)
@@ -83,6 +87,9 @@ async def test_anchors__smoke(
                 datatype="FP32",
             )
         ],
+    )
+    assert isinstance(
+        anchor_image_runtime_with_remote_predict_patch, AlibiExplainBlackBoxRuntime
     )
     response = await anchor_image_runtime_with_remote_predict_patch.predict(
         inference_request
@@ -123,67 +130,6 @@ async def test_remote_predict__smoke(custom_runtime_tf, rest_client):
             ssl_verify_path="",
         )
         assert isinstance(res, InferenceResponse)
-
-
-async def test_alibi_runtime_wrapper(custom_runtime_tf: MLModel):
-    """
-    Checks that the wrapper returns back the expected valued from the underlying rt
-    """
-
-    class _MockInit(AlibiExplainRuntime):
-        def __init__(self, settings: ModelSettings):
-            self._rt = custom_runtime_tf
-
-    data = np.random.randn(10, 28, 28, 1) * 255
-    inference_request = InferenceRequest(
-        parameters=Parameters(content_type=NumpyCodec.ContentType),
-        inputs=[
-            RequestInput(
-                name="predict",
-                shape=data.shape,
-                data=data.tolist(),
-                datatype="FP32",
-            )
-        ],
-    )
-
-    # settings object is dummy and discarded
-    wrapper = _MockInit(ModelSettings(name="foo", implementation=AlibiExplainRuntime))
-
-    assert wrapper.settings == custom_runtime_tf.settings
-    assert wrapper.name == custom_runtime_tf.name
-    assert wrapper.version == custom_runtime_tf.version
-    assert wrapper.inputs == custom_runtime_tf.inputs
-    assert wrapper.outputs == custom_runtime_tf.outputs
-    assert wrapper.ready == custom_runtime_tf.ready
-
-    assert await wrapper.metadata() == await custom_runtime_tf.metadata()
-    assert await wrapper.predict(inference_request) == await custom_runtime_tf.predict(
-        inference_request
-    )
-
-    # check setters
-    dummy_shape_metadata = [
-        MetadataTensor(
-            name="dummy",
-            datatype="FP32",
-            shape=[1, 2],
-        )
-    ]
-    wrapper.inputs = dummy_shape_metadata
-    custom_runtime_tf.inputs = dummy_shape_metadata
-    assert wrapper.inputs == custom_runtime_tf.inputs
-
-    wrapper.outputs = dummy_shape_metadata
-    custom_runtime_tf.outputs = dummy_shape_metadata
-    assert wrapper.outputs == custom_runtime_tf.outputs
-
-    wrapper_public_funcs = list(filter(lambda x: not x.startswith("_"), dir(wrapper)))
-    expected_public_funcs = list(
-        filter(lambda x: not x.startswith("_"), dir(custom_runtime_tf))
-    )
-
-    assert wrapper_public_funcs == expected_public_funcs
 
 
 def fake_predictor(x):
@@ -291,7 +237,8 @@ async def test_v1_invalid_predict(
     async def _mocked_predict(request: InferenceRequest) -> InferenceResponse:
         return response
 
-    with patch.object(integrated_gradients_runtime._rt, "predict", _mocked_predict):
+    with patch.object(integrated_gradients_runtime, "predict", _mocked_predict):
         request = InferenceRequest(inputs=[])
         with pytest.raises(InvalidExplanationShape):
-            await integrated_gradients_runtime._rt.explain_v1_output(request)
+            assert isinstance(integrated_gradients_runtime, AlibiExplainRuntimeBase)
+            await integrated_gradients_runtime.explain_v1_output(request)

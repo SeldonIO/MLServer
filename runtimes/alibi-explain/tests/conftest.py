@@ -12,12 +12,14 @@ from typing import Type
 
 from httpx import AsyncClient
 from fastapi import FastAPI
+from prometheus_client.registry import REGISTRY, CollectorRegistry
+from starlette_exporter import PrometheusMiddleware
 from alibi.api.interfaces import Explanation, Explainer
 from alibi.explainers import AnchorImage
 
 from mlserver import MLModel
 from mlserver.handlers import DataPlane, ModelRepositoryHandlers
-from mlserver.parallel import InferencePool
+from mlserver.parallel import InferencePoolRegistry
 from mlserver.registry import MultiModelRegistry
 
 from mlserver.repository import ModelRepository, SchemalessModelRepository
@@ -25,22 +27,57 @@ from mlserver.rest import RESTServer
 from mlserver.settings import ModelSettings, ModelParameters, Settings
 from mlserver.types import MetadataModelResponse
 from mlserver.utils import install_uvloop_event_loop
+from mlserver.metrics.registry import MetricsRegistry, REGISTRY as METRICS_REGISTRY
+
 from mlserver_alibi_explain.common import AlibiExplainSettings
 from mlserver_alibi_explain.runtime import AlibiExplainRuntime, AlibiExplainRuntimeBase
 
 from .helpers.tf_model import get_tf_mnist_model_uri, TFMNISTModel
 from .helpers.run_async import run_async_as_sync
+from .helpers.metrics import unregister_metrics
 
 TESTS_PATH = Path(os.path.dirname(__file__))
 _ANCHOR_IMAGE_DIR = TESTS_PATH / ".data" / "mnist_anchor_image"
 
 
 @pytest.fixture
-async def inference_pool(settings: Settings) -> AsyncIterable[InferencePool]:
-    pool = InferencePool(settings)
-    yield pool
+def metrics_registry() -> Iterable[MetricsRegistry]:
+    yield METRICS_REGISTRY
 
-    await pool.close()
+    unregister_metrics(METRICS_REGISTRY)
+
+
+@pytest.fixture
+def prometheus_registry(
+    metrics_registry: MetricsRegistry,
+) -> Iterable[CollectorRegistry]:
+    """
+    Fixture used to ensure the registry is cleaned on each run.
+    Otherwise, `py-grpc-prometheus` will complain that metrics already exist.
+
+    TODO: Open issue in `py-grpc-prometheus` to check whether a metric exists
+    before creating it.
+    For an example on how to do this, see `starlette_exporter`'s implementation
+
+        https://github.com/stephenhillier/starlette_exporter/blob/947d4d631dd9a6a8c1071b45573c5562acba4834/starlette_exporter/middleware.py#L67
+    """
+    yield REGISTRY
+
+    unregister_metrics(REGISTRY)
+
+    # Clean metrics from `starlette_exporter` as well, as otherwise they won't
+    # get re-created
+    PrometheusMiddleware._metrics.clear()
+
+
+@pytest.fixture
+async def inference_pool_registry(
+    settings: Settings, prometheus_registry: CollectorRegistry
+) -> AsyncIterable[InferencePoolRegistry]:
+    registry = InferencePoolRegistry(settings)
+    yield registry
+
+    await registry.close()
 
 
 @pytest.fixture
@@ -72,12 +109,13 @@ def settings() -> Settings:
 
 @pytest.fixture
 async def model_registry(
-    custom_runtime_tf_settings, inference_pool
+    custom_runtime_tf_settings, inference_pool_registry
 ) -> AsyncIterable[MultiModelRegistry]:
     model_registry = MultiModelRegistry(
-        on_model_load=[inference_pool.load_model],
-        on_model_reload=[inference_pool.reload_model],
-        on_model_unload=[inference_pool.unload_model],
+        on_model_load=[inference_pool_registry.load_model],
+        on_model_reload=[inference_pool_registry.reload_model],
+        on_model_unload=[inference_pool_registry.unload_model],
+        model_initialiser=inference_pool_registry.model_initialiser,
     )
 
     await model_registry.load(custom_runtime_tf_settings)
@@ -121,6 +159,7 @@ async def rest_server(
     data_plane: DataPlane,
     model_repository_handlers: ModelRepositoryHandlers,
     custom_runtime_tf: MLModel,
+    prometheus_registry: CollectorRegistry,
 ) -> AsyncIterable[RESTServer]:
     server = RESTServer(
         settings=settings,
@@ -196,6 +235,7 @@ async def anchor_image_runtime_with_remote_predict_patch(
             ),
         )
     )
+    assert isinstance(rt, MLModel)
     await rt.load()
 
     yield rt
@@ -216,6 +256,7 @@ async def integrated_gradients_runtime() -> AlibiExplainRuntime:
             ),
         )
     )
+    assert isinstance(rt, MLModel)
     await rt.load()
 
     return rt

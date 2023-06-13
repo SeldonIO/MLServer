@@ -1,0 +1,201 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Model Repository",
+    "version": "2.0",
+    "contact": {
+      "name": "Seldon Technologies Ltd.",
+      "url": "https://www.seldon.io/",
+      "email": "hello@seldon.io"
+    },
+    "description": "The Model Repository API allows the user to manage the models running in the inference server. That is, querying the currently available models, load them and unload them."
+  },
+  "servers": [],
+  "paths": {
+    "/v2/repository/index": {
+      "post": {
+        "summary": "",
+        "operationId": "repository-index",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepositoryIndexResponse"
+                }
+              }
+            }
+          }
+        },
+        "description": "The index API returns information about every model available in a model repository, even if it is not currently loaded into Triton. The index API provides a way to determine which models can potentially be loaded by the Load API. A model-repository index request is made with an HTTP POST to the index endpoint. In the corresponding response the HTTP body contains the JSON response.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RepositoryIndexRequest"
+              }
+            }
+          }
+        },
+        "tags": [
+          "extension",
+          "model-repository",
+          "server"
+        ]
+      }
+    },
+    "/v2/repository/models/{model_name}/load": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "model_name",
+          "in": "path",
+          "required": true
+        }
+      ],
+      "post": {
+        "summary": "",
+        "operationId": "load-model",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepositoryLoadErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "description": "The load API requests that a model be loaded into Triton, or reloaded if the model is already loaded. A load request is made with an HTTP POST to a load endpoint. A successful load request is indicated by a 200 HTTP status.",
+        "tags": [
+          "extension",
+          "model",
+          "model-repository"
+        ]
+      }
+    },
+    "/v2/repository/models/{model_name}/unload": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "model_name",
+          "in": "path",
+          "required": true
+        }
+      ],
+      "post": {
+        "summary": "",
+        "operationId": "model-unload",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepositoryUnloadErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "description": "The unload API requests that a model be unloaded from Triton. An unload request is made with an HTTP POST to an unload endpoint. A successful unload request is indicated by a 200 HTTP status.",
+        "tags": [
+          "extension",
+          "model",
+          "model-repository"
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "RepositoryIndexRequest": {
+        "title": "RepositoryIndexRequest",
+        "type": "object",
+        "properties": {
+          "ready": {
+            "type": "boolean"
+          }
+        }
+      },
+      "RepositoryIndexResponse": {
+        "title": "RepositoryIndexResponse",
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "version": {
+              "type": "string"
+            },
+            "state": {
+              "type": "string",
+              "enum": [
+                "UNKNOWN",
+                "READY",
+                "UNAVAILABLE",
+                "LOADING",
+                "UNLOADING"
+              ]
+            },
+            "reason": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "name",
+            "state",
+            "reason"
+          ]
+        }
+      },
+      "RepositoryLoadErrorResponse": {
+        "title": "RepositoryLoadErrorResponse",
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          }
+        }
+      },
+      "RepositoryUnloadErrorResponse": {
+        "title": "RepositoryUnloadErrorResponse",
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "extension"
+    },
+    {
+      "name": "model"
+    },
+    {
+      "name": "model-repository"
+    },
+    {
+      "name": "server"
+    }
+  ]
+}

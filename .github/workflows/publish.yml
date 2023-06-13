@@ -1,0 +1,72 @@
+# This GH Action is triggered when a release is 'published' in GitHub.
+# Once that happens, it will re-generate the Changelog (from the GH tag), and
+# update the tag so that it gets picked up by ReadTheDocs.
+name: Publish Version
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  # NOTE: We need to update the CHANGELOG on both the `release/*` and `master`
+  # branches to ensure they are in sync.
+  changelog-release-branch:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'release' }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: rhysd/changelog-from-release/action@v3
+        with:
+          file: CHANGELOG.md
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          commit: false
+          args: -d=false -l=2
+          header: "# Changelog\n"
+      - name: Commiting & Pushing Updated Changelog
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Update CHANGELOG.md for ${{ github.event.release.tag_name }}
+          tagging_message: ${{ github.event.release.tag_name }}
+          # NOTE: The tag will already exist (created by the release pipeline),
+          # so we'll need to override it to ensure the tag contains the right
+          # changelog.
+          push_options: "--force"
+      - name: Tagging release as stable
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Update CHANGELOG.md for ${{ github.event.release.tag_name }}
+          tagging_message: stable
+          # NOTE: The tag will already exist (created by previous releases), so
+          # we'll need to override it to ensure it points to the latest
+          # published release.
+          push_options: "--force"
+
+  changelog-master-branch:
+    runs-on: ubuntu-latest
+    steps:
+      # TODO: Open a PR instead of pushing straight to `master`?
+      - uses: actions/checkout@v3
+        with:
+          ref: master
+      - uses: rhysd/changelog-from-release/action@v3
+        with:
+          file: CHANGELOG.md
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          commit: false
+          args: -d=false -l=2
+          header: "# Changelog\n\n"
+      - name: Open PR with Changelog changes
+        uses: peter-evans/create-pull-request@v5
+        with:
+          add-paths: ./CHANGELOG.md
+          commit-message: Update Changelog
+          branch: update-changelog
+          branch-suffix: timestamp
+          delete-branch: true
+          title: Update CHANGELOG
+          body: "
+            # Updated CHANGELOG\n
+            This automated PR re-generates the changelog to keep it up to
+            date."
+          reviewers: adriangonz

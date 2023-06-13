@@ -1,14 +1,20 @@
 import pandas as pd
 import numpy as np
 
-from typing import Optional, Any, List
+from typing import Optional, Any, List, Tuple
 
 from .base import RequestCodec, register_request_codec
 from .numpy import to_datatype, to_dtype
-from .string import encode_str
+from .string import encode_str, StringCodec
 from .utils import get_decoded_or_raw, InputOrOutput, inject_batch_dimension
 from .lists import ListElement
-from ..types import InferenceRequest, InferenceResponse, RequestInput, ResponseOutput
+from ..types import (
+    InferenceRequest,
+    InferenceResponse,
+    RequestInput,
+    ResponseOutput,
+    Parameters,
+)
 
 
 def _to_series(input_or_output: InputOrOutput) -> pd.Series:
@@ -29,32 +35,55 @@ def _to_series(input_or_output: InputOrOutput) -> pd.Series:
 def _to_response_output(series: pd.Series, use_bytes: bool = True) -> ResponseOutput:
     datatype = to_datatype(series.dtype)
     data = series.tolist()
+    content_type = None
 
-    if datatype == "BYTES" and use_bytes:
-        # To ensure that "string" columns can be encoded in gRPC, we need to
-        # encode them as bytes
-        data = list(map(_ensure_bytes, data))
+    if datatype == "BYTES":
+        data, content_type = _process_bytes(data, use_bytes)
 
     shape = inject_batch_dimension(list(series.shape))
+    parameters = None
+    if content_type:
+        parameters = Parameters(content_type=content_type)
 
     return ResponseOutput(
         name=series.name,
         shape=shape,
-        # If string, it should be encoded to bytes
         data=data,
         datatype=datatype,
+        parameters=parameters,
     )
 
 
-def _ensure_bytes(elem: ListElement) -> bytes:
-    if isinstance(elem, str):
-        return encode_str(elem)
+def _process_bytes(
+    data: List[ListElement], use_bytes: bool = True
+) -> Tuple[List[ListElement], Optional[str]]:
+    # To ensure that "string" columns can be encoded in gRPC, we need to
+    # encode them as bytes.
+    # We'll also keep track of whether the list should be treated in the
+    # future as a list of strings.
+    processed = []
+    content_type: Optional[str] = StringCodec.ContentType
+    for elem in data:
+        converted = elem
+        if not isinstance(elem, str):
+            # There was a non-string element, so we can't determine a content
+            # type
+            content_type = None
+        elif use_bytes:
+            converted = encode_str(elem)
 
-    return elem
+        processed.append(converted)
+
+    return processed, content_type
 
 
 @register_request_codec
 class PandasCodec(RequestCodec):
+    """
+    Decodes a request (response) into a Pandas DataFrame, assuming each input
+    (output) head corresponds to a column of the DataFrame.
+    """
+
     ContentType = "pd"
     TypeHint = pd.DataFrame
 
@@ -74,7 +103,10 @@ class PandasCodec(RequestCodec):
         outputs = cls.encode_outputs(payload, use_bytes=use_bytes)
 
         return InferenceResponse(
-            model_name=model_name, model_version=model_version, outputs=outputs
+            model_name=model_name,
+            model_version=model_version,
+            parameters=Parameters(content_type=cls.ContentType),
+            outputs=outputs,
         )
 
     @classmethod
@@ -101,15 +133,17 @@ class PandasCodec(RequestCodec):
         outputs = cls.encode_outputs(payload, use_bytes=use_bytes)
 
         return InferenceRequest(
+            parameters=Parameters(content_type=cls.ContentType),
             inputs=[
                 RequestInput(
                     name=output.name,
                     datatype=output.datatype,
                     shape=output.shape,
                     data=output.data,
+                    parameters=output.parameters,
                 )
                 for output in outputs
-            ]
+            ],
         )
 
     @classmethod

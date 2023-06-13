@@ -1,31 +1,49 @@
-FROM python:3.8-slim AS wheel-builder
+FROM python:3.10-slim AS wheel-builder
 SHELL ["/bin/bash", "-l", "-c"]
+
+ARG POETRY_VERSION="1.4.2"
 
 COPY ./hack/build-wheels.sh ./hack/build-wheels.sh
 COPY ./mlserver ./mlserver
 COPY ./runtimes ./runtimes
 COPY \
-    setup.py \
+    pyproject.toml \
+    poetry.lock \
     README.md \
     .
 
-# This will build the wheels and place will place them in the
-# /opt/mlserver/dist folder
-RUN ./hack/build-wheels.sh /opt/mlserver/dist
+# Install Poetry, build wheels and export constraints.txt file
+# NOTE: Poetry outputs extras within the constraints, which are not supported
+# by pip:
+# https://github.com/python-poetry/poetry-plugin-export/issues/210
+RUN pip install poetry==$POETRY_VERSION && \
+    ./hack/build-wheels.sh /opt/mlserver/dist && \
+    poetry export --with all-runtimes \
+        --without-hashes \
+        --format constraints.txt \
+        -o /opt/mlserver/dist/constraints.txt && \
+    sed -i 's/\[.*\]//g' /opt/mlserver/dist/constraints.txt
 
 FROM registry.access.redhat.com/ubi9/ubi-minimal
 SHELL ["/bin/bash", "-c"]
 
-ARG PYTHON_VERSION=3.8.13
-ARG CONDA_VERSION=4.13.0
+ARG PYTHON_VERSION=3.10.11
+ARG CONDA_VERSION=23.1.0
 ARG MINIFORGE_VERSION=${CONDA_VERSION}-1
 ARG RUNTIMES="all"
 
+# Set a few default environment variables, including `LD_LIBRARY_PATH`
+# (required to use GKE's injected CUDA libraries).
+# NOTE: When updating between major Python versions make sure you update the
+# `/opt/conda` path within `LD_LIBRARY_PATH`.
 ENV MLSERVER_MODELS_DIR=/mnt/models \
     MLSERVER_ENV_TARBALL=/mnt/models/environment.tar.gz \
     MLSERVER_PATH=/opt/mlserver \
     CONDA_PATH=/opt/conda \
-    PATH=/opt/mlserver/.local/bin:/opt/conda/bin:$PATH
+    PATH=/opt/mlserver/.local/bin:/opt/conda/bin:$PATH \
+    LD_LIBRARY_PATH=/usr/local/nvidia/lib64:/opt/conda/lib/python3.10/site-packages/nvidia/cuda_runtime/lib:$LD_LIBRARY_PATH \
+    TRANSFORMERS_CACHE=/opt/mlserver/.cache \
+    NUMBA_CACHE_DIR=/opt/mlserver/.cache
 
 # Install some base dependencies required for some libraries
 RUN microdnf update -y && \
@@ -37,7 +55,7 @@ RUN microdnf update -y && \
         glib2-devel \
         shadow-utils
 
-# Install Conda, Python 3.8 and FFmpeg
+# Install Conda, Python 3.10 and FFmpeg
 RUN microdnf install -y wget && \
     wget "https://github.com/conda-forge/miniforge/releases/download/${MINIFORGE_VERSION}/Miniforge3-${MINIFORGE_VERSION}-Linux-x86_64.sh" \
         -O miniforge3.sh && \
@@ -70,13 +88,15 @@ COPY --from=wheel-builder /opt/mlserver/dist ./dist
 # NOTE: Temporarily excluding mllib from the main image due to:
 #   CVE-2022-25168
 #   CVE-2022-42889
+# NOTE: Removing explicitly requirements.txt file from spaCy's test
+# dependencies causing false positives in Snyk.
 RUN . $CONDA_PATH/etc/profile.d/conda.sh && \
     pip install --upgrade pip wheel setuptools && \
     if [[ $RUNTIMES == "all" ]]; then \
         for _wheel in "./dist/mlserver_"*.whl; do \
             if [[ ! $_wheel == *"mllib"* ]]; then \
                 echo "--> Installing $_wheel..."; \
-                pip install $_wheel; \
+                pip install $_wheel --constraint ./dist/constraints.txt; \
             fi \
         done \
     else \
@@ -84,10 +104,12 @@ RUN . $CONDA_PATH/etc/profile.d/conda.sh && \
             _wheelName=$(echo $_runtime | tr '-' '_'); \
             _wheel="./dist/$_wheelName-"*.whl; \
             echo "--> Installing $_wheel..."; \
-            pip install $_wheel; \
+            pip install $_wheel --constraint ./dist/constraints.txt; \
         done \
     fi && \
-    pip install $(ls "./dist/mlserver-"*.whl)
+    pip install $(ls "./dist/mlserver-"*.whl) --constraint ./dist/constraints.txt && \
+    rm -f /opt/conda/lib/python3.10/site-packages/spacy/tests/package/requirements.txt && \
+    rm -rf /root/.cache/pip
 
 COPY ./licenses/license.txt .
 COPY ./licenses/license.txt /licenses/

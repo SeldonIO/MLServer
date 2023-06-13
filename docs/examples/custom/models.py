@@ -23,8 +23,7 @@ class NumpyroModel(MLModel):
 
         self._predictive = Predictive(self._model, self._samples)
 
-        self.ready = True
-        return self.ready
+        return True
 
     @decode_args
     async def predict(

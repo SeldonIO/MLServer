@@ -11,7 +11,7 @@ from .settings import Settings, ModelSettings
 from .logging import configure_logger
 from .registry import MultiModelRegistry
 from .handlers import DataPlane, ModelRepositoryHandlers
-from .parallel import InferencePool
+from .parallel import InferencePoolRegistry
 from .batching import load_batching
 from .rest import RESTServer
 from .grpc import GRPCServer
@@ -25,41 +25,27 @@ HANDLED_SIGNALS = [signal.SIGINT, signal.SIGTERM, signal.SIGQUIT]
 class MLServer:
     def __init__(self, settings: Settings):
         self._settings = settings
-        self._inference_pool = None
-        on_model_load = [
-            self.add_custom_handlers,
-            load_batching,
-        ]
-        on_model_reload = [self.reload_custom_handlers]
-        on_model_unload = [self.remove_custom_handlers]
+        self._add_signal_handlers()
 
+        self._metrics_server = None
+        if self._settings.metrics_endpoint:
+            self._metrics_server = MetricsServer(self._settings)
+
+        self._inference_pool_registry = None
         if self._settings.parallel_workers:
             # Only load inference pool if parallel inference has been enabled
-            self._inference_pool = InferencePool(self._settings)
-            on_model_load = [
-                self._inference_pool.load_model,
-                self.add_custom_handlers,
-                load_batching,
-            ]
-            on_model_reload = [
-                self._inference_pool.reload_model,  # type: ignore
-                self.reload_custom_handlers,
-            ]
-            on_model_unload = [
-                self._inference_pool.unload_model,  # type: ignore
-                self.remove_custom_handlers,
-            ]
+            on_worker_stop = []
+            if self._metrics_server:
+                on_worker_stop = [self._metrics_server.on_worker_stop]
 
-        self._model_registry = MultiModelRegistry(
-            on_model_load=on_model_load,  # type: ignore
-            on_model_reload=on_model_reload,  # type: ignore
-            on_model_unload=on_model_unload,  # type: ignore
-        )
+            self._inference_pool_registry = InferencePoolRegistry(
+                self._settings, on_worker_stop=on_worker_stop  # type: ignore
+            )
 
+        self._model_registry = self._create_model_registry()
         self._model_repository = ModelRepositoryFactory.resolve_model_repository(
             self._settings
         )
-
         self._data_plane = DataPlane(
             settings=self._settings, model_registry=self._model_registry
         )
@@ -67,12 +53,53 @@ class MLServer:
             repository=self._model_repository, model_registry=self._model_registry
         )
 
+        self._configure_logger()
+        self._create_servers()
+
+    def _create_model_registry(self) -> MultiModelRegistry:
+        on_model_load = [
+            self.add_custom_handlers,
+            load_batching,
+        ]
+        on_model_reload = [self.reload_custom_handlers]
+        on_model_unload = [self.remove_custom_handlers]
+
+        if not self._inference_pool_registry:
+            return MultiModelRegistry(
+                on_model_load=on_model_load,  # type: ignore
+                on_model_reload=on_model_reload,  # type: ignore
+                on_model_unload=on_model_unload,  # type: ignore
+            )
+
+        on_model_load = [
+            self._inference_pool_registry.load_model,
+            self.add_custom_handlers,
+            load_batching,
+        ]
+        on_model_reload = [
+            self._inference_pool_registry.reload_model,  # type: ignore
+            self.reload_custom_handlers,
+        ]
+        on_model_unload = [
+            self._inference_pool_registry.unload_model,  # type: ignore
+            self.remove_custom_handlers,
+        ]
+
+        return MultiModelRegistry(
+            on_model_load=on_model_load,  # type: ignore
+            on_model_reload=on_model_reload,  # type: ignore
+            on_model_unload=on_model_unload,  # type: ignore
+            model_initialiser=self._inference_pool_registry.model_initialiser,
+        )
+
+    def _configure_logger(self):
         logger.setLevel(logging.INFO)
         if self._settings.debug:
             logger.setLevel(logging.DEBUG)
 
-        self._logger = configure_logger(settings)
+        self._logger = configure_logger(self._settings)
 
+    def _create_servers(self):
         self._rest_server = RESTServer(
             self._settings, self._data_plane, self._model_repository_handlers
         )
@@ -84,13 +111,7 @@ class MLServer:
         if self._settings.kafka_enabled:
             self._kafka_server = KafkaServer(self._settings, self._data_plane)
 
-        self._metrics_server = None
-        if self._settings.metrics_endpoint:
-            self._metrics_server = MetricsServer(self._settings)
-
     async def start(self, models_settings: List[ModelSettings] = []):
-        self._add_signal_handlers()
-
         servers = [self._rest_server.start(), self._grpc_server.start()]
         if self._metrics_server:
             servers.append(self._metrics_server.start())
@@ -153,14 +174,17 @@ class MLServer:
             )
 
     async def stop(self, sig: Optional[int] = None):
-        if self._inference_pool:
-            await self._inference_pool.close()
+        if self._inference_pool_registry:
+            await self._inference_pool_registry.close()
 
         if self._kafka_server:
             await self._kafka_server.stop()
 
-        await self._grpc_server.stop(sig)
-        await self._rest_server.stop(sig)
+        if self._grpc_server:
+            await self._grpc_server.stop(sig)
+
+        if self._rest_server:
+            await self._rest_server.stop(sig)
 
         if self._metrics_server:
             await self._metrics_server.stop(sig)

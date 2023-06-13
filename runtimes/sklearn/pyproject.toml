@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "mlserver-sklearn"
+version = "1.4.0.dev2"
+description = "Scikit-Learn runtime for MLServer"
+authors = ["Seldon Technologies Ltd. <hello@seldon.io>"]
+license = "Apache-2.0"
+readme = "README.md"
+packages = [{include = "mlserver_sklearn"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+scikit-learn = "*"
+joblib = "*"
+mlserver = "*"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

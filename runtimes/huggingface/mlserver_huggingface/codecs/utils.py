@@ -7,6 +7,7 @@ from PIL import Image, ImageChops
 from transformers.pipelines import Conversation
 
 IMAGE_PREFIX = "data:image/"
+DEFAULT_IMAGE_FORMAT = "PNG"
 
 
 class HuggingfaceJSONEncoder(json.JSONEncoder):
@@ -19,10 +20,12 @@ class HuggingfaceJSONEncoder(json.JSONEncoder):
             return int(obj)
         elif isinstance(obj, Image.Image):
             buf = io.BytesIO()
+            if not obj.format:
+                obj.format = DEFAULT_IMAGE_FORMAT
             obj.save(buf, format=obj.format)
             return (
                 IMAGE_PREFIX
-                + obj.format
+                + obj.format.lower()
                 + ";base64,"
                 + base64.b64encode(buf.getvalue()).decode()
             )
