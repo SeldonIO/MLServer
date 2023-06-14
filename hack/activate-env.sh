@@ -21,7 +21,7 @@ _unpackEnv() {
 
   echo "--> Unpacking environment at $_envTarball..."
   mkdir -p $_envFolder
-  tar -zxvf "$_envTarball" -C $_envFolder
+  tar -zxf "$_envTarball" -C $_envFolder
 }
 
 _activateEnv() {
@@ -36,7 +36,7 @@ _activateEnv() {
   echo "--> Sourcing new environment at $_envFolder..."
   # Need to disable unbound errors for activate
   set +u
-  source $_activate
+  source $_activate &> /dev/null 2>&1
   set -u
 
   echo "--> Calling conda-unpack..."
