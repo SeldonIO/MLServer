@@ -94,7 +94,6 @@ class Worker(Process):
     async def coro_run(self):
         self.__inner_init__()
         loop = asyncio.get_event_loop()
-
         while self._active:
             readable = await loop.run_in_executor(self._executor, self._select)
             for r in readable:
@@ -112,6 +111,9 @@ class Worker(Process):
                         self._active = False
                         return
 
+                    #  print(f"about to crash worker, pid={self.pid}")
+                    print(f"all good in worker, pid={self.pid}")
+                    #  raise Exception("something crazy happened")
                     schedule_with_callback(
                         self._process_model_update(model_update), self._handle_response
                     )

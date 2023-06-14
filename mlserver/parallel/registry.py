@@ -1,6 +1,7 @@
 import asyncio
 import os
 import shutil
+import signal
 
 from typing import Optional, Dict, List
 
@@ -55,6 +56,17 @@ class InferencePoolRegistry:
         self._pools: Dict[str, InferencePool] = {}
 
         os.makedirs(self._settings.environments_dir, exist_ok=True)
+
+        # Register sigchld signal handler
+        signal.signal(signal.SIGCHLD, self._handle_dead_workers)
+
+    def _handle_dead_workers(self, signum, frame):
+        pid, _ = os.waitpid(-1, os.WNOHANG)
+        if pid == 0:
+            # Worker terminated gracefully, nothing to do
+            return
+
+        print(f"in _handle_dead_workers, pid={pid} - status={status}")
 
     async def _get_or_create(self, model: MLModel) -> InferencePool:
         env_tarball = _get_env_tarball(model)
