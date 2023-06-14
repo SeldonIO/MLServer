@@ -36,7 +36,7 @@ _activateEnv() {
   echo "--> Sourcing new environment at $_envFolder..."
   # Need to disable unbound errors for activate
   set +u
-  source $_activate &> /dev/null 2>&1
+  source $_activate 1> /dev/null
   set -u
 
   echo "--> Calling conda-unpack..."
