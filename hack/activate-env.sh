@@ -21,7 +21,7 @@ _unpackEnv() {
 
   echo "--> Unpacking environment at $_envTarball..."
   mkdir -p $_envFolder
-  tar -zxvf "$_envTarball" -C $_envFolder
+  tar -zxf "$_envTarball" -C $_envFolder
 }
 
 _activateEnv() {
@@ -36,11 +36,11 @@ _activateEnv() {
   echo "--> Sourcing new environment at $_envFolder..."
   # Need to disable unbound errors for activate
   set +u
-  source $_activate
+  source $_activate 1> /dev/null
   set -u
 
   echo "--> Calling conda-unpack..."
-  conda-unpack --quiet
+  conda-unpack 1> /dev/null
 
   echo "--> Disabling user-installed packages..."
   # https://github.com/conda/conda/issues/448#issuecomment-195848539
