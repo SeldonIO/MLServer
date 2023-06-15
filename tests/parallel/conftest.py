@@ -8,6 +8,7 @@ from mlserver.types import InferenceRequest
 from mlserver.utils import generate_uuid
 from mlserver.model import MLModel
 from mlserver.env import Environment
+from mlserver.parallel.dispatcher import Dispatcher
 from mlserver.parallel.model import ModelMethods
 from mlserver.parallel.pool import InferencePool
 from mlserver.parallel.worker import Worker
@@ -27,6 +28,20 @@ async def inference_pool(settings: Settings) -> InferencePool:
     yield pool
 
     await pool.close()
+
+
+@pytest.fixture
+async def dispatcher(settings: Settings, responses: Queue) -> Dispatcher:
+    workers: Dict[int, Worker] = {}
+    for idx in range(settings.parallel_workers):
+        worker = Worker(settings, responses)
+        worker.start()
+        workers[worker.pid] = worker  # type: ignore
+
+    dispatcher = Dispatcher(workers, responses)
+    yield dispatcher
+
+    await dispatcher.stop()
 
 
 @pytest.fixture

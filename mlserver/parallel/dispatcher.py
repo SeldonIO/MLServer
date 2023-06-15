@@ -44,6 +44,15 @@ class Dispatcher:
             registry=REGISTRY,
         )
 
+    def on_worker_stop(self, worker: Worker):
+        pid = worker.pid
+        if pid in self._workers:
+            del self._workers[pid]
+
+        self._workers_round_robin = cycle(self._workers.keys())
+
+        # TODO: Cancel on-flight requests for worker?
+
     def start(self):
         self._active = True
         self._process_responses_task = schedule_with_callback(
