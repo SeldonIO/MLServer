@@ -6,8 +6,8 @@ import numpy as np
 import pandas as pd
 
 from sklearn.dummy import DummyClassifier
-from pytorch_lightning import Trainer
-from pytorch_lightning.callbacks.early_stopping import EarlyStopping
+from lightning.pytorch import Trainer
+from lightning.pytorch.callbacks.early_stopping import EarlyStopping
 from mlflow.models.signature import ModelSignature, infer_signature
 from mlserver.settings import ModelSettings, ModelParameters
 from mlserver.types import InferenceRequest
