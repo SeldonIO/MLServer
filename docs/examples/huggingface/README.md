@@ -35,6 +35,7 @@ We will show how to add share a task
     }
 }
 ```
+The task section in the huggingface runtime refers to the hugginface piplines for each of their predefined tasks. You can refer                           [huggingface documentation](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.pipeline.task) for updated list of out of box supported models. The model listed in "task" section above needs to support one of their base "tasks". If thats not the case then you need to wrap around your model using custom runtime.  
 
 Now that we have our config in-place, we can start the server by running `mlserver start .`. This needs to either be ran from the same directory where our config files are or pointing to the folder where they are.
 
