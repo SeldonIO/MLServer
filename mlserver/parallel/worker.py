@@ -111,9 +111,6 @@ class Worker(Process):
                         self._active = False
                         return
 
-                    #  print(f"about to crash worker, pid={self.pid}")
-                    print(f"all good in worker, pid={self.pid}")
-                    #  raise Exception("something crazy happened")
                     schedule_with_callback(
                         self._process_model_update(model_update), self._handle_response
                     )
