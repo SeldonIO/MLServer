@@ -125,11 +125,11 @@ types-requests = "~2.28.11.5"
 tensorflow = "~2.12.0"
 
 ## Dev dependencies from MLflow
-torch = "1.13.1"
-pytorch-lightning = "1.8.0.post1"
-torchmetrics = "0.10.2"
-torchvision = "0.14.1"
-mlflow = "2.3.1"
+torch = "2.0.0"
+pytorch-lightning = "2.0.3"
+torchmetrics = "0.11.4"
+torchvision = "0.15.1"
+mlflow = "2.4.1"
 
 ## Dev dependencies from HuggingFace
 transformers = "~4.30.0"
