@@ -1,6 +1,7 @@
 import asyncio
 
-from typing import Dict, List, Tuple
+from collections import defaultdict
+from typing import Dict, List, Tuple, Set
 from itertools import cycle
 from multiprocessing import Queue
 from concurrent.futures import ThreadPoolExecutor
@@ -9,6 +10,7 @@ from asyncio import Future
 from ..utils import schedule_with_callback, generate_uuid
 from ..metrics import REGISTRY
 
+from .errors import WorkerStop
 from .worker import Worker
 from .logging import logger
 from .utils import END_OF_QUEUE, cancel_task
@@ -26,6 +28,14 @@ QUEUE_METRIC_NAME = "parallel_request_queue"
 class AsyncResponses:
     def __init__(self):
         self._futures: Dict[str, Future[ModelResponseMessage]] = {}
+
+        # _workers_map keeps track of which in-flight requests are being served
+        # by each worker
+        self._workers_map: Dict[int, Set[str]] = defaultdict(set)
+        # _futures_map keeps track of which worker is serving each in-flight
+        # request
+        self._futures_map: Dict[str, int] = {}
+
         self.parallel_request_queue_size = self._get_or_create_metric()
 
     def _get_or_create_metric(self) -> Histogram:
@@ -38,15 +48,17 @@ class AsyncResponses:
             registry=REGISTRY,
         )
 
-    async def schedule_and_wait(self, message: Message) -> ModelResponseMessage:
+    async def schedule_and_wait(
+        self, message: Message, worker: Worker
+    ) -> ModelResponseMessage:
         """
         Schedule a response and wait until it gets resolved.
         """
         message_id = message.id
-        future = self.schedule(message)
+        future = self.schedule(message, worker)
         return await self.wait(message_id)
 
-    def schedule(self, message: Message) -> Future:
+    def schedule(self, message: Message, worker: Worker) -> Future:
         """
         Schedule a response to be resolved in the future.
         """
@@ -54,6 +66,10 @@ class AsyncResponses:
         future = loop.create_future()
         message_id = message.id
         self._futures[message_id] = future
+
+        # Keep track of allocation for in-flight requests
+        self._futures_map[message_id] = worker.pid
+        self._workers_map[worker.pid].add(message_id)
 
         # Monitor current in-flight requests
         in_flight_count = len(self._futures)
@@ -69,6 +85,8 @@ class AsyncResponses:
             return response_message
         finally:
             del self._futures[message_id]
+            worker_pid = self._futures_map.pop(message_id)
+            self._workers_map[worker_pid].remove(message_id)
 
     def resolve(self, response: ModelResponseMessage):
         """
@@ -86,6 +104,18 @@ class AsyncResponses:
         else:
             loop.call_soon_threadsafe(future.set_result, response)
 
+    def cancel(self, worker: Worker, exit_code: int):
+        """
+        Cancel in-flight requests for worker (e.g. because it died
+        unexpectedly).
+        """
+        in_flight = self._workers_map[worker.pid]
+        for message_id in in_flight:
+            err = WorkerStop(exit_code)
+            future = self._futures[message_id]
+            loop = future.get_loop()
+            loop.call_soon_threadsafe(future.set_exception, err)
+
 
 class Dispatcher:
     def __init__(self, workers: Dict[int, Worker], responses: Queue):
@@ -97,14 +127,13 @@ class Dispatcher:
         self._executor = ThreadPoolExecutor()
         self._async_responses = AsyncResponses()
 
-    def on_worker_stop(self, worker: Worker):
+    def on_worker_stop(self, worker: Worker, exit_code: int):
         pid = worker.pid
         if pid in self._workers:
             del self._workers[pid]
 
         self._workers_round_robin = cycle(self._workers.keys())
-
-        # TODO: Cancel on-flight requests for worker?
+        self._async_responses.cancel(worker, exit_code)
 
     def start(self):
         self._active = True
@@ -143,7 +172,7 @@ class Dispatcher:
         worker, wpid = self._get_worker()
         worker.send_request(request_message)
 
-        return await self._async_responses.schedule_and_wait(request_message)
+        return await self._async_responses.schedule_and_wait(request_message, worker)
 
     def _get_worker(self) -> Tuple[Worker, int]:
         """
@@ -171,7 +200,7 @@ class Dispatcher:
         worker_update = model_update.copy()
         worker_update.id = generate_uuid()
         worker.send_update(worker_update)
-        return await self._async_responses.schedule_and_wait(worker_update)
+        return await self._async_responses.schedule_and_wait(worker_update, worker)
 
     async def stop(self):
         self._executor.shutdown()

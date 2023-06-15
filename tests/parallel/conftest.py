@@ -31,17 +31,8 @@ async def inference_pool(settings: Settings) -> InferencePool:
 
 
 @pytest.fixture
-async def dispatcher(settings: Settings, responses: Queue) -> Dispatcher:
-    workers: Dict[int, Worker] = {}
-    for idx in range(settings.parallel_workers):
-        worker = Worker(settings, responses)
-        worker.start()
-        workers[worker.pid] = worker  # type: ignore
-
-    dispatcher = Dispatcher(workers, responses)
-    yield dispatcher
-
-    await dispatcher.stop()
+async def dispatcher(inference_pool) -> Dispatcher:
+    return inference_pool._dispatcher
 
 
 @pytest.fixture
