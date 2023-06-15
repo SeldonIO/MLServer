@@ -23,15 +23,9 @@ from prometheus_client import Histogram
 QUEUE_METRIC_NAME = "parallel_request_queue"
 
 
-class Dispatcher:
-    def __init__(self, workers: Dict[int, Worker], responses: Queue):
-        self._responses = responses
-        self._workers = workers
-        self._workers_round_robin = cycle(self._workers.keys())
-        self._active = False
-        self._process_responses_task = None
-        self._executor = ThreadPoolExecutor()
-        self._async_responses: Dict[str, Future[ModelResponseMessage]] = {}
+class AsyncResponses:
+    def __init__(self):
+        self._futures: Dict[str, Future[ModelResponseMessage]] = {}
         self.parallel_request_queue_size = self._get_or_create_metric()
 
     def _get_or_create_metric(self) -> Histogram:
@@ -43,6 +37,65 @@ class Dispatcher:
             "counter of request queue size for workers",
             registry=REGISTRY,
         )
+
+    async def schedule_and_wait(self, message: Message) -> ModelResponseMessage:
+        """
+        Schedule a response and wait until it gets resolved.
+        """
+        message_id = message.id
+        future = self.schedule(message)
+        return await self.wait(message_id)
+
+    def schedule(self, message: Message) -> Future:
+        """
+        Schedule a response to be resolved in the future.
+        """
+        loop = asyncio.get_running_loop()
+        future = loop.create_future()
+        message_id = message.id
+        self._futures[message_id] = future
+
+        # Monitor current in-flight requests
+        in_flight_count = len(self._futures)
+        self.parallel_request_queue_size.observe(in_flight_count)
+
+        return future
+
+    async def wait(self, message_id: str) -> ModelResponseMessage:
+        future = self._futures[message_id]
+
+        try:
+            response_message = await future
+            return response_message
+        finally:
+            del self._futures[message_id]
+
+    def resolve(self, response: ModelResponseMessage):
+        """
+        Resolve a previously scheduled response future.
+        """
+        message_id = response.id
+        future = self._futures[message_id]
+
+        # NOTE: Use call_soon_threadsafe to cover cases where `model.predict()`
+        # (or other methods) get called from a separate thread (and a separate
+        # AsyncIO loop)
+        loop = future.get_loop()
+        if response.exception:
+            loop.call_soon_threadsafe(future.set_exception, response.exception)
+        else:
+            loop.call_soon_threadsafe(future.set_result, response)
+
+
+class Dispatcher:
+    def __init__(self, workers: Dict[int, Worker], responses: Queue):
+        self._responses = responses
+        self._workers = workers
+        self._workers_round_robin = cycle(self._workers.keys())
+        self._active = False
+        self._process_responses_task = None
+        self._executor = ThreadPoolExecutor()
+        self._async_responses = AsyncResponses()
 
     def on_worker_stop(self, worker: Worker):
         pid = worker.pid
@@ -82,23 +135,7 @@ class Dispatcher:
             if response is END_OF_QUEUE:
                 return
 
-            await self._process_response(response)
-
-    async def _process_response(self, response: ModelResponseMessage):
-        internal_id = response.id
-
-        async_response = self._async_responses[internal_id]
-
-        # NOTE: Use call_soon_threadsafe to cover cases where `model.predict()`
-        # (or other methods) get called from a separate thread (and a separate
-        # AsyncIO loop)
-        response_loop = async_response.get_loop()
-        if response.exception:
-            response_loop.call_soon_threadsafe(
-                async_response.set_exception, response.exception
-            )
-        else:
-            response_loop.call_soon_threadsafe(async_response.set_result, response)
+            self._async_responses.resolve(response)
 
     async def dispatch_request(
         self, request_message: ModelRequestMessage
@@ -106,7 +143,7 @@ class Dispatcher:
         worker, wpid = self._get_worker()
         worker.send_request(request_message)
 
-        return await self._dispatch(request_message)
+        return await self._async_responses.schedule_and_wait(request_message)
 
     def _get_worker(self) -> Tuple[Worker, int]:
         """
@@ -134,26 +171,7 @@ class Dispatcher:
         worker_update = model_update.copy()
         worker_update.id = generate_uuid()
         worker.send_update(worker_update)
-        return await self._dispatch(worker_update)
-
-    async def _dispatch(self, message: Message) -> ModelResponseMessage:
-        loop = asyncio.get_running_loop()
-        async_response = loop.create_future()
-        internal_id = message.id
-        self._async_responses[internal_id] = async_response
-
-        # Monitor current in-flight requests
-        self.parallel_request_queue_size.observe(len(self._async_responses))
-        return await self._wait_response(internal_id)
-
-    async def _wait_response(self, internal_id: str) -> ModelResponseMessage:
-        async_response = self._async_responses[internal_id]
-
-        try:
-            inference_response = await async_response
-            return inference_response
-        finally:
-            del self._async_responses[internal_id]
+        return await self._async_responses.schedule_and_wait(worker_update)
 
     async def stop(self):
         self._executor.shutdown()
