@@ -106,12 +106,12 @@ class InferencePool:
             return
 
         # TODO: Call downstream _on_worker_stop hooks
+        worker = self._workers[pid]
         logger.warning(
-            f"Worker with PID {pid} on {self.name} stopped "
+            f"Worker with PID {worker.pid} on {self.name} stopped "
             f"unexpectedly with exit code {exit_code}. "
             "Triggering worker restart..."
         )
-        worker = self._workers[pid]
         self._dispatcher.on_worker_stop(worker, exit_code)
         if pid in self._workers:
             # NOTE: worker may be removed by dispatcher

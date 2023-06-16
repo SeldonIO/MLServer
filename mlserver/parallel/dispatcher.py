@@ -110,6 +110,12 @@ class AsyncResponses:
         unexpectedly).
         """
         in_flight = self._workers_map[worker.pid]
+        if in_flight:
+            logger.info(
+                f"Cancelling {len(in_flight)} in-flight requests for "
+                "worker {worker.pid} which died unexpectedly with "
+                "exit code {exit_code}..."
+            )
         for message_id in in_flight:
             # TODO: Can we use worker.exitcode here?
             err = WorkerStop(exit_code)
