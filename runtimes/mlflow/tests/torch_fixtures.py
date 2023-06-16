@@ -4,9 +4,9 @@ To see the original source, please check:
 
 https://github.com/mlflow/mlflow/blob/master/examples/pytorch/MNIST/mnist_autolog_example.py
 """
-import pytorch_lightning as pl
 import torch
 
+from lightning import pytorch as pl
 from argparse import ArgumentParser
 from torch.nn import functional as F
 from torch.utils.data import DataLoader, random_split
@@ -82,11 +82,12 @@ class LightningMNISTClassifier(pl.LightningModule):
         """
         Initializes the network
         """
-        super(LightningMNISTClassifier, self).__init__()
+        super().__init__()
 
         # mnist images are (1, 28, 28) (channels, width, height)
         self.optimizer = None
         self.scheduler = None
+        self.validation_step_outputs = []
         self.layer_1 = torch.nn.Linear(28 * 28, 128)
         self.layer_2 = torch.nn.Linear(128, 256)
         self.layer_3 = torch.nn.Linear(256, 10)
@@ -173,16 +174,20 @@ class LightningMNISTClassifier(pl.LightningModule):
         x, y = val_batch
         logits = self.forward(x)
         loss = self.cross_entropy_loss(logits, y)
-        return {"val_step_loss": loss}
+        pred = {"val_step_loss": loss}
+        self.validation_step_outputs.append(pred)
+        return pred
 
-    def validation_epoch_end(self, outputs):
+    def on_validation_epoch_end(self):
         """
         Computes average validation accuracy
         :param outputs: outputs after every epoch end
         :return: output - average valid loss
         """
-        avg_loss = torch.stack([x["val_step_loss"] for x in outputs]).mean()
+        losses = torch.stack([x["val_step_loss"] for x in self.validation_step_outputs])
+        avg_loss = losses.mean()
         self.log("val_loss", avg_loss, sync_dist=True)
+        self.validation_step_outputs.clear()
 
     def test_step(self, test_batch, batch_idx):
         """
