@@ -10,6 +10,7 @@ from ..env import Environment
 
 from .model import ParallelModel
 from .worker import Worker
+from .logging import logger
 from .utils import configure_inference_pool, terminate_queue
 from .messages import (
     ModelResponseMessage,
@@ -92,12 +93,24 @@ class InferencePool:
 
         return self._env.env_hash
 
+    @property
+    def name(self) -> str:
+        if self.env_hash:
+            return f"inference pool with hash '{self.env_hash}'"
+
+        return "default inference pool"
+
     async def on_worker_stop(self, pid: int, exit_code: int):
         if pid not in self._workers:
             # If this worker didn't belong to this pool, ignore
             return
 
         # TODO: Call downstream _on_worker_stop hooks
+        logger.warning(
+            f"Worker with PID {pid} on {self.name} stopped "
+            f"unexpectedly with exit code {exit_code}. "
+            "Triggering worker restart..."
+        )
         worker = self._workers[pid]
         self._dispatcher.on_worker_stop(worker, exit_code)
         if pid in self._workers:
@@ -110,6 +123,7 @@ class InferencePool:
     async def _start_worker(self) -> Worker:
         worker = Worker(self._settings, self._responses, self._env)
         worker.start()
+        logger.info(f"Starting new worker with PID {worker.pid} on {self.name}...")
 
         # Add to dispatcher so that it can receive load requests and reload all
         # models
@@ -133,6 +147,7 @@ class InferencePool:
         # models
         self._dispatcher.on_worker_ready(worker)
 
+        logger.info(f"New worker with PID {worker.pid} on {self.name} is now ready.")
         return worker
 
     async def load_model(self, model: MLModel) -> MLModel:

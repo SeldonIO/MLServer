@@ -58,16 +58,21 @@ class InferencePoolRegistry:
         os.makedirs(self._settings.environments_dir, exist_ok=True)
 
         # Register sigchld signal handler
-        signal.signal(signal.SIGCHLD, self._handle_worker_stop)
+        signal.signal(
+            signal.SIGCHLD,
+            lambda *args: asyncio.create_task(self._handle_worker_stop(*args)),
+        )
 
-    def _handle_worker_stop(self, signum, frame):
+    async def _handle_worker_stop(self, signum, frame):
         pid, exit_code = os.waitpid(-1, os.WNOHANG)
         if pid == 0 or exit_code == 0:
             # Worker terminated gracefully, nothing to do
             return
 
-        self._default_pool.on_worker_stop(pid, exit_code)
-        [pool.on_worker_stop(pid) for pool in self._pools.values()]
+        await self._default_pool.on_worker_stop(pid, exit_code)
+        await asyncio.gather(
+            *[pool.on_worker_stop(pid) for pool in self._pools.values()]
+        )
 
     async def _get_or_create(self, model: MLModel) -> InferencePool:
         env_tarball = _get_env_tarball(model)
@@ -206,14 +211,12 @@ class InferencePoolRegistry:
 
     async def _close_pool(self, env_hash: Optional[str] = None):
         pool = self._default_pool
-        pool_name = "default inference pool"
         if env_hash:
             pool = self._pools[env_hash]
-            pool_name = f"inference pool with hash '{env_hash}'"
 
-        logger.info(f"Waiting for shutdown of {pool_name}...")
+        logger.info(f"Waiting for shutdown of {pool.name}...")
         await pool.close()
-        logger.info(f"Shutdown of {pool_name} complete")
+        logger.info(f"Shutdown of {pool.name} complete")
 
         if env_hash:
             del self._pools[env_hash]

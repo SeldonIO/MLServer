@@ -1,5 +1,6 @@
 import pytest
 import os
+import asyncio
 
 from mlserver.env import Environment, compute_hash
 from mlserver.model import MLModel
@@ -168,3 +169,29 @@ async def test_invalid_env_hash(
     _set_environment_hash(sum_model, "foo")
     with pytest.raises(EnvironmentNotFound):
         await inference_pool_registry._find(sum_model)
+
+
+async def test_worker_stop(
+    settings: Settings,
+    inference_pool_registry: InferencePoolRegistry,
+    sum_model: MLModel,
+    inference_request: InferenceRequest,
+    caplog,
+):
+    # Pick random worker and kill it
+    default_pool = inference_pool_registry._default_pool
+    workers = list(default_pool._workers.values())
+    stopped_worker = workers[0]
+    stopped_worker.kill()
+
+    # Give some time for worker to come up
+    await asyncio.sleep(5)
+
+    # Ensure SIGCHD signal was handled
+    assert f"with PID {stopped_worker.pid}" in caplog.text
+
+    # Cycle through every worker
+    assert len(default_pool._workers) == settings.parallel_workers
+    for _ in range(settings.parallel_workers + 2):
+        inference_response = await sum_model.predict(inference_request)
+        assert len(inference_response.outputs) > 0
