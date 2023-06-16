@@ -33,8 +33,6 @@ class MetricsServer:
         if not worker.pid:
             return
 
-        # NOTE: If a worker gets restarted (instead of regular shutdown), we may
-        # not want to remove old files to keep counts intact
         await stop_metrics(self._settings, worker.pid)
 
     async def start(self):

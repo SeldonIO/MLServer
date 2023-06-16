@@ -105,7 +105,6 @@ class InferencePool:
             # If this worker didn't belong to this pool, ignore
             return
 
-        # TODO: Call downstream _on_worker_stop hooks
         worker = self._workers[pid]
         logger.warning(
             f"Worker with PID {worker.pid} on {self.name} stopped "
@@ -116,6 +115,9 @@ class InferencePool:
         if pid in self._workers:
             # NOTE: worker may be removed by dispatcher
             del self._workers[pid]
+
+        # Call attached on_worker_stop hooks
+        await asyncio.gather(*[callback(worker) for callback in self._on_worker_stop])
 
         # Start a new worker
         await self._start_worker()
