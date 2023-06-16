@@ -1,7 +1,7 @@
 import asyncio
 
 from multiprocessing import Queue
-from typing import Awaitable, Callable, Dict, Optional, List
+from typing import Awaitable, Callable, Dict, Optional, List, Iterable
 
 from ..model import MLModel
 from ..types import InferenceRequest, InferenceResponse
@@ -30,7 +30,7 @@ class WorkerRegistry:
     This can be used to re-load all models when a worker stops unexpectedly.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._models: Dict[str, ModelSettings] = {}
 
     def _key(self, model_settings: ModelSettings) -> str:
@@ -49,7 +49,7 @@ class WorkerRegistry:
         return len(self._models)
 
     @property
-    def models(self) -> list:
+    def models(self) -> Iterable[ModelSettings]:
         return self._models.values()
 
 
@@ -129,7 +129,7 @@ class InferencePool:
 
         # Add to dispatcher so that it can receive load requests and reload all
         # models
-        self._workers[worker.pid] = worker
+        self._workers[worker.pid] = worker  # type: ignore
         await self._dispatcher.on_worker_start(worker)
 
         await asyncio.gather(

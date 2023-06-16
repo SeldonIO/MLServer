@@ -26,7 +26,7 @@ QUEUE_METRIC_NAME = "parallel_request_queue"
 
 
 class AsyncResponses:
-    def __init__(self):
+    def __init__(self) -> None:
         self._futures: Dict[str, Future[ModelResponseMessage]] = {}
 
         # _workers_map keeps track of which in-flight requests are being served
@@ -55,7 +55,7 @@ class AsyncResponses:
         Schedule a response and wait until it gets resolved.
         """
         message_id = message.id
-        future = self.schedule(message, worker)
+        self.schedule(message, worker)
         return await self.wait(message_id)
 
     def schedule(self, message: Message, worker: Worker) -> Future:
@@ -68,8 +68,8 @@ class AsyncResponses:
         self._futures[message_id] = future
 
         # Keep track of allocation for in-flight requests
-        self._futures_map[message_id] = worker.pid
-        self._workers_map[worker.pid].add(message_id)
+        self._futures_map[message_id] = worker.pid  # type: ignore
+        self._workers_map[worker.pid].add(message_id)  # type: ignore
 
         # Monitor current in-flight requests
         in_flight_count = len(self._futures)
@@ -109,7 +109,7 @@ class AsyncResponses:
         Cancel in-flight requests for worker (e.g. because it died
         unexpectedly).
         """
-        in_flight = self._workers_map[worker.pid]
+        in_flight = self._workers_map[worker.pid]  # type: ignore
         if in_flight:
             logger.info(
                 f"Cancelling {len(in_flight)} in-flight requests for "
@@ -135,7 +135,7 @@ class Dispatcher:
         self._executor = ThreadPoolExecutor()
         self._async_responses = AsyncResponses()
 
-    def _reset_round_robin(self) -> list:
+    def _reset_round_robin(self) -> cycle[int]:
         worker_pids = list(self._workers.keys())
         self._workers_round_robin = cycle(worker_pids)
         return self._workers_round_robin
@@ -150,7 +150,7 @@ class Dispatcher:
         # Lock while worker is coming up to ensure no model updates get lost in
         # translation
         async with self._worker_starting_lock:
-            self._workers[worker.pid] = worker
+            self._workers[worker.pid] = worker  # type: ignore
 
     def on_worker_ready(self, worker: Worker):
         """

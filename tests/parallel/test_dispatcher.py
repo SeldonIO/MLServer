@@ -5,8 +5,6 @@ from mlserver.parallel.errors import WorkerStop
 from mlserver.parallel.dispatcher import Dispatcher
 from mlserver.parallel.messages import ModelUpdateMessage, ModelRequestMessage
 
-from ..fixtures import SlowModel
-
 
 async def test_on_worker_stop(dispatcher: Dispatcher):
     worker = list(dispatcher._workers.values())[0]

@@ -34,7 +34,7 @@ def test_workers_start(inference_pool: InferencePool, settings: Settings):
         assert check_pid(worker_pid)
 
 
-async def test_worker_stopped(
+async def test_on_worker_stop(
     settings: Settings, inference_pool: InferencePool, sum_model: MLModel
 ):
     # Ensure pool has some loaded models
