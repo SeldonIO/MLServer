@@ -5,6 +5,7 @@ from random import random
 import tritonclient.http.aio as httpclient
 
 import asyncio
+import numpy as np
 import aiofiles
 import logging
 import click
@@ -101,17 +102,21 @@ class TritonRequest:
         cls, inference_request: InferenceRequest, binary_data: bool
     ) -> "TritonRequest":
         inputs = []
-
         for request_input in inference_request.inputs or []:
             new_input = httpclient.InferInput(
                 request_input.name, request_input.shape, request_input.datatype
             )
+            request_input_np = NumpyCodec.decode_input(request_input)
+
+            # Change datatype if BYTES to satisfy Tritonclient checks
+            if request_input.datatype == "BYTES":
+                request_input_np = request_input_np.astype(np.object_)
+
             new_input.set_data_from_numpy(
-                NumpyCodec.decode_input(request_input),
+                request_input_np,
                 binary_data=binary_data,
             )
             inputs.append(new_input)
-
         outputs = []
         for request_output in inference_request.outputs or []:
             new_output = httpclient.InferRequestedOutput(
@@ -208,7 +213,6 @@ def preprocess_items(
             )
             invalid_inputs.append(_serialize_validation_error(item.index, e))
     batched = BatchedRequests(inference_requests)
-
     # Set `id` for batched requests - if only single request use its own id
     if len(inference_requests) == 1:
         batched.merged_request.id = inference_request.id

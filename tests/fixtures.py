@@ -15,7 +15,12 @@ except ImportError:
 from typing import Dict, List
 
 from mlserver import MLModel
-from mlserver.types import InferenceRequest, InferenceResponse, Parameters
+from mlserver.types import (
+    InferenceRequest,
+    InferenceResponse,
+    ResponseOutput,
+    Parameters,
+)
 from mlserver.codecs import NumpyCodec, decode_args, StringCodec
 from mlserver.handlers.custom import custom_handler
 from mlserver.errors import MLServerError
@@ -98,5 +103,28 @@ class EnvModel(MLModel):
             model_name=self.name,
             outputs=[
                 StringCodec.encode_output("sklearn_version", [self._sklearn_version]),
+            ],
+        )
+
+
+class EchoModel(MLModel):
+    async def load(self) -> bool:
+        print("Echo Model Initialized")
+        return await super().load()
+
+    async def predict(self, payload: InferenceRequest) -> InferenceResponse:
+        return InferenceResponse(
+            id=payload.id,
+            model_name=self.name,
+            model_version=self.version,
+            outputs=[
+                ResponseOutput(
+                    name=input.name,
+                    shape=input.shape,
+                    datatype=input.datatype,
+                    data=input.data,
+                    parameters=input.parameters,
+                )
+                for input in payload.inputs
             ],
         )
