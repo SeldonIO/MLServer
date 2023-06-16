@@ -35,23 +35,21 @@ class WorkerRegistry:
     def _key(self, model_settings: ModelSettings) -> str:
         return f"{model_settings.name}-{model_settings.version}"
 
-    def on_model_load(self, model_settings: ModelSettings):
+    def add(self, model_settings: ModelSettings):
         model_key = self._key(model_settings)
         self._models[model_key] = model_settings
 
-    def on_model_reload(
-        self, old_model_settings: ModelSettings, new_model_settings: ModelSettings
-    ):
-        self.on_model_unload(old_model_settings)
-        self.on_model_load(new_model_settings)
-
-    def on_model_unload(self, model_settings: ModelSettings):
+    def remove(self, model_settings: ModelSettings):
         model_key = self._key(model_settings)
         if model_key in self._models:
             del self._models[model_key]
 
     def __len__(self) -> int:
         return len(self._models)
+
+    @property
+    def models(self) -> list:
+        return self._models.values()
 
 
 class InferencePool:
@@ -94,7 +92,7 @@ class InferencePool:
 
         return self._env.env_hash
 
-    def on_worker_stop(self, pid: int, exit_code: int):
+    async def on_worker_stop(self, pid: int, exit_code: int):
         if pid not in self._workers:
             # If this worker didn't belong to this pool, ignore
             return
@@ -106,8 +104,36 @@ class InferencePool:
             # NOTE: worker may be removed by dispatcher
             del self._workers[pid]
 
-        #  worker = Worker(self._settings, self._responses, self._env)
-        #  worker.start()
+        # Start a new worker
+        await self._start_worker()
+
+    async def _start_worker(self) -> Worker:
+        worker = Worker(self._settings, self._responses, self._env)
+        worker.start()
+
+        # Add to dispatcher so that it can receive load requests and reload all
+        # models
+        self._workers[worker.pid] = worker
+        await self._dispatcher.on_worker_start(worker)
+
+        await asyncio.gather(
+            *[
+                self._dispatcher.dispatch_update_to_worker(
+                    worker,
+                    ModelUpdateMessage(
+                        update_type=ModelUpdateType.Load,
+                        model_settings=model_settings,  # type: ignore
+                    ),
+                )
+                for model_settings in self._worker_registry.models
+            ]
+        )
+
+        # Once all models are loaded, we notify the dispatcher to reload all
+        # models
+        self._dispatcher.on_worker_ready(worker)
+
+        return worker
 
     async def load_model(self, model: MLModel) -> MLModel:
         load_message = ModelUpdateMessage(
@@ -116,13 +142,14 @@ class InferencePool:
         )
         await self._dispatcher.dispatch_update(load_message)
 
-        self._worker_registry.on_model_load(model.settings)
+        self._worker_registry.add(model.settings)
         return ParallelModel(model, self._dispatcher)
 
     async def reload_model(self, old_model: MLModel, new_model: MLModel) -> MLModel:
         # The model registries within each worker will take care of reloading
         # the model internally
-        self._worker_registry.on_model_reload(old_model.settings, new_model.settings)
+        self._worker_registry.remove(old_model.settings)
+        self._worker_registry.add(new_model.settings)
         return await self.load_model(new_model)
 
     async def unload_model(self, model: MLModel) -> MLModel:
@@ -132,7 +159,7 @@ class InferencePool:
         )
         await self._dispatcher.dispatch_update(unload_message)
 
-        self._worker_registry.on_model_unload(model.settings)
+        self._worker_registry.remove(model.settings)
         return ParallelModel(model, self._dispatcher)
 
     def empty(self) -> bool:

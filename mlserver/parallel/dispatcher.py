@@ -121,18 +121,46 @@ class Dispatcher:
     def __init__(self, workers: Dict[int, Worker], responses: Queue):
         self._responses = responses
         self._workers = workers
-        self._workers_round_robin = cycle(self._workers.keys())
+        self._workers_round_robin = self._reset_round_robin()
+        self._worker_starting_lock = asyncio.Lock()
         self._active = False
         self._process_responses_task = None
         self._executor = ThreadPoolExecutor()
         self._async_responses = AsyncResponses()
 
+    def _reset_round_robin(self) -> list:
+        worker_pids = list(self._workers.keys())
+        self._workers_round_robin = cycle(worker_pids)
+        return self._workers_round_robin
+
+    async def on_worker_start(self, worker: Worker):
+        """
+        Handler for workers who have just started but are still not ready to
+        receive traffic.
+        This is used for workers that got restarted and need to reload all
+        models.
+        """
+        # Lock while worker is coming up to ensure no model updates get lost in
+        # translation
+        async with self._worker_starting_lock:
+            self._workers[worker.pid] = worker
+
+    def on_worker_ready(self, worker: Worker):
+        """
+        Handler for workers who are now ready to receive traffic.
+        """
+        self._reset_round_robin()
+
     def on_worker_stop(self, worker: Worker, exit_code: int):
+        """
+        Handler used for workers who stopped unexpectedly and there need to be
+        removed from the round robin rotation.
+        """
         pid = worker.pid
         if pid in self._workers:
             del self._workers[pid]
 
-        self._workers_round_robin = cycle(self._workers.keys())
+        self._reset_round_robin()
         self._async_responses.cancel(worker, exit_code)
 
     def start(self):
@@ -185,14 +213,15 @@ class Dispatcher:
     async def dispatch_update(
         self, model_update: ModelUpdateMessage
     ) -> List[ModelResponseMessage]:
-        return await asyncio.gather(
-            *[
-                self._dispatch_update(worker, model_update)
-                for worker in self._workers.values()
-            ]
-        )
+        async with self._worker_starting_lock:
+            return await asyncio.gather(
+                *[
+                    self.dispatch_update_to_worker(worker, model_update)
+                    for worker in self._workers.values()
+                ]
+            )
 
-    async def _dispatch_update(
+    async def dispatch_update_to_worker(
         self, worker: Worker, model_update: ModelUpdateMessage
     ) -> ModelResponseMessage:
         # NOTE: Need to rewrite the UUID to ensure each worker sends back a

@@ -58,15 +58,16 @@ class InferencePoolRegistry:
         os.makedirs(self._settings.environments_dir, exist_ok=True)
 
         # Register sigchld signal handler
-        signal.signal(signal.SIGCHLD, self._handle_dead_workers)
+        signal.signal(signal.SIGCHLD, self._handle_worker_stop)
 
-    def _handle_dead_workers(self, signum, frame):
-        pid, _ = os.waitpid(-1, os.WNOHANG)
-        if pid == 0:
+    def _handle_worker_stop(self, signum, frame):
+        pid, exit_code = os.waitpid(-1, os.WNOHANG)
+        if pid == 0 or exit_code == 0:
             # Worker terminated gracefully, nothing to do
             return
 
-        print(f"in _handle_dead_workers, pid={pid} - status={status}")
+        self._default_pool.on_worker_stop(pid, exit_code)
+        [pool.on_worker_stop(pid) for pool in self._pools.values()]
 
     async def _get_or_create(self, model: MLModel) -> InferencePool:
         env_tarball = _get_env_tarball(model)
