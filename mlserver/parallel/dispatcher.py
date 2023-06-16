@@ -1,7 +1,7 @@
 import asyncio
 
 from collections import defaultdict
-from typing import Dict, List, Tuple, Set
+from typing import Dict, List, Tuple, Set, Iterator
 from itertools import cycle
 from multiprocessing import Queue
 from concurrent.futures import ThreadPoolExecutor
@@ -135,7 +135,7 @@ class Dispatcher:
         self._executor = ThreadPoolExecutor()
         self._async_responses = AsyncResponses()
 
-    def _reset_round_robin(self) -> cycle[int]:
+    def _reset_round_robin(self) -> Iterator[int]:
         worker_pids = list(self._workers.keys())
         self._workers_round_robin = cycle(worker_pids)
         return self._workers_round_robin
