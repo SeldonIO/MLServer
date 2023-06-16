@@ -16,8 +16,8 @@ alibi = {extras = ["shap", "tensorflow"], version = "*"}
 
 [tool.poetry.group.dev.dependencies]
 tensorflow = "~2.12.0"
-requests-mock = "1.10.0"
-types-requests = "2.31.0.1"
+requests-mock = "~1.10.0"
+types-requests = "~2.28.11.5"
 
 [build-system]
 requires = ["poetry-core"]
