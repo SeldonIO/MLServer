@@ -1,5 +1,5 @@
 torch==1.13.1
-pytorch-lightning==1.8.0.post1
+pytorch-lightning==2.0.3
 # Pin torchmetrics to a version older than 0.5.0 to avoid this issue:
 # https://github.com/PyTorchLightning/pytorch-lightning/issues/10233
 torchmetrics==0.10.2
