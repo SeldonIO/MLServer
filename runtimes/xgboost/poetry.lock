@@ -1775,17 +1775,17 @@ test = ["Cython (>=0.29.32,<0.30.0)", "aiohttp", "flake8 (>=3.9.2,<3.10.0)", "my
 
 [[package]]
 name = "xgboost"
-version = "1.7.5"
+version = "1.7.6"
 description = "XGBoost Python Package"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "xgboost-1.7.5-py3-none-macosx_10_15_x86_64.macosx_11_0_x86_64.macosx_12_0_x86_64.whl", hash = "sha256:ca9e8455343cc3f1fddc825209ad00623bc82de0364097b31d649bca6a5f8fb4"},
-    {file = "xgboost-1.7.5-py3-none-macosx_12_0_arm64.whl", hash = "sha256:9eed5629c9008c36d65db6869defac31de635f766f215fc4b09b6a389c637f27"},
-    {file = "xgboost-1.7.5-py3-none-manylinux2014_aarch64.whl", hash = "sha256:af3227dbd839a8e2a215844a6276eae027d5f83a9cb501148dfcdb047a195411"},
-    {file = "xgboost-1.7.5-py3-none-manylinux2014_x86_64.whl", hash = "sha256:1d1dda6b84ea50a2ea1ed18390e93e275d57dc4cffd682014dc30ae5a116c92b"},
-    {file = "xgboost-1.7.5-py3-none-win_amd64.whl", hash = "sha256:ac17664ff24ea1c160a0d50aff521b654f0911f4684a88bbb46a074c46c9e3f1"},
-    {file = "xgboost-1.7.5.tar.gz", hash = "sha256:63474265a0194f27889c6fb54e5939ad21bcd5fcfaca7b6a89e143be42ed7ad1"},
+    {file = "xgboost-1.7.6-py3-none-macosx_10_15_x86_64.macosx_11_0_x86_64.macosx_12_0_x86_64.whl", hash = "sha256:4c34675b4d2678c624ddde5d45361e7e16046923e362e4e609b88353e6b87124"},
+    {file = "xgboost-1.7.6-py3-none-macosx_12_0_arm64.whl", hash = "sha256:59b4b366d2cafc7f645e87d897983a5b59be02876194b1d213bd8d8b811d8ce8"},
+    {file = "xgboost-1.7.6-py3-none-manylinux2014_aarch64.whl", hash = "sha256:281c3c6f4fbed2d36bf95cd02a641afa95e72e9abde70064056da5e76233e8df"},
+    {file = "xgboost-1.7.6-py3-none-manylinux2014_x86_64.whl", hash = "sha256:b1d5db49b199152d62bd9217c98760207d3de86d2b9d243260c573ffe638f80a"},
+    {file = "xgboost-1.7.6-py3-none-win_amd64.whl", hash = "sha256:127cf1f5e2ec25cd41429394c6719b87af1456ce583e89f0bffd35d02ad18bcb"},
+    {file = "xgboost-1.7.6.tar.gz", hash = "sha256:1c527554a400445e0c38186039ba1a00425dcdb4e40b37eed0e74cb39a159c47"},
 ]
 
 [package.dependencies]
