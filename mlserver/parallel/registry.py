@@ -57,7 +57,8 @@ class InferencePoolRegistry:
 
         os.makedirs(self._settings.environments_dir, exist_ok=True)
 
-        # Register sigchld signal handler
+        # Register sigchld signal handler (saving original to restore it later)
+        self._original_sigchld_handler = signal.getsignal(signal.SIGCHLD)
         signal.signal(
             signal.SIGCHLD,
             lambda *args: asyncio.create_task(self._handle_worker_stop(*args)),
@@ -204,6 +205,8 @@ class InferencePoolRegistry:
         return unloaded
 
     async def close(self):
+        # Reset signal handler
+        signal.signal(signal.SIGCHLD, self._original_sigchld_handler)
         await asyncio.gather(
             self._close_pool(None),
             *[self._close_pool(env_hash) for env_hash in self._pools],
