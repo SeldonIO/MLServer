@@ -139,6 +139,14 @@ async def test_load_multi_version(
         callback.assert_not_called_with(existing_model)
 
 
+async def test_unload(model_registry: MultiModelRegistry, sum_model: MLModel, mocker):
+    spy = mocker.spy(sum_model, "unload")
+    await model_registry.unload(sum_model.name)
+
+    assert not sum_model.ready
+    spy.assert_called_once()
+
+
 @pytest.mark.parametrize(
     "versions_to_unload",
     [
