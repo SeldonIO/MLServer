@@ -186,6 +186,7 @@ class SingleModelRegistry:
         if old_model == self.default:
             self._clear_default()
 
+        old_model.ready = not await old_model.unload()
         logger.info(f"Reloaded model '{new_model.name}' succesfully.")
 
     async def unload(self):
@@ -220,6 +221,8 @@ class SingleModelRegistry:
 
         if model == self.default:
             self._clear_default()
+
+        model.ready = not await model.unload()
 
     def _find_model(self, version: Optional[str] = None) -> Optional[MLModel]:
         if version:
