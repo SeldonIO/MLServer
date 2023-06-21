@@ -79,7 +79,7 @@ class MLModel:
         """
         raise NotImplementedError("predict() method not implemented")
 
-    async def unload(self) -> None:
+    async def unload(self) -> bool:
         """
         Method responsible for unloading the model, freeing any resources (e.g.
         CPU memory, GPU memory, etc.).
@@ -91,7 +91,7 @@ class MLModel:
         **This method should be overriden to implement your custom unload
         logic.**
         """
-        pass
+        return True
 
     @property
     def name(self) -> str:

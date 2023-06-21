@@ -97,6 +97,7 @@ async def test_reload_model(
     assert new_model != existing_model
     assert new_model == reloaded_model
     assert reloaded_model.ready
+    assert not existing_model.ready
 
     for callback in model_registry._on_model_load:
         callback.assert_not_called()
