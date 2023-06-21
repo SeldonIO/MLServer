@@ -1,6 +1,24 @@
 # Changelog
 
 
+<a name="1.3.4"></a>
+## [1.3.4](https://github.com/SeldonIO/MLServer/releases/tag/1.3.4) - 21 Jun 2023
+
+<!-- Release notes generated using configuration in .github/release.yml at 1.3.4 -->
+
+### What's Changed
+
+* Silent logging by [@dtpryce](https://github.com/dtpryce) in https://github.com/SeldonIO/MLServer/pull/1230
+* Fix `mlserver infer` with `BYTES` by [@RafalSkolasinski](https://github.com/RafalSkolasinski) in https://github.com/SeldonIO/MLServer/pull/1213
+
+### New Contributors
+* [@dtpryce](https://github.com/dtpryce) made their first contribution in https://github.com/SeldonIO/MLServer/pull/1230
+
+**Full Changelog**: https://github.com/SeldonIO/MLServer/compare/1.3.3...1.3.4
+
+[Changes][1.3.4]
+
+
 <a name="1.3.3"></a>
 ## [1.3.3](https://github.com/SeldonIO/MLServer/releases/tag/1.3.3) - 05 Jun 2023
 
@@ -309,6 +327,7 @@ To learn more about how to use MLServer directly from the MLflow CLI, check out 
 [Changes][1.1.0]
 
 
+[1.3.4]: https://github.com/SeldonIO/MLServer/compare/1.3.3...1.3.4
 [1.3.3]: https://github.com/SeldonIO/MLServer/compare/1.3.2...1.3.3
 [1.3.2]: https://github.com/SeldonIO/MLServer/compare/1.3.1...1.3.2
 [1.3.1]: https://github.com/SeldonIO/MLServer/compare/1.3.0...1.3.1
