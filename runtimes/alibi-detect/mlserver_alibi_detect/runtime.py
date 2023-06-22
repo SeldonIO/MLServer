@@ -130,6 +130,7 @@ class AlibiDetectRuntime(MLModel):
             try:
                 current_pred = self._model.predict(x, **predict_kwargs)
                 pred.append(current_pred)
+                print("in the current prediction")
                 print(current_pred['data']['is_drift'])
                 mlserver.log(seldon_model_drift=current_pred['data']['is_drift'])
             except (ValueError, IndexError) as e:
