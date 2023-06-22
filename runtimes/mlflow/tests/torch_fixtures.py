@@ -5,8 +5,8 @@ To see the original source, please check:
 https://github.com/mlflow/mlflow/blob/master/examples/pytorch/MNIST/mnist_autolog_example.py
 """
 import torch
+import pytorch_lightning as pl
 
-from lightning import pytorch as pl
 from argparse import ArgumentParser
 from torch.nn import functional as F
 from torch.utils.data import DataLoader, random_split
