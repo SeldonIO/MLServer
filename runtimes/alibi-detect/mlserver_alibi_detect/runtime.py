@@ -8,6 +8,7 @@ from functools import cached_property
 
 from alibi_detect.saving import load_detector
 
+import mlserver
 from mlserver.batching import BatchedRequests
 from mlserver.types import InferenceRequest, InferenceResponse
 from mlserver.settings import ModelSettings
@@ -69,6 +70,8 @@ class AlibiDetectRuntime(MLModel):
         self._model_uri = await get_model_uri(self._settings)
         try:
             self._model = load_detector(self._model_uri)
+            mlserver.register("seldon_model_drift", "This is a custom metric example")
+
             # Check whether an online drift detector (i.e. has a save_state method)
             self._online = True if hasattr(self._model, "save_state") else False
         except (
@@ -125,7 +128,10 @@ class AlibiDetectRuntime(MLModel):
         for x in X:
             # Prediction
             try:
-                pred.append(self._model.predict(x, **predict_kwargs))
+                current_pred = self._model.predict(x, **predict_kwargs)
+                pred.append(current_pred)
+                print(current_pred['data']['is_drift'])
+                mlserver.log(seldon_model_drift=current_pred['data']['is_drift'])
             except (ValueError, IndexError) as e:
                 raise InferenceError(
                     f"Invalid predict parameters for model {self._settings.name}: {e}"
