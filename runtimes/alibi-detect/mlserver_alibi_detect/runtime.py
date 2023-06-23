@@ -70,7 +70,7 @@ class AlibiDetectRuntime(MLModel):
         self._model_uri = await get_model_uri(self._settings)
         try:
             self._model = load_detector(self._model_uri)
-            mlserver.register("seldon_model_drift", "This is a custom metric example")
+            mlserver.register("seldon_model_drift", "Drift metrics")
 
             # Check whether an online drift detector (i.e. has a save_state method)
             self._online = True if hasattr(self._model, "save_state") else False
