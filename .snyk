@@ -8,6 +8,7 @@ ignore:
   # package.
   # Therefore, even though there is a corresponding upgrade path for the JARs
   # themselves, these are out of our control.
+  # For more details, see https://issues.apache.org/jira/browse/SPARK-44157
   SNYK-JAVA-COMGOOGLEPROTOBUF-3167772:
     - "*":
         reason: Outdated protobuf-java JAR within PySpark bundle
