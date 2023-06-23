@@ -8,12 +8,12 @@ readme = "README.md"
 packages = [{include = "mlserver_mlflow"}]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.8.1,<3.12"
 mlserver = "*"
 mlflow = "*"
 
-
 [tool.poetry.group.dev.dependencies]
+mlserver = {path = "../..", develop = true}
 torch = "2.0.0"
 pytorch-lightning = "2.0.3"
 torchmetrics = "0.11.4"

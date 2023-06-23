@@ -8,6 +8,15 @@ IMAGE_NAME := seldonio/mlserver
 install-dev:
 	poetry install --sync --with all-runtimes --with all-runtimes-dev
 
+lock:
+	# echo "Locking mlserver deps..."
+	# poetry lock
+	for _runtime in ./runtimes/*; \
+	do \
+		echo "Locking $$_runtime deps..."; \
+		poetry lock -C $$_runtime; \
+	done
+
 _generate: # "private" target to call `fmt` after `generate`
 	./hack/generate-types.sh
 

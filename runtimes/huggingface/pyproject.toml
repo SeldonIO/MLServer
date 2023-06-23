@@ -15,6 +15,7 @@ pillow = "*"
 optimum = {extras = ["onnxruntime"], version = "^1.4.0,<1.9.0"}
 
 [tool.poetry.group.dev.dependencies]
+mlserver = {path = "../..", develop = true}
 torch = "2.0.0"
 transformers = "~4.30.0"
 tensorflow = "~2.12.0"
