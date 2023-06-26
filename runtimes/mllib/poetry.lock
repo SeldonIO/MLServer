@@ -1402,12 +1402,12 @@ email = ["email-validator (>=1.0.3)"]
 
 [[package]]
 name = "pyspark"
-version = "3.4.0"
+version = "3.4.1"
 description = "Apache Spark Python API"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "pyspark-3.4.0.tar.gz", hash = "sha256:167a23e11854adb37f8602de6fcc3a4f96fd5f1e323b9bb83325f38408c5aafd"},
+    {file = "pyspark-3.4.1.tar.gz", hash = "sha256:72cd66ab8cf61a75854e5a753f75bea35ee075c3a96f9de4e2a66d02ec7fc652"},
 ]
 
 [package.dependencies]
