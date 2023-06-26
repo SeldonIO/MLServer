@@ -17,6 +17,7 @@ _ANCHOR_TEXT_TAG = "anchor_text"
 _ANCHOR_TABULAR_TAG = "anchor_tabular"
 _KERNEL_SHAP_TAG = "kernel_shap"
 _INTEGRATED_GRADIENTS_TAG = "integrated_gradients"
+_TREE_SHAP_TAG = "tree_shap"
 
 
 # NOTE: to add new explainers populate the below dict with a new
@@ -29,6 +30,7 @@ _INTEGRATED_GRADIENTS_TAG = "integrated_gradients"
 #  update ExplainerEnum
 
 _BLACKBOX_MODULE = "mlserver_alibi_explain.explainers.black_box_runtime"
+_WHITEBOX_MODULE = "mlserver_alibi_explain.explainers.white_box_runtime"
 _INTEGRATED_GRADIENTS_MODULE = "mlserver_alibi_explain.explainers.integrated_gradients"
 
 _TAG_TO_RT_IMPL: Dict[str, ExplainerDependencyReference] = {
@@ -56,6 +58,11 @@ _TAG_TO_RT_IMPL: Dict[str, ExplainerDependencyReference] = {
         explainer_name=_INTEGRATED_GRADIENTS_TAG,
         runtime_class=f"{_INTEGRATED_GRADIENTS_MODULE}.IntegratedGradientsWrapper",
         alibi_class="alibi.explainers.IntegratedGradients",
+    ),
+    _TREE_SHAP_TAG: ExplainerDependencyReference(
+        explainer_name=_TREE_SHAP_TAG,
+        runtime_class=f"{_WHITEBOX_MODULE}.AlibiExplainWhiteBoxRuntime",
+        alibi_class="alibi.explainers.TreeShap",
     ),
 }
 
