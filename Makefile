@@ -9,8 +9,8 @@ install-dev:
 	poetry install --sync --with all-runtimes --with all-runtimes-dev
 
 lock:
-	# echo "Locking mlserver deps..."
-	# poetry lock
+	echo "Locking mlserver deps..."
+	poetry lock
 	for _runtime in ./runtimes/*; \
 	do \
 		echo "Locking $$_runtime deps..."; \
