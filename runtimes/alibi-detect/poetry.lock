@@ -198,27 +198,27 @@ frozenlist = ">=1.1.0"
 
 [[package]]
 name = "alibi-detect"
-version = "0.11.2"
+version = "0.11.3"
 description = "Algorithms for outlier detection, concept drift and metrics."
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "alibi-detect-0.11.2.tar.gz", hash = "sha256:b30de219f6ef55f05f5afdfced992240add511e8aa461e67e2bb1f7a9ec86a2d"},
-    {file = "alibi_detect-0.11.2-py3-none-any.whl", hash = "sha256:20d0fcafaac1c4445fd17c66ba71490f3c52591fec8ea0add2ebe3f931ae17d4"},
+    {file = "alibi-detect-0.11.3.tar.gz", hash = "sha256:110d94b03648354264fb9f82cbe34b103135f6303449769e60a088daee5a135a"},
+    {file = "alibi_detect-0.11.3-py3-none-any.whl", hash = "sha256:5646519a93aca23201616412b388a6de2d88b9e2c55a8a3d2a6748c4a6991f42"},
 ]
 
 [package.dependencies]
 catalogue = ">=2.0.0,<3.0.0"
 dill = ">=0.3.0,<0.4.0"
 matplotlib = ">=3.0.0,<4.0.0"
-numba = ">=0.50.0,<0.54.0 || >0.54.0,<0.57.0"
+numba = ">=0.50.0,<0.54.0 || >0.54.0,<0.58.0"
 numpy = ">=1.16.2,<2.0.0"
 opencv-python = ">=3.2.0,<5.0.0"
 pandas = ">=1.0.0,<3.0.0"
 Pillow = ">=5.4.1,<10.0.0"
 pydantic = ">=1.8.0,<2.0.0"
 requests = ">=2.21.0,<3.0.0"
-scikit-image = ">=0.14.2,<0.17.1 || >0.17.1,<0.21"
+scikit-image = ">=0.14.2,<0.17.1 || >0.17.1,<0.22"
 scikit-learn = ">=0.20.2,<2.0.0"
 scipy = ">=1.3.0,<2.0.0"
 tensorflow = {version = ">=2.2.0,<2.6.0 || >2.6.0,<2.6.1 || >2.6.1,<2.13.0", optional = true, markers = "extra == \"tensorflow\""}
@@ -1886,8 +1886,8 @@ files = [
 [package.dependencies]
 numpy = [
     {version = ">1.20", markers = "python_version <= \"3.9\""},
-    {version = ">=1.21.2", markers = "python_version > \"3.9\""},
     {version = ">=1.23.3", markers = "python_version > \"3.10\""},
+    {version = ">=1.21.2", markers = "python_version > \"3.9\""},
 ]
 
 [package.extras]
