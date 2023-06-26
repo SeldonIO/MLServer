@@ -1028,13 +1028,13 @@ dask = ["dask[array] (>=2.0.0)", "dask[dataframe] (>=2.0.0)", "dask[distributed]
 
 [[package]]
 name = "mlserver"
-version = "1.3.3"
+version = "1.3.4"
 description = "ML server"
 optional = false
 python-versions = "*"
 files = [
-    {file = "mlserver-1.3.3-py3-none-any.whl", hash = "sha256:f8a7c6fc56c9cb07665d14fcc2e8d53f41a837b3970acc30abed90d7d82f9b6e"},
-    {file = "mlserver-1.3.3.tar.gz", hash = "sha256:4264ac1a3da21cf440239a302b1d9e176cbf2326d7e63d492cc4ea275fc5c993"},
+    {file = "mlserver-1.3.4-py3-none-any.whl", hash = "sha256:d1d847d60c058cb1322cbd469a813015a3e82acf6cd7bf006c8568feaa0c4289"},
+    {file = "mlserver-1.3.4.tar.gz", hash = "sha256:821315caf55f9d2e3fdec3b7173899afecaebe09afcda6124f94a112e6a8234a"},
 ]
 
 [package.dependencies]
