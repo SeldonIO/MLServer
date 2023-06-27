@@ -68,14 +68,17 @@ class AsyncResponses:
         self._futures[message_id] = future
 
         # Keep track of allocation for in-flight requests
-        self._futures_map[message_id] = worker.pid  # type: ignore
-        self._workers_map[worker.pid].add(message_id)  # type: ignore
+        self._track_message(message, worker)
 
         # Monitor current in-flight requests
         in_flight_count = len(self._futures)
         self.parallel_request_queue_size.observe(in_flight_count)
 
         return future
+
+    def _track_message(self, message: Message, worker: Worker) -> None:
+        self._futures_map[message.id] = worker.pid  # type: ignore
+        self._workers_map[worker.pid].add(message.id)  # type: ignore
 
     async def _wait(self, message_id: str) -> ModelResponseMessage:
         future = self._futures[message_id]
@@ -84,9 +87,12 @@ class AsyncResponses:
             response_message = await future
             return response_message
         finally:
-            del self._futures[message_id]
-            worker_pid = self._futures_map.pop(message_id)
-            self._workers_map[worker_pid].remove(message_id)
+            self._clear_message(message_id)
+
+    def _clear_message(self, message_id: str) -> None:
+        del self._futures[message_id]
+        worker_pid = self._futures_map.pop(message_id)
+        self._workers_map[worker_pid].remove(message_id)
 
     def resolve(self, response: ModelResponseMessage):
         """
