@@ -1,0 +1,4 @@
+{
+    "name": "sentence-transformer",
+    "implementation": "models.SentenceTransformerModel"
+}
