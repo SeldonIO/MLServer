@@ -51,6 +51,8 @@ RUN ./hack/build-env.sh . && \
     chown -R 1000:0 ./envs/base && \
     chmod -R 776 ./envs/base && \
     rm -rf /root/.cache/pip
+
+RUN mkdir /.cache
 USER 1000
 
 # Copy everything else
