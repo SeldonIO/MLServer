@@ -36,12 +36,12 @@ async def test_dispatch(
 async def test_cancel(dispatcher: Dispatcher, inference_request_message):
     worker = list(dispatcher._workers.values())[0]
     async_responses = dispatcher._async_responses
-    async_responses.schedule(inference_request_message, worker)
+    async_responses._schedule(inference_request_message, worker)
 
     exit_code = 234
     async_responses.cancel(worker, exit_code)
 
     with pytest.raises(WorkerStop) as err:
-        await async_responses.wait(inference_request_message.id)
+        await async_responses._wait(inference_request_message.id)
 
     assert str(exit_code) in str(err)

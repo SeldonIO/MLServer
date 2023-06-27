@@ -55,10 +55,10 @@ class AsyncResponses:
         Schedule a response and wait until it gets resolved.
         """
         message_id = message.id
-        self.schedule(message, worker)
-        return await self.wait(message_id)
+        self._schedule(message, worker)
+        return await self._wait(message_id)
 
-    def schedule(self, message: Message, worker: Worker) -> Future:
+    def _schedule(self, message: Message, worker: Worker) -> Future:
         """
         Schedule a response to be resolved in the future.
         """
@@ -77,7 +77,7 @@ class AsyncResponses:
 
         return future
 
-    async def wait(self, message_id: str) -> ModelResponseMessage:
+    async def _wait(self, message_id: str) -> ModelResponseMessage:
         future = self._futures[message_id]
 
         try:
