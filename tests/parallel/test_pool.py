@@ -85,7 +85,7 @@ async def test_start_worker_new_model(
     # Ensure pool has some loaded models
     await inference_pool.load_model(sum_model)
 
-    # Assert new models make their way throug to the new worker
+    # Assert new models make their way through to the new worker
     start_worker_task = asyncio.create_task(inference_pool._start_worker())
     new_model = await inference_pool.load_model(simple_model)
     inference_request = InferenceRequest(
