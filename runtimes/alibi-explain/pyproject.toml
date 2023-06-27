@@ -10,6 +10,9 @@ packages = [{include = "mlserver_alibi_explain"}]
 [tool.poetry.dependencies]
 python = "^3.8.1,<3.12"
 mlserver = "*"
+mlserver_sklearn = "*"
+mlserver_xgboost = "*"
+mlserver_lightgbm = "*"
 orjson = "*"
 alibi = {extras = ["shap", "tensorflow"], version = "*"}
 
