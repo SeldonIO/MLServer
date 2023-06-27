@@ -52,6 +52,7 @@ class HuggingFaceRuntime(MLModel):
         )
 
     async def unload(self) -> bool:
+        # TODO: Free up Tensorflow's GPU memory
         is_torch = self._model.framework == "pt"
         if not is_torch:
             return True
