@@ -123,7 +123,6 @@ class AsyncResponses:
                 "exit code {exit_code}..."
             )
         for message_id in in_flight:
-            # TODO: Can we use worker.exitcode here?
             err = WorkerStop(exit_code)
             future = self._futures[message_id]
             loop = future.get_loop()
