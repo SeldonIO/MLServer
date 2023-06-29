@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import AsyncIterable, Dict, Any, Iterable
 from unittest.mock import patch
 from typing import Type
+import joblib
 
 from httpx import AsyncClient
 from fastapi import FastAPI
@@ -16,6 +17,9 @@ from prometheus_client.registry import REGISTRY, CollectorRegistry
 from starlette_exporter import PrometheusMiddleware
 from alibi.api.interfaces import Explanation, Explainer
 from alibi.explainers import AnchorImage
+import numpy as np
+
+from sklearn.ensemble import RandomForestClassifier
 
 from mlserver import MLModel
 from mlserver.handlers import DataPlane, ModelRepositoryHandlers
@@ -33,6 +37,7 @@ from mlserver_alibi_explain.common import AlibiExplainSettings
 from mlserver_alibi_explain.runtime import AlibiExplainRuntime, AlibiExplainRuntimeBase
 
 from .helpers.tf_model import get_tf_mnist_model_uri, TFMNISTModel
+from .helpers.sk_model import get_sk_income_model_uri, get_income_data
 from .helpers.run_async import run_async_as_sync
 from .helpers.metrics import unregister_metrics
 
@@ -323,3 +328,13 @@ def _train_anchor_image_explainer() -> None:
 
     _ANCHOR_IMAGE_DIR.mkdir(parents=True)
     anchor_image.save(_ANCHOR_IMAGE_DIR)
+
+
+@pytest.fixture
+def sk_income_model() -> RandomForestClassifier:
+    model = joblib.load(get_sk_income_model_uri())
+    return model
+
+@pytest.fixture
+def income_data() -> dict:
+    return get_income_data()

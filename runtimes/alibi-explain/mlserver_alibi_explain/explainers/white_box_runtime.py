@@ -1,7 +1,7 @@
 from abc import ABC
-from typing import Any, Type
+from typing import Any, Type, Dict
 
-from alibi.api.interfaces import Explainer
+from alibi.api.interfaces import Explainer, Explanation
 
 from mlserver import ModelSettings
 from mlserver_alibi_explain.common import AlibiExplainSettings
@@ -41,6 +41,11 @@ class AlibiExplainWhiteBoxRuntime(ABC, AlibiExplainRuntimeBase):
             self._model = await self._load_from_uri(self._inference_model)
 
         return True
+
+    def _explain_impl(self, input_data: Any, explain_parameters: Dict) -> Explanation:
+        # TODO: how are we going to deal with that?
+        assert self._inference_model is not None, "Inference model is not set"
+        return self._model.explain(input_data, **explain_parameters)
 
     async def _get_inference_model(self) -> Any:
         raise NotImplementedError
