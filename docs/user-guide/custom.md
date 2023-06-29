@@ -20,6 +20,9 @@ abstract class, whose main methods are:
 - {func}`load() <mlserver.MLModel.load>`:
   Responsible for loading any artifacts related to a model (e.g. model
   weights, pickle files, etc.).
+- {func}`unload() <mlserver.MLModel.unload>`:
+  Responsible for unloading the model, freeing any resources (e.g. GPU memory,
+  etc.).
 - {func}`predict() <mlserver.MLModel.predict>`:
   Responsible for using a model to perform inference on an incoming data point.
 
