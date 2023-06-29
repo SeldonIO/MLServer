@@ -2,7 +2,6 @@ import pytest
 import os
 import shutil
 import asyncio
-import logging
 import glob
 
 from starlette_exporter import PrometheusMiddleware
@@ -18,7 +17,7 @@ from mlserver.repository import (
 )
 from mlserver.parallel import InferencePoolRegistry
 from mlserver.utils import install_uvloop_event_loop
-from mlserver.logging import get_logger
+from mlserver.logging import configure_logger
 from mlserver.env import Environment
 from mlserver.metrics.registry import MetricsRegistry, REGISTRY as METRICS_REGISTRY
 from mlserver import types, Settings, ModelSettings, MLServer
@@ -73,10 +72,8 @@ async def env(env_tarball: str, tmp_path: str) -> Environment:
 
 
 @pytest.fixture(autouse=True)
-def logger():
-    logger = get_logger()
-    logger.setLevel(logging.DEBUG)
-    return logger
+def logger(settings: Settings):
+    return configure_logger(settings)
 
 
 @pytest.fixture

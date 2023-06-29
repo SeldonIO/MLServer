@@ -16,6 +16,12 @@ class EnvironmentNotFound(MLServerError):
         super().__init__(msg, status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+class WorkerStop(MLServerError):
+    def __init__(self, exit_code: int):
+        msg = f"Worker process stopped unexpectedly with exit code {exit_code}."
+        super().__init__(msg, status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 class WorkerError(MLServerError):
     """
     Class used to wrap exceptions raised from the workers.

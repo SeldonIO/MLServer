@@ -94,7 +94,6 @@ class Worker(Process):
     async def coro_run(self):
         self.__inner_init__()
         loop = asyncio.get_event_loop()
-
         while self._active:
             readable = await loop.run_in_executor(self._executor, self._select)
             for r in readable:
