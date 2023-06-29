@@ -64,6 +64,9 @@ uvloop = {version = "*", markers = "sys_platform != 'win32' and (sys_platform !=
 ## functionality added in Python 3.10
 ## https://setuptools.pypa.io/en/latest/userguide/datafiles.html#accessing-data-files-at-runtime
 importlib-resources = "^5.12.0"
+opentelemetry-instrumentation-fastapi = "^0.39b0"
+opentelemetry-sdk = "^1.18.0"
+opentelemetry-exporter-otlp-proto-grpc = "^1.18.0"
 
 [tool.poetry.group.dev.dependencies]
 datamodel-code-generator = "0.18.1"

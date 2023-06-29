@@ -4,6 +4,13 @@ from fastapi.responses import Response as FastAPIResponse
 from fastapi.routing import APIRoute as FastAPIRoute
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+from opentelemetry.sdk.resources import Resource, SERVICE_NAME
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+
+
 from starlette_exporter import PrometheusMiddleware
 
 from .endpoints import Endpoints, ModelRepositoryEndpoints
@@ -145,6 +152,20 @@ def create_app(
         docs_url=None,
         redoc_url=None,
     )
+
+    resource = Resource(attributes={
+        SERVICE_NAME: "mlserver-actual"
+    })
+    tracer_provider = TracerProvider(resource=resource)
+    otel_exporter = OTLPSpanExporter(insecure=True, endpoint="localhost:4317")
+    tracer_provider.add_span_processor(BatchSpanProcessor(otel_exporter))
+
+    FastAPIInstrumentor.instrument_app(
+        app,
+        tracer_provider=tracer_provider,
+        excluded_urls="unimportant"  # comma delimited
+    )
+
     app.router.route_class = APIRoute
     app.add_middleware(GZipMiddleware)
     if settings.cors_settings is not None:
