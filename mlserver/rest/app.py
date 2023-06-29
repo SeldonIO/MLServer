@@ -160,10 +160,13 @@ def create_app(
     otel_exporter = OTLPSpanExporter(insecure=True, endpoint="localhost:4317")
     tracer_provider.add_span_processor(BatchSpanProcessor(otel_exporter))
 
+    excluded_urls = [
+        "v2/models/mnist-svm/docs"
+    ]
     FastAPIInstrumentor.instrument_app(
         app,
         tracer_provider=tracer_provider,
-        excluded_urls="unimportant"  # comma delimited
+        excluded_urls=",".join(excluded_urls),
     )
 
     app.router.route_class = APIRoute

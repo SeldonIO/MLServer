@@ -17,7 +17,7 @@ from .logging import logger
 from opentelemetry.sdk.resources import Resource, SERVICE_NAME
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor
-from opentelemetry.instrumentation.grpc import aio_server_interceptor
+from opentelemetry.instrumentation.grpc import aio_server_interceptor, filters
 # Workers used for non-AsyncIO workloads (which aren't any in our case)
 DefaultGrpcWorkers = 5
 
@@ -58,7 +58,11 @@ class GRPCServer:
         tracer_provider = TracerProvider(resource=resource)
         otel_exporter = OTLPSpanExporter(insecure=True, endpoint="localhost:4317")
         tracer_provider.add_span_processor(SimpleSpanProcessor(otel_exporter))
-        interceptors.append(aio_server_interceptor(tracer_provider=tracer_provider))
+        excluded_urls = filters.negate(filters.any_of(
+            filters.full_method_name("/inference.GRPCInferenceService/ServerReady"),
+            filters.method_name("ServerLive"),
+        ))
+        interceptors.append(aio_server_interceptor(tracer_provider=tracer_provider, filter_=excluded_urls))
 
         self._server = aio.server(
             ThreadPoolExecutor(max_workers=DefaultGrpcWorkers),
