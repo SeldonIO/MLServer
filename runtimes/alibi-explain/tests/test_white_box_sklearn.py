@@ -13,6 +13,12 @@ from mlserver_alibi_explain import AlibiExplainRuntime
 from mlserver_alibi_explain.common import convert_from_bytes
 
 
+EXPLANATION_KEY = {
+    'tree_shap': 'shap_values',
+    'tree_partial_dependence': 'pd_values',
+    'tree_partial_dependence_variance': 'pd_values',
+}
+
 @fixture
 @parametrize_with_cases("model_settings, explainer, request")
 async def explainer_runtime_request(model_settings: ModelSettings, explainer: Explainer, request: InferenceRequest) \
@@ -42,8 +48,8 @@ async def test_end_2_end(
     input_data_np = NumpyCodec.decode_input(payload.inputs[0])
     explanation = explainer.explain(input_data_np)
 
-    print(decoded_runtime_results)
+    explainer_type = explainer_runtime.settings.parameters.extra['explainer_type']
     assert_array_almost_equal(
-        np.array(decoded_runtime_results["data"]["shap_values"]),
-        explanation.data["shap_values"],
+        np.array(decoded_runtime_results["data"][EXPLANATION_KEY[explainer_type]]),
+        explanation.data[EXPLANATION_KEY[explainer_type]],
     )

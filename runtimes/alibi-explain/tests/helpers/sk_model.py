@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 import joblib
 
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import GradientBoostingClassifier
 from alibi.datasets import fetch_adult
 
 from mlserver import MLModel
@@ -39,7 +39,7 @@ def _train_sk_income() -> None:
     data = get_income_data()
     X_train, Y_train = data['X'], data['Y']
 
-    model = RandomForestClassifier(n_estimators=50, n_jobs=-1)
+    model = GradientBoostingClassifier(n_estimators=50)
     model.fit(X_train, Y_train)
 
     _MODEL_PATH.parent.mkdir(parents=True)
