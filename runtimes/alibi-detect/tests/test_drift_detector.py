@@ -186,6 +186,7 @@ async def test_predict_metrics(
     [
         ({"data": {"is_drift": [0]}}, [{"seldon_model_drift": 0}]),
         ({"data": {"is_drift": [1]}}, [{"seldon_model_drift": 1}]),
+        ({"data": {"is_drift": 0}}, [{"seldon_model_drift": 0}]),
         (
             {"data": {"is_drift": [1, 0, 1]}},
             [

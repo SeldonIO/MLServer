@@ -147,9 +147,12 @@ class AlibiDetectRuntime(MLModel):
 
         data = current_pred["data"]
         if "is_drift" in data:
-            # NOTE: is_drift will hold an array which could be larger than 1
-            # (e.g. if drift is provided per input feature)
+            # NOTE: is_drift may be an array larger than 1 (e.g. if drift is
+            # provided per input feature) or a single-value integer
             is_drift = data["is_drift"]
+            if isinstance(is_drift, int):
+                is_drift = [is_drift]
+
             for is_drift_instance in is_drift:
                 mlserver.log(seldon_model_drift=is_drift_instance)
 
