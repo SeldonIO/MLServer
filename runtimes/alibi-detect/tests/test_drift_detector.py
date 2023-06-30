@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 import mlserver
 
-from typing import List
+from typing import Iterable, List
 
 from alibi_detect.cd import TabularDrift, CVMDriftOnline
 
@@ -17,7 +17,9 @@ from .conftest import P_VAL_THRESHOLD, ERT, WINDOW_SIZES
 
 
 @pytest.fixture(autouse=True)
-def drift_detector_context(drift_detector_settings: ModelSettings) -> ModelSettings:
+def drift_detector_context(
+    drift_detector_settings: ModelSettings,
+) -> Iterable[ModelSettings]:
     # Ensure context is activated - otherwise it may fail trying to register
     # drift
     with model_context(drift_detector_settings):
