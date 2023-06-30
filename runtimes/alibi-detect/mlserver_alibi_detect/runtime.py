@@ -130,9 +130,7 @@ class AlibiDetectRuntime(MLModel):
             try:
                 current_pred = self._model.predict(x, **predict_kwargs)
                 pred.append(current_pred)
-                print("in the current prediction")
-                print(current_pred['data']['is_drift'])
-                mlserver.log(seldon_model_drift=current_pred['data']['is_drift'])
+                self._log_metrics(current_pred)
             except (ValueError, IndexError) as e:
                 raise InferenceError(
                     f"Invalid predict parameters for model {self._settings.name}: {e}"
@@ -142,6 +140,18 @@ class AlibiDetectRuntime(MLModel):
                 self._save_state()
 
         return self._encode_response(self._postproc_pred(pred))
+
+    def _log_metrics(self, current_pred: dict) -> None:
+        if "data" not in current_pred:
+            return
+
+        data = current_pred["data"]
+        if "is_drift" in data:
+            # NOTE: is_drift will hold an array which could be larger than 1
+            # (e.g. if drift is provided per input feature)
+            is_drift = data["is_drift"]
+            for is_drift_instance in is_drift:
+                mlserver.log(seldon_model_drift=is_drift_instance)
 
     def _encode_response(self, y: dict) -> InferenceResponse:
         outputs = []
