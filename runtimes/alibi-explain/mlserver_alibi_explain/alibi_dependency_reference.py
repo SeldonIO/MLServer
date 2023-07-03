@@ -19,6 +19,7 @@ _KERNEL_SHAP_TAG = "kernel_shap"
 _INTEGRATED_GRADIENTS_TAG = "integrated_gradients"
 _TREE_SHAP_TAG = "tree_shap"
 _TREE_PARTIAL_DEPENDENCE_TAG = "tree_partial_dependence"
+_TREE_PARTIAL_DEPENDENCE_VARIANCE_TAG = "tree_partial_dependence_variance"
 
 
 # NOTE: to add new explainers populate the below dict with a new

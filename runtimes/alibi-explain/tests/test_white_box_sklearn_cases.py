@@ -44,3 +44,23 @@ def case_tree_partial_dependence(sk_income_model, income_data, tmp_path, save) \
     save_dir = tmp_path if save else None
     return build_test_case('tree_partial_dependence', init_kwargs, explain_kwargs, fit=False,
                            save_dir=save_dir, payload=income_data['X'][:1])
+
+
+def case_tree_partial_dependence_variance(sk_income_model, income_data, tmp_path) \
+        -> Tuple[ModelSettings, Explainer, InferenceRequest, dict]:
+    """
+    TreePartialDependence explainer with a sklearn classifier. Test Init w/ params.
+
+    # TODO - add load from uri test once https://github.com/SeldonIO/alibi/issues/938 is fixed.
+    """
+    # Set kwargs
+    init_kwargs = {
+        'predictor': sk_income_model,
+        'feature_names': income_data['feature_names'],
+        'categorical_names': income_data['category_map'],
+        'target_names': income_data['target_names'],
+    }
+    explain_kwargs = {'features': [0, 2]}
+
+    return build_test_case('tree_partial_dependence', init_kwargs, explain_kwargs, fit=False,
+                           save_dir=None, payload=income_data['X'][:1])
