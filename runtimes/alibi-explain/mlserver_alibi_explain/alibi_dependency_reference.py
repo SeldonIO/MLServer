@@ -16,12 +16,9 @@ _ANCHOR_IMAGE_TAG = "anchor_image"
 _ANCHOR_TEXT_TAG = "anchor_text"
 _ANCHOR_TABULAR_TAG = "anchor_tabular"
 _KERNEL_SHAP_TAG = "kernel_shap"
-_PARTIAL_DEPENDENCE_TAG = "partial_dependence"
-_PARTIAL_DEPENDENCE_VARIANCE_TAG = "partial_dependence_variance"
 _INTEGRATED_GRADIENTS_TAG = "integrated_gradients"
 _TREE_SHAP_TAG = "tree_shap"
 _TREE_PARTIAL_DEPENDENCE_TAG = "tree_partial_dependence"
-_TREE_PARTIAL_DEPENDENCE_VARIANCE_TAG = "tree_partial_dependence_variance"
 
 
 # NOTE: to add new explainers populate the below dict with a new
@@ -58,16 +55,6 @@ _TAG_TO_RT_IMPL: Dict[str, ExplainerDependencyReference] = {
         runtime_class=f"{_BLACKBOX_MODULE}.AlibiExplainBlackBoxRuntime",
         alibi_class="alibi.explainers.KernelShap",
     ),
-    _PARTIAL_DEPENDENCE_TAG: ExplainerDependencyReference(
-        explainer_name=_PARTIAL_DEPENDENCE_TAG,
-        runtime_class=f"{_BLACKBOX_MODULE}.AlibiExplainBlackBoxRuntime",
-        alibi_class="alibi.explainers.PartialDependence",
-    ),
-    _PARTIAL_DEPENDENCE_VARIANCE_TAG: ExplainerDependencyReference(
-        explainer_name=_PARTIAL_DEPENDENCE_VARIANCE_TAG,
-        runtime_class=f"{_BLACKBOX_MODULE}.AlibiExplainBlackBoxRuntime",
-        alibi_class="alibi.explainers.PartialDependenceVariance",
-    ),
     _INTEGRATED_GRADIENTS_TAG: ExplainerDependencyReference(
         explainer_name=_INTEGRATED_GRADIENTS_TAG,
         runtime_class=f"{_INTEGRATED_GRADIENTS_MODULE}.IntegratedGradientsWrapper",
@@ -96,8 +83,6 @@ class ExplainerEnum(str, Enum):
     anchor_text = _ANCHOR_TEXT_TAG
     anchor_tabular = _ANCHOR_TABULAR_TAG
     kernel_shap = _KERNEL_SHAP_TAG
-    partial_dependence = _PARTIAL_DEPENDENCE_TAG
-    partial_dependence_variance = _PARTIAL_DEPENDENCE_VARIANCE_TAG
     integrated_gradients = _INTEGRATED_GRADIENTS_TAG
     tree_shap = _TREE_SHAP_TAG
     tree_partial_dependence = _TREE_PARTIAL_DEPENDENCE_TAG

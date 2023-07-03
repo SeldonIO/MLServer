@@ -53,7 +53,7 @@ def metrics_registry() -> Iterable[MetricsRegistry]:
 
 @pytest.fixture
 def prometheus_registry(
-        metrics_registry: MetricsRegistry,
+    metrics_registry: MetricsRegistry,
 ) -> Iterable[CollectorRegistry]:
     """
     Fixture used to ensure the registry is cleaned on each run.
@@ -76,7 +76,7 @@ def prometheus_registry(
 
 @pytest.fixture
 async def inference_pool_registry(
-        settings: Settings, prometheus_registry: CollectorRegistry
+    settings: Settings, prometheus_registry: CollectorRegistry
 ) -> AsyncIterable[InferencePoolRegistry]:
     registry = InferencePoolRegistry(settings)
     yield registry
@@ -113,7 +113,7 @@ def settings() -> Settings:
 
 @pytest.fixture
 async def model_registry(
-        custom_runtime_tf_settings, inference_pool_registry
+    custom_runtime_tf_settings, inference_pool_registry
 ) -> AsyncIterable[MultiModelRegistry]:
     model_registry = MultiModelRegistry(
         on_model_load=[inference_pool_registry.load_model],
@@ -150,7 +150,7 @@ def model_repository(tmp_path, custom_runtime_tf) -> ModelRepository:
 
 @pytest.fixture
 def model_repository_handlers(
-        model_repository: ModelRepository, model_registry: MultiModelRegistry
+    model_repository: ModelRepository, model_registry: MultiModelRegistry
 ) -> ModelRepositoryHandlers:
     return ModelRepositoryHandlers(
         repository=model_repository, model_registry=model_registry
@@ -159,11 +159,11 @@ def model_repository_handlers(
 
 @pytest.fixture
 async def rest_server(
-        settings: Settings,
-        data_plane: DataPlane,
-        model_repository_handlers: ModelRepositoryHandlers,
-        custom_runtime_tf: MLModel,
-        prometheus_registry: CollectorRegistry,
+    settings: Settings,
+    data_plane: DataPlane,
+    model_repository_handlers: ModelRepositoryHandlers,
+    custom_runtime_tf: MLModel,
+    prometheus_registry: CollectorRegistry,
 ) -> AsyncIterable[RESTServer]:
     server = RESTServer(
         settings=settings,
@@ -222,10 +222,10 @@ def mock_remote_metadata(mocker):
 
 @pytest.fixture
 async def anchor_image_runtime_with_remote_predict_patch(
-        anchor_image_directory,
-        custom_runtime_tf: MLModel,
-        mock_remote_metadata,
-        mock_remote_predict,
+    anchor_image_directory,
+    custom_runtime_tf: MLModel,
+    mock_remote_metadata,
+    mock_remote_predict,
 ) -> AsyncIterable[AlibiExplainRuntime]:
     rt = AlibiExplainRuntime(
         ModelSettings(
