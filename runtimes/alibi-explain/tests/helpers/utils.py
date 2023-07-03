@@ -92,16 +92,23 @@ def build_test_case(explainer_type: str, init_kwargs: dict, explain_kwargs: dict
     )
 
     # Explainer model settings
+    model_params = {}
+    alibi_explain_settings = {
+        'explainer_type': explainer_type,
+        'infer_uri': str(get_sk_income_model_uri()),
+    }
+    if save_dir:
+        model_params['uri'] = str(save_dir)
+    else:
+        init_params = init_kwargs.copy()
+        init_params.pop('predictor')  # TODO: Will need to add `model`, `predict_fn` here eventually
+        alibi_explain_settings['init_parameters'] = init_params
+    model_params['extra'] = AlibiExplainSettings(**alibi_explain_settings)
+
     model_settings = ModelSettings(
         name="foo",
         implementation=AlibiExplainRuntime,
-        parameters=ModelParameters(
-            uri=str(save_dir),
-            extra=AlibiExplainSettings(
-                explainer_type=explainer_type,
-                infer_uri=str(get_sk_income_model_uri()),
-            )
-        ),
+        parameters=ModelParameters(**model_params),
     )
 
     # Inference request

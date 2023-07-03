@@ -15,7 +15,6 @@ from mlserver_alibi_explain.common import convert_from_bytes
 EXPLANATION_KEY = {  # Explanation key to compare for each explainer type
     'tree_shap': 'shap_values',
     'tree_partial_dependence': 'pd_values',
-    'tree_partial_dependence_variance': 'pd_values',
 }
 
 
