@@ -8,6 +8,7 @@ from functools import cached_property
 
 from alibi_detect.saving import load_detector
 
+import mlserver
 from mlserver.batching import BatchedRequests
 from mlserver.types import InferenceRequest, InferenceResponse
 from mlserver.settings import ModelSettings
@@ -69,6 +70,8 @@ class AlibiDetectRuntime(MLModel):
         self._model_uri = await get_model_uri(self._settings)
         try:
             self._model = load_detector(self._model_uri)
+            mlserver.register("seldon_model_drift", "Drift metrics")
+
             # Check whether an online drift detector (i.e. has a save_state method)
             self._online = True if hasattr(self._model, "save_state") else False
         except (
@@ -125,7 +128,9 @@ class AlibiDetectRuntime(MLModel):
         for x in X:
             # Prediction
             try:
-                pred.append(self._model.predict(x, **predict_kwargs))
+                current_pred = self._model.predict(x, **predict_kwargs)
+                pred.append(current_pred)
+                self._log_metrics(current_pred)
             except (ValueError, IndexError) as e:
                 raise InferenceError(
                     f"Invalid predict parameters for model {self._settings.name}: {e}"
@@ -135,6 +140,21 @@ class AlibiDetectRuntime(MLModel):
                 self._save_state()
 
         return self._encode_response(self._postproc_pred(pred))
+
+    def _log_metrics(self, current_pred: dict) -> None:
+        if "data" not in current_pred:
+            return
+
+        data = current_pred["data"]
+        if "is_drift" in data:
+            # NOTE: is_drift may be an array larger than 1 (e.g. if drift is
+            # provided per input feature) or a single-value integer
+            is_drift = data["is_drift"]
+            if isinstance(is_drift, int):
+                is_drift = [is_drift]
+
+            for is_drift_instance in is_drift:
+                mlserver.log(seldon_model_drift=is_drift_instance)
 
     def _encode_response(self, y: dict) -> InferenceResponse:
         outputs = []

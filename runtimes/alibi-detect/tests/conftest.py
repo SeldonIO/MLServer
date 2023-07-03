@@ -4,11 +4,13 @@ import asyncio
 import numpy as np
 import tensorflow as tf
 
+from typing import Iterable
 from tensorflow.keras.layers import Dense, InputLayer
 from alibi_detect.cd import TabularDrift, CVMDriftOnline
 from alibi_detect.od import OutlierVAE
 from alibi_detect.saving import save_detector
 
+from mlserver.metrics.context import model_context
 from mlserver.settings import ModelSettings, ModelParameters
 from mlserver.types import InferenceRequest
 from mlserver.utils import install_uvloop_event_loop
@@ -115,8 +117,8 @@ async def outlier_detector(
 @pytest.fixture
 def drift_detector_settings(
     drift_detector_uri: str,
-) -> ModelSettings:
-    return ModelSettings(
+) -> Iterable[ModelSettings]:
+    model_settings = ModelSettings(
         name="alibi-detect-model",
         implementation=AlibiDetectRuntime,
         parameters=ModelParameters(
@@ -126,12 +128,17 @@ def drift_detector_settings(
         ),
     )
 
+    # Ensure context is activated - otherwise it may fail trying to register
+    # drift
+    with model_context(model_settings):
+        yield model_settings
+
 
 @pytest.fixture
 def online_drift_detector_settings(
     online_drift_detector_uri: str,
-) -> ModelSettings:
-    return ModelSettings(
+) -> Iterable[ModelSettings]:
+    model_settings = ModelSettings(
         name="alibi-detect-model",
         implementation=AlibiDetectRuntime,
         parameters=ModelParameters(
@@ -143,6 +150,11 @@ def online_drift_detector_settings(
             },  # spec batch_size to check that it is ignored
         ),
     )
+
+    # Ensure context is activated - otherwise it may fail trying to register
+    # drift
+    with model_context(model_settings):
+        yield model_settings
 
 
 @pytest.fixture
