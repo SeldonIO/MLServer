@@ -18,7 +18,7 @@ from starlette_exporter import PrometheusMiddleware
 from alibi.api.interfaces import Explanation, Explainer
 from alibi.explainers import AnchorImage
 
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.base import BaseEstimator
 
 from mlserver import MLModel
 from mlserver.handlers import DataPlane, ModelRepositoryHandlers
@@ -330,7 +330,7 @@ def _train_anchor_image_explainer() -> None:
 
 
 @pytest.fixture(scope="module")
-def sk_income_model() -> RandomForestClassifier:
+def sk_income_model() -> BaseEstimator:
     model = joblib.load(get_sk_income_model_uri())
     return model
 
