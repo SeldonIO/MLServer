@@ -280,7 +280,7 @@ def dummy_explainer_settings() -> Iterable[ModelSettings]:
             super().__init__(settings, explainer_settings)
 
         def _explain_impl(
-                self, input_data: Any, explain_parameters: Dict
+            self, input_data: Any, explain_parameters: Dict
         ) -> Explanation:
             return Explanation(meta={}, data={})
 
@@ -291,8 +291,8 @@ def dummy_explainer_settings() -> Iterable[ModelSettings]:
         "AlibiExplainBlackBoxRuntime"
     )
     with patch(
-            blackbox_import_path,
-            _DummyExplainer,
+        blackbox_import_path,
+        _DummyExplainer,
     ):
         yield ModelSettings(
             parallel_workers=0,
@@ -307,10 +307,10 @@ def dummy_explainer_settings() -> Iterable[ModelSettings]:
 
 @pytest.fixture
 async def dummy_alibi_explain_client(
-        rest_server: RESTServer,
-        model_registry: MultiModelRegistry,
-        dummy_explainer_settings: ModelSettings,
-        rest_client: AsyncClient,
+    rest_server: RESTServer,
+    model_registry: MultiModelRegistry,
+    dummy_explainer_settings: ModelSettings,
+    rest_client: AsyncClient,
 ) -> AsyncIterable[AsyncClient]:
     dummy_explainer = await model_registry.load(dummy_explainer_settings)
 
