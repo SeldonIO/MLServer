@@ -2,28 +2,16 @@ import numpy as np
 import pytest
 import mlserver
 
-from typing import Iterable, List
+from typing import List
 
 from alibi_detect.cd import TabularDrift, CVMDriftOnline
 
-from mlserver.settings import ModelSettings
 from mlserver.types import InferenceRequest, Parameters, RequestInput
 from mlserver.codecs import NumpyCodec, NumpyRequestCodec
-from mlserver.metrics.context import model_context
 
 from mlserver_alibi_detect import AlibiDetectRuntime
 
 from .conftest import P_VAL_THRESHOLD, ERT, WINDOW_SIZES
-
-
-@pytest.fixture(autouse=True)
-def drift_detector_context(
-    drift_detector_settings: ModelSettings,
-) -> Iterable[ModelSettings]:
-    # Ensure context is activated - otherwise it may fail trying to register
-    # drift
-    with model_context(drift_detector_settings):
-        yield drift_detector_settings
 
 
 async def test_load_folder(
