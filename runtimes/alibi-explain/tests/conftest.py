@@ -17,7 +17,6 @@ from prometheus_client.registry import REGISTRY, CollectorRegistry
 from starlette_exporter import PrometheusMiddleware
 from alibi.api.interfaces import Explanation, Explainer
 from alibi.explainers import AnchorImage
-import numpy as np
 
 from sklearn.ensemble import RandomForestClassifier
 
