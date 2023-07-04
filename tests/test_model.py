@@ -1,4 +1,5 @@
 import pytest
+import inspect
 import numpy as np
 import pandas as pd
 
@@ -9,6 +10,21 @@ from mlserver.codecs import RequestCodec, NumpyCodec, StringCodec
 from mlserver.codecs.numpy import NumpyRequestCodec
 from mlserver.codecs.pandas import PandasCodec
 from mlserver.model import MLModel
+
+
+async def test_predict_stream(
+    sum_model: MLModel,
+    inference_request: InferenceRequest,
+):
+    generator = sum_model.predict_stream(inference_request)
+    assert inspect.isasyncgen(generator)
+
+    responses = []
+    async for response in generator:
+        responses.append(response)
+
+    assert len(responses) == 1
+    assert len(responses[0].outputs) > 0
 
 
 @pytest.mark.parametrize(
