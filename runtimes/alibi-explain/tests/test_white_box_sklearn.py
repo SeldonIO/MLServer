@@ -34,10 +34,10 @@ async def test_case(model_settings: ModelSettings, explainer: Explainer,
     return runtime, explainer, request, explain_kwargs
 
 
-async def test_end_2_end(test_case):
+async def test_explain(test_case):
     """
-    End-to-end test for the Alibi Explain runtime. This test is parametrized by a separate test case for each of the
-    supported explainer types.
+    Test the explain method of the Alibi Explain runtime. This test is parametrized by a separate test case for each of
+    supported explainer types. The explanations from the runtime and the equivalent local explainer are compared.
     """
     explainer_runtime, explainer, payload, explain_kwargs = await test_case
 
