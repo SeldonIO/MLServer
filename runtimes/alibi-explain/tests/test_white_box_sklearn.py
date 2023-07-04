@@ -19,7 +19,7 @@ EXPLANATION_KEY = {  # Explanation key to compare for each explainer type
 
 
 @fixture
-@parametrize_with_cases("model_settings, explainer, request, explain_kwargs")
+@parametrize_with_cases("model_settings, explainer, request, explain_kwargs", import_fixtures=True)
 async def test_case(model_settings: ModelSettings, explainer: Explainer,
                     request: InferenceRequest, explain_kwargs: dict) \
         -> Tuple[AlibiExplainRuntime, Explainer, InferenceRequest, dict]:
