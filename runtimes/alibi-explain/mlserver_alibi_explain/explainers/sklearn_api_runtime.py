@@ -10,7 +10,7 @@ from mlserver.errors import InvalidModelURI
 from mlserver_alibi_explain.explainers.white_box_runtime import AlibiExplainWhiteBoxRuntime
 
 
-class AlibiExplainSKLearnAPIRuntime(AlibiExplainWhiteBoxRuntime):
+class SKLearnRuntime(AlibiExplainWhiteBoxRuntime):
     """
     Runtime for white-box explainers that require access to a tree-based model matching the SKLearn API, such as
     a sklearn, XGBoost, or LightGBM model. Example explainers include TreeShap and TreePartialDependence.

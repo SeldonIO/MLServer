@@ -63,17 +63,17 @@ _TAG_TO_RT_IMPL: Dict[str, ExplainerDependencyReference] = {
     ),
     _TREE_SHAP_TAG: ExplainerDependencyReference(
         explainer_name=_TREE_SHAP_TAG,
-        runtime_class=f"{_WHITEBOX_SKLEARN_MODULE}.AlibiExplainSKLearnAPIRuntime",
+        runtime_class=f"{_WHITEBOX_SKLEARN_MODULE}.SKLearnRuntime",
         alibi_class="alibi.explainers.TreeShap",
     ),
     _TREE_PARTIAL_DEPENDENCE_TAG: ExplainerDependencyReference(
         explainer_name=_TREE_PARTIAL_DEPENDENCE_TAG,
-        runtime_class=f"{_WHITEBOX_SKLEARN_MODULE}.AlibiExplainSKLearnAPIRuntime",
+        runtime_class=f"{_WHITEBOX_SKLEARN_MODULE}.SKLearnRuntime",
         alibi_class="alibi.explainers.TreePartialDependence",
     ),
     _TREE_PARTIAL_DEPENDENCE_VARIANCE_TAG: ExplainerDependencyReference(
         explainer_name=_TREE_PARTIAL_DEPENDENCE_VARIANCE_TAG,
-        runtime_class=f"{_WHITEBOX_SKLEARN_MODULE}.AlibiExplainSKLearnAPIRuntime",
+        runtime_class=f"{_WHITEBOX_SKLEARN_MODULE}.SKLearnRuntime",
         alibi_class="alibi.explainers.PartialDependenceVariance",
     ),
 }
