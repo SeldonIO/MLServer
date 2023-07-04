@@ -1804,6 +1804,30 @@ files = [
 ]
 
 [[package]]
+name = "lightgbm"
+version = "3.3.5"
+description = "LightGBM Python Package"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "lightgbm-3.3.5-py3-none-macosx_10_15_x86_64.macosx_11_6_x86_64.macosx_12_0_x86_64.whl", hash = "sha256:843dd37c00a1096a8898b80e368b3eef7f5a5d327d1fd9eb770b6f3c2e1edc49"},
+    {file = "lightgbm-3.3.5-py3-none-manylinux1_x86_64.whl", hash = "sha256:044f65664c1a32c98cb619bafa97d8cd9d93c2c2d5053376aadfe509a3a3e7fa"},
+    {file = "lightgbm-3.3.5-py3-none-manylinux2014_aarch64.whl", hash = "sha256:ef01e46939293a0a36729350a7384dc17a36880176d0f17d82b738bbe77e4528"},
+    {file = "lightgbm-3.3.5-py3-none-win_amd64.whl", hash = "sha256:02a40745c1972cf4a2cde764c7739228f45178c2237af2df40fde7063a58ac6a"},
+    {file = "lightgbm-3.3.5.tar.gz", hash = "sha256:10b8fbdcf851e4f68a1f02f38d99bdc44c7c7fb9b1a62dcf924a0d29ff73395c"},
+]
+
+[package.dependencies]
+numpy = "*"
+scikit-learn = "!=0.22.0"
+scipy = "*"
+wheel = "*"
+
+[package.extras]
+dask = ["dask[array] (>=2.0.0)", "dask[dataframe] (>=2.0.0)", "dask[distributed] (>=2.0.0)", "pandas"]
+
+[[package]]
 name = "llvmlite"
 version = "0.40.1"
 description = "lightweight wrapper around basic LLVM functionality"
@@ -2008,8 +2032,8 @@ files = [
 [package.dependencies]
 numpy = [
     {version = ">1.20", markers = "python_version <= \"3.9\""},
-    {version = ">=1.23.3", markers = "python_version > \"3.10\""},
     {version = ">=1.21.2", markers = "python_version > \"3.9\""},
+    {version = ">=1.23.3", markers = "python_version > \"3.10\""},
 ]
 
 [package.extras]
@@ -2046,6 +2070,62 @@ uvloop = {version = "*", markers = "sys_platform != \"win32\" and sys_platform !
 [package.source]
 type = "directory"
 url = "../.."
+
+[[package]]
+name = "mlserver-lightgbm"
+version = "1.4.0.dev2"
+description = "LightGBM runtime for MLServer"
+category = "main"
+optional = false
+python-versions = "^3.8.1,<3.12"
+files = []
+develop = true
+
+[package.dependencies]
+lightgbm = "*"
+mlserver = "*"
+pandas = "*"
+
+[package.source]
+type = "directory"
+url = "../lightgbm"
+
+[[package]]
+name = "mlserver-sklearn"
+version = "1.4.0.dev2"
+description = "Scikit-Learn runtime for MLServer"
+category = "main"
+optional = false
+python-versions = "^3.8.1,<3.12"
+files = []
+develop = true
+
+[package.dependencies]
+joblib = "*"
+mlserver = "*"
+scikit-learn = "*"
+
+[package.source]
+type = "directory"
+url = "../sklearn"
+
+[[package]]
+name = "mlserver-xgboost"
+version = "1.4.0.dev2"
+description = "XGBoost runtime for MLServer"
+category = "main"
+optional = false
+python-versions = "^3.8.1,<3.12"
+files = []
+develop = true
+
+[package.dependencies]
+mlserver = "*"
+xgboost = {version = "*", extras = ["scikit-learn"]}
+
+[package.source]
+type = "directory"
+url = "../xgboost"
 
 [[package]]
 name = "multidict"
@@ -2670,7 +2750,7 @@ version = "2.21"
 description = "C parser in Python"
 category = "main"
 optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+python-versions = "*"
 files = [
     {file = "pycparser-2.21-py2.py3-none-any.whl", hash = "sha256:8ee45429555515e1f6b185e78100aea234072576aa43ab53aefcae078162fca9"},
     {file = "pycparser-2.21.tar.gz", hash = "sha256:e644fdec12f7872f86c58ff790da456218b10f863970249516d60a5eaca77206"},
@@ -3414,16 +3494,6 @@ files = [
     {file = "smart_open-6.3.0-py3-none-any.whl", hash = "sha256:b4c9ae193ad6d3e7add50944b86afa0d150bd821ab8ec21edb26d9a06b66f6a8"},
     {file = "smart_open-6.3.0.tar.gz", hash = "sha256:d5238825fe9a9340645fac3d75b287c08fbb99fb2b422477de781c9f5f09e019"},
 ]
-
-[package.extras]
-all = ["azure-common", "azure-core", "azure-storage-blob", "boto3", "google-cloud-storage (>=2.6.0)", "paramiko", "requests"]
-azure = ["azure-common", "azure-core", "azure-storage-blob"]
-gcs = ["google-cloud-storage (>=2.6.0)"]
-http = ["requests"]
-s3 = ["boto3"]
-ssh = ["paramiko"]
-test = ["azure-common", "azure-core", "azure-storage-blob", "boto3", "google-cloud-storage (>=2.6.0)", "moto[server]", "paramiko", "pytest", "pytest-rerunfailures", "requests", "responses"]
-webhdfs = ["requests"]
 
 [[package]]
 name = "sniffio"
@@ -4337,6 +4407,35 @@ files = [
 ]
 
 [[package]]
+name = "xgboost"
+version = "1.7.6"
+description = "XGBoost Python Package"
+category = "main"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "xgboost-1.7.6-py3-none-macosx_10_15_x86_64.macosx_11_0_x86_64.macosx_12_0_x86_64.whl", hash = "sha256:4c34675b4d2678c624ddde5d45361e7e16046923e362e4e609b88353e6b87124"},
+    {file = "xgboost-1.7.6-py3-none-macosx_12_0_arm64.whl", hash = "sha256:59b4b366d2cafc7f645e87d897983a5b59be02876194b1d213bd8d8b811d8ce8"},
+    {file = "xgboost-1.7.6-py3-none-manylinux2014_aarch64.whl", hash = "sha256:281c3c6f4fbed2d36bf95cd02a641afa95e72e9abde70064056da5e76233e8df"},
+    {file = "xgboost-1.7.6-py3-none-manylinux2014_x86_64.whl", hash = "sha256:b1d5db49b199152d62bd9217c98760207d3de86d2b9d243260c573ffe638f80a"},
+    {file = "xgboost-1.7.6-py3-none-win_amd64.whl", hash = "sha256:127cf1f5e2ec25cd41429394c6719b87af1456ce583e89f0bffd35d02ad18bcb"},
+    {file = "xgboost-1.7.6.tar.gz", hash = "sha256:1c527554a400445e0c38186039ba1a00425dcdb4e40b37eed0e74cb39a159c47"},
+]
+
+[package.dependencies]
+numpy = "*"
+scikit-learn = {version = "*", optional = true, markers = "extra == \"scikit-learn\""}
+scipy = "*"
+
+[package.extras]
+dask = ["dask", "distributed", "pandas"]
+datatable = ["datatable"]
+pandas = ["pandas"]
+plotting = ["graphviz", "matplotlib"]
+pyspark = ["cloudpickle", "pyspark", "scikit-learn"]
+scikit-learn = ["scikit-learn"]
+
+[[package]]
 name = "yarl"
 version = "1.9.2"
 description = "Yet another URL library"
@@ -4510,4 +4609,4 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8.1,<3.12"
-content-hash = "b71171ca2b9655c0935bb3917685c5b849c2abb947b45fee0aaf7737f297cf20"
+content-hash = "ba7b8804fdbc74404fec2c8a57e9f255820c161689555761e004aac824f9103a"
