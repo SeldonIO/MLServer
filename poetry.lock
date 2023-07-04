@@ -5075,13 +5075,13 @@ unidecode = ["Unidecode (>=1.1.1)"]
 
 [[package]]
 name = "pytorch-lightning"
-version = "2.0.3"
+version = "2.0.4"
 description = "PyTorch Lightning is the lightweight PyTorch wrapper for ML researchers. Scale your models. Write less boilerplate."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "pytorch-lightning-2.0.3.tar.gz", hash = "sha256:3b12080f6b3205cc7aaa42a1e08b221007b999a63c0032d0090f29ff8d0d7221"},
-    {file = "pytorch_lightning-2.0.3-py3-none-any.whl", hash = "sha256:9d7f0bc1c5264e727f5be4fdce30106b8e68d622c69e8f4b4182d3646b8f22c2"},
+    {file = "pytorch-lightning-2.0.4.tar.gz", hash = "sha256:e766975a6beaf40808a577a997663ca349adbf6a544c3de18dbcbdc2c5f7d47d"},
+    {file = "pytorch_lightning-2.0.4-py3-none-any.whl", hash = "sha256:6b1b04c818250ebfe5cde576b3e559f4d00c84c2f80598ef40224b2a749a5398"},
 ]
 
 [package.dependencies]
@@ -5096,13 +5096,13 @@ tqdm = ">=4.57.0"
 typing-extensions = ">=4.0.0"
 
 [package.extras]
-all = ["deepspeed (>=0.8.2)", "gym[classic-control] (>=0.17.0)", "hydra-core (>=1.0.5)", "ipython[all] (<8.7.1)", "jsonargparse[signatures] (>=4.18.0)", "lightning-utilities (>=0.7.0)", "matplotlib (>3.1)", "omegaconf (>=2.0.5)", "rich (>=12.3.0)", "tensorboardX (>=2.2)", "torchmetrics (>=0.10.0)", "torchvision (>=0.12.0)"]
+all = ["deepspeed (>=0.8.2)", "gym[classic-control] (>=0.17.0)", "hydra-core (>=1.0.5)", "ipython[all] (<8.14.1)", "jsonargparse[signatures] (>=4.18.0)", "lightning-utilities (>=0.7.0)", "matplotlib (>3.1)", "omegaconf (>=2.0.5)", "rich (>=12.3.0)", "tensorboardX (>=2.2)", "torchmetrics (>=0.10.0)", "torchvision (>=0.12.0)"]
 deepspeed = ["deepspeed (>=0.8.2)"]
-dev = ["cloudpickle (>=1.3)", "coverage (==7.2.5)", "deepspeed (>=0.8.2)", "fastapi (<0.87.0)", "gym[classic-control] (>=0.17.0)", "hydra-core (>=1.0.5)", "ipython[all] (<8.7.1)", "jsonargparse[signatures] (>=4.18.0)", "lightning-utilities (>=0.7.0)", "matplotlib (>3.1)", "omegaconf (>=2.0.5)", "onnx (<1.15.0)", "onnxruntime (<1.14.0)", "pandas (>1.0)", "protobuf (<=3.20.1)", "psutil (<5.9.5)", "pytest (==7.3.1)", "pytest-cov (==4.0.0)", "pytest-forked (==1.4.0)", "pytest-rerunfailures (==10.3)", "rich (>=12.3.0)", "scikit-learn (>0.22.1)", "tensorboard (>=2.9.1)", "tensorboardX (>=2.2)", "torchmetrics (>=0.10.0)", "torchvision (>=0.12.0)", "uvicorn (<0.22.1)"]
-examples = ["gym[classic-control] (>=0.17.0)", "ipython[all] (<8.7.1)", "lightning-utilities (>=0.7.0)", "torchmetrics (>=0.10.0)", "torchvision (>=0.12.0)"]
+dev = ["cloudpickle (>=1.3)", "coverage (==7.2.5)", "deepspeed (>=0.8.2)", "fastapi (<0.98.0)", "gym[classic-control] (>=0.17.0)", "hydra-core (>=1.0.5)", "ipython[all] (<8.14.1)", "jsonargparse[signatures] (>=4.18.0)", "lightning-utilities (>=0.7.0)", "matplotlib (>3.1)", "omegaconf (>=2.0.5)", "onnx (<1.15.0)", "onnxruntime (<1.16.0)", "pandas (>1.0)", "protobuf (<=3.20.1)", "psutil (<5.9.5)", "pytest (==7.3.1)", "pytest-cov (==4.0.0)", "pytest-forked (==1.4.0)", "pytest-rerunfailures (==10.3)", "rich (>=12.3.0)", "scikit-learn (>0.22.1)", "tensorboard (>=2.9.1)", "tensorboardX (>=2.2)", "torchmetrics (>=0.10.0)", "torchvision (>=0.12.0)", "uvicorn (<0.22.1)"]
+examples = ["gym[classic-control] (>=0.17.0)", "ipython[all] (<8.14.1)", "lightning-utilities (>=0.7.0)", "torchmetrics (>=0.10.0)", "torchvision (>=0.12.0)"]
 extra = ["hydra-core (>=1.0.5)", "jsonargparse[signatures] (>=4.18.0)", "matplotlib (>3.1)", "omegaconf (>=2.0.5)", "rich (>=12.3.0)", "tensorboardX (>=2.2)"]
 strategies = ["deepspeed (>=0.8.2)"]
-test = ["cloudpickle (>=1.3)", "coverage (==7.2.5)", "fastapi (<0.87.0)", "onnx (<1.15.0)", "onnxruntime (<1.14.0)", "pandas (>1.0)", "protobuf (<=3.20.1)", "psutil (<5.9.5)", "pytest (==7.3.1)", "pytest-cov (==4.0.0)", "pytest-forked (==1.4.0)", "pytest-rerunfailures (==10.3)", "scikit-learn (>0.22.1)", "tensorboard (>=2.9.1)", "uvicorn (<0.22.1)"]
+test = ["cloudpickle (>=1.3)", "coverage (==7.2.5)", "fastapi (<0.98.0)", "onnx (<1.15.0)", "onnxruntime (<1.16.0)", "pandas (>1.0)", "protobuf (<=3.20.1)", "psutil (<5.9.5)", "pytest (==7.3.1)", "pytest-cov (==4.0.0)", "pytest-forked (==1.4.0)", "pytest-rerunfailures (==10.3)", "scikit-learn (>0.22.1)", "tensorboard (>=2.9.1)", "uvicorn (<0.22.1)"]
 
 [[package]]
 name = "pytz"
@@ -7796,4 +7796,4 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8.1,<3.12"
-content-hash = "7a7681d103ce8f3013c5145fafc72822c5a9713923ef39907548f9d153e22a4a"
+content-hash = "9e6ad9f772639ecf6dd6fc728008cc0042954e31b681c1bc96d6f4cd0a3f67a8"
