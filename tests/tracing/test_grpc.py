@@ -22,7 +22,9 @@ async def test_grpc_metrics(
 
     span = spans[0]
     assert span["name"] == "/inference.GRPCInferenceService/ModelInfer"
-    assert "service.name.testing" in span["resource"]["attributes"] and \
-           span["resource"]["attributes"]["service.name.testing"] == "mlserver-testing"
+    assert (
+        "service.name.testing" in span["resource"]["attributes"]
+        and span["resource"]["attributes"]["service.name.testing"] == "mlserver-testing"
+    )
     assert span["kind"] == "SpanKind.SERVER"
     assert span["parent_id"] is None

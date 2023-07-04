@@ -12,10 +12,12 @@ _TRACER_PROVIDER: Optional[TracerProvider] = None
 
 
 def _create_resource(settings: Settings) -> Resource:
-    return Resource(attributes={
-        SERVICE_NAME: settings.server_name,
-        SERVICE_VERSION: settings.server_version,
-    })
+    return Resource(
+        attributes={
+            SERVICE_NAME: settings.server_name,
+            SERVICE_VERSION: settings.server_version,
+        }
+    )
 
 
 def _create_span_exporter(settings: Settings) -> SpanExporter:

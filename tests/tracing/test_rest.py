@@ -24,8 +24,11 @@ async def test_tracing(
     trace_ids = set()
     for s in spans:
         assert "/v2/models/{model_name}/infer" in s["name"]
-        assert "service.name.testing" in s["resource"]["attributes"] and \
-            s["resource"]["attributes"]["service.name.testing"] == "mlserver-testing"
+        assert (
+            "service.name.testing" in s["resource"]["attributes"]
+            and s["resource"]["attributes"]["service.name.testing"]
+            == "mlserver-testing"
+        )
         trace_ids.add(s["context"]["trace_id"])
     assert len(trace_ids) == 1
 

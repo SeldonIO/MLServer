@@ -4236,6 +4236,28 @@ instruments = ["fastapi (>=0.58,<1.0)"]
 test = ["httpx (>=0.22,<1.0)", "opentelemetry-instrumentation-fastapi[instruments]", "opentelemetry-test-utils (==0.39b0)", "requests (>=2.23,<3.0)"]
 
 [[package]]
+name = "opentelemetry-instrumentation-grpc"
+version = "0.39b0"
+description = "OpenTelemetry gRPC instrumentation"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "opentelemetry_instrumentation_grpc-0.39b0-py3-none-any.whl", hash = "sha256:1ab7a1e4a43efd8e827d1666065253fdc4dca76ca7bcf43417fe7523999e3145"},
+    {file = "opentelemetry_instrumentation_grpc-0.39b0.tar.gz", hash = "sha256:766ea59ff2677301e5354d2113a635c20e462611ecd4b5fb764121759d945bb2"},
+]
+
+[package.dependencies]
+opentelemetry-api = ">=1.12,<2.0"
+opentelemetry-instrumentation = "0.39b0"
+opentelemetry-sdk = ">=1.12,<2.0"
+opentelemetry-semantic-conventions = "0.39b0"
+wrapt = ">=1.0.0,<2.0.0"
+
+[package.extras]
+instruments = ["grpcio (>=1.27,<2.0)"]
+test = ["opentelemetry-instrumentation-grpc[instruments]", "opentelemetry-sdk (>=1.12,<2.0)", "opentelemetry-test-utils (==0.39b0)", "protobuf (>=3.13,<4.0)"]
+
+[[package]]
 name = "opentelemetry-proto"
 version = "1.18.0"
 description = "OpenTelemetry Python Proto"
@@ -8025,4 +8047,4 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8.1,<3.12"
-content-hash = "36ad7c02280e0fd728ca13e49b0b94cb4b2fee1366dbb94df528470487363428"
+content-hash = "551a2a87f59f2fc131dee0ee11d90d909ffbb69677f281598683f3af51d9f4b1"

@@ -151,10 +151,12 @@ def create_app(
 
     if settings.tracing_server:
         tracer_provider = get_tracer_provider(settings)
-        excluded_urls = ",".join([
-            "/v2/health/live",
-            "/v2/health/ready",
-        ])
+        excluded_urls = ",".join(
+            [
+                "/v2/health/live",
+                "/v2/health/ready",
+            ]
+        )
 
         FastAPIInstrumentor.instrument_app(
             app,

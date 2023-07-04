@@ -26,22 +26,22 @@ def span_exporter(mocker) -> SpanExporter:
 
 @fixture(autouse=True)
 def tracer_provider(mocker, span_exporter, settings) -> TracerProvider:
-    resource = Resource(attributes={
-        "service.name.testing": "mlserver-testing"
-    })
+    resource = Resource(attributes={"service.name.testing": "mlserver-testing"})
     tracer_provider = TracerProvider(resource=resource)
     span_processor = SimpleSpanProcessor(span_exporter)
     tracer_provider.add_span_processor(span_processor)
 
     mocker.patch("mlserver.rest.app.get_tracer_provider", return_value=tracer_provider)
-    mocker.patch("mlserver.grpc.server.get_tracer_provider", return_value=tracer_provider)
+    mocker.patch(
+        "mlserver.grpc.server.get_tracer_provider", return_value=tracer_provider
+    )
     yield tracer_provider
     tracer_provider.shutdown()
 
 
 @fixture
 async def inference_service_stub(
-        mlserver: MLServer, settings: Settings
+    mlserver: MLServer, settings: Settings
 ) -> AsyncGenerator[GRPCInferenceServiceStub, None]:
     async with aio.insecure_channel(f"{settings.host}:{settings.grpc_port}") as channel:
         yield GRPCInferenceServiceStub(channel)
