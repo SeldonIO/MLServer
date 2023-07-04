@@ -15,10 +15,10 @@ from httpx import AsyncClient
 from fastapi import FastAPI
 from prometheus_client.registry import REGISTRY, CollectorRegistry
 from starlette_exporter import PrometheusMiddleware
+from sklearn.ensemble import GradientBoostingClassifier
+from alibi.datasets import fetch_adult
 from alibi.api.interfaces import Explanation, Explainer
 from alibi.explainers import AnchorImage
-
-from sklearn.base import BaseEstimator
 
 from mlserver import MLModel
 from mlserver.handlers import DataPlane, ModelRepositoryHandlers
@@ -36,7 +36,6 @@ from mlserver_alibi_explain.common import AlibiExplainSettings
 from mlserver_alibi_explain.runtime import AlibiExplainRuntime, AlibiExplainRuntimeBase
 
 from .helpers.tf_model import get_tf_mnist_model_uri, TFMNISTModel
-from .helpers.sk_model import get_sk_income_model_uri, get_income_data
 from .helpers.run_async import run_async_as_sync
 from .helpers.metrics import unregister_metrics
 
@@ -329,12 +328,34 @@ def _train_anchor_image_explainer() -> None:
     anchor_image.save(_ANCHOR_IMAGE_DIR)
 
 
-@pytest.fixture(scope="module")
-def sk_income_model() -> BaseEstimator:
-    model = joblib.load(get_sk_income_model_uri())
-    return model
+@pytest.fixture(scope="function")  # must scope as function due to use of tmp_path
+def sk_income_model_uri(income_data, tmp_path) -> str:
+    X_train, Y_train = income_data['X'], income_data['Y']
+
+    model = GradientBoostingClassifier(n_estimators=50)
+    model.fit(X_train, Y_train)
+
+    model_uri = os.path.join(tmp_path, "sklearn-model.joblib")
+    joblib.dump(model, model_uri)
+
+    return model_uri
 
 
 @pytest.fixture(scope="module")
 def income_data() -> dict:
-    return get_income_data()
+    adult = fetch_adult()
+    X = adult.data
+    Y = adult.target
+
+    feature_names = adult.feature_names
+    category_map = adult.category_map
+
+    # Package into dictionary
+    data_dict = {
+        'X': X,
+        'Y': Y,
+        'feature_names': feature_names,
+        'category_map': category_map,
+        'target_names': adult.target_names,
+    }
+    return data_dict

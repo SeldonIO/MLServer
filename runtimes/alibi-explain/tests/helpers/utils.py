@@ -1,5 +1,6 @@
 from typing import Union, Literal, Optional, Tuple
 from pathlib import Path
+import joblib
 import numpy as np
 
 from alibi.api.interfaces import Explainer
@@ -10,22 +11,21 @@ from mlserver.settings import ModelSettings, ModelParameters
 from mlserver_alibi_explain import AlibiExplainRuntime
 from mlserver_alibi_explain.common import AlibiExplainSettings, import_and_get_class
 from mlserver_alibi_explain.alibi_dependency_reference import get_alibi_class_as_str
-from .sk_model import get_sk_income_model_uri
 
 
 def train_explainer(
         explainer_tag: str,
         save_dir: Optional[Path],
-        fit: Union[np.ndarray, Literal[False, 'no-data']] = False,
-        *args,
-        **kwargs
+        init_args: tuple,
+        init_kwargs: dict,
+        fit: Union[np.ndarray, Literal[False, 'no-data']] = False
         ) -> Explainer:
     """
     Train and save an explainer.
     """
     # Instantiate explainer
     klass = import_and_get_class(get_alibi_class_as_str(explainer_tag))
-    explainer = klass(*args, **kwargs)
+    explainer = klass(*init_args, **init_kwargs)
 
     # Fit explainer
     if fit:
@@ -60,7 +60,8 @@ def build_request(data: np.ndarray, **explain_kwargs) -> InferenceRequest:
 
 
 def build_test_case(explainer_type: str, init_kwargs: dict, explain_kwargs: dict,
-               fit: Union[np.ndarray, Literal[False, 'no-data']], save_dir: Optional[Path], payload: np.ndarray) \
+                    fit: Union[np.ndarray, Literal[False, 'no-data']], save_dir: Optional[Path], payload: np.ndarray,
+                    model_uri: str) \
         -> Tuple[ModelSettings, Explainer, InferenceRequest, dict]:
     """
     Function to build a test case for a given explainer type. The function returns a model settings object, an
@@ -82,26 +83,30 @@ def build_test_case(explainer_type: str, init_kwargs: dict, explain_kwargs: dict
         will not be saved to disk, and `init_parameters` will specified in `ModelSettings` instead.
     payload
         The payload to send as request to the explainer.
+    model_uri
+        The URI of the model to explain (loaded with joblib).
     """
     # Build explainer
+    model = joblib.load(model_uri)
+    init_args = (model,)
     explainer = train_explainer(
         explainer_type,
         save_dir,
-        fit=fit,
-        **init_kwargs
+        init_args,
+        init_kwargs,
+        fit=fit
     )
 
     # Explainer model settings
     model_params = {}
     alibi_explain_settings = {
         'explainer_type': explainer_type,
-        'infer_uri': str(get_sk_income_model_uri()),
+        'infer_uri': model_uri,
     }
     if save_dir:
         model_params['uri'] = str(save_dir)
     else:
         init_params = init_kwargs.copy()
-        init_params.pop('predictor')  # TODO: Will need to add `model`, `predict_fn` here eventually
         alibi_explain_settings['init_parameters'] = init_params
     model_params['extra'] = AlibiExplainSettings(**alibi_explain_settings)
 
