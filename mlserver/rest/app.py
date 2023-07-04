@@ -5,11 +5,6 @@ from fastapi.routing import APIRoute as FastAPIRoute
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
-from opentelemetry.sdk.resources import Resource, SERVICE_NAME
-from opentelemetry.sdk.trace.export import BatchSpanProcessor
-from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
-
 
 from starlette_exporter import PrometheusMiddleware
 
@@ -20,6 +15,7 @@ from .errors import _EXCEPTION_HANDLERS
 
 from ..settings import Settings
 from ..handlers import DataPlane, ModelRepositoryHandlers
+from ..tracing import get_tracer_provider
 
 
 class APIRoute(FastAPIRoute):
@@ -153,21 +149,18 @@ def create_app(
         redoc_url=None,
     )
 
-    resource = Resource(attributes={
-        SERVICE_NAME: "mlserver-actual"
-    })
-    tracer_provider = TracerProvider(resource=resource)
-    otel_exporter = OTLPSpanExporter(insecure=True, endpoint="localhost:4317")
-    tracer_provider.add_span_processor(BatchSpanProcessor(otel_exporter))
+    if settings.tracing_server:
+        tracer_provider = get_tracer_provider(settings)
+        excluded_urls = ",".join([
+            "/v2/health/live",
+            "/v2/health/ready",
+        ])
 
-    excluded_urls = [
-        "v2/models/mnist-svm/docs"
-    ]
-    FastAPIInstrumentor.instrument_app(
-        app,
-        tracer_provider=tracer_provider,
-        excluded_urls=",".join(excluded_urls),
-    )
+        FastAPIInstrumentor.instrument_app(
+            app,
+            tracer_provider=tracer_provider,
+            excluded_urls=excluded_urls,
+        )
 
     app.router.route_class = APIRoute
     app.add_middleware(GZipMiddleware)

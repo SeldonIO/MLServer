@@ -2,10 +2,9 @@ from grpc import aio
 from concurrent.futures import ThreadPoolExecutor
 from typing import Optional, Any, List, Tuple
 
-from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
-
 from ..handlers import DataPlane, ModelRepositoryHandlers
 from ..settings import Settings
+from ..tracing import get_tracer_provider
 
 from .servicers import InferenceServicer
 from .model_repository import ModelRepositoryServicer
@@ -14,9 +13,6 @@ from .model_repository_pb2_grpc import add_ModelRepositoryServiceServicer_to_ser
 from .interceptors import LoggingInterceptor, PromServerInterceptor
 from .logging import logger
 
-from opentelemetry.sdk.resources import Resource, SERVICE_NAME
-from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 from opentelemetry.instrumentation.grpc import aio_server_interceptor, filters
 # Workers used for non-AsyncIO workloads (which aren't any in our case)
 DefaultGrpcWorkers = 5
@@ -52,17 +48,16 @@ class GRPCServer:
                 PromServerInterceptor(enable_handling_time_histogram=True)
             )
 
-        resource = Resource(attributes={
-            SERVICE_NAME: "mlserver-actual"
-        })
-        tracer_provider = TracerProvider(resource=resource)
-        otel_exporter = OTLPSpanExporter(insecure=True, endpoint="localhost:4317")
-        tracer_provider.add_span_processor(SimpleSpanProcessor(otel_exporter))
-        excluded_urls = filters.negate(filters.any_of(
-            filters.full_method_name("/inference.GRPCInferenceService/ServerReady"),
-            filters.method_name("ServerLive"),
-        ))
-        interceptors.append(aio_server_interceptor(tracer_provider=tracer_provider, filter_=excluded_urls))
+        if self._settings.tracing_server:
+            tracer_provider = get_tracer_provider(self._settings)
+            excluded_urls = filters.negate(filters.any_of(
+                filters.full_method_name("/inference.GRPCInferenceService/ServerLive"),
+                filters.full_method_name("/inference.GRPCInferenceService/ServerReady"),
+            ))
+
+            interceptors.append(
+                aio_server_interceptor(tracer_provider=tracer_provider, filter_=excluded_urls)
+            )
 
         self._server = aio.server(
             ThreadPoolExecutor(max_workers=DefaultGrpcWorkers),

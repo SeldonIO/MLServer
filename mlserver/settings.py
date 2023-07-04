@@ -224,11 +224,15 @@ class Settings(BaseSettings):
     logging_settings: Optional[Union[str, Dict]] = None
     """Path to logging config file or dictionary configuration."""
 
-    # Kakfa Server settings
+    # Kafka Server settings
     kafka_enabled: bool = False
     kafka_servers: str = "localhost:9092"
     kafka_topic_input: str = "mlserver-input"
     kafka_topic_output: str = "mlserver-output"
+
+    # OpenTelemetry Tracing settings
+    tracing_server: Optional[str] = None
+    """Server name used to export OpenTelemetry tracing to collector service."""
 
     # Custom server settings
     _custom_rest_server_settings: Optional[dict] = None
