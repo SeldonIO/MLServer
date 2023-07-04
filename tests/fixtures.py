@@ -14,7 +14,7 @@ try:
 except ImportError:
     sklearn = None
 
-from typing import Dict, List
+from typing import Dict, List, AsyncIterator
 
 from mlserver import MLModel
 from mlserver.types import (
@@ -23,7 +23,7 @@ from mlserver.types import (
     ResponseOutput,
     Parameters,
 )
-from mlserver.codecs import NumpyCodec, decode_args, StringCodec
+from mlserver.codecs import NumpyRequestCodec, NumpyCodec, decode_args, StringCodec
 from mlserver.handlers.custom import custom_handler
 from mlserver.errors import MLServerError
 
@@ -62,6 +62,20 @@ class SumModel(MLModel):
             response.parameters = Parameters(headers=response_headers)
 
         return response
+
+
+class StreamModel(MLModel):
+    response_chunks = 5
+
+    async def predict_stream(
+        self, payload: InferenceRequest
+    ) -> AsyncIterator[InferenceResponse]:
+        decoded = self.decode_request(payload, default_codec=NumpyRequestCodec)
+
+        for idx in range(self.response_chunks):
+            yield NumpyRequestCodec.encode_response(
+                model_name=self.name, payload=decoded + idx, model_version=self.version
+            )
 
 
 class ErrorModel(MLModel):

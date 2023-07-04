@@ -26,7 +26,7 @@ from mlserver.metrics.registry import MetricsRegistry, REGISTRY as METRICS_REGIS
 from mlserver import types, Settings, ModelSettings, MLServer
 
 from .metrics.utils import unregister_metrics
-from .fixtures import SumModel, ErrorModel, SimpleModel
+from .fixtures import SumModel, StreamModel, ErrorModel, SimpleModel
 from .utils import RESTClient, get_available_ports, _pack, _get_tarball_name
 
 MIN_PYTHON_VERSION = (3, 9)
@@ -189,6 +189,19 @@ async def sum_model(
     model_registry: MultiModelRegistry, sum_model_settings: ModelSettings
 ) -> SumModel:
     return await model_registry.get_model(sum_model_settings.name)
+
+
+@pytest.fixture
+def stream_model_settings() -> ModelSettings:
+    return ModelSettings(name="stream-model", implementation=StreamModel)
+
+
+@pytest.fixture
+async def stream_model(
+    model_registry: MultiModelRegistry, stream_model_settings: ModelSettings
+) -> StreamModel:
+    await model_registry.load(stream_model_settings)
+    return await model_registry.get_model(stream_model_settings.name)
 
 
 @pytest.fixture

@@ -11,8 +11,10 @@ from mlserver.codecs.numpy import NumpyRequestCodec
 from mlserver.codecs.pandas import PandasCodec
 from mlserver.model import MLModel
 
+from .fixtures import StreamModel
 
-async def test_predict_stream(
+
+async def test_predict_stream_fallback(
     sum_model: MLModel,
     inference_request: InferenceRequest,
 ):
@@ -25,6 +27,24 @@ async def test_predict_stream(
 
     assert len(responses) == 1
     assert len(responses[0].outputs) > 0
+
+
+async def test_predict_stream(
+    stream_model: StreamModel,
+    inference_request: InferenceRequest,
+):
+    generator = stream_model.predict_stream(inference_request)
+    assert inspect.isasyncgen(generator)
+
+    responses = []
+    async for response in generator:
+        responses.append(response)
+
+    assert len(responses) == stream_model.response_chunks
+    for idx in range(stream_model.response_chunks):
+        decoded_request = NumpyRequestCodec.decode_request(inference_request)
+        decoded_response = NumpyRequestCodec.decode_response(responses[idx])
+        np.testing.assert_array_equal(decoded_response, decoded_request + idx)
 
 
 @pytest.mark.parametrize(

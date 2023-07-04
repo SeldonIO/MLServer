@@ -96,6 +96,21 @@ async def test_infer(data_plane, sum_model, inference_request):
     assert prediction.outputs[0].data == TensorData(root=[6])
 
 
+async def test_infer_stream(data_plane, stream_model, inference_request):
+    stream = data_plane.infer_stream(
+        payload=inference_request, name=stream_model.name, version=stream_model.version
+    )
+
+    idx = 0
+    async for prediction in stream:
+        assert prediction.id == inference_request.id
+        assert len(prediction.outputs) == 1
+        assert prediction.outputs[0].data.__root__ == [1 + idx, 2 + idx, 3 + idx]
+        idx += 1
+
+    assert idx == stream_model.response_chunks
+
+
 async def test_infer_error_not_ready(data_plane, sum_model, inference_request):
     sum_model.ready = False
     with pytest.raises(ModelNotReady):

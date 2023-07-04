@@ -1,9 +1,11 @@
+from contextlib import asynccontextmanager
 from prometheus_client import (
     Counter,
     Summary,
 )
-from typing import Optional
+from typing import AsyncIterator, Optional
 
+from ..model import MLModel
 from ..errors import ModelNotReady
 from ..context import model_context
 from ..settings import Settings
@@ -85,6 +87,84 @@ class DataPlane:
         name: str,
         version: Optional[str] = None,
     ) -> InferenceResponse:
+        # need to cache the payload here since it
+        # will be modified in the context manager
+        if self._response_cache is not None:
+            cache_key = payload.json()
+
+        async with self._infer_contextmanager(name, version) as model:
+            payload = self._prepare_payload(payload, model)
+
+            if (
+                self._response_cache is not None
+                and model.settings.cache_enabled is not False
+            ):
+                cache_value = await self._response_cache.lookup(cache_key)
+                if cache_value != "":
+                    prediction = InferenceResponse.parse_raw(cache_value)
+                else:
+                    prediction = await model.predict(payload)
+                    # ignore cache insertion error if any
+                    await self._response_cache.insert(cache_key, prediction.json())
+            else:
+                prediction = await model.predict(payload)
+
+            # Ensure ID matches
+            prediction.id = payload.id
+            self._inference_middleware.response_middleware(prediction, model.settings)
+            return prediction
+
+    async def infer_stream(
+        self,
+        payloads: AsyncIterator[InferenceRequest],
+        name: str,
+        version: Optional[str] = None,
+    ) -> AsyncIterator[InferenceResponse]:
+        # TODO: Implement cache for stream
+        async with self._infer_contextmanager(name, version) as model:
+            async for payload in payloads:
+                break
+
+            payload = self._prepare_payload(payload, model)
+            payloads_decorated = self._payloads_decorator(payload, payloads, model)
+
+            async for prediction in model.predict_stream(payloads_decorated):
+                prediction.id = payload.id  # Ensure ID matches
+                self._inference_middleware.response_middleware(
+                    prediction, model.settings
+                )
+                yield prediction
+
+    def _prepare_payload(
+        self, payload: InferenceRequest, model: MLModel
+    ) -> InferenceRequest:
+        if payload.id is None:
+            payload.id = generate_uuid()
+
+        self._inference_middleware.request_middleware(payload, model.settings)
+        return payload
+
+    async def _payloads_decorator(
+        self,
+        payload: InferenceRequest,
+        payloads: AsyncIterator[InferenceRequest],
+        model: MLModel,
+    ) -> AsyncIterator[InferenceRequest]:
+
+        payload = self._prepare_payload(payload, model)
+        yield payload
+
+        async for payload in payloads:
+            payload = self._prepare_payload(payload, model)
+            yield payload
+
+    @asynccontextmanager
+    async def _infer_contextmanager(
+        self,
+        name: str,
+        version: Optional[str] = None,
+    ) -> AsyncIterator[MLModel]:
+
         infer_duration = self._ModelInferRequestDuration.labels(
             model=name, version=version
         ).time()
@@ -92,45 +172,15 @@ class DataPlane:
             model=name, version=version
         ).count_exceptions()
 
-        if self._response_cache is not None:
-            cache_key = payload.model_dump_json()
-
         with infer_duration, infer_errors:
-            if payload.id is None:
-                payload.id = generate_uuid()
-
             model = await self._model_registry.get_model(name, version)
             if not model.ready:
                 raise ModelNotReady(name, version)
 
-            self._inference_middleware.request_middleware(payload, model.settings)
-
-            # TODO: Make await optional for sync methods
             with model_context(model.settings):
-                if (
-                    self._response_cache is not None
-                    and model.settings.cache_enabled is not False
-                ):
-                    cache_value = await self._response_cache.lookup(cache_key)
-                    if cache_value != "":
-                        prediction = InferenceResponse.parse_raw(cache_value)
-                    else:
-                        prediction = await model.predict(payload)
-                        # ignore cache insertion error if any
-                        await self._response_cache.insert(
-                            cache_key, prediction.model_dump_json()
-                        )
-                else:
-                    prediction = await model.predict(payload)
-
-            # Ensure ID matches
-            prediction.id = payload.id
-
-            self._inference_middleware.response_middleware(prediction, model.settings)
+                yield model
 
             self._ModelInferRequestSuccess.labels(model=name, version=version).inc()
-
-            return prediction
 
     def _create_response_cache(self) -> ResponseCache:
         return LocalCache(size=self._settings.cache_size)
