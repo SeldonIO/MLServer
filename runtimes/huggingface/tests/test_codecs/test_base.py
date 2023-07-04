@@ -26,7 +26,7 @@ from ..utils import (
             {"foo": ["bar1", "bar2"], "foo2": ["var1"]},
             False,
             InferenceRequest(
-                parameters=Parameters(content_type="str"),
+                parameters=Parameters(content_type="hf"),
                 inputs=[
                     RequestInput(
                         name="foo",
@@ -49,7 +49,7 @@ from ..utils import (
             {"foo": ["bar1", "bar2"], "foo2": ["var1"]},
             True,
             InferenceRequest(
-                parameters=Parameters(content_type="str"),
+                parameters=Parameters(content_type="hf"),
                 inputs=[
                     RequestInput(
                         name="foo",
@@ -77,7 +77,7 @@ from ..utils import (
             },
             False,
             InferenceRequest(
-                parameters=Parameters(content_type="str"),
+                parameters=Parameters(content_type="hf"),
                 inputs=[
                     RequestInput(
                         name="images",
@@ -98,7 +98,7 @@ from ..utils import (
             },
             True,
             InferenceRequest(
-                parameters=Parameters(content_type="str"),
+                parameters=Parameters(content_type="hf"),
                 inputs=[
                     RequestInput(
                         name="images",
@@ -128,7 +128,7 @@ from ..utils import (
             },
             True,
             InferenceRequest(
-                parameters=Parameters(content_type="str"),
+                parameters=Parameters(content_type="hf"),
                 inputs=[
                     RequestInput(
                         name="conversations",
@@ -158,7 +158,7 @@ from ..utils import (
             },
             False,
             InferenceRequest(
-                parameters=Parameters(content_type="str"),
+                parameters=Parameters(content_type="hf"),
                 inputs=[
                     RequestInput(
                         name="conversations",
@@ -182,7 +182,7 @@ from ..utils import (
             },
             False,
             InferenceRequest(
-                parameters=Parameters(content_type="str"),
+                parameters=Parameters(content_type="hf"),
                 inputs=[
                     RequestInput(
                         name="singlejson",
@@ -207,7 +207,7 @@ from ..utils import (
             },
             True,
             InferenceRequest(
-                parameters=Parameters(content_type="str"),
+                parameters=Parameters(content_type="hf"),
                 inputs=[
                     RequestInput(
                         name="singlejson",
@@ -241,7 +241,7 @@ from ..utils import (
             },
             True,
             InferenceRequest(
-                parameters=Parameters(content_type="str"),
+                parameters=Parameters(content_type="hf"),
                 inputs=[
                     RequestInput(
                         name="jsonlist",
@@ -277,7 +277,7 @@ from ..utils import (
             },
             False,
             InferenceRequest(
-                parameters=Parameters(content_type="str"),
+                parameters=Parameters(content_type="hf"),
                 inputs=[
                     RequestInput(
                         name="jsonlist",
@@ -299,7 +299,7 @@ from ..utils import (
             {"nplist": [np.int8([[2, 2], [2, 2]]), np.float64([[2, 2], [2, 2]])]},
             False,
             InferenceRequest(
-                parameters=Parameters(content_type="str"),
+                parameters=Parameters(content_type="hf"),
                 inputs=[
                     RequestInput(
                         name="nplist",
@@ -319,7 +319,7 @@ from ..utils import (
             },
             False,
             InferenceRequest(
-                parameters=Parameters(content_type="str"),
+                parameters=Parameters(content_type="hf"),
                 inputs=[
                     RequestInput(
                         name="raw_int",

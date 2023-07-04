@@ -13,6 +13,16 @@ pip install mlserver mlserver-huggingface
 For further information on how to use MLServer with HuggingFace, you can check
 out this [worked out example](../../docs/examples/huggingface/README.md).
 
+## Content Types
+
+The HuggingFace runtime will always decode the input request using its own
+built-in codec.
+Therefore, [content type annotations](../../docs/user-guide/content-type) at
+the request level will **be ignored**.
+Not that this **doesn't include [input-level content
+type](../../docs/user-guide/content-type#Codecs) annotations**, which will be
+respected as usual.
+
 ## Settings
 
 The HuggingFace runtime exposes a couple extra parameters which can be used to
