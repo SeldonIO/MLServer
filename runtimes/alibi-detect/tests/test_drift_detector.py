@@ -1,9 +1,12 @@
 import numpy as np
+import pytest
+import mlserver
+
+from typing import List
 
 from alibi_detect.cd import TabularDrift, CVMDriftOnline
 
 from mlserver.types import InferenceRequest, Parameters, RequestInput
-
 from mlserver.codecs import NumpyCodec, NumpyRequestCodec
 
 from mlserver_alibi_detect import AlibiDetectRuntime
@@ -141,3 +144,54 @@ async def test_predict_batch_online(online_drift_detector: AlibiDetectRuntime):
     test_stats = NumpyCodec.decode_output(response.outputs[6])
     assert np.isnan(test_stats[0]).all()
     assert not np.isnan(test_stats[WINDOW_SIZES[0]]).all()
+
+
+async def test_predict_metrics(
+    mocker,
+    drift_detector: AlibiDetectRuntime,
+    inference_request: InferenceRequest,
+):
+    mlserver_log = mocker.spy(mlserver, "log")
+
+    # For #(batch - 1) requests, outputs should be empty
+    batch_size = drift_detector._ad_settings.batch_size
+    for _ in range(batch_size - 1):  # type: ignore
+        response = await drift_detector.predict(inference_request)
+        assert len(response.outputs) == 0
+
+    # By request batch_size, drift should run
+    response = await drift_detector.predict(inference_request)
+
+    is_drift = response.outputs[0]
+    assert is_drift.shape[1] > 1
+    assert mlserver_log.call_count == is_drift.shape[1]
+    for call, d in zip(mlserver_log.mock_calls, is_drift.data):
+        assert call.kwargs == {"seldon_model_drift": d}
+
+
+@pytest.mark.parametrize(
+    "current_pred, expected",
+    [
+        ({"data": {"is_drift": [0]}}, [{"seldon_model_drift": 0}]),
+        ({"data": {"is_drift": [1]}}, [{"seldon_model_drift": 1}]),
+        ({"data": {"is_drift": 0}}, [{"seldon_model_drift": 0}]),
+        (
+            {"data": {"is_drift": [1, 0, 1]}},
+            [
+                {"seldon_model_drift": 1},
+                {"seldon_model_drift": 0},
+                {"seldon_model_drift": 1},
+            ],
+        ),
+        ({"data": {}}, []),
+        ({}, []),
+    ],
+)
+def test_log_metrics(
+    mocker, current_pred: dict, expected: List[dict], drift_detector: AlibiDetectRuntime
+):
+    mlserver_log = mocker.spy(mlserver, "log")
+    drift_detector._log_metrics(current_pred)
+
+    for call, e in zip(mlserver_log.mock_calls, expected):
+        assert call.kwargs == e

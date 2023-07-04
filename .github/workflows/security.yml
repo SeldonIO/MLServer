@@ -50,6 +50,7 @@ jobs:
             --severity-threshold=high
             --app-vulns
             --file=Dockerfile
+            --policy-path=.snyk
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       - name: Upload result to GitHub Code Scanning

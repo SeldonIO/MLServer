@@ -79,6 +79,20 @@ class MLModel:
         """
         raise NotImplementedError("predict() method not implemented")
 
+    async def unload(self) -> bool:
+        """
+        Method responsible for unloading the model, freeing any resources (e.g.
+        CPU memory, GPU memory, etc.).
+        This method will be called on each of the parallel workers (when
+        :doc:`parallel inference </user-guide/parallel-inference>`) is
+        enabled).
+        A return value of ``True`` will mean the model is now unloaded.
+
+        **This method should be overriden to implement your custom unload
+        logic.**
+        """
+        return True
+
     @property
     def name(self) -> str:
         """

@@ -44,7 +44,7 @@ class MultiInputRequestCodec(RequestCodec):
 
     DefaultCodec: Type["InputCodecTy"] = StringCodec
     InputCodecsWithPriority: List[Type[InputCodecTy]] = []
-    ContentType = StringCodec.ContentType
+    ContentType = ""
 
     @classmethod
     def _find_encode_codecs(
@@ -194,5 +194,5 @@ class HuggingfaceRequestCodec(MultiInputRequestCodec):
         NumpyListCodec,
         RawCodec,
     ]
-    ContentType = StringCodec.ContentType
+    ContentType = "hf"
     DefaultCodec = StringCodec

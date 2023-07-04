@@ -1,0 +1,37 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.25.0
+
+# Ignore CVEs with no upgrade path that are either disputed by the vendor or
+# where the vendor has not provided any resolution ETA.
+ignore:
+  # The CVEs below are introduced by JARs bundled within PySpark's Python
+  # package.
+  # Therefore, even though there is a corresponding upgrade path for the JARs
+  # themselves, these are out of our control.
+  # For more details, see https://issues.apache.org/jira/browse/SPARK-44157
+  SNYK-JAVA-COMGOOGLEPROTOBUF-3167772:
+    - "*":
+        reason: Outdated protobuf-java JAR within PySpark bundle
+  SNYK-JAVA-COMGOOGLEPROTOBUF-2331703:
+    - "*":
+        reason: Outdated protobuf-java JAR within PySpark bundle
+  SNYK-JAVA-COMGOOGLEPROTOBUF-173761:
+    - "*":
+        reason: Outdated protobuf-java JAR within PySpark bundle
+  SNYK-JAVA-IONETTY-5725787:
+    - "*":
+        reason: Outdated netty-handler JAR within PySpark bundle
+  SNYK-JAVA-ORGAPACHEHADOOP-3034197:
+    - "*":
+        reason: Outdated hadoop-client JAR within PySpark bundle
+  SNYK-JAVA-ORGAPACHEHIVE-2952701:
+    - "*":
+        reason: Outdated hive-exec JAR within PySpark bundle
+  SNYK-JAVA-ORGAPACHETHRIFT-1074898:
+    - "*":
+        reason: Outdated libthrift JAR within PySpark bundle
+  SNYK-JAVA-ORGAPACHETHRIFT-474610:
+    - "*":
+        reason: Outdated libthrift JAR within PySpark bundle
+
+patch: {}

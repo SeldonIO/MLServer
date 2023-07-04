@@ -27,6 +27,14 @@ async def test_load(future_runtime: Awaitable[HuggingFaceRuntime]):
     assert isinstance(runtime._model, QuestionAnsweringPipeline)
 
 
+async def test_unload(future_runtime: Awaitable[HuggingFaceRuntime]):
+    runtime = await future_runtime
+    assert runtime.ready
+
+    unloaded = await runtime.unload()
+    assert unloaded
+
+
 async def test_infer(
     future_runtime: Awaitable[HuggingFaceRuntime], inference_request: InferenceRequest
 ):

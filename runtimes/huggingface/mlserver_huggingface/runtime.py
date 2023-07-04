@@ -1,4 +1,5 @@
 import asyncio
+import torch
 
 from mlserver.model import MLModel
 from mlserver.settings import ModelSettings
@@ -38,7 +39,7 @@ class HuggingFaceRuntime(MLModel):
 
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
         # TODO: convert and validate?
-        kwargs = self.decode_request(payload, default_codec=HuggingfaceRequestCodec)
+        kwargs = HuggingfaceRequestCodec.decode_request(payload)
         args = kwargs.pop("args", [])
 
         array_inputs = kwargs.pop("array_inputs", [])
@@ -49,6 +50,21 @@ class HuggingFaceRuntime(MLModel):
         return self.encode_response(
             payload=prediction, default_codec=HuggingfaceRequestCodec
         )
+
+    async def unload(self) -> bool:
+        # TODO: Free up Tensorflow's GPU memory
+        is_torch = self._model.framework == "pt"
+        if not is_torch:
+            return True
+
+        uses_gpu = torch.cuda.is_available() and self._model.device != -1
+        if not uses_gpu:
+            # Nothing to free
+            return True
+
+        # Free up Torch's GPU memory
+        torch.cuda.empty_cache()
+        return True
 
     def _merge_metadata(self) -> None:
         meta = METADATA.get(self.hf_settings.task)

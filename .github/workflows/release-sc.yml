@@ -46,7 +46,11 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           image: seldonio/mlserver-sc:${{ github.event.inputs.version }}
-          args: --fail-on=upgradable --app-vulns --severity-threshold=high --file=Dockerfile
+          args: --fail-on=upgradable
+            --app-vulns
+            --severity-threshold=high
+            --file=Dockerfile
+            --policy-path=.snyk
       - name: Login to DockerHub
         uses: docker/login-action@v2
         with:
@@ -112,7 +116,11 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           image: seldonio/mlserver-sc-slim:${{ github.event.inputs.version }}
-          args: --fail-on=upgradable --app-vulns --severity-threshold=high --file=Dockerfile
+          args: --fail-on=upgradable
+            --app-vulns
+            --severity-threshold=high
+            --file=Dockerfile
+            --policy-path=.snyk
       - name: Login to DockerHub
         uses: docker/login-action@v2
         with:
