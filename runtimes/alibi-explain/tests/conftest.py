@@ -9,7 +9,6 @@ from pathlib import Path
 from typing import AsyncIterable, Dict, Any, Iterable
 from unittest.mock import patch
 from typing import Type
-import joblib
 
 from httpx import AsyncClient
 from fastapi import FastAPI
