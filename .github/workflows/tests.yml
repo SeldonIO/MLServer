@@ -131,6 +131,13 @@ jobs:
         python-version: ["3.8", "3.9", "3.10"]
     runs-on: ${{ matrix.os }}
     steps:
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@master
+        with:
+          remove-dotnet: "true"
+          remove-haskell: "true"
+          remove-android: "true"
+          root-reserve-mb: "30720"
       - name: Setup docker (missing on MacOS)
         if: runner.os == 'macos'
         run: |
