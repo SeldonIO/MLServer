@@ -58,7 +58,6 @@ jobs:
           ln -sfn $(which docker-buildx) $HOME/.docker/cli-plugins/docker-buildx
           colima start --memory 5 --network-driver slirp
           sudo ln -sf $HOME/.colima/default/docker.sock /var/run/docker.sock
-
       - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
@@ -132,6 +131,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Maximize build space
+        if: runner.os == 'ubuntu'
         uses: easimon/maximize-build-space@master
         with:
           remove-dotnet: "true"
