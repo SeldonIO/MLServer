@@ -4,6 +4,8 @@ from fastapi.responses import Response as FastAPIResponse
 from fastapi.routing import APIRoute as FastAPIRoute
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+
 from starlette_exporter import PrometheusMiddleware
 
 from .endpoints import Endpoints, ModelRepositoryEndpoints
@@ -13,6 +15,7 @@ from .errors import _EXCEPTION_HANDLERS
 
 from ..settings import Settings
 from ..handlers import DataPlane, ModelRepositoryHandlers
+from ..tracing import get_tracer_provider
 
 
 class APIRoute(FastAPIRoute):
@@ -145,6 +148,22 @@ def create_app(
         docs_url=None,
         redoc_url=None,
     )
+
+    if settings.tracing_server:
+        tracer_provider = get_tracer_provider(settings)
+        excluded_urls = ",".join(
+            [
+                "/v2/health/live",
+                "/v2/health/ready",
+            ]
+        )
+
+        FastAPIInstrumentor.instrument_app(
+            app,
+            tracer_provider=tracer_provider,
+            excluded_urls=excluded_urls,
+        )
+
     app.router.route_class = APIRoute
     app.add_middleware(GZipMiddleware)
     if settings.cors_settings is not None:

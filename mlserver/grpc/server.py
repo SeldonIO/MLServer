@@ -4,6 +4,7 @@ from typing import Optional, Any, List, Tuple
 
 from ..handlers import DataPlane, ModelRepositoryHandlers
 from ..settings import Settings
+from ..tracing import get_tracer_provider
 
 from .servicers import InferenceServicer
 from .model_repository import ModelRepositoryServicer
@@ -11,6 +12,8 @@ from .dataplane_pb2_grpc import add_GRPCInferenceServiceServicer_to_server
 from .model_repository_pb2_grpc import add_ModelRepositoryServiceServicer_to_server
 from .interceptors import LoggingInterceptor, PromServerInterceptor
 from .logging import logger
+
+from opentelemetry.instrumentation.grpc import aio_server_interceptor, filters
 
 # Workers used for non-AsyncIO workloads (which aren't any in our case)
 DefaultGrpcWorkers = 5
@@ -44,6 +47,25 @@ class GRPCServer:
         if self._settings.metrics_endpoint:
             interceptors.append(
                 PromServerInterceptor(enable_handling_time_histogram=True)
+            )
+
+        if self._settings.tracing_server:
+            tracer_provider = get_tracer_provider(self._settings)
+            excluded_urls = filters.negate(
+                filters.any_of(
+                    filters.full_method_name(
+                        "/inference.GRPCInferenceService/ServerLive"
+                    ),
+                    filters.full_method_name(
+                        "/inference.GRPCInferenceService/ServerReady"
+                    ),
+                )
+            )
+
+            interceptors.append(
+                aio_server_interceptor(
+                    tracer_provider=tracer_provider, filter_=excluded_urls
+                )
             )
 
         self._server = aio.server(
