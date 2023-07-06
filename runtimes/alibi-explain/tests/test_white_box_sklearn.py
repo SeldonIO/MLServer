@@ -43,7 +43,7 @@ async def test_case(
     The `explainer`, `request` and `explain_kwargs` are simply passed through.
     """
     runtime = AlibiExplainRuntime(model_settings)
-    runtime.ready = await runtime.load()
+    runtime.ready = await runtime.load()  # type: ignore[attr-defined]
     return runtime, explainer, request, explain_kwargs
 
 

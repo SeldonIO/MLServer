@@ -1,4 +1,4 @@
-from typing import Union, Literal, Optional, Tuple
+from typing import Union, Literal, Optional, Tuple, Dict, Any
 from pathlib import Path
 import joblib
 import numpy as np
@@ -101,8 +101,8 @@ def build_test_case(
     )
 
     # Explainer model settings
-    model_params = {}
-    alibi_explain_settings = {
+    model_params: Dict[str, Any] = {}
+    alibi_explain_settings: Dict[str, Any] = {
         "explainer_type": explainer_type,
         "infer_uri": model_uri,
     }

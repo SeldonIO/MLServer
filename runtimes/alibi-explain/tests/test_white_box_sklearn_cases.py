@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Tuple, Dict, Any
 import os
 import joblib
 import pytest
@@ -58,7 +58,7 @@ def case_tree_shap(
         "model_output": "raw",
         "task": "classification",
     }
-    explain_kwargs = {}
+    explain_kwargs: Dict[str, Any] = {}
 
     return build_test_case(
         "tree_shap",
