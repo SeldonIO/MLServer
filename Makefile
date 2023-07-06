@@ -56,7 +56,7 @@ push:
 	for _runtime in ./runtimes/*; \
 	do \
 	  _runtimeName=$$(basename $$_runtime); \
-		poetry publish -C $$_runtime; \
+		poetry publish --skip-existing -C $$_runtime; \
 		docker push ${IMAGE_NAME}:${VERSION}-$$_runtimeName; \
 	done
 
