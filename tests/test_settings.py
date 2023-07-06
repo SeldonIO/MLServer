@@ -7,6 +7,7 @@ from mlserver.settings import CORSSettings, Settings, ModelSettings, ModelParame
 from mlserver.repository import DEFAULT_MODEL_SETTINGS_FILENAME
 
 from .conftest import TESTDATA_PATH, TESTS_PATH
+from mlserver.types import Tracepoint
 
 
 def test_settings_from_env(monkeypatch):
@@ -92,3 +93,19 @@ def test_model_settings_serialisation():
     as_json = model_settings.json()
     as_dict = json.loads(as_json)
     as_dict["implementation"] == expected
+
+
+def test_tracing_settings_json_load():
+    settings_path = os.path.join(TESTDATA_PATH, "settings-tracing.json")
+    settings = Settings.parse_file(settings_path)
+
+    assert settings.tracepoint_settings.enable_tracepoints is True
+    expected_tracepoints = {
+        Tracepoint.model_load_begin,
+        Tracepoint.model_load_end,
+        Tracepoint.model_reload_begin,
+        Tracepoint.model_reload_end,
+        Tracepoint.model_unload,
+    }
+    configured_tracepoints = set(settings.tracepoint_settings.configured_tracepoints)
+    assert configured_tracepoints == expected_tracepoints

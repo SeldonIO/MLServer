@@ -9,7 +9,7 @@ from pydantic import PyObject, Extra, Field, BaseSettings as _BaseSettings
 from contextlib import contextmanager
 
 from .version import __version__
-from .types import MetadataTensor
+from .types import MetadataTensor, Tracepoint
 
 ENV_FILE_SETTINGS = ".env"
 ENV_PREFIX_SETTINGS = "MLSERVER_"
@@ -127,6 +127,24 @@ class CORSSettings(BaseSettings):
     """Sets a maximum time in seconds for browsers to cache CORS responses"""
 
 
+class TracepointSettings(BaseSettings):
+    enable_tracepoints: bool = True
+    """
+    Whether to enable the export of tracepoints, which allows arbitrary probes
+    (BPF, SystemTap) to be attached at runtime to statically-defined points in
+    the code. Setting this to "True" adds a dependency on python-stapsdt
+    (https://github.com/linux-usdt/python-stapsdt) and requires the libstapsdt
+    native library (https://github.com/linux-usdt/libstapsdt) to be installed on
+    your system.
+    """
+
+    configured_tracepoints: Optional[List[Tracepoint]] = Tracepoint.all()
+    """
+    When tracing is enabled (via `enable_tracepoints`), this controls the 
+    list of tracepoints exposed by MLServer
+    """
+
+
 class Settings(BaseSettings):
     class Config:
         env_file = ENV_FILE_SETTINGS
@@ -224,15 +242,22 @@ class Settings(BaseSettings):
     logging_settings: Optional[Union[str, Dict]] = None
     """Path to logging config file or dictionary configuration."""
 
-    # Kafka Server settings
+    # Kakfa Server settings
     kafka_enabled: bool = False
     kafka_servers: str = "localhost:9092"
     kafka_topic_input: str = "mlserver-input"
     kafka_topic_output: str = "mlserver-output"
 
-    # OpenTelemetry Tracing settings
+    # Tracing settings
+    # OpenTelemetry
     tracing_server: Optional[str] = None
     """Server name used to export OpenTelemetry tracing to collector service."""
+
+    # System tracing (BPF, Systemtap)
+    tracepoint_settings: Optional[TracepointSettings] = TracepointSettings()
+    """
+    Control the export of static tracepoints for external probing at runtime
+    """
 
     # Custom server settings
     _custom_rest_server_settings: Optional[dict] = None

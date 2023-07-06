@@ -23,6 +23,8 @@ from .model_repository import (
     RepositoryUnloadErrorResponse,
 )
 
+from .tracepoints import Tracepoint, ArgStatus, MAX_TRACEPOINT_ARGS
+
 __all__ = [
     # Dataplane
     "MetadataServerResponse",
@@ -45,4 +47,8 @@ __all__ = [
     "RepositoryIndexResponse",
     "RepositoryLoadErrorResponse",
     "RepositoryUnloadErrorResponse",
+    # Tracing
+    "Tracepoint",
+    "ArgStatus",
+    "MAX_TRACEPOINT_ARGS",
 ]

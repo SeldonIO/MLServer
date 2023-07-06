@@ -1,0 +1,13 @@
+{
+  "tracing_settings": {
+    "enable_tracing": true,
+    "configured_tracepoints": [
+        "model_load_begin",
+        "model_load_begin",
+        "model_load_end",
+        "model_reload_begin",
+        "model_reload_end",
+        "model_unload"
+    ]
+  }
+}
