@@ -17,6 +17,9 @@ _ANCHOR_TEXT_TAG = "anchor_text"
 _ANCHOR_TABULAR_TAG = "anchor_tabular"
 _KERNEL_SHAP_TAG = "kernel_shap"
 _INTEGRATED_GRADIENTS_TAG = "integrated_gradients"
+_TREE_SHAP_TAG = "tree_shap"
+_TREE_PARTIAL_DEPENDENCE_TAG = "tree_partial_dependence"
+_TREE_PARTIAL_DEPENDENCE_VARIANCE_TAG = "tree_partial_dependence_variance"
 
 
 # NOTE: to add new explainers populate the below dict with a new
@@ -30,6 +33,7 @@ _INTEGRATED_GRADIENTS_TAG = "integrated_gradients"
 
 _BLACKBOX_MODULE = "mlserver_alibi_explain.explainers.black_box_runtime"
 _INTEGRATED_GRADIENTS_MODULE = "mlserver_alibi_explain.explainers.integrated_gradients"
+_WHITEBOX_SKLEARN_MODULE = "mlserver_alibi_explain.explainers.sklearn_api_runtime"
 
 _TAG_TO_RT_IMPL: Dict[str, ExplainerDependencyReference] = {
     _ANCHOR_IMAGE_TAG: ExplainerDependencyReference(
@@ -57,6 +61,21 @@ _TAG_TO_RT_IMPL: Dict[str, ExplainerDependencyReference] = {
         runtime_class=f"{_INTEGRATED_GRADIENTS_MODULE}.IntegratedGradientsWrapper",
         alibi_class="alibi.explainers.IntegratedGradients",
     ),
+    _TREE_SHAP_TAG: ExplainerDependencyReference(
+        explainer_name=_TREE_SHAP_TAG,
+        runtime_class=f"{_WHITEBOX_SKLEARN_MODULE}.SKLearnRuntime",
+        alibi_class="alibi.explainers.TreeShap",
+    ),
+    _TREE_PARTIAL_DEPENDENCE_TAG: ExplainerDependencyReference(
+        explainer_name=_TREE_PARTIAL_DEPENDENCE_TAG,
+        runtime_class=f"{_WHITEBOX_SKLEARN_MODULE}.SKLearnRuntime",
+        alibi_class="alibi.explainers.TreePartialDependence",
+    ),
+    _TREE_PARTIAL_DEPENDENCE_VARIANCE_TAG: ExplainerDependencyReference(
+        explainer_name=_TREE_PARTIAL_DEPENDENCE_VARIANCE_TAG,
+        runtime_class=f"{_WHITEBOX_SKLEARN_MODULE}.SKLearnRuntime",
+        alibi_class="alibi.explainers.PartialDependenceVariance",
+    ),
 }
 
 
@@ -66,6 +85,9 @@ class ExplainerEnum(str, Enum):
     anchor_tabular = _ANCHOR_TABULAR_TAG
     kernel_shap = _KERNEL_SHAP_TAG
     integrated_gradients = _INTEGRATED_GRADIENTS_TAG
+    tree_shap = _TREE_SHAP_TAG
+    tree_partial_dependence = _TREE_PARTIAL_DEPENDENCE_TAG
+    tree_partial_dependence_variance = _TREE_PARTIAL_DEPENDENCE_VARIANCE_TAG
 
 
 def get_mlmodel_class_as_str(tag: Union[ExplainerEnum, str]) -> str:

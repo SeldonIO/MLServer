@@ -123,9 +123,7 @@ class AlibiExplainRuntimeBase(MLModel):
         )
 
     async def _load_from_uri(self, predictor: Any) -> Explainer:
-        # load the model from disk
-        # full model is passed as `predictor`
-        # load the model from disk
+        """Load the explainer from disk, and pass the predictor"""
         model_parameters: Optional[ModelParameters] = self.settings.parameters
         if model_parameters is None:
             raise ModelParametersMissing(self.name)
