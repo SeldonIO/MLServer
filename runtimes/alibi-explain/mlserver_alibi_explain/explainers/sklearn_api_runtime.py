@@ -5,14 +5,18 @@ from xgboost.core import XGBoostError
 
 from mlserver_xgboost.xgboost import _load_sklearn_interface as load_xgb_model
 from mlserver.errors import InvalidModelURI
-from mlserver_alibi_explain.explainers.white_box_runtime import AlibiExplainWhiteBoxRuntime
+from mlserver_alibi_explain.explainers.white_box_runtime import (
+    AlibiExplainWhiteBoxRuntime,
+)
 
 
 class SKLearnRuntime(AlibiExplainWhiteBoxRuntime):
     """
-    Runtime for white-box explainers that require access to a tree-based model matching the SKLearn API, such as
-    a sklearn, XGBoost, or LightGBM model. Example explainers include TreeShap and TreePartialDependence.
+    Runtime for white-box explainers that require access to a tree-based model matching
+    the SKLearn API, such as a sklearn, XGBoost, or LightGBM model. Example explainers
+    include TreeShap and TreePartialDependence.
     """
+
     async def _get_inference_model(self) -> Any:
         inference_model_path = self.alibi_explain_settings.infer_uri
         # Attempt to load model.

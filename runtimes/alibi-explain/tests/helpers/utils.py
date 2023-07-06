@@ -14,12 +14,12 @@ from mlserver_alibi_explain.alibi_dependency_reference import get_alibi_class_as
 
 
 def train_explainer(
-        explainer_tag: str,
-        save_dir: Optional[Path],
-        init_args: tuple,
-        init_kwargs: dict,
-        fit: Union[np.ndarray, Literal[False, 'no-data']] = False
-        ) -> Explainer:
+    explainer_tag: str,
+    save_dir: Optional[Path],
+    init_args: tuple,
+    init_kwargs: dict,
+    fit: Union[np.ndarray, Literal[False, "no-data"]] = False,
+) -> Explainer:
     """
     Train and save an explainer.
     """
@@ -29,7 +29,7 @@ def train_explainer(
 
     # Fit explainer
     if fit:
-        explainer.fit() if fit == 'no-data' else explainer.fit(fit)
+        explainer.fit() if fit == "no-data" else explainer.fit(fit)
 
     # Save explainer
     if save_dir:
@@ -59,13 +59,19 @@ def build_request(data: np.ndarray, **explain_kwargs) -> InferenceRequest:
     return inference_request
 
 
-def build_test_case(explainer_type: str, init_kwargs: dict, explain_kwargs: dict,
-                    fit: Union[np.ndarray, Literal[False, 'no-data']], save_dir: Optional[Path], payload: np.ndarray,
-                    model_uri: str) \
-        -> Tuple[ModelSettings, Explainer, InferenceRequest, dict]:
+def build_test_case(
+    explainer_type: str,
+    init_kwargs: dict,
+    explain_kwargs: dict,
+    fit: Union[np.ndarray, Literal[False, "no-data"]],
+    save_dir: Optional[Path],
+    payload: np.ndarray,
+    model_uri: str,
+) -> Tuple[ModelSettings, Explainer, InferenceRequest, dict]:
     """
-    Function to build a test case for a given explainer type. The function returns a model settings object, an
-    explainer object, an inference request object and a dictionary of explain parameters.
+    Function to build a test case for a given explainer type. The function returns a
+    model settings object, an explainer object, an inference request object and a
+    dictionary of explain parameters.
 
     Parameters
     ----------
@@ -76,11 +82,12 @@ def build_test_case(explainer_type: str, init_kwargs: dict, explain_kwargs: dict
     explain_kwargs
         Explain kwargs for the explainer.
     fit
-        Data to fit the explainer on, `False` if no fit is required, or `'no-data'` to fit the explainer without
-         data e.g. for `TreeShap` with path-dependent algorithm.
+        Data to fit the explainer on, `False` if no fit is required, or `'no-data'` to
+        fit the explainer without data e.g. `TreeShap` with path-dependent algorithm.
     save_dir
-        Directory to save the explainer to, and then pass to `uri` in `ModelParameters`. If `None`, the explainer
-        will not be saved to disk, and `init_parameters` will specified in `ModelSettings` instead.
+        Directory to save the explainer to, and then pass to `uri` in `ModelParameters`.
+        If `None`, the explainer will not be saved to disk, and `init_parameters` will
+        specified in `ModelSettings` instead.
     payload
         The payload to send as request to the explainer.
     model_uri
@@ -90,25 +97,21 @@ def build_test_case(explainer_type: str, init_kwargs: dict, explain_kwargs: dict
     model = joblib.load(model_uri)
     init_args = (model,)
     explainer = train_explainer(
-        explainer_type,
-        save_dir,
-        init_args,
-        init_kwargs,
-        fit=fit
+        explainer_type, save_dir, init_args, init_kwargs, fit=fit
     )
 
     # Explainer model settings
     model_params = {}
     alibi_explain_settings = {
-        'explainer_type': explainer_type,
-        'infer_uri': model_uri,
+        "explainer_type": explainer_type,
+        "infer_uri": model_uri,
     }
     if save_dir:
-        model_params['uri'] = str(save_dir)
+        model_params["uri"] = str(save_dir)
     else:
         init_params = init_kwargs.copy()
-        alibi_explain_settings['init_parameters'] = init_params
-    model_params['extra'] = AlibiExplainSettings(**alibi_explain_settings)
+        alibi_explain_settings["init_parameters"] = init_params
+    model_params["extra"] = AlibiExplainSettings(**alibi_explain_settings)
 
     model_settings = ModelSettings(
         name="foo",

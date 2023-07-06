@@ -44,7 +44,9 @@ class AlibiExplainBlackBoxRuntime(AlibiExplainRuntimeBase):
         # TODO: use init explainer field instead?
         if self.alibi_explain_settings.init_parameters is not None:
             init_parameters = self.alibi_explain_settings.init_parameters
-            self._model = self._explainer_class(self._infer_impl, **init_parameters)  # type: ignore
+            self._model = self._explainer_class(
+                self._infer_impl, **init_parameters  # type: ignore
+            )
         else:
             self._model = await self._load_from_uri(self._infer_impl)
 

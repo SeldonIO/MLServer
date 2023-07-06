@@ -33,9 +33,11 @@ class AlibiExplainWhiteBoxRuntime(ABC, AlibiExplainRuntimeBase):
         self._inference_model = await self._get_inference_model()
 
         if self.alibi_explain_settings.init_parameters is not None:
-            # Instantiate explainer with init parameters (and give it full inference model)
+            # Instantiate explainer with init parameters (and give it inference model)
             init_parameters = self.alibi_explain_settings.init_parameters
-            self._model = self._explainer_class(self._inference_model, **init_parameters)  # type: ignore
+            self._model = self._explainer_class(
+                self._inference_model, **init_parameters  # type: ignore
+            )
         else:
             # Load explainer from URI (and give it full inference model)
             self._model = await self._load_from_uri(self._inference_model)
