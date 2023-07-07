@@ -18,12 +18,14 @@ from .grpc import GRPCServer
 from .metrics import MetricsServer
 from .kafka import KafkaServer
 from .utils import logger
+from .system_tracing import sys_tracer, configure_tracepoints
 
 HANDLED_SIGNALS = [signal.SIGINT, signal.SIGTERM, signal.SIGQUIT]
 
 
 class MLServer:
     def __init__(self, settings: Settings):
+        configure_tracepoints(sys_tracer, settings.tracepoint_settings)
         self._settings = settings
         self._add_signal_handlers()
 
@@ -54,6 +56,7 @@ class MLServer:
         )
 
         self._configure_logger()
+        logger.info(f"MLServer enabled {sys_tracer.tracepoints_count} tracepoints")
         self._create_servers()
 
     def _create_model_registry(self) -> MultiModelRegistry:
@@ -188,3 +191,5 @@ class MLServer:
 
         if self._metrics_server:
             await self._metrics_server.stop(sig)
+
+        sys_tracer.unload()

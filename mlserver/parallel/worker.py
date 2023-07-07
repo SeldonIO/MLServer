@@ -11,6 +11,7 @@ from typing import Optional
 from ..registry import MultiModelRegistry
 from ..utils import install_uvloop_event_loop, schedule_with_callback
 from ..logging import configure_logger
+from ..system_tracing import configure_tracepoints
 from ..settings import Settings
 from ..metrics import configure_metrics, model_context
 from ..env import Environment
@@ -23,6 +24,7 @@ from .messages import (
 )
 from .utils import terminate_queue, END_OF_QUEUE
 from .logging import logger
+from .system_tracing import sys_tracer
 from .errors import WorkerError
 
 IGNORED_SIGNALS = [signal.SIGINT, signal.SIGTERM, signal.SIGQUIT]
@@ -64,7 +66,11 @@ class Worker(Process):
 
         with ctx:
             install_uvloop_event_loop()
+            configure_tracepoints(sys_tracer, self._settings.tracepoint_settings)
             configure_logger(self._settings)
+            logger.info(
+                f"Worker [{self.pid}]: enabled {sys_tracer.tracepoints_count} tracepoints"
+            )
             configure_metrics(self._settings)
             self._ignore_signals()
             asyncio.run(self.coro_run())
@@ -196,3 +202,4 @@ class Worker(Process):
         self._model_updates.close()
         self._requests.close()
         self._executor.shutdown()
+        sys_tracer.unload()
