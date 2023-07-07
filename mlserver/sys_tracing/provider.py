@@ -9,14 +9,14 @@ MLServer fires the tracepoints defined by the tracing provider (one of the tp_*
 functions) whenever application-specific events take place, such as starting to
 process an inference request, loading/unloading a model, etc:
 
-``` 
+```
 sys_trace = SystemTracingProvider()
-sys_trace.generate_native_sdt_tracepoints(settings.tracepoint_settings) 
-... 
+sys_trace.generate_native_sdt_tracepoints(settings.tracepoint_settings)
+...
 # A new model gets loaded
-ext_trace.tp_model_load_begin(...) 
-model.ready = await model.load() 
-ext_trace.tp_model_load_end(...) 
+sys_trace.tp_model_load_begin(...)
+model.ready = await model.load()
+sys_trace.tp_model_load_end(...)
 ```
 
 Sometimes, the arguments that we want to pass to a tracepoint are obtained by
@@ -25,18 +25,18 @@ when no external probe is attached to that tracepoint. In this case, we can
 first call the `is_active` member function, which only returns true if the
 passed tracepoint has an external probe attached:
 
-``` 
+```
 if sys_trace.is_active(Tracepoint.inference_begin):
-    # compute arguments 
+    # compute arguments
     pipeline = parse_headers(...)
 
-    # fire tracepoint 
+    # fire tracepoint
     sys_trace.tp_inference_begin(..., pipeline, ...)
 ```
 
 Each tp_* function calls into a native shared library that is generated on the
 fly and dynamically loaded inside the process when calling
-`ext_trace.generate_native_sdt_tracepoints(...)`. In the shared library, a
+`sys_trace.generate_native_sdt_tracepoints(...)`. In the shared library, a
 tracepoint is just a hook function (a series of nop instructions followed by a
 ret). The code of this hook can be modified at runtime to jump into code
 provided from outside the process (e.g. SystemTap or BPF probes running in
@@ -95,7 +95,7 @@ class SystemTracingProvider:
                 # native ELF library containing the tracepoint functions to
                 # which external probes can be attached to.
                 import stapsdt
-            except:
+            except Exception:
                 logger.warning(
                     "Could not enable tracing. Ensure python-stapsdt and libstapsdt.so are installed"
                 )
@@ -110,7 +110,7 @@ class SystemTracingProvider:
             # provider, while disabled ones remain as stubs
             for tp in self._configured_tracepoints:
                 arg_types, status = tp.get_arg_types()
-                if arg_types != None:
+                if arg_types is not None:
                     self._num_native_tracepoints += 1
                     self._tracepoint_definition[tp] = self._provider.add_probe(
                         tp.name, *arg_types

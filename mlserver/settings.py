@@ -140,7 +140,7 @@ class TracepointSettings(BaseSettings):
 
     configured_tracepoints: Optional[List[Tracepoint]] = Tracepoint.all()
     """
-    When tracing is enabled (via `enable_tracepoints`), this controls the 
+    When tracing is enabled (via `enable_tracepoints`), this controls the
     list of tracepoints exposed by MLServer
     """
 

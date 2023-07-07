@@ -230,7 +230,7 @@ class SingleModelRegistry:
             self._clear_default()
 
         model.ready = not await model.unload()
-        
+
         sys_tracer.tp_model_unload(model.name, model.version)
 
     def _find_model(self, version: Optional[str] = None) -> Optional[MLModel]:

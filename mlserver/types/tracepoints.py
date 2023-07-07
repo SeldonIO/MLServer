@@ -1,6 +1,6 @@
 """
 A tracepoint is a statically defined marker placed in code to identify
-application-level events. 
+application-level events.
 
 From the perspective of the python application, each tracepoint acts like a
 normal function call. When a tracepoint is initialized by the tracing provider,
@@ -15,7 +15,7 @@ The list of arguments is statically defined for each tracepoint in
 `ArgTypeMap._prototypes`.
 
 The subset of tracepoints visible to external tracing users can be restricted in
-the MLServer settings, via the `tracepoint_settings.configured_tracepoints` 
+the MLServer settings, via the `tracepoint_settings.configured_tracepoints`
 option.
 
 See `system_tracing.provider` for more details about the actual tracepoint

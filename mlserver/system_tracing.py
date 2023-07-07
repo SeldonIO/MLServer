@@ -1,4 +1,3 @@
-from .logging import logger
 from .settings import TracepointSettings
 from .sys_tracing import SystemTracingProvider
 
