@@ -28,7 +28,7 @@ spec. Watch a quick video introducing the project [here](https://www.youtube.com
   both the gRPC and REST flavours, which has been standardised and adopted by
   various model serving frameworks.
 
-You can read more about the goals of this project on the [inital design
+You can read more about the goals of this project on the [initial design
 document](https://docs.google.com/document/d/1C2uf4SaAtwLTlBCciOhvdiKQ2Eay4U72VxAD4bXe7iU/edit?usp=sharing).
 
 ## Usage
