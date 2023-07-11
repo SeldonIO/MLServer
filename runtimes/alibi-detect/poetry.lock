@@ -192,13 +192,13 @@ frozenlist = ">=1.1.0"
 
 [[package]]
 name = "alibi-detect"
-version = "0.11.3"
+version = "0.11.4"
 description = "Algorithms for outlier detection, concept drift and metrics."
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 files = [
-    {file = "alibi-detect-0.11.3.tar.gz", hash = "sha256:110d94b03648354264fb9f82cbe34b103135f6303449769e60a088daee5a135a"},
-    {file = "alibi_detect-0.11.3-py3-none-any.whl", hash = "sha256:5646519a93aca23201616412b388a6de2d88b9e2c55a8a3d2a6748c4a6991f42"},
+    {file = "alibi-detect-0.11.4.tar.gz", hash = "sha256:5e81eee628260a264e5ebf27d9ab400a34f8ab53d1c0e883547c4c6f9b1aa1be"},
+    {file = "alibi_detect-0.11.4-py3-none-any.whl", hash = "sha256:d1273a160583df44eaa17d557762152f70dda0ef064963c622655f3fef8d4aa3"},
 ]
 
 [package.dependencies]
