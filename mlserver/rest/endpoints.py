@@ -1,8 +1,9 @@
 from fastapi.requests import Request
 from fastapi.responses import Response, HTMLResponse
 from fastapi.openapi.docs import get_swagger_ui_html
+from sse_starlette.sse import EventSourceResponse
 
-from typing import Optional
+from typing import AsyncIterator, Optional
 
 from ..types import (
     MetadataModelResponse,
@@ -15,6 +16,7 @@ from ..types import (
 from ..handlers import DataPlane, ModelRepositoryHandlers
 from ..utils import insert_headers, extract_headers
 
+from .responses import ServerSentEvent
 from .openapi import get_openapi_schema, get_model_schema_uri, get_model_schema
 from .utils import to_status_code
 
@@ -105,6 +107,34 @@ class Endpoints:
             raw_response.headers.update(response_headers)
 
         return inference_response
+
+    async def infer_stream(
+        self,
+        raw_request: Request,
+        raw_response: Response,
+        payload: InferenceRequest,
+        model_name: str,
+        model_version: Optional[str] = None,
+    ) -> EventSourceResponse:
+        request_headers = dict(raw_request.headers)
+        insert_headers(payload, request_headers)
+
+        infer_stream = self._data_plane.infer_stream(payload, model_name, model_version)
+        sse_stream = _as_sse(infer_stream)
+        return EventSourceResponse(sse_stream)
+
+
+async def _as_sse(
+    infer_stream: AsyncIterator[InferenceResponse],
+) -> AsyncIterator[ServerSentEvent]:
+    """
+    Helper to convert all the responses coming out of a generator to a
+    Server-Sent Event object.
+    """
+    async for inference_response in infer_stream:
+        # TODO: How should we send headers back?
+        response_headers = extract_headers(inference_response)
+        yield ServerSentEvent(inference_response)
 
 
 class ModelRepositoryEndpoints:
