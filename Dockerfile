@@ -1,17 +1,7 @@
-# MLSERVER_SYS_TRACING may be set to:
-# - "sdt-sys-tracing" build SDT (static-defined tracing) native dependencies
-# - "without-sys-tracing" no system tracing dependencies
-ARG OPT_MLSERVER_SYS_TRACING="sdt-sys-tracing"
-ARG LIBSTAPSDT_VERSION="0.1.1"
-
-
 FROM python:3.10-slim AS wheel-builder
 SHELL ["/bin/bash", "-l", "-c"]
 
 ARG POETRY_VERSION="1.4.2"
-ARG OPT_MLSERVER_SYS_TRACING
-
-ENV OPT_MLSERVER_SYS_TRACING=${OPT_MLSERVER_SYS_TRACING:-without-sys-tracing}
 
 COPY ./hack/build-wheels.sh ./hack/build-wheels.sh
 COPY ./mlserver ./mlserver
@@ -28,13 +18,9 @@ COPY \
 # https://github.com/python-poetry/poetry-plugin-export/issues/210
 RUN pip install poetry==$POETRY_VERSION && \
     ./hack/build-wheels.sh /opt/mlserver/dist && \
-    _extras=() && \
-    if [[ "${OPT_MLSERVER_SYS_TRACING}" == "sdt-sys-tracing" ]]; then \
-        _extras+=("-E tracepoints"); \
-    fi && \
     poetry export --with all-runtimes \
         --without-hashes \
-        "${_extras[@]}" \
+        -E everything \
         --format constraints.txt \
         -o /opt/mlserver/dist/constraints.txt && \
     sed -i 's/\[.*\]//g' /opt/mlserver/dist/constraints.txt
@@ -46,7 +32,7 @@ RUN pip install poetry==$POETRY_VERSION && \
 FROM almalinux/9-minimal AS libstapsdt-builder
 SHELL ["/bin/bash", "-c"]
 
-ARG LIBSTAPSDT_VERSION
+ARG LIBSTAPSDT_VERSION="0.1.1"
 
 # Install libstapsdt dev dependencies
 RUN microdnf update -y && \
@@ -78,7 +64,6 @@ ARG PYTHON_VERSION=3.10.11
 ARG CONDA_VERSION=23.1.0
 ARG MINIFORGE_VERSION=${CONDA_VERSION}-1
 ARG RUNTIMES="all"
-ARG OPT_MLSERVER_SYS_TRACING
 
 # Set a few default environment variables, including `LD_LIBRARY_PATH`
 # (required to use GKE's injected CUDA libraries).
@@ -87,7 +72,6 @@ ARG OPT_MLSERVER_SYS_TRACING
 ENV MLSERVER_MODELS_DIR=/mnt/models \
     MLSERVER_ENV_TARBALL=/mnt/models/environment.tar.gz \
     MLSERVER_PATH=/opt/mlserver \
-    OPT_MLSERVER_SYS_TRACING=${OPT_MLSERVER_SYS_TRACING:-without-sys-tracing} \
     CONDA_PATH=/opt/conda \
     PATH=/opt/mlserver/.local/bin:/opt/conda/bin:$PATH \
     LD_LIBRARY_PATH=/usr/local/nvidia/lib64:/opt/conda/lib/python3.10/site-packages/nvidia/cuda_runtime/lib:$LD_LIBRARY_PATH \
@@ -102,11 +86,8 @@ RUN microdnf update -y && \
         libgomp \
         mesa-libGL \
         glib2-devel \
-        shadow-utils && \
-        if [[ "${OPT_MLSERVER_SYS_TRACING}" == "sdt-sys-tracing" ]]; then \
-            microdnf install -y \
-                elfutils-libelf; \
-        fi
+        shadow-utils \
+        elfutils-libelf
 
 # Install libstapsdt
 COPY --from=libstapsdt-builder /libstapsdt-install /
@@ -149,10 +130,6 @@ COPY --from=wheel-builder /opt/mlserver/dist ./dist
 # NOTE: Removing explicitly requirements.txt file from spaCy's test
 # dependencies causing false positives in Snyk.
 RUN . $CONDA_PATH/etc/profile.d/conda.sh && \
-    _extras=() && \
-    if [[ "${OPT_MLSERVER_SYS_TRACING}" == "sdt-sys-tracing" ]]; then \
-        _extras+=( "tracepoints" ); \
-    fi && \
     pip install --upgrade pip wheel setuptools && \
     if [[ $RUNTIMES == "all" ]]; then \
         for _wheel in "./dist/mlserver_"*.whl; do \
@@ -169,12 +146,7 @@ RUN . $CONDA_PATH/etc/profile.d/conda.sh && \
             pip install $_wheel --constraint ./dist/constraints.txt; \
         done \
     fi && \
-    if [[ ${#_extras[@]} -gt 0 ]]; then \
-        extras_list=$(IFS=, ; echo "${_extras[@]}") && \ 
-        pip install $(ls "./dist/mlserver-"*.whl)[${extras_list}] --constraint ./dist/constraints.txt; \
-    else \
-        pip install $(ls "./dist/mlserver-"*.whl) --constraint ./dist/constraints.txt; \
-    fi && \
+    pip install $(ls "./dist/mlserver-"*.whl)[everything] --constraint ./dist/constraints.txt && \
     rm -f /opt/conda/lib/python3.10/site-packages/spacy/tests/package/requirements.txt && \
     rm -rf /root/.cache/pip
 

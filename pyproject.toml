@@ -72,6 +72,7 @@ opentelemetry-instrumentation-grpc = "^0.39b0"
 
 [tool.poetry.extras]
 tracepoints = ["stapsdt"]
+everything = ["stapsdt"]
 
 [tool.poetry.group.dev.dependencies]
 datamodel-code-generator = "0.21.0"
