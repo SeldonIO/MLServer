@@ -7,7 +7,6 @@ from mlserver.settings import CORSSettings, Settings, ModelSettings, ModelParame
 from mlserver.repository import DEFAULT_MODEL_SETTINGS_FILENAME
 
 from .conftest import TESTDATA_PATH, TESTS_PATH
-from mlserver.types import Tracepoint
 
 
 def test_settings_from_env(monkeypatch):

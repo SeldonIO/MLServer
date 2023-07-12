@@ -1,5 +1,4 @@
-from pydantic import BaseModel as _BaseModel, json as pydantic_json
-from enum import Enum
+from pydantic import BaseModel as _BaseModel
 
 
 class BaseModel(_BaseModel):

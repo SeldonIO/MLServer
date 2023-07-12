@@ -21,7 +21,7 @@ option.
 See `system_tracing.provider` for more details about the actual tracepoint
 implementation.
 """
-from typing import Optional
+from typing import Optional, Tuple, List
 from enum import Enum, IntEnum, auto
 
 # The underlying SDT tracepoint implementation currently only works on x86-64
@@ -120,7 +120,7 @@ class Tracepoint(Enum):
     def none():
         return set()
 
-    def get_arg_types(self) -> tuple[Optional[list[int]], ArgStatus]:
+    def get_arg_types(self) -> Tuple[Optional[List[int]], ArgStatus]:
         """
         Returns a (arg_types_list, status) tuple for the current tracepoint. The
         arg_types_list, when not None, defines the function prototype of the
