@@ -21,8 +21,8 @@ option.
 See `system_tracing.provider` for more details about the actual tracepoint
 implementation.
 """
+from typing import Optional
 from enum import Enum, IntEnum, auto
-from ..types.base import EnumSettingByName
 
 # The underlying SDT tracepoint implementation currently only works on x86-64
 # architectures. For simplicity, it supports a maximum of 6 tracepoint
@@ -77,7 +77,7 @@ class ArgStatus(Enum):
     NoPrototypeDefined = auto()
 
 
-class Tracepoint(EnumSettingByName):
+class Tracepoint(Enum):
     """
     The available MLServer tracepoints.
 
@@ -120,7 +120,7 @@ class Tracepoint(EnumSettingByName):
     def none():
         return set()
 
-    def get_arg_types(self) -> tuple[list[int] | None, ArgStatus]:
+    def get_arg_types(self) -> tuple[Optional[list[int]], ArgStatus]:
         """
         Returns a (arg_types_list, status) tuple for the current tracepoint. The
         arg_types_list, when not None, defines the function prototype of the

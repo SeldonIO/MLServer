@@ -25,7 +25,7 @@ HANDLED_SIGNALS = [signal.SIGINT, signal.SIGTERM, signal.SIGQUIT]
 
 class MLServer:
     def __init__(self, settings: Settings):
-        configure_tracepoints(sys_tracer, settings.tracepoint_settings)
+        configure_tracepoints(sys_tracer, settings.tracepoints_enabled)
         self._settings = settings
         self._add_signal_handlers()
 

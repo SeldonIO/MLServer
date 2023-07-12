@@ -49,16 +49,16 @@ of the probing code.
 
 At the moment, tracing is only available on x86-64 architectures.
 """
+from typing import Union
 from importlib import import_module
 
 from ..logging import logger
-from ..settings import TracepointSettings
-from ..types import Tracepoint, ArgStatus, MAX_TRACEPOINT_ARGS
+from .tracepoints import Tracepoint, ArgStatus, MAX_TRACEPOINT_ARGS
 from .stapsdt_stub import Probe as NopTracepoint
 
 
 class SystemTracingProvider:
-    def __init__(self, name):
+    def __init__(self, name: str):
         # Tracing is an optional facility, requiring additional runtime
         # dependencies. Because of this, we initialize this provider with stub
         # tracepoints which do nothing.
@@ -71,15 +71,14 @@ class SystemTracingProvider:
 
         self._provider = stapsdt.Provider(self._name)
         self._num_native_tracepoints: int = 0
-        self._configured_tracepoints: set[Tracepoint] = Tracepoint.none()
         self._tracepoint_definition: dict[
-            Tracepoint, stapsdt.Probe | NopTracepoint
+            Tracepoint, Union[stapsdt.Probe, NopTracepoint]
         ] = {}
 
         for tp in Tracepoint:
             self._tracepoint_definition[tp] = NopTracepoint
 
-    def create_native_sdt_tracepoints(self, tracepoint_settings: TracepointSettings):
+    def create_native_sdt_tracepoints(self, enable_tracepoints: bool):
         """
         Makes the configured tracepoints visible to external tracing programs
 
@@ -88,7 +87,7 @@ class SystemTracingProvider:
               .notes ELF section with metadata used for attaching probes
             - loads the shared library in the current process
         """
-        if tracepoint_settings.enable_tracepoints:
+        if enable_tracepoints:
             try:
                 # On import, stapsdt will attempt to dynamically load
                 # libstapsdt.so, which is responsible for dynamically creating a
@@ -102,13 +101,9 @@ class SystemTracingProvider:
                 return
 
             self._provider = stapsdt.Provider(self._name)
-            self._configured_tracepoints = set(
-                tracepoint_settings.configured_tracepoints or Tracepoint.none()
-            )
 
-            # The tracepoints configured in settings get registered with the
-            # provider, while disabled ones remain as stubs
-            for tp in self._configured_tracepoints:
+            # Register tracepoints with the native stapsdt provider
+            for tp in Tracepoint:
                 arg_types, status = tp.get_arg_types()
                 if arg_types is not None:
                     self._num_native_tracepoints += 1
@@ -130,7 +125,7 @@ class SystemTracingProvider:
             load_error = self._provider.load()
             if load_error:
                 self._num_native_tracepoints = 0
-                for tp in self._configured_tracepoints:
+                for tp in Tracepoint:
                     self._tracepoint_definition[tp] = NopTracepoint
 
     @property

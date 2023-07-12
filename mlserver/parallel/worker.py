@@ -66,7 +66,7 @@ class Worker(Process):
 
         with ctx:
             install_uvloop_event_loop()
-            configure_tracepoints(sys_tracer, self._settings.tracepoint_settings)
+            configure_tracepoints(sys_tracer, self._settings.tracepoints_enabled)
             configure_logger(self._settings)
             logger.info(
                 f"Worker [{self.pid}]: enabled {sys_tracer.tracepoints_count} tracepoints"
