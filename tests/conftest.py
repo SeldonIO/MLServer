@@ -193,7 +193,10 @@ async def sum_model(
 
 @pytest.fixture
 def stream_model_settings() -> ModelSettings:
-    return ModelSettings(name="stream-model", implementation=StreamModel)
+    # TODO: Enable parallel_workers once stream is supported
+    return ModelSettings(
+        name="stream-model", implementation=StreamModel, parallel_workers=0
+    )
 
 
 @pytest.fixture

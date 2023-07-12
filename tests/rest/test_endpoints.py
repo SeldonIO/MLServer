@@ -1,13 +1,22 @@
 import pytest
 
 from typing import Optional
+from httpx import AsyncClient
+from httpx_sse import aconnect_sse
 
 from mlserver import __version__
+from mlserver.settings import ModelSettings
+from mlserver.model import MLModel
 from mlserver.types import (
+    InferenceRequest,
     InferenceResponse,
     MetadataServerResponse,
     MetadataModelResponse,
+<<<<<<< HEAD
     TensorData,
+=======
+    RepositoryIndexRequest,
+>>>>>>> Add tests for infer-stream endpoint
 )
 from mlserver.cloudevents import (
     CLOUDEVENTS_HEADER_SPECVERSION_DEFAULT,
@@ -15,28 +24,28 @@ from mlserver.cloudevents import (
 )
 
 
-async def test_live(rest_client):
+async def test_live(rest_client: AsyncClient):
     endpoint = "/v2/health/live"
     response = await rest_client.get(endpoint)
 
     assert response.status_code == 200
 
 
-async def test_ready(rest_client):
+async def test_ready(rest_client: AsyncClient):
     endpoint = "/v2/health/ready"
     response = await rest_client.get(endpoint)
 
     assert response.status_code == 200
 
 
-async def test_model_ready(rest_client, sum_model):
+async def test_model_ready(rest_client: AsyncClient, sum_model: MLModel):
     endpoint = f"/v2/models/{sum_model.name}/versions/{sum_model.version}/ready"
     response = await rest_client.get(endpoint)
 
     assert response.status_code == 200
 
 
-async def test_metadata(rest_client):
+async def test_metadata(rest_client: AsyncClient):
     endpoint = "/v2"
     response = await rest_client.get(endpoint)
 
@@ -47,7 +56,7 @@ async def test_metadata(rest_client):
     assert metadata.extensions == []
 
 
-async def test_openapi(rest_client):
+async def test_openapi(rest_client: AsyncClient):
     endpoint = "/v2/docs"
     response = await rest_client.get(endpoint)
 
@@ -55,7 +64,7 @@ async def test_openapi(rest_client):
     assert "html" in response.headers["content-type"]
 
 
-async def test_docs(rest_client):
+async def test_docs(rest_client: AsyncClient):
     endpoint = "/v2/docs/dataplane.json"
     response = await rest_client.get(endpoint)
 
@@ -63,7 +72,9 @@ async def test_docs(rest_client):
     assert "openapi" in response.json()
 
 
-async def test_model_metadata(rest_client, sum_model_settings):
+async def test_model_metadata(
+    rest_client: AsyncClient, sum_model_settings: ModelSettings
+):
     endpoint = f"v2/models/{sum_model_settings.name}"
     response = await rest_client.get(endpoint)
 
@@ -79,7 +90,7 @@ async def test_model_metadata(rest_client, sum_model_settings):
     "model_name,model_version", [("sum-model", "v1.2.3"), ("sum-model", None)]
 )
 async def test_model_openapi(
-    rest_client, model_name: str, model_version: Optional[str]
+    rest_client: AsyncClient, model_name: str, model_version: Optional[str]
 ):
     endpoint = f"/v2/models/{model_name}/docs/dataplane.json"
     if model_version is not None:
@@ -95,7 +106,9 @@ async def test_model_openapi(
 @pytest.mark.parametrize(
     "model_name,model_version", [("sum-model", "v1.2.3"), ("sum-model", None)]
 )
-async def test_model_docs(rest_client, model_name: str, model_version: Optional[str]):
+async def test_model_docs(
+    rest_client: AsyncClient, model_name: str, model_version: Optional[str]
+):
     endpoint = f"/v2/models/{model_name}/docs"
     if model_version is not None:
         endpoint = f"/v2/models/{model_name}/versions/{model_version}/docs"
@@ -109,10 +122,10 @@ async def test_model_docs(rest_client, model_name: str, model_version: Optional[
     "model_name,model_version", [("sum-model", "v1.2.3"), ("sum-model", None)]
 )
 async def test_infer(
-    rest_client,
-    inference_request,
-    model_name,
-    model_version,
+    rest_client: AsyncClient,
+    inference_request: InferenceRequest,
+    model_name: str,
+    model_version: Optional[str],
 ):
     endpoint = f"/v2/models/{model_name}/infer"
     if model_version is not None:
@@ -126,10 +139,28 @@ async def test_infer(
     assert prediction.outputs[0].data == TensorData(root=[6])
 
 
+async def test_infer_stream(
+    rest_client: AsyncClient,
+    inference_request: InferenceRequest,
+    stream_model: MLModel,
+):
+    endpoint = f"/v2/models/{stream_model.name}/infer-stream"
+    conn = aconnect_sse(rest_client, "POST", endpoint, json=inference_request.dict())
+    async with conn as stream:
+        idx = 0
+        async for response in stream.aiter_sse():
+            prediction = InferenceResponse.parse_obj(response.json())
+            assert len(prediction.outputs) == 1
+            assert prediction.outputs[0].data.__root__ == [1 + idx, 2 + idx, 3 + idx]
+            idx += 1
+
+        assert idx == stream_model.response_chunks
+
+
 async def test_infer_headers(
-    rest_client,
-    inference_request,
-    sum_model_settings,
+    rest_client: AsyncClient,
+    inference_request: InferenceRequest,
+    sum_model_settings: ModelSettings,
 ):
     endpoint = f"/v2/models/{sum_model_settings.name}/infer"
     response = await rest_client.post(
@@ -147,7 +178,9 @@ async def test_infer_headers(
     )
 
 
-async def test_infer_error(rest_client, inference_request):
+async def test_infer_error(
+    rest_client: AsyncClient, inference_request: InferenceRequest
+):
     endpoint = "/v2/models/my-model/versions/v0/infer"
     response = await rest_client.post(endpoint, json=inference_request.model_dump())
 
@@ -155,7 +188,9 @@ async def test_infer_error(rest_client, inference_request):
     assert response.json()["error"] == "Model my-model with version v0 not found"
 
 
-async def test_model_repository_index(rest_client, repository_index_request):
+async def test_model_repository_index(
+    rest_client: AsyncClient, repository_index_request: RepositoryIndexRequest
+):
     endpoint = "/v2/repository/index"
     response = await rest_client.post(
         endpoint, json=repository_index_request.model_dump()
@@ -167,7 +202,9 @@ async def test_model_repository_index(rest_client, repository_index_request):
     assert len(models) == 1
 
 
-async def test_model_repository_unload(rest_client, sum_model_settings):
+async def test_model_repository_unload(
+    rest_client: AsyncClient, sum_model_settings: ModelSettings
+):
     endpoint = f"/v2/repository/models/{sum_model_settings.name}/unload"
     response = await rest_client.post(endpoint)
 
@@ -178,8 +215,8 @@ async def test_model_repository_unload(rest_client, sum_model_settings):
 
 
 async def test_model_repository_load(
-    rest_client,
-    sum_model_settings,
+    rest_client: AsyncClient,
+    sum_model_settings: ModelSettings,
 ):
     await rest_client.post(f"/v2/repository/models/{sum_model_settings.name}/unload")
 
@@ -192,7 +229,9 @@ async def test_model_repository_load(
     assert model_metadata.status_code == 200
 
 
-async def test_model_repository_load_error(rest_client, sum_model_settings):
+async def test_model_repository_load_error(
+    rest_client: AsyncClient, sum_model_settings: ModelSettings
+):
     endpoint = "/v2/repository/models/my-model/load"
     response = await rest_client.post(endpoint)
 

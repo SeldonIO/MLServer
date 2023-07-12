@@ -78,6 +78,13 @@ def create_app(
             endpoints.infer,
             methods=["POST"],
         ),
+        # TODO: Decide on different endpoint, or payload parameter to enable /
+        # disable streaming
+        APIRoute(
+            "/v2/models/{model_name}/infer-stream",
+            endpoints.infer_stream,
+            methods=["POST"],
+        ),
         # Model metadata
         APIRoute(
             "/v2/models/{model_name}",
@@ -167,7 +174,7 @@ def create_app(
         )
 
     app.router.route_class = APIRoute
-    app.add_middleware(GZipMiddleware)
+    #  app.add_middleware(GZipMiddleware)
     if settings.cors_settings is not None:
         app.add_middleware(
             CORSMiddleware,
