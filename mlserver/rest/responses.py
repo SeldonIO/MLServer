@@ -39,7 +39,9 @@ class Response(_JSONResponse):
 class ServerSentEvent(_ServerSentEvent):
     def __init__(self, data: BaseModel, *args, **kwargs):
         super().__init__(data, *args, **kwargs)
-        self._sep = encode_str(self.DEFAULT_SEPARATOR)
+        # NOTE: SSE should use `\n\n` as separator
+        # https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events#event_stream_format
+        self._sep = b"\n\n"
         self._pre = b"data: "
 
     def encode(self) -> bytes:

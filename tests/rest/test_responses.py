@@ -9,5 +9,5 @@ def test_sse_encode(inference_request: InferenceRequest):
     as_string = encoded.decode("utf-8")
 
     expected_json = inference_request.json().replace(" ", "")
-    expected = f"data: {expected_json}\r\n"
+    expected = f"data: {expected_json}\n\n"
     assert as_string == expected
