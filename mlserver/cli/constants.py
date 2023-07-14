@@ -1,13 +1,15 @@
 DockerfileName = "Dockerfile"
 DockerfileTemplate = """
-FROM continuumio/miniconda3:4.12.0 AS env-builder
+FROM continuumio/miniconda3:22.11.1 AS env-builder
 SHELL ["/bin/bash", "-c"]
 
 ARG MLSERVER_ENV_NAME="mlserver-custom-env" \\
     MLSERVER_ENV_TARBALL="./envs/base.tar.gz"
 
 RUN conda config --add channels conda-forge && \\
-    conda install conda-pack
+    conda install conda-libmamba-solver && \\
+    conda config --set solver libmamba && \\
+    conda install conda-pack 
 
 # The `[]` character range will ensure that Docker doesn't complain if the
 # files don't exist:
