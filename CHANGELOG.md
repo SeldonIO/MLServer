@@ -1,6 +1,24 @@
 # Changelog
 
 
+<a name="1.3.5"></a>
+## [1.3.5](https://github.com/SeldonIO/MLServer/releases/tag/1.3.5) - 10 Jul 2023
+
+<!-- Release notes generated using configuration in .github/release.yml at 1.3.5 -->
+
+### What's Changed
+
+* Rename HF codec to `hf` by [@adriangonz](https://github.com/adriangonz)  in https://github.com/SeldonIO/MLServer/pull/1268
+* Publish is_drift metric to Prom by [@joshsgoldstein](https://github.com/joshsgoldstein)  in https://github.com/SeldonIO/MLServer/pull/1263
+
+### New Contributors
+* [@joshsgoldstein](https://github.com/joshsgoldstein) made their first contribution in https://github.com/SeldonIO/MLServer/pull/1263
+
+**Full Changelog**: https://github.com/SeldonIO/MLServer/compare/1.3.4...1.3.5
+
+[Changes][1.3.5]
+
+
 <a name="1.3.4"></a>
 ## [1.3.4](https://github.com/SeldonIO/MLServer/releases/tag/1.3.4) - 21 Jun 2023
 
@@ -327,6 +345,7 @@ To learn more about how to use MLServer directly from the MLflow CLI, check out 
 [Changes][1.1.0]
 
 
+[1.3.5]: https://github.com/SeldonIO/MLServer/compare/1.3.4...1.3.5
 [1.3.4]: https://github.com/SeldonIO/MLServer/compare/1.3.3...1.3.4
 [1.3.3]: https://github.com/SeldonIO/MLServer/compare/1.3.2...1.3.3
 [1.3.2]: https://github.com/SeldonIO/MLServer/compare/1.3.1...1.3.2
