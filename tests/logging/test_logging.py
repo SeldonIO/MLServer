@@ -2,7 +2,12 @@ import pytest
 
 from mlserver import ModelSettings
 from mlserver.context import model_context
-from mlserver.logging import ModelLoggerFormatter, LoggerFormat, configure_logger, logger
+from mlserver.logging import (
+    ModelLoggerFormatter,
+    LoggerFormat,
+    configure_logger,
+    logger,
+)
 from mlserver.settings import ModelParameters, Settings
 from tests.fixtures import SumModel
 from logging import INFO

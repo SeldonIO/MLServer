@@ -41,6 +41,7 @@ class ModelLoggerFormatter(logging.Formatter):
     A logging formatter that uses context variables to inject
     the model name and version in the log message.
     """
+
     @staticmethod
     def _fmt_model(name: str, version: str) -> str:
         if not name:
