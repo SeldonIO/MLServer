@@ -13,9 +13,9 @@ from mlserver.metrics.context import (
     SELDON_MODEL_VERSION_LABEL,
     register,
     log,
-    model_context,
     _get_labels_from_context,
 )
+from mlserver.context import model_context
 
 from ..fixtures import SumModel
 

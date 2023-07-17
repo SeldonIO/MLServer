@@ -5,7 +5,7 @@ from prometheus_client import (
 from typing import Optional
 
 from ..errors import ModelNotReady
-from ..metrics import model_context
+from ..context import model_context
 from ..settings import Settings
 from ..registry import MultiModelRegistry
 from ..types import (
@@ -73,7 +73,8 @@ class DataPlane:
     ) -> MetadataModelResponse:
         model = await self._model_registry.get_model(name, version)
         # TODO: Make await optional for sync methods
-        return await model.metadata()
+        with model_context(model.settings):
+            return await model.metadata()
 
     async def infer(
         self,

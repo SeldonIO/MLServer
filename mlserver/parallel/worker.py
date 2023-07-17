@@ -12,7 +12,8 @@ from ..registry import MultiModelRegistry
 from ..utils import install_uvloop_event_loop, schedule_with_callback
 from ..logging import configure_logger
 from ..settings import Settings
-from ..metrics import configure_metrics, model_context
+from ..metrics import configure_metrics
+from ..context import model_context
 from ..env import Environment
 
 from .messages import (

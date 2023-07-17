@@ -1,6 +1,7 @@
 from .server import MetricsServer
 from .prometheus import configure_metrics
-from .context import model_context, register, log
+from .context import register, log
+from ..context import model_context
 from .registry import REGISTRY
 
 __all__ = [
