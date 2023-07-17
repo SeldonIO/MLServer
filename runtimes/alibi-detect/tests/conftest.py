@@ -10,7 +10,7 @@ from alibi_detect.cd import TabularDrift, CVMDriftOnline
 from alibi_detect.od import OutlierVAE
 from alibi_detect.saving import save_detector
 
-from mlserver.metrics.context import model_context
+from mlserver.context import model_context
 from mlserver.settings import ModelSettings, ModelParameters
 from mlserver.types import InferenceRequest
 from mlserver.utils import install_uvloop_event_loop
