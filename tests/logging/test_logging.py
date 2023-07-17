@@ -43,7 +43,7 @@ def test_model_logging_formatter(name, version, expected_fmt, caplog):
 
     logger.info("Before model context")
     with model_context(model_settings):
-        logger.info(f"Inside model context")
+        logger.info("Inside model context")
     logger.info("After model context")
 
     log_records = caplog.text.strip().split("\n")
