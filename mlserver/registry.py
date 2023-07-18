@@ -166,7 +166,7 @@ class SingleModelRegistry:
             self._register(model)
             model.ready = await model.load()
 
-            logger.info(f"Loaded model '{model.name}' succesfully.")
+            logger.info(f"Loaded model '{model.name}' successfully.")
         except Exception:
             logger.info(
                 f"Couldn't load model '{model.name}'. "
@@ -189,7 +189,7 @@ class SingleModelRegistry:
             self._clear_default()
 
         old_model.ready = not await old_model.unload()
-        logger.info(f"Reloaded model '{new_model.name}' succesfully.")
+        logger.info(f"Reloaded model '{new_model.name}' successfully.")
 
     async def unload(self):
         models = await self.get_models()
@@ -198,7 +198,7 @@ class SingleModelRegistry:
         self._versions.clear()
         self._clear_default()
 
-        logger.info(f"Unloaded all versions of model '{self._name}' succesfully.")
+        logger.info(f"Unloaded all versions of model '{self._name}' successfully.")
 
     async def unload_version(self, version: Optional[str] = None):
         model = await self.get_model(version)
@@ -225,7 +225,7 @@ class SingleModelRegistry:
             if model.version:
                 model_msg = f"version {model.version} of {model_msg}"
 
-            logger.info(f"Unloaded {model_msg} succesfully.")
+            logger.info(f"Unloaded {model_msg} successfully.")
 
     def _find_model(self, version: Optional[str] = None) -> Optional[MLModel]:
         if version:

@@ -53,7 +53,7 @@ class ModelLoggerFormatter(logging.Formatter):
         model_name = model_name_var.get("")
         model_version = model_version_var.get("")
 
-        record.model = self.__class__._fmt_model(model_name, model_version)
+        record.model = self._fmt_model(model_name, model_version)
 
         return super().format(record)
 
