@@ -8,6 +8,7 @@ from .model import MLModel
 from .errors import ModelNotFound
 from .logging import logger
 from .settings import ModelSettings
+from .system_tracing import sys_tracer
 
 ModelInitialiser = Callable[[ModelSettings], MLModel]
 ModelRegistryHook = Callable[[MLModel], Awaitable[MLModel]]
@@ -155,6 +156,7 @@ class SingleModelRegistry:
             # appears as a not-ready (i.e. loading) model
             self._register(model)
 
+            sys_tracer.tp_model_load_begin(model.name, model.version)
             for callback in self._on_model_load:
                 # NOTE: Callbacks need to be executed sequentially to ensure that
                 # they go in the right order
@@ -164,6 +166,7 @@ class SingleModelRegistry:
             self._register(model)
             model.ready = await model.load()
 
+            sys_tracer.tp_model_load_end(model.name, model.version)
             logger.info(f"Loaded model '{model.name}' succesfully.")
         except Exception:
             logger.info(
@@ -180,7 +183,11 @@ class SingleModelRegistry:
         # Loading the model before unloading the old one - this will ensure
         # that at least one is available (sort of mimicking a rolling
         # deployment)
+        sys_tracer.tp_model_reload_begin(
+            new_model.name, new_model.version, old_model.version
+        )
         new_model.ready = await new_model.load()
+        sys_tracer.tp_model_reload_end(new_model.name, new_model.version)
         self._register(new_model)
 
         if old_model == self.default:
@@ -223,6 +230,8 @@ class SingleModelRegistry:
             self._clear_default()
 
         model.ready = not await model.unload()
+
+        sys_tracer.tp_model_unload(model.name, model.version)
 
     def _find_model(self, version: Optional[str] = None) -> Optional[MLModel]:
         if version:

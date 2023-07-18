@@ -222,6 +222,7 @@
 "spacy-lookups-data","1.0.3","MIT License"
 "sqlparse","0.4.4","BSD License"
 "srsly","2.4.6","MIT License"
+"stapsdt","0.1.1","MIT License"
 "starlette","0.27.0","BSD License"
 "starlette-exporter","0.16.0","Apache License 2.0"
 "sympy","1.12","BSD License"

@@ -59,6 +59,7 @@ tritonclient = {version = "^2.24", extras = ["http"]}
 aiofiles = "*"
 orjson = "*"
 uvloop = {version = "*", markers = "sys_platform != 'win32' and (sys_platform != 'cygwin' and platform_python_implementation != 'PyPy')"}
+stapsdt = {version = "^0.1.1", optional = true}
 
 ## The importlib-resources backport is required to use some
 ## functionality added in Python 3.10
@@ -68,6 +69,10 @@ opentelemetry-instrumentation-fastapi = "^0.39b0"
 opentelemetry-sdk = "^1.18.0"
 opentelemetry-exporter-otlp-proto-grpc = "^1.18.0"
 opentelemetry-instrumentation-grpc = "^0.39b0"
+
+[tool.poetry.extras]
+tracepoints = ["stapsdt"]
+everything = ["stapsdt"]
 
 [tool.poetry.group.dev.dependencies]
 datamodel-code-generator = "0.21.0"

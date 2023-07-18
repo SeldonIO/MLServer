@@ -20,9 +20,42 @@ RUN pip install poetry==$POETRY_VERSION && \
     ./hack/build-wheels.sh /opt/mlserver/dist && \
     poetry export --with all-runtimes \
         --without-hashes \
+        -E everything \
         --format constraints.txt \
         -o /opt/mlserver/dist/constraints.txt && \
     sed -i 's/\[.*\]//g' /opt/mlserver/dist/constraints.txt
+
+
+# Build native dependencies for tracepoints; 
+# Almalinux is binary-compatible with rhel ubi images but contains repositories
+# with additional devel packages (elfutils-libelf-devel needed here)
+FROM almalinux/9-minimal AS libstapsdt-builder
+SHELL ["/bin/bash", "-c"]
+
+ARG LIBSTAPSDT_VERSION="0.1.1"
+
+# Install libstapsdt dev dependencies
+RUN microdnf update -y && \
+    microdnf install -y \
+        wget \
+        tar \
+        gzip \
+        gcc \
+        make \
+        findutils \
+        elfutils-libelf-devel
+
+# Get libstapsdt sources, compile and install into separate tree
+# We also need to patch the resulting library symlink to be relative so that
+# we may copy the resulting files in a different container directly
+RUN wget "https://github.com/linux-usdt/libstapsdt/archive/refs/tags/v${LIBSTAPSDT_VERSION}.tar.gz" && \
+    tar -xzf v${LIBSTAPSDT_VERSION}.tar.gz && \
+    cd libstapsdt-${LIBSTAPSDT_VERSION} && \
+    make && \
+    make install DESTDIR=/libstapsdt-install && \
+    cd /libstapsdt-install/usr/lib && \
+    readlink libstapsdt.so | sed s+/libstapsdt-install/usr/lib/++ | xargs -I % ln -fs % libstapsdt.so
+
 
 FROM registry.access.redhat.com/ubi9/ubi-minimal
 SHELL ["/bin/bash", "-c"]
@@ -53,7 +86,13 @@ RUN microdnf update -y && \
         libgomp \
         mesa-libGL \
         glib2-devel \
-        shadow-utils
+        shadow-utils \
+        elfutils-libelf
+
+# Install libstapsdt
+COPY --from=libstapsdt-builder /libstapsdt-install /
+# Update symlinks & ldconfig cache
+RUN ldconfig
 
 # Install Conda, Python 3.10 and FFmpeg
 RUN microdnf install -y wget && \
@@ -107,7 +146,7 @@ RUN . $CONDA_PATH/etc/profile.d/conda.sh && \
             pip install $_wheel --constraint ./dist/constraints.txt; \
         done \
     fi && \
-    pip install $(ls "./dist/mlserver-"*.whl) --constraint ./dist/constraints.txt && \
+    pip install $(ls "./dist/mlserver-"*.whl)[everything] --constraint ./dist/constraints.txt && \
     rm -f /opt/conda/lib/python3.10/site-packages/spacy/tests/package/requirements.txt && \
     rm -rf /root/.cache/pip
 

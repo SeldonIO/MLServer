@@ -230,9 +230,16 @@ class Settings(BaseSettings):
     kafka_topic_input: str = "mlserver-input"
     kafka_topic_output: str = "mlserver-output"
 
-    # OpenTelemetry Tracing settings
+    # Tracing settings
+    # OpenTelemetry
     tracing_server: Optional[str] = None
     """Server name used to export OpenTelemetry tracing to collector service."""
+
+    # Enable/disable tracepoints for system tracing (BPF, Systemtap)
+    tracepoints_enabled: Optional[bool] = True
+    """
+    Control the export of static tracepoints for external probing at runtime
+    """
 
     # Custom server settings
     _custom_rest_server_settings: Optional[dict] = None
