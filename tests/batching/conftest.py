@@ -7,7 +7,7 @@ from typing import Callable, Tuple, Awaitable
 from mlserver.utils import generate_uuid
 from mlserver.types import InferenceRequest, TensorData
 from mlserver.model import MLModel
-from mlserver.metrics.context import model_context
+from mlserver.context import model_context
 from mlserver.batching.adaptive import AdaptiveBatcher
 from mlserver.settings import ModelSettings
 

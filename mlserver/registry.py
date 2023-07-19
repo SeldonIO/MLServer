@@ -4,6 +4,7 @@ from typing import Callable, Awaitable, List, Dict, Optional
 from itertools import chain
 from functools import cmp_to_key
 
+from .context import model_context
 from .model import MLModel
 from .errors import ModelNotFound
 from .logging import logger
@@ -142,10 +143,11 @@ class SingleModelRegistry:
 
         new_model = self._model_initialiser(model_settings)
 
-        if previous_loaded_model:
-            await self._reload_model(previous_loaded_model, new_model)
-        else:
-            await self._load_model(new_model)
+        with model_context(model_settings):
+            if previous_loaded_model:
+                await self._reload_model(previous_loaded_model, new_model)
+            else:
+                await self._load_model(new_model)
 
         return new_model
 
@@ -164,7 +166,7 @@ class SingleModelRegistry:
             self._register(model)
             model.ready = await model.load()
 
-            logger.info(f"Loaded model '{model.name}' succesfully.")
+            logger.info(f"Loaded model '{model.name}' successfully.")
         except Exception:
             logger.info(
                 f"Couldn't load model '{model.name}'. "
@@ -187,7 +189,7 @@ class SingleModelRegistry:
             self._clear_default()
 
         old_model.ready = not await old_model.unload()
-        logger.info(f"Reloaded model '{new_model.name}' succesfully.")
+        logger.info(f"Reloaded model '{new_model.name}' successfully.")
 
     async def unload(self):
         models = await self.get_models()
@@ -196,33 +198,34 @@ class SingleModelRegistry:
         self._versions.clear()
         self._clear_default()
 
-        logger.info(f"Unloaded all versions of model '{self._name}' succesfully.")
+        logger.info(f"Unloaded all versions of model '{self._name}' successfully.")
 
     async def unload_version(self, version: Optional[str] = None):
         model = await self.get_model(version)
         await self._unload_model(model)
 
-        model_msg = f"model '{model.name}'"
-        if version:
-            model_msg = f"version {version} of {model_msg}"
-
-        logger.info(f"Unloaded {model_msg} succesfully.")
-
     async def _unload_model(self, model: MLModel):
-        # NOTE: Every callback needs to run to ensure one doesn't block the
-        # others
-        await asyncio.gather(
-            *[callback(model) for callback in self._on_model_unload],
-            return_exceptions=True,
-        )
+        with model_context(model.settings):
+            # NOTE: Every callback needs to run to ensure one doesn't block the
+            # others
+            await asyncio.gather(
+                *[callback(model) for callback in self._on_model_unload],
+                return_exceptions=True,
+            )
 
-        if model.version:
-            del self._versions[model.version]
+            if model.version:
+                del self._versions[model.version]
 
-        if model == self.default:
-            self._clear_default()
+            if model == self.default:
+                self._clear_default()
 
-        model.ready = not await model.unload()
+            model.ready = not await model.unload()
+
+            model_msg = f"model '{model.name}'"
+            if model.version:
+                model_msg = f"version {model.version} of {model_msg}"
+
+            logger.info(f"Unloaded {model_msg} successfully.")
 
     def _find_model(self, version: Optional[str] = None) -> Optional[MLModel]:
         if version:
