@@ -1,11 +1,9 @@
 {
   "name": "sum-model",
 
-  "implementation": "models.SumModel",
+  "implementation": "models.StreamModel",
 
-  "max_batch_size": 200,
-  "max_batch_time": 0.2,
-
+  "parallel_workers": 0,
   "versions": ["sum-model/v1.2.3"],
   "platform": "mlserver",
   "inputs": [

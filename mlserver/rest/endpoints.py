@@ -112,15 +112,25 @@ class Endpoints:
         self,
         raw_request: Request,
         raw_response: Response,
-        payload: InferenceRequest,
+        # payload: InferenceRequest,
         model_name: str,
         model_version: Optional[str] = None,
     ) -> EventSourceResponse:
+        payload = None
+        async for chunk in raw_request.stream():
+            if chunk:
+                print(" ===== RAW ===== ")
+                print(chunk)
+                payload = InferenceRequest.parse_raw(chunk)
+                print(" ===== DECODED ===== ")
+                print(payload)
+
         request_headers = dict(raw_request.headers)
         insert_headers(payload, request_headers)
 
         infer_stream = self._data_plane.infer_stream(payload, model_name, model_version)
         sse_stream = _as_sse(infer_stream)
+
         return EventSourceResponse(sse_stream)
 
 
