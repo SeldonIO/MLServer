@@ -48,7 +48,7 @@ def test_model_logging_formatter_unstructured(name, version, expected_fmt, caplo
     logger.info("After model context")
 
     log_records = caplog.text.strip().split("\n")
-    assert len(caplog.messages) == 3
+    assert len(log_records) == 3
 
     assert expected_fmt not in log_records[0]
     assert expected_fmt in log_records[1]
@@ -56,26 +56,26 @@ def test_model_logging_formatter_unstructured(name, version, expected_fmt, caplo
 
 
 @pytest.mark.parametrize(
-    "name, version, expected_fmt",
+    "name, version, expected_model_details",
     [
         (
             "foo",
             "v1.0",
-            "{}",
+            {"model_name", "model_version"}
         ),
-        # (
-        #     "foo",
-        #     "",
-        #     "[foo]",
-        # ),
-        # (
-        #     "foo",
-        #     None,
-        #     "[foo]",
-        # ),
+        (
+            "foo",
+            "",
+            {"model_name"}
+        ),
+        (
+            "foo",
+            None,
+            {"model_name"}
+        ),
     ],
 )
-def test_model_logging_formatter_structured(name, version, expected_fmt, caplog):
+def test_model_logging_formatter_structured(name, version, expected_model_details, caplog):
     caplog.handler.setFormatter(ModelLoggerFormatter(use_structured_logging=True))
     caplog.set_level(INFO)
 
@@ -88,9 +88,14 @@ def test_model_logging_formatter_structured(name, version, expected_fmt, caplog)
         logger.info("Inside model context")
     logger.info("After model context")
 
-    structured_log = json.loads(caplog.text)
+    log_records = caplog.text.strip().split("\n")
+    assert len(log_records) == 3
 
-    assert "model_name" in structured_log
+    json_log_records = [json.loads(lr) for lr in log_records]
+
+    assert not expected_model_details <= json_log_records[0].keys()
+    assert expected_model_details <= json_log_records[1].keys()
+    assert not expected_model_details <= json_log_records[2].keys()
 
 
 @pytest.mark.parametrize("debug", [True, False])
