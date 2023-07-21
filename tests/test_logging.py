@@ -1,4 +1,6 @@
 import pytest
+import json
+
 
 from mlserver import ModelSettings
 from mlserver.context import model_context
@@ -108,6 +110,7 @@ def test_model_logging_formatter_structured(
         logger.info("Inside model context")
     logger.info("After model context")
 
+    _ = [json.loads(lr) for lr in caplog.text.strip().split("\n")]
     log_records = caplog.get_records("call")
     assert len(log_records) == 3
 
