@@ -2,7 +2,7 @@ from prometheus_client import Histogram
 
 from .registry import REGISTRY
 from .errors import InvalidModelContext
-from ..context import model_name_var, model_version_var
+from ..context import MODEL_NAME_VAR, MODEL_VERSION_VAR
 
 SELDON_MODEL_NAME_LABEL = "model_name"
 SELDON_MODEL_VERSION_LABEL = "model_version"
@@ -28,8 +28,8 @@ def register(name: str, description: str) -> Histogram:
 
 def _get_labels_from_context() -> dict:
     try:
-        model_name = model_name_var.get()
-        model_version = model_version_var.get()
+        model_name = MODEL_NAME_VAR.get()
+        model_version = MODEL_VERSION_VAR.get()
         return {
             SELDON_MODEL_NAME_LABEL: model_name,
             SELDON_MODEL_VERSION_LABEL: model_version,

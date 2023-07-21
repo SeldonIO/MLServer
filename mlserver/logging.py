@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Optional, Dict, Union
 import logging.config
 
-from .context import model_name_var, model_version_var
+from .context import MODEL_NAME_VAR, MODEL_VERSION_VAR
 from .settings import Settings
 
 LoggerName = "mlserver"
@@ -36,10 +36,7 @@ def apply_logging_file(logging_settings: Union[str, Dict]):
 
 
 class ModelLoggerFormatter(logging.Formatter):
-    """
-    A logging formatter that uses context variables to inject
-    the model name and version in the log message.
-    """
+    """Log formatter incorporating model details, e.g. name and version."""
 
     _UNSTRUCTURED_FORMAT = "%(asctime)s [%(name)s]%(model)s %(levelname)s - %(message)s"
     _STRUCTURED_FORMAT = "{\"time\":\"%(asctime)s\", \"name\": \"%(name)s\", " \
@@ -73,8 +70,8 @@ class ModelLoggerFormatter(logging.Formatter):
         return model_details
 
     def format(self, record: logging.LogRecord) -> str:
-        model_name = model_name_var.get("")
-        model_version = model_version_var.get("")
+        model_name = MODEL_NAME_VAR.get("")
+        model_version = MODEL_VERSION_VAR.get("")
 
         record.model = (
             self._format_structured_model_details(model_name, model_version)
