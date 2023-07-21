@@ -1,5 +1,3 @@
-import json
-
 import pytest
 
 from mlserver import ModelSettings
@@ -15,26 +13,37 @@ from logging import INFO
 
 
 @pytest.mark.parametrize(
-    "name, version, expected_fmt",
+    "name, version, expected_model_fmt, fmt_present_in_all",
     [
         (
             "foo",
             "v1.0",
             "[foo:v1.0]",
+            False,
         ),
         (
             "foo",
             "",
             "[foo]",
+            False,
         ),
         (
-            "foo",
-            None,
-            "[foo]",
+            "",
+            "v1.0",
+            "",
+            True,
+        ),
+        (
+            "",
+            "",
+            "",
+            True,
         ),
     ],
 )
-def test_model_logging_formatter_unstructured(name, version, expected_fmt, caplog):
+def test_model_logging_formatter_unstructured(
+    name: str, version: str, expected_model_fmt: str, fmt_present_in_all: bool, caplog
+):
     caplog.handler.setFormatter(ModelLoggerFormatter(use_structured_logging=False))
     caplog.set_level(INFO)
 
@@ -47,35 +56,46 @@ def test_model_logging_formatter_unstructured(name, version, expected_fmt, caplo
         logger.info("Inside model context")
     logger.info("After model context")
 
-    log_records = caplog.text.strip().split("\n")
+    log_records = caplog.get_records("call")
     assert len(log_records) == 3
 
-    assert expected_fmt not in log_records[0]
-    assert expected_fmt in log_records[1]
-    assert expected_fmt not in log_records[2]
+    assert all(hasattr(lr, "model") for lr in log_records)
+
+    if fmt_present_in_all:
+        assert all(lr.model == expected_model_fmt for lr in log_records)
+    else:
+        assert expected_model_fmt != log_records[0].model
+        assert expected_model_fmt == log_records[1].model
+        assert expected_model_fmt != log_records[2].model
 
 
 @pytest.mark.parametrize(
-    "name, version, expected_model_details",
+    "name, version, expected_model_fmt, fmt_present_in_all",
     [
         (
             "foo",
             "v1.0",
-            {"model_name", "model_version"}
+            ', "model_name": "foo", "model_version": "v1.0"',
+            False,
         ),
         (
             "foo",
             "",
-            {"model_name"}
+            ', "model_name": "foo"',
+            False,
         ),
         (
-            "foo",
-            None,
-            {"model_name"}
+            "",
+            "v1.0",
+            "",
+            True,
         ),
+        ("", "", "", True),
     ],
 )
-def test_model_logging_formatter_structured(name, version, expected_model_details, caplog):
+def test_model_logging_formatter_structured(
+    name: str, version: str, expected_model_fmt: str, fmt_present_in_all: bool, caplog
+):
     caplog.handler.setFormatter(ModelLoggerFormatter(use_structured_logging=True))
     caplog.set_level(INFO)
 
@@ -88,14 +108,17 @@ def test_model_logging_formatter_structured(name, version, expected_model_detail
         logger.info("Inside model context")
     logger.info("After model context")
 
-    log_records = caplog.text.strip().split("\n")
+    log_records = caplog.get_records("call")
     assert len(log_records) == 3
 
-    json_log_records = [json.loads(lr) for lr in log_records]
+    assert all(hasattr(lr, "model") for lr in log_records)
 
-    assert not expected_model_details <= json_log_records[0].keys()
-    assert expected_model_details <= json_log_records[1].keys()
-    assert not expected_model_details <= json_log_records[2].keys()
+    if fmt_present_in_all:
+        assert all(lr.model == expected_model_fmt for lr in log_records)
+    else:
+        assert expected_model_fmt != log_records[0].model
+        assert expected_model_fmt == log_records[1].model
+        assert expected_model_fmt != log_records[2].model
 
 
 @pytest.mark.parametrize("debug", [True, False])
