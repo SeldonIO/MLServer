@@ -39,9 +39,10 @@ class ModelLoggerFormatter(logging.Formatter):
     """Log formatter incorporating model details, e.g. name and version."""
 
     _UNSTRUCTURED_FORMAT = "%(asctime)s [%(name)s]%(model)s %(levelname)s - %(message)s"
-    _STRUCTURED_FORMAT = "{\"time\":\"%(asctime)s\", \"name\": \"%(name)s\", " \
-                         "\"level\": \"%(levelname)s\", \"message\": \"%(message)s\"" \
-                         " %(model)s}"
+    _STRUCTURED_FORMAT = (
+        '{"time": "%(asctime)s", "name": "%(name)s", "level": "%(levelname)s", '
+        '"message": "%(message)s" %(model)s}'
+    )
 
     def __init__(self, use_structured_logging: bool):
         super().__init__(
@@ -64,9 +65,9 @@ class ModelLoggerFormatter(logging.Formatter):
     def _format_structured_model_details(name: str, version: str) -> str:
         if not name:
             return ""
-        model_details = f", \"model_name\": \"{name}\""
+        model_details = f', "model_name": "{name}"'
         if version:
-            model_details += f", \"model_version\": \"{version}\""
+            model_details += f', "model_version": "{version}"'
         return model_details
 
     def format(self, record: logging.LogRecord) -> str:
