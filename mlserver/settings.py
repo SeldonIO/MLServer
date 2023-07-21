@@ -221,6 +221,8 @@ class Settings(BaseSettings):
     """
 
     # Logging settings
+    use_structured_logging: bool = False
+    """"""
     logging_settings: Optional[Union[str, Dict]] = None
     """Path to logging config file or dictionary configuration."""
 

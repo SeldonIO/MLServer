@@ -1,10 +1,11 @@
+import json
+
 import pytest
 
 from mlserver import ModelSettings
 from mlserver.context import model_context
 from mlserver.logging import (
     ModelLoggerFormatter,
-    LoggerFormat,
     configure_logger,
     logger,
 )
@@ -33,8 +34,8 @@ from logging import INFO
         ),
     ],
 )
-def test_model_logging_formatter(name, version, expected_fmt, caplog):
-    caplog.handler.setFormatter(ModelLoggerFormatter(LoggerFormat))
+def test_model_logging_formatter_unstructured(name, version, expected_fmt, caplog):
+    caplog.handler.setFormatter(ModelLoggerFormatter(use_structured_logging=False))
     caplog.set_level(INFO)
 
     model_settings = ModelSettings(
@@ -52,6 +53,44 @@ def test_model_logging_formatter(name, version, expected_fmt, caplog):
     assert expected_fmt not in log_records[0]
     assert expected_fmt in log_records[1]
     assert expected_fmt not in log_records[2]
+
+
+@pytest.mark.parametrize(
+    "name, version, expected_fmt",
+    [
+        (
+            "foo",
+            "v1.0",
+            "{}",
+        ),
+        # (
+        #     "foo",
+        #     "",
+        #     "[foo]",
+        # ),
+        # (
+        #     "foo",
+        #     None,
+        #     "[foo]",
+        # ),
+    ],
+)
+def test_model_logging_formatter_structured(name, version, expected_fmt, caplog):
+    caplog.handler.setFormatter(ModelLoggerFormatter(use_structured_logging=True))
+    caplog.set_level(INFO)
+
+    model_settings = ModelSettings(
+        name=name, implementation=SumModel, parameters=ModelParameters(version=version)
+    )
+
+    logger.info("Before model context")
+    with model_context(model_settings):
+        logger.info("Inside model context")
+    logger.info("After model context")
+
+    structured_log = json.loads(caplog.text)
+
+    assert "model_name" in structured_log
 
 
 @pytest.mark.parametrize("debug", [True, False])
