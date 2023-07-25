@@ -28,12 +28,14 @@ class APIRoute(FastAPIRoute):
         *args,
         response_model_exclude_unset=True,
         response_model_exclude_none=True,
+        response_class=Response,
         **kwargs
     ):
         super().__init__(
             *args,
             response_model_exclude_unset=response_model_exclude_unset,
             response_model_exclude_none=response_model_exclude_none,
+            response_class=Response,
             **kwargs
         )
 
