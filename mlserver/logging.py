@@ -14,6 +14,8 @@ LoggerName = "mlserver"
 
 logger = logging.getLogger(LoggerName)
 
+_STREAM_HANDLER_NAME = "stdout_stream_handler"
+
 
 def get_logger():
     return logger
@@ -44,13 +46,15 @@ class ModelLoggerFormatter(logging.Formatter):
         '"message": "%(message)s" %(model)s}'
     )
 
-    def __init__(self, use_structured_logging: bool):
+    def __init__(self, settings: Optional[Settings]):
+        self.use_structured_logging = (
+            settings is not None and settings.use_structured_logging
+        )
         super().__init__(
             self._STRUCTURED_FORMAT
-            if use_structured_logging
+            if self.use_structured_logging
             else self._UNSTRUCTURED_FORMAT
         )
-        self.use_structured_logging = use_structured_logging
 
     @staticmethod
     def _format_unstructured_model_details(name: str, version: str) -> str:
@@ -83,21 +87,26 @@ class ModelLoggerFormatter(logging.Formatter):
         return super().format(record)
 
 
+def _find_handler(
+    logger: logging.Logger, handler_name: str
+) -> Optional[logging.Handler]:
+    for h in logger.handlers:
+        if h.get_name() == handler_name:
+            return h
+    return None
+
+
 def configure_logger(settings: Optional[Settings] = None):
     logger = get_logger()
 
     # Don't add handler twice
-    if not logger.handlers:
-        stream_handler = StreamHandler(sys.stdout)
+    handler = _find_handler(logger, _STREAM_HANDLER_NAME)
+    if handler is None:
+        handler = StreamHandler(sys.stdout)
+        handler.set_name(_STREAM_HANDLER_NAME)
+        logger.addHandler(handler)
 
-        use_structured_logging = False
-        if settings and settings.use_structured_logging:
-            use_structured_logging = True
-
-        formatter = ModelLoggerFormatter(use_structured_logging)
-        stream_handler.setFormatter(formatter)
-
-        logger.addHandler(stream_handler)
+    handler.setFormatter(ModelLoggerFormatter(settings))
 
     logger.setLevel(logging.INFO)
     if settings and settings.debug:

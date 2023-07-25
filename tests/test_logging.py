@@ -8,6 +8,7 @@ from mlserver.logging import (
     ModelLoggerFormatter,
     configure_logger,
     logger,
+    _STREAM_HANDLER_NAME,
 )
 from mlserver.settings import ModelParameters, Settings
 from tests.fixtures import SumModel
@@ -44,9 +45,15 @@ from logging import INFO
     ],
 )
 def test_model_logging_formatter_unstructured(
-    name: str, version: str, expected_model_fmt: str, fmt_present_in_all: bool, caplog
+    name: str,
+    version: str,
+    expected_model_fmt: str,
+    fmt_present_in_all: bool,
+    settings: Settings,
+    caplog,
 ):
-    caplog.handler.setFormatter(ModelLoggerFormatter(use_structured_logging=False))
+    settings.use_structured_logging = False
+    caplog.handler.setFormatter(ModelLoggerFormatter(settings))
     caplog.set_level(INFO)
 
     model_settings = ModelSettings(
@@ -96,9 +103,15 @@ def test_model_logging_formatter_unstructured(
     ],
 )
 def test_model_logging_formatter_structured(
-    name: str, version: str, expected_model_fmt: str, fmt_present_in_all: bool, caplog
+    name: str,
+    version: str,
+    expected_model_fmt: str,
+    fmt_present_in_all: bool,
+    settings: Settings,
+    caplog,
 ):
-    caplog.handler.setFormatter(ModelLoggerFormatter(use_structured_logging=True))
+    settings.use_structured_logging = True
+    caplog.handler.setFormatter(ModelLoggerFormatter(settings))
     caplog.set_level(INFO)
 
     model_settings = ModelSettings(
@@ -136,3 +149,36 @@ def test_log_level_gets_persisted(debug: bool, settings: Settings, caplog):
         assert test_log_message in caplog.text
     else:
         assert test_log_message not in caplog.text
+
+
+def test_configure_logger_when_called_multiple_times_with_same_logger(settings):
+    logger = configure_logger()
+
+    assert len(logger.handlers) == 1
+    handler = logger.handlers[0]
+    assert handler.name == _STREAM_HANDLER_NAME
+    assert (
+        hasattr(handler.formatter, "use_structured_logging")
+        and handler.formatter.use_structured_logging is False
+    )
+
+    logger = configure_logger(settings)
+
+    assert len(logger.handlers) == 1
+    handler = logger.handlers[0]
+    assert handler.name == _STREAM_HANDLER_NAME
+    assert (
+        hasattr(handler.formatter, "use_structured_logging")
+        and handler.formatter.use_structured_logging is False
+    )
+
+    settings.use_structured_logging = True
+    logger = configure_logger(settings)
+
+    assert len(logger.handlers) == 1
+    handler = logger.handlers[0]
+    assert handler.name == _STREAM_HANDLER_NAME
+    assert (
+        hasattr(handler.formatter, "use_structured_logging")
+        and handler.formatter.use_structured_logging is True
+    )
