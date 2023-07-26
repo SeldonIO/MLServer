@@ -463,7 +463,7 @@ mlserver build similarity_model/ -t 'fancy_ml_service'
 ```
 
 We can check that our image was successfully build not only by looking at the logs of the previous 
-command but also with the `docker assets` command.
+command but also with the `docker images` command.
 
 
 ```bash
