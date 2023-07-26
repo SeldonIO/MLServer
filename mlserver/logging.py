@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Optional, Dict, Union
 import logging.config
 
-from .context import MODEL_NAME_VAR, MODEL_VERSION_VAR
+from .context import model_name_var, model_version_var
 from .settings import Settings
 
 LoggerName = "mlserver"
@@ -75,8 +75,8 @@ class ModelLoggerFormatter(logging.Formatter):
         return model_details
 
     def format(self, record: logging.LogRecord) -> str:
-        model_name = MODEL_NAME_VAR.get("")
-        model_version = MODEL_VERSION_VAR.get("")
+        model_name = model_name_var.get("")
+        model_version = model_version_var.get("")
 
         record.model = (
             self._format_structured_model_details(model_name, model_version)

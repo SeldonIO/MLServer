@@ -3,7 +3,7 @@ import pytest
 from typing import Optional
 
 from mlserver.settings import ModelSettings, ModelParameters
-from mlserver.context import model_context, MODEL_NAME_VAR, MODEL_VERSION_VAR
+from mlserver.context import model_context, model_name_var, model_version_var
 from .fixtures import SumModel
 
 
@@ -29,19 +29,19 @@ def test_model_context(name: str, version: Optional[str], expected_version: str)
     )
 
     with pytest.raises(LookupError):
-        _ = MODEL_NAME_VAR.get()
+        _ = model_name_var.get()
 
     with pytest.raises(LookupError):
-        _ = MODEL_VERSION_VAR.get()
+        _ = model_version_var.get()
 
     with model_context(model_settings):
-        var_name = MODEL_NAME_VAR.get()
-        var_version = MODEL_VERSION_VAR.get()
+        var_name = model_name_var.get()
+        var_version = model_version_var.get()
         assert var_name == name
         assert var_version == expected_version
 
     with pytest.raises(LookupError):
-        _ = MODEL_NAME_VAR.get()
+        _ = model_name_var.get()
 
     with pytest.raises(LookupError):
-        _ = MODEL_VERSION_VAR.get()
+        _ = model_version_var.get()
