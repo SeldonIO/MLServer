@@ -221,6 +221,8 @@ class Settings(BaseSettings):
     """
 
     # Logging settings
+    use_structured_logging: bool = False
+    """Use JSON-formatted structured logging instead of default format."""
     logging_settings: Optional[Union[str, Dict]] = None
     """Path to logging config file or dictionary configuration."""
 

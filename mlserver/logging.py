@@ -11,9 +11,10 @@ from .context import model_name_var, model_version_var
 from .settings import Settings
 
 LoggerName = "mlserver"
-LoggerFormat = "%(asctime)s [%(name)s]%(model)s %(levelname)s - %(message)s"
 
 logger = logging.getLogger(LoggerName)
+
+_STREAM_HANDLER_NAME = "stdout_stream_handler"
 
 
 def get_logger():
@@ -37,37 +38,75 @@ def apply_logging_file(logging_settings: Union[str, Dict]):
 
 
 class ModelLoggerFormatter(logging.Formatter):
-    """
-    A logging formatter that uses context variables to inject
-    the model name and version in the log message.
-    """
+    """Log formatter incorporating model details, e.g. name and version."""
+
+    _UNSTRUCTURED_FORMAT = "%(asctime)s [%(name)s]%(model)s %(levelname)s - %(message)s"
+    _STRUCTURED_FORMAT = (
+        '{"time": "%(asctime)s", "name": "%(name)s", "level": "%(levelname)s", '
+        '"message": "%(message)s" %(model)s}'
+    )
+
+    def __init__(self, settings: Optional[Settings]):
+        self.use_structured_logging = (
+            settings is not None and settings.use_structured_logging
+        )
+        super().__init__(
+            self._STRUCTURED_FORMAT
+            if self.use_structured_logging
+            else self._UNSTRUCTURED_FORMAT
+        )
 
     @staticmethod
-    def _fmt_model(name: str, version: str) -> str:
+    def _format_unstructured_model_details(name: str, version: str) -> str:
         if not name:
             return ""
-        model_fmt = f"{name}:{version}" if version else name
-        return f"[{model_fmt}]"
+        elif not version:
+            return f"[{name}]"
+        else:
+            return f"[{name}:{version}]"
+
+    @staticmethod
+    def _format_structured_model_details(name: str, version: str) -> str:
+        if not name:
+            return ""
+        model_details = f', "model_name": "{name}"'
+        if version:
+            model_details += f', "model_version": "{version}"'
+        return model_details
 
     def format(self, record: logging.LogRecord) -> str:
         model_name = model_name_var.get("")
         model_version = model_version_var.get("")
 
-        record.model = self._fmt_model(model_name, model_version)
+        record.model = (
+            self._format_structured_model_details(model_name, model_version)
+            if self.use_structured_logging
+            else self._format_unstructured_model_details(model_name, model_version)
+        )
 
         return super().format(record)
+
+
+def _find_handler(
+    logger: logging.Logger, handler_name: str
+) -> Optional[logging.Handler]:
+    for h in logger.handlers:
+        if h.get_name() == handler_name:
+            return h
+    return None
 
 
 def configure_logger(settings: Optional[Settings] = None):
     logger = get_logger()
 
     # Don't add handler twice
-    if not logger.handlers:
-        stream_handler = StreamHandler(sys.stdout)
-        formatter = ModelLoggerFormatter(LoggerFormat)
-        stream_handler.setFormatter(formatter)
+    handler = _find_handler(logger, _STREAM_HANDLER_NAME)
+    if handler is None:
+        handler = StreamHandler(sys.stdout)
+        handler.set_name(_STREAM_HANDLER_NAME)
+        logger.addHandler(handler)
 
-        logger.addHandler(stream_handler)
+    handler.setFormatter(ModelLoggerFormatter(settings))
 
     logger.setLevel(logging.INFO)
     if settings and settings.debug:
