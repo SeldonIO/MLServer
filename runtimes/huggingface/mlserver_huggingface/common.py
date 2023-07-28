@@ -63,7 +63,7 @@ def load_pipeline_from_settings(
     # If max_batch_size > 0 we need to ensure tokens are padded
     if settings.max_batch_size:
         model = hf_pipeline.model
-        eos_token_id = model.config.eos_token_id
+        eos_token_id = model.config.eos_token_id # type: ignore
         hf_pipeline.tokenizer.pad_token_id = [str(eos_token_id)]  # type: ignore
 
     return hf_pipeline
