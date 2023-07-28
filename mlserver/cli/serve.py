@@ -23,7 +23,7 @@ async def load_settings(
     if folder:
         sys.path.insert(0, folder)
 
-    settings = None
+    settings: Settings
     if _path_exists(folder, DEFAULT_SETTINGS_FILENAME):
         settings_path = os.path.join(folder, DEFAULT_SETTINGS_FILENAME)  # type: ignore
         settings = Settings.parse_file(settings_path)
