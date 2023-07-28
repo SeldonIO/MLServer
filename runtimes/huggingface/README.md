@@ -63,7 +63,7 @@ The path must point to a folder containing the model artefacts compatible with t
 ````{note}
 If a `parameters.extra.pretrained_model` parameter is specified in `parameters.extra` section, 
 it will take precedence over `parameters.uri`. It can point to a model artefact folder or can 
-also be a model name. Furthermore, in the case of MMS, `pretrained_model` and 
+also be a model name. Furthermore, `pretrained_model` and 
 `uri` can be used interchangeably only if the paths provided are absolute. This is 
 because `pretrained_model` expects a relative path to itself, i.e. relative 
 to the `model-settings.json`.
