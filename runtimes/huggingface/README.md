@@ -58,31 +58,15 @@ MLSERVER_MODEL_HUGGINGFACE_OPTIMUM_MODEL=true
 ### Loading local models
 It is possible to load a model from a local path into a HuggingFace pipeline, if desired. 
 The path must point to a folder containing the model artefacts compatible with the HuggingFace specifications.
-#### Multi-model serving folder structure
-In the case of MMS, the example below assumes the desired model folder resides in `./models`, e.g. `./models/your-model-artefacts-folder` and inside a `models-settings.json` file is expected to exist.
-The `uri` field could be an absolute path to the model artefacts folder or a relative path to the folder from which MLServer is started.
-```{code-block} json
----
-emphasize-lines: 5-5
----
-{
-  "name": "qa",
-  "implementation": "mlserver_huggingface.HuggingFaceRuntime",
-  "parameters": {
-      "uri": "./models/your-model-artefacts-folder",
-      "version": "v1.0",
-      "extra": {
-          "task": "question-answering",
-      }
-  }
-}
-```
+
 
 ````{note}
-If a `parameters.extra.pretrained_model` parameter is specified in `parameters.extra` section, it will take precedence 
-over `parameters.uri`. Furthermore, in the case of MMS, `parameters.extra.pretrained_model` and `parameters.uri` can 
-be used interchangeably only if the paths provided are absolute. This is because the `parameters.extra.pretrained_model` 
-expects a relative path to itself, i.e. relative to the `model-settings.json`.
+If a `parameters.extra.pretrained_model` parameter is specified in `parameters.extra` section, 
+it will take precedence over `parameters.uri`. It can point to a model artefact folder or can 
+also be a model name. Furthermore, in the case of MMS, `pretrained_model` and 
+`uri` can be used interchangeably only if the paths provided are absolute. This is 
+because `pretrained_model` expects a relative path to itself, i.e. relative 
+to the `model-settings.json`.
 ````
 
 ### Reference
