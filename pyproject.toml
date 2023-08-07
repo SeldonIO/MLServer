@@ -92,7 +92,7 @@ pyyaml = "6.0"
 conda-pack = {git = "https://github.com/conda/conda-pack", rev = "0.7.0"}
 flake8 = "6.0.0"
 flake8-black = "0.3.6"
-mypy = "1.2.0"
+mypy = "1.4.1"
 mypy-protobuf = "3.1.0"
 types-protobuf = "4.23.0.1"
 types-orjson = "3.6.2"
