@@ -2580,13 +2580,13 @@ files = [
 
 [[package]]
 name = "pytorch-lightning"
-version = "2.0.5"
+version = "2.0.6"
 description = "PyTorch Lightning is the lightweight PyTorch wrapper for ML researchers. Scale your models. Write less boilerplate."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "pytorch-lightning-2.0.5.tar.gz", hash = "sha256:242ea5fc13972868f58cc8b323054bb7e01406313dbafde389e12639dee22cd9"},
-    {file = "pytorch_lightning-2.0.5-py3-none-any.whl", hash = "sha256:cb86032e025cafb67c907fd1507de02f7a5b4edafbea89f58ca3f867cef851cd"},
+    {file = "pytorch-lightning-2.0.6.tar.gz", hash = "sha256:a97d84f679ef94f866d84bffdd7497ddfe2124dfa24e64e69565c668c03fb54f"},
+    {file = "pytorch_lightning-2.0.6-py3-none-any.whl", hash = "sha256:1c825715d9c3494adf6227596e14757b802747091c7899497e3dec3315961f03"},
 ]
 
 [package.dependencies]
@@ -3557,4 +3557,4 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8.1,<3.12"
-content-hash = "c50c85d478c144082fb5a3f004606a37f750698ae4f8a155cfba69818dd001da"
+content-hash = "99235e7b26e0d3f90077fdaac1090be357f416bee8a7d9f1ba35ebfe010a9aaa"
