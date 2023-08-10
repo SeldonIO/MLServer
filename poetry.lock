@@ -3263,13 +3263,13 @@ dev = ["absl-py", "pyink", "pylint (>=2.6.0)", "pytest", "pytest-xdist"]
 
 [[package]]
 name = "mlflow"
-version = "2.4.1"
+version = "2.5.0"
 description = "MLflow: A Platform for ML Development and Productionization"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "mlflow-2.4.1-py3-none-any.whl", hash = "sha256:355bf5c0214f9f137f0b3d78f2f0a7f284eebbb23a027ad3e686eb1b84c1bbe9"},
-    {file = "mlflow-2.4.1.tar.gz", hash = "sha256:6598f78f7ece59a9480573af57b09708a3283ece88f196e5d172c2040cec323f"},
+    {file = "mlflow-2.5.0-py3-none-any.whl", hash = "sha256:981fcb3480ca7383b47e22b5e4c726d21e2c87fb4035e5a1b57574736c665576"},
+    {file = "mlflow-2.5.0.tar.gz", hash = "sha256:f992ae8ea9c73502344baf48c4ec447aa9efbfa8965bc090868e6163234f4eb0"},
 ]
 
 [package.dependencies]
@@ -3308,7 +3308,7 @@ waitress = {version = "<3", markers = "platform_system == \"Windows\""}
 aliyun-oss = ["aliyunstoreplugin"]
 databricks = ["azure-storage-file-datalake (>12)", "boto3 (>1)", "google-cloud-storage (>=1.30.0)"]
 extras = ["azureml-core (>=1.2.0)", "boto3", "google-cloud-storage (>=1.30.0)", "kubernetes", "mlserver (>=1.2.0,!=1.3.1)", "mlserver-mlflow (>=1.2.0,!=1.3.1)", "prometheus-flask-exporter", "pyarrow", "pysftp", "requests-auth-aws-sigv4", "virtualenv"]
-gateway = ["fastapi (<1)", "pydantic (>=1.0,<3)", "uvicorn (<1)"]
+gateway = ["aiohttp (<4)", "fastapi (<1)", "psutil (<6)", "pydantic (>=1.0,<2)", "uvicorn[standard] (<1)", "watchfiles (<1)"]
 sqlserver = ["mlflow-dbstore"]
 
 [[package]]
@@ -8047,4 +8047,4 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8.1,<3.12"
-content-hash = "be98eb32e46b0520630e59524517ee5f7517a9c02ddb630ccef96a2231eb2400"
+content-hash = "a45fcd96dbbf999195c9fd075d824614a1d59992ec04065cb0f62b90bdb7bf75"
