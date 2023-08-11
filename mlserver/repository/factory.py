@@ -11,8 +11,8 @@ class ModelRepositoryFactory:
         if settings.model_repository_implementation:
             model_repository_implementation = settings.model_repository_implementation
 
-        model_repository = model_repository_implementation(
+        result = model_repository_implementation(
             root=settings.model_repository_root,
             **settings.model_repository_implementation_args,
         )
-        return model_repository
+        return result

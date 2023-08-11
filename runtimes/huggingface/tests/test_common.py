@@ -1,4 +1,4 @@
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -50,34 +50,27 @@ def test_load_pipeline(optimum_model: bool, expected):
 
 
 @pytest.mark.parametrize(
-    "hf_pretrained_model, has_model_params, uri_value, expected",
+    "has_model_params, param_uri_value, expected",
     [
-        (None, True, None, None),
-        (None, True, "", ""),
-        (None, True, "/some/folder/model-artefacts", "/some/folder/model-artefacts"),
-        (None, False, "N/A", None),
-        ("", True, None, None),
-        ("", True, "", ""),
-        ("", True, "/some/folder/model-artefacts", "/some/folder/model-artefacts"),
-        ("", False, "N/A", ""),
-        ("./some-pretrained-folder", "N/A", "N/A", "./some-pretrained-folder"),
+        (True, "", "./some-pretrained-folder"),
+        (True, None, "./some-pretrained-folder"),
+        (True, "/some/folder/model-artefacts", "./some-pretrained-folder"),
+        (False, "", "./some-pretrained-folder"),
     ],
 )
 @patch("mlserver_huggingface.common._get_pipeline_class")
-def test_pipeline_was_initialised_with_correct_model(
+def test_pipeline_was_initialised_and_pretrained_model_takes_precedence(
     mock_pipeline_factory,
-    hf_pretrained_model: Optional[str],
-    has_model_params: Optional[bool],
-    uri_value: Optional[str],
-    expected: Optional[str],
+    has_model_params: bool,
+    param_uri_value: Optional[str],
+    expected: str,
 ):
     mock_pipeline_factory.return_value = MagicMock()
 
-    hf_settings = HuggingFaceSettings(pretrained_model=hf_pretrained_model)
-
+    hf_settings = HuggingFaceSettings(pretrained_model="./some-pretrained-folder")
     model_params = None
     if has_model_params:
-        model_params = ModelParameters(uri=uri_value)
+        model_params = ModelParameters(uri=param_uri_value)
 
     model_settings = ModelSettings(
         name="foo",
@@ -88,7 +81,48 @@ def test_pipeline_was_initialised_with_correct_model(
     _ = load_pipeline_from_settings(hf_settings, model_settings)
 
     mock_pipeline_factory.return_value.assert_called_once()
+    pipeline_call_args = mock_pipeline_factory.return_value.call_args
 
+    assert pipeline_call_args.kwargs["model"] == expected
+
+
+@pytest.mark.parametrize(
+    "empty_pretrained_model_value, has_model_params, param_uri_value, expected",
+    [
+        (None, True, None, None),
+        (None, True, "", ""),
+        (None, True, "/some/folder/model-artefacts", "/some/folder/model-artefacts"),
+        (None, False, "", None),
+        ("", True, None, None),
+        ("", True, "", ""),
+        ("", True, "/some/folder/model-artefacts", "/some/folder/model-artefacts"),
+        ("", False, "", ""),
+    ],
+)
+@patch("mlserver_huggingface.common._get_pipeline_class")
+def test_pipeline_was_initialised_when_pretrained_model_is_not_supplied(
+    mock_pipeline_factory,
+    empty_pretrained_model_value: Optional[str],
+    has_model_params: bool,
+    param_uri_value: Optional[str],
+    expected: str,
+):
+    mock_pipeline_factory.return_value = MagicMock()
+
+    hf_settings = HuggingFaceSettings(pretrained_model=empty_pretrained_model_value)
+    model_params = None
+    if has_model_params:
+        model_params = ModelParameters(uri=param_uri_value)
+
+    model_settings = ModelSettings(
+        name="foo",
+        implementation=HuggingFaceRuntime,
+        parameters=model_params,
+    )
+
+    _ = load_pipeline_from_settings(hf_settings, model_settings)
+
+    mock_pipeline_factory.return_value.assert_called_once()
     pipeline_call_args = mock_pipeline_factory.return_value.call_args
 
     assert pipeline_call_args.kwargs["model"] == expected
