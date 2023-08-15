@@ -59,7 +59,7 @@ def load_pipeline_from_settings(
         framework=hf_settings.framework,
     )
 
-    # If max_batch_size > 0 we need to ensure tokens are padded
+    # If max_batch_size > 1 we need to ensure tokens are padded
     if settings.max_batch_size > 1:
         model = hf_pipeline.model
         if not hf_pipeline.tokenizer.pad_token_id:
