@@ -3,6 +3,7 @@ import numpy as np
 
 from typing import Callable
 from functools import partial
+from mlserver.logging import logger
 from mlserver.settings import ModelSettings
 
 import torch
@@ -59,10 +60,14 @@ def load_pipeline_from_settings(
     )
 
     # If max_batch_size > 0 we need to ensure tokens are padded
-    if settings.max_batch_size:
+    if settings.max_batch_size > 1:
         model = hf_pipeline.model
-        eos_token_id = model.config.eos_token_id
-        hf_pipeline.tokenizer.pad_token_id = [str(eos_token_id)]  # type: ignore
+        if not hf_pipeline.tokenizer.pad_token_id:
+            eos_token_id = model.config.eos_token_id
+            if not eos_token_id:
+                logger.warning(f"Model {hf_settings.take_name} has neither pad_token or eos_token defined, setting batch size to 1")
+                hf_pipeline._batch_size = 1
+            hf_pipeline.tokenizer.pad_token_id = [str(eos_token_id)]  # type: ignore
 
     return hf_pipeline
 
