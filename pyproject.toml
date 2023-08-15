@@ -73,7 +73,7 @@ opentelemetry-instrumentation-grpc = "^0.39b0"
 datamodel-code-generator = "0.21.0"
 grpcio-tools = "1.48.1"
 tritonclient = {version = "2.32.0", extras = ["http"]}
-pytest = "7.3.1"
+pytest = "7.4.0"
 pytest-asyncio = "0.21.0"
 pytest-mock = "3.11.1"
 pytest-cases = "3.6.14"
