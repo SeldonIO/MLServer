@@ -57,12 +57,10 @@ MLSERVER_MODEL_HUGGINGFACE_OPTIMUM_MODEL=true
 
 ### Loading models
 #### Local models
-It is possible to load a model from a local path into a HuggingFace pipeline by leaving both `parameters.uri` and `parameters.extra.pretrained_model` empty in the `model-settings.json`.
-In this case, the HuggingFace runtime will populate `parameters.uri` to have the value of the model folder where `rclone` will have
-downloaded the model artefacts folder from the specified in the UI remote location.
+It is possible to load a local model into a HuggingFace pipeline by specifying the model artefact folder path in `parameters.uri` in `model-settings.json`.
 
 #### HuggingFace models
-Already available HuggingFace models can also be downloaded and loaded by specifying their name in `parameters.extra.pretrained_model` in `model-settings.json`.
+Models in the HuggingFace hub can be loaded by specifying their name in `parameters.extra.pretrained_model` in `model-settings.json`.
 
 ````{note}
 If `parameters.extra.pretrained_model` is specified, it takes precedence over `parameters.uri`.
