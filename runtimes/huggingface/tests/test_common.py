@@ -79,7 +79,7 @@ def test_load_pipeline(optimum_model: bool, expected):
     ],
 )
 @patch("mlserver_huggingface.common._get_pipeline_class")
-def test_pipeline_was_initialised_with_correct_model_param(
+def test_pipeline_is_initialised_with_correct_model_param(
     mock_pipeline_factory,
     pretrained_model: Optional[str],
     parameters_uri: Optional[str],
