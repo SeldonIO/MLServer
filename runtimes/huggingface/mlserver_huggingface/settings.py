@@ -1,7 +1,7 @@
 import os
 import orjson
 
-from typing import Optional, Dict
+from typing import Optional, Dict, Union
 from pydantic import BaseSettings
 from distutils.util import strtobool
 from transformers.pipelines import SUPPORTED_TASKS
@@ -110,13 +110,21 @@ class HuggingFaceSettings(BaseSettings):
         return self.task
 
 
-def parse_parameters_from_env() -> Dict:
+def parse_parameters_from_env() -> Dict[str, Union[str, bool, float, int]]:
     """
     This method parses the environment variables injected via SCv1.
+
+    At least an empty dict is always returned.
     """
     # TODO: Once support for SCv1 is deprecated, we should remove this method and rely
     # purely on settings coming via the `model-settings.json` file.
     parameters = orjson.loads(os.environ.get(PARAMETERS_ENV_NAME, "[]"))
+
+    parsed_parameters: Dict[str, Union[str, bool, float, int]] = {}
+
+    # Guard: Exit early if there's no parameters
+    if len(parameters) == 0:
+        return parsed_parameters
 
     type_dict = {
         "INT": int,
@@ -126,7 +134,6 @@ def parse_parameters_from_env() -> Dict:
         "BOOL": bool,
     }
 
-    parsed_parameters = {}
     for param in parameters:
         name = param.get("name")
         value = param.get("value")
@@ -140,17 +147,15 @@ def parse_parameters_from_env() -> Dict:
                 raise InvalidModelParameter(name, value, type_)
             except KeyError:
                 raise InvalidModelParameterType(type_)
+
     return parsed_parameters
 
 
 def get_huggingface_settings(model_settings: ModelSettings) -> HuggingFaceSettings:
-    env_params = parse_parameters_from_env()
-    if not env_params and (
-        not model_settings.parameters or not model_settings.parameters.extra
-    ):
-        raise MissingHuggingFaceSettings()
+    """Get the HuggingFace settings provided to the runtime"""
 
-    extra = env_params or model_settings.parameters.extra  # type: ignore
+    env_params = parse_parameters_from_env()
+    extra = merge_huggingface_settings_extra(model_settings, env_params)
     hf_settings = HuggingFaceSettings(**extra)  # type: ignore
 
     if hf_settings.task not in SUPPORTED_TASKS:
@@ -161,3 +166,35 @@ def get_huggingface_settings(model_settings: ModelSettings) -> HuggingFaceSettin
             raise InvalidOptimumTask(hf_settings.task, SUPPORTED_OPTIMUM_TASKS.keys())
 
     return hf_settings
+
+
+def merge_huggingface_settings_extra(
+    model_settings: ModelSettings, env_params: Dict[str, Union[str, bool, float, int]]
+) -> Dict[str, Union[str, bool, float, int]]:
+    """
+    This function returns the Extra field of the Settings.
+
+    It merges them, iff they're both present, from the
+    environment AND model settings file. Precedence is
+    giving to the environment.
+    """
+
+    # Both `parameters` and `extra` are Optional, so we
+    # need to get the value, or nothing.
+    settings_params = (
+        model_settings.parameters.extra
+        if model_settings.parameters is not None
+        else None
+    )
+
+    if settings_params is None and env_params == {}:
+        # There must be settings provided by at least the environment OR model settings
+        raise MissingHuggingFaceSettings()
+
+    # Set the default value
+    settings_params = settings_params or {}
+
+    # Overwrite any conflicting keys, giving precedence to the environment
+    settings_params.update(env_params)
+
+    return settings_params
