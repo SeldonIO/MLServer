@@ -31,7 +31,7 @@ def load_pipeline_from_settings(
 
     model = hf_settings.pretrained_model
     if not model:
-        model = settings.parameters.uri
+        model = settings.parameters.uri  # type: ignore
     tokenizer = hf_settings.pretrained_tokenizer
     if not tokenizer:
         tokenizer = hf_settings.pretrained_model
