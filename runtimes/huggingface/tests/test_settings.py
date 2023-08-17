@@ -7,6 +7,7 @@ from mlserver.settings import ModelSettings, ModelParameters
 from mlserver_huggingface.runtime import HuggingFaceRuntime
 from mlserver_huggingface.settings import (
     HuggingFaceSettings,
+    ExtraDict,
     PARAMETERS_ENV_NAME,
     get_huggingface_settings,
     merge_huggingface_settings_extra,
@@ -70,7 +71,7 @@ def model_settings_extra_empty():
 )
 def test_merge_huggingface_settings_extra(
     model_settings: str,
-    env_params: Dict,
+    env_params: ExtraDict,
     expected: Dict,
     request: pytest.FixtureRequest,
 ):

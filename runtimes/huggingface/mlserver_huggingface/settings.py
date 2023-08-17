@@ -1,7 +1,7 @@
 import os
 import orjson
 
-from typing import Optional, Dict, Union
+from typing import Optional, Dict, Union, NewType
 from pydantic import BaseSettings
 from distutils.util import strtobool
 from transformers.pipelines import SUPPORTED_TASKS
@@ -110,7 +110,18 @@ class HuggingFaceSettings(BaseSettings):
         return self.task
 
 
-def parse_parameters_from_env() -> Dict[str, Union[str, bool, float, int]]:
+EXTRA_TYPE_DICT = {
+    "INT": int,
+    "FLOAT": float,
+    "DOUBLE": float,
+    "STRING": str,
+    "BOOL": bool,
+}
+
+ExtraDict = NewType("ExtraDict", Dict[str, Union[str, bool, float, int]])
+
+
+def parse_parameters_from_env() -> ExtraDict:
     """
     This method parses the environment variables injected via SCv1.
 
@@ -120,19 +131,11 @@ def parse_parameters_from_env() -> Dict[str, Union[str, bool, float, int]]:
     # purely on settings coming via the `model-settings.json` file.
     parameters = orjson.loads(os.environ.get(PARAMETERS_ENV_NAME, "[]"))
 
-    parsed_parameters: Dict[str, Union[str, bool, float, int]] = {}
+    parsed_parameters: ExtraDict = ExtraDict({})
 
     # Guard: Exit early if there's no parameters
     if len(parameters) == 0:
         return parsed_parameters
-
-    type_dict = {
-        "INT": int,
-        "FLOAT": float,
-        "DOUBLE": float,
-        "STRING": str,
-        "BOOL": bool,
-    }
 
     for param in parameters:
         name = param.get("name")
@@ -142,7 +145,7 @@ def parse_parameters_from_env() -> Dict[str, Union[str, bool, float, int]]:
             parsed_parameters[name] = bool(strtobool(value))
         else:
             try:
-                parsed_parameters[name] = type_dict[type_](value)
+                parsed_parameters[name] = EXTRA_TYPE_DICT[type_](value)
             except ValueError:
                 raise InvalidModelParameter(name, value, type_)
             except KeyError:
@@ -169,8 +172,8 @@ def get_huggingface_settings(model_settings: ModelSettings) -> HuggingFaceSettin
 
 
 def merge_huggingface_settings_extra(
-    model_settings: ModelSettings, env_params: Dict[str, Union[str, bool, float, int]]
-) -> Dict[str, Union[str, bool, float, int]]:
+    model_settings: ModelSettings, env_params: ExtraDict
+) -> ExtraDict:
     """
     This function returns the Extra field of the Settings.
 
@@ -197,4 +200,4 @@ def merge_huggingface_settings_extra(
     # Overwrite any conflicting keys, giving precedence to the environment
     settings_params.update(env_params)
 
-    return settings_params
+    return ExtraDict(settings_params)
