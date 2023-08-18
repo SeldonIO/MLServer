@@ -2,7 +2,7 @@ import os
 import orjson
 
 from typing import Optional, Dict, Union, NewType
-from pydantic import BaseSettings
+from pydantic import BaseSettings, Extra
 from distutils.util import strtobool
 from transformers.pipelines import SUPPORTED_TASKS
 
@@ -37,6 +37,7 @@ class HuggingFaceSettings(BaseSettings):
 
     class Config:
         env_prefix = ENV_PREFIX_HUGGINGFACE_SETTINGS
+        extra = Extra.ignore
 
     # TODO: Document fields
     task: str = ""

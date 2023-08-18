@@ -1,6 +1,8 @@
+from unittest.mock import MagicMock, patch
+
 import pytest
 
-from typing import Dict
+from typing import Dict, Optional
 from optimum.onnxruntime.modeling_ort import ORTModelForQuestionAnswering
 from transformers.models.distilbert.modeling_distilbert import (
     DistilBertForQuestionAnswering,
@@ -45,3 +47,58 @@ def test_load_pipeline(optimum_model: bool, expected):
     pipeline = load_pipeline_from_settings(hf_settings, model_settings)
 
     assert isinstance(pipeline.model, expected)
+
+
+@pytest.mark.parametrize(
+    "pretrained_model, parameters_uri, expected",
+    [
+        (None, None, None),
+        (None, "", ""),
+        (None, "/some/folder/model-artefacts", "/some/folder/model-artefacts"),
+        ("", None, None),
+        ("", "", ""),
+        ("", "/some/folder/model-artefacts", "/some/folder/model-artefacts"),
+        ("some-model", None, "some-model"),
+        ("some-model", "", "some-model"),
+        ("some-model", "/some/folder/model-artefacts", "some-model"),
+        (
+            "/some/other/folder/model-artefacts",
+            None,
+            "/some/other/folder/model-artefacts",
+        ),
+        (
+            "/some/other/folder/model-artefacts",
+            "",
+            "/some/other/folder/model-artefacts",
+        ),
+        (
+            "/some/other/folder/model-artefacts",
+            "/some/folder/model-artefacts",
+            "/some/other/folder/model-artefacts",
+        ),
+    ],
+)
+@patch("mlserver_huggingface.common._get_pipeline_class")
+def test_pipeline_is_initialised_with_correct_model_param(
+    mock_pipeline_factory,
+    pretrained_model: Optional[str],
+    parameters_uri: Optional[str],
+    expected: Optional[str],
+):
+    mock_pipeline_factory.return_value = MagicMock()
+
+    hf_settings = HuggingFaceSettings(pretrained_model=pretrained_model)
+    model_params = ModelParameters(uri=parameters_uri)
+
+    model_settings = ModelSettings(
+        name="foo",
+        implementation=HuggingFaceRuntime,
+        parameters=model_params,
+    )
+
+    _ = load_pipeline_from_settings(hf_settings, model_settings)
+
+    mock_pipeline_factory.return_value.assert_called_once()
+    pipeline_call_args = mock_pipeline_factory.return_value.call_args
+
+    assert pipeline_call_args.kwargs["model"] == expected
