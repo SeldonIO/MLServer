@@ -121,8 +121,8 @@ def test_encode_output(payload: np.ndarray, expected: ResponseOutput):
             np.array(["foo", "bar"], dtype=str),
         ),
         (
-            RequestInput(name="foo", shape=[3], data=[1, 2, None], datatype="FP64"),
-            np.array([1, 2, np.NaN], dtype="float64"),
+            RequestInput(name="foo", shape=[3], data=[1, 2, None], datatype="FP16"),
+            np.array([1, 2, np.NaN], dtype="float16"),
         ),
     ],
 )

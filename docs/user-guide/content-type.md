@@ -215,7 +215,8 @@ payloads under some conditions.
 In order to send / receive NaN values, you must ensure that:
 
 - You are using the `REST` interface.
-- The input / output entry containing NaN values uses the `FP32` datatype.
+- The input / output entry containing NaN values uses either the `FP16`, `FP32`
+  or `FP64` datatypes.
 - You are either using the [Pandas codec](#pandas-dataframe) or the [Numpy
   codec](#numpy-array).
 
@@ -244,7 +245,7 @@ emphasize-lines: 8
         "content_type": "np"
       },
       "data": [1, 2, null, 4]
-      "datatype": "FP32",
+      "datatype": "FP64",
       "shape": [2, 2],
     }
   ]
