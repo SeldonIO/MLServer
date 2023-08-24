@@ -78,6 +78,16 @@ def test_can_encode(payload: Any, expected: bool):
                 parameters=Parameters(content_type=NumpyCodec.ContentType),
             ),
         ),
+        (
+            np.array([2.3, 3.4, np.NaN]),
+            ResponseOutput(
+                name="foo",
+                shape=[3, 1],
+                data=[2.3, 3.4, None],
+                datatype="FP64",
+                parameters=Parameters(content_type=NumpyCodec.ContentType),
+            ),
+        ),
     ],
 )
 def test_encode_output(payload: np.ndarray, expected: ResponseOutput):
@@ -110,9 +120,55 @@ def test_encode_output(payload: np.ndarray, expected: ResponseOutput):
             RequestInput(name="foo", shape=[2], data=["foo", "bar"], datatype="BYTES"),
             np.array(["foo", "bar"], dtype=str),
         ),
+        (
+            RequestInput(name="foo", shape=[3], data=[1, 2, None], datatype="FP64"),
+            np.array([1, 2, np.NaN], dtype="float64"),
+        ),
     ],
 )
 def test_decode_input(request_input: RequestInput, expected: np.ndarray):
+    decoded = NumpyCodec.decode_input(request_input)
+    np.testing.assert_array_equal(decoded, expected)
+
+
+@pytest.mark.parametrize(
+    "request_input, expected",
+    [
+        (
+            RequestInput(name="foo", shape=[3], data=[1, 2, 3], datatype="INT32"),
+            np.array([1, 2, 3]),
+        ),
+        (
+            RequestInput(name="foo", shape=[2, 2], data=[1, 2, 3, 4], datatype="INT32"),
+            np.array([[1, 2], [3, 4]]),
+        ),
+        (
+            RequestInput(name="foo", shape=[2], data=[1, 2], datatype="FP32"),
+            np.array([1, 2], dtype=float),
+        ),
+        (
+            RequestInput(
+                name="foo", shape=[2, 1], data=[b"\x01\x02"], datatype="BYTES"
+            ),
+            np.array([[b"\x01"], [b"\x02"]]),
+        ),
+        (
+            RequestInput(name="foo", shape=[2], data=["foo", "bar"], datatype="BYTES"),
+            np.array(["foo", "bar"]),
+        ),
+        (
+            RequestInput(
+                name="foo",
+                shape=[3],
+                data=[2.3, 3.4, None],
+                datatype="FP32",
+                parameters=Parameters(content_type=NumpyCodec.ContentType),
+            ),
+            np.array([2.3, 3.4, np.NaN], dtype="float32"),
+        ),
+    ],
+)
+def test_encode_input(request_input: RequestInput, expected: np.ndarray):
     decoded = NumpyCodec.decode_input(request_input)
     np.testing.assert_array_equal(decoded, expected)
 
@@ -127,7 +183,7 @@ def test_decode_input(request_input: RequestInput, expected: np.ndarray):
         RequestInput(name="foo", shape=[2], data=["foo", "bar"], datatype="BYTES"),
     ],
 )
-def test_encode_input(request_input):
+def test_codec_idempotent(request_input: RequestInput):
     decoded = NumpyCodec.decode_input(request_input)
     response_output = NumpyCodec.encode_output(name="foo", payload=decoded)
 
