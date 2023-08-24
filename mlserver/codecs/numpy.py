@@ -97,12 +97,12 @@ def _encode_data(data: np.ndarray, datatype: str) -> list:
     # Replace NaN with null
     has_nan = np.isnan(data).any()
     if has_nan:
-        flattened_list = list(map(_convert_nan, flattened_list))
+        flattened_list = list(map(convert_nan, flattened_list))
 
     return flattened_list
 
 
-def _convert_nan(val):
+def convert_nan(val):
     if np.isnan(val):
         return None
 
