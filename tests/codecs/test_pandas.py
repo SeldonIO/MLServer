@@ -70,6 +70,16 @@ def test_can_encode(payload: Any, expected: bool):
                 name="bar", shape=[2, 1], data=[[1, 2, 3], [4, 5, 6]], datatype="BYTES"
             ),
         ),
+        (
+            pd.Series(data=[4, np.NaN, 6], name="bar"),
+            True,
+            ResponseOutput(
+                name="bar",
+                shape=[3, 1],
+                data=[4, None, 6],
+                datatype="FP64",
+            ),
+        ),
     ],
 )
 def test_to_response_output(series, use_bytes, expected):
@@ -131,6 +141,23 @@ def test_to_response_output(series, use_bytes, expected):
                         data=["A", "B", "C"],
                         parameters=Parameters(content_type=StringCodec.ContentType),
                     ),
+                ],
+            ),
+        ),
+        (
+            pd.DataFrame(
+                {
+                    "a": [1, np.NaN, 3],
+                }
+            ),
+            False,
+            InferenceResponse(
+                model_name="my-model",
+                parameters=Parameters(content_type=PandasCodec.ContentType),
+                outputs=[
+                    ResponseOutput(
+                        name="a", shape=[3, 1], datatype="FP64", data=[1, None, 3]
+                    )
                 ],
             ),
         ),
