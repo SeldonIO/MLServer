@@ -2080,13 +2080,13 @@ tests = ["pytest", "pytest-cov", "pytest-pep8"]
 
 [[package]]
 name = "optimum"
-version = "1.11.1"
+version = "1.11.2"
 description = "Optimum Library is an extension of the Hugging Face Transformers library, providing a framework to integrate third-party libraries from Hardware Partners and interface with their specific functionality."
 optional = false
 python-versions = ">=3.7.0"
 files = [
-    {file = "optimum-1.11.1-py3-none-any.whl", hash = "sha256:5dcb43049b05c6a61d34c95c394de4479f640255b5799fcb36bec669dbebf844"},
-    {file = "optimum-1.11.1.tar.gz", hash = "sha256:f483f96e4bc38b3d6913c9c2d31dcbd073a9bdd3c08fcc863328ee9056b6595c"},
+    {file = "optimum-1.11.2-py3-none-any.whl", hash = "sha256:1382d923f95e053db677b1bc84803828921b41dd15d094cc61deab33ab5d4fb2"},
+    {file = "optimum-1.11.2.tar.gz", hash = "sha256:664fa01aa4734d13ba291d41e7b901d333cea45b6c55d66098f43160bf7533ab"},
 ]
 
 [package.dependencies]
@@ -2116,7 +2116,7 @@ exporters-gpu = ["onnx", "onnxruntime-gpu", "timm"]
 exporters-tf = ["h5py", "numpy (<1.24.0)", "onnx", "onnxruntime", "tensorflow (>=2.4)", "tf2onnx", "timm"]
 furiosa = ["optimum-furiosa"]
 graphcore = ["optimum-graphcore"]
-habana = ["optimum-habana", "transformers (<4.29.0)"]
+habana = ["optimum-habana"]
 intel = ["optimum-intel (>=1.10.1)"]
 neural-compressor = ["optimum-intel[neural-compressor] (>=1.9.2)"]
 neuron = ["optimum-neuron[neuron]"]
