@@ -92,7 +92,24 @@ def _encode_data(data: np.ndarray, datatype: str) -> list:
             # need to encapsulate it into a list so that it's compatible.
             return [data.tobytes()]
 
-    return data.flatten().tolist()
+    flattened_list = data.flatten().tolist()
+
+    # Replace NaN with null
+    if datatype != "BYTES":
+        # The `isnan` method doesn't work on Numpy arrays with non-numeric
+        # types
+        has_nan = np.isnan(data).any()
+        if has_nan:
+            flattened_list = list(map(convert_nan, flattened_list))
+
+    return flattened_list
+
+
+def convert_nan(val):
+    if np.isnan(val):
+        return None
+
+    return val
 
 
 @register_input_codec

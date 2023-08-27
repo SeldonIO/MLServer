@@ -24,14 +24,15 @@ _PipelineConstructor = Callable[..., Pipeline]
 def load_pipeline_from_settings(
     hf_settings: HuggingFaceSettings, settings: ModelSettings
 ) -> Pipeline:
-    # TODO: Support URI for locally downloaded artifacts
-    # uri = model_parameters.uri
     pipeline = _get_pipeline_class(hf_settings)
 
     batch_size = 1
     if settings.max_batch_size:
         batch_size = settings.max_batch_size
 
+    model = hf_settings.pretrained_model
+    if not model:
+        model = settings.parameters.uri  # type: ignore
     tokenizer = hf_settings.pretrained_tokenizer
     if not tokenizer:
         tokenizer = hf_settings.pretrained_model
@@ -52,7 +53,7 @@ def load_pipeline_from_settings(
 
     hf_pipeline = pipeline(
         hf_settings.task_name,
-        model=hf_settings.pretrained_model,
+        model=model,
         tokenizer=tokenizer,
         device=hf_settings.device,
         batch_size=batch_size,
@@ -63,7 +64,7 @@ def load_pipeline_from_settings(
     if settings.max_batch_size > 1:
         model = hf_pipeline.model
         if not hf_pipeline.tokenizer.pad_token_id:
-            eos_token_id = model.config.eos_token_id
+            eos_token_id = model.config.eos_token_id # type: ignore
             if eos_token_id:
                 hf_pipeline.tokenizer.pad_token_id = [str(eos_token_id)]  # type: ignore
             else:

@@ -2080,13 +2080,13 @@ tests = ["pytest", "pytest-cov", "pytest-pep8"]
 
 [[package]]
 name = "optimum"
-version = "1.11.0"
+version = "1.11.2"
 description = "Optimum Library is an extension of the Hugging Face Transformers library, providing a framework to integrate third-party libraries from Hardware Partners and interface with their specific functionality."
 optional = false
 python-versions = ">=3.7.0"
 files = [
-    {file = "optimum-1.11.0-py3-none-any.whl", hash = "sha256:2d1d6202aff0b8c2978818991c8974a7b3672a25fc5b54498d43936cd065d021"},
-    {file = "optimum-1.11.0.tar.gz", hash = "sha256:ba4821db92fa0394d90971b0c23ded612095dec5192921f35ad370f6dd41f991"},
+    {file = "optimum-1.11.2-py3-none-any.whl", hash = "sha256:1382d923f95e053db677b1bc84803828921b41dd15d094cc61deab33ab5d4fb2"},
+    {file = "optimum-1.11.2.tar.gz", hash = "sha256:664fa01aa4734d13ba291d41e7b901d333cea45b6c55d66098f43160bf7533ab"},
 ]
 
 [package.dependencies]
@@ -2110,19 +2110,20 @@ transformers = {version = ">=4.26.0", extras = ["sentencepiece"]}
 benchmark = ["evaluate (>=0.2.0)", "optuna", "scikit-learn", "seqeval", "torchvision", "tqdm"]
 dev = ["Pillow", "black (>=23.1,<24.0)", "diffusers (>=0.17.0)", "einops", "invisible-watermark", "parameterized", "pytest", "pytest-xdist", "requests", "ruff (>=0.0.241,<=0.0.259)", "sacremoses", "torchaudio", "torchvision"]
 diffusers = ["diffusers"]
+doc-build = ["accelerate"]
 exporters = ["onnx", "onnxruntime", "timm"]
 exporters-gpu = ["onnx", "onnxruntime-gpu", "timm"]
 exporters-tf = ["h5py", "numpy (<1.24.0)", "onnx", "onnxruntime", "tensorflow (>=2.4)", "tf2onnx", "timm"]
 furiosa = ["optimum-furiosa"]
 graphcore = ["optimum-graphcore"]
-habana = ["optimum-habana", "transformers (<4.29.0)"]
+habana = ["optimum-habana"]
 intel = ["optimum-intel (>=1.10.1)"]
 neural-compressor = ["optimum-intel[neural-compressor] (>=1.9.2)"]
 neuron = ["optimum-neuron[neuron]"]
 neuronx = ["optimum-neuron[neuronx]"]
 nncf = ["optimum-intel[nncf] (>=1.10.1)"]
 onnxruntime = ["datasets (>=1.2.1)", "evaluate", "onnx", "onnxruntime (>=1.11.0)", "protobuf (>=3.20.1)"]
-onnxruntime-gpu = ["datasets (>=1.2.1)", "evaluate", "onnx", "onnxruntime-gpu (>=1.11.0)", "protobuf (>=3.20.1)"]
+onnxruntime-gpu = ["accelerate", "datasets (>=1.2.1)", "evaluate", "onnx", "onnxruntime-gpu (>=1.11.0)", "protobuf (>=3.20.1)"]
 openvino = ["optimum-intel[openvino] (>=1.10.1)"]
 quality = ["black (>=23.1,<24.0)", "ruff (>=0.0.241,<=0.0.259)"]
 tests = ["Pillow", "diffusers (>=0.17.0)", "einops", "invisible-watermark", "parameterized", "pytest", "pytest-xdist", "requests", "sacremoses", "torchaudio", "torchvision"]

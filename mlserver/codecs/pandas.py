@@ -4,7 +4,7 @@ import numpy as np
 from typing import Optional, Any, List, Tuple
 
 from .base import RequestCodec, register_request_codec
-from .numpy import to_datatype, to_dtype
+from .numpy import to_datatype, to_dtype, convert_nan
 from .string import encode_str, StringCodec
 from .utils import get_decoded_or_raw, InputOrOutput, inject_batch_dimension
 from .lists import ListElement
@@ -35,8 +35,13 @@ def _to_series(input_or_output: InputOrOutput) -> pd.Series:
 def _to_response_output(series: pd.Series, use_bytes: bool = True) -> ResponseOutput:
     datatype = to_datatype(series.dtype)
     data = series.tolist()
-    content_type = None
 
+    # Replace NaN with null
+    has_nan = series.isnull().any()
+    if has_nan:
+        data = list(map(convert_nan, data))
+
+    content_type = None
     if datatype == "BYTES":
         data, content_type = _process_bytes(data, use_bytes)
 

@@ -78,6 +78,26 @@ def test_can_encode(payload: Any, expected: bool):
                 parameters=Parameters(content_type=NumpyCodec.ContentType),
             ),
         ),
+        (
+            np.array([None, "bar"]),
+            ResponseOutput(
+                name="foo",
+                shape=[2, 1],
+                data=[None, "bar"],
+                datatype="BYTES",
+                parameters=Parameters(content_type=NumpyCodec.ContentType),
+            ),
+        ),
+        (
+            np.array([2.3, 3.4, np.NaN]),
+            ResponseOutput(
+                name="foo",
+                shape=[3, 1],
+                data=[2.3, 3.4, None],
+                datatype="FP64",
+                parameters=Parameters(content_type=NumpyCodec.ContentType),
+            ),
+        ),
     ],
 )
 def test_encode_output(payload: np.ndarray, expected: ResponseOutput):
@@ -110,6 +130,10 @@ def test_encode_output(payload: np.ndarray, expected: ResponseOutput):
             RequestInput(name="foo", shape=[2], data=["foo", "bar"], datatype="BYTES"),
             np.array(["foo", "bar"], dtype=str),
         ),
+        (
+            RequestInput(name="foo", shape=[3], data=[1, 2, None], datatype="FP16"),
+            np.array([1, 2, np.NaN], dtype="float16"),
+        ),
     ],
 )
 def test_decode_input(request_input: RequestInput, expected: np.ndarray):
@@ -127,7 +151,7 @@ def test_decode_input(request_input: RequestInput, expected: np.ndarray):
         RequestInput(name="foo", shape=[2], data=["foo", "bar"], datatype="BYTES"),
     ],
 )
-def test_encode_input(request_input):
+def test_codec_idempotent(request_input: RequestInput):
     decoded = NumpyCodec.decode_input(request_input)
     response_output = NumpyCodec.encode_output(name="foo", payload=decoded)
 

@@ -202,6 +202,57 @@ raw_response = response.json()
 inference_response = InferenceResponse(**raw_response)
 ```
 
+#### Support for NaN values
+
+The NaN (Not a Number) value is used in Numpy and other scientific libraries to
+describe an invalid or missing value (e.g. a division by zero).
+In some scenarios, it may be desirable to let your models receive and / or
+output NaN values (e.g. these can be useful sometimes with GBTs, like XGBoost
+models).
+This is why MLServer supports encoding NaN values on your request / response
+payloads under some conditions.
+
+In order to send / receive NaN values, you must ensure that:
+
+- You are using the `REST` interface.
+- The input / output entry containing NaN values uses either the `FP16`, `FP32`
+  or `FP64` datatypes.
+- You are either using the [Pandas codec](#pandas-dataframe) or the [Numpy
+  codec](#numpy-array).
+
+Assuming those conditions are satisfied, any `null` value within your tensor
+payload will be converted to NaN.
+
+For example, if you take the following Numpy array:
+
+```python
+import numpy as np
+
+foo = np.array([[1.2, 2.3], [np.NaN, 4.5]])
+```
+
+We could encode it as:
+
+```{code-block} json
+---
+emphasize-lines: 8
+---
+{
+  "inputs": [
+    {
+      "name": "foo",
+      "parameters": {
+        "content_type": "np"
+      },
+      "data": [1, 2, null, 4]
+      "datatype": "FP64",
+      "shape": [2, 2],
+    }
+  ]
+}
+```
+
+
 ### Model Metadata
 
 Content types can also be defined as part of the [model's
