@@ -44,7 +44,7 @@ setup(
     install_requires=[
         "click",
         # 0.89.0: https://github.com/tiangolo/fastapi/issues/5861
-        "fastapi >=0.88.0, <=0.89.1, !=0.89.0",
+        "fastapi >=0.88.0,!=0.89.0,<=0.97.0",
         "python-dotenv",
         "grpcio",
         # The importlib-resources backport is required to use some
