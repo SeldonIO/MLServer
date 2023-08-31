@@ -1,7 +1,7 @@
 FROM python:3.10-slim AS wheel-builder
 SHELL ["/bin/bash", "-l", "-c"]
 
-ARG POETRY_VERSION="1.4.2"
+ARG POETRY_VERSION="1.6.1"
 
 COPY ./hack/build-wheels.sh ./hack/build-wheels.sh
 COPY ./mlserver ./mlserver
