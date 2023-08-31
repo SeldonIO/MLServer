@@ -1415,17 +1415,17 @@ protobuf = ["grpcio-tools (>=1.57.0)"]
 
 [[package]]
 name = "gunicorn"
-version = "20.1.0"
+version = "21.2.0"
 description = "WSGI HTTP Server for UNIX"
 optional = false
 python-versions = ">=3.5"
 files = [
-    {file = "gunicorn-20.1.0-py3-none-any.whl", hash = "sha256:9dcc4547dbb1cb284accfb15ab5667a0e5d1881cc443e0677b4882a4067a807e"},
-    {file = "gunicorn-20.1.0.tar.gz", hash = "sha256:e0a968b5ba15f8a328fdfd7ab1fcb5af4470c28aaf7e55df02a99bc13138e6e8"},
+    {file = "gunicorn-21.2.0-py3-none-any.whl", hash = "sha256:3213aa5e8c24949e792bcacfc176fef362e7aac80b76c56f6b5122bf350722f0"},
+    {file = "gunicorn-21.2.0.tar.gz", hash = "sha256:88ec8bff1d634f98e61b9f65bc4bf3cd918a90806c6f5c48bc5603849ec81033"},
 ]
 
 [package.dependencies]
-setuptools = ">=3.0"
+packaging = "*"
 
 [package.extras]
 eventlet = ["eventlet (>=0.24.1)"]
@@ -1848,13 +1848,13 @@ python-dateutil = ">=2.7"
 
 [[package]]
 name = "mlflow"
-version = "2.4.1"
+version = "2.6.0"
 description = "MLflow: A Platform for ML Development and Productionization"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "mlflow-2.4.1-py3-none-any.whl", hash = "sha256:355bf5c0214f9f137f0b3d78f2f0a7f284eebbb23a027ad3e686eb1b84c1bbe9"},
-    {file = "mlflow-2.4.1.tar.gz", hash = "sha256:6598f78f7ece59a9480573af57b09708a3283ece88f196e5d172c2040cec323f"},
+    {file = "mlflow-2.6.0-py3-none-any.whl", hash = "sha256:3fc90da77be154f13ad306d94efc6ac77d504107f9085e1262c8c3e259521e79"},
+    {file = "mlflow-2.6.0.tar.gz", hash = "sha256:fd569232e65d69c0cb7006847b1a1bd80831bf0e19378052a44ee5c0ae349182"},
 ]
 
 [package.dependencies]
@@ -1866,7 +1866,7 @@ docker = ">=4.0.0,<7"
 entrypoints = "<1"
 Flask = "<3"
 gitpython = ">=2.1.0,<4"
-gunicorn = {version = "<21", markers = "platform_system != \"Windows\""}
+gunicorn = {version = "<22", markers = "platform_system != \"Windows\""}
 importlib-metadata = ">=3.7.0,<4.7.0 || >4.7.0,<7"
 Jinja2 = [
     {version = ">=2.11,<4", markers = "platform_system != \"Windows\""},
@@ -1893,7 +1893,7 @@ waitress = {version = "<3", markers = "platform_system == \"Windows\""}
 aliyun-oss = ["aliyunstoreplugin"]
 databricks = ["azure-storage-file-datalake (>12)", "boto3 (>1)", "google-cloud-storage (>=1.30.0)"]
 extras = ["azureml-core (>=1.2.0)", "boto3", "google-cloud-storage (>=1.30.0)", "kubernetes", "mlserver (>=1.2.0,!=1.3.1)", "mlserver-mlflow (>=1.2.0,!=1.3.1)", "prometheus-flask-exporter", "pyarrow", "pysftp", "requests-auth-aws-sigv4", "virtualenv"]
-gateway = ["fastapi (<1)", "pydantic (>=1.0,<3)", "uvicorn (<1)"]
+gateway = ["aiohttp (<4)", "fastapi (<1)", "psutil (<6)", "pydantic (>=1.0,<2)", "uvicorn[standard] (<1)", "watchfiles (<1)"]
 sqlserver = ["mlflow-dbstore"]
 
 [[package]]
@@ -4005,4 +4005,4 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8.1,<3.12"
-content-hash = "7d79ea43142fe8f94708c1dfb570851f88db5fc013c51fd648de70c78be1e085"
+content-hash = "41fc499d1dad29b477d20d1644b06e8ba8b8271296726aac10a68a653494475c"

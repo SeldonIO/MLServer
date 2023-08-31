@@ -131,12 +131,12 @@ tensorflow = "~2.12.0"
 ## Dev dependencies from MLflow
 torch = "2.0.0"
 pytorch-lightning = "2.0.7"
-torchmetrics = "0.11.4"
+torchmetrics = "1.1.0"
 torchvision = "0.15.1"
-mlflow = "2.5.0"
+mlflow = "2.6.0"
 
 ## Dev dependencies from HuggingFace
-transformers = "~4.30.0"
+transformers = ">=4.30,<4.32"
 
 [tool.poetry.group.docs]
 optional = true
