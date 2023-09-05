@@ -90,7 +90,7 @@ pyyaml = "6.0.1"
 ## Latest version of conda-pack (0.7.0) is not on PyPi
 ## See https://github.com/conda/conda-pack/issues/219
 conda-pack = {git = "https://github.com/conda/conda-pack", rev = "0.7.0"}
-flake8 = "6.0.0"
+flake8 = "6.1.0"
 flake8-black = "0.3.6"
 mypy = "1.5.1"
 mypy-protobuf = "3.1.0"
