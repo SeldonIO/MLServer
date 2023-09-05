@@ -102,3 +102,46 @@ def test_pipeline_is_initialised_with_correct_model_param(
     pipeline_call_args = mock_pipeline_factory.return_value.call_args
 
     assert pipeline_call_args.kwargs["model"] == expected
+
+
+@pytest.mark.parametrize(
+    "pretrained_model, task, input_batch_size, expected_batch_size",
+    [
+        (
+            "hf-internal-testing/tiny-bert-for-token-classification",
+            "token-classification",
+            1,
+            1,
+        ),
+        (
+            "hf-internal-testing/tiny-bert-for-token-classification",
+            "token-classification",
+            0,
+            1,
+        ),
+        (
+            "hf-internal-testing/tiny-bert-for-token-classification",
+            "token-classification",
+            10,
+            1,
+        ),  # Neither pad_token nor eos_token defined revert to 1
+    ],
+)
+def test_pipeline_checks_for_eos_and_pad_token(
+    pretrained_model: str,
+    task: Optional[str],
+    input_batch_size: Optional[int],
+    expected_batch_size: Optional[int],
+):
+    hf_settings = HuggingFaceSettings(pretrained_model=pretrained_model, task=task)
+    model_params = ModelParameters()
+    model_settings = ModelSettings(
+        name="foo",
+        implementation=HuggingFaceRuntime,
+        parameters=model_params,
+        max_batch_size=input_batch_size,
+    )
+
+    m = load_pipeline_from_settings(hf_settings, model_settings)
+
+    assert m._batch_size == expected_batch_size
