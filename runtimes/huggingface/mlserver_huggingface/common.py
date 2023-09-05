@@ -69,9 +69,9 @@ def load_pipeline_from_settings(
                 hf_pipeline.tokenizer.pad_token_id = [str(eos_token_id)]  # type: ignore
             else:
                 logger.warning(
-                    "Model has neither pad_token or eos_token defined, setting batch size to 1"
+                    "Model has neither pad_token or eos_token, setting batch size to 1"
                 )
-                hf_pipeline._batch_size = 1  # pylint: disable=W0212
+                hf_pipeline._batch_size = 1
 
     return hf_pipeline
 
