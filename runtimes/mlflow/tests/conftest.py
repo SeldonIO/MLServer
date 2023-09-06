@@ -41,9 +41,14 @@ def dataset() -> tuple:
 
 
 @pytest.fixture
-def model_signature(dataset: tuple) -> ModelSignature:
+def default_inference_params() -> dict:
+    return {"foo_param": "foo_value"}
+
+
+@pytest.fixture
+def model_signature(dataset: tuple, default_inference_params: dict) -> ModelSignature:
     X, y = dataset
-    signature = infer_signature(X, y)
+    signature = infer_signature(X, model_output=y, params=default_inference_params)
 
     return signature
 

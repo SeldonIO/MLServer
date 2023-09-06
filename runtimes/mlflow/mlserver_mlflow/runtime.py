@@ -10,7 +10,8 @@ from mlflow.pyfunc.scoring_server import (
     CONTENT_TYPE_CSV,
     CONTENT_TYPE_JSON,
     parse_csv_input,
-    infer_and_parse_json_input,
+    _split_data_and_params,
+    infer_and_parse_data,
     predictions_to_json,
 )
 
@@ -124,8 +125,10 @@ class MLflowRuntime(MLModel):
         if mime_type == CONTENT_TYPE_CSV:
             csv_input = StringIO(raw_body)
             data = parse_csv_input(csv_input=csv_input, schema=self._input_schema)
+            inference_params = None
         elif mime_type == CONTENT_TYPE_JSON:
-            data = infer_and_parse_json_input(raw_body, self._input_schema)
+            raw_data, inference_params = _split_data_and_params(raw_body)
+            data = infer_and_parse_data(raw_data, self._input_schema)
         else:
             err_message = (
                 "This predictor only supports the following content types, "
@@ -134,7 +137,7 @@ class MLflowRuntime(MLModel):
             raise InferenceError(err_message)
 
         try:
-            raw_predictions = self._model.predict(data)
+            raw_predictions = self._model.predict(data, params=inference_params)
         except MlflowException as e:
             raise InferenceError(e.message)
         except Exception:
