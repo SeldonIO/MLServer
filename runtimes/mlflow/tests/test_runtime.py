@@ -1,4 +1,5 @@
 import pytest
+from unittest import mock
 import numpy as np
 import pandas as pd
 
@@ -14,6 +15,7 @@ from mlserver.types import (
 )
 from mlflow.pyfunc import PyFuncModel
 from mlflow.models.signature import ModelSignature
+from mlflow.pyfunc.scoring_server import CONTENT_TYPE_CSV, CONTENT_TYPE_JSON
 
 from mlserver_mlflow import MLflowRuntime
 from mlserver_mlflow.codecs import TensorDictCodec
@@ -188,3 +190,70 @@ async def test_metadata(runtime: MLflowRuntime, model_signature: ModelSignature)
 
     assert metadata.parameters is not None
     assert metadata.parameters.content_type == PandasCodec.ContentType
+
+
+@pytest.mark.parametrize(
+    "input, expected",
+    [
+        # works with params:
+        (
+            ['{"instances": [1, 2, 3], "params": {"foo": "bar"}}', CONTENT_TYPE_JSON],
+            {"data": {"foo": [1, 2, 3]}, "params": {"foo": "bar"}},
+        ),
+        (
+            [
+                '{"inputs": [1, 2, 3], "params": {"foo": "bar"}}',
+                CONTENT_TYPE_JSON,
+            ],
+            {"data": {"foo": [1, 2, 3]}, "params": {"foo": "bar"}},
+        ),
+        (
+            [
+                '{"inputs": {"foo": [1, 2, 3]}, "params": {"foo": "bar"}}',
+                CONTENT_TYPE_JSON,
+            ],
+            {"data": {"foo": [1, 2, 3]}, "params": {"foo": "bar"}},
+        ),
+        (
+            [
+                '{"dataframe_split": {'
+                '"columns": ["foo"], '
+                '"data": [1, 2, 3]}, '
+                '"params": {"foo": "bar"}}',
+                CONTENT_TYPE_JSON,
+            ],
+            {"data": {"foo": [1, 2, 3]}, "params": {"foo": "bar"}},
+        ),
+        (
+            [
+                '{"dataframe_records": ['
+                '{"foo": 1}, {"foo": 2}, {"foo": 3}], '
+                '"params": {"foo": "bar"}}',
+                CONTENT_TYPE_JSON,
+            ],
+            {"data": {"foo": [1, 2, 3]}, "params": {"foo": "bar"}},
+        ),
+        (
+            ["foo\n1\n2\n3\n", CONTENT_TYPE_CSV],
+            {"data": {"foo": [1, 2, 3]}, "params": None},
+        ),
+        # works without params:
+        (
+            ['{"instances": [1, 2, 3]}', CONTENT_TYPE_JSON],
+            {"data": {"foo": [1, 2, 3]}, "params": None},
+        ),
+    ],
+)
+async def test_invocation_with_params(
+    runtime: MLflowRuntime,
+    input: list,
+    expected: dict,
+):
+    with mock.patch.object(
+        runtime._model, "predict", return_value=[1, 2, 3]
+    ) as predict_mock:
+        await runtime.invocations(*input)
+        np.testing.assert_array_equal(
+            predict_mock.call_args[0][0].get("foo"), expected["data"]["foo"]
+        )
+        assert predict_mock.call_args.kwargs["params"] == expected["params"]
