@@ -122,7 +122,7 @@ optional = true
 
 [tool.poetry.group.all-runtimes-dev.dependencies]
 ## Dev dependencies from Alibi-Explain
-requests-mock = "~1.10.0"
+requests-mock = "~1.11.0"
 types-requests = "~2.28.11.5"
 
 ## Dev dependencies from Alibi-Detect
