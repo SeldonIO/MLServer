@@ -1130,16 +1130,16 @@ crc32c = ["crc32c"]
 
 [[package]]
 name = "lightgbm"
-version = "4.0.0"
+version = "4.1.0"
 description = "LightGBM Python Package"
 optional = false
 python-versions = ">=3.6"
 files = [
-    {file = "lightgbm-4.0.0-py3-none-macosx_10_15_x86_64.macosx_11_6_x86_64.macosx_12_5_x86_64.whl", hash = "sha256:1fd4e5d737ef09ec707ce377f0c081f42978407ea32d4394ecbd68ed13e9eb0c"},
-    {file = "lightgbm-4.0.0-py3-none-manylinux2014_aarch64.whl", hash = "sha256:393f4128c1fad1afd31411b39b6ae8dbf62bf4151c03dffae733f2dbfef42c29"},
-    {file = "lightgbm-4.0.0-py3-none-manylinux_2_28_x86_64.whl", hash = "sha256:84b57ac7470d8a3c51da470b68fb38cf237f67dceefb6093e27e5f41a77daef7"},
-    {file = "lightgbm-4.0.0-py3-none-win_amd64.whl", hash = "sha256:f75ed6e16d7d42263cb278dd0d5f9cf1e74b89c74630352d110937154f357f79"},
-    {file = "lightgbm-4.0.0.tar.gz", hash = "sha256:03d1b3903aa51cd9a5e3965941236f2a7bf5a69d7a76059dbf68fd9b4fc92d8f"},
+    {file = "lightgbm-4.1.0-py3-none-macosx_10_15_x86_64.macosx_11_6_x86_64.macosx_12_5_x86_64.whl", hash = "sha256:f5794ab83ea5df5329675661e90e40dcfdabca844c801c351204f005fd44b31c"},
+    {file = "lightgbm-4.1.0-py3-none-manylinux2014_aarch64.whl", hash = "sha256:52023ca78e7584658b4024b8d08fa5b4cb83c469d6e3c78806b15d1867db586c"},
+    {file = "lightgbm-4.1.0-py3-none-manylinux_2_28_x86_64.whl", hash = "sha256:47578cff4bc8116b62adc02437bf2b49dcc7ad4e8e3dd8dad3fe88e694d74d93"},
+    {file = "lightgbm-4.1.0-py3-none-win_amd64.whl", hash = "sha256:384be334d7d8c76ce3894844c6487d788c7259a94c4710114ae6feaaa47dc29e"},
+    {file = "lightgbm-4.1.0.tar.gz", hash = "sha256:bee59dd269a93b093f2c610d4a6683a7ea87c63d3ea35c622123ce2c020b2abc"},
 ]
 
 [package.dependencies]
@@ -1612,8 +1612,8 @@ files = [
 [package.dependencies]
 numpy = [
     {version = ">=1.20.3", markers = "python_version < \"3.10\""},
-    {version = ">=1.21.0", markers = "python_version >= \"3.10\" and python_version < \"3.11\""},
     {version = ">=1.23.2", markers = "python_version >= \"3.11\""},
+    {version = ">=1.21.0", markers = "python_version >= \"3.10\" and python_version < \"3.11\""},
 ]
 python-dateutil = ">=2.8.2"
 pytz = ">=2020.1"
