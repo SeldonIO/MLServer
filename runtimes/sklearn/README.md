@@ -33,7 +33,7 @@ of the Scikit-Learn model.
 | --------------- | ------------------- | -------------------------------------------------------------------------------------------------------------------- |
 | `predict`       | ✅                  | Available on most models, but not in [Scikit-Learn pipelines](https://scikit-learn.org/stable/modules/compose.html). |
 | `predict_proba` | ❌                  | Only available on non-regressor models.                                                                              |
-| `transform`     | ❌                  | Only availabe on [Scikit-Learn pipelines](https://scikit-learn.org/stable/modules/compose.html).                     |
+| `transform`     | ❌                  | Only available on [Scikit-Learn pipelines](https://scikit-learn.org/stable/modules/compose.html).                     |
 
 By default, the runtime will only return the output of `predict`.
 However, you are able to control which outputs you want back through the
