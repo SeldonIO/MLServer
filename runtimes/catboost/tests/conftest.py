@@ -39,6 +39,7 @@ def model_uri(tmp_path) -> str:
 def model_settings(model_uri: str) -> ModelSettings:
     return ModelSettings(
         name="catboost-model",
+        implementation=CatboostModel,
         parameters=ModelParameters(uri=model_uri, version="v1.2.3"),
     )
 
