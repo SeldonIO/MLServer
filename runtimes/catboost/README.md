@@ -1,6 +1,6 @@
 # CatBoost runtime for MLServer
 
-This package provides a MLServer runtime compatible with CatBoost.
+This package provides a MLServer runtime compatible with CatBoost's `CatboostClassifier`.
 
 ## Usage
 

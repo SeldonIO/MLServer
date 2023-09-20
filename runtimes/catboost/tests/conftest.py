@@ -1,7 +1,7 @@
 import pytest
 import os
 import numpy as np
-from catboost import CatBoostClassifier #, CatBoostRegressor, CatBoostRanker
+from catboost import CatBoostClassifier  # , CatBoostRegressor, CatBoostRanker
 
 from mlserver.settings import ModelSettings, ModelParameters
 from mlserver.types import InferenceRequest
@@ -14,7 +14,6 @@ TESTDATA_PATH = os.path.join(TESTS_PATH, "testdata")
 
 @pytest.fixture
 def model_uri(tmp_path) -> str:
-
     train_data = np.random.randint(0, 100, size=(100, 10))
     train_labels = np.random.randint(0, 2, size=(100))
 
