@@ -54,6 +54,7 @@ def load_pipeline_from_settings(
     hf_pipeline = pipeline(
         hf_settings.task_name,
         model=model,
+        model_kwargs=hf_settings.model_kwargs,
         tokenizer=tokenizer,
         device=hf_settings.device,
         batch_size=batch_size,
