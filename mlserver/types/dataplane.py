@@ -95,5 +95,6 @@ class MetadataModelResponse(BaseModel):
 class InferenceRequest(BaseModel):
     id: Optional[str] = None
     parameters: Optional["Parameters"] = None
+    inference_kwargs: Optional[dict] = {}
     inputs: List["RequestInput"]
     outputs: Optional[List["RequestOutput"]] = None

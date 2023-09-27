@@ -40,6 +40,7 @@ class HuggingFaceRuntime(MLModel):
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
         # TODO: convert and validate?
         kwargs = HuggingfaceRequestCodec.decode_request(payload)
+        kwargs.update(payload.inference_kwargs)
         args = kwargs.pop("args", [])
 
         array_inputs = kwargs.pop("array_inputs", [])
