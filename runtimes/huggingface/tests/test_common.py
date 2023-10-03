@@ -138,7 +138,7 @@ def test_pipeline_is_initialised_with_correct_model_kwargs(
 
 
 @pytest.mark.parametrize(
-    "pretrained_model, model_kwargs, expected_model_kwargs",
+    "pretrained_model, model_kwargs, expected",
     [
         (
             "hf-internal-testing/tiny-bert-for-token-classification",
@@ -155,7 +155,7 @@ def test_pipeline_is_initialised_with_correct_model_kwargs(
 def test_pipeline_uses_model_kwargs(
     pretrained_model: str,
     model_kwargs: Optional[dict],
-    expected_model_kwargs: Optional[str],
+    expected: bool,
 ):
     hf_settings = HuggingFaceSettings(
         pretrained_model=pretrained_model,
@@ -169,7 +169,7 @@ def test_pipeline_uses_model_kwargs(
 
     m = load_pipeline_from_settings(hf_settings, model_settings)
 
-    assert m.model.is_loaded_in_8bit == expected_model_kwargs
+    assert m.model.is_loaded_in_8bit == expected
 
 
 @pytest.mark.parametrize(
