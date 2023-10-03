@@ -16,6 +16,7 @@ models](./custom/README.md)).
 - [Serving Scikit-Learn models](./sklearn/README.md)
 - [Serving XGBoost models](./xgboost/README.md)
 - [Serving LightGBM models](./lightgbm/README.md)
+- [Serving CatBoost models](./catboost/README.md)
 - [Serving Tempo pipelines](./tempo/README.md)
 - [Serving MLflow models](./mlflow/README.md)
 - [Serving custom models](./custom/README.md)

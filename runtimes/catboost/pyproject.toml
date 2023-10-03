@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "mlserver-catboost"
+version = "1.4.0.dev3"
+description = "Catboost runtime for MLServer"
+authors = ["Theofilos Papapanagiotou <theofilos@gmail.com>"]
+maintainers = ["Seldon Technologies Ltd. <hello@seldon.io>"]
+license = "Apache-2.0"
+readme = "README.md"
+packages = [{include = "mlserver_catboost"}]
+
+[tool.poetry.dependencies]
+python = "^3.8.1,<3.12"
+catboost = "*"
+joblib = "*"
+mlserver = "*"
+
+[tool.poetry.group.dev.dependencies]
+mlserver = {path = "../..", develop = true}
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

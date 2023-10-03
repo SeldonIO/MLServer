@@ -1,0 +1,11 @@
+{
+  "inputs": [
+    {
+      "name": "input-0",
+      "shape": [10],
+      "datatype": "INT32",
+      "data": [[56,  2, 85, 72,  4, 87, 26, 50, 32, 19]]
+    }
+  ],
+  "outputs": [{ "name": "predict" }]
+}
