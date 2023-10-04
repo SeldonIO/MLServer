@@ -12,7 +12,7 @@ from mlserver.settings import ModelSettings, ModelParameters
 
 from mlserver_huggingface.runtime import HuggingFaceRuntime
 from mlserver_huggingface.settings import HuggingFaceSettings
-from mlserver_huggingface.common import load_pipeline_from_settings, _get_pipeline_class
+from mlserver_huggingface.common import load_pipeline_from_settings
 
 
 @pytest.mark.parametrize(
