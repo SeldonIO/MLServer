@@ -155,7 +155,7 @@ def test_pipeline_is_initialised_with_correct_model_kwargs(
 def test_pipeline_uses_model_kwargs(
     pretrained_model: str,
     model_kwargs: Optional[dict],
-    expected: bool,
+    expected: torch.dtype,
 ):
     hf_settings = HuggingFaceSettings(
         pretrained_model=pretrained_model,
