@@ -1,7 +1,7 @@
 from unittest.mock import MagicMock, patch
 
 import pytest
-
+import torch
 from typing import Dict, Optional
 from optimum.onnxruntime.modeling_ort import ORTModelForQuestionAnswering
 from transformers.models.distilbert.modeling_distilbert import (
@@ -12,7 +12,7 @@ from mlserver.settings import ModelSettings, ModelParameters
 
 from mlserver_huggingface.runtime import HuggingFaceRuntime
 from mlserver_huggingface.settings import HuggingFaceSettings
-from mlserver_huggingface.common import load_pipeline_from_settings
+from mlserver_huggingface.common import load_pipeline_from_settings, _get_pipeline_class
 
 
 @pytest.mark.parametrize(
@@ -142,13 +142,13 @@ def test_pipeline_is_initialised_with_correct_model_kwargs(
     [
         (
             "hf-internal-testing/tiny-bert-for-token-classification",
-            {"load_in_8bit": True},
-            True,
+            {"torch_dtype": torch.float16},
+            torch.float16,
         ),
         (
             "hf-internal-testing/tiny-bert-for-token-classification",
             None,
-            False,
+            torch.float32,
         ),
     ],
 )
@@ -166,10 +166,9 @@ def test_pipeline_uses_model_kwargs(
         name="foo",
         implementation=HuggingFaceRuntime,
     )
-
     m = load_pipeline_from_settings(hf_settings, model_settings)
 
-    assert m.model.is_loaded_in_8bit == expected
+    assert m.model.dtype == expected
 
 
 @pytest.mark.parametrize(

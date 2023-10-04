@@ -25,7 +25,6 @@ def load_pipeline_from_settings(
     hf_settings: HuggingFaceSettings, settings: ModelSettings
 ) -> Pipeline:
     pipeline = _get_pipeline_class(hf_settings)
-
     batch_size = 1
     if settings.max_batch_size:
         batch_size = settings.max_batch_size
