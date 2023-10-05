@@ -123,12 +123,10 @@ def test_pipeline_is_initialised_with_correct_model_kwargs(
     mock_pipeline_factory.return_value = MagicMock()
 
     hf_settings = HuggingFaceSettings(model_kwargs=model_kwargs)
-
+    model_params = ModelParameters(uri="dummy_uri")
     model_settings = ModelSettings(
-        name="foo",
-        implementation=HuggingFaceRuntime,
+        name="foo", implementation=HuggingFaceRuntime, parameters=model_params
     )
-
     _ = load_pipeline_from_settings(hf_settings, model_settings)
 
     mock_pipeline_factory.return_value.assert_called_once()
