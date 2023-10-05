@@ -131,7 +131,7 @@ tensorflow = "~2.12.0"
 ## Dev dependencies from MLflow
 torch = "2.0.0"
 pytorch-lightning = "2.0.9.post0"
-torchmetrics = "1.1.0"
+torchmetrics = "1.2.0"
 torchvision = "0.15.1"
 mlflow = "2.6.0"
 
