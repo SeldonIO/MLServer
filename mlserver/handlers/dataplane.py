@@ -4,6 +4,7 @@ from prometheus_client import (
 )
 from typing import Optional
 
+import asyncio
 from ..errors import ModelNotReady
 from ..context import model_context
 from ..settings import Settings
@@ -17,6 +18,7 @@ from ..types import (
 from ..middleware import InferenceMiddlewares
 from ..cloudevents import CloudEventsMiddleware
 from ..utils import generate_uuid
+from ..cache.cache import ResponseCache
 
 
 class DataPlane:
@@ -25,10 +27,15 @@ class DataPlane:
     servers.
     """
 
-    def __init__(self, settings: Settings, model_registry: MultiModelRegistry):
+    def __init__(
+        self,
+        settings: Settings,
+        model_registry: MultiModelRegistry,
+        response_cache: ResponseCache,
+    ):
         self._settings = settings
         self._model_registry = model_registry
-
+        self._response_cache = response_cache
         self._inference_middleware = InferenceMiddlewares(
             CloudEventsMiddleware(settings)
         )
@@ -90,6 +97,7 @@ class DataPlane:
         ).count_exceptions()
 
         with infer_duration, infer_errors:
+            cache_key = payload.json()
             if payload.id is None:
                 payload.id = generate_uuid()
 
@@ -101,7 +109,21 @@ class DataPlane:
 
             # TODO: Make await optional for sync methods
             with model_context(model.settings):
-                prediction = await model.predict(payload)
+                if (
+                    self._settings.cache_enabled
+                    and model.settings.cache_enabled
+                    and self._response_cache is not None
+                ):
+                    cache_value = await self._response_cache.lookup(cache_key)
+                    if cache_value is not None:
+                        prediction = InferenceResponse.parse_raw(cache_value)
+                    else:
+                        prediction = await model.predict(payload)
+                        asyncio.create_task(
+                            self._response_cache.insert(cache_key, prediction.json())
+                        )
+                else:
+                    prediction = await model.predict(payload)
 
             # Ensure ID matches
             prediction.id = payload.id

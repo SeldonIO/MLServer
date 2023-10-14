@@ -241,6 +241,9 @@ class Settings(BaseSettings):
     _custom_metrics_server_settings: Optional[dict] = None
     _custom_grpc_server_settings: Optional[dict] = None
 
+    cache_enabled: Optional[bool] = False
+    """Enable Caching for the model predictions."""
+
 
 class ModelParameters(BaseSettings):
     """
@@ -393,3 +396,6 @@ class ModelSettings(BaseSettings):
     # However, it's also possible to override them manually.
     parameters: Optional[ModelParameters] = None
     """Extra parameters for each instance of this model."""
+
+    cache_enabled: Optional[bool] = False
+    """Enable Caching for the model predictions."""

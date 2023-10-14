@@ -18,6 +18,8 @@ from .grpc import GRPCServer
 from .metrics import MetricsServer
 from .kafka import KafkaServer
 from .utils import logger
+from .cache.cache import ResponseCache
+from .cache.local.local import LocalCache
 
 HANDLED_SIGNALS = [signal.SIGINT, signal.SIGTERM, signal.SIGQUIT]
 
@@ -46,8 +48,11 @@ class MLServer:
         self._model_repository = ModelRepositoryFactory.resolve_model_repository(
             self._settings
         )
+        self._response_cache = self._create_response_cache()
         self._data_plane = DataPlane(
-            settings=self._settings, model_registry=self._model_registry
+            settings=self._settings,
+            model_registry=self._model_registry,
+            response_cache=self._response_cache,
         )
         self._model_repository_handlers = ModelRepositoryHandlers(
             repository=self._model_repository, model_registry=self._model_registry
@@ -55,6 +60,12 @@ class MLServer:
 
         self._configure_logger()
         self._create_servers()
+
+    def _create_response_cache(self) -> ResponseCache:
+        if self._settings.cache_enabled:
+            return LocalCache()
+        else:
+            return None
 
     def _create_model_registry(self) -> MultiModelRegistry:
         on_model_load = [
