@@ -60,7 +60,7 @@ class MLServer:
         self._configure_logger()
         self._create_servers()
 
-    def _create_response_cache(self) -> ResponseCache | None:
+    def _create_response_cache(self) -> Optional[ResponseCache]:
         if self._settings.cache_enabled:
             return LocalCache(size=self._settings.cache_size)
         else:

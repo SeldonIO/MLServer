@@ -31,7 +31,7 @@ class DataPlane:
         self,
         settings: Settings,
         model_registry: MultiModelRegistry,
-        response_cache: ResponseCache | None,
+        response_cache: Optional[ResponseCache] = None,
     ):
         self._settings = settings
         self._model_registry = model_registry
