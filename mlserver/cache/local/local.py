@@ -17,4 +17,4 @@ class LocalCache(ResponseCache):
         if key in self.cache:
             return self.cache[key]
         else:
-            return None
+            return ""

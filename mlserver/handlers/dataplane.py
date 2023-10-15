@@ -31,7 +31,7 @@ class DataPlane:
         self,
         settings: Settings,
         model_registry: MultiModelRegistry,
-        response_cache: ResponseCache,
+        response_cache: ResponseCache | None,
     ):
         self._settings = settings
         self._model_registry = model_registry
@@ -115,7 +115,7 @@ class DataPlane:
                     and self._response_cache is not None
                 ):
                     cache_value = await self._response_cache.lookup(cache_key)
-                    if cache_value is not None:
+                    if cache_value != "":
                         prediction = InferenceResponse.parse_raw(cache_value)
                     else:
                         prediction = await model.predict(payload)
