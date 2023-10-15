@@ -244,6 +244,9 @@ class Settings(BaseSettings):
     cache_enabled: Optional[bool] = False
     """Enable Caching for the model predictions."""
 
+    cache_size: Optional[int] = 100
+    """Cache size to be used if caching is enabled."""
+
 
 class ModelParameters(BaseSettings):
     """

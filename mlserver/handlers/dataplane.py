@@ -18,7 +18,7 @@ from ..types import (
 from ..middleware import InferenceMiddlewares
 from ..cloudevents import CloudEventsMiddleware
 from ..utils import generate_uuid
-from ..cache.cache import ResponseCache
+from ..cache import ResponseCache
 
 
 class DataPlane:

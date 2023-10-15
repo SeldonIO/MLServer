@@ -18,8 +18,7 @@ from .grpc import GRPCServer
 from .metrics import MetricsServer
 from .kafka import KafkaServer
 from .utils import logger
-from .cache.cache import ResponseCache
-from .cache.local.local import LocalCache
+from .cache import ResponseCache, LocalCache
 
 HANDLED_SIGNALS = [signal.SIGINT, signal.SIGTERM, signal.SIGQUIT]
 
@@ -63,7 +62,7 @@ class MLServer:
 
     def _create_response_cache(self) -> ResponseCache:
         if self._settings.cache_enabled:
-            return LocalCache()
+            return LocalCache(size=self._settings.cache_size)
         else:
             return None
 
