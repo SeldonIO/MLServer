@@ -1,8 +1,9 @@
 from collections import OrderedDict
 from ..cache import ResponseCache
 
+
 class LocalCache(ResponseCache):
-    def __init__(self,size=100):
+    def __init__(self, size=100):
         self.cache = OrderedDict()
         self.size_limit = size
 
