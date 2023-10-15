@@ -203,7 +203,9 @@ def data_plane(
     model_registry: MultiModelRegistry,
     prometheus_registry: CollectorRegistry,
 ) -> DataPlane:
-    return DataPlane(settings=settings, model_registry=model_registry)
+    return DataPlane(
+        settings=settings, model_registry=model_registry, response_cache=None
+    )
 
 
 @pytest.fixture

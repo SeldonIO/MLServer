@@ -127,7 +127,9 @@ async def model_registry(
 
 @pytest.fixture
 def data_plane(settings: Settings, model_registry: MultiModelRegistry) -> DataPlane:
-    return DataPlane(settings=settings, model_registry=model_registry)
+    return DataPlane(
+        settings=settings, model_registry=model_registry, response_cache=None
+    )
 
 
 @pytest.fixture
