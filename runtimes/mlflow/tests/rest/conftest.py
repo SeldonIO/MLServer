@@ -95,9 +95,7 @@ def settings() -> Settings:
 
 @pytest.fixture
 def data_plane(settings: Settings, model_registry: MultiModelRegistry) -> DataPlane:
-    return DataPlane(
-        settings=settings, model_registry=model_registry, response_cache=None
-    )
+    return DataPlane(settings=settings, model_registry=model_registry)
 
 
 @pytest.fixture
