@@ -1,7 +1,7 @@
 from unittest.mock import MagicMock, patch
 
 import pytest
-
+import torch
 from typing import Dict, Optional
 from optimum.onnxruntime.modeling_ort import ORTModelForQuestionAnswering
 from transformers.models.distilbert.modeling_distilbert import (
@@ -102,6 +102,71 @@ def test_pipeline_is_initialised_with_correct_model_param(
     pipeline_call_args = mock_pipeline_factory.return_value.call_args
 
     assert pipeline_call_args.kwargs["model"] == expected
+
+
+@pytest.mark.parametrize(
+    "model_kwargs, expected",
+    [
+        (None, None),
+        (
+            {"load_in_8bit": True},
+            {"load_in_8bit": True},
+        ),
+    ],
+)
+@patch("mlserver_huggingface.common._get_pipeline_class")
+def test_pipeline_is_initialised_with_correct_model_kwargs(
+    mock_pipeline_factory,
+    model_kwargs: Optional[dict],
+    expected: Optional[str],
+):
+    mock_pipeline_factory.return_value = MagicMock()
+
+    hf_settings = HuggingFaceSettings(model_kwargs=model_kwargs)
+    model_params = ModelParameters(uri="dummy_uri")
+    model_settings = ModelSettings(
+        name="foo", implementation=HuggingFaceRuntime, parameters=model_params
+    )
+    _ = load_pipeline_from_settings(hf_settings, model_settings)
+
+    mock_pipeline_factory.return_value.assert_called_once()
+    pipeline_call_args = mock_pipeline_factory.return_value.call_args
+
+    assert pipeline_call_args.kwargs["model_kwargs"] == expected
+
+
+@pytest.mark.parametrize(
+    "pretrained_model, model_kwargs, expected",
+    [
+        (
+            "hf-internal-testing/tiny-bert-for-token-classification",
+            {"torch_dtype": torch.float16},
+            torch.float16,
+        ),
+        (
+            "hf-internal-testing/tiny-bert-for-token-classification",
+            None,
+            torch.float32,
+        ),
+    ],
+)
+def test_pipeline_uses_model_kwargs(
+    pretrained_model: str,
+    model_kwargs: Optional[dict],
+    expected: torch.dtype,
+):
+    hf_settings = HuggingFaceSettings(
+        pretrained_model=pretrained_model,
+        task="token-classification",
+        model_kwargs=model_kwargs,
+    )
+    model_settings = ModelSettings(
+        name="foo",
+        implementation=HuggingFaceRuntime,
+    )
+    m = load_pipeline_from_settings(hf_settings, model_settings)
+
+    assert m.model.dtype == expected
 
 
 @pytest.mark.parametrize(
