@@ -241,10 +241,10 @@ class Settings(BaseSettings):
     _custom_metrics_server_settings: Optional[dict] = None
     _custom_grpc_server_settings: Optional[dict] = None
 
-    cache_enabled: Optional[bool] = None
+    cache_enabled: bool = False
     """Enable caching for the model predictions."""
 
-    cache_size: Optional[int] = None
+    cache_size: int = 100
     """Cache size to be used if caching is enabled."""
 
 
@@ -400,7 +400,7 @@ class ModelSettings(BaseSettings):
     parameters: Optional[ModelParameters] = None
     """Extra parameters for each instance of this model."""
 
-    cache_enabled: Optional[bool] = None
+    cache_enabled: bool = False
     """Enable caching for a specific model. This parameter can be used to disable
     cache for a specific model, if the server level caching is enabled. If the
     server level caching is disabled, this parameter value will have no effect."""

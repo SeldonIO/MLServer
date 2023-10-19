@@ -30,7 +30,8 @@ class DataPlane:
         self._settings = settings
         self._model_registry = model_registry
 
-        self._response_cache = self._create_response_cache()
+        if settings.cache_enabled:
+            self._response_cache = self._create_response_cache()
         self._inference_middleware = InferenceMiddlewares(
             CloudEventsMiddleware(settings)
         )
@@ -91,8 +92,10 @@ class DataPlane:
             model=name, version=version
         ).count_exceptions()
 
-        with infer_duration, infer_errors:
+        if self._response_cache is not None:
             cache_key = payload.json()
+
+        with infer_duration, infer_errors:
             if payload.id is None:
                 payload.id = generate_uuid()
 
@@ -105,9 +108,8 @@ class DataPlane:
             # TODO: Make await optional for sync methods
             with model_context(model.settings):
                 if (
-                    self._settings.cache_enabled
+                    self._response_cache is not None
                     and model.settings.cache_enabled is not False
-                    and self._response_cache is not None
                 ):
                     cache_value = await self._response_cache.lookup(cache_key)
                     if cache_value != "":
@@ -115,7 +117,7 @@ class DataPlane:
                     else:
                         prediction = await model.predict(payload)
                         # ignore cache insertion error if any
-                        self._response_cache.insert(cache_key, prediction.json())
+                        await self._response_cache.insert(cache_key, prediction.json())
                 else:
                     prediction = await model.predict(payload)
 
@@ -128,10 +130,5 @@ class DataPlane:
 
             return prediction
 
-    def _create_response_cache(self) -> Optional[ResponseCache]:
-        if self._settings.cache_enabled:
-            if self._settings.cache_size is None:
-                # Default cache size if caching is enabled
-                self._settings.cache_size = 100
-            return LocalCache(size=self._settings.cache_size)
-        return None
+    def _create_response_cache(self) -> ResponseCache:
+        return LocalCache(size=self._settings.cache_size)
