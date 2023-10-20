@@ -3,7 +3,7 @@ import uuid
 
 from mlserver.errors import ModelNotReady
 from mlserver.settings import ModelSettings, ModelParameters
-from mlserver.types import MetadataTensor
+from mlserver.types import MetadataTensor, InferenceResponse
 
 from ..fixtures import SumModel
 
@@ -114,3 +114,18 @@ async def test_infer_generates_uuid(data_plane, sum_model, inference_request):
 
     assert prediction.id is not None
     assert prediction.id == str(uuid.UUID(prediction.id))
+
+
+async def test_infer_response_cache(data_plane, sum_model, inference_request):
+    prediction = await data_plane.infer(
+        payload=inference_request, name=sum_model.name, version=sum_model.version
+    )
+    response_cache = data_plane._get_response_cache()
+
+    assert response_cache is not None
+    assert response_cache.size() == 1
+    assert len(
+        InferenceResponse.parse_raw(
+            response_cache.lookup(inference_request.json())
+        ).outputs
+    ) == len(prediction.outputs)

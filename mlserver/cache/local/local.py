@@ -9,7 +9,7 @@ class LocalCache(ResponseCache):
 
     async def insert(self, key: str, value: str):
         self.cache[key] = value
-        if len(self.cache) > self.size_limit:
+        if self.size() > self.size_limit:
             # The cache removes the first entry if it overflows (i.e. in FIFO order)
             self.cache.popitem(last=False)
         return None
@@ -19,3 +19,6 @@ class LocalCache(ResponseCache):
             return self.cache[key]
         else:
             return ""
+
+    async def size(self) -> int:
+        return len(self.cache)

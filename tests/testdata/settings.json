@@ -4,5 +4,6 @@
   "parallel_workers": 2,
   "cors_settings": {
     "allow_origins": ["*"]
-  }
+  },
+  "cache_enabled": true
 }

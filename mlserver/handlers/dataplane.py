@@ -29,7 +29,7 @@ class DataPlane:
     def __init__(self, settings: Settings, model_registry: MultiModelRegistry):
         self._settings = settings
         self._model_registry = model_registry
-
+        self._response_cache = None
         if settings.cache_enabled:
             self._response_cache = self._create_response_cache()
         self._inference_middleware = InferenceMiddlewares(
@@ -132,3 +132,6 @@ class DataPlane:
 
     def _create_response_cache(self) -> ResponseCache:
         return LocalCache(size=self._settings.cache_size)
+
+    def _get_response_cache(self) -> Optional[ResponseCache]:
+        return self._response_cache
