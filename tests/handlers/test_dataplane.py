@@ -116,16 +116,36 @@ async def test_infer_generates_uuid(data_plane, sum_model, inference_request):
     assert prediction.id == str(uuid.UUID(prediction.id))
 
 
-async def test_infer_response_cache(data_plane, sum_model, inference_request):
-    prediction = await data_plane.infer(
+async def test_infer_response_cache(cached_data_plane, sum_model, inference_request):
+    cache_key = inference_request.json()
+    payload = inference_request.copy(deep=True)
+    prediction = await cached_data_plane.infer(
+        payload=payload, name=sum_model.name, version=sum_model.version
+    )
+
+    response_cache = cached_data_plane._get_response_cache()
+    assert response_cache is not None
+    assert await response_cache.size() == 1
+
+    cache_value = await response_cache.lookup(cache_key)
+    cached_response = InferenceResponse.parse_raw(cache_value)
+    assert cached_response.model_name == prediction.model_name
+    assert cached_response.model_version == prediction.model_version
+    assert cached_response.Config == prediction.Config
+    assert cached_response.outputs == prediction.outputs
+
+    prediction = await cached_data_plane.infer(
         payload=inference_request, name=sum_model.name, version=sum_model.version
     )
-    response_cache = data_plane._get_response_cache()
 
-    assert response_cache is not None
-    assert response_cache.size() == 1
-    assert len(
-        InferenceResponse.parse_raw(
-            response_cache.lookup(inference_request.json())
-        ).outputs
-    ) == len(prediction.outputs)
+    # Using existing cache value
+    assert await response_cache.size() == 1
+    assert cached_response.model_name == prediction.model_name
+    assert cached_response.model_version == prediction.model_version
+    assert cached_response.Config == prediction.Config
+    assert cached_response.outputs == prediction.outputs
+
+
+async def test_response_cache_disabled(data_plane):
+    response_cache = data_plane._get_response_cache()
+    assert response_cache is None
