@@ -1057,6 +1057,31 @@ files = [
 ]
 
 [[package]]
+name = "cuda-python"
+version = "12.3.0"
+description = "Python bindings for CUDA"
+optional = false
+python-versions = "*"
+files = [
+    {file = "cuda_python-12.3.0-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:45285ec0f0dc4fe604b3568e77ba3363d3ce531ac9f9a5510d2276ad46ef143f"},
+    {file = "cuda_python-12.3.0-cp310-cp310-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:a6f666d01e573454cbd38495911fe25686849e5996f140d9b756f02f93e19e43"},
+    {file = "cuda_python-12.3.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:7560ea424044420a2762559832e392e48317889db62c5da7e8957b1907996d32"},
+    {file = "cuda_python-12.3.0-cp310-cp310-win_amd64.whl", hash = "sha256:02f392dbb320731cf89a02a2540db84e4beb27f900d4128e407c33d20adc7c8e"},
+    {file = "cuda_python-12.3.0-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:0f4784d5f9cbf7239d00e8abcad56bf9130c0274ac20976a0e5c71d02324a42b"},
+    {file = "cuda_python-12.3.0-cp311-cp311-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:c02922b14f12aeae9388aef4d0f633bde5225a818a0bfc9cade61bcf7a65e69c"},
+    {file = "cuda_python-12.3.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:0a27dd9cb84000e3812d797de631fefcff5470ddfc30f4110aba1eccf8c32f68"},
+    {file = "cuda_python-12.3.0-cp311-cp311-win_amd64.whl", hash = "sha256:01579e5cf7959e7759e2f23232e2e53167c1cf2461b0ba73a3c2cb03602d54af"},
+    {file = "cuda_python-12.3.0-cp38-cp38-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:c1ef4fae871533942e35ebff86be9f7b74e5f75c602c93200e419668191899c3"},
+    {file = "cuda_python-12.3.0-cp38-cp38-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:b5f79e9a37e7cc8b70e511bfbf3ca6f72479928ac9fdc3c398eaba7a53a8da15"},
+    {file = "cuda_python-12.3.0-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:9740518a875715b77c52215e74d09fdc2dc02c8080db8052e6b1bc16d96557f9"},
+    {file = "cuda_python-12.3.0-cp38-cp38-win_amd64.whl", hash = "sha256:3113e83d0b596d393a32fe4fcd2461f905ce3dc4e6bc9e6d2fd451834b2fc167"},
+    {file = "cuda_python-12.3.0-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:a55005abb6597b4f24cf6d20e7e0debb8d29023d6456337e0129717ecf669864"},
+    {file = "cuda_python-12.3.0-cp39-cp39-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:59f67d9f6d461c78a5552044b9660759b84d949b506afc7c797b18c12d49f967"},
+    {file = "cuda_python-12.3.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:386b9c823fb41fc305dcb5074336c9e74863813fa84d9c7394f4fc068a2b1e2f"},
+    {file = "cuda_python-12.3.0-cp39-cp39-win_amd64.whl", hash = "sha256:4409591a627ae400a1ef5e1635d5a57b45488599d1ef16248cdbc960cb6b9f3f"},
+]
+
+[[package]]
 name = "cycler"
 version = "0.11.0"
 description = "Composable style cycles"
@@ -7566,26 +7591,26 @@ tutorials = ["matplotlib", "pandas", "tabulate"]
 
 [[package]]
 name = "tritonclient"
-version = "2.32.0"
+version = "2.38.0"
 description = "Python client library and utilities for communicating with Triton Inference Server"
 optional = false
 python-versions = "*"
 files = [
-    {file = "tritonclient-2.32.0-py3-none-any.whl", hash = "sha256:2a9077a0f1424ef521ee89a519cdbe29892a058068b195641e83ba97817f150d"},
-    {file = "tritonclient-2.32.0-py3-none-manylinux1_x86_64.whl", hash = "sha256:0431006258c0cca6ecb840d0af5b97bd40e13ec3224005dcd31da14f9d396421"},
-    {file = "tritonclient-2.32.0-py3-none-manylinux2014_aarch64.whl", hash = "sha256:8a1476c64c07f8873a65025bfd14d40ffc153e0966bb2b361939ad4eceec0a6a"},
+    {file = "tritonclient-2.38.0-py3-none-any.whl", hash = "sha256:c472740daa9e211deb26a333e7984cb2a1bf8f075ae70edc587559a28472b948"},
+    {file = "tritonclient-2.38.0-py3-none-manylinux1_x86_64.whl", hash = "sha256:2c77702a09327d86ba9876f2ed0e0419be0e3bf4a1a2813e8385531ee2cf2369"},
 ]
 
 [package.dependencies]
-aiohttp = {version = ">=3.8.1", optional = true, markers = "extra == \"http\""}
+aiohttp = {version = ">=3.8.1,<4.0.0", optional = true, markers = "extra == \"http\""}
+cuda-python = "*"
 geventhttpclient = {version = ">=1.4.4,<=2.0.2", optional = true, markers = "extra == \"http\""}
 numpy = ">=1.19.1"
 python-rapidjson = ">=0.9.1"
 
 [package.extras]
-all = ["aiohttp (>=3.8.1)", "geventhttpclient (>=1.4.4,<=2.0.2)", "grpcio (>=1.41.0)", "numpy (>=1.19.1)", "packaging (>=14.1)", "protobuf (>=3.5.0,<4)", "python-rapidjson (>=0.9.1)"]
+all = ["aiohttp (>=3.8.1,<4.0.0)", "geventhttpclient (>=1.4.4,<=2.0.2)", "grpcio (>=1.41.0)", "numpy (>=1.19.1)", "packaging (>=14.1)", "protobuf (>=3.5.0,<4)", "python-rapidjson (>=0.9.1)"]
 grpc = ["grpcio (>=1.41.0)", "numpy (>=1.19.1)", "packaging (>=14.1)", "protobuf (>=3.5.0,<4)", "python-rapidjson (>=0.9.1)"]
-http = ["aiohttp (>=3.8.1)", "geventhttpclient (>=1.4.4,<=2.0.2)", "numpy (>=1.19.1)", "python-rapidjson (>=0.9.1)"]
+http = ["aiohttp (>=3.8.1,<4.0.0)", "geventhttpclient (>=1.4.4,<=2.0.2)", "numpy (>=1.19.1)", "python-rapidjson (>=0.9.1)"]
 
 [[package]]
 name = "typer"
@@ -8260,4 +8285,4 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8.1,<3.12"
-content-hash = "8f89cf7d1f572f727d4d7784096cffc37e83cf315f90e64fd1507ce7bafa1823"
+content-hash = "8e8632380103b6ef1ccae1c295dad8ded8ce3f25d9e4baebba76b6eb0cadf7be"
