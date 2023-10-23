@@ -55,7 +55,7 @@ uvicorn = "*"
 starlette-exporter = "*"
 py-grpc-prometheus = "*"
 aiokafka = "*"
-tritonclient = {version = "^2.24", extras = ["http"]}
+tritonclient = {version = "^2.38", extras = ["http"]}
 aiofiles = "*"
 orjson = "*"
 uvloop = {version = "*", markers = "sys_platform != 'win32' and (sys_platform != 'cygwin' and platform_python_implementation != 'PyPy')"}
@@ -72,7 +72,7 @@ opentelemetry-instrumentation-grpc = "^0.39b0"
 [tool.poetry.group.dev.dependencies]
 datamodel-code-generator = "0.21.0"
 grpcio-tools = "1.48.1"
-tritonclient = {version = "2.32.0", extras = ["http"]}
+tritonclient = {version = "2.38.0", extras = ["http"]}
 pytest = "7.4.0"
 pytest-asyncio = "0.21.1"
 pytest-mock = "3.11.1"
