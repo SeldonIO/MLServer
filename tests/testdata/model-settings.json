@@ -28,5 +28,7 @@
 
   "parameters": {
     "version": "v1.2.3"
-  }
+  },
+
+  "cache_enabled": true
 }
