@@ -18,7 +18,7 @@ optimum = {extras = ["onnxruntime"], version = ">=1.4,<2.0"}
 mlserver = {path = "../..", develop = true}
 torch = "2.0.0"
 transformers = ">=4.30,<4.35"
-tensorflow = "~2.12.0"
+tensorflow = ">=2.12,<2.14"
 
 [build-system]
 requires = ["poetry-core"]
