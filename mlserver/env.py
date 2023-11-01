@@ -114,7 +114,7 @@ class Environment:
 
         return ""
 
-    def __enter__(self):
+    def __enter__(self) -> "Environment":
         self._prev_sys_path = sys.path
         self._prev_bin_path = os.environ["PATH"]
 
