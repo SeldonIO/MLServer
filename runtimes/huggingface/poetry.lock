@@ -2357,12 +2357,13 @@ tests = ["pytest", "pytest-cov", "pytest-pep8"]
 
 [[package]]
 name = "optimum"
-version = "1.13.2"
+version = "1.13.3"
 description = "Optimum Library is an extension of the Hugging Face Transformers library, providing a framework to integrate third-party libraries from Hardware Partners and interface with their specific functionality."
 optional = false
 python-versions = ">=3.7.0"
 files = [
-    {file = "optimum-1.13.2.tar.gz", hash = "sha256:a637ce85881019333f40f19ae7ee8ae9e22e2346cdd4f25b9b07be3a95ca4962"},
+    {file = "optimum-1.13.3-py3-none-any.whl", hash = "sha256:cb8c18aecc79519a74f7a522ebd1823ee7766b67d5901be88d0fffebe2e91bd1"},
+    {file = "optimum-1.13.3.tar.gz", hash = "sha256:fdd1285723fc266472115f7c702de4aec89e81789c5ca054947bdab4d63c4f7a"},
 ]
 
 [package.dependencies]
@@ -2372,7 +2373,7 @@ datasets = [
     {version = ">=1.2.1", optional = true, markers = "extra == \"onnxruntime\""},
 ]
 evaluate = {version = "*", optional = true, markers = "extra == \"onnxruntime\""}
-huggingface_hub = ">=0.8.0"
+huggingface-hub = ">=0.8.0"
 numpy = "*"
 onnx = {version = "*", optional = true, markers = "extra == \"onnxruntime\""}
 onnxruntime = {version = ">=1.11.0", optional = true, markers = "extra == \"onnxruntime\""}
@@ -2380,7 +2381,7 @@ packaging = "*"
 protobuf = {version = ">=3.20.1", optional = true, markers = "extra == \"onnxruntime\""}
 sympy = "*"
 torch = ">=1.9"
-transformers = {version = ">=4.26.0", extras = ["sentencepiece"]}
+transformers = {version = ">=4.26.0,<4.35.0", extras = ["sentencepiece"]}
 
 [package.extras]
 benchmark = ["evaluate (>=0.2.0)", "optuna", "scikit-learn", "seqeval", "torchvision", "tqdm"]
@@ -2392,7 +2393,7 @@ exporters-gpu = ["onnx", "onnxruntime-gpu", "timm"]
 exporters-tf = ["h5py", "numpy (<1.24.0)", "onnx", "onnxruntime", "tensorflow (>=2.4,<=2.12.1)", "tf2onnx", "timm"]
 furiosa = ["optimum-furiosa"]
 graphcore = ["optimum-graphcore"]
-habana = ["optimum-habana"]
+habana = ["optimum-habana", "transformers (>=4.33.0,<4.35.0)"]
 intel = ["optimum-intel (>=1.11.0)"]
 neural-compressor = ["optimum-intel[neural-compressor] (>=1.11.0)"]
 neuron = ["optimum-neuron[neuron]"]
