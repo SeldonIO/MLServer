@@ -83,7 +83,7 @@ class HuggingFaceSettings(BaseSettings):
     runtime.
     """
 
-    device: int = -1
+    device: Optional[Union[int, str, "torch.device"]] = -1
     """
     Device in which this pipeline will be loaded (e.g., "cpu", "cuda:1", "mps",
     or a GPU ordinal rank like 1).
