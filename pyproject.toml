@@ -149,7 +149,7 @@ myst-parser = "2.0.0"
 sphinxcontrib-bibtex = "2.5.0"
 autodoc_pydantic = "1.9.0"
 sphinx-click = "4.4.0"
-sphinx_design = "0.4.1"
+sphinx_design = "0.5.0"
 sphinx-autobuild = "2021.3.14"
 
 [build-system]
