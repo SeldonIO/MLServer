@@ -2211,17 +2211,17 @@ files = [
 
 [[package]]
 name = "xgboost"
-version = "2.0.0"
+version = "2.0.2"
 description = "XGBoost Python Package"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "xgboost-2.0.0-py3-none-macosx_10_15_x86_64.macosx_11_0_x86_64.macosx_12_0_x86_64.whl", hash = "sha256:602134f13df6ac0747191febe29b020699c3ef7eae7c35bb55004b3288c21bb4"},
-    {file = "xgboost-2.0.0-py3-none-macosx_12_0_arm64.whl", hash = "sha256:0a1041718a0d7026aa51c9abc5270f22620b9ac930c0785c2178216fe073c512"},
-    {file = "xgboost-2.0.0-py3-none-manylinux2014_aarch64.whl", hash = "sha256:b73b954096775b7012dec7834420e051f98c51529263b5724386858bb54300af"},
-    {file = "xgboost-2.0.0-py3-none-manylinux2014_x86_64.whl", hash = "sha256:5bf02fa47d727eb5e8e71e39f3c21a5d46490e43b3d985e24f7a0126ef33eabc"},
-    {file = "xgboost-2.0.0-py3-none-win_amd64.whl", hash = "sha256:fe83a3a47dcb56880f3957e0cdb7780d5f886007d9cd10c51a9c0a30d9e970bc"},
-    {file = "xgboost-2.0.0.tar.gz", hash = "sha256:a89a4504c486043dbfdad41e5f426e2a0b4e5494a5f3ca99cf7ad85a665c79e7"},
+    {file = "xgboost-2.0.2-py3-none-macosx_10_15_x86_64.macosx_11_0_x86_64.macosx_12_0_x86_64.whl", hash = "sha256:630f04b04b0dccd532ad9e5c112030c04ea4e4764b6c3dc8ac49431ce60c03df"},
+    {file = "xgboost-2.0.2-py3-none-macosx_12_0_arm64.whl", hash = "sha256:ceefbf09a66af56109e9076680e44f14895a09e3c81e1af9e22ee57a86d86c9b"},
+    {file = "xgboost-2.0.2-py3-none-manylinux2014_aarch64.whl", hash = "sha256:6c98b48229eefbdc7a30ce7df88ec5c8e88c5a5d13a7dd78952de2f12ae72480"},
+    {file = "xgboost-2.0.2-py3-none-manylinux2014_x86_64.whl", hash = "sha256:351acb1696f6e83ce7650a8ca1fee5d4f9e4cef78d39c0973984c8eb226e2bff"},
+    {file = "xgboost-2.0.2-py3-none-win_amd64.whl", hash = "sha256:f07f42441f05a289bc4d34342c2335726763ae0759d7241ef25d0eab007dbec4"},
+    {file = "xgboost-2.0.2.tar.gz", hash = "sha256:55b5188e6da1d61f02f30a5dd8daffc3a6b5bb975a7249bf381dc1754dc89688"},
 ]
 
 [package.dependencies]
