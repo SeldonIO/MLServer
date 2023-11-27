@@ -2,7 +2,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 import torch
-from typing import Dict, Optional
+from typing import Dict, Optional, Union
 from optimum.onnxruntime.modeling_ort import ORTModelForQuestionAnswering
 from transformers.models.distilbert.modeling_distilbert import (
     DistilBertForQuestionAnswering,
@@ -167,6 +167,43 @@ def test_pipeline_uses_model_kwargs(
     m = load_pipeline_from_settings(hf_settings, model_settings)
 
     assert m.model.dtype == expected
+
+
+@pytest.mark.parametrize(
+    "pretrained_model, device, expected",
+    [
+        (
+            "hf-internal-testing/tiny-bert-for-token-classification",
+            None,
+            torch.device("cpu"),
+        ),
+        (
+            "hf-internal-testing/tiny-bert-for-token-classification",
+            -1,
+            torch.device("cpu"),
+        ),
+        (
+            "hf-internal-testing/tiny-bert-for-token-classification",
+            "cpu",
+            torch.device("cpu"),
+        ),
+    ],
+)
+def test_pipeline_cpu_device_set(
+    pretrained_model: str,
+    device: Optional[Union[str, int]],
+    expected: torch.device,
+):
+    hf_settings = HuggingFaceSettings(
+        pretrained_model=pretrained_model, task="token-classification", device=device
+    )
+    model_settings = ModelSettings(
+        name="foo",
+        implementation=HuggingFaceRuntime,
+    )
+    m = load_pipeline_from_settings(hf_settings, model_settings)
+
+    assert m.model.device == expected
 
 
 @pytest.mark.parametrize(
