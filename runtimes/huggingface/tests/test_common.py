@@ -1,5 +1,5 @@
 from unittest.mock import MagicMock, patch
-
+import json
 import pytest
 import torch
 from typing import Dict, Optional
@@ -13,6 +13,9 @@ from mlserver.settings import ModelSettings, ModelParameters
 from mlserver_huggingface.runtime import HuggingFaceRuntime
 from mlserver_huggingface.settings import HuggingFaceSettings
 from mlserver_huggingface.common import load_pipeline_from_settings
+from mlserver.types import InferenceRequest, RequestInput
+from mlserver.settings import ModelSettings, ModelParameters
+from mlserver.types.dataplane import Parameters
 
 
 @pytest.mark.parametrize(
@@ -210,3 +213,61 @@ def test_pipeline_checks_for_eos_and_pad_token(
     m = load_pipeline_from_settings(hf_settings, model_settings)
 
     assert m._batch_size == expected_batch_size
+
+
+@pytest.mark.parametrize(
+    "inference_kwargs1, inference_kwargs2, expected",
+    [
+        (
+            {"max_length": 20},
+            {"max_length": 10},
+            True,
+        )
+    ],
+)
+async def test_pipeline_uses_inference_kwargs(
+    inference_kwargs1: Optional[dict],
+    inference_kwargs2: Optional[dict],
+    expected: bool,
+):
+    model_settings = ModelSettings(
+        name="foo",
+        implementation=HuggingFaceRuntime,
+        parameters=ModelParameters(
+            extra={
+                "pretrained_model": "Maykeye/TinyLLama-v0",
+                "task": "text-generation",
+            }
+        ),
+    )
+    runtime = HuggingFaceRuntime(model_settings)
+    runtime.ready = await runtime.load()
+    payload1 = InferenceRequest(
+        inputs=[
+            RequestInput(
+                name="args",
+                shape=[1],
+                datatype="BYTES",
+                data=["This is a test"],
+            )
+        ],
+        parameters=Parameters(extra=inference_kwargs1),
+    )
+    payload2 = InferenceRequest(
+        inputs=[
+            RequestInput(
+                name="args",
+                shape=[1],
+                datatype="BYTES",
+                data=["This is a test"],
+            )
+        ],
+        parameters=Parameters(extra=inference_kwargs2),
+    )
+
+    result1 = await runtime.predict(payload1)
+    result1 = json.loads(result1.outputs[0].data[0])["generated_text"]
+
+    result2 = await runtime.predict(payload2)
+    result2 = json.loads(result2.outputs[0].data[0])["generated_text"]
+    assert (len(result1) > len(result2)) == expected
