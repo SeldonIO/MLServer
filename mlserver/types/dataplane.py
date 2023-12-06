@@ -28,7 +28,7 @@ class Parameters(BaseModel):
 
     content_type: Optional[str] = None
     headers: Optional[Dict[str, Any]] = None
-    extra: Optional[dict] = {}
+    extra: Optional[dict] = None
 
 
 class TensorData(BaseModel):

@@ -1,3 +1,4 @@
+from symbol import comparison
 from unittest.mock import MagicMock, patch
 import json
 import pytest
@@ -269,4 +270,5 @@ async def test_pipeline_uses_inference_kwargs(
 
     result2 = await runtime.predict(payload2)
     result2 = json.loads(result2.outputs[0].data[0])["generated_text"]
-    assert (len(result1) > len(result2)) == expected
+    comparison = len(result1) > len(result2)
+    assert comparison == expected
