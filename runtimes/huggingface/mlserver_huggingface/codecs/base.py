@@ -183,7 +183,9 @@ class MultiInputRequestCodec(RequestCodec):
             values[item.name] = value
         if request.parameters is not None:
             if hasattr(request.parameters, "extra"):
-                values.update(request.parameters.extra)
+                extra = request.parameters.extra
+                if isinstance(extra, dict):
+                    values.update(extra)
         return values
 
 
