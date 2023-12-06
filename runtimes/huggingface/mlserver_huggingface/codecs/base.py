@@ -182,7 +182,7 @@ class MultiInputRequestCodec(RequestCodec):
             value = get_decoded_or_raw(item)
             values[item.name] = value
         if request.parameters is not None:
-            if request.parameters.extra is not None:
+            if hasattr(request.parameters, "extra"):
                 values.update(request.parameters.extra)
         return values
 

@@ -266,8 +266,10 @@ async def test_pipeline_uses_inference_kwargs(
     )
 
     result1 = await runtime.predict(payload1)
-    result1 = json.loads(result1.outputs[0].data[0])["generated_text"]
+    generated_text1 = json.loads(result1.outputs[0].data[0])["generated_text"]
+    assert isinstance(generated_text1, str)
     result2 = await runtime.predict(payload2)
-    result2 = json.loads(result2.outputs[0].data[0])["generated_text"]
-    comparison = len(result1) > len(result2)
+    generated_text2 = json.loads(result2.outputs[0].data[0])["generated_text"]
+    assert isinstance(generated_text2, str)
+    comparison = len(generated_text1) > len(generated_text2)
     assert comparison == expected
