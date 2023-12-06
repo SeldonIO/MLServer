@@ -28,7 +28,7 @@ class Parameters(BaseModel):
 
     content_type: Optional[str] = None
     headers: Optional[Dict[str, Any]] = None
-
+    extra: Optional[dict] = {}
 
 class TensorData(BaseModel):
     __root__: Any = Field(..., title="TensorData")
