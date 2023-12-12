@@ -13,6 +13,10 @@ mlserver = "*"
 tensorflow = "*"
 pillow = "*"
 optimum = {extras = ["onnxruntime"], version = ">=1.4,<2.0"}
+fugashi = "^1.3.0"
+unidic = "^1.1.0"
+unidic-lite = "^1.0.8"
+ipadic = "^1.0.0"
 
 [tool.poetry.group.dev.dependencies]
 mlserver = {path = "../..", develop = true}
