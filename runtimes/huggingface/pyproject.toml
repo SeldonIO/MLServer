@@ -25,9 +25,9 @@ torch = "2.2.2"
 transformers = ">=4.30,<5.0"
 tensorflow = ">=2.12,<2.17"
 
+[tool.poetry.extras]
+japanese = ["fugashi", "unidic", "unidic-lite", "ipadic"]
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
-
-[tool.poetry.extras]
-japanese = ["fugashi", "unidic", "unidic-lite", "ipadic"]
