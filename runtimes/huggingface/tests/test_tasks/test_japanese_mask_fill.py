@@ -4,13 +4,13 @@ from mlserver_huggingface import HuggingFaceRuntime
 from mlserver_huggingface.codecs import HuggingfaceRequestCodec
 
 
-test_sentence = "実際に空が[MASK]のか？"
-
-
 @pytest.fixture
-def current_model_settings(request) -> ModelSettings:
-    if not request.config.option.test_hg_tasks:
+def bert_japanese_settings(request) -> ModelSettings:
+    if (not request.config.option.test_hg_tasks) or (
+        not request.config.option.test_ja_support
+    ):
         pytest.skip()
+
     return ModelSettings(
         name="model",
         implementation=HuggingFaceRuntime,
@@ -25,14 +25,17 @@ def current_model_settings(request) -> ModelSettings:
 
 
 @pytest.fixture
-async def current_runtime(current_model_settings: ModelSettings) -> HuggingFaceRuntime:
-    runtime = HuggingFaceRuntime(current_model_settings)
+async def current_runtime(bert_japanese_settings: ModelSettings) -> HuggingFaceRuntime:
+    runtime = HuggingFaceRuntime(bert_japanese_settings)
     await runtime.load()
     return runtime
 
 
 @pytest.fixture
 def japanese_text_request():
+    # Test sentence: Is the sky really [MASK]?
+    test_sentence = "実際に空が[MASK]のか？"
+
     inputs = [test_sentence]
     req = HuggingfaceRequestCodec.encode_request(
         {"inputs": inputs},
@@ -42,7 +45,9 @@ def japanese_text_request():
 
 
 async def test_infer(current_runtime, japanese_text_request):
+    # [MASK] = visible
+    expected_output = "見える"
     resp = await current_runtime.predict(japanese_text_request)
     decoded = HuggingfaceRequestCodec.decode_response(resp)
     top_result = list(decoded.items())[0][1][0]
-    assert top_result["token_str"] == "見える", "Inference is incorrect!"
+    assert top_result["token_str"] == expected_output, "Inference is correct!"

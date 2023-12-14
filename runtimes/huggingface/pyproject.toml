@@ -13,16 +13,19 @@ mlserver = "*"
 tensorflow = "*"
 pillow = "*"
 optimum = {extras = ["onnxruntime"], version = ">=1.4,<2.0"}
-fugashi = "^1.3.0"
-unidic = "^1.1.0"
-unidic-lite = "^1.0.8"
-ipadic = "^1.0.0"
+fugashi = {version = "^1.3.0", optional = true}
+unidic = {version = "^1.1.0", optional = true}
+unidic-lite = {version = "^1.0.8", optional = true}
+ipadic = {version = "^1.0.0", optional = true}
 
 [tool.poetry.group.dev.dependencies]
 mlserver = {path = "../..", develop = true}
 torch = "2.0.0"
 transformers = ">=4.30,<4.36"
 tensorflow = ">=2.12,<2.14"
+
+[tool.poetry.extras]
+japanese = ["fugashi", "unidic", "unidic-lite", "ipadic"]
 
 [build-system]
 requires = ["poetry-core"]
