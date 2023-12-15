@@ -50,10 +50,6 @@ from mlserver_huggingface.codecs import HuggingfaceRequestCodec
 )
 def test_decode_request(inference_request, expected):
     payload = HuggingfaceRequestCodec.decode_request(inference_request)
-    import pdb
-
-    pdb.set_trace()
-
     assert payload == expected
 
 
