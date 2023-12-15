@@ -216,19 +216,15 @@ def test_pipeline_checks_for_eos_and_pad_token(
 
 
 @pytest.mark.parametrize(
-    "inference_kwargs1, inference_kwargs2, expected",
+    "inference_kwargs,  expected_num_tokens",
     [
-        (
-            {"max_length": 20},
-            {"max_length": 10},
-            True,
-        )
+        ({"max_new_tokens": 10, "return_full_text": False}, 10),
+        ({"max_new_tokens": 20, "return_full_text": False}, 20),
     ],
 )
 async def test_pipeline_uses_inference_kwargs(
-    inference_kwargs1: Optional[dict],
-    inference_kwargs2: Optional[dict],
-    expected: bool,
+    inference_kwargs: Optional[dict],
+    expected_num_tokens: int,
 ):
     model_settings = ModelSettings(
         name="foo",
@@ -242,7 +238,7 @@ async def test_pipeline_uses_inference_kwargs(
     )
     runtime = HuggingFaceRuntime(model_settings)
     runtime.ready = await runtime.load()
-    payload1 = InferenceRequest(
+    payload = InferenceRequest(
         inputs=[
             RequestInput(
                 name="args",
@@ -251,25 +247,13 @@ async def test_pipeline_uses_inference_kwargs(
                 data=["This is a test"],
             )
         ],
-        parameters=Parameters(extra=inference_kwargs1),
+        parameters=Parameters(extra=inference_kwargs),
     )
-    payload2 = InferenceRequest(
-        inputs=[
-            RequestInput(
-                name="args",
-                shape=[1],
-                datatype="BYTES",
-                data=["This is a test"],
-            )
-        ],
-        parameters=Parameters(extra=inference_kwargs2),
-    )
+    tokenizer = runtime._model.tokenizer
 
-    result1 = await runtime.predict(payload1)
-    generated_text1 = json.loads(result1.outputs[0].data[0])["generated_text"]
-    assert isinstance(generated_text1, str)
-    result2 = await runtime.predict(payload2)
-    generated_text2 = json.loads(result2.outputs[0].data[0])["generated_text"]
-    assert isinstance(generated_text2, str)
-    comparison = len(generated_text1) > len(generated_text2)
-    assert comparison == expected
+    prediction = await runtime.predict(payload)
+    generated_text = json.loads(prediction.outputs[0].data[0])["generated_text"]
+    assert isinstance(generated_text, str)
+    tokenized_generated_text = tokenizer.tokenize(generated_text)
+    num_predicted_tokens = len(tokenized_generated_text)
+    assert num_predicted_tokens == expected_num_tokens

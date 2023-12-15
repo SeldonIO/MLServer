@@ -1,3 +1,4 @@
+import logging
 from typing import Optional, Type, Any, Dict, List, Union, Sequence
 from mlserver.codecs.utils import (
     has_decoded,
@@ -186,6 +187,10 @@ class MultiInputRequestCodec(RequestCodec):
                 extra = request.parameters.extra
                 if isinstance(extra, dict):
                     values.update(extra)
+                else:
+                    logging.warn(
+                        "Extra inference kwargs should be kept in a dictionary."
+                    )
         return values
 
 

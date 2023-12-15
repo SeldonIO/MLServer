@@ -28,11 +28,31 @@ from mlserver_huggingface.codecs import HuggingfaceRequestCodec
                 ]
             ),
             {"foo": ["bar1", "bar2"], "foo2": ["var1"]},
-        )
+        ),
+        (
+            InferenceRequest(
+                parameters=Parameters(content_type="str", extra={"foo3": "var2"}),
+                inputs=[
+                    RequestInput(
+                        name="foo",
+                        datatype="BYTES",
+                        data=["bar1", "bar2"],
+                        shape=[2, 1],
+                    ),
+                    RequestInput(
+                        name="foo2", datatype="BYTES", data=["var1"], shape=[1, 1]
+                    ),
+                ],
+            ),
+            {"foo": ["bar1", "bar2"], "foo2": ["var1"], "foo3": "var2"},
+        ),
     ],
 )
 def test_decode_request(inference_request, expected):
     payload = HuggingfaceRequestCodec.decode_request(inference_request)
+    import pdb
+
+    pdb.set_trace()
 
     assert payload == expected
 
