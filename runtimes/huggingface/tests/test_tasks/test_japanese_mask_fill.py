@@ -35,19 +35,20 @@ async def current_runtime(bert_japanese_settings: ModelSettings) -> HuggingFaceR
 def japanese_text_request():
     # Test sentence: Is the sky really [MASK]?
     test_sentence = "実際に空が[MASK]のか？"
+    # [MASK] = visible
+    expected_output = "見える"
 
     inputs = [test_sentence]
     req = HuggingfaceRequestCodec.encode_request(
         {"inputs": inputs},
         use_bytes=False,
     )
-    return req
+    return req, expected_output
 
 
 async def test_infer(current_runtime, japanese_text_request):
-    # [MASK] = visible
-    expected_output = "見える"
-    resp = await current_runtime.predict(japanese_text_request)
+    req, expected_output = japanese_text_request
+    resp = await current_runtime.predict(req)
     decoded = HuggingfaceRequestCodec.decode_response(resp)
     top_result = list(decoded.items())[0][1][0]
     assert top_result["token_str"] == expected_output, "Inference is correct!"
