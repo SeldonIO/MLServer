@@ -298,15 +298,18 @@ mlserver start .
 ```
 we can pass inferences like this. Note the `[MASK]` token. The mask token can be different for different models, so check the HuggingFace model config for special tokens.
 ```python
+from mlserver_huggingface import HuggingFaceRuntime
 # Test sentence: Is the sky really [MASK]?
 test_sentence = "実際に空が[MASK]のか？"
 # [MASK] = visible
 expected_output = "見える"
-inference_request = {
-    "inputs": [
-        test_sentence
-    ]
-}
+
+
+inference_request = HuggingfaceRequestCodec.encode_request(
+    {"inputs": [test_sentence]},
+    use_bytes=False,
+)
+requests.post("http://localhost:8080/v2/models/transformer/infer", json=inference_request).json()
 ```
 ```
 Response:
