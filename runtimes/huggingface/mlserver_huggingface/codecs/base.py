@@ -171,6 +171,10 @@ class MultiInputRequestCodec(RequestCodec):
 
     @classmethod
     def decode_request(cls, request: InferenceRequest) -> Dict[str, Any]:
+        """
+        Decode Inference requst into dictionary
+        extra Inference kwargs can be kept in 'InferenceRequest.parameters.extra'
+        """
         values = {}
         field_codecs = cls._find_decode_codecs(request)
         for item in request.inputs:
