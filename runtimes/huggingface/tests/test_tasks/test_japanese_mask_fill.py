@@ -38,17 +38,19 @@ def japanese_text_request():
     # [MASK] = visible
     expected_output = "見える"
 
-    inputs = [test_sentence]
-    req = HuggingfaceRequestCodec.encode_request(
-        {"inputs": inputs},
+    outputs = [expected_output]
+    reqs = HuggingfaceRequestCodec.encode_request(
+        {"inputs": [test_sentence]},
         use_bytes=False,
     )
-    return req, expected_output
+    return reqs, outputs
 
 
 async def test_infer(current_runtime, japanese_text_request):
-    req, expected_output = japanese_text_request
-    resp = await current_runtime.predict(req)
+    reqs, expected_outputs = japanese_text_request
+    resp = await current_runtime.predict(reqs)
     decoded = HuggingfaceRequestCodec.decode_response(resp)
-    top_result = list(decoded.items())[0][1][0]
-    assert top_result["token_str"] == expected_output, "Inference is correct!"
+
+    for req, expected_output in zip(list(decoded.items()), expected_outputs):
+        top_result = req[1][0]
+        assert top_result["token_str"] == expected_output, "Inference is correct!"
