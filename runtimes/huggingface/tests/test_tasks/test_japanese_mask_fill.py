@@ -4,53 +4,63 @@ from mlserver_huggingface import HuggingFaceRuntime
 from mlserver_huggingface.codecs import HuggingfaceRequestCodec
 
 
-@pytest.fixture
-def bert_japanese_settings(request) -> ModelSettings:
+"""
+Test case summary:
+
+1. Short sentence with a single masked word.
+
+
+Input: 実際に空が[MASK]のか？ English: Is the sky truly [MASK]?
+
+Output: ある　ー＞ English: Does the sky truly exist?
+
+Model: izumi-lab/bert-small-japanese (a 70 MB masked language model
+trained on a mask filling task.)
+
+"""
+
+
+@pytest.mark.parametrize(
+    "test_sentence,expected_output,model_parameters",
+    [
+        (
+            "実際に空が[MASK]のか？",
+            "ある",
+            ModelParameters(
+                extra={
+                    "task": "fill-mask",
+                    "pretrained_model": "izumi-lab/bert-small-japanese",
+                    "pretrained_tokenizer": "izumi-lab/bert-small-japanese",
+                }
+            ),
+        )
+    ],
+)
+async def test_infer(test_sentence, expected_output, model_parameters, request):
     if (not request.config.option.test_hg_tasks) or (
         not request.config.option.test_ja_support
     ):
         pytest.skip()
 
-    return ModelSettings(
-        name="model",
-        implementation=HuggingFaceRuntime,
-        parameters=ModelParameters(
-            extra={
-                "task": "fill-mask",
-                "pretrained_model": "cl-tohoku/bert-base-japanese",
-                "pretrained_tokenizer": "cl-tohoku/bert-base-japanese",
-            }
-        ),
-    )
-
-
-@pytest.fixture
-async def current_runtime(bert_japanese_settings: ModelSettings) -> HuggingFaceRuntime:
-    runtime = HuggingFaceRuntime(bert_japanese_settings)
-    await runtime.load()
-    return runtime
-
-
-@pytest.fixture
-def japanese_text_request():
-    # Test sentence: Is the sky really [MASK]?
-    test_sentence = "実際に空が[MASK]のか？"
-    # [MASK] = visible
-    expected_output = "見える"
-
-    outputs = [expected_output]
+    # Get
     reqs = HuggingfaceRequestCodec.encode_request(
         {"inputs": [test_sentence]},
         use_bytes=False,
     )
-    return reqs, outputs
 
+    # Load model
+    bert_japanese_settings = ModelSettings(
+        name="model", implementation=HuggingFaceRuntime, parameters=model_parameters
+    )
 
-async def test_infer(current_runtime, japanese_text_request):
-    reqs, expected_outputs = japanese_text_request
-    resp = await current_runtime.predict(reqs)
+    # Create runtime
+    runtime = HuggingFaceRuntime(bert_japanese_settings)
+    await runtime.load()
+
+    # Generate response
+    resp = await runtime.predict(reqs)
     decoded = HuggingfaceRequestCodec.decode_response(resp)
 
-    for req, expected_output in zip(list(decoded.items()), expected_outputs):
-        top_result = req[1][0]
-        assert top_result["token_str"] == expected_output, "Inference is correct!"
+    # Get top result
+    top_result = decoded["output"][0]
+    assert top_result["token_str"] == expected_output, "Inference is correct!"
