@@ -172,8 +172,8 @@ class MultiInputRequestCodec(RequestCodec):
     @classmethod
     def decode_request(cls, request: InferenceRequest) -> Dict[str, Any]:
         """
-        Decode Inference requst into dictionary
-        extra Inference kwargs can be kept in 'InferenceRequest.parameters.extra'
+        Decode Inference request into dictionary
+        extra Inference kwargs are extracted from 'InferenceRequest.parameters.extra'
         """
         values = {}
         field_codecs = cls._find_decode_codecs(request)
@@ -193,7 +193,8 @@ class MultiInputRequestCodec(RequestCodec):
                     values.update(extra)
                 else:
                     logging.warn(
-                        "Extra inference kwargs should be kept in a dictionary."
+                        f"Extra parameters is provided with value '{extra}' and type '{type(extra)}' \n"
+                        "Extra parameters cannot be parsed, expected a dictionary."
                     )
         return values
 

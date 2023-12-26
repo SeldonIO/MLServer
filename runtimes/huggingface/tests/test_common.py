@@ -16,6 +16,7 @@ from mlserver_huggingface.settings import HuggingFaceSettings
 from mlserver_huggingface.common import load_pipeline_from_settings
 from mlserver.types import InferenceRequest, RequestInput
 from mlserver.types.dataplane import Parameters
+from mlserver_huggingface.codecs.base import MultiInputRequestCodec
 
 
 @pytest.mark.parametrize(
@@ -252,7 +253,9 @@ async def test_pipeline_uses_inference_kwargs(
     tokenizer = runtime._model.tokenizer
 
     prediction = await runtime.predict(payload)
-    generated_text = json.loads(prediction.outputs[0].data[0])["generated_text"]
+    generated_text = MultiInputRequestCodec.decode_response(prediction)["output"][0][
+        "generated_text"
+    ]
     assert isinstance(generated_text, str)
     tokenized_generated_text = tokenizer.tokenize(generated_text)
     num_predicted_tokens = len(tokenized_generated_text)
