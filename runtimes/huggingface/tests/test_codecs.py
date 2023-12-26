@@ -73,9 +73,9 @@ def test_decode_request(inference_request, expected):
             ),
             {"foo": ["bar1", "bar2"]},
             logging.warn(
-                "Extra parameters is provided with"
-                " value: 'foo3' and type '<class 'str'> \n"
-                "Extra parameters cannot be parsed, expected a dictionary."
+                "Extra parameters is provided with ",
+                +"value: 'foo3' and type '<class 'str'> \n",
+                +"Extra parameters cannot be parsed, expected a dictionary.",
             ),
         ),
         (
@@ -95,9 +95,9 @@ def test_decode_request(inference_request, expected):
             ),
             {"foo": ["bar1", "bar2"]},
             logging.warn(
-                "Extra parameters is provided with"
-                " value '123' and type '<class 'int'> \n"
-                "Extra parameters cannot be parsed, expected a dictionary."
+                "Extra parameters is provided with "
+                + "value '123' and type '<class 'int'> \n",
+                +"Extra parameters cannot be parsed, expected a dictionary.",
             ),
         ),
     ],
