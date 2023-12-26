@@ -1,6 +1,5 @@
 from unittest.mock import MagicMock, patch
 
-import json
 import pytest
 import torch
 from typing import Dict, Optional
