@@ -80,7 +80,7 @@ def test_decode_request(inference_request, expected):
         ),
         (
             InferenceRequest(
-                parameters=Parameters(content_type="str", extra=123),
+                parameters=Parameters(content_type="str", extra=1234),
                 inputs=[
                     RequestInput(
                         name="foo",
@@ -96,7 +96,7 @@ def test_decode_request(inference_request, expected):
             {"foo": ["bar1", "bar2"]},
             logging.warn(
                 "Extra parameters is provided with "
-                + "value '123' and type '<class 'int'> \n",
+                + "value '1234' and type '<class 'int'> \n",
                 +"Extra parameters cannot be parsed, expected a dictionary.",
             ),
         ),
