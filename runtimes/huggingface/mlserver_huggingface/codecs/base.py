@@ -193,9 +193,9 @@ class MultiInputRequestCodec(RequestCodec):
                     values.update(extra)
                 else:
                     logging.warn(
-                        "Extra parameters is provided with" 
-                        f" value '{extra}' and type '{type(extra)}' \n"
-                        "Extra parameters cannot be parsed, expected a dictionary."
+                        "Extra parameters is provided with",
+                        f" value '{extra}' and type '{type(extra)}' \n",
+                        "Extra parameters cannot be parsed, expected a dictionary.",
                     )
         return values
 
