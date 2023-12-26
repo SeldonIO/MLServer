@@ -253,8 +253,8 @@ async def test_pipeline_uses_inference_kwargs(
 
     prediction = await runtime.predict(payload)
     decoded_prediction = MultiInputRequestCodec.decode_response(prediction)
-    generated_text = decoded_prediction["output"]
-    generated_text = generated_text[0]["generated_text"]
+    if isinstance(decoded_prediction, dict):
+        generated_text = decoded_prediction["output"][0]["generated_text"]
     assert isinstance(generated_text, str)
     tokenized_generated_text = tokenizer.tokenize(generated_text)
     num_predicted_tokens = len(tokenized_generated_text)
