@@ -42,7 +42,7 @@ async def test_infer(test_sentence, expected_output, model_parameters, request):
     ):
         pytest.skip()
 
-    # Get
+    # Get inferences
     reqs = HuggingfaceRequestCodec.encode_request(
         {"inputs": [test_sentence]},
         use_bytes=False,
