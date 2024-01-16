@@ -144,7 +144,7 @@ optional = true
 [tool.poetry.group.docs.dependencies]
 Sphinx = "6.2.1"
 sphinx_material = "0.0.35"
-readthedocs-sphinx-search = "0.3.1"
+readthedocs-sphinx-search = "0.3.2"
 myst-parser = "2.0.0"
 sphinxcontrib-bibtex = "2.5.0"
 autodoc_pydantic = "1.9.0"
