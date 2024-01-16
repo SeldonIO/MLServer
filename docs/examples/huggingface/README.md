@@ -199,9 +199,13 @@ inference_request = {
 requests.post("http://localhost:8080/v2/models/transformer/infer", json=inference_request).json()
 ```
 
-### Masked Language Modeling
+### Masked Language Modeling (Optional Japanese Language Example)
 
-We can also serve a masked language model. In the following example, we also build the `huggingface` runtime with the `-E japanese` flag to enable support for Japanese tokenizers.
+We can also serve a masked language model. In the following example, we also build the `huggingface` runtime with the `-E japanese` flag to enable support for Japanese tokenizers. For example, after running the normal project build from the root directory with `make install-dev`, we can install the optional Japanese dependencies in dev mode:
+
+`poetry install -E japanese`
+
+from the `./runtimes/huggingface` level. 
 
 ```python
 %%writefile ./model-settings.json
