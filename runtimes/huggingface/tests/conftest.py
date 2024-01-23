@@ -9,6 +9,7 @@ from mlserver.types import InferenceRequest, RequestInput
 # if not provide this command argument, task tests skiped
 def pytest_addoption(parser):
     parser.addoption("--test-hg-tasks", action="store_true", default=False)
+    parser.addoption("--test-ja-support", action="store_true", default=False)
 
 
 @pytest.fixture()

@@ -199,6 +199,50 @@ inference_request = {
 requests.post("http://localhost:8080/v2/models/transformer/infer", json=inference_request).json()
 ```
 
+### Masked Language Modeling (Optional Japanese Language Example)
+
+We can also serve a masked language model. In the following example, we also build the `huggingface` runtime with the `-E japanese` flag to enable support for Japanese tokenizers. For example, after running the normal project build from the root directory with `make install-dev`, we can install the optional Japanese dependencies in dev mode:
+
+`poetry install -E japanese`
+
+from the `./runtimes/huggingface` level. 
+
+```python
+%%writefile ./model-settings.json
+{
+  "name": "model",
+  "implementation": "mlserver_huggingface.runtime.HuggingFaceRuntime",
+  "parameters": {
+    "extra": {
+      "task": "fill-mask",
+      "pretrained_model": "cl-tohoku/bert-base-japanese",
+      "pretrained_tokenizer": "cl-tohoku/bert-base-japanese"
+    }
+  }
+}
+```
+Using the shell to start mlserver like so,
+```shell
+mlserver start .
+```
+we can pass inferences like this. Note the `[MASK]` token. The mask token can be different for different models, so check the HuggingFace model config for special tokens.
+```python
+from mlserver_huggingface.codecs import HuggingfaceRequestCodec
+import json
+
+# Test sentence: Is the sky really [MASK]?
+test_sentence = "実際に空が[MASK]のか？"
+# [MASK] = visible
+expected_output = "見える"
+
+inference_request = HuggingfaceRequestCodec.encode_request(
+    {"inputs": [test_sentence]},
+    use_bytes=False,
+)
+json.dumps(inference_request.dict())
+response = requests.post("http://localhost:8080/v2/models/transformer/infer", json=inference_request.dict()).json()
+json.loads(response['outputs'][0]['data'][0])["sequence"]
+```
 ## GPU Acceleration
 
 We can also evaluate GPU acceleration, we can test the speed on CPU vs GPU using the following parameters
