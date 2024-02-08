@@ -25,12 +25,14 @@ class HuggingFaceRuntime(MLModel):
     async def load(self) -> bool:
         logger.info(f"Loading model for task '{self.hf_settings.task_name}'...")
         loop = asyncio.get_running_loop()
-        self._model = await asyncio.gather(loop.run_in_executor(
-            None,
-            load_pipeline_from_settings,
-            self.hf_settings,
-            self.settings,
-        ))
+        [self._model] = await asyncio.gather(
+            loop.run_in_executor(
+                None,
+                load_pipeline_from_settings,
+                self.hf_settings,
+                self.settings,
+            )
+        )
         self._merge_metadata()
         return True
 

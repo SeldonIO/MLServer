@@ -2,7 +2,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 import torch
-from typing import Dict, Optional
+from typing import Dict, Optional, Union
 from optimum.onnxruntime.modeling_ort import ORTModelForQuestionAnswering
 from transformers.models.distilbert.modeling_distilbert import (
     DistilBertForQuestionAnswering,
@@ -13,6 +13,9 @@ from mlserver.settings import ModelSettings, ModelParameters
 from mlserver_huggingface.runtime import HuggingFaceRuntime
 from mlserver_huggingface.settings import HuggingFaceSettings
 from mlserver_huggingface.common import load_pipeline_from_settings
+from mlserver.types import InferenceRequest, RequestInput
+from mlserver.types.dataplane import Parameters
+from mlserver_huggingface.codecs.base import MultiInputRequestCodec
 
 
 @pytest.mark.parametrize(
@@ -170,6 +173,43 @@ def test_pipeline_uses_model_kwargs(
 
 
 @pytest.mark.parametrize(
+    "pretrained_model, device, expected",
+    [
+        (
+            "hf-internal-testing/tiny-bert-for-token-classification",
+            None,
+            torch.device("cpu"),
+        ),
+        (
+            "hf-internal-testing/tiny-bert-for-token-classification",
+            -1,
+            torch.device("cpu"),
+        ),
+        (
+            "hf-internal-testing/tiny-bert-for-token-classification",
+            "cpu",
+            torch.device("cpu"),
+        ),
+    ],
+)
+def test_pipeline_cpu_device_set(
+    pretrained_model: str,
+    device: Optional[Union[str, int]],
+    expected: torch.device,
+):
+    hf_settings = HuggingFaceSettings(
+        pretrained_model=pretrained_model, task="token-classification", device=device
+    )
+    model_settings = ModelSettings(
+        name="foo",
+        implementation=HuggingFaceRuntime,
+    )
+    m = load_pipeline_from_settings(hf_settings, model_settings)
+
+    assert m.model.device == expected
+
+
+@pytest.mark.parametrize(
     "pretrained_model, task, input_batch_size, expected_batch_size",
     [
         (
@@ -210,3 +250,49 @@ def test_pipeline_checks_for_eos_and_pad_token(
     m = load_pipeline_from_settings(hf_settings, model_settings)
 
     assert m._batch_size == expected_batch_size
+
+
+@pytest.mark.parametrize(
+    "inference_kwargs,  expected_num_tokens",
+    [
+        ({"max_new_tokens": 10, "return_full_text": False}, 10),
+        ({"max_new_tokens": 20, "return_full_text": False}, 20),
+    ],
+)
+async def test_pipeline_uses_inference_kwargs(
+    inference_kwargs: Optional[dict],
+    expected_num_tokens: int,
+):
+    model_settings = ModelSettings(
+        name="foo",
+        implementation=HuggingFaceRuntime,
+        parameters=ModelParameters(
+            extra={
+                "pretrained_model": "Maykeye/TinyLLama-v0",
+                "task": "text-generation",
+            }
+        ),
+    )
+    runtime = HuggingFaceRuntime(model_settings)
+    runtime.ready = await runtime.load()
+    payload = InferenceRequest(
+        inputs=[
+            RequestInput(
+                name="args",
+                shape=[1],
+                datatype="BYTES",
+                data=["This is a test"],
+            )
+        ],
+        parameters=Parameters(extra=inference_kwargs),
+    )
+    tokenizer = runtime._model.tokenizer
+
+    prediction = await runtime.predict(payload)
+    decoded_prediction = MultiInputRequestCodec.decode_response(prediction)
+    if isinstance(decoded_prediction, dict):
+        generated_text = decoded_prediction["output"][0]["generated_text"]
+    assert isinstance(generated_text, str)
+    tokenized_generated_text = tokenizer.tokenize(generated_text)
+    num_predicted_tokens = len(tokenized_generated_text)
+    assert num_predicted_tokens == expected_num_tokens
