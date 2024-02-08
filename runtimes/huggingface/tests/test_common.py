@@ -268,3 +268,49 @@ def test_pipeline_checks_for_eos_and_pad_token(
     m = load_pipeline_from_settings(hf_settings, model_settings)
 
     assert m._batch_size == expected_batch_size
+
+
+@pytest.mark.parametrize(
+    "inference_kwargs,  expected_num_tokens",
+    [
+        ({"max_new_tokens": 10, "return_full_text": False}, 10),
+        ({"max_new_tokens": 20, "return_full_text": False}, 20),
+    ],
+)
+async def test_pipeline_uses_inference_kwargs(
+    inference_kwargs: Optional[dict],
+    expected_num_tokens: int,
+):
+    model_settings = ModelSettings(
+        name="foo",
+        implementation=HuggingFaceRuntime,
+        parameters=ModelParameters(
+            extra={
+                "pretrained_model": "Maykeye/TinyLLama-v0",
+                "task": "text-generation",
+            }
+        ),
+    )
+    runtime = HuggingFaceRuntime(model_settings)
+    runtime.ready = await runtime.load()
+    payload = InferenceRequest(
+        inputs=[
+            RequestInput(
+                name="args",
+                shape=[1],
+                datatype="BYTES",
+                data=["This is a test"],
+            )
+        ],
+        parameters=Parameters(extra=inference_kwargs),
+    )
+    tokenizer = runtime._model.tokenizer
+
+    prediction = await runtime.predict(payload)
+    decoded_prediction = MultiInputRequestCodec.decode_response(prediction)
+    if isinstance(decoded_prediction, dict):
+        generated_text = decoded_prediction["output"][0]["generated_text"]
+    assert isinstance(generated_text, str)
+    tokenized_generated_text = tokenizer.tokenize(generated_text)
+    num_predicted_tokens = len(tokenized_generated_text)
+    assert num_predicted_tokens == expected_num_tokens

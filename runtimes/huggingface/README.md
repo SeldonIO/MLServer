@@ -66,6 +66,24 @@ Models in the HuggingFace hub can be loaded by specifying their name in `paramet
 If `parameters.extra.pretrained_model` is specified, it takes precedence over `parameters.uri`.
 ````
 
+#### Model Inference
+Model inference is done by HuggingFace pipeline. It allows users to run inference on a batch of inputs. Extra inference kwargs can be kept in `parameters.extra`.
+```{code-block} json
+{
+    "inputs": [
+        {
+            "name": "text_inputs",
+            "shape": [1],
+            "datatype": "BYTES",
+            "data": ["My kitten's name is JoJo,","Tell me a story:"],
+        }
+    ],
+    "parameters": {
+        "extra":{"max_new_tokens": 200,"return_full_text": false}
+    }
+}
+```
+
 ### Reference
 
 You can find the full reference of the accepted extra settings for the
