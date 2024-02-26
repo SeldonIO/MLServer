@@ -19,6 +19,7 @@ from mlserver.types import (
     InferenceRequest,
     Parameters,
 )
+from mlserver.types import Datatype as MDatatype
 
 from mlserver_mlflow.codecs import TensorDictCodec
 from mlserver_mlflow.metadata import (
@@ -35,19 +36,19 @@ from mlserver_mlflow.metadata import (
     [
         (
             TensorSpec(name="foo", shape=(2, 2), type=np.dtype("int32")),
-            ("INT32", NumpyCodec.ContentType),
+            (MDatatype.INT32, NumpyCodec.ContentType),
         ),
         (
             ColSpec(name="foo", type=DataType.string),
-            ("BYTES", StringCodec.ContentType),
+            (MDatatype.BYTES, StringCodec.ContentType),
         ),
         (
             ColSpec(name="foo", type=DataType.binary),
-            ("BYTES", Base64Codec.ContentType),
+            (MDatatype.BYTES, Base64Codec.ContentType),
         ),
     ],
 )
-def test_get_content_type(input_spec: InputSpec, expected: Tuple[str, str]):
+def test_get_content_type(input_spec: InputSpec, expected: Tuple[MDatatype, str]):
     datatype, content_type = _get_content_type(input_spec)
     assert (datatype, content_type) == expected
 

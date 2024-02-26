@@ -3,24 +3,25 @@ import struct
 from functools import reduce
 from operator import mul
 from typing import List, Tuple
+from .types import Datatype
 
 from .codecs.string import encode_str
 from .codecs.utils import InputOrOutput
 from .codecs.lists import ListElement
 
 _DatatypeToCtype = {
-    "BOOL": "?",
-    "UINT8": "B",
-    "UINT16": "H",
-    "UINT32": "I",
-    "UINT64": "L",
-    "INT8": "b",
-    "INT16": "h",
-    "INT32": "i",
-    "INT64": "l",
-    "FP16": "e",
-    "FP32": "f",
-    "FP64": "d",
+    Datatype.BOOL: "?",
+    Datatype.UINT8: "B",
+    Datatype.UINT16: "H",
+    Datatype.UINT32: "I",
+    Datatype.UINT64: "L",
+    Datatype.INT8: "b",
+    Datatype.INT16: "h",
+    Datatype.INT32: "i",
+    Datatype.INT64: "l",
+    Datatype.FP16: "e",
+    Datatype.FP32: "f",
+    Datatype.FP64: "d",
 }
 
 _SizeFormat = "<I"
@@ -32,7 +33,7 @@ def _tensor_length(shape: List[int]) -> int:
 
 def _tensor_format(elem: InputOrOutput) -> str:
     size = _tensor_length(elem.shape)
-    ctype = _DatatypeToCtype[elem.datatype]
+    ctype = _DatatypeToCtype[Datatype(elem.datatype)]
     return f"{size}{ctype}"
 
 

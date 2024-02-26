@@ -6,11 +6,18 @@ on:
       version:
         description: "MLServer Version to Release"
         required: true
+
+env:
+  DOCKER_DOMAIN: europe-west2-docker.pkg.dev
+  DOCKER_REGISTRY: europe-west2-docker.pkg.dev/dev-seldon-registry/mlserver
+  MLSERVER_IMAGE: europe-west2-docker.pkg.dev/dev-seldon-registry/mlserver/mlserver:${{ github.event.inputs.version }}
+  PYPI_REGISTRY: https://europe-west2-python.pkg.dev/dev-seldon-registry/pypi/
+
 jobs:
   draft-release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Update Version
         run: |
           ./hack/update-version.sh ${{ github.event.inputs.version }}
@@ -25,7 +32,6 @@ jobs:
           generate_release_notes: true
           draft: true
           tag_name: ${{ github.event.inputs.version }}
-
   mlserver:
     needs: draft-release
     runs-on: ubuntu-latest
@@ -33,28 +39,39 @@ jobs:
       - name: Maximize build space
         uses: easimon/maximize-build-space@master
         with:
-          remove-dotnet: "true"
-          remove-haskell: "true"
-          remove-android: "true"
-          root-reserve-mb: "30720"
-      - uses: actions/checkout@v3
+          remove-dotnet: 'true'
+          remove-haskell: 'true'
+          remove-android: 'true'
+          remove-codeql: 'true'
+          remove-docker-images: 'true'
+          root-reserve-mb: 30720
+          swap-size-mb: 1024
+      - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.inputs.version }}
       - name: Set up Python 3.10
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: "3.10"
+      - id: auth
+        name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
       - name: Install Poetry
         uses: snok/install-poetry@v1
         with:
           virtualenvs-create: false
+      - name: Configure Poetry
+        run: |
+          poetry config repositories.seldon-pypi $PYPI_REGISTRY
+          poetry self add keyring keyrings.google-artifactregistry-auth
       - name: Build Python wheel
         run: |
           poetry build
-          poetry publish --skip-existing
+          poetry publish --skip-existing -r seldon-pypi
         env:
-          POETRY_HTTP_BASIC_PYPI_USERNAME: ${{ secrets.TWINE_USERNAME }}
-          POETRY_HTTP_BASIC_PYPI_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file_path }}
       - name: Build Docker Image
         run: |
           DOCKER_BUILDKIT=1 docker build . \
@@ -63,14 +80,12 @@ jobs:
           DOCKER_BUILDKIT=1 docker build . \
             --build-arg RUNTIMES=all \
             -t $MLSERVER_IMAGE
-        env:
-          MLSERVER_IMAGE: seldonio/mlserver:${{ github.event.inputs.version }}
       - name: Scan Docker Image
         uses: snyk/actions/docker@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          image: seldonio/mlserver:${{ github.event.inputs.version }}
+          image: $DOCKER_REGISTRY/mlserver:${{ github.event.inputs.version }}
           args: --fail-on=upgradable
             --app-vulns
             --severity-threshold=high
@@ -81,66 +96,19 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          image: seldonio/mlserver:${{ github.event.inputs.version }}-slim
+          image: $DOCKER_REGISTRY/mlserver:${{ github.event.inputs.version }}-slim
           args: --fail-on=upgradable
             --app-vulns
             --severity-threshold=high
             --file=Dockerfile
             --policy-path=.snyk
-      - name: Login to DockerHub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Push to DockerHub
+      - name: Configure Docker
+        run: |
+          gcloud auth configure-docker $DOCKER_DOMAIN -q
+      - name: Push to GCP
         run: |
           docker push $MLSERVER_IMAGE-slim
           docker push $MLSERVER_IMAGE
-        env:
-          MLSERVER_IMAGE: seldonio/mlserver:${{ github.event.inputs.version }}
-      - name: Login to Quay.io
-        uses: docker/login-action@v2
-        with:
-          registry: quay.io
-          username: ${{ secrets.QUAY_USERNAME }}
-          password: ${{ secrets.QUAY_PASSWORD }}
-      - name: Push to Quay.io
-        run: |
-          docker tag $MLSERVER_IMAGE-slim $QUAY_MLSERVER_IMAGE-slim
-          docker push $QUAY_MLSERVER_IMAGE-slim
-          docker tag $MLSERVER_IMAGE $QUAY_MLSERVER_IMAGE
-          docker push $QUAY_MLSERVER_IMAGE
-        env:
-          MLSERVER_IMAGE: seldonio/mlserver:${{ github.event.inputs.version }}
-          QUAY_MLSERVER_IMAGE: quay.io/redhat-isv-containers/63566bb9822ce8cef9ba27fc:${{ github.event.inputs.version }}
-      - name: Install preflight
-        run: |
-          wget https://github.com/redhat-openshift-ecosystem/openshift-preflight/releases/download/$PREFLIGHT_VERSION/preflight-linux-amd64
-          chmod u+x preflight-linux-amd64
-          sudo mv preflight-linux-amd64 /usr/local/bin/preflight
-          preflight --version
-        env:
-          PREFLIGHT_VERSION: 1.4.2
-      - name: Submit preflight results
-        run: |
-          preflight check container \
-            $QUAY_MLSERVER_IMAGE-slim \
-            --docker-config=${HOME}/.docker/config.json \
-            --certification-project-id=$PROJECT_ID \
-            --pyxis-api-token=$PYXIS_API_TOKEN \
-            --artifacts ./artifacts/mlserver \
-            --submit
-          preflight check container \
-            $QUAY_MLSERVER_IMAGE \
-            --docker-config=${HOME}/.docker/config.json \
-            --certification-project-id=$PROJECT_ID \
-            --pyxis-api-token=$PYXIS_API_TOKEN \
-            --artifacts ./artifacts/mlserver-slim \
-            --submit
-        env:
-          PYXIS_API_TOKEN: ${{ secrets.PYXIS_API_TOKEN }}
-          PROJECT_ID: 63566bb9822ce8cef9ba27fc
-          QUAY_MLSERVER_IMAGE: quay.io/redhat-isv-containers/63566bb9822ce8cef9ba27fc:${{ github.event.inputs.version }}
 
   runtimes:
     needs: draft-release
@@ -157,92 +125,66 @@ jobs:
           - mllib
           - sklearn
           - xgboost
+    env:
+      RUNTIME_IMAGE: europe-west2-docker.pkg.dev/dev-seldon-registry/mlserver/mlserver:${{ github.event.inputs.version }}-${{ matrix.runtime }}
     steps:
       - name: Maximize build space
         uses: easimon/maximize-build-space@master
         with:
-          remove-dotnet: "true"
-          remove-haskell: "true"
-          remove-android: "true"
-          root-reserve-mb: "30720"
-      - uses: actions/checkout@v3
+          remove-dotnet: 'true'
+          remove-haskell: 'true'
+          remove-android: 'true'
+          remove-codeql: 'true'
+          remove-docker-images: 'true'
+          root-reserve-mb: 30720
+          swap-size-mb: 1024
+      - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.inputs.version }}
       - name: Set up Python 3.10
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: "3.10"
+      - id: auth
+        name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
       - name: Install Poetry
         uses: snok/install-poetry@v1
         with:
           virtualenvs-create: false
+      - name: Configure Poetry
+        run: |
+          poetry config repositories.seldon-pypi $PYPI_REGISTRY
+          poetry self add keyring keyrings.google-artifactregistry-auth
       - name: Build Python wheel
         working-directory: ./runtimes/${{ matrix.runtime }}
         run: |
+          echo $GOOGLE_APPLICATION_CREDENTIALS}
+          cat $GOOGLE_APPLICATION_CREDENTIALS
           poetry build
-          poetry publish --skip-existing
+          poetry publish --skip-existing -r seldon-pypi
         env:
-          POETRY_HTTP_BASIC_PYPI_USERNAME: ${{ secrets.TWINE_USERNAME }}
-          POETRY_HTTP_BASIC_PYPI_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file_path }}
       - name: Build Docker Image
         run: |
           DOCKER_BUILDKIT=1 docker build . \
             --build-arg RUNTIMES=mlserver-${{ matrix.runtime }} \
             -t $RUNTIME_IMAGE
-        env:
-          RUNTIME_IMAGE: seldonio/mlserver:${{ github.event.inputs.version }}-${{ matrix.runtime }}
       - name: Scan Docker Image
         uses: snyk/actions/docker@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          image: seldonio/mlserver:${{ github.event.inputs.version }}-${{ matrix.runtime }}
+          image: $DOCKER_REGISTRY/mlserver:${{ github.event.inputs.version }}-${{ matrix.runtime }}
           args: --fail-on=upgradable
             --app-vulns
-            --severity-threshold=high
-            --file=Dockerfile
+            --severity-threshold=high --file=Dockerfile
             --policy-path=.snyk
-      - name: Login to DockerHub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Push to DockerHub
+      - name: Configure Docker
+        run: |
+          gcloud auth configure-docker $DOCKER_DOMAIN -q
+      - name: Push to GCP
         run: |
           docker push $RUNTIME_IMAGE
-        env:
-          RUNTIME_IMAGE: seldonio/mlserver:${{ github.event.inputs.version }}-${{ matrix.runtime }}
-      - name: Login to Quay.io
-        uses: docker/login-action@v2
-        with:
-          registry: quay.io
-          username: ${{ secrets.QUAY_USERNAME }}
-          password: ${{ secrets.QUAY_PASSWORD }}
-      - name: Push to Quay.io
-        run: |
-          docker tag $RUNTIME_IMAGE $QUAY_RUNTIME_IMAGE
-          docker push $QUAY_RUNTIME_IMAGE
-        env:
-          RUNTIME_IMAGE: seldonio/mlserver:${{ github.event.inputs.version }}-${{ matrix.runtime }}
-          QUAY_RUNTIME_IMAGE: quay.io/redhat-isv-containers/63566bb9822ce8cef9ba27fc:${{ github.event.inputs.version }}-${{ matrix.runtime }}
-      - name: Install preflight
-        run: |
-          wget https://github.com/redhat-openshift-ecosystem/openshift-preflight/releases/download/$PREFLIGHT_VERSION/preflight-linux-amd64
-          chmod u+x preflight-linux-amd64
-          sudo mv preflight-linux-amd64 /usr/local/bin/preflight
-          preflight --version
-        env:
-          PREFLIGHT_VERSION: 1.4.2
-      - name: Submit preflight results
-        run: |
-          preflight check container \
-            $QUAY_RUNTIME_IMAGE \
-            --docker-config=${HOME}/.docker/config.json \
-            --certification-project-id=$PROJECT_ID \
-            --pyxis-api-token=$PYXIS_API_TOKEN \
-            --artifacts ./artifacts/mlserver-${{ matrix.runtime }} \
-            --submit
-        env:
-          PYXIS_API_TOKEN: ${{ secrets.PYXIS_API_TOKEN }}
-          PROJECT_ID: 63566bb9822ce8cef9ba27fc
-          QUAY_RUNTIME_IMAGE: quay.io/redhat-isv-containers/63566bb9822ce8cef9ba27fc:${{ github.event.inputs.version }}-${{ matrix.runtime }}

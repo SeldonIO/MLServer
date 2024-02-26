@@ -55,9 +55,10 @@ lightning_logs
 docs/_build/
 
 # Tests cache folders
-tests/testdata/.cache/**
-runtimes/alibi-explain/tests/.data/**
-runtimes/mlflow/tests/testdata/.cache/**
+**/tests/testdata/.cache/**
+## The .data path is longer used, but let's keep the line to avoid people
+## pushing their old .data folder by mistake
+runtimes/alibi-explain/tests/.data/** 
 
 # Docker metadata
 .docker/

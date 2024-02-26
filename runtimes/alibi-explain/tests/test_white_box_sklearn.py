@@ -53,7 +53,7 @@ async def test_explain(test_case):
     separate test case for each of supported explainer types. The explanations from the
     runtime and the equivalent local explainer are compared.
     """
-    explainer_runtime, explainer, payload, explain_kwargs = await test_case
+    explainer_runtime, explainer, payload, explain_kwargs = test_case
 
     # Send an inference request to the explainer runtime
     runtime_result = await explainer_runtime.predict(payload)

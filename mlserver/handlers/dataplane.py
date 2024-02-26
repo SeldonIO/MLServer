@@ -17,7 +17,6 @@ from ..types import (
 from ..middleware import InferenceMiddlewares
 from ..cloudevents import CloudEventsMiddleware
 from ..utils import generate_uuid
-from ..cache import ResponseCache, LocalCache
 
 
 class DataPlane:
@@ -29,9 +28,7 @@ class DataPlane:
     def __init__(self, settings: Settings, model_registry: MultiModelRegistry):
         self._settings = settings
         self._model_registry = model_registry
-        self._response_cache = None
-        if settings.cache_enabled:
-            self._response_cache = self._create_response_cache()
+
         self._inference_middleware = InferenceMiddlewares(
             CloudEventsMiddleware(settings)
         )
@@ -92,9 +89,6 @@ class DataPlane:
             model=name, version=version
         ).count_exceptions()
 
-        if self._response_cache is not None:
-            cache_key = payload.json()
-
         with infer_duration, infer_errors:
             if payload.id is None:
                 payload.id = generate_uuid()
@@ -107,19 +101,7 @@ class DataPlane:
 
             # TODO: Make await optional for sync methods
             with model_context(model.settings):
-                if (
-                    self._response_cache is not None
-                    and model.settings.cache_enabled is not False
-                ):
-                    cache_value = await self._response_cache.lookup(cache_key)
-                    if cache_value != "":
-                        prediction = InferenceResponse.parse_raw(cache_value)
-                    else:
-                        prediction = await model.predict(payload)
-                        # ignore cache insertion error if any
-                        await self._response_cache.insert(cache_key, prediction.json())
-                else:
-                    prediction = await model.predict(payload)
+                prediction = await model.predict(payload)
 
             # Ensure ID matches
             prediction.id = payload.id
@@ -129,9 +111,3 @@ class DataPlane:
             self._ModelInferRequestSuccess.labels(model=name, version=version).inc()
 
             return prediction
-
-    def _create_response_cache(self) -> ResponseCache:
-        return LocalCache(size=self._settings.cache_size)
-
-    def _get_response_cache(self) -> Optional[ResponseCache]:
-        return self._response_cache

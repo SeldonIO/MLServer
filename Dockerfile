@@ -1,7 +1,7 @@
 FROM python:3.10-slim AS wheel-builder
 SHELL ["/bin/bash", "-l", "-c"]
 
-ARG POETRY_VERSION="1.6.1"
+ARG POETRY_VERSION="1.7.1"
 
 COPY ./hack/build-wheels.sh ./hack/build-wheels.sh
 COPY ./mlserver ./mlserver
@@ -42,7 +42,7 @@ ENV MLSERVER_MODELS_DIR=/mnt/models \
     CONDA_PATH=/opt/conda \
     PATH=/opt/mlserver/.local/bin:/opt/conda/bin:$PATH \
     LD_LIBRARY_PATH=/usr/local/nvidia/lib64:/opt/conda/lib/python3.10/site-packages/nvidia/cuda_runtime/lib:$LD_LIBRARY_PATH \
-    TRANSFORMERS_CACHE=/opt/mlserver/.cache \
+    HF_HOME=/opt/mlserver/.cache \
     NUMBA_CACHE_DIR=/opt/mlserver/.cache
 
 # Install some base dependencies required for some libraries

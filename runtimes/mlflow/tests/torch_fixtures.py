@@ -4,6 +4,7 @@ To see the original source, please check:
 
 https://github.com/mlflow/mlflow/blob/master/examples/pytorch/MNIST/mnist_autolog_example.py
 """
+
 import torch
 import pytorch_lightning as pl
 

@@ -75,7 +75,6 @@ Out of the box, MLServer provides support for:
 | XGBoost       | ✅        | [MLServer XGBoost](./runtimes/xgboost)                           |
 | Spark MLlib   | ✅        | [MLServer MLlib](./runtimes/mllib)                               |
 | LightGBM      | ✅        | [MLServer LightGBM](./runtimes/lightgbm)                         |
-| CatBoost     | ✅        | [MLServer CatBoost](./runtimes/catboost)                         |
 | Tempo         | ✅        | [`github.com/SeldonIO/tempo`](https://github.com/SeldonIO/tempo) |
 | MLflow        | ✅        | [MLServer MLflow](./runtimes/mlflow)                             |
 | Alibi-Detect  | ✅        | [MLServer Alibi Detect](./runtimes/alibi-detect)                 |
@@ -92,7 +91,6 @@ MLServer to start serving your machine learning models.
 - [Serving a `scikit-learn` model](./docs/examples/sklearn/README.md)
 - [Serving a `xgboost` model](./docs/examples/xgboost/README.md)
 - [Serving a `lightgbm` model](./docs/examples/lightgbm/README.md)
-- [Serving a `catboost` model](./docs/examples/catboost/README.md)
 - [Serving a `tempo` pipeline](./docs/examples/tempo/README.md)
 - [Serving a custom model](./docs/examples/custom/README.md)
 - [Serving an `alibi-detect` model](./docs/examples/alibi-detect/README.md)
@@ -113,4 +111,18 @@ For example:
 
 ```bash
 ./hack/update-version.sh 0.2.0.dev1
+```
+
+### Testing
+
+To run all of the tests for MLServer and the runtimes, use:
+
+```bash
+make test
+```
+
+To run run tests for a single file, use something like:
+
+```bash
+tox -e py3 -- tests/batch_processing/test_rest.py
 ```

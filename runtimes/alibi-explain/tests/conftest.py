@@ -5,7 +5,7 @@ import pytest
 import tensorflow as tf
 import functools
 
-from pathlib import Path
+from filelock import FileLock
 from typing import AsyncIterable, Dict, Any, Iterable
 from unittest.mock import patch
 from typing import Type
@@ -32,12 +32,13 @@ from mlserver.metrics.registry import MetricsRegistry, REGISTRY as METRICS_REGIS
 from mlserver_alibi_explain.common import AlibiExplainSettings
 from mlserver_alibi_explain.runtime import AlibiExplainRuntime, AlibiExplainRuntimeBase
 
-from .helpers.tf_model import get_tf_mnist_model_uri, TFMNISTModel
+from .helpers.tf_model import TFMNISTModel, train_tf_mnist
 from .helpers.run_async import run_async_as_sync
 from .helpers.metrics import unregister_metrics
 
-TESTS_PATH = Path(os.path.dirname(__file__))
-_ANCHOR_IMAGE_DIR = TESTS_PATH / ".data" / "mnist_anchor_image"
+TESTS_PATH = os.path.dirname(__file__)
+TESTDATA_PATH = os.path.join(TESTS_PATH, "testdata")
+TESTDATA_CACHE_PATH = os.path.join(TESTDATA_PATH, ".cache")
 
 
 @pytest.fixture
@@ -90,10 +91,11 @@ def event_loop():
 
 
 @pytest.fixture
-def custom_runtime_tf_settings() -> ModelSettings:
+def custom_runtime_tf_settings(tf_mnist_model_uri: str) -> ModelSettings:
     return ModelSettings(
         name="custom_tf_mnist_model",
         implementation=TFMNISTModel,
+        parameters=ModelParameters(uri=tf_mnist_model_uri),
     )
 
 
@@ -186,10 +188,44 @@ async def rest_client(rest_app: FastAPI) -> AsyncIterable[AsyncClient]:
 
 
 @pytest.fixture
-def anchor_image_directory() -> Path:
-    if not _ANCHOR_IMAGE_DIR.exists():
-        _train_anchor_image_explainer()
-    return _ANCHOR_IMAGE_DIR
+def testdata_cache_path() -> str:
+    if not os.path.exists(TESTDATA_CACHE_PATH):
+        os.makedirs(TESTDATA_CACHE_PATH, exist_ok=True)
+
+    return TESTDATA_CACHE_PATH
+
+
+@pytest.fixture
+def anchor_image_directory(testdata_cache_path: str, tf_mnist_model_uri: str) -> str:
+    anchor_path = os.path.join(testdata_cache_path, "mnist_anchor_image")
+
+    # NOTE: Lock to avoid race conditions when running tests in parallel
+    with FileLock(f"{anchor_path}.lock"):
+        if os.path.exists(anchor_path):
+            return anchor_path
+
+        os.makedirs(anchor_path, exist_ok=True)
+        model = tf.keras.models.load_model(tf_mnist_model_uri)
+        anchor_image = AnchorImage(model.predict, (28, 28, 1))
+        anchor_image.save(anchor_path)
+
+    return anchor_path
+
+
+@pytest.fixture
+def tf_mnist_model_uri(testdata_cache_path: str) -> str:
+    model_folder = os.path.join(testdata_cache_path, "tf_mnist")
+    os.makedirs(model_folder, exist_ok=True)
+
+    # NOTE: Lock to avoid race conditions when running tests in parallel
+    with FileLock(f"{model_folder}.lock"):
+        model_uri = os.path.join(model_folder, "model.h5")
+        if os.path.exists(model_uri):
+            return model_uri
+
+        train_tf_mnist(model_uri)
+
+    return model_uri
 
 
 @pytest.fixture
@@ -242,18 +278,18 @@ async def anchor_image_runtime_with_remote_predict_patch(
 
 
 @pytest.fixture
-async def integrated_gradients_runtime() -> AlibiExplainRuntime:
+async def integrated_gradients_runtime(tf_mnist_model_uri: str) -> AlibiExplainRuntime:
+    explainer_settings = AlibiExplainSettings(
+        init_parameters={"n_steps": 50, "method": "gausslegendre"},
+        explainer_type="integrated_gradients",
+        infer_uri=tf_mnist_model_uri,
+    )
+
     rt = AlibiExplainRuntime(
         ModelSettings(
             parallel_workers=1,
             implementation=AlibiExplainRuntime,
-            parameters=ModelParameters(
-                extra=AlibiExplainSettings(
-                    init_parameters={"n_steps": 50, "method": "gausslegendre"},
-                    explainer_type="integrated_gradients",
-                    infer_uri=str(get_tf_mnist_model_uri()),
-                )
-            ),
+            parameters=ModelParameters(extra=explainer_settings.dict()),
         )
     )
     assert isinstance(rt, MLModel)
@@ -315,11 +351,3 @@ async def dummy_alibi_explain_client(
     yield rest_client
 
     await rest_server.add_custom_handlers(dummy_explainer)
-
-
-def _train_anchor_image_explainer() -> None:
-    model = tf.keras.models.load_model(get_tf_mnist_model_uri())
-    anchor_image = AnchorImage(model.predict, (28, 28, 1))
-
-    _ANCHOR_IMAGE_DIR.mkdir(parents=True)
-    anchor_image.save(_ANCHOR_IMAGE_DIR)

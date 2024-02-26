@@ -244,7 +244,7 @@ emphasize-lines: 8
       "parameters": {
         "content_type": "np"
       },
-      "data": [1, 2, null, 4]
+      "data": [1.2, 2.3, null, 4.5]
       "datatype": "FP64",
       "shape": [2, 2],
     }

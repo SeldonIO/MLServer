@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mlserver-alibi-detect"
-version = "1.4.0.dev3"
+version = "1.4.0.dev11"
 description = "Alibi-Detect runtime for MLServer"
 authors = ["Seldon Technologies Ltd. <hello@seldon.io>"]
 license = "Apache-2.0"
@@ -14,7 +14,7 @@ alibi-detect = {extras = ["tensorflow"], version = "*"}
 
 [tool.poetry.group.dev.dependencies]
 mlserver = {path = "../..", develop = true}
-tensorflow = "~2.12.0"
+tensorflow = ">=2.12,<2.14"
 
 [build-system]
 requires = ["poetry-core"]

@@ -61,10 +61,7 @@ class HuggingFaceSettings(BaseSettings):
     """
     Name of the model that should be loaded in the pipeline.
     """
-    model_kwargs: Optional[dict] = None
-    """
-    model kwargs that should be loaded in the pipeline.
-    """
+
     pretrained_tokenizer: Optional[str] = None
     """
     Name of the tokenizer that should be loaded in the pipeline.
