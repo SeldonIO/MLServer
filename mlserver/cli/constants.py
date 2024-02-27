@@ -1,5 +1,5 @@
 DefaultBaseImage = (
-    "europe-west2-docker.pkg.dev/dev-seldon-registry/mlserver/mlserver:{version}-slim"
+    "seldonio/mlserver:{version}-slim"
 )
 
 DockerfileName = "Dockerfile"
