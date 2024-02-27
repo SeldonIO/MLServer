@@ -8,10 +8,6 @@ on:
   pull_request:
     branches: [master]
 
-env:
-  DOCKER_DOMAIN: europe-west2-docker.pkg.dev
-  SERVICE_ACCOUNT: github-actions@dev-seldon-registry.iam.gserviceaccount.com
-
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -36,9 +32,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # NOTE: Disable MacOS tests in `mlserver-plus` to reduce CI cost.
-        # os: [ubuntu-latest, macos-latest]
-        os: [ubuntu-latest]
+        os: [ubuntu-latest, macos-latest]
         # NOTE: There's no pre-built `grpcio` wheel for Python 3.11 yet
         # https://github.com/grpc/grpc/issues/32454
         python-version: ["3.8", "3.9", "3.10"]
@@ -73,18 +67,6 @@ jobs:
         with:
           auto-update-conda: true
           auto-activate-base: false
-      # NOTE: We log in to GCloud and configure Docker to make sure we can pull the
-      # private slim base image during `mlserver build` tests
-      - id: auth
-        name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
-      - name: Configure Docker
-        run: |
-          gcloud auth configure-docker $DOCKER_DOMAIN -q
-          gcloud auth activate-service-account $SERVICE_ACCOUNT \
-            --key-file=${{ steps.auth.outputs.credentials_file_path }}
       - name: Install Poetry
         uses: snok/install-poetry@v1
         with:
@@ -100,9 +82,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # NOTE: Disable MacOS tests in `mlserver-plus` to reduce CI cost.
-        # os: [ubuntu-latest, macos-latest]
-        os: [ubuntu-latest]
+        os: [ubuntu-latest, macos-latest]
         python-version: ["3.8", "3.9", "3.10"]
         tox-environment:
           - sklearn
@@ -148,9 +128,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # NOTE: Disable MacOS tests in `mlserver-plus` to reduce CI cost.
-        # os: [ubuntu-latest, macos-latest]
-        os: [ubuntu-latest]
+        os: [ubuntu-latest, macos-latest]
         python-version: ["3.8", "3.9", "3.10"]
     runs-on: ${{ matrix.os }}
     steps:
@@ -197,18 +175,6 @@ jobs:
         with:
           auto-update-conda: true
           auto-activate-base: false
-      # NOTE: We log in to GCloud and configure Docker to make sure we can pull the
-      # private slim base image during `mlserver build` tests
-      - id: auth
-        name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
-      - name: Configure Docker
-        run: |
-          gcloud auth configure-docker $DOCKER_DOMAIN -q
-          gcloud auth activate-service-account $SERVICE_ACCOUNT \
-            --key-file=${{ steps.auth.outputs.credentials_file_path }}
       - name: Install Poetry
         uses: snok/install-poetry@v1
         with:
