@@ -11,11 +11,6 @@ classifiers = [
 ]
 include =  ["mlserver/rest/openapi/*.json"]
 
-[[tool.poetry.source]]
-name = "seldon-pypi"
-url = "https://europe-west2-python.pkg.dev/dev-seldon-registry/pypi/simple/"
-priority = "explicit"
-
 [tool.poetry.scripts]
 mlserver = 'mlserver.cli:main'
 
