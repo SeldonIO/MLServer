@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'release' }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: rhysd/changelog-from-release/action@v3
         with:
           file: CHANGELOG.md
@@ -46,7 +46,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # TODO: Open a PR instead of pushing straight to `master`?
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: master
       - uses: rhysd/changelog-from-release/action@v3

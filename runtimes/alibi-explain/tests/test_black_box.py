@@ -21,6 +21,7 @@ from mlserver.types import (
     Parameters,
     RequestInput,
     MetadataTensor,
+    Datatype,
 )
 from mlserver.types import (
     MetadataModelResponse,
@@ -38,7 +39,6 @@ from mlserver_alibi_explain.explainers.black_box_runtime import (
 )
 from mlserver_alibi_explain.runtime import AlibiExplainRuntime, AlibiExplainRuntimeBase
 from .helpers.run_async import run_sync_as_async
-from .helpers.tf_model import get_tf_mnist_model_uri
 
 TESTS_PATH = Path(os.path.dirname(__file__))
 _DEFAULT_ID_NAME = "dummy_id"
@@ -100,8 +100,8 @@ async def test_predict_impl(
 
 
 @pytest.fixture()
-def alibi_anchor_image_model(anchor_image_directory):
-    inference_model = tf.keras.models.load_model(get_tf_mnist_model_uri())
+def alibi_anchor_image_model(anchor_image_directory: str, tf_mnist_model_uri: str):
+    inference_model = tf.keras.models.load_model(tf_mnist_model_uri)
     model = load_explainer(anchor_image_directory, inference_model.predict)
     return model
 
@@ -183,9 +183,13 @@ async def test_end_2_end_explain_v1_output(
             MetadataModelResponse(
                 name="dummy",
                 platform="dummy",
-                inputs=[MetadataTensor(name="input_name", datatype="dummy", shape=[])],
+                inputs=[
+                    MetadataTensor(name="input_name", datatype=Datatype.BYTES, shape=[])
+                ],
                 outputs=[
-                    MetadataTensor(name="output_name", datatype="dummy", shape=[])
+                    MetadataTensor(
+                        name="output_name", datatype=Datatype.BYTES, shape=[]
+                    )
                 ],
             ),
             None,
@@ -212,10 +216,16 @@ async def test_end_2_end_explain_v1_output(
             MetadataModelResponse(
                 name="dummy",
                 platform="dummy",
-                inputs=[MetadataTensor(name="input_name", datatype="dummy", shape=[])],
+                inputs=[
+                    MetadataTensor(name="input_name", datatype=Datatype.BYTES, shape=[])
+                ],
                 outputs=[
-                    MetadataTensor(name="output_name", datatype="dummy", shape=[]),
-                    MetadataTensor(name="output_name_2", datatype="dummy", shape=[]),
+                    MetadataTensor(
+                        name="output_name", datatype=Datatype.BYTES, shape=[]
+                    ),
+                    MetadataTensor(
+                        name="output_name_2", datatype=Datatype.BYTES, shape=[]
+                    ),
                 ],
             ),
             None,
@@ -264,10 +274,16 @@ async def test_end_2_end_explain_v1_output(
             MetadataModelResponse(
                 name="dummy",
                 platform="dummy",
-                inputs=[MetadataTensor(name="input_name", datatype="dummy", shape=[])],
+                inputs=[
+                    MetadataTensor(name="input_name", datatype=Datatype.BYTES, shape=[])
+                ],
                 outputs=[
-                    MetadataTensor(name="output_name", datatype="dummy", shape=[]),
-                    MetadataTensor(name="output_name_2", datatype="dummy", shape=[]),
+                    MetadataTensor(
+                        name="output_name", datatype=Datatype.BYTES, shape=[]
+                    ),
+                    MetadataTensor(
+                        name="output_name_2", datatype=Datatype.BYTES, shape=[]
+                    ),
                 ],
             ),
             "output_name_2",

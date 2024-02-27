@@ -3,6 +3,7 @@ from typing import Union, Tuple, List, Optional
 from mlflow.types.schema import Schema, ColSpec, TensorSpec, DataType
 
 from mlserver.types import MetadataTensor, Parameters
+from mlserver.types import Datatype as MDatatype
 from mlserver.codecs import (
     PandasCodec,
     NumpyCodec,
@@ -20,18 +21,18 @@ DefaultInputPrefix = "input-"
 DefaultOutputPrefix = "output-"
 
 _MLflowToContentType = {
-    DataType.boolean: ("BOOL", NumpyCodec.ContentType),
-    DataType.integer: ("INT32", NumpyCodec.ContentType),
-    DataType.long: ("INT64", NumpyCodec.ContentType),
-    DataType.float: ("FP32", NumpyCodec.ContentType),
-    DataType.double: ("FP64", NumpyCodec.ContentType),
-    DataType.string: ("BYTES", StringCodec.ContentType),
-    DataType.binary: ("BYTES", Base64Codec.ContentType),
-    DataType.datetime: ("BYTES", DatetimeCodec.ContentType),
+    DataType.boolean: (MDatatype.BOOL, NumpyCodec.ContentType),
+    DataType.integer: (MDatatype.INT32, NumpyCodec.ContentType),
+    DataType.long: (MDatatype.INT64, NumpyCodec.ContentType),
+    DataType.float: (MDatatype.FP32, NumpyCodec.ContentType),
+    DataType.double: (MDatatype.FP64, NumpyCodec.ContentType),
+    DataType.string: (MDatatype.BYTES, StringCodec.ContentType),
+    DataType.binary: (MDatatype.BYTES, Base64Codec.ContentType),
+    DataType.datetime: (MDatatype.BYTES, DatetimeCodec.ContentType),
 }
 
 
-def _get_content_type(input_spec: InputSpec) -> Tuple[str, str]:
+def _get_content_type(input_spec: InputSpec) -> Tuple[MDatatype, str]:
     if isinstance(input_spec, TensorSpec):
         datatype = to_datatype(input_spec.type)
         content_type = NumpyCodec.ContentType

@@ -1,3 +1,7 @@
+DefaultBaseImage = (
+    "europe-west2-docker.pkg.dev/dev-seldon-registry/mlserver/mlserver:{version}-slim"
+)
+
 DockerfileName = "Dockerfile"
 DockerfileTemplate = """
 FROM continuumio/miniconda3:23.5.2-0 AS env-builder
@@ -33,7 +37,7 @@ RUN mkdir $(dirname $MLSERVER_ENV_TARBALL); \\
     done; \\
     chmod -R 776 $(dirname $MLSERVER_ENV_TARBALL)
 
-FROM seldonio/mlserver:{version}-slim
+FROM {base_image}
 SHELL ["/bin/bash", "-c"]
 
 # Copy all potential sources for custom environments

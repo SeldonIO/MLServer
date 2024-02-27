@@ -12,7 +12,7 @@ from mlserver_lightgbm.lightgbm import WELLKNOWN_MODEL_FILENAMES
 
 def test_load(model: LightGBMModel):
     assert model.ready
-    assert type(model._model) == lgb.Booster
+    assert isinstance(model._model, lgb.Booster)
 
 
 @pytest.mark.parametrize("fname", WELLKNOWN_MODEL_FILENAMES)
@@ -27,7 +27,7 @@ async def test_load_folder(fname, model_uri: str, model_settings: ModelSettings)
     model.ready = await model.load()
 
     assert model.ready
-    assert type(model._model) == lgb.Booster
+    assert isinstance(model._model, lgb.Booster)
 
 
 async def test_predict(model: LightGBMModel, inference_request: InferenceRequest):

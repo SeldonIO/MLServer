@@ -7,7 +7,7 @@ from mlserver_alibi_detect import AlibiDetectRuntime
 
 async def test_load_folder(outlier_detector: AlibiDetectRuntime):
     assert outlier_detector.ready
-    assert type(outlier_detector._model) == OutlierVAE
+    assert isinstance(outlier_detector._model, OutlierVAE)
 
 
 async def test_predict(

@@ -14,13 +14,14 @@ from ..types import (
     RequestInput,
     ResponseOutput,
     Parameters,
+    Datatype,
 )
 
 
 def _to_series(input_or_output: InputOrOutput) -> pd.Series:
     payload = get_decoded_or_raw(input_or_output)
 
-    if input_or_output.datatype == "BYTES":
+    if Datatype(input_or_output.datatype) == Datatype.BYTES:
         # Don't convert the dtype of BYTES
         return pd.Series(payload)
 
@@ -42,7 +43,7 @@ def _to_response_output(series: pd.Series, use_bytes: bool = True) -> ResponseOu
         data = list(map(convert_nan, data))
 
     content_type = None
-    if datatype == "BYTES":
+    if datatype == Datatype.BYTES:
         data, content_type = _process_bytes(data, use_bytes)
 
     shape = inject_batch_dimension(list(series.shape))

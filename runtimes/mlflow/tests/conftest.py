@@ -5,6 +5,7 @@ import asyncio
 import numpy as np
 import pandas as pd
 
+from filelock import FileLock
 from sklearn.dummy import DummyClassifier
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
@@ -67,27 +68,40 @@ def model_uri(tmp_path: str, dataset: tuple, model_signature: ModelSignature) ->
 
 
 @pytest.fixture
-def pytorch_model_uri() -> str:
-    model_path = os.path.join(TESTDATA_CACHE_PATH, "pytorch-model")
-    if os.path.exists(model_path):
-        return model_path
+def testdata_cache_path() -> str:
+    if not os.path.exists(TESTDATA_CACHE_PATH):
+        os.makedirs(TESTDATA_CACHE_PATH, exist_ok=True)
 
-    model = LightningMNISTClassifier(batch_size=64, num_workers=3, lr=0.001)
+    return TESTDATA_CACHE_PATH
 
-    dm = MNISTDataModule(batch_size=64, num_workers=3)
-    dm.setup(stage="fit")
 
-    early_stopping = EarlyStopping(
-        monitor="val_loss",
-        mode="min",
-        verbose=False,
-        patience=3,
-    )
+@pytest.fixture
+def pytorch_model_uri(
+    testdata_cache_path: str,
+) -> str:
+    model_path = os.path.join(testdata_cache_path, "pytorch-model")
 
-    trainer = Trainer(callbacks=[early_stopping])
-    trainer.fit(model, dm)
+    # NOTE: Lock to avoid race conditions when running tests in parallel
+    with FileLock(f"{model_path}.lock"):
+        if os.path.exists(model_path):
+            return model_path
 
-    mlflow.pytorch.save_model(model, path=model_path)
+        model = LightningMNISTClassifier(batch_size=64, num_workers=3, lr=0.001)
+
+        dm = MNISTDataModule(batch_size=64, num_workers=3)
+        dm.setup(stage="fit")
+
+        early_stopping = EarlyStopping(
+            monitor="val_loss",
+            mode="min",
+            verbose=False,
+            patience=3,
+        )
+
+        trainer = Trainer(callbacks=[early_stopping])
+        trainer.fit(model, dm)
+
+        mlflow.pytorch.save_model(model, path=model_path)
 
     return model_path
 

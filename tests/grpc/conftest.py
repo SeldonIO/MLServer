@@ -59,6 +59,14 @@ def model_infer_request() -> pb.ModelInferRequest:
 
 
 @pytest.fixture
+def model_infer_request_invalid_datatype() -> pb.ModelInferRequest:
+    payload_path = os.path.join(
+        TESTDATA_GRPC_PATH, "model-infer-request-invalid-datatype.json"
+    )
+    return _read_testdata_pb(payload_path, pb.ModelInferRequest)
+
+
+@pytest.fixture
 def grpc_parameters() -> Dict[str, pb.InferParameter]:
     return {
         "content_type": pb.InferParameter(string_param="np"),
