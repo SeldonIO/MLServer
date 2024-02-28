@@ -12,7 +12,7 @@ from mlserver_catboost.catboost import WELLKNOWN_MODEL_FILENAMES
 
 def test_load(model: CatboostModel):
     assert model.ready
-    assert type(model._model) == CatBoostClassifier
+    assert isinstance(model._model, CatBoostClassifier)
 
 
 @pytest.mark.parametrize("fname", WELLKNOWN_MODEL_FILENAMES)
@@ -27,7 +27,7 @@ async def test_load_folder(fname, model_uri: str, model_settings: ModelSettings)
     await model.load()
 
     assert model.ready
-    assert type(model._model) == CatBoostClassifier
+    assert isinstance(model._model, CatBoostClassifier)
 
 
 async def test_predict(model: CatboostModel, inference_request: InferenceRequest):
