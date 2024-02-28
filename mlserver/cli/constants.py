@@ -1,6 +1,4 @@
-DefaultBaseImage = (
-    "seldonio/mlserver:{version}-slim"
-)
+DefaultBaseImage = "seldonio/mlserver:{version}-slim"
 
 DockerfileName = "Dockerfile"
 DockerfileTemplate = """
