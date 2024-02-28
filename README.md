@@ -75,7 +75,7 @@ Out of the box, MLServer provides support for:
 | XGBoost       | ✅        | [MLServer XGBoost](./runtimes/xgboost)                           |
 | Spark MLlib   | ✅        | [MLServer MLlib](./runtimes/mllib)                               |
 | LightGBM      | ✅        | [MLServer LightGBM](./runtimes/lightgbm)                         |
-| CatBoost     | ✅        | [MLServer CatBoost](./runtimes/catboost)                         |
+| CatBoost      | ✅        | [MLServer CatBoost](./runtimes/catboost)                         |
 | Tempo         | ✅        | [`github.com/SeldonIO/tempo`](https://github.com/SeldonIO/tempo) |
 | MLflow        | ✅        | [MLServer MLflow](./runtimes/mlflow)                             |
 | Alibi-Detect  | ✅        | [MLServer Alibi Detect](./runtimes/alibi-detect)                 |
