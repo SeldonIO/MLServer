@@ -11,8 +11,6 @@ from mlserver.codecs import NumpyCodec
 from mlserver.types import InferenceRequest, Parameters, RequestInput
 from mlserver_alibi_explain.common import convert_from_bytes
 
-from .helpers.tf_model import get_tf_mnist_model_uri
-
 
 @pytest.fixture()
 def payload() -> InferenceRequest:
@@ -34,8 +32,8 @@ def payload() -> InferenceRequest:
 
 
 @pytest.fixture()
-def alibi_integrated_gradients_model() -> Tuple:
-    inference_model = tf.keras.models.load_model(get_tf_mnist_model_uri())
+def alibi_integrated_gradients_model(tf_mnist_model_uri: str) -> Tuple:
+    inference_model = tf.keras.models.load_model(tf_mnist_model_uri)
     ig_model = IntegratedGradients(model=inference_model)
     return inference_model, ig_model
 

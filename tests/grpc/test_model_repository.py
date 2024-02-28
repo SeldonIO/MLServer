@@ -54,7 +54,7 @@ def test_repositoryindexresponse_from_types(repository_index_response):
         assert isinstance(grpc_model, mr_pb.RepositoryIndexResponse.ModelIndex)
         assert expected.name == grpc_model.name
         assert expected.version == grpc_model.version
-        assert expected.state.value == grpc_model.state
+        assert expected.state == grpc_model.state
         assert expected.reason == grpc_model.reason
 
 

@@ -1,6 +1,7 @@
 """
 Command-line interface to manage MLServer models.
 """
+
 import click
 import asyncio
 
@@ -234,8 +235,13 @@ async def infer(
     extra_verbose,
 ):
     """
-    Execute batch inference requests against V2 inference server (experimental).
+    Deprecated: This experimental feature will be removed in future work.
+    Execute batch inference requests against V2 inference server.
     """
+    logger.warn(
+        "This feature has been deprecated and will be removed in a future version"
+    )
+
     await process_batch(
         model_name=model_name,
         url=url,

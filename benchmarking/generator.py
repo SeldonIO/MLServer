@@ -1,6 +1,7 @@
 """
 CLI to generate test benchmark data.
 """
+
 import os
 import json
 import numpy as np

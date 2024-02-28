@@ -10,23 +10,23 @@ install-dev:
 
 lock:
 	echo "Locking mlserver deps..."
-	poetry lock
+	poetry lock --no-update
 	for _runtime in ./runtimes/*; \
 	do \
 		echo "Locking $$_runtime deps..."; \
-		poetry lock -C $$_runtime; \
+		poetry lock --no-update -C $$_runtime; \
 	done
 
 _generate: # "private" target to call `fmt` after `generate`
-	./hack/generate-types.sh
+	poetry run bash ./hack/generate-types.sh
 
 generate: | _generate fmt
 
-run: 
+run:
 	mlserver start \
 		./tests/testdata
 
-build: clean 
+build: clean
 	./hack/build-images.sh ${VERSION}
 	./hack/build-wheels.sh ./dist
 
@@ -89,7 +89,7 @@ licenses:
 		> ./licenses/license_info.no_versions.csv
 
 fmt:
-	black .
+	poetry run black .
 
 version:
 	@echo ${VERSION}

@@ -114,3 +114,17 @@ For example:
 ```bash
 ./hack/update-version.sh 0.2.0.dev1
 ```
+
+### Testing
+
+To run all of the tests for MLServer and the runtimes, use:
+
+```bash
+make test
+```
+
+To run run tests for a single file, use something like:
+
+```bash
+tox -e py3 -- tests/batch_processing/test_rest.py
+```

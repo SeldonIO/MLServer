@@ -3,7 +3,10 @@ import os
 import shutil
 import asyncio
 import glob
+import json
 
+from filelock import FileLock
+from typing import Dict, Any
 from starlette_exporter import PrometheusMiddleware
 from prometheus_client.registry import REGISTRY, CollectorRegistry
 from unittest.mock import Mock
@@ -49,15 +52,25 @@ Mock.assert_not_called_with = assert_not_called_with
 
 
 @pytest.fixture
-async def env_tarball(tmp_path: str) -> str:
-    tarball_name = _get_tarball_name()
-    tarball_path = os.path.join(TESTDATA_CACHE_PATH, tarball_name)
-    if os.path.isfile(tarball_path):
-        return tarball_path
+def testdata_cache_path() -> str:
+    if not os.path.exists(TESTDATA_CACHE_PATH):
+        os.makedirs(TESTDATA_CACHE_PATH, exist_ok=True)
 
-    os.makedirs(TESTDATA_CACHE_PATH, exist_ok=True)
-    env_yml = os.path.join(TESTDATA_PATH, "environment.yml")
-    await _pack(env_yml, tarball_path)
+    return TESTDATA_CACHE_PATH
+
+
+@pytest.fixture
+async def env_tarball(testdata_cache_path: str) -> str:
+    tarball_name = _get_tarball_name()
+    tarball_path = os.path.join(testdata_cache_path, tarball_name)
+
+    with FileLock(f"{tarball_path}.lock"):
+        if os.path.isfile(tarball_path):
+            return tarball_path
+
+        env_yml = os.path.join(TESTDATA_PATH, "environment.yml")
+        await _pack(env_yml, tarball_path)
+
     return tarball_path
 
 
@@ -176,6 +189,16 @@ def metadata_model_response() -> types.MetadataModelResponse:
 def inference_request() -> types.InferenceRequest:
     payload_path = os.path.join(TESTDATA_PATH, "inference-request.json")
     return types.InferenceRequest.parse_file(payload_path)
+
+
+@pytest.fixture
+def inference_request_invalid_datatype() -> Dict[str, Any]:
+    payload_path = os.path.join(
+        TESTDATA_PATH, "inference-request-invalid-datatype.json"
+    )
+    with open(payload_path, "r") as payload_file:
+        inference_request = json.load(payload_file)
+    return inference_request
 
 
 @pytest.fixture
@@ -309,3 +332,14 @@ async def inference_pool_registry(
     yield registry
 
     await registry.close()
+
+
+@pytest.fixture
+def datatype_error_message():
+    error_message = (
+        "value is not a valid enumeration member;"
+        " permitted: 'BOOL', 'UINT8', 'UINT16', 'UINT32',"
+        " 'UINT64', 'INT8', 'INT16', 'INT32', 'INT64',"
+        " 'FP16', 'FP32', 'FP64', 'BYTES'"
+    )
+    return error_message

@@ -18,14 +18,14 @@ async def test_load_folder(
     drift_detector: AlibiDetectRuntime,
 ):
     assert drift_detector.ready
-    assert type(drift_detector._model) == TabularDrift
+    assert isinstance(drift_detector._model, TabularDrift)
 
 
 async def test_load_folder_online(
     online_drift_detector: AlibiDetectRuntime,
 ):
     assert online_drift_detector.ready
-    assert type(online_drift_detector._model) == CVMDriftOnline
+    assert isinstance(online_drift_detector._model, CVMDriftOnline)
 
 
 async def test_predict(

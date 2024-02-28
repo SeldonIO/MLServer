@@ -1,0 +1,10 @@
+{
+  "inputs": [
+    {
+      "name": "input-0",
+      "shape": [1, 3],
+      "datatype": "INT322",
+      "data": [1, 2, 3]
+    }
+  ]
+}

@@ -2,7 +2,7 @@ import numpy as np
 
 from typing import Any
 
-from ..types import RequestInput, ResponseOutput, Parameters
+from ..types import RequestInput, ResponseOutput, Parameters, Datatype
 
 from .base import InputCodec, register_input_codec, register_request_codec
 from .utils import SingleInputRequestCodec, InputOrOutput, inject_batch_dimension
@@ -10,31 +10,31 @@ from .lists import is_list_of
 from .string import encode_str
 
 _DatatypeToNumpy = {
-    "BOOL": "bool",
-    "UINT8": "uint8",
-    "UINT16": "uint16",
-    "UINT32": "uint32",
-    "UINT64": "uint64",
-    "INT8": "int8",
-    "INT16": "int16",
-    "INT32": "int32",
-    "INT64": "int64",
-    "FP16": "float16",
-    "FP32": "float32",
-    "FP64": "float64",
-    "BYTES": "bytes",
+    Datatype.BOOL: "bool",
+    Datatype.UINT8: "uint8",
+    Datatype.UINT16: "uint16",
+    Datatype.UINT32: "uint32",
+    Datatype.UINT64: "uint64",
+    Datatype.INT8: "int8",
+    Datatype.INT16: "int16",
+    Datatype.INT32: "int32",
+    Datatype.INT64: "int64",
+    Datatype.FP16: "float16",
+    Datatype.FP32: "float32",
+    Datatype.FP64: "float64",
+    Datatype.BYTES: "bytes",
 }
 
 _NumpyToDatatype = {value: key for key, value in _DatatypeToNumpy.items()}
 
 # NOTE: numpy has more types than v2 protocol
-_NumpyToDatatype["object"] = "BYTES"
-_NumpyToDatatype["S"] = "BYTES"
-_NumpyToDatatype["U"] = "BYTES"
+_NumpyToDatatype["object"] = Datatype.BYTES
+_NumpyToDatatype["S"] = Datatype.BYTES
+_NumpyToDatatype["U"] = Datatype.BYTES
 
 
 def to_dtype(input_or_output: InputOrOutput) -> "np.dtype":
-    dtype = _DatatypeToNumpy[input_or_output.datatype]
+    dtype = _DatatypeToNumpy[Datatype(input_or_output.datatype)]
 
     if input_or_output.datatype == "BYTES":
         data = getattr(input_or_output.data, "__root__", input_or_output.data)
@@ -50,7 +50,7 @@ def to_dtype(input_or_output: InputOrOutput) -> "np.dtype":
     return np.dtype(dtype)
 
 
-def to_datatype(dtype: np.dtype) -> str:
+def to_datatype(dtype: np.dtype) -> Datatype:
     as_str = str(dtype)
 
     if as_str not in _NumpyToDatatype:
@@ -66,7 +66,7 @@ def _to_ndarray(input_or_output: InputOrOutput) -> np.ndarray:
     data = getattr(input_or_output.data, "__root__", input_or_output.data)
     dtype = to_dtype(input_or_output)
 
-    if input_or_output.datatype == "BYTES":
+    if Datatype(input_or_output.datatype) == Datatype.BYTES:
         if is_list_of(data, bytes):
             # If the inputs is of type `BYTES`, there could be multiple "lists"
             # serialised into multiple buffers.
@@ -77,8 +77,8 @@ def _to_ndarray(input_or_output: InputOrOutput) -> np.ndarray:
     return np.array(data, dtype)
 
 
-def _encode_data(data: np.ndarray, datatype: str) -> list:
-    if datatype == "BYTES":
+def _encode_data(data: np.ndarray, datatype: Datatype) -> list:
+    if datatype == Datatype.BYTES:
         if np.issubdtype(data.dtype, str):
             # Handle special case of a string Numpy array, where the diff elems
             # need to be encoded as well
@@ -95,7 +95,7 @@ def _encode_data(data: np.ndarray, datatype: str) -> list:
     flattened_list = data.flatten().tolist()
 
     # Replace NaN with null
-    if datatype != "BYTES":
+    if datatype != Datatype.BYTES:
         # The `isnan` method doesn't work on Numpy arrays with non-numeric
         # types
         has_nan = np.isnan(data).any()

@@ -64,7 +64,7 @@ def _merge_input_parameters(
         uncommon_keys = set(all_params).union(set(obj_params)) - common_keys
         new_all_params = {}
         for key in common_keys:
-            if type(all_params[key]) == list:
+            if isinstance(all_params[key], list):
                 new_value = all_params[key] + [obj_params[key]]
                 new_all_params[key] = new_value
             else:
@@ -234,9 +234,11 @@ class BatchedRequests:
                 shape=shape.to_list(),
                 data=data,
                 datatype=response_output.datatype,
-                parameters=all_parameters
-                if all_parameters is None
-                else all_parameters[internal_id],
+                parameters=(
+                    all_parameters
+                    if all_parameters is None
+                    else all_parameters[internal_id]
+                ),
             )
 
         return response_outputs
