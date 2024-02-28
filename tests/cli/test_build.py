@@ -17,7 +17,9 @@ from ..utils import RESTClient
 @fixture
 @parametrize_with_cases("custom_runtime_path")
 def custom_image(
-    docker_client: DockerClient, custom_runtime_path: str, current_cases
+    docker_client: DockerClient,
+    custom_runtime_path: str,
+    current_cases,
 ) -> str:
     dockerfile = generate_dockerfile()
     current_case = current_cases["custom_image"]["custom_runtime_path"]
@@ -41,7 +43,7 @@ def custom_runtime_server(
     settings: Settings,
     free_ports: Tuple[int, int, int],
     random_user_id: int,
-) -> str:
+) -> Tuple[str, str]:
     host_http_port, host_grpc_port, host_metrics_port = free_ports
 
     container = docker_client.containers.run(
