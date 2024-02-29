@@ -72,6 +72,7 @@ opentelemetry-sdk = "^1.22.0"
 opentelemetry-instrumentation-fastapi = ">=0.43b0"
 opentelemetry-instrumentation-grpc = ">=0.43b0"
 opentelemetry-exporter-otlp-proto-grpc = "^1.22.0"
+cryptography = "^42.0.5"
 
 [tool.poetry.group.dev.dependencies]
 datamodel-code-generator = "0.25.4"
