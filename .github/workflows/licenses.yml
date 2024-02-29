@@ -32,7 +32,7 @@ jobs:
             ./licenses/license_info.no_versions.csv
       - name: Open PR with License Changes
         if: ${{ failure() }}
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@v6
         with:
           add-paths: ./licenses
           commit-message: Re-generate license info
