@@ -8,7 +8,7 @@ readme = "README.md"
 packages = [{include = "mlserver_xgboost"}]
 
 [tool.poetry.dependencies]
-python = "^3.8.1,<3.12"
+python = ">=3.9,<3.12"
 mlserver = "*"
 xgboost = {extras = ["scikit-learn"], version = "*"}
 
