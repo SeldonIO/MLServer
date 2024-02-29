@@ -55,14 +55,11 @@ uvicorn = "*"
 starlette-exporter = "*"
 py-grpc-prometheus = "*"
 aiokafka = "*"
-## Tritonclient has recently started requiring cuda-python, which doesn't work
-## in MacOS.
-## Adding a ceiling until this issue gets resolved:
-##    https://github.com/triton-inference-server/server/issues/6246
-tritonclient = {version = ">=2.24,<2.43", extras = ["http"]}
+tritonclient = "*"
 aiofiles = "*"
 orjson = "*"
 uvloop = {version = "*", markers = "sys_platform != 'win32' and (sys_platform != 'cygwin' and platform_python_implementation != 'PyPy')"}
+pydantic = "<2.0.0"
 
 ## The importlib-resources backport is required to use some
 ## functionality added in Python 3.10
