@@ -3,7 +3,8 @@ import numpy as np
 
 from pydantic.error_wrappers import ValidationError
 from typing import Optional, List, Dict
-from pydantic import BaseSettings, Field
+from pydantic import Field
+from pydantic_settings import BaseSettings
 from functools import cached_property
 
 from alibi_detect.saving import load_detector

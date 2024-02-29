@@ -2,7 +2,7 @@ import os
 import orjson
 
 from typing import Optional, Dict, Union, NewType
-from pydantic import BaseSettings, Extra
+from pydantic_settings import BaseSettings, Extra
 from distutils.util import strtobool
 from transformers.pipelines import SUPPORTED_TASKS
 

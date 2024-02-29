@@ -5,7 +5,8 @@ import importlib
 import inspect
 
 from typing import Any, Dict, List, Optional, Type, Union, no_type_check, TYPE_CHECKING
-from pydantic import PyObject, Extra, Field, BaseSettings as _BaseSettings
+from pydantic import PyObject, Extra, Field
+from pydantic_settings import BaseSettings as _BaseSettings
 from contextlib import contextmanager
 
 from .version import __version__
