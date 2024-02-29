@@ -24,7 +24,7 @@ jobs:
           args: -d=false -l=2
           header: "# Changelog\n"
       - name: Commiting & Pushing Updated Changelog
-        uses: stefanzweifel/git-auto-commit-action@v4
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: Update CHANGELOG.md for ${{ github.event.release.tag_name }}
           tagging_message: ${{ github.event.release.tag_name }}
@@ -33,7 +33,7 @@ jobs:
           # changelog.
           push_options: "--force"
       - name: Tagging release as stable
-        uses: stefanzweifel/git-auto-commit-action@v4
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: Update CHANGELOG.md for ${{ github.event.release.tag_name }}
           tagging_message: stable
@@ -57,7 +57,7 @@ jobs:
           args: -d=false -l=2
           header: "# Changelog\n\n"
       - name: Open PR with Changelog changes
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@v6
         with:
           add-paths: ./CHANGELOG.md
           commit-message: Update Changelog
