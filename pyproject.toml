@@ -57,6 +57,8 @@ py-grpc-prometheus = "*"
 aiokafka = "*"
 # add a min version to tritonclient due to https://github.com/triton-inference-server/server/issues/6246
 tritonclient = {version = ">=2.42", extras = ["http"]}
+geventhttpclient = "*"
+gevent = "*"
 aiofiles = "*"
 orjson = "*"
 uvloop = {version = "*", markers = "sys_platform != 'win32' and (sys_platform != 'cygwin' and platform_python_implementation != 'PyPy')"}
