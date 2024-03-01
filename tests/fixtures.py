@@ -1,9 +1,9 @@
 import asyncio
 import random
 import string
+
 import numpy as np
 from fastapi import Body
-from pydantic import BaseModel
 
 try:
     # NOTE: This is used in the EnvModel down below, which tests dynamic
