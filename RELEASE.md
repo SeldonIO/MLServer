@@ -12,7 +12,10 @@ carefully and make sure you understand the different parts of the process.**
 
 ## Process Summary
 
-1. If this is a new **major or minor official release**, create a [release
+1. Update the version, using the [available script](./README.md#versioning),
+   following the [versioning scheme](#versioning-scheme).
+
+2. If this is a new **major or minor official release**, create a [release
    branch](#release-branches) from `master`.
    Alternatively, if this is a **patch official release**, checkout the
    existing [release branch](#release-branches) and cherry-pick any relevant
@@ -21,19 +24,19 @@ carefully and make sure you understand the different parts of the process.**
    Note that, for **dev releases**, the above is not needed and you can trigger
    the `MLServer Release` action straight from `master`.
 
-2. Trigger a `MLServer Release` from Github Actions.
+3. Trigger a `MLServer Release` from Github Actions.
 
    1. Provide the [version tag](versioning-scheme) that you want to release.
       ![MLServer Release](./docs/assets/mlserver-release.png)
 
-3. Monitor the triggered workflow, until it's finished.
+4. Monitor the triggered workflow, until it's finished.
 
    1. Once it's done, all the [release artifacts](release-artifacts) will be
       pushed to Docker Hub and PyPI.
    2. Additionally, a release draft will get created in the repository
       [Releases section](https://github.com/SeldonIO/MLServer/releases).
 
-4. For **official releases**, update the release draft (created in step `3.2`)
+5. For **official releases**, update the release draft (created in step `3.2`)
    in the [Releases section](https://github.com/SeldonIO/MLServer/releases) of
    the repository.
 
