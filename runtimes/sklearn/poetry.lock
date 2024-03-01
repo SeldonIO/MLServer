@@ -353,7 +353,7 @@ develop = true
 aiofiles = "*"
 aiokafka = "*"
 click = "*"
-fastapi = ">=0.88.0,!=0.89.0,<=0.109.2"
+fastapi = ">=0.88.0,!=0.89.0,<=0.110.0"
 grpcio = "*"
 importlib-resources = "^5.12.0"
 numpy = "*"
