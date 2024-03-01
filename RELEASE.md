@@ -12,6 +12,9 @@ carefully and make sure you understand the different parts of the process.**
 
 ## Process Summary
 
+NB: The release workflows take care of setting the specified version, so you
+do not need to run the script for updating the version beforehand.
+
 1. If this is a new **major or minor official release**, create a [release
    branch](#release-branches) from `master`.
    Alternatively, if this is a **patch official release**, checkout the
