@@ -1833,7 +1833,7 @@ xethub = ["mlflow-xethub"]
 
 [[package]]
 name = "mlserver"
-version = "1.4.0.dev11"
+version = "1.4.0"
 description = "MLServer"
 optional = false
 python-versions = "^3.8.1,<3.12"
