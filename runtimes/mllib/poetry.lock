@@ -358,7 +358,7 @@ pydantic = "<2.0.0"
 python-dotenv = "*"
 python-multipart = "*"
 starlette-exporter = "*"
-tritonclient = ">=2.40"
+tritonclient = "*"
 uvicorn = "*"
 uvloop = {version = "*", markers = "(sys_platform != \"win32\" and sys_platform != \"cygwin\") and platform_python_implementation != \"PyPy\""}
 
