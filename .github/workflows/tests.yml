@@ -35,7 +35,7 @@ jobs:
         os: [ubuntu-latest, macos-latest]
         # NOTE: There's no pre-built `grpcio` wheel for Python 3.11 yet
         # https://github.com/grpc/grpc/issues/32454
-        python-version: ["3.8", "3.9", "3.10"]
+        python-version: ["3.9", "3.10"]
         is-pr:
           - ${{ github.event_name == 'pull_request' }}
         exclude:
@@ -83,7 +83,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        python-version: ["3.8", "3.9", "3.10"]
+        python-version: ["3.9", "3.10"]
         tox-environment:
           - sklearn
           - xgboost
@@ -129,7 +129,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        python-version: ["3.8", "3.9", "3.10"]
+        python-version: [3.9", "3.10"]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Maximize build space

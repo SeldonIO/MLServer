@@ -43,7 +43,7 @@ asyncio_mode = "auto"
 addopts = "--import-mode=importlib"
 
 [tool.poetry.dependencies]
-python = "^3.8.1,<3.12"
+python = ">=3.9,<3.12"
 click = "*"
 fastapi = ">=0.88.0,!=0.89.0,<=0.109.2"
 python-dotenv = "*"
@@ -55,14 +55,13 @@ uvicorn = "*"
 starlette-exporter = "*"
 py-grpc-prometheus = "*"
 aiokafka = "*"
-## Tritonclient has recently started requiring cuda-python, which doesn't work
-## in MacOS.
-## Adding a ceiling until this issue gets resolved:
-##    https://github.com/triton-inference-server/server/issues/6246
-tritonclient = {version = ">=2.24,<2.43", extras = ["http"]}
+# add a min version to tritonclient due to https://github.com/triton-inference-server/server/issues/6246
+tritonclient = ">=2.40"
 aiofiles = "*"
 orjson = "*"
 uvloop = {version = "*", markers = "sys_platform != 'win32' and (sys_platform != 'cygwin' and platform_python_implementation != 'PyPy')"}
+pydantic = "<2.0.0"
+python-multipart = "*"
 
 ## The importlib-resources backport is required to use some
 ## functionality added in Python 3.10
@@ -93,7 +92,7 @@ pyyaml = "6.0.1"
 conda-pack = "0.7.1"
 flake8 = "7.0.0"
 flake8-black = "0.3.6"
-mypy = "1.5.1"
+mypy = "1.8.0"
 mypy-protobuf = "3.1.0"
 types-protobuf = "4.24.0.20240129"
 types-orjson = "3.6.2"
@@ -106,7 +105,7 @@ filelock = "^3.13.1"
 
 [tool.poetry.group.docker.dependencies]
 protobuf = "3.20.3"
-tensorflow = "~2.12.0"
+tensorflow = "<2.15"
 
 [tool.poetry.group.all-runtimes]
 optional = true
@@ -129,13 +128,13 @@ requests-mock = "~1.11.0"
 types-requests = "~2.28.11.5"
 
 ## Dev dependencies from Alibi-Detect
-tensorflow = "~2.12.0"
+tensorflow = "<2.15"
 
 ## Dev dependencies from MLflow
-torch = "2.0.0"
-pytorch-lightning = "2.1.3"
+torch = "2.2.1"
+pytorch-lightning = "2.2.0.post0"
 torchmetrics = "1.3.1"
-torchvision = "0.15.1"
+torchvision = "0.17.1"
 mlflow = "2.10.2"
 
 ## Dev dependencies from HuggingFace

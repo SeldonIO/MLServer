@@ -1,7 +1,9 @@
 import asyncio
 import random
 import string
+
 import numpy as np
+from fastapi import Body
 
 try:
     # NOTE: This is used in the EnvModel down below, which tests dynamic
@@ -28,11 +30,11 @@ from mlserver.errors import MLServerError
 
 class SumModel(MLModel):
     @custom_handler(rest_path="/my-custom-endpoint")
-    async def my_payload(self, payload: list) -> int:
+    async def my_payload(self, payload: list = Body(...)) -> int:
         return sum(payload)
 
     @custom_handler(rest_path="/custom-endpoint-with-long-response")
-    async def long_response_endpoint(self, length: int) -> Dict[str, str]:
+    async def long_response_endpoint(self, length: int = Body(...)) -> Dict[str, str]:
         alphabet = string.ascii_lowercase
         response = "".join(random.choice(alphabet) for i in range(length))
         return {"foo": response}
