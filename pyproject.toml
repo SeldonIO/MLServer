@@ -56,7 +56,9 @@ starlette-exporter = "*"
 py-grpc-prometheus = "*"
 aiokafka = "*"
 # add a min version to tritonclient due to https://github.com/triton-inference-server/server/issues/6246
-tritonclient = ">=2.40"
+tritonclient = {version = ">=2.42", extras = ["http"]}
+geventhttpclient = "*"
+gevent = "*"
 aiofiles = "*"
 orjson = "*"
 uvloop = {version = "*", markers = "sys_platform != 'win32' and (sys_platform != 'cygwin' and platform_python_implementation != 'PyPy')"}
@@ -75,7 +77,6 @@ opentelemetry-exporter-otlp-proto-grpc = "^1.22.0"
 [tool.poetry.group.dev.dependencies]
 datamodel-code-generator = "0.25.4"
 grpcio-tools = "1.48.1"
-tritonclient = {version = "2.42.0", extras = ["http"]}
 pytest = "7.4.4"
 pytest-asyncio = "0.21.1"
 pytest-mock = "3.11.1"
@@ -126,9 +127,6 @@ optional = true
 ## Dev dependencies from Alibi-Explain
 requests-mock = "~1.11.0"
 types-requests = "~2.28.11.5"
-
-## Dev dependencies from Alibi-Detect
-tensorflow = "<2.15"
 
 ## Dev dependencies from MLflow
 torch = "2.2.1"

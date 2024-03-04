@@ -47,7 +47,7 @@ jobs:
       - name: Upload result to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: snyk-code.sarif
+          sarif_file: snyk-sat.sarif
 
   scan-image:
     runs-on: ubuntu-latest

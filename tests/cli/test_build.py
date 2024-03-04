@@ -1,3 +1,5 @@
+import logging
+
 import pytest
 import random
 
@@ -26,7 +28,11 @@ def custom_image(
 
     yield image_name
 
-    docker_client.images.remove(image=image_name, force=True)
+    # in CI sometimes this fails, TODO: indentify why
+    try:
+        docker_client.images.remove(image=image_name, force=True)
+    except Exception:
+        logging.warning("skipping remove")
 
 
 @pytest.fixture
