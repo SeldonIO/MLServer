@@ -1,4 +1,3 @@
-import logging
 from typing import Optional, Type, Any, Dict, List, Union, Sequence
 from mlserver.codecs.utils import (
     has_decoded,
@@ -171,10 +170,6 @@ class MultiInputRequestCodec(RequestCodec):
 
     @classmethod
     def decode_request(cls, request: InferenceRequest) -> Dict[str, Any]:
-        """
-        Decode Inference request into dictionary
-        extra Inference kwargs are extracted from 'InferenceRequest.parameters.extra'
-        """
         values = {}
         field_codecs = cls._find_decode_codecs(request)
         for item in request.inputs:
@@ -186,18 +181,6 @@ class MultiInputRequestCodec(RequestCodec):
 
             value = get_decoded_or_raw(item)
             values[item.name] = value
-
-        if request.parameters is not None:
-            if hasattr(request.parameters, "extra"):
-                extra = request.parameters.extra
-                if isinstance(extra, dict):
-                    values.update(extra)
-                else:
-                    logging.warn(
-                        "Extra parameters is provided with "
-                        + f"value '{extra}' and type '{type(extra)}' \n"
-                        + "Extra parameters cannot be parsed, expected a dictionary."
-                    )
         return values
 
 
