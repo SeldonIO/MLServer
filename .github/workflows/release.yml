@@ -33,7 +33,8 @@ jobs:
           generate_release_notes: true
           draft: true
           tag_name: ${{ github.event.inputs.version }}
-  mlserver:
+
+  mlserver-image-build:
     needs: draft-release
     runs-on: ubuntu-latest
     steps:
@@ -50,26 +51,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.inputs.version }}
-      - name: Set up Python 3.10
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.10"
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
-        with:
-          virtualenvs-create: false
-      - name: Build Python wheel
-        run: |
-          poetry build
-          poetry publish --skip-existing
-        env:
-          POETRY_HTTP_BASIC_PYPI_USERNAME: ${{ secrets.TWINE_USERNAME }}
-          POETRY_HTTP_BASIC_PYPI_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
       - name: Build Docker Image
         run: |
-          DOCKER_BUILDKIT=1 docker build . \
-            --build-arg RUNTIMES="" \
-            -t $MLSERVER_IMAGE-slim
           DOCKER_BUILDKIT=1 docker build . \
             --build-arg RUNTIMES=all \
             -t $MLSERVER_IMAGE
@@ -84,7 +67,68 @@ jobs:
             --severity-threshold=high
             --file=Dockerfile
             --policy-path=.snyk
-      - name: Scan Docker Slim Image
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Push to DockerHub
+        run: |
+          docker push $MLSERVER_IMAGE
+      - name: Login to Quay.io
+        uses: docker/login-action@v3
+        with:
+          registry: quay.io
+          username: ${{ secrets.QUAY_USERNAME }}
+          password: ${{ secrets.QUAY_PASSWORD }}
+      - name: Push to Quay.io
+        run: |
+          docker tag $MLSERVER_IMAGE $QUAY_MLSERVER_IMAGE
+          docker push $QUAY_MLSERVER_IMAGE
+      - name: Install preflight
+        run: |
+          wget https://github.com/redhat-openshift-ecosystem/openshift-preflight/releases/download/$PREFLIGHT_VERSION/preflight-linux-amd64
+          chmod u+x preflight-linux-amd64
+          sudo mv preflight-linux-amd64 /usr/local/bin/preflight
+          preflight --version
+        env:
+          PREFLIGHT_VERSION: 1.4.2
+      - name: Submit preflight results
+        run: |
+          preflight check container \
+            $QUAY_MLSERVER_IMAGE \
+            --docker-config=${HOME}/.docker/config.json \
+            --certification-project-id=$PROJECT_ID \
+            --pyxis-api-token=$PYXIS_API_TOKEN \
+            --artifacts ./artifacts/mlserver-slim \
+            --submit
+        env:
+          PYXIS_API_TOKEN: ${{ secrets.PYXIS_API_TOKEN }}
+          PROJECT_ID: 63566bb9822ce8cef9ba27fc
+
+  mlserver-slim-image-build:
+    needs: draft-release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@master
+        with:
+          remove-dotnet: 'true'
+          remove-haskell: 'true'
+          remove-android: 'true'
+          remove-codeql: 'true'
+          remove-docker-images: 'true'
+          root-reserve-mb: 30720
+          swap-size-mb: 1024
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.version }}
+      - name: Build Docker Image
+        run: |
+          DOCKER_BUILDKIT=1 docker build . \
+            --build-arg RUNTIMES="" \
+            -t $MLSERVER_IMAGE-slim
+      - name: Scan Docker Image
         uses: snyk/actions/docker@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
@@ -103,7 +147,6 @@ jobs:
       - name: Push to DockerHub
         run: |
           docker push $MLSERVER_IMAGE-slim
-          docker push $MLSERVER_IMAGE
       - name: Login to Quay.io
         uses: docker/login-action@v3
         with:
@@ -114,8 +157,6 @@ jobs:
         run: |
           docker tag $MLSERVER_IMAGE-slim $QUAY_MLSERVER_IMAGE-slim
           docker push $QUAY_MLSERVER_IMAGE-slim
-          docker tag $MLSERVER_IMAGE $QUAY_MLSERVER_IMAGE
-          docker push $QUAY_MLSERVER_IMAGE
       - name: Install preflight
         run: |
           wget https://github.com/redhat-openshift-ecosystem/openshift-preflight/releases/download/$PREFLIGHT_VERSION/preflight-linux-amd64
@@ -133,17 +174,33 @@ jobs:
             --pyxis-api-token=$PYXIS_API_TOKEN \
             --artifacts ./artifacts/mlserver \
             --submit
-          preflight check container \
-            $QUAY_MLSERVER_IMAGE \
-            --docker-config=${HOME}/.docker/config.json \
-            --certification-project-id=$PROJECT_ID \
-            --pyxis-api-token=$PYXIS_API_TOKEN \
-            --artifacts ./artifacts/mlserver-slim \
-            --submit
         env:
           PYXIS_API_TOKEN: ${{ secrets.PYXIS_API_TOKEN }}
           PROJECT_ID: 63566bb9822ce8cef9ba27fc
-
+          
+  pypy-publish:
+    needs: draft-release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.version }}
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: false
+      - name: Build Python wheel
+        run: |
+          poetry build
+          poetry publish --skip-existing
+        env:
+          POETRY_HTTP_BASIC_PYPI_USERNAME: ${{ secrets.TWINE_USERNAME }}
+          POETRY_HTTP_BASIC_PYPI_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
+      
   runtimes:
     needs: draft-release
     runs-on: ubuntu-latest
