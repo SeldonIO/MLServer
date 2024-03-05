@@ -1,6 +1,33 @@
 # Changelog
 
 
+<a name="1.5.0"></a>
+## [1.5.0](https://github.com/SeldonIO/MLServer/releases/tag/1.5.0) - 05 Mar 2024
+
+<!-- Release notes generated using configuration in .github/release.yml at 1.5.0 -->
+
+## What's Changed
+
+* Update CHANGELOG by [@github-actions](https://github.com/github-actions) in https://github.com/SeldonIO/MLServer/pull/1592
+* build: Migrate away from Node v16 actions by [@jesse-c](https://github.com/jesse-c) in https://github.com/SeldonIO/MLServer/pull/1596
+* build: Bump version and improve release doc by [@jesse-c](https://github.com/jesse-c) in https://github.com/SeldonIO/MLServer/pull/1602
+* build: Upgrade stale packages (fastapi, starlette, tensorflow, torch) by [@sakoush](https://github.com/sakoush) in https://github.com/SeldonIO/MLServer/pull/1603
+* fix(ci): tests and security workflow fixes by [@sakoush](https://github.com/sakoush) in https://github.com/SeldonIO/MLServer/pull/1608
+* Re-generate License Info by [@github-actions](https://github.com/github-actions) in https://github.com/SeldonIO/MLServer/pull/1612
+* fix(ci): Missing quote in CI test for all_runtimes by [@sakoush](https://github.com/sakoush) in https://github.com/SeldonIO/MLServer/pull/1617
+* build(docker): Bump dependencies by [@jesse-c](https://github.com/jesse-c) in https://github.com/SeldonIO/MLServer/pull/1618
+* docs: List supported Python versions  by [@jesse-c](https://github.com/jesse-c) in https://github.com/SeldonIO/MLServer/pull/1591
+* fix(ci): Have separate smaller tasks for release by [@sakoush](https://github.com/sakoush) in https://github.com/SeldonIO/MLServer/pull/1619
+
+
+## Notes
+* We remove support for python 3.8, check https://github.com/SeldonIO/MLServer/pull/1603 for more info. Docker images for mlserver are already using python 3.10.
+
+**Full Changelog**: https://github.com/SeldonIO/MLServer/compare/1.4.0...1.5.0
+
+[Changes][1.5.0]
+
+
 <a name="1.4.0"></a>
 ## [1.4.0](https://github.com/SeldonIO/MLServer/releases/tag/1.4.0) - 28 Feb 2024
 
@@ -400,6 +427,7 @@ To learn more about how to use MLServer directly from the MLflow CLI, check out 
 [Changes][1.1.0]
 
 
+[1.5.0]: https://github.com/SeldonIO/MLServer/compare/1.4.0...1.5.0
 [1.4.0]: https://github.com/SeldonIO/MLServer/compare/1.3.5...1.4.0
 [1.3.5]: https://github.com/SeldonIO/MLServer/compare/1.3.4...1.3.5
 [1.3.4]: https://github.com/SeldonIO/MLServer/compare/1.3.3...1.3.4
