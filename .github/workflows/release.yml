@@ -178,7 +178,7 @@ jobs:
           PYXIS_API_TOKEN: ${{ secrets.PYXIS_API_TOKEN }}
           PROJECT_ID: 63566bb9822ce8cef9ba27fc
           
-  pypy-publish:
+  mlserver-pypi-publish:
     needs: draft-release
     runs-on: ubuntu-latest
     steps:
