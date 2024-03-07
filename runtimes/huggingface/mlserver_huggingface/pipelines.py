@@ -27,8 +27,6 @@ class StEmbeddingPipeline(Pipeline):
             forward_kwargs["prompt_name"] = kwargs["prompt_name"]
         if "prompt" in kwargs:
             forward_kwargs["prompt"] = kwargs["prompt"]
-        if "batch_size" in kwargs:
-            forward_kwargs["batch_size"] = kwargs["batch_size"]
         if "show_progress_bar" in kwargs:
             forward_kwargs["show_progress_bar"] = kwargs["show_progress_bar"]
         if "output_value" in kwargs:
@@ -46,18 +44,22 @@ class StEmbeddingPipeline(Pipeline):
     def preprocess(self, inputs):
         return inputs
 
-    def _forward(self, sentences: Union[str, List[str]]):
-        outputs = self.model.encode(sentences)
+    def _forward(self, sentences: Union[str, List[str]], batch_size=32, **kwargs):
+        outputs = self.model.encode(sentences, batch_size=batch_size, **kwargs)
         return outputs
 
-    def forward(self, sentences: Union[str, List[str]], **forward_params):
-        model_outputs = self._forward(sentences, **forward_params)
+    def forward(
+        self, sentences: Union[str, List[str]], batch_size=32, **forward_params
+    ):
+        model_outputs = self._forward(
+            sentences, batch_size=batch_size, **forward_params
+        )
         return model_outputs
 
     def postprocess(self, model_outputs):
         return model_outputs
 
-    def __call__(self, sentences: Union[str, List[str]], **kwargs):
+    def __call__(self, sentences: Union[str, List[str]], batch_size=32, **kwargs):
         (
             preprocess_params,
             forward_params,
@@ -67,5 +69,8 @@ class StEmbeddingPipeline(Pipeline):
         preprocess_params = {**self._preprocess_params, **preprocess_params}
         forward_params = {**self._forward_params, **forward_params}
         postprocess_params = {**self._postprocess_params, **postprocess_params}
-        model_outputs = self.forward(sentences, **forward_params)
+        model_outputs = self.forward(sentences, batch_size=batch_size, **forward_params)
         return model_outputs
+
+    def predict(self, X, batch_size=32, **kwargs):
+        return self(X, batch_size=batch_size, **kwargs)
