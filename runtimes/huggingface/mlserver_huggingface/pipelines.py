@@ -18,7 +18,7 @@ class StEmbeddingPipeline(Pipeline):
         self.model_name = model.config._name_or_path
         assert is_sentence_transformer_model(
             self.model_name
-        ), f"{self.model_name} is not a sentence transformers model.Please use a sentence transformers model"
+        ), f"{self.model_name} is not a sentence transformers model."
         self.model = SentenceTransformer(self.model_name)
 
     def _sanitize_parameters(self, **kwargs):
