@@ -16,7 +16,6 @@ def test_sentence_transformers_pipeline():
     )
     model_settings = ModelSettings(name="foo", implementation=HuggingFaceRuntime)
     pipeline = load_pipeline_from_settings(hf_settings, model_settings)
-
     sentences = [
         "This framework generates embeddings for each input sentence",
         "Sentences are passed as a list of string.",
