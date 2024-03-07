@@ -10,9 +10,11 @@ class StEmbeddingPipeline(Pipeline):
     """A custom huggingface pipeline that wraps sentence transformers embedder"""
 
     def __init__(self, model: AutoModel, **kwargs):
-        self._preprocess_params, self._forward_params, self._postprocess_params = (
-            self._sanitize_parameters(**kwargs)
-        )
+        (
+            self._preprocess_params,
+            self._forward_params,
+            self._postprocess_params,
+        ) = self._sanitize_parameters(**kwargs)
         self.model_name = model.config._name_or_path
         assert is_sentence_transformer_model(
             self.model_name
@@ -20,7 +22,6 @@ class StEmbeddingPipeline(Pipeline):
         self.model = SentenceTransformer(self.model_name)
 
     def _sanitize_parameters(self, **kwargs):
-
         forward_kwargs = {}
         if "prompt_name" in kwargs:
             forward_kwargs["prompt_name"] = kwargs["prompt_name"]
@@ -57,9 +58,10 @@ class StEmbeddingPipeline(Pipeline):
         return model_outputs
 
     def __call__(self, sentences: Union[str, List[str]], **kwargs):
-
-        preprocess_params, forward_params, postprocess_params = (
-            self._sanitize_parameters(**kwargs)
-        )
+        (
+            preprocess_params,
+            forward_params,
+            postprocess_params,
+        ) = self._sanitize_parameters(**kwargs)
         model_outputs = self.forward(sentences, **forward_params)
         return model_outputs
