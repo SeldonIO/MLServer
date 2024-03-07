@@ -63,5 +63,9 @@ class StEmbeddingPipeline(Pipeline):
             forward_params,
             postprocess_params,
         ) = self._sanitize_parameters(**kwargs)
+        # Fuse __init__ params and __call__ params without modifying the __init__ ones.
+        preprocess_params = {**self._preprocess_params, **preprocess_params}
+        forward_params = {**self._forward_params, **forward_params}
+        postprocess_params = {**self._postprocess_params, **postprocess_params}
         model_outputs = self.forward(sentences, **forward_params)
         return model_outputs
