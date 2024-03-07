@@ -7,7 +7,8 @@ from mlserver.settings import ModelSettings
 
 
 def test_sentence_transformers_pipeline():
-    pretrained_model = "sentence-transformers/all-distilroberta-v1"
+    # A tiny sentence transformers model for testing, which only takes 17.6MB of memory
+    pretrained_model = "sentence-transformers-testing/stsb-bert-tiny-safetensors"
     st_embeder = SentenceTransformer(pretrained_model)
 
     hf_settings = HuggingFaceSettings(
