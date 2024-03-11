@@ -46,11 +46,13 @@ class StEmbeddingPipeline(Pipeline):
             sentences = [sentences]
         return sentences
 
-    def _forward(self, sentences: List[str], batch_size=32, **kwargs):
+    def _forward(self, sentences: Union[str, List[str]], batch_size=32, **kwargs):
         outputs = self.model.encode(sentences, batch_size=batch_size, **kwargs)
         return outputs
 
-    def forward(self, sentences: List[str], batch_size=32, **forward_params):
+    def forward(
+        self, sentences: Union[str, List[str]], batch_size=32, **forward_params
+    ):
 
         model_outputs = self._forward(
             sentences, batch_size=batch_size, **forward_params
