@@ -1773,13 +1773,13 @@ python-dateutil = ">=2.7"
 
 [[package]]
 name = "mlflow"
-version = "2.11.0"
+version = "2.11.1"
 description = "MLflow: A Platform for ML Development and Productionization"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "mlflow-2.11.0-py3-none-any.whl", hash = "sha256:c8c7d0ff7595d71765ca7338575e76df7af020b6dc00f66b015b38488e7a763d"},
-    {file = "mlflow-2.11.0.tar.gz", hash = "sha256:5fc6046a94e4269564dbeb748bb791ccb5c671a9c5c2b91ef3713c16aa614595"},
+    {file = "mlflow-2.11.1-py3-none-any.whl", hash = "sha256:4d62a0bd0da9f4b16256e686b06905a6f8533eb587cd8e2dc7ee8324cf94ab35"},
+    {file = "mlflow-2.11.1.tar.gz", hash = "sha256:a2ec29ee862f19955208fb8e05e51e5e9d2edc7175e37cf136d943b981a824e9"},
 ]
 
 [package.dependencies]
@@ -3937,4 +3937,4 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<3.12"
-content-hash = "019b3ee28dcb5ed9b2708b58bfa561a410a561c691bbf7139a34d5f92b3f182a"
+content-hash = "be679ad59cc2cc7a44f30b187e64ac66a7a5ec7ebc1599b73a9702b540b0fe15"
