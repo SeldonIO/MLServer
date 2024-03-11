@@ -62,47 +62,6 @@ class StEmbeddingPipeline(Pipeline):
         return outputs
 
     def __call__(self, sentences: Union[str, List[str]], batch_size=32, **kwargs):
-        """
-        Computes sentence embeddings.
-
-        Parameters
-        ----------
-        sentences: str
-            the sentences to embed.
-        prompt_name: dict
-            The name of the prompt to use for encoding. Must be a key in the `prompts` dictionary
-            which is either set in the constructor or loaded from the model configuration. For example if
-            `prompt_name` is ``"query"`` and the `prompts` is ``{"query": "query: ", ...}``, then the sentence "What
-            is the capital of France?" will be encoded as "query: What is the capital of France?" because the sentence
-            is appended to the prompt. If `prompt` is also set, this argument is ignored.
-        prompt: str
-            The prompt to use for encoding. For example, if the prompt is ``"query: "``, then the
-            sentence "What is the capital of France?" will be encoded as "query: What is the capital of France?"
-            because the sentence is appended to the prompt. If `prompt` is set, `prompt_name` is ignored.
-        batch_size: int
-            the batch size used for the computation.
-        show_progress_bar: bool
-            Whether to output a progress bar when encode sentences.
-        output_value: str
-            The type of embeddings to return: "sentence_embedding" to get sentence embeddings,
-            "token_embeddings" to get wordpiece token embeddings, and `None`, to get all output values. Defaults
-            to "sentence_embedding".
-        convert_to_numpy: bool
-            Whether the output should be a list of numpy vectors. If False, it is a list of PyTorch tensors.
-        convert_to_tensor: bool
-            Whether the output should be one large tensor. Overwrites `convert_to_numpy`.
-        device: str
-            Which `torch.device` to use for the computation.
-
-        normalize_embeddings: bool
-            Whether to normalize returned vectors to have length 1. In that case,
-            the faster dot-product (util.dot_score) instead of cosine similarity can be used.
-        Returns
-        -------
-            By default, a list of tensors is returned. If convert_to_tensor, a stacked tensor is returned.
-            If convert_to_numpy, a numpy matrix is returned.
-
-        """
         (
             preprocess_params,
             forward_params,
