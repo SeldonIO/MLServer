@@ -41,7 +41,7 @@ class StEmbeddingPipeline(Pipeline):
             forward_kwargs["normalize_embeddings"] = kwargs["normalize_embeddings"]
         return {}, forward_kwargs, {}
 
-    def preprocess(self, sentences: Union[str, List[str]]):
+    def preprocess(self, sentences: Union[str, List[str]]) -> List[str]:
         if isinstance(sentences, str):
             sentences = [sentences]
         return sentences
