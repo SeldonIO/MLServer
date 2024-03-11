@@ -51,7 +51,6 @@ class StEmbeddingPipeline(Pipeline):
         return outputs
 
     def forward(self, sentences: List[str], batch_size=32, **forward_params):
-
         model_outputs = self._forward(
             sentences, batch_size=batch_size, **forward_params
         )
