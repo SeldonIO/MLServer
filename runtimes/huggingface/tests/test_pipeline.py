@@ -12,7 +12,7 @@ def test_sentence_transformers_pipeline():
     st_embeder = SentenceTransformer(pretrained_model)
 
     hf_settings = HuggingFaceSettings(
-        pretrained_model=pretrained_model, task="sentence_embedding"
+        pretrained_model=pretrained_model, task="sentence-embedding"
     )
     model_settings = ModelSettings(name="foo", implementation=HuggingFaceRuntime)
     pipeline = load_pipeline_from_settings(hf_settings, model_settings)
@@ -22,5 +22,5 @@ def test_sentence_transformers_pipeline():
         "The quick brown fox jumps over the lazy dog.",
     ]
     st_pred = st_embeder.encode(sentences)
-    pipeline_pred = pipeline.predict(sentences)
+    pipeline_pred = pipeline.predict(sentences)["embeddings"]
     assert np.array_equal(st_pred, pipeline_pred)

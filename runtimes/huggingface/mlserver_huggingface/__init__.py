@@ -4,7 +4,7 @@ from transformers.pipelines import PIPELINE_REGISTRY
 
 # Added Custom pipeline
 PIPELINE_REGISTRY.register_pipeline(
-    "sentence_embedding",
+    "sentence-embedding",
     pipeline_class=StEmbeddingPipeline,
     type="text",
 )
