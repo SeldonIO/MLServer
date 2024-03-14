@@ -82,6 +82,8 @@ Out of the box, MLServer provides support for:
 | Alibi-Explain | ✅        | [MLServer Alibi Explain](./runtimes/alibi-explain)               |
 | HuggingFace   | ✅        | [MLServer HuggingFace](./runtimes/huggingface)                   |
 
+MLServer is licensed under the Apache License, Version 2.0. However please note that software used in conjunction with, or alongside, MLServer may be licensed under different terms. For example, Alibi Detect and Alibi Explain are both licensed under the Business Source License 1.1. For more information about the legal terms of products that are used in conjunction with or alongside MLServer, please refer to their respective documentation.
+
 ## Supported Python Versions
 
 🔴 Unsupported
