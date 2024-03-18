@@ -306,6 +306,20 @@ tensorflow = ["tensorflow (>=2.2.0,!=2.6.0,!=2.6.1,<2.15.0)", "tensorflow-probab
 torch = ["torch (>=1.7.0,<3.0.0)"]
 
 [[package]]
+name = "aniso8601"
+version = "9.0.1"
+description = "A library for parsing ISO 8601 strings."
+optional = false
+python-versions = "*"
+files = [
+    {file = "aniso8601-9.0.1-py2.py3-none-any.whl", hash = "sha256:1d2b7ef82963909e93c4f24ce48d4de9e66009a21bf1c1e1c85bdd0812fe412f"},
+    {file = "aniso8601-9.0.1.tar.gz", hash = "sha256:72e3117667eedf66951bb2d93f4296a56b94b078a8a95905a052611fb3f1b973"},
+]
+
+[package.extras]
+dev = ["black", "coverage", "isort", "pre-commit", "pyenchant", "pylint"]
+
+[[package]]
 name = "anyio"
 version = "4.3.0"
 description = "High level compatibility layer for multiple asynchronous event loop implementations"
@@ -2010,6 +2024,51 @@ protobuf = ">=3.19.5,<3.20.0 || >3.20.0,<3.20.1 || >3.20.1,<4.21.1 || >4.21.1,<4
 grpc = ["grpcio (>=1.44.0,<2.0.0.dev0)"]
 
 [[package]]
+name = "graphene"
+version = "3.3"
+description = "GraphQL Framework for Python"
+optional = false
+python-versions = "*"
+files = [
+    {file = "graphene-3.3-py2.py3-none-any.whl", hash = "sha256:bb3810be33b54cb3e6969506671eb72319e8d7ba0d5ca9c8066472f75bf35a38"},
+    {file = "graphene-3.3.tar.gz", hash = "sha256:529bf40c2a698954217d3713c6041d69d3f719ad0080857d7ee31327112446b0"},
+]
+
+[package.dependencies]
+aniso8601 = ">=8,<10"
+graphql-core = ">=3.1,<3.3"
+graphql-relay = ">=3.1,<3.3"
+
+[package.extras]
+dev = ["black (==22.3.0)", "coveralls (>=3.3,<4)", "flake8 (>=4,<5)", "iso8601 (>=1,<2)", "mock (>=4,<5)", "pytest (>=6,<7)", "pytest-asyncio (>=0.16,<2)", "pytest-benchmark (>=3.4,<4)", "pytest-cov (>=3,<4)", "pytest-mock (>=3,<4)", "pytz (==2022.1)", "snapshottest (>=0.6,<1)"]
+test = ["coveralls (>=3.3,<4)", "iso8601 (>=1,<2)", "mock (>=4,<5)", "pytest (>=6,<7)", "pytest-asyncio (>=0.16,<2)", "pytest-benchmark (>=3.4,<4)", "pytest-cov (>=3,<4)", "pytest-mock (>=3,<4)", "pytz (==2022.1)", "snapshottest (>=0.6,<1)"]
+
+[[package]]
+name = "graphql-core"
+version = "3.2.3"
+description = "GraphQL implementation for Python, a port of GraphQL.js, the JavaScript reference implementation for GraphQL."
+optional = false
+python-versions = ">=3.6,<4"
+files = [
+    {file = "graphql-core-3.2.3.tar.gz", hash = "sha256:06d2aad0ac723e35b1cb47885d3e5c45e956a53bc1b209a9fc5369007fe46676"},
+    {file = "graphql_core-3.2.3-py3-none-any.whl", hash = "sha256:5766780452bd5ec8ba133f8bf287dc92713e3868ddd83aee4faab9fc3e303dc3"},
+]
+
+[[package]]
+name = "graphql-relay"
+version = "3.2.0"
+description = "Relay library for graphql-core"
+optional = false
+python-versions = ">=3.6,<4"
+files = [
+    {file = "graphql-relay-3.2.0.tar.gz", hash = "sha256:1ff1c51298356e481a0be009ccdff249832ce53f30559c1338f22a0e0d17250c"},
+    {file = "graphql_relay-3.2.0-py3-none-any.whl", hash = "sha256:c9b22bd28b170ba1fe674c74384a8ff30a76c8e26f88ac3aa1584dd3179953e5"},
+]
+
+[package.dependencies]
+graphql-core = ">=3.2,<3.3"
+
+[[package]]
 name = "greenlet"
 version = "3.0.3"
 description = "Lightweight in-process concurrent programming"
@@ -3192,13 +3251,13 @@ dev = ["absl-py", "pyink", "pylint (>=2.6.0)", "pytest", "pytest-xdist"]
 
 [[package]]
 name = "mlflow"
-version = "2.10.2"
+version = "2.11.1"
 description = "MLflow: A Platform for ML Development and Productionization"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "mlflow-2.10.2-py3-none-any.whl", hash = "sha256:f9fa74d88a837866cd9074f95fae94c8bf621b6e34eb3135891b6e1126880bef"},
-    {file = "mlflow-2.10.2.tar.gz", hash = "sha256:3ddf32ba2c01dac79e4d077d4bb9ed46d82a082dc99223207d562c7ee6bee671"},
+    {file = "mlflow-2.11.1-py3-none-any.whl", hash = "sha256:4d62a0bd0da9f4b16256e686b06905a6f8533eb587cd8e2dc7ee8324cf94ab35"},
+    {file = "mlflow-2.11.1.tar.gz", hash = "sha256:a2ec29ee862f19955208fb8e05e51e5e9d2edc7175e37cf136d943b981a824e9"},
 ]
 
 [package.dependencies]
@@ -3208,7 +3267,8 @@ cloudpickle = "<4"
 docker = ">=4.0.0,<8"
 entrypoints = "<1"
 Flask = "<4"
-gitpython = ">=2.1.0,<4"
+gitpython = ">=3.1.9,<4"
+graphene = "<4"
 gunicorn = {version = "<22", markers = "platform_system != \"Windows\""}
 importlib-metadata = ">=3.7.0,<4.7.0 || >4.7.0,<8"
 Jinja2 = [
@@ -3222,7 +3282,7 @@ packaging = "<24"
 pandas = "<3"
 protobuf = ">=3.12.0,<5"
 pyarrow = ">=4.0.0,<16"
-pytz = "<2024"
+pytz = "<2025"
 pyyaml = ">=5.1,<7"
 querystring-parser = "<2"
 requests = ">=2.17.3,<3"
@@ -3230,14 +3290,14 @@ scikit-learn = "<2"
 scipy = "<2"
 sqlalchemy = ">=1.4.0,<3"
 sqlparse = ">=0.4.0,<1"
-waitress = {version = "<3", markers = "platform_system == \"Windows\""}
+waitress = {version = "<4", markers = "platform_system == \"Windows\""}
 
 [package.extras]
 aliyun-oss = ["aliyunstoreplugin"]
-databricks = ["azure-storage-file-datalake (>12)", "boto3 (>1)", "botocore (>1.34)", "google-cloud-storage (>=1.30.0)"]
-extras = ["azureml-core (>=1.2.0)", "boto3", "botocore", "google-cloud-storage (>=1.30.0)", "kubernetes", "mlserver (>=1.2.0,!=1.3.1)", "mlserver-mlflow (>=1.2.0,!=1.3.1)", "prometheus-flask-exporter", "pyarrow", "pysftp", "requests-auth-aws-sigv4", "virtualenv"]
-gateway = ["aiohttp (<4)", "boto3 (>=1.28.56,<2)", "fastapi (<1)", "pydantic (>=1.0,<3)", "slowapi (<1)", "tiktoken (<1)", "uvicorn[standard] (<1)", "watchfiles (<1)"]
-genai = ["aiohttp (<4)", "boto3 (>=1.28.56,<2)", "fastapi (<1)", "pydantic (>=1.0,<3)", "slowapi (<1)", "tiktoken (<1)", "uvicorn[standard] (<1)", "watchfiles (<1)"]
+databricks = ["azure-storage-file-datalake (>12)", "boto3 (>1)", "botocore", "google-cloud-storage (>=1.30.0)"]
+extras = ["azureml-core (>=1.2.0)", "boto3", "botocore", "google-cloud-storage (>=1.30.0)", "kubernetes", "mlserver (>=1.2.0,!=1.3.1,<1.4.0)", "mlserver-mlflow (>=1.2.0,!=1.3.1,<1.4.0)", "prometheus-flask-exporter", "pyarrow", "pysftp", "requests-auth-aws-sigv4", "virtualenv"]
+gateway = ["aiohttp (<4)", "boto3 (>=1.28.56,<2)", "fastapi (<1)", "pydantic (>=1.0,<3)", "slowapi (>=0.1.9,<1)", "tiktoken (<1)", "uvicorn[standard] (<1)", "watchfiles (<1)"]
+genai = ["aiohttp (<4)", "boto3 (>=1.28.56,<2)", "fastapi (<1)", "pydantic (>=1.0,<3)", "slowapi (>=0.1.9,<1)", "tiktoken (<1)", "uvicorn[standard] (<1)", "watchfiles (<1)"]
 sqlserver = ["mlflow-dbstore"]
 xethub = ["mlflow-xethub"]
 
@@ -8019,4 +8079,4 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<3.12"
-content-hash = "353bbde4e3319dfe8e3f016111da047dcfd6c7ac82457be5c5ec9b4cf46e966a"
+content-hash = "35ea42e2fd1b7b466dbae84628aafef2f2069b2a50d25d3306d6c065f3e276e6"
