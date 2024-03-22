@@ -11,7 +11,7 @@ class StEmbeddingPipeline(Pipeline):
     """A custom huggingface pipeline that wraps sentence transformers embedder"""
 
     def __init__(self, model: AutoModel, tokenizer: AutoTokenizer, **kwargs):
-        # This tokenzier is not being used.sentence-transformers model contains a tokenizer
+        #self.tokenzier is not being used.sentence-transformers model has a tokenizer
         self.tokenizer = tokenizer
         (
             self._preprocess_params,
