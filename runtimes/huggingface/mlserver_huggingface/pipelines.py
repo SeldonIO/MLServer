@@ -10,7 +10,7 @@ from sentence_transformers import SentenceTransformer
 class StEmbeddingPipeline(Pipeline):
     """A custom huggingface pipeline that wraps sentence transformers embedder"""
 
-    def __init__(self, model: AutoModel,tokenizer:AutoTokenizer, **kwargs):
+    def __init__(self, model: AutoModel, tokenizer: AutoTokenizer, **kwargs):
         # This tokenzier is not being used
         # sentence-transformers model contains a tokenizer 
         self.tokenizer = tokenizer
@@ -24,6 +24,7 @@ class StEmbeddingPipeline(Pipeline):
             self.model_name
         ), f"{self.model_name} is not a sentence transformers model."
         self.model = SentenceTransformer(self.model_name)
+        
     def _sanitize_parameters(self, **kwargs):
         forward_kwargs = {}
         if "prompt_name" in kwargs:
