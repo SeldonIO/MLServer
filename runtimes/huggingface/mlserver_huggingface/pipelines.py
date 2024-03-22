@@ -2,6 +2,7 @@ from typing import Union, List
 
 from transformers import Pipeline
 from transformers import AutoModel
+from transformers import AutoTokenizer
 from sentence_transformers.util import is_sentence_transformer_model
 from sentence_transformers import SentenceTransformer
 
@@ -9,7 +10,10 @@ from sentence_transformers import SentenceTransformer
 class StEmbeddingPipeline(Pipeline):
     """A custom huggingface pipeline that wraps sentence transformers embedder"""
 
-    def __init__(self, model: AutoModel, **kwargs):
+    def __init__(self, model: AutoModel,tokenizer:AutoTokenizer, **kwargs):
+        # This tokenzier is not being used
+        # sentence-transformers model contains a tokenizer 
+        self.tokenizer = tokenizer
         (
             self._preprocess_params,
             self._forward_params,
