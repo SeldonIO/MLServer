@@ -24,7 +24,6 @@ class StEmbeddingPipeline(Pipeline):
             self.model_name
         ), f"{self.model_name} is not a sentence transformers model."
         self.model = SentenceTransformer(self.model_name)
-
     def _sanitize_parameters(self, **kwargs):
         forward_kwargs = {}
         if "prompt_name" in kwargs:
