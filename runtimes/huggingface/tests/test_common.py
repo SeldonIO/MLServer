@@ -13,6 +13,9 @@ from mlserver.settings import ModelSettings, ModelParameters
 from mlserver_huggingface.runtime import HuggingFaceRuntime
 from mlserver_huggingface.settings import HuggingFaceSettings
 from mlserver_huggingface.common import load_pipeline_from_settings
+from mlserver.types import InferenceRequest, RequestInput
+from mlserver.types.dataplane import Parameters
+from mlserver_huggingface.codecs.base import MultiInputRequestCodec
 
 
 @pytest.mark.parametrize(
