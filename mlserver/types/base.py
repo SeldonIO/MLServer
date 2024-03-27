@@ -1,5 +1,7 @@
 from pydantic import BaseModel as _BaseModel
 
+from mlserver.pydantic_migration import is_pydantic_v1
+
 
 class BaseModel(_BaseModel):
     """
@@ -20,5 +22,18 @@ class BaseModel(_BaseModel):
             exclude_unset=exclude_unset, exclude_none=exclude_none, **kwargs
         )
 
+
+if is_pydantic_v1():
+
     class Config:
         use_enum_values = True
+
+    # MyPy would complain if running under Pydantic 2.x
+    BaseModel.Config = Config  # type: ignore
+
+else:
+    from pydantic import ConfigDict
+
+    model_config = ConfigDict(use_enum_values=True)
+    # MyPy would complain if running under Pydantic 1.x
+    BaseModel.model_config = model_config  # type: ignore

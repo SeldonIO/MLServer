@@ -1,6 +1,7 @@
 from .repository import ModelRepository, SchemalessModelRepository
 from ..settings import Settings
-from pydantic import PyObject
+
+from mlserver.pydantic_migration import PyObject
 
 
 class ModelRepositoryFactory:
