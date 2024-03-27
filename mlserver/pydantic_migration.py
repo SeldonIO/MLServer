@@ -1,3 +1,4 @@
+# noqa: F401
 from pydantic import VERSION, Field
 
 
