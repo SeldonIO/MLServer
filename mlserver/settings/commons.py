@@ -1,15 +1,17 @@
+import json
 import sys
 import os
-import json
 import importlib
 import inspect
-
-from typing import Any, Dict, List, Optional, Type, Union, no_type_check, TYPE_CHECKING
-from pydantic import PyObject, Extra, Field, BaseSettings as _BaseSettings
 from contextlib import contextmanager
+from typing import Type, no_type_check, Optional, List, Union, Dict, Any, TYPE_CHECKING
 
-from .version import __version__
-from .types import MetadataTensor
+from mlserver.version import __version__
+from mlserver.types import MetadataTensor
+from mlserver.pydantic_migration import BaseSettings as _BaseSettings, PyObject, Field
+
+if TYPE_CHECKING:
+    from ..model import MLModel
 
 ENV_FILE_SETTINGS = ".env"
 ENV_PREFIX_SETTINGS = "MLSERVER_"
@@ -19,9 +21,6 @@ DEFAULT_PARALLEL_WORKERS = 1
 
 DEFAULT_ENVIRONMENTS_DIR = os.path.join(os.getcwd(), ".envs")
 DEFAULT_METRICS_DIR = os.path.join(os.getcwd(), ".metrics")
-
-if TYPE_CHECKING:
-    from ..model import MLModel
 
 
 @contextmanager
@@ -92,9 +91,6 @@ class BaseSettings(_BaseSettings):
 
 
 class CORSSettings(BaseSettings):
-    class Config:
-        env_file = ENV_FILE_SETTINGS
-        env_prefix = ENV_PREFIX_SETTINGS
 
     allow_origins: Optional[List[str]] = []
     """
@@ -128,9 +124,6 @@ class CORSSettings(BaseSettings):
 
 
 class Settings(BaseSettings):
-    class Config:
-        env_file = ENV_FILE_SETTINGS
-        env_prefix = ENV_PREFIX_SETTINGS
 
     debug: bool = True
 
@@ -257,11 +250,6 @@ class ModelParameters(BaseSettings):
     can change on each instance (e.g. each version) of the model.
     """
 
-    class Config:
-        extra = Extra.allow
-        env_file = ENV_FILE_SETTINGS
-        env_prefix = ENV_PREFIX_MODEL_SETTINGS
-
     uri: Optional[str] = None
     """
     URI where the model artifacts can be found.
@@ -287,10 +275,6 @@ class ModelParameters(BaseSettings):
 
 
 class ModelSettings(BaseSettings):
-    class Config:
-        env_file = ENV_FILE_SETTINGS
-        env_prefix = ENV_PREFIX_MODEL_SETTINGS
-        underscore_attrs_are_private = True
 
     # Source points to the file where model settings were loaded from
     _source: Optional[str] = None
@@ -382,19 +366,6 @@ class ModelSettings(BaseSettings):
     """When adaptive batching is enabled, maximum amount of time (in seconds)
     to wait for enough requests to build a full batch."""
 
-    # Custom model class implementation
-    # NOTE: The `implementation_` attr will only point to the string import.
-    # The actual import will occur within the `implementation` property - think
-    # of this as a lazy import.
-    # You should always use `model_settings.implementation` and treat
-    # `implementation_` as a private attr (due to Pydantic - we can't just
-    # prefix the attr with `_`).
-    implementation_: str = Field(
-        alias="implementation", env="MLSERVER_MODEL_IMPLEMENTATION"
-    )
-    """*Python path* to the inference runtime to use to serve this model (e.g.
-    ``mlserver_sklearn.SKLearnModel``)."""
-
     # Model parameters are meant to be set directly by the MLServer runtime.
     # However, it's also possible to override them manually.
     parameters: Optional[ModelParameters] = None
@@ -404,3 +375,6 @@ class ModelSettings(BaseSettings):
     """Enable caching for a specific model. This parameter can be used to disable
     cache for a specific model, if the server level caching is enabled. If the
     server level caching is disabled, this parameter value will have no effect."""
+
+    # Overridden in `settings_v1.py` and `settings_v2.py`
+    implementation_: str = Field()

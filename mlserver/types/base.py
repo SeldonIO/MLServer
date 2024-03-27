@@ -1,5 +1,7 @@
 from pydantic import BaseModel as _BaseModel
 
+from mlserver.pydantic_migration import is_pydantic_v1
+
 
 class BaseModel(_BaseModel):
     """
@@ -20,5 +22,14 @@ class BaseModel(_BaseModel):
             exclude_unset=exclude_unset, exclude_none=exclude_none, **kwargs
         )
 
+
+if is_pydantic_v1():
     class Config:
         use_enum_values = True
+
+    BaseModel.Config = Config
+
+else:
+    from pydantic import ConfigDict
+    model_config = ConfigDict(use_enum_values=True)
+    BaseModel.model_config = model_config
