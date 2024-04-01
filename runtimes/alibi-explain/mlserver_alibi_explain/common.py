@@ -1,10 +1,9 @@
 import re
 from importlib import import_module
-from typing import Any, Optional, Type, Union, List
+from typing import Any, Optional, Type, Union, List, TYPE_CHECKING
 
 import numpy as np
 import requests
-from pydantic import BaseSettings
 
 from mlserver.codecs import StringCodec, NumpyCodec
 from mlserver.types import (
@@ -26,6 +25,15 @@ EXPLAINER_TYPE_TAG = "explainer_type"
 ENV_PREFIX_ALIBI_EXPLAIN_SETTINGS = "MLSERVER_MODEL_ALIBI_EXPLAIN_"
 EXPLAIN_PARAMETERS_TAG = "explain_parameters"
 SELDON_SKIP_LOGGING_HEADER = "Seldon-Skip-Logging"
+
+
+if TYPE_CHECKING:
+    from pydantic_settings import BaseSettings
+else:
+    try:
+        from pydantic_settings import BaseSettings
+    except ImportError:
+        from pydantic import BaseSettings
 
 
 #  TODO: add this utility in the codec.
@@ -81,13 +89,10 @@ def construct_metadata_url(infer_url: str) -> str:
     return re.sub(r"/infer$", "", infer_url)
 
 
-class AlibiExplainSettings(BaseSettings):
+class AlibiExplainSettings(BaseSettings, env_prefix=ENV_PREFIX_ALIBI_EXPLAIN_SETTINGS):
     """
     Parameters that apply only to alibi explain models
     """
-
-    class Config:
-        env_prefix = ENV_PREFIX_ALIBI_EXPLAIN_SETTINGS
 
     infer_uri: str
     explainer_type: str

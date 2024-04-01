@@ -1,10 +1,20 @@
 import os
 import orjson
 
-from typing import Optional, Dict, Union, NewType
-from pydantic import BaseSettings, Extra
+from typing import Optional, Dict, Union, NewType, TYPE_CHECKING
+from pydantic import Extra
 from distutils.util import strtobool
 from transformers.pipelines import SUPPORTED_TASKS
+
+
+if TYPE_CHECKING:
+    from pydantic_settings import BaseSettings
+else:
+    try:
+        from pydantic_settings import BaseSettings
+    except ImportError:
+        from pydantic import BaseSettings
+
 
 try:
     # Optimum 1.7 changed the import name from `SUPPORTED_TASKS` to
@@ -30,14 +40,14 @@ ENV_PREFIX_HUGGINGFACE_SETTINGS = "MLSERVER_MODEL_HUGGINGFACE_"
 PARAMETERS_ENV_NAME = "PREDICTIVE_UNIT_PARAMETERS"
 
 
-class HuggingFaceSettings(BaseSettings):
+class HuggingFaceSettings(
+    BaseSettings,
+    env_prefix=ENV_PREFIX_HUGGINGFACE_SETTINGS,
+    extra=Extra.ignore,
+):
     """
     Parameters that apply only to HuggingFace models
     """
-
-    class Config:
-        env_prefix = ENV_PREFIX_HUGGINGFACE_SETTINGS
-        extra = Extra.ignore
 
     # TODO: Document fields
     task: str = ""

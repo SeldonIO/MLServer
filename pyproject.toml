@@ -62,8 +62,9 @@ gevent = "*"
 aiofiles = "*"
 orjson = "*"
 uvloop = {version = "*", markers = "sys_platform != 'win32' and (sys_platform != 'cygwin' and platform_python_implementation != 'PyPy')"}
-pydantic = "*"
 python-multipart = "*"
+pydantic = "*"
+pydantic-settings = { version = "*", optional = true }
 
 ## The importlib-resources backport is required to use some
 ## functionality added in Python 3.10
@@ -73,8 +74,11 @@ opentelemetry-sdk = "^1.22.0"
 opentelemetry-instrumentation-fastapi = ">=0.43b0"
 opentelemetry-instrumentation-grpc = ">=0.43b0"
 opentelemetry-exporter-otlp-proto-grpc = "^1.22.0"
-pydantic-settings = "^2.2.1"
-bump-pydantic = "^0.8.0"
+
+[tool.poetry.extras]
+pydantic-v2 = [
+    "pydantic-settings",
+]
 
 [tool.poetry.group.dev.dependencies]
 datamodel-code-generator = "0.25.5"
@@ -114,13 +118,13 @@ tensorflow = "<2.15"
 optional = true
 
 [tool.poetry.group.all-runtimes.dependencies]
-# mlserver-sklearn = {path = "./runtimes/sklearn", develop = true}
-# mlserver-xgboost = {path = "./runtimes/xgboost", develop = true}
-# mlserver-lightgbm = {path = "./runtimes/lightgbm", develop = true}
-# mlserver-mlflow = {path = "./runtimes/mlflow", develop = true}
-# mlserver-huggingface = {path = "./runtimes/huggingface", develop = true}
-# mlserver-alibi-explain = {path = "./runtimes/alibi-explain", develop = true}
-# mlserver-alibi-detect = {path = "./runtimes/alibi-detect", develop = true}
+mlserver-sklearn = {path = "./runtimes/sklearn", develop = true}
+mlserver-xgboost = {path = "./runtimes/xgboost", develop = true}
+mlserver-lightgbm = {path = "./runtimes/lightgbm", develop = true}
+mlserver-mlflow = {path = "./runtimes/mlflow", develop = true}
+mlserver-huggingface = {path = "./runtimes/huggingface", develop = true}
+mlserver-alibi-explain = {path = "./runtimes/alibi-explain", develop = true}
+mlserver-alibi-detect = {path = "./runtimes/alibi-detect", develop = true}
 
 [tool.poetry.group.all-runtimes-dev]
 optional = true
@@ -149,7 +153,7 @@ sphinx_material = "0.0.36"
 readthedocs-sphinx-search = "0.3.2"
 myst-parser = "2.0.0"
 sphinxcontrib-bibtex = "2.5.0"
-# autodoc_pydantic = "1.9.0"
+autodoc_pydantic = "*"
 sphinx-click = "5.1.0"
 sphinx_design = "0.4.1"
 sphinx-autobuild = "2024.2.4"

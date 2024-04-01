@@ -5,10 +5,13 @@ import importlib
 import inspect
 from contextlib import contextmanager
 from typing import Type, no_type_check, Optional, List, Union, Dict, Any, TYPE_CHECKING
+from typing_extensions import Annotated, Self
+
+from pydantic import Extra, Field
 
 from mlserver.version import __version__
 from mlserver.types import MetadataTensor
-from mlserver.pydantic_migration import BaseSettings as _BaseSettings, PyObject, Field
+from mlserver.pydantic_migration import BaseSettings as _BaseSettings, PyObject
 
 if TYPE_CHECKING:
     from ..model import MLModel
@@ -90,8 +93,9 @@ class BaseSettings(_BaseSettings):
         )
 
 
-class CORSSettings(BaseSettings):
-
+class CORSSettings(
+    BaseSettings, env_file=ENV_FILE_SETTINGS, env_prefix=ENV_PREFIX_SETTINGS
+):
     allow_origins: Optional[List[str]] = []
     """
     A list of origins that should be permitted to make
@@ -123,8 +127,9 @@ class CORSSettings(BaseSettings):
     """Sets a maximum time in seconds for browsers to cache CORS responses"""
 
 
-class Settings(BaseSettings):
-
+class Settings(
+    BaseSettings, env_file=ENV_FILE_SETTINGS, env_prefix=ENV_PREFIX_SETTINGS
+):
     debug: bool = True
 
     parallel_workers: int = DEFAULT_PARALLEL_WORKERS
@@ -241,7 +246,12 @@ class Settings(BaseSettings):
     """Cache size to be used if caching is enabled."""
 
 
-class ModelParameters(BaseSettings):
+class ModelParameters(
+    BaseSettings,
+    extra=Extra.allow,
+    env_file=ENV_FILE_SETTINGS,
+    env_prefix=ENV_PREFIX_MODEL_SETTINGS,
+):
     """
     Parameters that apply only to a particular instance of a model.
     This can include things like model weights, or arbitrary ``extra``
@@ -274,8 +284,12 @@ class ModelParameters(BaseSettings):
     implementation."""
 
 
-class ModelSettings(BaseSettings):
-
+class _ModelSettings(
+    BaseSettings,
+    env_file=ENV_FILE_SETTINGS,
+    env_prefix=ENV_PREFIX_MODEL_SETTINGS,
+    underscore_attrs_are_private=True,
+):
     # Source points to the file where model settings were loaded from
     _source: Optional[str] = None
 
@@ -289,14 +303,14 @@ class ModelSettings(BaseSettings):
         super().__init__(*args, **kwargs)
 
     @classmethod
-    def parse_file(cls, path: str) -> "ModelSettings":  # type: ignore
+    def parse_file(cls, path: str) -> Self:  # type: ignore
         with open(path, "r") as f:
             obj = json.load(f)
             obj["_source"] = path
             return cls.parse_obj(obj)
 
     @classmethod
-    def parse_obj(cls, obj: Any) -> "ModelSettings":
+    def parse_obj(cls, obj: Any) -> Self:
         source = obj.pop("_source", None)
         model_settings = super().parse_obj(obj)
         if source:
@@ -343,19 +357,26 @@ class ModelSettings(BaseSettings):
     """Metadata about the outputs returned by the model."""
 
     # Parallel settings
-    parallel_workers: Optional[int] = Field(
-        None,
-        deprecated=True,
-        description=(
-            "Use the `parallel_workers` field the server wide settings instead."
+    parallel_workers: Annotated[
+        Optional[int],
+        Field(
+            None,
+            deprecated=True,
+            description=(
+                "Use the `parallel_workers` field the server wide settings instead."
+            ),
         ),
-    )
+    ]
 
-    warm_workers: bool = Field(
-        False,
-        deprecated=True,
-        description="Inference workers will now always be `warmed up` at start time.",
-    )
+    warm_workers: Annotated[
+        bool,
+        Field(
+            False,
+            deprecated=True,
+            description="Inference workers will now always "
+            "be `warmed up` at start time.",
+        ),
+    ]
 
     # Adaptive Batching settings (disabled by default)
     max_batch_size: int = 0

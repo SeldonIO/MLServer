@@ -2,8 +2,8 @@ import os
 import numpy as np
 
 from pydantic.error_wrappers import ValidationError
-from typing import Optional, List, Dict
-from pydantic import BaseSettings, Field
+from typing import Optional, List, Dict, TYPE_CHECKING
+from pydantic import Field
 from functools import cached_property
 
 from alibi_detect.saving import load_detector
@@ -23,13 +23,17 @@ ENV_PREFIX_ALIBI_DETECT_SETTINGS = "MLSERVER_MODEL_ALIBI_DETECT_"
 ALIBI_MODULE_NAMES = {"cd": "drift", "od": "outlier", "ad": "adversarial"}
 
 
-class AlibiDetectSettings(BaseSettings):
-    """
-    Parameters that apply only to alibi detect models
-    """
+if TYPE_CHECKING:
+    from pydantic_settings import BaseSettings
+else:
+    try:
+        from pydantic_settings import BaseSettings
+    except ImportError:
+        from pydantic import BaseSettings
 
-    class Config:
-        env_prefix = ENV_PREFIX_ALIBI_DETECT_SETTINGS
+
+class AlibiDetectSettings(BaseSettings, env_prefix=ENV_PREFIX_ALIBI_DETECT_SETTINGS):
+    """Parameters that apply only to alibi detect models."""
 
     predict_parameters: dict = {}
     """
@@ -57,12 +61,10 @@ class AlibiDetectRuntime(MLModel):
     """
 
     def __init__(self, settings: ModelSettings):
-        if settings.parameters is None:
-            self._ad_settings = AlibiDetectSettings()
-        else:
-            extra = settings.parameters.extra
-            self._ad_settings = AlibiDetectSettings(**extra)  # type: ignore
-
+        parameters = (
+            settings.parameters.extra if settings.parameters is not None else {}
+        ) or {}
+        self._ad_settings = AlibiDetectSettings(**parameters)
         self._batch: List[InferenceRequest] = []
         super().__init__(settings)
 

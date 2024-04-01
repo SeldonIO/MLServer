@@ -1,38 +1,9 @@
 from pydantic import Field
-from pydantic_settings import SettingsConfigDict
 
-from mlserver.settings.commons import (
-    ENV_FILE_SETTINGS,
-    ENV_PREFIX_SETTINGS,
-    ENV_PREFIX_MODEL_SETTINGS,
-    CORSSettings,
-    Settings,
-    ModelParameters,
-    ModelSettings as _ModelSettings,
-)
-
-
-CORSSettings.model_config = SettingsConfigDict(
-    env_file=ENV_FILE_SETTINGS,
-    env_prefix=ENV_PREFIX_SETTINGS,
-)
-
-Settings.model_config = SettingsConfigDict(
-    env_file=ENV_FILE_SETTINGS,
-    env_prefix=ENV_PREFIX_SETTINGS,
-)
-ModelParameters.model_config = model_config = SettingsConfigDict(
-    extra="allow",
-    env_file=ENV_FILE_SETTINGS,
-    env_prefix=ENV_PREFIX_MODEL_SETTINGS,
-)
+from mlserver.settings.commons import _ModelSettings
 
 
 class ModelSettings(_ModelSettings):
-    model_config = SettingsConfigDict(
-        env_file=ENV_FILE_SETTINGS,
-        env_prefix=ENV_PREFIX_MODEL_SETTINGS,
-    )
 
     # Custom model class implementation
     # NOTE: The `implementation_` attr will only point to the string import.

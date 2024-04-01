@@ -5,8 +5,8 @@ from enum import IntEnum
 from pydantic import BaseModel, Field
 from typing import Any, Dict, List, Optional, Union
 
-from ..utils import generate_uuid
-from ..settings import ModelSettings
+from mlserver.utils import generate_uuid
+from mlserver.settings import ModelSettings
 
 
 class ModelUpdateType(IntEnum):
@@ -26,13 +26,10 @@ class ModelRequestMessage(Message):
     method_kwargs: Dict[str, Any] = {}
 
 
-class ModelResponseMessage(Message):
-    class Config:
-        # This is to allow having an Exception field
-        arbitrary_types_allowed = True
-
-    return_value: Optional[Any]
-    exception: Optional[Union[Exception, CancelledError]]
+# `arbitrary_types_allowed` to allow having an Exception field
+class ModelResponseMessage(Message, arbitrary_types_allowed=True):
+    return_value: Optional[Any] = None
+    exception: Optional[Union[Exception, CancelledError]] = None
 
 
 class ModelUpdateMessage(Message):

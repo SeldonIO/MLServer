@@ -119,6 +119,7 @@ class Convertor:
 
 
 class EqualUtil:
+    @staticmethod
     def pil_equal(img1: "Image.Image", img2: "Image.Image") -> bool:
         diff = ImageChops.difference(img1, img2)
         if diff.getbbox() is None:

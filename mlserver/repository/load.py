@@ -1,6 +1,6 @@
 import os
 
-from ..settings import ModelParameters, ModelSettings
+from mlserver.settings import ModelParameters, ModelSettings
 from ..logging import logger
 
 
