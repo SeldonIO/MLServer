@@ -69,4 +69,4 @@ jobs:
             # Updated CHANGELOG\n
             This automated PR re-generates the changelog to keep it up to
             date."
-          reviewers: adriangonz
+          reviewers: "SeldonIO/mlops"
