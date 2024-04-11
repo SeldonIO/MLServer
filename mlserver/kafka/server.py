@@ -27,13 +27,30 @@ class KafkaServer:
         self._handlers = KafkaHandlers(data_plane)
 
     def _create_server(self):
-        self._consumer = AIOKafkaConsumer(
-            self._settings.kafka_topic_input,
-            bootstrap_servers=self._settings.kafka_servers,
-        )
-        self._producer = AIOKafkaProducer(
-            bootstrap_servers=self._settings.kafka_servers
-        )
+        if self._settings.kafka_auth_enabled:
+            self._consumer = AIOKafkaConsumer(
+                self._settings.kafka_topic_input,
+                bootstrap_servers=self._settings.kafka_servers,
+                security_protocol=self._settings.kafka_security_protocol,
+                sasl_mechanism=self._settings.kafka_sasl_mechanism,
+                sasl_plain_username=self._settings.kafka_sasl_plain_username,
+                sasl_plain_password=self._settings.kafka_sasl_plain_password
+            )
+            self._producer = AIOKafkaProducer(
+                bootstrap_servers=self._settings.kafka_servers,
+                security_protocol=self._settings.kafka_security_protocol,
+                sasl_mechanism=self._settings.kafka_sasl_mechanism,
+                sasl_plain_username=self._settings.kafka_sasl_plain_username,
+                sasl_plain_password=self._settings.kafka_sasl_plain_password
+            )
+        else:
+            self._consumer = AIOKafkaConsumer(
+                self._settings.kafka_topic_input,
+                bootstrap_servers=self._settings.kafka_servers,
+            )
+            self._producer = AIOKafkaProducer(
+                bootstrap_servers=self._settings.kafka_servers
+            )
 
     async def add_custom_handlers(self, model: MLModel):
         # TODO: Implement
