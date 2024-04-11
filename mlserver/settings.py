@@ -231,6 +231,18 @@ class Settings(BaseSettings):
     kafka_servers: str = "localhost:9092"
     kafka_topic_input: str = "mlserver-input"
     kafka_topic_output: str = "mlserver-output"
+    kafka_auth_enabled: bool = False
+    """If Kafka auth is enabled use the authentication options for `security_protocol` and `sasl_mechanism` in 
+    aiokafka documentation (https://aiokafka.readthedocs.io/en/stable/api.html#api-documentation)"""
+    kafka_security_protocol: str = "PLAINTEXT"
+    kafka_sasl_mechanism: str = "PLAIN"
+    kafka_sasl_plain_username: Optional[str] = None
+    kafka_sasl_plain_password: Optional[str] = None
+    kafka_ssl_ca_file: Optional[str] = None
+    kafka_ssl_cert_file: Optional[str] = None
+    kafka_ssl_key_file: Optional[str] = None
+    kafka_ssl_key_password: Optional[str] = None
+
 
     # OpenTelemetry Tracing settings
     tracing_server: Optional[str] = None
