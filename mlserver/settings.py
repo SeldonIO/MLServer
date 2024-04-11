@@ -236,8 +236,12 @@ class Settings(BaseSettings):
     aiokafka documentation (https://aiokafka.readthedocs.io/en/stable/api.html#api-documentation)"""
     kafka_security_protocol: str = "PLAINTEXT"
     kafka_sasl_mechanism: str = "PLAIN"
-    kafka_sasl_plain_username: str
-    kafka_sasl_plain_password: str
+    kafka_sasl_plain_username: Optional[str] = None
+    kafka_sasl_plain_password: Optional[str] = None
+    kafka_ssl_ca_file: Optional[str] = None
+    kafka_ssl_cert_file: Optional[str] = None
+    kafka_ssl_key_file: Optional[str] = None
+    kafka_ssl_key_password: Optional[str] = None
 
 
     # OpenTelemetry Tracing settings

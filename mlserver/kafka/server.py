@@ -4,6 +4,7 @@ from mlserver.errors import MLServerError
 from enum import Enum
 from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
 from aiokafka.errors import ConsumerStoppedError
+from aiokafka.helpers import create_ssl_context
 
 from ..handlers import DataPlane
 from ..settings import Settings
@@ -28,20 +29,32 @@ class KafkaServer:
 
     def _create_server(self):
         if self._settings.kafka_auth_enabled:
+            ssl_context = None
+            if self._settings.kafka_security_protocol in ["SSL", "SASL_SSL"]:
+                ssl_context = create_ssl_context(
+                    cafile=self._settings.kafka_ssl_ca_file,  # "./ca-cert" CA used to sign certificate.
+                    # `CARoot` of JKS store container
+                    certfile=self._settings.kafka_ssl_cert_file,  # "./cert-signed", Signed certificate
+                    keyfile=self._settings.kafka_ssl_key_file,  # "./cert-key",  # Private Key file of `certfile` cert
+                    password=self._settings.kafka_ssl_key_password
+                )
+
             self._consumer = AIOKafkaConsumer(
                 self._settings.kafka_topic_input,
                 bootstrap_servers=self._settings.kafka_servers,
                 security_protocol=self._settings.kafka_security_protocol,
                 sasl_mechanism=self._settings.kafka_sasl_mechanism,
                 sasl_plain_username=self._settings.kafka_sasl_plain_username,
-                sasl_plain_password=self._settings.kafka_sasl_plain_password
+                sasl_plain_password=self._settings.kafka_sasl_plain_password,
+                ssl_context=ssl_context
             )
             self._producer = AIOKafkaProducer(
                 bootstrap_servers=self._settings.kafka_servers,
                 security_protocol=self._settings.kafka_security_protocol,
                 sasl_mechanism=self._settings.kafka_sasl_mechanism,
                 sasl_plain_username=self._settings.kafka_sasl_plain_username,
-                sasl_plain_password=self._settings.kafka_sasl_plain_password
+                sasl_plain_password=self._settings.kafka_sasl_plain_password,
+                ssl_context=create_ssl_context
             )
         else:
             self._consumer = AIOKafkaConsumer(
