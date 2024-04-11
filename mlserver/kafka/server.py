@@ -54,7 +54,7 @@ class KafkaServer:
                 sasl_mechanism=self._settings.kafka_sasl_mechanism,
                 sasl_plain_username=self._settings.kafka_sasl_plain_username,
                 sasl_plain_password=self._settings.kafka_sasl_plain_password,
-                ssl_context=create_ssl_context
+                ssl_context=ssl_context
             )
         else:
             self._consumer = AIOKafkaConsumer(
