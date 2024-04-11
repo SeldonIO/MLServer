@@ -119,8 +119,8 @@ class AsyncResponses:
         if in_flight:
             logger.info(
                 f"Cancelling {len(in_flight)} in-flight requests for "
-                "worker {worker.pid} which died unexpectedly with "
-                "exit code {exit_code}..."
+                f"worker {worker.pid} which died unexpectedly with "
+                f"exit code {exit_code}..."
             )
         for message_id in in_flight:
             err = WorkerStop(exit_code)
