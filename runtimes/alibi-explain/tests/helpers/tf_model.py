@@ -1,24 +1,14 @@
-import os
-from pathlib import Path
-
 import tensorflow as tf
+
 from tensorflow.keras.layers import Activation, Conv2D, Dense, Dropout
 from tensorflow.keras.layers import Flatten, Input, MaxPooling2D
 from tensorflow.keras.models import Model
 from tensorflow.keras.utils import to_categorical
 
 from mlserver import MLModel
+from mlserver.utils import get_model_uri
 from mlserver.codecs import NumpyCodec
 from mlserver.types import InferenceRequest, InferenceResponse
-
-
-_MODEL_PATH = Path(os.path.dirname(__file__)).parent / ".data" / "tf_mnist" / "model.h5"
-
-
-def get_tf_mnist_model_uri() -> Path:
-    if not _MODEL_PATH.exists():
-        _train_tf_mnist()
-    return _MODEL_PATH
 
 
 class TFMNISTModel(MLModel):
@@ -33,11 +23,12 @@ class TFMNISTModel(MLModel):
         )
 
     async def load(self) -> bool:
-        self._model = tf.keras.models.load_model(get_tf_mnist_model_uri())
+        model_uri = await get_model_uri(self._settings)
+        self._model = tf.keras.models.load_model(model_uri)
         return True
 
 
-def _train_tf_mnist() -> None:
+def train_tf_mnist(model_h5_uri: str) -> None:
     train, test = tf.keras.datasets.mnist.load_data()
     X_train, y_train = train
     X_test, y_test = test
@@ -77,5 +68,4 @@ def _train_tf_mnist() -> None:
         validation_data=(X_test, y_test),
     )
 
-    _MODEL_PATH.parent.mkdir(parents=True)
-    model.save(_MODEL_PATH, save_format="h5")
+    model.save(model_h5_uri, save_format="h5")

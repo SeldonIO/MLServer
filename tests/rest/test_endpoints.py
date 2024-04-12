@@ -195,3 +195,14 @@ async def test_model_repository_load_error(rest_client, sum_model_settings):
 
     assert response.status_code == 404
     assert response.json()["error"] == "Model my-model not found"
+
+
+async def test_infer_invalid_datatype_error(
+    rest_client, inference_request_invalid_datatype, datatype_error_message
+):
+    endpoint = "/v2/models/sum-model/infer"
+    response = await rest_client.post(endpoint, json=inference_request_invalid_datatype)
+
+    assert response.status_code == 422
+
+    assert response.json()["detail"][0]["msg"] == datatype_error_message

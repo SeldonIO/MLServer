@@ -4,7 +4,7 @@ import numpy as np
 from typing import Any
 
 from mlserver.codecs.numpy import NumpyCodec, to_datatype
-from mlserver.types import RequestInput, ResponseOutput, Parameters
+from mlserver.types import RequestInput, ResponseOutput, Parameters, Datatype
 
 
 @pytest.mark.parametrize(
@@ -185,21 +185,21 @@ def test_decode_output(payload, expected):
 @pytest.mark.parametrize(
     "dtype, datatype",
     [
-        (np.bool_, "BOOL"),
-        (np.uint8, "UINT8"),
-        (np.uint16, "UINT16"),
-        (np.uint32, "UINT32"),
-        (np.uint64, "UINT64"),
-        (np.int8, "INT8"),
-        (np.int16, "INT16"),
-        (np.int32, "INT32"),
-        (np.int64, "INT64"),
-        (np.float16, "FP16"),
-        (np.float32, "FP32"),
-        (np.float64, "FP64"),
-        (np.byte, "INT8"),
-        (bytes, "BYTES"),
-        (str, "BYTES"),
+        (np.bool_, Datatype.BOOL),
+        (np.uint8, Datatype.UINT8),
+        (np.uint16, Datatype.UINT16),
+        (np.uint32, Datatype.UINT32),
+        (np.uint64, Datatype.UINT64),
+        (np.int8, Datatype.INT8),
+        (np.int16, Datatype.INT16),
+        (np.int32, Datatype.INT32),
+        (np.int64, Datatype.INT64),
+        (np.float16, Datatype.FP16),
+        (np.float32, Datatype.FP32),
+        (np.float64, Datatype.FP64),
+        (np.byte, Datatype.INT8),
+        (bytes, Datatype.BYTES),
+        (str, Datatype.BYTES),
     ],
 )
 def test_to_datatype(dtype, datatype):

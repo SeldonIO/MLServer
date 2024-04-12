@@ -11,9 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     if: github.repository == 'SeldonIO/MLServer' # Do not run this on forks.
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Python 3.10
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: "3.10"
       - name: Install Poetry
@@ -32,7 +32,7 @@ jobs:
             ./licenses/license_info.no_versions.csv
       - name: Open PR with License Changes
         if: ${{ failure() }}
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@v6
         with:
           add-paths: ./licenses
           commit-message: Re-generate license info

@@ -10,17 +10,20 @@ jobs:
   draft-release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Update Version
         run: |
           ./hack/update-version.sh ${{ github.event.inputs.version }}
       - name: Commiting & Pushing Updated Version Tag
-        uses: stefanzweifel/git-auto-commit-action@v4
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: Bump version to ${{ github.event.inputs.version }}
           tagging_message: ${{ github.event.inputs.version }}
       - name: Draft Release
-        uses: softprops/action-gh-release@v1
+        # TODO: Use a version value, when available [1]
+        #
+        # [1] https://github.com/softprops/action-gh-release/issues/410
+        uses: softprops/action-gh-release@4634c16e79c963813287e889244c50009e7f0981
         with:
           generate_release_notes: false
           draft: true
@@ -33,11 +36,14 @@ jobs:
       - name: Maximize build space
         uses: easimon/maximize-build-space@master
         with:
-          remove-dotnet: "true"
-          remove-haskell: "true"
-          remove-android: "true"
-          root-reserve-mb: "30720"
-      - uses: actions/checkout@v3
+          remove-dotnet: 'true'
+          remove-haskell: 'true'
+          remove-android: 'true'
+          remove-codeql: 'true'
+          remove-docker-images: 'true'
+          overprovision-lvm: 'true'
+          swap-size-mb: 1024
+      - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.inputs.version }}
       - name: Build Docker Image
@@ -59,7 +65,7 @@ jobs:
             --file=Dockerfile
             --policy-path=.snyk
       - name: Login to DockerHub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
@@ -69,7 +75,7 @@ jobs:
         env:
           MLSERVER_IMAGE: seldonio/mlserver-sc:${{ github.event.inputs.version }}
       - name: Login to Quay.io
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           registry: quay.io
           username: ${{ secrets.SC_QUAY_USERNAME }}
@@ -107,7 +113,7 @@ jobs:
     needs: draft-release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.inputs.version }}
       - name: Build Docker Image
@@ -129,7 +135,7 @@ jobs:
             --file=Dockerfile
             --policy-path=.snyk
       - name: Login to DockerHub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
@@ -139,7 +145,7 @@ jobs:
         env:
           MLSERVER_IMAGE: seldonio/mlserver-sc-slim:${{ github.event.inputs.version }}
       - name: Login to Quay.io
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           registry: quay.io
           username: ${{ secrets.SC_QUAY_USERNAME_SLIM }}

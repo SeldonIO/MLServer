@@ -11,11 +11,13 @@ from .constants import (
     DockerfileTemplate,
     DockerignoreName,
     Dockerignore,
+    DefaultBaseImage,
 )
 
 
-def generate_dockerfile() -> str:
-    return DockerfileTemplate.format(version=__version__)
+def generate_dockerfile(base_image: str = DefaultBaseImage) -> str:
+    base_image = base_image.format(version=__version__)
+    return DockerfileTemplate.format(base_image=base_image)
 
 
 def write_dockerfile(

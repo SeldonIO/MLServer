@@ -1,0 +1,10 @@
+{
+  "name": "transformer",
+  "implementation": "mlserver_huggingface.runtime.HuggingFaceRuntime",
+  "parameters": {
+    "extra": {
+      "task": "fill-mask",
+      "pretrained_model": "cl-tohoku/bert-base-japanese",
+      "pretrained_tokenizer": "cl-tohoku/bert-base-japanese"
+    }
+  }

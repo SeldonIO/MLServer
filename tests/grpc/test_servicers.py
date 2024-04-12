@@ -13,6 +13,7 @@ from mlserver.grpc.converters import (
     InferOutputTensorConverter,
 )
 from mlserver.raw import pack, unpack
+from mlserver.types import Datatype
 from mlserver import __version__
 
 
@@ -97,7 +98,7 @@ async def test_model_infer_raw_contents(inference_service_stub, model_infer_requ
         response_output = InferOutputTensorConverter.to_types(output_tensor)
         data = unpack(response_output, raw_output)
         contents = InferTensorContentsConverter.from_types(
-            data, response_output.datatype
+            data, Datatype(response_output.datatype)
         )
         output_tensor.contents.CopyFrom(contents)
 
@@ -184,3 +185,18 @@ async def test_model_repository_load_error(inference_service_stub, sum_model_set
 
     assert err.value.code() == grpc.StatusCode.NOT_FOUND
     assert err.value.details() == "Model my-model not found"
+
+
+async def test_infer_invalid_datatype_error(
+    inference_service_stub,
+    model_infer_request_invalid_datatype,
+):
+    model_infer_request_invalid_datatype.model_name = "sum-model"
+    model_infer_request_invalid_datatype.ClearField("model_version")
+
+    with pytest.raises(grpc.aio.AioRpcError) as exc_info:
+        _ = await inference_service_stub.ModelInfer(
+            model_infer_request_invalid_datatype
+        )
+
+    assert exc_info.value.details() == "'INT322' is not a valid Datatype"

@@ -5,6 +5,7 @@ environment.yml or a requirements.txt file).
 Note that this is independent from the SKLearn runtime, and it's only meant to
 be used to test custom model images.
 """
+
 import numpy as np
 
 from sklearn.dummy import DummyClassifier

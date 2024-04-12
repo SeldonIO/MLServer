@@ -1,6 +1,7 @@
 from .dataplane import (
     MetadataServerResponse,
     MetadataServerErrorResponse,
+    Datatype,
     MetadataTensor,
     MetadataModelErrorResponse,
     Parameters,
@@ -27,6 +28,7 @@ __all__ = [
     # Dataplane
     "MetadataServerResponse",
     "MetadataServerErrorResponse",
+    "Datatype",
     "MetadataTensor",
     "MetadataModelErrorResponse",
     "Parameters",

@@ -1,14 +1,16 @@
+import logging
+
 import pytest
 import random
 
 from docker.client import DockerClient
 from pytest_cases import fixture, parametrize_with_cases
-from typing import Tuple
+from typing import Tuple, Optional
 
 from mlserver import __version__
 from mlserver.types import InferenceRequest, Parameters
 from mlserver.settings import Settings
-from mlserver.cli.constants import DockerfileTemplate
+from mlserver.cli.constants import DockerfileTemplate, DefaultBaseImage
 from mlserver.cli.build import generate_dockerfile, build_image
 
 from ..utils import RESTClient
@@ -22,11 +24,15 @@ def custom_image(
     dockerfile = generate_dockerfile()
     current_case = current_cases["custom_image"]["custom_runtime_path"]
     image_name = f"{current_case.id}:0.1.0"
-    build_image(custom_runtime_path, dockerfile, image_name, no_cache=True)
+    build_image(custom_runtime_path, dockerfile, image_name)
 
     yield image_name
 
-    docker_client.images.remove(image=image_name, force=True)
+    # in CI sometimes this fails, TODO: indentify why
+    try:
+        docker_client.images.remove(image=image_name, force=True)
+    except Exception:
+        logging.warning("skipping remove")
 
 
 @pytest.fixture
@@ -60,10 +66,25 @@ def custom_runtime_server(
     container.remove(force=True)
 
 
-def test_generate_dockerfile():
-    dockerfile = generate_dockerfile()
+@pytest.mark.parametrize(
+    "base_image",
+    [
+        None,
+        "customreg/customimage:{version}-slim",
+        "customreg/custonimage:customtag",
+    ],
+)
+def test_generate_dockerfile(base_image: Optional[str]):
+    dockerfile = ""
+    if base_image is None:
+        dockerfile = generate_dockerfile()
+        base_image = DefaultBaseImage
+    else:
+        dockerfile = generate_dockerfile(base_image=base_image)
 
-    assert dockerfile == DockerfileTemplate.format(version=__version__)
+    expected = base_image.format(version=__version__)
+    assert expected in dockerfile
+    assert dockerfile == DockerfileTemplate.format(base_image=expected)
 
 
 def test_build(docker_client: DockerClient, custom_image: str):

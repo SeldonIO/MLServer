@@ -24,7 +24,7 @@ from mlserver_mlflow.codecs import TensorDictCodec
 def test_load(runtime: MLflowRuntime):
     assert runtime.ready
 
-    assert type(runtime._model) == PyFuncModel
+    assert isinstance(runtime._model, PyFuncModel)
 
 
 async def test_predict(runtime: MLflowRuntime, inference_request: InferenceRequest):

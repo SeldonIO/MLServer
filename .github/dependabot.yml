@@ -6,67 +6,67 @@ updates:
     schedule:
       interval: "weekly"
     reviewers:
-      - adriangonz
+      - "SeldonIO/mlops"
 
   - package-ecosystem: "pip"
     directory: "/runtimes/alibi-detect"
     schedule:
       interval: "weekly"
     reviewers:
-      - adriangonz
+      - "SeldonIO/mlops"
 
   - package-ecosystem: "pip"
     directory: "/runtimes/alibi-explain"
     schedule:
       interval: "weekly"
     reviewers:
-      - adriangonz
+      - "SeldonIO/mlops"
 
   - package-ecosystem: "pip"
     directory: "/runtimes/huggingface"
     schedule:
       interval: "weekly"
     reviewers:
-      - adriangonz
+      - "SeldonIO/mlops"
 
   - package-ecosystem: "pip"
     directory: "/runtimes/lightgbm"
     schedule:
       interval: "weekly"
     reviewers:
-      - adriangonz
+      - "SeldonIO/mlops"
 
   - package-ecosystem: "pip"
     directory: "/runtimes/mlflow"
     schedule:
       interval: "weekly"
     reviewers:
-      - adriangonz
+      - "SeldonIO/mlops"
 
   - package-ecosystem: "pip"
     directory: "/runtimes/mllib"
     schedule:
       interval: "weekly"
     reviewers:
-      - adriangonz
+      - "SeldonIO/mlops"
 
   - package-ecosystem: "pip"
     directory: "/runtimes/sklearn"
     schedule:
       interval: "weekly"
     reviewers:
-      - adriangonz
+      - "SeldonIO/mlops"
 
   - package-ecosystem: "pip"
     directory: "/runtimes/xgboost"
     schedule:
       interval: "weekly"
     reviewers:
-      - adriangonz
+      - "SeldonIO/mlops"
 
   - package-ecosystem: "docker"
     directory: "/"
     schedule:
       interval: "weekly"
     reviewers:
-      - adriangonz
+      - "SeldonIO/mlops"

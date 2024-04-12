@@ -246,6 +246,23 @@ paths:
         - inference
         - model
 components:
+  enums:
+    TensorDataTypes:
+      type: string
+      enum:
+        - BOOL
+        - UINT8
+        - UINT16
+        - UINT32
+        - UINT64
+        - INT8
+        - INT16
+        - INT32
+        - INT64
+        - FP16
+        - FP32
+        - FP64
+        - BYTES
   schemas:
     MetadataServerResponse:
       title: MetadataServerResponse
@@ -304,8 +321,7 @@ components:
       properties:
         name:
           type: string
-        datatype:
-          type: string
+        datatype: $ref: '#/components/enums/TensorDataTypes'
         shape:
           type: array
           items:
@@ -399,8 +415,7 @@ components:
           type: array
           items:
             type: integer
-        datatype:
-          type: string
+        datatype: $ref: '#/components/enums/TensorDataTypes'
         parameters:
           $ref: '#/components/schemas/Parameters'
         data:
@@ -432,8 +447,7 @@ components:
           type: array
           items:
             type: integer
-        datatype:
-          type: string
+        datatype: $ref: '#/components/enums/TensorDataTypes'
         parameters:
           $ref: '#/components/schemas/Parameters'
         data:

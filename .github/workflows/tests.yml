@@ -12,9 +12,9 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Python 3.10
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: "3.10"
       - name: Install Poetry
@@ -35,7 +35,7 @@ jobs:
         os: [ubuntu-latest, macos-latest]
         # NOTE: There's no pre-built `grpcio` wheel for Python 3.11 yet
         # https://github.com/grpc/grpc/issues/32454
-        python-version: ["3.8", "3.9", "3.10"]
+        python-version: ["3.9", "3.10"]
         is-pr:
           - ${{ github.event_name == 'pull_request' }}
         exclude:
@@ -58,12 +58,12 @@ jobs:
           ln -sfn $(which docker-buildx) $HOME/.docker/cli-plugins/docker-buildx
           colima start --memory 5 --network-driver slirp
           sudo ln -sf $HOME/.colima/default/docker.sock /var/run/docker.sock
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - uses: conda-incubator/setup-miniconda@v2
+      - uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
           auto-activate-base: false
@@ -83,7 +83,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        python-version: ["3.8", "3.9", "3.10"]
+        python-version: ["3.9", "3.10"]
         tox-environment:
           - sklearn
           - xgboost
@@ -102,12 +102,12 @@ jobs:
             os: macos-latest
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - uses: conda-incubator/setup-miniconda@v2
+      - uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
           auto-activate-base: false
@@ -122,25 +122,29 @@ jobs:
         run: |
           tox -c ./runtimes/${{ matrix.tox-environment }}
 
+  # Ensure that having all the runtimes installed together works
   all-runtimes:
     if: github.event_name == 'push'
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        python-version: ["3.8", "3.9", "3.10"]
+        python-version: ["3.9", "3.10"]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Maximize build space
-        if: runner.os == 'ubuntu'
+        if: runner.os == 'Linux'
         uses: easimon/maximize-build-space@master
         with:
-          remove-dotnet: "true"
-          remove-haskell: "true"
-          remove-android: "true"
-          root-reserve-mb: "30720"
+          remove-dotnet: 'true'
+          remove-haskell: 'true'
+          remove-android: 'true'
+          remove-codeql: 'true'
+          remove-docker-images: 'true'
+          overprovision-lvm: 'true'
+          swap-size-mb: 1024
       - name: Setup docker (missing on MacOS)
-        if: runner.os == 'macos'
+        if: runner.os == 'macOS'
         run: |
           # From https://github.com/actions/runner-images/issues/17#issuecomment-1537238473
           # From https://github.com/abiosoft/colima/discussions/273#discussioncomment-4959736
@@ -153,7 +157,7 @@ jobs:
           colima start --memory 5 --network-driver slirp
           sudo ln -sf $HOME/.colima/default/docker.sock /var/run/docker.sock
       - name: Downgrade OpenMP (in MacOS)
-        if: runner.os == 'macos'
+        if: runner.os == 'macOS'
         run: |
           # Recent versions of OpenMP cause segfaults in MacOS when training
           # LightGBM / XGBoost models (but only when Torch is present)
@@ -162,12 +166,12 @@ jobs:
           wget https://raw.githubusercontent.com/Homebrew/homebrew-core/fb8323f2b170bd4ae97e1bac9bf3e2983af3fdb0/Formula/libomp.rb
           brew unlink libomp
           brew install libomp.rb
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - uses: conda-incubator/setup-miniconda@v2
+      - uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
           auto-activate-base: false

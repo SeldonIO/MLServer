@@ -1,6 +1,7 @@
 import pytest
 import docker
 import asyncio
+import logging
 
 from aiokafka import AIOKafkaProducer, AIOKafkaConsumer
 from kafka.admin import KafkaAdminClient
@@ -22,6 +23,8 @@ from ..utils import get_available_ports
 
 from .utils import create_test_topics, bootstrap
 
+logger = logging.getLogger()
+
 
 @pytest.fixture(scope="module")
 def event_loop():
@@ -36,13 +39,29 @@ def event_loop():
 
 @pytest.fixture(scope="module")
 def docker_client() -> DockerClient:
-    return docker.from_env()
+    logger.debug("Docker client: starting")
+    client = docker.from_env()
+    logger.debug("Docker client: started")
+
+    logger.debug("Docker client: yielding")
+    yield client
+    logger.debug("Docker client: yielded")
+
+    logger.debug("Docker client: closing")
+    client.close()
+    logger.debug("Docker client: closed")
 
 
 @pytest.fixture(scope="module")
 def kafka_network(docker_client: DockerClient) -> str:
-    kafka_network = "kafka"
-    network = docker_client.networks.create(name=kafka_network)
+    kafka_network = f"kafka-{generate_uuid()}"
+    network = docker_client.networks.create(
+        name=kafka_network,
+        # Don't restrict external access to the network
+        internal=False,
+    )
+
+    logger.debug(f"Docker client: network: {network.attrs}")
 
     yield kafka_network
 
@@ -52,8 +71,10 @@ def kafka_network(docker_client: DockerClient) -> str:
 @pytest.fixture(scope="module")
 def zookeeper(docker_client: DockerClient, kafka_network: str) -> str:
     [zookeeper_port] = get_available_ports()
+    zookeeper_name = f"zookeeper-{generate_uuid()}"
+
     container = docker_client.containers.run(
-        name="zookeeper",
+        name=zookeeper_name,
         image="confluentinc/cp-zookeeper:latest",
         ports={
             f"{zookeeper_port}/tcp": str(zookeeper_port),
@@ -66,7 +87,10 @@ def zookeeper(docker_client: DockerClient, kafka_network: str) -> str:
         detach=True,
     )
 
-    yield f"zookeeper:{zookeeper_port}"
+    zookeeper_addr = f"{zookeeper_name}:{zookeeper_port}"
+    logger.debug(f"Zookeeper server: {zookeeper_addr}")
+
+    yield zookeeper_addr
 
     container.remove(force=True)
 
@@ -74,32 +98,33 @@ def zookeeper(docker_client: DockerClient, kafka_network: str) -> str:
 @pytest.fixture(scope="module")
 async def kafka(docker_client: DockerClient, zookeeper: str, kafka_network: str) -> str:
     [kafka_port] = get_available_ports()
+    kafka_name = f"kafka-{generate_uuid()}"
+
     container = docker_client.containers.run(
-        name="kafka",
+        name=kafka_name,
         image="confluentinc/cp-kafka:latest",
         ports={
             f"{kafka_port}/tcp": str(kafka_port),
         },
         environment={
+            "KAFKA_BROKER_ID": 1,
             "KAFKA_ZOOKEEPER_CONNECT": zookeeper,
-            "KAFKA_ADVERTISED_LISTENERS": (
-                f"PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:{kafka_port}"
-            ),
-            "KAFKA_LISTENER_SECURITY_PROTOCOL_MAP": (
-                "PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT"
-            ),
+            "KAFKA_ADVERTISED_LISTENERS": f"PLAINTEXT://{kafka_name}:9092,PLAINTEXT_INTERNAL://localhost:{kafka_port}",  # noqa: E501
+            "KAFKA_LISTENER_SECURITY_PROTOCOL_MAP": "PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT",  # noqa: E501
             "KAFKA_INTER_BROKER_LISTENER_NAME": "PLAINTEXT",
         },
         network=kafka_network,
         detach=True,
     )
 
-    kafka_server = f"localhost:{kafka_port}"
+    kafka_addr = f"localhost:{kafka_port}"
+    logger.debug(f"Kafka server: {kafka_addr}")
 
     try:
         # Wait until Kafka server is healthy
-        await bootstrap(kafka_server)
-        yield kafka_server
+        await bootstrap(kafka_addr)
+
+        yield kafka_addr
     except Exception:
         raise
     finally:

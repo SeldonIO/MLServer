@@ -88,10 +88,11 @@ following custom runtime:
 
 ```{code-block} python
 ---
-emphasize-lines: 2, 11-12
+emphasize-lines: 2-3, 12-13
 ---
 from mlserver import MLModel
 from mlserver.codecs import decode_args
+from typing import List
 
 class MyCustomRuntime(MLModel):
 

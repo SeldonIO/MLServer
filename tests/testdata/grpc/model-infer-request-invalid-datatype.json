@@ -1,0 +1,15 @@
+{
+  "model_name": "sum-model",
+  "model_version": "v1.2.3",
+  "inputs": [
+    {
+      "name": "input-0",
+      "datatype": "INT322",
+      "shape": [1, 3],
+      "contents": { "int_contents": [1, 2, 3] },
+      "parameters": {
+        "content_type": { "string_param": "np" }
+      }
+    }
+  ]
+}

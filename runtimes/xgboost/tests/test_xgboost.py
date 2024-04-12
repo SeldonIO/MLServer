@@ -18,12 +18,12 @@ from mlserver_xgboost.xgboost import (
 
 def test_load(model: XGBoostModel):
     assert model.ready
-    assert type(model._model) == xgb.XGBRegressor
+    assert isinstance(model._model, xgb.XGBRegressor)
 
 
 def test_load_classifier(classifier: XGBoostModel):
     assert classifier.ready
-    assert type(classifier._model) == xgb.XGBClassifier
+    assert isinstance(classifier._model, xgb.XGBClassifier)
 
 
 async def test_load_folder(model_uri: str, model_settings: ModelSettings):
@@ -40,7 +40,7 @@ async def test_load_folder(model_uri: str, model_settings: ModelSettings):
     model.ready = await model.load()
 
     assert model.ready
-    assert type(model._model) == xgb.XGBRegressor
+    assert isinstance(model._model, xgb.XGBRegressor)
 
 
 async def test_predict(model: XGBoostModel, inference_request: InferenceRequest):

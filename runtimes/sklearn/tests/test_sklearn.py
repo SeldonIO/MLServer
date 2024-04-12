@@ -20,17 +20,17 @@ from mlserver.types import RequestInput, RequestOutput, Parameters
 
 def test_load(model: SKLearnModel):
     assert model.ready
-    assert type(model._model) == DummyClassifier
+    assert isinstance(model._model, DummyClassifier)
 
 
 def test_regression_load(regression_model: SKLearnModel):
     assert regression_model.ready
-    assert type(regression_model._model) == DummyRegressor
+    assert isinstance(regression_model._model, DummyRegressor)
 
 
 def test_pandas_load(pandas_model: SKLearnModel):
     assert pandas_model.ready
-    assert type(pandas_model._model) == Pipeline
+    assert isinstance(pandas_model._model, Pipeline)
 
 
 @pytest.mark.parametrize("fname", WELLKNOWN_MODEL_FILENAMES)
@@ -45,7 +45,7 @@ async def test_load_folder(fname, model_uri: str, model_settings: ModelSettings)
     model.ready = await model.load()
 
     assert model.ready
-    assert type(model._model) == DummyClassifier
+    assert isinstance(model._model, DummyClassifier)
 
 
 async def test_multiple_inputs_error(model: SKLearnModel, inference_request):

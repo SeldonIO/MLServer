@@ -96,7 +96,7 @@ ServerLiveRequest = _reflection.GeneratedProtocolMessageType(
     (_message.Message,),
     {
         "DESCRIPTOR": _SERVERLIVEREQUEST,
-        "__module__": "dataplane_pb2"
+        "__module__": "dataplane_pb2",
         # @@protoc_insertion_point(class_scope:inference.ServerLiveRequest)
     },
 )
@@ -107,7 +107,7 @@ ServerLiveResponse = _reflection.GeneratedProtocolMessageType(
     (_message.Message,),
     {
         "DESCRIPTOR": _SERVERLIVERESPONSE,
-        "__module__": "dataplane_pb2"
+        "__module__": "dataplane_pb2",
         # @@protoc_insertion_point(class_scope:inference.ServerLiveResponse)
     },
 )
@@ -118,7 +118,7 @@ ServerReadyRequest = _reflection.GeneratedProtocolMessageType(
     (_message.Message,),
     {
         "DESCRIPTOR": _SERVERREADYREQUEST,
-        "__module__": "dataplane_pb2"
+        "__module__": "dataplane_pb2",
         # @@protoc_insertion_point(class_scope:inference.ServerReadyRequest)
     },
 )
@@ -129,7 +129,7 @@ ServerReadyResponse = _reflection.GeneratedProtocolMessageType(
     (_message.Message,),
     {
         "DESCRIPTOR": _SERVERREADYRESPONSE,
-        "__module__": "dataplane_pb2"
+        "__module__": "dataplane_pb2",
         # @@protoc_insertion_point(class_scope:inference.ServerReadyResponse)
     },
 )
@@ -140,7 +140,7 @@ ModelReadyRequest = _reflection.GeneratedProtocolMessageType(
     (_message.Message,),
     {
         "DESCRIPTOR": _MODELREADYREQUEST,
-        "__module__": "dataplane_pb2"
+        "__module__": "dataplane_pb2",
         # @@protoc_insertion_point(class_scope:inference.ModelReadyRequest)
     },
 )
@@ -151,7 +151,7 @@ ModelReadyResponse = _reflection.GeneratedProtocolMessageType(
     (_message.Message,),
     {
         "DESCRIPTOR": _MODELREADYRESPONSE,
-        "__module__": "dataplane_pb2"
+        "__module__": "dataplane_pb2",
         # @@protoc_insertion_point(class_scope:inference.ModelReadyResponse)
     },
 )
@@ -162,7 +162,7 @@ ServerMetadataRequest = _reflection.GeneratedProtocolMessageType(
     (_message.Message,),
     {
         "DESCRIPTOR": _SERVERMETADATAREQUEST,
-        "__module__": "dataplane_pb2"
+        "__module__": "dataplane_pb2",
         # @@protoc_insertion_point(class_scope:inference.ServerMetadataRequest)
     },
 )
@@ -173,7 +173,7 @@ ServerMetadataResponse = _reflection.GeneratedProtocolMessageType(
     (_message.Message,),
     {
         "DESCRIPTOR": _SERVERMETADATARESPONSE,
-        "__module__": "dataplane_pb2"
+        "__module__": "dataplane_pb2",
         # @@protoc_insertion_point(class_scope:inference.ServerMetadataResponse)
     },
 )
@@ -184,7 +184,7 @@ ModelMetadataRequest = _reflection.GeneratedProtocolMessageType(
     (_message.Message,),
     {
         "DESCRIPTOR": _MODELMETADATAREQUEST,
-        "__module__": "dataplane_pb2"
+        "__module__": "dataplane_pb2",
         # @@protoc_insertion_point(class_scope:inference.ModelMetadataRequest)
     },
 )
@@ -203,12 +203,12 @@ ModelMetadataResponse = _reflection.GeneratedProtocolMessageType(
                     (_message.Message,),
                     {
                         "DESCRIPTOR": _MODELMETADATARESPONSE_TENSORMETADATA_PARAMETERSENTRY,
-                        "__module__": "dataplane_pb2"
+                        "__module__": "dataplane_pb2",
                         # @@protoc_insertion_point(class_scope:inference.ModelMetadataResponse.TensorMetadata.ParametersEntry)
                     },
                 ),
                 "DESCRIPTOR": _MODELMETADATARESPONSE_TENSORMETADATA,
-                "__module__": "dataplane_pb2"
+                "__module__": "dataplane_pb2",
                 # @@protoc_insertion_point(class_scope:inference.ModelMetadataResponse.TensorMetadata)
             },
         ),
@@ -217,12 +217,12 @@ ModelMetadataResponse = _reflection.GeneratedProtocolMessageType(
             (_message.Message,),
             {
                 "DESCRIPTOR": _MODELMETADATARESPONSE_PARAMETERSENTRY,
-                "__module__": "dataplane_pb2"
+                "__module__": "dataplane_pb2",
                 # @@protoc_insertion_point(class_scope:inference.ModelMetadataResponse.ParametersEntry)
             },
         ),
         "DESCRIPTOR": _MODELMETADATARESPONSE,
-        "__module__": "dataplane_pb2"
+        "__module__": "dataplane_pb2",
         # @@protoc_insertion_point(class_scope:inference.ModelMetadataResponse)
     },
 )
@@ -244,12 +244,12 @@ ModelInferRequest = _reflection.GeneratedProtocolMessageType(
                     (_message.Message,),
                     {
                         "DESCRIPTOR": _MODELINFERREQUEST_INFERINPUTTENSOR_PARAMETERSENTRY,
-                        "__module__": "dataplane_pb2"
+                        "__module__": "dataplane_pb2",
                         # @@protoc_insertion_point(class_scope:inference.ModelInferRequest.InferInputTensor.ParametersEntry)
                     },
                 ),
                 "DESCRIPTOR": _MODELINFERREQUEST_INFERINPUTTENSOR,
-                "__module__": "dataplane_pb2"
+                "__module__": "dataplane_pb2",
                 # @@protoc_insertion_point(class_scope:inference.ModelInferRequest.InferInputTensor)
             },
         ),
@@ -262,12 +262,12 @@ ModelInferRequest = _reflection.GeneratedProtocolMessageType(
                     (_message.Message,),
                     {
                         "DESCRIPTOR": _MODELINFERREQUEST_INFERREQUESTEDOUTPUTTENSOR_PARAMETERSENTRY,
-                        "__module__": "dataplane_pb2"
+                        "__module__": "dataplane_pb2",
                         # @@protoc_insertion_point(class_scope:inference.ModelInferRequest.InferRequestedOutputTensor.ParametersEntry)
                     },
                 ),
                 "DESCRIPTOR": _MODELINFERREQUEST_INFERREQUESTEDOUTPUTTENSOR,
-                "__module__": "dataplane_pb2"
+                "__module__": "dataplane_pb2",
                 # @@protoc_insertion_point(class_scope:inference.ModelInferRequest.InferRequestedOutputTensor)
             },
         ),
@@ -276,12 +276,12 @@ ModelInferRequest = _reflection.GeneratedProtocolMessageType(
             (_message.Message,),
             {
                 "DESCRIPTOR": _MODELINFERREQUEST_PARAMETERSENTRY,
-                "__module__": "dataplane_pb2"
+                "__module__": "dataplane_pb2",
                 # @@protoc_insertion_point(class_scope:inference.ModelInferRequest.ParametersEntry)
             },
         ),
         "DESCRIPTOR": _MODELINFERREQUEST,
-        "__module__": "dataplane_pb2"
+        "__module__": "dataplane_pb2",
         # @@protoc_insertion_point(class_scope:inference.ModelInferRequest)
     },
 )
@@ -305,12 +305,12 @@ ModelInferResponse = _reflection.GeneratedProtocolMessageType(
                     (_message.Message,),
                     {
                         "DESCRIPTOR": _MODELINFERRESPONSE_INFEROUTPUTTENSOR_PARAMETERSENTRY,
-                        "__module__": "dataplane_pb2"
+                        "__module__": "dataplane_pb2",
                         # @@protoc_insertion_point(class_scope:inference.ModelInferResponse.InferOutputTensor.ParametersEntry)
                     },
                 ),
                 "DESCRIPTOR": _MODELINFERRESPONSE_INFEROUTPUTTENSOR,
-                "__module__": "dataplane_pb2"
+                "__module__": "dataplane_pb2",
                 # @@protoc_insertion_point(class_scope:inference.ModelInferResponse.InferOutputTensor)
             },
         ),
@@ -319,12 +319,12 @@ ModelInferResponse = _reflection.GeneratedProtocolMessageType(
             (_message.Message,),
             {
                 "DESCRIPTOR": _MODELINFERRESPONSE_PARAMETERSENTRY,
-                "__module__": "dataplane_pb2"
+                "__module__": "dataplane_pb2",
                 # @@protoc_insertion_point(class_scope:inference.ModelInferResponse.ParametersEntry)
             },
         ),
         "DESCRIPTOR": _MODELINFERRESPONSE,
-        "__module__": "dataplane_pb2"
+        "__module__": "dataplane_pb2",
         # @@protoc_insertion_point(class_scope:inference.ModelInferResponse)
     },
 )
@@ -338,7 +338,7 @@ InferParameter = _reflection.GeneratedProtocolMessageType(
     (_message.Message,),
     {
         "DESCRIPTOR": _INFERPARAMETER,
-        "__module__": "dataplane_pb2"
+        "__module__": "dataplane_pb2",
         # @@protoc_insertion_point(class_scope:inference.InferParameter)
     },
 )
@@ -349,7 +349,7 @@ InferTensorContents = _reflection.GeneratedProtocolMessageType(
     (_message.Message,),
     {
         "DESCRIPTOR": _INFERTENSORCONTENTS,
-        "__module__": "dataplane_pb2"
+        "__module__": "dataplane_pb2",
         # @@protoc_insertion_point(class_scope:inference.InferTensorContents)
     },
 )
@@ -360,7 +360,7 @@ ModelRepositoryParameter = _reflection.GeneratedProtocolMessageType(
     (_message.Message,),
     {
         "DESCRIPTOR": _MODELREPOSITORYPARAMETER,
-        "__module__": "dataplane_pb2"
+        "__module__": "dataplane_pb2",
         # @@protoc_insertion_point(class_scope:inference.ModelRepositoryParameter)
     },
 )
@@ -371,7 +371,7 @@ RepositoryIndexRequest = _reflection.GeneratedProtocolMessageType(
     (_message.Message,),
     {
         "DESCRIPTOR": _REPOSITORYINDEXREQUEST,
-        "__module__": "dataplane_pb2"
+        "__module__": "dataplane_pb2",
         # @@protoc_insertion_point(class_scope:inference.RepositoryIndexRequest)
     },
 )
@@ -386,12 +386,12 @@ RepositoryIndexResponse = _reflection.GeneratedProtocolMessageType(
             (_message.Message,),
             {
                 "DESCRIPTOR": _REPOSITORYINDEXRESPONSE_MODELINDEX,
-                "__module__": "dataplane_pb2"
+                "__module__": "dataplane_pb2",
                 # @@protoc_insertion_point(class_scope:inference.RepositoryIndexResponse.ModelIndex)
             },
         ),
         "DESCRIPTOR": _REPOSITORYINDEXRESPONSE,
-        "__module__": "dataplane_pb2"
+        "__module__": "dataplane_pb2",
         # @@protoc_insertion_point(class_scope:inference.RepositoryIndexResponse)
     },
 )
@@ -407,12 +407,12 @@ RepositoryModelLoadRequest = _reflection.GeneratedProtocolMessageType(
             (_message.Message,),
             {
                 "DESCRIPTOR": _REPOSITORYMODELLOADREQUEST_PARAMETERSENTRY,
-                "__module__": "dataplane_pb2"
+                "__module__": "dataplane_pb2",
                 # @@protoc_insertion_point(class_scope:inference.RepositoryModelLoadRequest.ParametersEntry)
             },
         ),
         "DESCRIPTOR": _REPOSITORYMODELLOADREQUEST,
-        "__module__": "dataplane_pb2"
+        "__module__": "dataplane_pb2",
         # @@protoc_insertion_point(class_scope:inference.RepositoryModelLoadRequest)
     },
 )
@@ -424,7 +424,7 @@ RepositoryModelLoadResponse = _reflection.GeneratedProtocolMessageType(
     (_message.Message,),
     {
         "DESCRIPTOR": _REPOSITORYMODELLOADRESPONSE,
-        "__module__": "dataplane_pb2"
+        "__module__": "dataplane_pb2",
         # @@protoc_insertion_point(class_scope:inference.RepositoryModelLoadResponse)
     },
 )
@@ -439,12 +439,12 @@ RepositoryModelUnloadRequest = _reflection.GeneratedProtocolMessageType(
             (_message.Message,),
             {
                 "DESCRIPTOR": _REPOSITORYMODELUNLOADREQUEST_PARAMETERSENTRY,
-                "__module__": "dataplane_pb2"
+                "__module__": "dataplane_pb2",
                 # @@protoc_insertion_point(class_scope:inference.RepositoryModelUnloadRequest.ParametersEntry)
             },
         ),
         "DESCRIPTOR": _REPOSITORYMODELUNLOADREQUEST,
-        "__module__": "dataplane_pb2"
+        "__module__": "dataplane_pb2",
         # @@protoc_insertion_point(class_scope:inference.RepositoryModelUnloadRequest)
     },
 )
@@ -456,7 +456,7 @@ RepositoryModelUnloadResponse = _reflection.GeneratedProtocolMessageType(
     (_message.Message,),
     {
         "DESCRIPTOR": _REPOSITORYMODELUNLOADRESPONSE,
-        "__module__": "dataplane_pb2"
+        "__module__": "dataplane_pb2",
         # @@protoc_insertion_point(class_scope:inference.RepositoryModelUnloadResponse)
     },
 )
@@ -464,6 +464,7 @@ _sym_db.RegisterMessage(RepositoryModelUnloadResponse)
 
 _GRPCINFERENCESERVICE = DESCRIPTOR.services_by_name["GRPCInferenceService"]
 if _descriptor._USE_C_DESCRIPTORS == False:
+
     DESCRIPTOR._options = None
     _MODELMETADATARESPONSE_TENSORMETADATA_PARAMETERSENTRY._options = None
     _MODELMETADATARESPONSE_TENSORMETADATA_PARAMETERSENTRY._serialized_options = b"8\001"

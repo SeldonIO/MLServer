@@ -75,12 +75,33 @@ Out of the box, MLServer provides support for:
 | XGBoost       | ✅        | [MLServer XGBoost](./runtimes/xgboost)                           |
 | Spark MLlib   | ✅        | [MLServer MLlib](./runtimes/mllib)                               |
 | LightGBM      | ✅        | [MLServer LightGBM](./runtimes/lightgbm)                         |
-| CatBoost     | ✅        | [MLServer CatBoost](./runtimes/catboost)                         |
+| CatBoost      | ✅        | [MLServer CatBoost](./runtimes/catboost)                         |
 | Tempo         | ✅        | [`github.com/SeldonIO/tempo`](https://github.com/SeldonIO/tempo) |
 | MLflow        | ✅        | [MLServer MLflow](./runtimes/mlflow)                             |
 | Alibi-Detect  | ✅        | [MLServer Alibi Detect](./runtimes/alibi-detect)                 |
 | Alibi-Explain | ✅        | [MLServer Alibi Explain](./runtimes/alibi-explain)               |
 | HuggingFace   | ✅        | [MLServer HuggingFace](./runtimes/huggingface)                   |
+
+MLServer is licensed under the Apache License, Version 2.0. However please note that software used in conjunction with, or alongside, MLServer may be licensed under different terms. For example, Alibi Detect and Alibi Explain are both licensed under the Business Source License 1.1. For more information about the legal terms of products that are used in conjunction with or alongside MLServer, please refer to their respective documentation.
+
+## Supported Python Versions
+
+🔴 Unsupported
+
+🟠 Deprecated: To be removed in a future version
+
+🟢 Supported
+
+🔵 Untested
+
+| Python Version | Status |
+| -------------- | ------ |
+| 3.7            | 🔴     |
+| 3.8            | 🔴     |
+| 3.9            | 🟢     |
+| 3.10           | 🟢     |
+| 3.11           | 🔵     |
+| 3.12           | 🔵     |
 
 ## Examples
 
@@ -109,8 +130,24 @@ packages](./docs/runtimes/index.md) try to follow the same versioning schema.
 To bump the version across all of them, you can use the
 [`./hack/update-version.sh`](./hack/update-version.sh) script.
 
+We generally keep the version as a placeholder for an upcoming version.
+
 For example:
 
 ```bash
 ./hack/update-version.sh 0.2.0.dev1
+```
+
+### Testing
+
+To run all of the tests for MLServer and the runtimes, use:
+
+```bash
+make test
+```
+
+To run run tests for a single file, use something like:
+
+```bash
+tox -e py3 -- tests/batch_processing/test_rest.py
 ```

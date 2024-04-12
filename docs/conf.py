@@ -24,7 +24,7 @@ html_title = "MLServer Documentation"
 author = "Seldon Technologies"
 
 # The full version, including alpha/beta/rc tags
-release = "1.4.0.dev3"
+release = "1.5.0.dev1"
 
 
 # -- General configuration ---------------------------------------------------
@@ -40,6 +40,7 @@ extensions = [
     "sphinx_click",
     "sphinx_design",
     "sphinx.ext.autodoc",
+    "sphinx_copybutton",
 ]
 
 # Add any paths that contain templates here, relative to this directory.

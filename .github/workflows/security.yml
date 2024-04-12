@@ -13,10 +13,9 @@ jobs:
   scan-code:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Security Scan
         uses: snyk/actions/python-3.10@master
-        continue-on-error: true
         with:
           args: --fail-on=upgradable
             --severity-threshold=high
@@ -26,9 +25,29 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       - name: Upload result to GitHub Code Scanning
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: snyk-code.sarif
+
+  static-code-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Static Code Analysis Scan
+        uses: snyk/actions/python-3.10@master
+        with:
+          command: code test
+          args: --fail-on=upgradable
+            --severity-threshold=high
+            --all-projects
+            --exclude=tests,docs
+            --sarif-file-output=snyk-sat.sarif
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      - name: Upload result to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: snyk-sat.sarif
 
   scan-image:
     runs-on: ubuntu-latest
@@ -36,11 +55,14 @@ jobs:
       - name: Maximize build space
         uses: easimon/maximize-build-space@master
         with:
-          remove-dotnet: "true"
-          remove-haskell: "true"
-          remove-android: "true"
-          root-reserve-mb: "30720"
-      - uses: actions/checkout@v3
+          remove-dotnet: 'true'
+          remove-haskell: 'true'
+          remove-android: 'true'
+          remove-codeql: 'true'
+          remove-docker-images: 'true'
+          overprovision-lvm: 'true'
+          swap-size-mb: 1024
+      - uses: actions/checkout@v4
       - name: Build Docker Image
         run: |
           DOCKER_BUILDKIT=1 docker build . \
@@ -50,7 +72,6 @@ jobs:
           MLSERVER_IMAGE: seldonio/mlserver:${{ github.sha }}
       - name: Scan Docker Image
         uses: snyk/actions/docker@master
-        continue-on-error: true
         with:
           image: seldonio/mlserver:${{ github.sha }}
           args: --fail-on=upgradable
@@ -61,6 +82,6 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       - name: Upload result to GitHub Code Scanning
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: snyk.sarif

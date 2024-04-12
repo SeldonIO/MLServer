@@ -18,6 +18,7 @@ from aiohttp.client_exceptions import (
 )
 from aiohttp_retry import RetryClient, ExponentialRetry
 
+from mlserver.logging import logger
 from mlserver.utils import generate_uuid
 from mlserver.types import RepositoryIndexResponse, InferenceRequest, InferenceResponse
 
@@ -39,13 +40,14 @@ def get_available_ports(n: int = 1) -> List[int]:
 
 async def _run(cmd):
     process = await asyncio.create_subprocess_shell(
-        cmd,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
+        cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE
     )
 
     return_code = await process.wait()
     if return_code != 0:
+        _, stderr = await process.communicate()
+        logger.debug(f"Failed to run command '{cmd}'")
+        logger.debug(stderr.decode("utf-8"))
         raise Exception(f"Command '{cmd}' failed with code '{return_code}'")
 
 

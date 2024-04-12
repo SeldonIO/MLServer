@@ -83,10 +83,10 @@ class HuggingFaceSettings(BaseSettings):
     runtime.
     """
 
-    device: int = -1
+    device: Optional[Union[int, str]] = None
     """
     Device in which this pipeline will be loaded (e.g., "cpu", "cuda:1", "mps",
-    or a GPU ordinal rank like 1).
+    or a GPU ordinal rank like 1). Default value of None becomes cpu.
     """
 
     inter_op_threads: Optional[int] = None

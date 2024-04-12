@@ -28,10 +28,8 @@ def get_namespace() -> Optional[str]:
         # Namespace can be fetched from loaded file vars from k8s 1.15.3+
         with open("/var/run/secrets/kubernetes.io/serviceaccount/namespace", "r") as f:
             return f.read()
-    except FileNotFoundError:
+    except (FileNotFoundError, BlockingIOError):
         return None
-
-    return None
 
 
 def _update_headers(

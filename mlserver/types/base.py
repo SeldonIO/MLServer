@@ -19,3 +19,6 @@ class BaseModel(_BaseModel):
         return super().json(
             exclude_unset=exclude_unset, exclude_none=exclude_none, **kwargs
         )
+
+    class Config:
+        use_enum_values = True

@@ -1,6 +1,88 @@
 # Changelog
 
 
+<a name="1.5.0"></a>
+## [1.5.0](https://github.com/SeldonIO/MLServer/releases/tag/1.5.0) - 05 Mar 2024
+
+<!-- Release notes generated using configuration in .github/release.yml at 1.5.0 -->
+
+## What's Changed
+
+* Update CHANGELOG by [@github-actions](https://github.com/github-actions) in https://github.com/SeldonIO/MLServer/pull/1592
+* build: Migrate away from Node v16 actions by [@jesse-c](https://github.com/jesse-c) in https://github.com/SeldonIO/MLServer/pull/1596
+* build: Bump version and improve release doc by [@jesse-c](https://github.com/jesse-c) in https://github.com/SeldonIO/MLServer/pull/1602
+* build: Upgrade stale packages (fastapi, starlette, tensorflow, torch) by [@sakoush](https://github.com/sakoush) in https://github.com/SeldonIO/MLServer/pull/1603
+* fix(ci): tests and security workflow fixes by [@sakoush](https://github.com/sakoush) in https://github.com/SeldonIO/MLServer/pull/1608
+* Re-generate License Info by [@github-actions](https://github.com/github-actions) in https://github.com/SeldonIO/MLServer/pull/1612
+* fix(ci): Missing quote in CI test for all_runtimes by [@sakoush](https://github.com/sakoush) in https://github.com/SeldonIO/MLServer/pull/1617
+* build(docker): Bump dependencies by [@jesse-c](https://github.com/jesse-c) in https://github.com/SeldonIO/MLServer/pull/1618
+* docs: List supported Python versions  by [@jesse-c](https://github.com/jesse-c) in https://github.com/SeldonIO/MLServer/pull/1591
+* fix(ci): Have separate smaller tasks for release by [@sakoush](https://github.com/sakoush) in https://github.com/SeldonIO/MLServer/pull/1619
+
+
+## Notes
+* We remove support for python 3.8, check https://github.com/SeldonIO/MLServer/pull/1603 for more info. Docker images for mlserver are already using python 3.10.
+
+**Full Changelog**: https://github.com/SeldonIO/MLServer/compare/1.4.0...1.5.0
+
+[Changes][1.5.0]
+
+
+<a name="1.4.0"></a>
+## [1.4.0](https://github.com/SeldonIO/MLServer/releases/tag/1.4.0) - 28 Feb 2024
+
+<!-- Release notes generated using configuration in .github/release.yml at 1.4.0 -->
+
+## What's Changed
+* Free up some space for GH actions by [@adriangonz](https://github.com/adriangonz) in https://github.com/SeldonIO/MLServer/pull/1282
+* Introduce tracing with OpenTelemetry by [@vtaskow](https://github.com/vtaskow) in https://github.com/SeldonIO/MLServer/pull/1281
+* Update release CI to use Poetry by [@adriangonz](https://github.com/adriangonz) in https://github.com/SeldonIO/MLServer/pull/1283
+* Re-generate License Info by [@github-actions](https://github.com/github-actions) in https://github.com/SeldonIO/MLServer/pull/1284
+* Add support for white-box explainers to alibi-explain runtime by [@ascillitoe](https://github.com/ascillitoe) in https://github.com/SeldonIO/MLServer/pull/1279
+* Update CHANGELOG by [@github-actions](https://github.com/github-actions) in https://github.com/SeldonIO/MLServer/pull/1294
+* Fix build-wheels.sh error when copying to output path by [@lc525](https://github.com/lc525) in https://github.com/SeldonIO/MLServer/pull/1286
+* Fix typo by [@strickvl](https://github.com/strickvl) in https://github.com/SeldonIO/MLServer/pull/1289
+* feat(logging): Distinguish logs from different models by [@vtaskow](https://github.com/vtaskow) in https://github.com/SeldonIO/MLServer/pull/1302
+* Make sure we use our Response class by [@adriangonz](https://github.com/adriangonz) in https://github.com/SeldonIO/MLServer/pull/1314
+* Adding Quick-Start Guide to docs by [@ramonpzg](https://github.com/ramonpzg) in https://github.com/SeldonIO/MLServer/pull/1315
+* feat(logging): Provide JSON-formatted structured logging as option by [@vtaskow](https://github.com/vtaskow) in https://github.com/SeldonIO/MLServer/pull/1308
+* Bump in conda version and mamba solver  by [@dtpryce](https://github.com/dtpryce) in https://github.com/SeldonIO/MLServer/pull/1298
+* feat(huggingface): Merge model settings by [@jesse-c](https://github.com/jesse-c) in https://github.com/SeldonIO/MLServer/pull/1337
+* feat(huggingface): Load local artefacts in HuggingFace runtime by [@vtaskow](https://github.com/vtaskow) in https://github.com/SeldonIO/MLServer/pull/1319
+* Document and test behaviour around NaN by [@adriangonz](https://github.com/adriangonz) in https://github.com/SeldonIO/MLServer/pull/1346
+* Address flakiness on 'mlserver build' tests by [@adriangonz](https://github.com/adriangonz) in https://github.com/SeldonIO/MLServer/pull/1363
+* Bump Poetry and lockfiles by [@adriangonz](https://github.com/adriangonz) in https://github.com/SeldonIO/MLServer/pull/1369
+* Bump Miniforge3 to 23.3.1 by [@adriangonz](https://github.com/adriangonz) in https://github.com/SeldonIO/MLServer/pull/1372
+* Re-generate License Info by [@github-actions](https://github.com/github-actions) in https://github.com/SeldonIO/MLServer/pull/1373
+* Improved huggingface batch logic by [@ajsalow](https://github.com/ajsalow) in https://github.com/SeldonIO/MLServer/pull/1336
+* Add inference params support to MLFlow's custom invocation endpoint (… by [@M4nouel](https://github.com/M4nouel) in https://github.com/SeldonIO/MLServer/pull/1375
+* Increase build space for runtime builds by [@adriangonz](https://github.com/adriangonz) in https://github.com/SeldonIO/MLServer/pull/1385
+* Fix minor typo in `sklearn` README by [@krishanbhasin-gc](https://github.com/krishanbhasin-gc) in https://github.com/SeldonIO/MLServer/pull/1402
+* Add catboost classifier support by [@krishanbhasin-gc](https://github.com/krishanbhasin-gc) in https://github.com/SeldonIO/MLServer/pull/1403
+* added model_kwargs to huggingface model by [@nanbo-liu](https://github.com/nanbo-liu) in https://github.com/SeldonIO/MLServer/pull/1417
+* Re-generate License Info by [@github-actions](https://github.com/github-actions) in https://github.com/SeldonIO/MLServer/pull/1456
+* Local response cache implementation by [@SachinVarghese](https://github.com/SachinVarghese) in https://github.com/SeldonIO/MLServer/pull/1440
+* fix link to custom runtimes by [@kretes](https://github.com/kretes) in https://github.com/SeldonIO/MLServer/pull/1467
+* Improve typing on `Environment` class by [@krishanbhasin-gc](https://github.com/krishanbhasin-gc) in https://github.com/SeldonIO/MLServer/pull/1469
+* build(dependabot): Change reviewers by [@jesse-c](https://github.com/jesse-c) in https://github.com/SeldonIO/MLServer/pull/1548
+* MLServer changes from internal fork - deps and CI updates by [@sakoush](https://github.com/sakoush) in https://github.com/SeldonIO/MLServer/pull/1588
+
+## New Contributors
+* [@vtaskow](https://github.com/vtaskow) made their first contribution in https://github.com/SeldonIO/MLServer/pull/1281
+* [@lc525](https://github.com/lc525) made their first contribution in https://github.com/SeldonIO/MLServer/pull/1286
+* [@strickvl](https://github.com/strickvl) made their first contribution in https://github.com/SeldonIO/MLServer/pull/1289
+* [@ramonpzg](https://github.com/ramonpzg) made their first contribution in https://github.com/SeldonIO/MLServer/pull/1315
+* [@jesse-c](https://github.com/jesse-c) made their first contribution in https://github.com/SeldonIO/MLServer/pull/1337
+* [@ajsalow](https://github.com/ajsalow) made their first contribution in https://github.com/SeldonIO/MLServer/pull/1336
+* [@M4nouel](https://github.com/M4nouel) made their first contribution in https://github.com/SeldonIO/MLServer/pull/1375
+* [@nanbo-liu](https://github.com/nanbo-liu) made their first contribution in https://github.com/SeldonIO/MLServer/pull/1417
+* [@kretes](https://github.com/kretes) made their first contribution in https://github.com/SeldonIO/MLServer/pull/1467
+
+**Full Changelog**: https://github.com/SeldonIO/MLServer/compare/1.3.5...1.4.0
+
+[Changes][1.4.0]
+
+
 <a name="1.3.5"></a>
 ## [1.3.5](https://github.com/SeldonIO/MLServer/releases/tag/1.3.5) - 10 Jul 2023
 
@@ -345,6 +427,8 @@ To learn more about how to use MLServer directly from the MLflow CLI, check out 
 [Changes][1.1.0]
 
 
+[1.5.0]: https://github.com/SeldonIO/MLServer/compare/1.4.0...1.5.0
+[1.4.0]: https://github.com/SeldonIO/MLServer/compare/1.3.5...1.4.0
 [1.3.5]: https://github.com/SeldonIO/MLServer/compare/1.3.4...1.3.5
 [1.3.4]: https://github.com/SeldonIO/MLServer/compare/1.3.3...1.3.4
 [1.3.3]: https://github.com/SeldonIO/MLServer/compare/1.3.2...1.3.3
@@ -359,4 +443,4 @@ To learn more about how to use MLServer directly from the MLflow CLI, check out 
 [1.2.0.dev1]: https://github.com/SeldonIO/MLServer/compare/1.1.0...1.2.0.dev1
 [1.1.0]: https://github.com/SeldonIO/MLServer/tree/1.1.0
 
-<!-- Generated by https://github.com/rhysd/changelog-from-release v3.7.1 -->
+<!-- Generated by https://github.com/rhysd/changelog-from-release v3.7.2 -->
