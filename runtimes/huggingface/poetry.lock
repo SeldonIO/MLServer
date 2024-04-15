@@ -2308,13 +2308,13 @@ tests = ["pytest", "pytest-cov", "pytest-pep8"]
 
 [[package]]
 name = "optimum"
-version = "1.17.1"
+version = "1.18.1"
 description = "Optimum Library is an extension of the Hugging Face Transformers library, providing a framework to integrate third-party libraries from Hardware Partners and interface with their specific functionality."
 optional = false
 python-versions = ">=3.7.0"
 files = [
-    {file = "optimum-1.17.1-py3-none-any.whl", hash = "sha256:508bc55db3c9434f4e8d5a30c39a46ac63c4cdb45bcc5a641b6c1c77cae88d23"},
-    {file = "optimum-1.17.1.tar.gz", hash = "sha256:e59af717e8691b11903fe2cfb8c6efd6f6798b0417f3e70d231e578a02448ceb"},
+    {file = "optimum-1.18.1-py3-none-any.whl", hash = "sha256:c963b4ea86ebc2fd8bbc8b30d3c0fddef6fd47645954f207c1910993498f6547"},
+    {file = "optimum-1.18.1.tar.gz", hash = "sha256:c962cc02d55d698461cbc2e3fcf5522fab83ed846c3f904f5bed3efdc48a702b"},
 ]
 
 [package.dependencies]
@@ -2332,30 +2332,30 @@ packaging = "*"
 protobuf = {version = ">=3.20.1", optional = true, markers = "extra == \"onnxruntime\""}
 sympy = "*"
 torch = ">=1.11"
-transformers = {version = ">=4.26.0", extras = ["sentencepiece"]}
+transformers = {version = ">=4.26.0,<4.40.0", extras = ["sentencepiece"]}
 
 [package.extras]
 amd = ["optimum-amd"]
 benchmark = ["evaluate (>=0.2.0)", "optuna", "scikit-learn", "seqeval", "torchvision", "tqdm"]
-dev = ["Pillow", "accelerate", "black (>=23.1,<24.0)", "diffusers (>=0.17.0)", "einops", "invisible-watermark", "parameterized", "pytest", "pytest-xdist", "requests", "rjieba", "ruff (==0.1.5)", "sacremoses", "scikit-learn", "timm", "torchaudio", "torchvision"]
+dev = ["Pillow", "accelerate", "black (>=23.1,<24.0)", "diffusers (>=0.17.0)", "einops", "invisible-watermark", "parameterized", "pytest (<=8.0.0)", "pytest-xdist", "requests", "rjieba", "ruff (==0.1.5)", "sacremoses", "scikit-learn", "timm", "torchaudio", "torchvision"]
 diffusers = ["diffusers"]
 doc-build = ["accelerate"]
 exporters = ["onnx", "onnxruntime", "timm"]
 exporters-gpu = ["onnx", "onnxruntime-gpu", "timm"]
-exporters-tf = ["h5py", "numpy (<1.24.0)", "onnx", "onnxruntime", "tensorflow (>=2.4,<=2.12.1)", "tf2onnx", "timm"]
+exporters-tf = ["h5py", "numpy (<1.24.0)", "onnx", "onnxruntime", "tensorflow (>=2.4,<=2.12.1)", "tf2onnx", "timm", "transformers[sentencepiece] (>=4.26.0,<4.38.0)"]
 furiosa = ["optimum-furiosa"]
 graphcore = ["optimum-graphcore"]
 habana = ["optimum-habana", "transformers (>=4.37.0,<4.38.0)"]
 intel = ["optimum-intel (>=1.15.0)"]
 neural-compressor = ["optimum-intel[neural-compressor] (>=1.15.0)"]
-neuron = ["optimum-neuron[neuron]"]
-neuronx = ["optimum-neuron[neuronx]"]
+neuron = ["optimum-neuron[neuron] (>=0.0.20)", "transformers (==4.36.2)"]
+neuronx = ["optimum-neuron[neuronx] (>=0.0.20)", "transformers (==4.36.2)"]
 nncf = ["optimum-intel[nncf] (>=1.15.0)"]
 onnxruntime = ["datasets (>=1.2.1)", "evaluate", "onnx", "onnxruntime (>=1.11.0)", "protobuf (>=3.20.1)"]
 onnxruntime-gpu = ["accelerate", "datasets (>=1.2.1)", "evaluate", "onnx", "onnxruntime-gpu (>=1.11.0)", "protobuf (>=3.20.1)"]
 openvino = ["optimum-intel[openvino] (>=1.15.0)"]
 quality = ["black (>=23.1,<24.0)", "ruff (==0.1.5)"]
-tests = ["Pillow", "accelerate", "diffusers (>=0.17.0)", "einops", "invisible-watermark", "parameterized", "pytest", "pytest-xdist", "requests", "rjieba", "sacremoses", "scikit-learn", "timm", "torchaudio", "torchvision"]
+tests = ["Pillow", "accelerate", "diffusers (>=0.17.0)", "einops", "invisible-watermark", "parameterized", "pytest (<=8.0.0)", "pytest-xdist", "requests", "rjieba", "sacremoses", "scikit-learn", "timm", "torchaudio", "torchvision"]
 
 [[package]]
 name = "orjson"
