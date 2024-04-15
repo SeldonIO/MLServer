@@ -1457,6 +1457,7 @@ files = [
 ]
 
 [[package]]
+<<<<<<< HEAD
 name = "kafka-python"
 version = "2.0.2"
 description = "Pure Python client for Apache Kafka"
@@ -1472,6 +1473,23 @@ crc32c = ["crc32c"]
 
 [[package]]
 >>>>>>> d5a79a6 (added sentence transformers pipeline)
+||||||| parent of 8c635c7 (Sync with opensource version and resolve merge conflicts.)
+name = "kafka-python"
+version = "2.0.2"
+description = "Pure Python client for Apache Kafka"
+optional = false
+python-versions = "*"
+files = [
+    {file = "kafka-python-2.0.2.tar.gz", hash = "sha256:04dfe7fea2b63726cd6f3e79a2d86e709d608d74406638c5da33a01d45a9d7e3"},
+    {file = "kafka_python-2.0.2-py2.py3-none-any.whl", hash = "sha256:2d92418c7cb1c298fa6c7f0fb3519b520d0d7526ac6cb7ae2a4fc65a51a94b6e"},
+]
+
+[package.extras]
+crc32c = ["crc32c"]
+
+[[package]]
+=======
+>>>>>>> 8c635c7 (Sync with opensource version and resolve merge conflicts.)
 name = "keras"
 version = "3.3.3"
 description = "Multi-backend Keras."
@@ -4768,13 +4786,5 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 
 [metadata]
 lock-version = "2.0"
-<<<<<<< HEAD
 python-versions = ">=3.9,<3.12"
 content-hash = "1f69e6b02610ab08654a7f7ac5bdfde9ecac54f944bf253f7a23fc80bf60481c"
-||||||| parent of d5a79a6 (added sentence transformers pipeline)
-python-versions = "^3.8.1,<3.12"
-content-hash = "9e0fecd5464db70f4be26a20b37e8e63ca2351644495296868c15d9a788c1881"
-=======
-python-versions = "^3.8.1,<3.12"
-content-hash = "1bbdee92c643c9cbb99591fba2a2776f0635b66f0f6be1deaf08f1bd6e972ecd"
->>>>>>> d5a79a6 (added sentence transformers pipeline)

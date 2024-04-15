@@ -1,3 +1,17 @@
+# This is the Striveworks fork of the MLServer Huggingface Chariot Runtime
+This allows us to make quickly changes, updates and bug fixes to mlserver hugginface at our own discretion.
+
+## Deploying a new version 
+ Once a change is merged and we want to release that change in to chariot there is a process to do so.
+
+First, increment the version within our MLServer Huggingface fork, [example](https://github.com/Striveworks/MLServer/commit/ae550a53bd7f2d1dbffb2d15d61a4c1c3ad29dd3). The switch into to the runtimes/huggingface directory, and run `poetry build`, to build the package. Next we want to push this new version from to our code artifact, if you have already ran ~/chariot/tools/setup-dev, you should be logged into codeartifact.
+Run `poetry publish --repository=codeartifact` to publish the new package do code artfiact.
+
+Now we need to update mlserver chariot to use this updated package. Switch to the chariot repo and make a new branch, swith into the mlserver chariot directory (which is at /chariot/py/apps/mlserver-chariot/). The run `poetry add mlserver-huggingface==x.xx` with x.xx set to the new version you created, this will update to pyproject.toml and lock file, go ahead and create and merge a pr with this change, [example](https://github.com/Striveworks/chariot/pull/6321/files).
+
+From then on builds of MLServer chariot will contain your changes. As we attempt to build it daily from main, you can either wait, or if you need it immediately, you can find build your PR generated, https://us-east-2.console.aws.amazon.com/ecr/repositories/private/724664234782/library/chariot-mlserver-chariot?region=us-east-2, and label it with main. Alterntaively you could just kick off new build of MLServer chariot with github actions, and check deploy to dev.
+
+
 # HuggingFace runtime for MLServer
 
 This package provides a MLServer runtime compatible with HuggingFace Transformers.
