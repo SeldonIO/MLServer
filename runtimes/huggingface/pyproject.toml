@@ -25,6 +25,7 @@ mlserver = {path = "../..", develop = true}
 torch = "2.2.2"
 transformers = ">=4.30,<5.0"
 tensorflow = ">=2.12,<2.17"
+tf-keras = "<3.0"
 
 [tool.poetry.extras]
 japanese = ["fugashi", "unidic", "unidic-lite", "ipadic"]

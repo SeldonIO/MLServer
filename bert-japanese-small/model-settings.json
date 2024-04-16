@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {
     "name": "transformer",
     "implementation": "mlserver_huggingface.runtime.HuggingFaceRuntime",
@@ -9,3 +10,16 @@
       }
     }
   }
+=======
+{
+  "name": "transformer",
+  "implementation": "mlserver_huggingface.runtime.HuggingFaceRuntime",
+  "parameters": {
+    "extra": {
+      "task": "fill-mask",
+      "pretrained_model": "izumi-lab/bert-small-japanese",
+      "pretrained_tokenizer": "izumi-lab/bert-small-japanese"
+    }
+  }
+}
+>>>>>>> 7f21db5f34f1cef2b6c42ac17b979f02d15f58d9

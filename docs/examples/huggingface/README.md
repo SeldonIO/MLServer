@@ -315,6 +315,7 @@ response = requests.post("http://localhost:8080/v2/models/transformer/infer", js
 json.loads(response['outputs'][0]['data'][0])["sequence"]
 ```
 <<<<<<< HEAD
+<<<<<<< HEAD
 ```
 Response:
 {'model_name': 'transformer', 'id': '9e966d8d-b43d-4ab4-8d47-90e367196233', 'parameters': {}, 'outputs': [{'name': 'output', 'shape': [5, 1], 'datatype': 'BYTES', 'parameters': {'content_type': 'hg_jsonlist'}, 'data': ['{"score": 0.3277095854282379, "token": 11819, "token_str": "\\u3042\\u308b", "sequence": "\\u5b9f\\u969b \\u306b \\u7a7a \\u304c \\u3042\\u308b \\u306e \\u304b?"}', '{"score": 0.10271108895540237, "token": 14656, "token_str": "\\u898b\\u3048\\u308b", "sequence": "\\u5b9f\\u969b \\u306b \\u7a7a \\u304c \\u898b\\u3048\\u308b \\u306e \\u304b?"}', '{"score": 0.08325661718845367, "token": 11835, "token_str": "\\u306a\\u3044", "sequence": "\\u5b9f\\u969b \\u306b \\u7a7a \\u304c \\u306a\\u3044 \\u306e \\u304b?"}', '{"score": 0.036131054162979126, "token": 18413, "token_str": "\\u6b63\\u3057\\u3044", "sequence": "\\u5b9f\\u969b \\u306b \\u7a7a \\u304c \\u6b63\\u3057\\u3044 \\u306e \\u304b?"}', '{"score": 0.029351236298680305, "token": 11820, "token_str": "\\u3044\\u308b", "sequence": "\\u5b9f\\u969b \\u306b \\u7a7a \\u304c \\u3044\\u308b \\u306e \\u304b?"}']}]}
@@ -323,6 +324,8 @@ Data:
 ```
 =======
 >>>>>>> Fixed merge conflict in README
+=======
+>>>>>>> 7f21db5f34f1cef2b6c42ac17b979f02d15f58d9
 ## GPU Acceleration
 
 We can also evaluate GPU acceleration, we can test the speed on CPU vs GPU using the following parameters

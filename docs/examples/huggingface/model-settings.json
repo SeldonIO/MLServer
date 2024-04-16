@@ -4,8 +4,15 @@
   "parameters": {
     "extra": {
       "task": "fill-mask",
+<<<<<<< HEAD
       "pretrained_model": "izumi-lab/bert-small-japanese",
       "pretrained_tokenizer": "izumi-lab/bert-small-japanese"
     }
   }
 }
+=======
+      "pretrained_model": "cl-tohoku/bert-base-japanese",
+      "pretrained_tokenizer": "cl-tohoku/bert-base-japanese"
+    }
+  }
+>>>>>>> 7f21db5f34f1cef2b6c42ac17b979f02d15f58d9
