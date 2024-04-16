@@ -26,7 +26,7 @@ def _pil_base64decode(imgbytes: Union[bytes, str]) -> "Image.Image":
 @register_input_codec
 class PILImageCodec(InputCodec):
     """
-    Codec that convers to / from a PIL.Image input.
+    Codec that converts to / from a PIL.Image.Image input.
     """
 
     ContentType = "pillow_image"
