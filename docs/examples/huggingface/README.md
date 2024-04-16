@@ -259,8 +259,17 @@ requests.post(
     "http://localhost:8080/v2/models/transformer/infer", json=inference_request
 ).json()
 ```
+```
+{'model_name': 'transformer',
+    'id': '835eabbd-daeb-4423-a64f-a7c4d7c60a9b',
+    'parameters': {},
+    'outputs': [{'name': 'output',
+    'shape': [1, 1],
+    'datatype': 'BYTES',
+    'parameters': {'content_type': 'hg_jsonlist'},
+    'data': ['{"label": "NEGATIVE", "score": 0.9996137022972107}']}]}
+```
 
-<<<<<<< HEAD
 ### Masked Language Modeling (Optional Japanese Language Example)
 
 We can also serve a masked language model. In the following example, we also build the `huggingface` runtime with the `-E japanese` flag to enable support for Japanese tokenizers. For example, after running the normal project build from the root directory with `make install-dev`, we can install the optional Japanese dependencies in dev mode:
@@ -305,22 +314,6 @@ json.dumps(inference_request.dict())
 response = requests.post("http://localhost:8080/v2/models/transformer/infer", json=inference_request.dict()).json()
 json.loads(response['outputs'][0]['data'][0])["sequence"]
 ```
-=======
-
-
-
-    {'model_name': 'transformer',
-     'id': '835eabbd-daeb-4423-a64f-a7c4d7c60a9b',
-     'parameters': {},
-     'outputs': [{'name': 'output',
-       'shape': [1, 1],
-       'datatype': 'BYTES',
-       'parameters': {'content_type': 'hg_jsonlist'},
-       'data': ['{"label": "NEGATIVE", "score": 0.9996137022972107}']}]}
-
-
-
->>>>>>> upstream/master
 ## GPU Acceleration
 
 We can also evaluate GPU acceleration, we can test the speed on CPU vs GPU using the following parameters
