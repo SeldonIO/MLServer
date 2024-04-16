@@ -5037,13 +5037,13 @@ testing = ["coverage (>=6.2)", "flaky (>=3.5.0)", "hypothesis (>=5.7.1)", "mypy 
 
 [[package]]
 name = "pytest-cases"
-version = "3.8.4"
+version = "3.8.5"
 description = "Separate test code from test cases in pytest."
 optional = false
 python-versions = "*"
 files = [
-    {file = "pytest-cases-3.8.4.tar.gz", hash = "sha256:b4cec335156f44f3bcfa85e79f2b34b5fa52e6332a8542ddf3e84fa13faacd76"},
-    {file = "pytest_cases-3.8.4-py2.py3-none-any.whl", hash = "sha256:d03575a375f953f35ae6840ee35fd1df9f7b6c54194845f81a0fe3d726a395dc"},
+    {file = "pytest-cases-3.8.5.tar.gz", hash = "sha256:c92054187847a7d30d8ab6709fb1670a830e4e19234be700c85c96b6d7102c16"},
+    {file = "pytest_cases-3.8.5-py2.py3-none-any.whl", hash = "sha256:0c8e3727f6494e65b47321adbd94c767277c7b5de1bd40dd518a13f7443b1fff"},
 ]
 
 [package.dependencies]
@@ -8079,4 +8079,4 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<3.12"
-content-hash = "37a493ac928b7298acd9a2ed72637a40dd7666f4091f014b988655e08e6f0015"
+content-hash = "2513a87aa83f660815ff8f8586ac6e8d00443e8cfcfabdf7292f5c1eeeb27b7f"
