@@ -2441,14 +2441,19 @@ tests = ["pytest", "pytest-cov", "pytest-pep8"]
 [[package]]
 name = "optimum"
 <<<<<<< HEAD
+<<<<<<< HEAD
 version = "1.19.0"
 =======
 version = "1.16.1"
 >>>>>>> Updated lock and docs
+=======
+version = "1.19.0"
+>>>>>>> Fixed merge conflict in lock
 description = "Optimum Library is an extension of the Hugging Face Transformers library, providing a framework to integrate third-party libraries from Hardware Partners and interface with their specific functionality."
 optional = false
 python-versions = ">=3.7.0"
 files = [
+<<<<<<< HEAD
 <<<<<<< HEAD
     {file = "optimum-1.19.0-py3-none-any.whl", hash = "sha256:b259b2379f6904d7e1bef3f9ab1c3f22ae6c42357b416311950cd65526bb485e"},
     {file = "optimum-1.19.0.tar.gz", hash = "sha256:a1eb134d70d3093eca68160fcf84c1aff8887726641f3362adca878fda095e3d"},
@@ -2456,6 +2461,10 @@ files = [
     {file = "optimum-1.16.1-py3-none-any.whl", hash = "sha256:c0d0cb5877ae7b8f40289c54885341297f61b30255a93a71f5e979bc86b03598"},
     {file = "optimum-1.16.1.tar.gz", hash = "sha256:9a74bc5cbbe2373fc45f477257d5046fd28b725bce91c1f8846baadba57f2129"},
 >>>>>>> Updated lock and docs
+=======
+    {file = "optimum-1.19.0-py3-none-any.whl", hash = "sha256:b259b2379f6904d7e1bef3f9ab1c3f22ae6c42357b416311950cd65526bb485e"},
+    {file = "optimum-1.19.0.tar.gz", hash = "sha256:a1eb134d70d3093eca68160fcf84c1aff8887726641f3362adca878fda095e3d"},
+>>>>>>> Fixed merge conflict in lock
 ]
 
 [package.dependencies]
@@ -3715,14 +3724,19 @@ files = [
 [[package]]
 name = "setuptools"
 <<<<<<< HEAD
+<<<<<<< HEAD
 version = "69.5.1"
 =======
 version = "69.0.3"
 >>>>>>> Updated lock and docs
+=======
+version = "69.5.1"
+>>>>>>> Fixed merge conflict in lock
 description = "Easily download, build, install, upgrade, and uninstall Python packages"
 optional = false
 python-versions = ">=3.8"
 files = [
+<<<<<<< HEAD
 <<<<<<< HEAD
     {file = "setuptools-69.5.1-py3-none-any.whl", hash = "sha256:c636ac361bc47580504644275c9ad802c50415c7522212252c033bd15f301f32"},
     {file = "setuptools-69.5.1.tar.gz", hash = "sha256:6c1fccdac05a97e598fb0ae3bbed5904ccb317337a51139dcd51453611bbb987"},
@@ -3730,6 +3744,10 @@ files = [
     {file = "setuptools-69.0.3-py3-none-any.whl", hash = "sha256:385eb4edd9c9d5c17540511303e39a147ce2fc04bc55289c322b9e5904fe2c05"},
     {file = "setuptools-69.0.3.tar.gz", hash = "sha256:be1af57fc409f93647f2e8e4573a142ed38724b8cdd389706a867bb4efcf1e78"},
 >>>>>>> Updated lock and docs
+=======
+    {file = "setuptools-69.5.1-py3-none-any.whl", hash = "sha256:c636ac361bc47580504644275c9ad802c50415c7522212252c033bd15f301f32"},
+    {file = "setuptools-69.5.1.tar.gz", hash = "sha256:6c1fccdac05a97e598fb0ae3bbed5904ccb317337a51139dcd51453611bbb987"},
+>>>>>>> Fixed merge conflict in lock
 ]
 
 [package.extras]
