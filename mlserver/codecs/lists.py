@@ -19,9 +19,10 @@ def is_list_of(payload: Any, instance_type: Type):
 
 
 def as_list(payload: ListPayload) -> Iterator[ListElement]:
+    """Return a payload as an iterator. Single elements will be
+    treated as a list of 1 item. All elements are assumed to be
+    string-like."""
     if isinstance(payload, list):
-        # If it's a list, assume list of strings
         yield from payload
     else:
-        # If not a list, assume that it's a single element
         yield payload

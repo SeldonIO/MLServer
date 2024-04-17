@@ -32,11 +32,23 @@ def image_base64(fname: str, use_bytes: bool = False) -> Union[str, bytes]:
 
 
 def image_base64_bytes(fname: str) -> bytes:
-    img = Image.open(file_path(fname))
+    """Load an image by filename and return it as Base64 encoded bytes"""
+    img = Image.open(
+        file_path(fname),
+        formats=None,  # Try and support all formats
+    )
+
+    fmt = img.format
+    if fmt is None:
+        raise ValueError("test image has no specified format")
+
     buf = io.BytesIO()
-    img.save(buf, format=img.format)
+    img.save(buf, format=fmt)
     v = base64.b64encode(buf.getvalue())
-    return f"data:image/{img.format.lower()};base64,".encode() + v
+
+    bytes = f"data:image/{fmt.lower()};base64,".encode() + v
+
+    return bytes
 
 
 def image_base64_str(fname: str) -> str:
