@@ -150,7 +150,7 @@ sphinxcontrib-bibtex = "2.5.0"
 autodoc_pydantic = "1.9.0"
 sphinx-click = "5.1.0"
 sphinx_design = "0.4.1"
-sphinx-autobuild = "2024.2.4"
+sphinx-autobuild = "2024.4.16"
 sphinx-copybutton = "^0.5.2"
 
 [build-system]
