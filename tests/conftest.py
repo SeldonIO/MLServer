@@ -226,6 +226,12 @@ def inference_request() -> types.InferenceRequest:
 
 
 @pytest.fixture
+def generate_request() -> types.InferenceRequest:
+    payload_path = os.path.join(TESTDATA_PATH, "generate-request.json")
+    return types.InferenceRequest.parse_file(payload_path)
+
+
+@pytest.fixture
 def inference_request_invalid_datatype() -> Dict[str, Any]:
     payload_path = os.path.join(
         TESTDATA_PATH, "inference-request-invalid-datatype.json"

@@ -96,19 +96,27 @@ async def test_infer(data_plane, sum_model, inference_request):
     assert prediction.outputs[0].data == TensorData(root=[6])
 
 
-async def test_infer_stream(data_plane, stream_model, inference_request):
-    stream = data_plane.infer_stream(
-        payload=inference_request, name=stream_model.name, version=stream_model.version
+async def test_generate(data_plane, text_model, generate_request):
+    completion = await data_plane.generate(
+        payload=generate_request, name=text_model.name, version=text_model.version
     )
 
-    idx = 0
-    async for prediction in stream:
-        assert prediction.id == inference_request.id
-        assert len(prediction.outputs) == 1
-        assert prediction.outputs[0].data.__root__ == [1 + idx, 2 + idx, 3 + idx]
-        idx += 1
+    assert len(completion.outputs) == 1
+    assert completion.outputs[0].data.__root__ == [b"What is the capital of France?"]
 
-    assert idx == stream_model.response_chunks
+
+async def test_generate_stream(data_plane, text_model, generate_request):
+    stream = data_plane.generate_stream(
+        payload=generate_request, name=text_model.name, version=text_model.version
+    )
+
+    completion = [tok async for tok in stream]
+    assert len(completion) == 6
+
+    concat_completion = b"".join(
+        [tok.outputs[0].data.__root__[0] for tok in completion]
+    )
+    assert concat_completion == b"What is the capital of France?"
 
 
 async def test_infer_error_not_ready(data_plane, sum_model, inference_request):
