@@ -64,17 +64,41 @@ class SumModel(MLModel):
         return response
 
 
-class StreamModel(MLModel):
-    response_chunks = 5
+class TextStreamModel(MLModel):
+    async def generate(self, payload: InferenceRequest) -> InferenceResponse:
+        text = "Hey now brown cow"
+        return InferenceResponse(
+            model_name=self._settings.name,
+            outputs=[
+                StringCodec.encode_output(
+                    name="output",
+                    payload=[text],
+                    use_bytes=True,
+                ),
+            ],
+        )
 
-    async def predict_stream(
+    async def generate_stream(
         self, payload: InferenceRequest
     ) -> AsyncIterator[InferenceResponse]:
-        decoded = self.decode_request(payload, default_codec=NumpyRequestCodec)
+        text = "Hey now brown cow"
+        words = text.split(" ")
 
-        for idx in range(self.response_chunks):
-            yield NumpyRequestCodec.encode_response(
-                model_name=self.name, payload=decoded + idx, model_version=self.version
+        split_text = []
+        for i, word in enumerate(words):
+            split_text.append(word if i == 0 else " " + word)
+
+        for word in split_text:
+            await asyncio.sleep(0.5)
+            yield InferenceResponse(
+                model_name=self._settings.name,
+                outputs=[
+                    StringCodec.encode_output(
+                        name="output",
+                        payload=[word],
+                        use_bytes=True,
+                    ),
+                ],
             )
 
 

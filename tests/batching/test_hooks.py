@@ -16,22 +16,31 @@ async def test_batching_predict(
     assert len(response.outputs) == 1
 
 
-async def test_batching_predict_stream(
-    stream_model: MLModel, inference_request: InferenceRequest, caplog
+@pytest.mark.parametrize("method_name", ["generate", "generate_stream"])
+async def test_batching_generate_warning(
+    method_name: str, stream_model: MLModel, inference_request: InferenceRequest, caplog
 ):
     # Force batching to be enabled
     stream_model.settings.max_batch_size = 10
     stream_model.settings.max_batch_time = 0.4
     await load_batching(stream_model)
 
-    stream = stream_model.predict_stream(inference_request)
+    method = getattr(stream_model, method_name)
+    if method_name == "generate_stream":
+        stream = method(inference_request)
+        responses = [r async for r in stream]
 
-    assert "not supported for inference streaming" in caplog.text
+        assert len(responses) > 0
+        assert isinstance(responses[0], InferenceResponse)
+        assert len(responses[0].outputs) == 1
+    else:
+        response = await method(inference_request)
 
-    responses = [r async for r in stream]
-    assert len(response) > 0
-    assert isinstance(responses[0], InferenceResponse)
-    assert len(response[0].outputs) == 1
+        assert response is not None
+        assert isinstance(response, InferenceResponse)
+        assert len(response.outputs) == 1
+
+    assert f"but not required for {method_name} method." in caplog.records[0].message
 
 
 @pytest.mark.parametrize(
