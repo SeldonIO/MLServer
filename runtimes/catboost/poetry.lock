@@ -335,36 +335,36 @@ files = [
 
 [[package]]
 name = "catboost"
-version = "1.2.3"
+version = "1.2.5"
 description = "CatBoost Python Package"
 optional = false
 python-versions = "*"
 files = [
-    {file = "catboost-1.2.3-cp310-cp310-macosx_11_0_universal2.whl", hash = "sha256:16dccd0922e4046aa36db6fb5f48503104f5b3c9c7bd256194dbf02ee1fabbf5"},
-    {file = "catboost-1.2.3-cp310-cp310-manylinux2014_aarch64.whl", hash = "sha256:cdb78481880b1c07f003c00c2e0b817f7a312ab0e93da5520f8a09efb82adc75"},
-    {file = "catboost-1.2.3-cp310-cp310-manylinux2014_x86_64.whl", hash = "sha256:647dd55dbf2808dcdd425131e4e279be0330fc6e442c196245d61bf44d742c54"},
-    {file = "catboost-1.2.3-cp310-cp310-win_amd64.whl", hash = "sha256:8365cb534da48f2dba12373a7e33aca6f9054b8214714d98175d1d6a8e8a221b"},
-    {file = "catboost-1.2.3-cp311-cp311-macosx_11_0_universal2.whl", hash = "sha256:649d19924db984930cd500faf862fd5b76698d9faa6e2350338d44d17261d783"},
-    {file = "catboost-1.2.3-cp311-cp311-manylinux2014_aarch64.whl", hash = "sha256:545e981506b02e6c716324089fc5201b57e5e30fb61929b0ac0b61af8290a9b1"},
-    {file = "catboost-1.2.3-cp311-cp311-manylinux2014_x86_64.whl", hash = "sha256:f8ad8cacf688f75a78324655a69a942309345960af2075b4618a4b723c95ba81"},
-    {file = "catboost-1.2.3-cp311-cp311-win_amd64.whl", hash = "sha256:d9cea396190d4b6072c0e9dced69a0a4b46accda5572b26962b3b29b6d1e9233"},
-    {file = "catboost-1.2.3-cp312-cp312-macosx_11_0_universal2.whl", hash = "sha256:7ea701141d12bb2e9ec348b4bb02be6b3188b6cd8832ae7b56a9bf98677a9128"},
-    {file = "catboost-1.2.3-cp312-cp312-manylinux2014_aarch64.whl", hash = "sha256:ec28140b7ad8663a68c05968c729263a7e8e604858a61fb6d9a190a9db025b26"},
-    {file = "catboost-1.2.3-cp312-cp312-manylinux2014_x86_64.whl", hash = "sha256:c73a85711260c48c881eff41f6183426eeee7f2e07118688ecafc8c32ab57eb3"},
-    {file = "catboost-1.2.3-cp312-cp312-win_amd64.whl", hash = "sha256:031c4a4e7160b6a965414dd60c9459fb8472c69a8156e80e16734dd0b068986e"},
-    {file = "catboost-1.2.3-cp37-cp37m-macosx_11_0_universal2.whl", hash = "sha256:b7c95c6ab5edccde2b847bac1dc990f9d26c79353ed52de348d3e228685f815e"},
-    {file = "catboost-1.2.3-cp37-cp37m-manylinux2014_aarch64.whl", hash = "sha256:69f24ed30a06c4a6d0f43203876edff3a09fe0487c201cfaace7338a286764a7"},
-    {file = "catboost-1.2.3-cp37-cp37m-manylinux2014_x86_64.whl", hash = "sha256:2b8a5ad81b6f4ae79067459a20b192a69066a5a1300d20e05b10f3af1092ab37"},
-    {file = "catboost-1.2.3-cp37-cp37m-win_amd64.whl", hash = "sha256:ea79008ad793a5090497020ed4afdbbc3cac71035483124aa43ca118cece659f"},
-    {file = "catboost-1.2.3-cp38-cp38-macosx_11_0_universal2.whl", hash = "sha256:5cb6be26e5c60b394482181f8e1392ae60d9583d0482f76a8c0cb75effc6da36"},
-    {file = "catboost-1.2.3-cp38-cp38-manylinux2014_aarch64.whl", hash = "sha256:fff6cc83401a60666ba14507402e1d633e94531a520abc479b7d8a98470b9db4"},
-    {file = "catboost-1.2.3-cp38-cp38-manylinux2014_x86_64.whl", hash = "sha256:e19ef50596486790e8fa49a927b0bce1a340a63c3ee897db0ce720bdb04500a3"},
-    {file = "catboost-1.2.3-cp38-cp38-win_amd64.whl", hash = "sha256:b0ac53dce6b9598bb0ec7144da360d455166e26859c50657cca79a4d19f04bc9"},
-    {file = "catboost-1.2.3-cp39-cp39-macosx_11_0_universal2.whl", hash = "sha256:37557e90e9c4185f41faff3c53e1bde52d926dea2feff6eda3d48d7c240ed726"},
-    {file = "catboost-1.2.3-cp39-cp39-manylinux2014_aarch64.whl", hash = "sha256:9a8eb86e5c4ed7d8f5f14c47965b3d5b1918c926280e71e024d03c7652e2a279"},
-    {file = "catboost-1.2.3-cp39-cp39-manylinux2014_x86_64.whl", hash = "sha256:a867deb1d0ff1a54feef91ab86bdb90f589dce1a7ba0da9ab1faf90eb72bde14"},
-    {file = "catboost-1.2.3-cp39-cp39-win_amd64.whl", hash = "sha256:78316a492d75089f77ea508ed009e54efe724120f549d6a2c782b8a4ccbf1256"},
-    {file = "catboost-1.2.3.tar.gz", hash = "sha256:72e141e3594975a7c08c787989b9b35d45b2beec13e37a62706a01b1037a1e44"},
+    {file = "catboost-1.2.5-cp310-cp310-macosx_11_0_universal2.whl", hash = "sha256:d266bcd87e7afa8c8c4cae1dbdb66f9487368ee2c1d2bbcefda0cbff7cb48ac4"},
+    {file = "catboost-1.2.5-cp310-cp310-manylinux2014_aarch64.whl", hash = "sha256:4143449dae1efc2752cbde2537b90611f36716e4e1e6827fc6856d07de16b431"},
+    {file = "catboost-1.2.5-cp310-cp310-manylinux2014_x86_64.whl", hash = "sha256:a92da61e95919b03d611045f0f3373799deec6f8192d7d1211714a21ff0da65e"},
+    {file = "catboost-1.2.5-cp310-cp310-win_amd64.whl", hash = "sha256:ad6ae9387759ca121042db60f4c73014027cb160a9dde1f52d353ca18b471e7c"},
+    {file = "catboost-1.2.5-cp311-cp311-macosx_11_0_universal2.whl", hash = "sha256:68dc17e6850f1ad8256fbbfbfac2c26b7be291c78b0961b135adf3aa6ed503bf"},
+    {file = "catboost-1.2.5-cp311-cp311-manylinux2014_aarch64.whl", hash = "sha256:b6e1617b57deca52c8880ec2439d0fb514d7e9f78479bae8dbfbd2f95bb3b28e"},
+    {file = "catboost-1.2.5-cp311-cp311-manylinux2014_x86_64.whl", hash = "sha256:9e0aac17d1a25e0f67770ba7362c6275db611ebb5dc6179daed84f55c3db976c"},
+    {file = "catboost-1.2.5-cp311-cp311-win_amd64.whl", hash = "sha256:901bf56e43334ce42f45b5c62fab1d8a14d54160b6da0645c798b7b7ad415da1"},
+    {file = "catboost-1.2.5-cp312-cp312-macosx_11_0_universal2.whl", hash = "sha256:82a321ba006abdeae9beb6e53c2d407b0eaaeadb4c1b56de1344f693e7512d08"},
+    {file = "catboost-1.2.5-cp312-cp312-manylinux2014_aarch64.whl", hash = "sha256:4180fe03d110acf44d09df7e3fd8e1ef62bfd3ac22ce90185332f52e24e96ac9"},
+    {file = "catboost-1.2.5-cp312-cp312-manylinux2014_x86_64.whl", hash = "sha256:e1925714d40a2a0d9fd086c33f2a668610c07630201527018f3f17a3d530c464"},
+    {file = "catboost-1.2.5-cp312-cp312-win_amd64.whl", hash = "sha256:f13acbcf2f3639d3d06808428db3207c7d776314041619cc32578927ec752221"},
+    {file = "catboost-1.2.5-cp37-cp37m-macosx_11_0_universal2.whl", hash = "sha256:1d8b06333495a90192618ddc4b0ea15186a35a53f55b7743e4c9758de1bb785d"},
+    {file = "catboost-1.2.5-cp37-cp37m-manylinux2014_aarch64.whl", hash = "sha256:87a556dfdad702d958b2f7bb1b6fc8bee4b1bf9bf3e7736aac3f70cb9522d53a"},
+    {file = "catboost-1.2.5-cp37-cp37m-manylinux2014_x86_64.whl", hash = "sha256:d0db06d11dd9446bcb1cd1417bced0c4f956abe3f50f72df79f1b2b6789a6bde"},
+    {file = "catboost-1.2.5-cp37-cp37m-win_amd64.whl", hash = "sha256:a1149bedba20fff940ece5ddd8e56420ebe26850b23533dfc6e5e4994049d220"},
+    {file = "catboost-1.2.5-cp38-cp38-macosx_11_0_universal2.whl", hash = "sha256:6e3a9bd84c3a92f7cab0a9c3451df21d930f4ebb4716f85513b4feac2b0ef209"},
+    {file = "catboost-1.2.5-cp38-cp38-manylinux2014_aarch64.whl", hash = "sha256:51acfea3bf141d25e3bc43e8dfc505920a8e701cb06c8d4164661a118e3e1178"},
+    {file = "catboost-1.2.5-cp38-cp38-manylinux2014_x86_64.whl", hash = "sha256:6acfc79e2be02b34caa26a339ace52c5991b1d9862dcb94f5ced1bd9ca9a8c18"},
+    {file = "catboost-1.2.5-cp38-cp38-win_amd64.whl", hash = "sha256:dabd1ea1bda91f72792b7f348d0301e637f98251fc4d50b62ffc872721997f47"},
+    {file = "catboost-1.2.5-cp39-cp39-macosx_11_0_universal2.whl", hash = "sha256:ed9521ce617f370dd7f8214f6b5ea2cdb2bfb47a2be0fb19a03b7c9d4399b4d1"},
+    {file = "catboost-1.2.5-cp39-cp39-manylinux2014_aarch64.whl", hash = "sha256:6cd81cb508031cb5feccdecb6f309fc9562b7114bc82fa06c17ffdbdb079198c"},
+    {file = "catboost-1.2.5-cp39-cp39-manylinux2014_x86_64.whl", hash = "sha256:86e05596a5330de7a8376f344079c3333fd3254e4300549654e343703f7315b0"},
+    {file = "catboost-1.2.5-cp39-cp39-win_amd64.whl", hash = "sha256:c75f57b1df9893d67ed8f04c32d5e8fe3d591ee873a94a2ff8279e32549397b0"},
+    {file = "catboost-1.2.5.tar.gz", hash = "sha256:12c31650fa55944e9ab5863d4eef194533914920c358b52a7a7d7b0b855cba9f"},
 ]
 
 [package.dependencies]
