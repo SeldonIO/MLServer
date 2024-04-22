@@ -1,9 +1,9 @@
 from fastapi.requests import Request
-from fastapi.responses import Response, HTMLResponse
+from fastapi.responses import Response, HTMLResponse, StreamingResponse
 from fastapi.openapi.docs import get_swagger_ui_html
 from sse_starlette.sse import EventSourceResponse
 
-from typing import AsyncIterator, Optional
+from typing import Any, AsyncIterator, Coroutine, Optional, Union
 
 from ..types import (
     MetadataModelResponse,
@@ -95,43 +95,101 @@ class Endpoints:
         model_name: str,
         model_version: Optional[str] = None,
     ) -> InferenceResponse:
-        request_headers = dict(raw_request.headers)
-        insert_headers(payload, request_headers)
-
-        inference_response = await self._data_plane.infer(
-            payload, model_name, model_version
+        return await _infer(
+            self._data_plane.infer,
+            raw_request,
+            raw_response,
+            payload,
+            model_name,
+            model_version,
         )
 
-        response_headers = extract_headers(inference_response)
-        if response_headers:
-            raw_response.headers.update(response_headers)
-
-        return inference_response
-
-    async def infer_stream(
+    async def generate(
         self,
         raw_request: Request,
         raw_response: Response,
-        # payload: InferenceRequest,
+        payload: InferenceRequest,
         model_name: str,
         model_version: Optional[str] = None,
-    ) -> EventSourceResponse:
-        payload = None
-        async for chunk in raw_request.stream():
-            if chunk:
-                print(" ===== RAW ===== ")
-                print(chunk)
-                payload = InferenceRequest.parse_raw(chunk)
-                print(" ===== DECODED ===== ")
-                print(payload)
+    ) -> InferenceResponse:
+        return await _infer(
+            self._data_plane.generate,
+            raw_request,
+            raw_response,
+            payload,
+            model_name,
+            model_version,
+        )
 
-        request_headers = dict(raw_request.headers)
-        insert_headers(payload, request_headers)
+    async def generate_stream(
+        self,
+        raw_request: Request,
+        raw_response: Response,
+        payload: InferenceRequest,
+        model_name: str,
+        model_version: Optional[str] = None,
+    ) -> StreamingResponse:
+        return await _infer_ostream(
+            self._data_plane.generate_stream,
+            raw_request,
+            raw_response,
+            payload,
+            model_name,
+            model_version,
+        )
 
-        infer_stream = self._data_plane.infer_stream(payload, model_name, model_version)
-        sse_stream = _as_sse(infer_stream)
+    async def generate_stream(
+        self,
+        raw_request: Request,
+        raw_response: Response,
+        payload: InferenceRequest,
+        model_name: str,
+        model_version: Optional[str] = None,
+    ) -> StreamingResponse:
+        return await _infer_ostream(
+            self._data_plane.generate_stream,
+            raw_request,
+            raw_response,
+            payload,
+            model_name,
+            model_version,
+        )
 
-        return EventSourceResponse(sse_stream)
+
+async def _infer(
+    dataplane_method: Coroutine[Any, Any, InferenceResponse],
+    raw_request: Request,
+    raw_response: Response,
+    payload: InferenceRequest,
+    model_name: str,
+    model_version: Optional[str] = None,
+) -> Union[InferenceResponse, AsyncIterator[InferenceResponse]]:
+    request_headers = dict(raw_request.headers)
+    insert_headers(payload, request_headers)
+
+    inference_response = await dataplane_method(payload, model_name, model_version)
+
+    response_headers = extract_headers(inference_response)
+    if response_headers:
+        raw_response.headers.update(response_headers)
+
+    return inference_response
+
+
+async def _infer_ostream(
+    dataplane_method: Coroutine[Any, Any, AsyncIterator[InferenceResponse]],
+    raw_request: Request,
+    raw_response: Response,
+    payload: InferenceRequest,
+    model_name: str,
+    model_version: Optional[str] = None,
+) -> StreamingResponse:
+    request_headers = dict(raw_request.headers)
+    insert_headers(payload, request_headers)
+
+    infer_stream = dataplane_method(payload, model_name, model_version)
+    sse_stream = _as_sse(infer_stream)
+    return StreamingResponse(sse_stream)
 
 
 async def _as_sse(
@@ -144,7 +202,7 @@ async def _as_sse(
     async for inference_response in infer_stream:
         # TODO: How should we send headers back?
         response_headers = extract_headers(inference_response)
-        yield ServerSentEvent(inference_response)
+        yield ServerSentEvent(inference_response).encode()
 
 
 class ModelRepositoryEndpoints:

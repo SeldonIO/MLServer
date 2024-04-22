@@ -78,11 +78,24 @@ def create_app(
             endpoints.infer,
             methods=["POST"],
         ),
-        # TODO: Decide on different endpoint, or payload parameter to enable /
-        # disable streaming
         APIRoute(
-            "/v2/models/{model_name}/infer-stream",
-            endpoints.infer_stream,
+            "/v2/models/{model_name}/generate",
+            endpoints.generate,
+            methods=["POST"],
+        ),
+        APIRoute(
+            "/v2/models/{model_name}/versions/{model_version}/generate",
+            endpoints.generate,
+            methods=["POST"],
+        ),
+        APIRoute(
+            "/v2/models/{model_name}/generate_stream",
+            endpoints.generate_stream,
+            methods=["POST"],
+        ),
+        APIRoute(
+            "/v2/models/{model_name}/versions/{model_version}/generate_stream",
+            endpoints.generate_stream,
             methods=["POST"],
         ),
         # Model metadata
