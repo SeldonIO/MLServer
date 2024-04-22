@@ -113,8 +113,8 @@ async def load_batching(model: MLModel) -> MLModel:
     # to use adaptive batching as well. However, we will need to check
     # somehow that the model does not support continuous batching, which
     # might require some changes on the runtime. Until then, we will
-    # we can still use the predict endpoint with adaptive batching
-    # instead of generate for the HF runtime.
+    # use the predict endpoint with adaptive batching instead of generate
+    # for the HF runtime.
     setattr(model, "generate", not_required_warning(model.generate))
     setattr(
         model,
