@@ -290,17 +290,17 @@ import requests
 inference_request = {
     "dataframe_split": {
         "columns": [
-            "alcohol",
-            "chlorides",
-            "citric acid",
-            "density",
             "fixed acidity",
-            "free sulfur dioxide",
-            "pH",
-            "residual sugar",
-            "sulphates",
-            "total sulfur dioxide",
             "volatile acidity",
+            "citric acid",
+            "residual sugar",
+            "chlorides",
+            "free sulfur dioxide",
+            "total sulfur dioxide",
+            "density",
+            "pH",
+            "sulphates",
+            "alcohol",
         ],
         "data": [[7.4,0.7,0,1.9,0.076,11,34,0.9978,3.51,0.56,9.4]]
     }
