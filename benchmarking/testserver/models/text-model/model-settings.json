@@ -1,0 +1,23 @@
+{
+  "name": "text-model",
+
+  "implementation": "models.TextStreamModel",
+  
+  "parallel_workers": 0,
+  "versions": ["text-model/v1.2.3"],
+  "platform": "mlserver",
+  "inputs": [
+    {
+      "datatype": "BYTES",
+      "name": "prompt",
+      "shape": [1]
+    }
+  ],
+  "outputs": [
+    {
+      "datatype": "BYTES",
+      "name": "output",
+      "shape": [1]
+    }
+  ]
+}

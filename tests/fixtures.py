@@ -64,9 +64,9 @@ class SumModel(MLModel):
         return response
 
 
-class TextStreamModel(MLModel):
+class TextModel(MLModel):
     async def generate(self, payload: InferenceRequest) -> InferenceResponse:
-        text = "Hey now brown cow"
+        text = StringCodec.decode_input(payload.inputs[0])[0]
         return InferenceResponse(
             model_name=self._settings.name,
             outputs=[
@@ -81,7 +81,7 @@ class TextStreamModel(MLModel):
     async def generate_stream(
         self, payload: InferenceRequest
     ) -> AsyncIterator[InferenceResponse]:
-        text = "Hey now brown cow"
+        text = StringCodec.decode_input(payload.inputs[0])[0]
         words = text.split(" ")
 
         split_text = []
