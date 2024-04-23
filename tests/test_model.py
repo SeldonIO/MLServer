@@ -11,14 +11,14 @@ from mlserver.codecs.numpy import NumpyRequestCodec
 from mlserver.codecs.pandas import PandasCodec
 from mlserver.model import MLModel
 
-from .fixtures import StreamModel
+from .fixtures import TextModel, TextStreamModel
 
 
-async def test_predict_stream_fallback(
-    sum_model: MLModel,
-    inference_request: InferenceRequest,
+async def test_generate_stream_fallback(
+    text_model: TextModel,
+    generate_request: InferenceRequest,
 ):
-    generator = sum_model.predict_stream(inference_request)
+    generator = text_model.generate_stream(generate_request)
     assert inspect.isasyncgen(generator)
 
     responses = []
@@ -29,22 +29,22 @@ async def test_predict_stream_fallback(
     assert len(responses[0].outputs) > 0
 
 
-async def test_predict_stream(
-    stream_model: StreamModel,
-    inference_request: InferenceRequest,
+async def test_generate_stream(
+    text_stream_model: TextStreamModel,
+    generate_request: InferenceRequest,
 ):
-    generator = stream_model.predict_stream(inference_request)
+    generator = text_stream_model.generate_stream(generate_request)
     assert inspect.isasyncgen(generator)
 
     responses = []
     async for response in generator:
         responses.append(response)
 
-    assert len(responses) == stream_model.response_chunks
-    for idx in range(stream_model.response_chunks):
-        decoded_request = NumpyRequestCodec.decode_request(inference_request)
-        decoded_response = NumpyRequestCodec.decode_response(responses[idx])
-        np.testing.assert_array_equal(decoded_response, decoded_request + idx)
+    ref_text = ["What", " is", " the", " capital", " of", " France?"]
+    assert len(responses) == len(ref_text)
+
+    for idx in range(len(ref_text)):
+        assert ref_text[idx] == StringCodec.decode_output(responses[idx].outputs[0])[0]
 
 
 @pytest.mark.parametrize(
