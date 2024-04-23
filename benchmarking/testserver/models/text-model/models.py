@@ -19,6 +19,8 @@ class TextModel(MLModel):
             ],
         )
 
+
+class TextStreamMode(MLModel):
     async def generate_stream(
         self, payload: InferenceRequest
     ) -> AsyncIterator[InferenceResponse]:

@@ -166,13 +166,13 @@ async def test_generate(
     assert prediction.outputs[0].data.__root__ == ["What is the capital of France?"]
 
 
-@pytest.mark.parametrize("sum_model", [lazy_fixture("text_model")])
+@pytest.mark.parametrize("sum_model", [lazy_fixture("text_stream_model")])
 async def test_generate_stream(
     rest_client: AsyncClient,
     generate_request: InferenceRequest,
-    text_model: MLModel,
+    text_stream_model: MLModel,
 ):
-    endpoint = f"/v2/models/{text_model.name}/generate_stream"
+    endpoint = f"/v2/models/{text_stream_model.name}/generate_stream"
     conn = aconnect_sse(rest_client, "POST", endpoint, json=generate_request.dict())
     ref_text = ["What", " is", " the", " capital", " of", " France?"]
 

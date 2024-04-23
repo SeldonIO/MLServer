@@ -18,14 +18,17 @@ async def test_batching_predict(
 
 @pytest.mark.parametrize("method_name", ["generate", "generate_stream"])
 async def test_batching_generate_warning(
-    method_name: str, text_model: MLModel, inference_request: InferenceRequest, caplog
+    method_name: str,
+    text_stream_model: MLModel,
+    inference_request: InferenceRequest,
+    caplog,
 ):
     # Force batching to be enabled
-    text_model.settings.max_batch_size = 10
-    text_model.settings.max_batch_time = 0.4
-    await load_batching(text_model)
+    text_stream_model.settings.max_batch_size = 10
+    text_stream_model.settings.max_batch_time = 0.4
+    await load_batching(text_stream_model)
 
-    method = getattr(text_model, method_name)
+    method = getattr(text_stream_model, method_name)
     if method_name == "generate_stream":
         stream = method(inference_request)
         responses = [r async for r in stream]
