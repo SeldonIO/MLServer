@@ -189,7 +189,7 @@ async def _infer_ostream(
 
     infer_stream = dataplane_method(payload, model_name, model_version)
     sse_stream = _as_sse(infer_stream)
-    return StreamingResponse(sse_stream)
+    return StreamingResponse(content=sse_stream, media_type="text/event-stream")
 
 
 async def _as_sse(

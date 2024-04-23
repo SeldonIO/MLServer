@@ -195,7 +195,10 @@ async def sum_model(
 def text_model_settings() -> ModelSettings:
     # TODO: Enable parallel_workers once stream is supported
     return ModelSettings(
-        name="text-model", implementation=TextModel, parallel_workers=0
+        name="text-model",
+        implementation=TextModel,
+        parallel_workers=0,
+        parameters={"version": "v1.2.3"},
     )
 
 

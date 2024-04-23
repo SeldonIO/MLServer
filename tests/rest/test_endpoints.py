@@ -1,4 +1,5 @@
 import pytest
+from pytest_lazyfixture import lazy_fixture
 
 from typing import Optional
 from httpx import AsyncClient
@@ -130,8 +131,12 @@ async def test_infer(
     endpoint = f"/v2/models/{model_name}/infer"
     if model_version is not None:
         endpoint = f"/v2/models/{model_name}/versions/{model_version}/infer"
+<<<<<<< HEAD
     response = await rest_client.post(endpoint, json=inference_request.model_dump())
+=======
+>>>>>>> Included endpoint tests for generate and generate_stream.
 
+    response = await rest_client.post(endpoint, json=inference_request.dict())
     assert response.status_code == 200
 
     prediction = InferenceResponse.model_validate(response.json())
@@ -139,22 +144,45 @@ async def test_infer(
     assert prediction.outputs[0].data == TensorData(root=[6])
 
 
-async def test_infer_stream(
+@pytest.mark.parametrize("sum_model", [lazy_fixture("text_model")])
+@pytest.mark.parametrize(
+    "model_name, model_version", [("text-model", "v1.2.3"), ("text-model", None)]
+)
+async def test_generate(
     rest_client: AsyncClient,
-    inference_request: InferenceRequest,
-    stream_model: MLModel,
+    generate_request: InferenceRequest,
+    model_name: str,
+    model_version: Optional[str],
 ):
-    endpoint = f"/v2/models/{stream_model.name}/infer-stream"
-    conn = aconnect_sse(rest_client, "POST", endpoint, json=inference_request.dict())
+    endpoint = f"/v2/models/{model_name}/generate"
+    if model_version is not None:
+        endpoint = f"/v2/models/{model_name}/versions/{model_version}/generate"
+
+    response = await rest_client.post(endpoint, json=generate_request.dict())
+    assert response.status_code == 200
+
+    prediction = InferenceResponse.parse_obj(response.json())
+    assert len(prediction.outputs) == 1
+    assert prediction.outputs[0].data.__root__ == ["What is the capital of France?"]
+
+
+@pytest.mark.parametrize("sum_model", [lazy_fixture("text_model")])
+async def test_generate_stream(
+    rest_client: AsyncClient,
+    generate_request: InferenceRequest,
+    text_model: MLModel,
+):
+    endpoint = f"/v2/models/{text_model.name}/generate_stream"
+    conn = aconnect_sse(rest_client, "POST", endpoint, json=generate_request.dict())
+    ref_text = ["What", " is", " the", " capital", " of", " France?"]
+
     async with conn as stream:
-        idx = 0
+        i = 0
         async for response in stream.aiter_sse():
             prediction = InferenceResponse.parse_obj(response.json())
             assert len(prediction.outputs) == 1
-            assert prediction.outputs[0].data.__root__ == [1 + idx, 2 + idx, 3 + idx]
-            idx += 1
-
-        assert idx == stream_model.response_chunks
+            assert prediction.outputs[0].data.__root__ == [ref_text[i]]
+            i += 1
 
 
 async def test_infer_headers(
