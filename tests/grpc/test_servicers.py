@@ -1,5 +1,6 @@
-import pytest
 import grpc
+import pytest
+from pytest_lazyfixture import lazy_fixture
 
 
 from mlserver.cloudevents import (
@@ -79,6 +80,63 @@ async def test_model_infer(
 
     assert len(prediction.outputs) == 1
     assert prediction.outputs[0].contents == expected
+
+
+@pytest.mark.parametrize("sum_model_settings", [lazy_fixture("text_model_settings")])
+@pytest.mark.parametrize("sum_model", [lazy_fixture("text_model")])
+@pytest.mark.parametrize(
+    "model_name,model_version", [("text-model", "v1.2.3"), ("text-model", None)]
+)
+async def test_model_generate(
+    inference_service_stub,
+    model_generate_request,
+    model_name,
+    model_version,
+):
+    model_generate_request.model_name = model_name
+    if model_version is not None:
+        model_generate_request.model_version = model_version
+    else:
+        model_generate_request.ClearField("model_version")
+
+    prediction = await inference_service_stub.ModelGenerate(model_generate_request)
+    expected = pb.InferTensorContents(
+        bytes_contents=[b"What is the capital of France?"]
+    )
+    assert len(prediction.outputs) == 1
+    assert prediction.outputs[0].contents == expected
+
+
+@pytest.mark.parametrize(
+    "sum_model_settings", [lazy_fixture("text_stream_model_settings")]
+)
+@pytest.mark.parametrize("sum_model", [lazy_fixture("text_stream_model")])
+@pytest.mark.parametrize(
+    "model_name,model_version",
+    [("text-stream-model", "v1.2.3"), ("text-stream-model", None)],
+)
+async def test_model_generate_stream(
+    inference_service_stub,
+    model_generate_request,
+    model_name,
+    model_version,
+):
+    model_generate_request.model_name = model_name
+    if model_version is not None:
+        model_generate_request.model_version = model_version
+    else:
+        model_generate_request.ClearField("model_version")
+
+    i = -1
+    text = ["What", " is", " the", " capital", " of", " France?"]
+
+    async for prediction in inference_service_stub.ModelGenerateStream(
+        model_generate_request
+    ):
+        i += 1
+        expected = pb.InferTensorContents(bytes_contents=[text[i].encode()])
+        assert len(prediction.outputs) == 1
+        assert prediction.outputs[0].contents == expected
 
 
 async def test_model_infer_raw_contents(inference_service_stub, model_infer_request):
