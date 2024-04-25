@@ -70,8 +70,9 @@ class GRPCServer:
 
         self._server = aio.server(
             ThreadPoolExecutor(max_workers=DefaultGrpcWorkers),
-            interceptors=tuple(interceptors),
-            options=self._get_options(),
+            # TODO: Fix this
+            # interceptors=tuple(interceptors),
+            # options=self._get_options(),
         )
 
         add_GRPCInferenceServiceServicer_to_server(

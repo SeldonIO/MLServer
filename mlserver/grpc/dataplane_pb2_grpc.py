@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from . import dataplane_pb2 as dataplane__pb2
+from mlserver.grpc import dataplane_pb2 as mlserver_dot_grpc_dot_dataplane__pb2
 
 
 class GRPCInferenceServiceStub(object):
@@ -19,48 +19,58 @@ class GRPCInferenceServiceStub(object):
         """
         self.ServerLive = channel.unary_unary(
             "/inference.GRPCInferenceService/ServerLive",
-            request_serializer=dataplane__pb2.ServerLiveRequest.SerializeToString,
-            response_deserializer=dataplane__pb2.ServerLiveResponse.FromString,
+            request_serializer=mlserver_dot_grpc_dot_dataplane__pb2.ServerLiveRequest.SerializeToString,
+            response_deserializer=mlserver_dot_grpc_dot_dataplane__pb2.ServerLiveResponse.FromString,
         )
         self.ServerReady = channel.unary_unary(
             "/inference.GRPCInferenceService/ServerReady",
-            request_serializer=dataplane__pb2.ServerReadyRequest.SerializeToString,
-            response_deserializer=dataplane__pb2.ServerReadyResponse.FromString,
+            request_serializer=mlserver_dot_grpc_dot_dataplane__pb2.ServerReadyRequest.SerializeToString,
+            response_deserializer=mlserver_dot_grpc_dot_dataplane__pb2.ServerReadyResponse.FromString,
         )
         self.ModelReady = channel.unary_unary(
             "/inference.GRPCInferenceService/ModelReady",
-            request_serializer=dataplane__pb2.ModelReadyRequest.SerializeToString,
-            response_deserializer=dataplane__pb2.ModelReadyResponse.FromString,
+            request_serializer=mlserver_dot_grpc_dot_dataplane__pb2.ModelReadyRequest.SerializeToString,
+            response_deserializer=mlserver_dot_grpc_dot_dataplane__pb2.ModelReadyResponse.FromString,
         )
         self.ServerMetadata = channel.unary_unary(
             "/inference.GRPCInferenceService/ServerMetadata",
-            request_serializer=dataplane__pb2.ServerMetadataRequest.SerializeToString,
-            response_deserializer=dataplane__pb2.ServerMetadataResponse.FromString,
+            request_serializer=mlserver_dot_grpc_dot_dataplane__pb2.ServerMetadataRequest.SerializeToString,
+            response_deserializer=mlserver_dot_grpc_dot_dataplane__pb2.ServerMetadataResponse.FromString,
         )
         self.ModelMetadata = channel.unary_unary(
             "/inference.GRPCInferenceService/ModelMetadata",
-            request_serializer=dataplane__pb2.ModelMetadataRequest.SerializeToString,
-            response_deserializer=dataplane__pb2.ModelMetadataResponse.FromString,
+            request_serializer=mlserver_dot_grpc_dot_dataplane__pb2.ModelMetadataRequest.SerializeToString,
+            response_deserializer=mlserver_dot_grpc_dot_dataplane__pb2.ModelMetadataResponse.FromString,
         )
         self.ModelInfer = channel.unary_unary(
             "/inference.GRPCInferenceService/ModelInfer",
-            request_serializer=dataplane__pb2.ModelInferRequest.SerializeToString,
-            response_deserializer=dataplane__pb2.ModelInferResponse.FromString,
+            request_serializer=mlserver_dot_grpc_dot_dataplane__pb2.ModelInferRequest.SerializeToString,
+            response_deserializer=mlserver_dot_grpc_dot_dataplane__pb2.ModelInferResponse.FromString,
+        )
+        self.ModelGenerate = channel.unary_unary(
+            "/inference.GRPCInferenceService/ModelGenerate",
+            request_serializer=mlserver_dot_grpc_dot_dataplane__pb2.ModelInferRequest.SerializeToString,
+            response_deserializer=mlserver_dot_grpc_dot_dataplane__pb2.ModelInferResponse.FromString,
+        )
+        self.ModelGenerateStream = channel.unary_stream(
+            "/inference.GRPCInferenceService/ModelGenerateStream",
+            request_serializer=mlserver_dot_grpc_dot_dataplane__pb2.ModelInferRequest.SerializeToString,
+            response_deserializer=mlserver_dot_grpc_dot_dataplane__pb2.ModelInferResponse.FromString,
         )
         self.RepositoryIndex = channel.unary_unary(
             "/inference.GRPCInferenceService/RepositoryIndex",
-            request_serializer=dataplane__pb2.RepositoryIndexRequest.SerializeToString,
-            response_deserializer=dataplane__pb2.RepositoryIndexResponse.FromString,
+            request_serializer=mlserver_dot_grpc_dot_dataplane__pb2.RepositoryIndexRequest.SerializeToString,
+            response_deserializer=mlserver_dot_grpc_dot_dataplane__pb2.RepositoryIndexResponse.FromString,
         )
         self.RepositoryModelLoad = channel.unary_unary(
             "/inference.GRPCInferenceService/RepositoryModelLoad",
-            request_serializer=dataplane__pb2.RepositoryModelLoadRequest.SerializeToString,
-            response_deserializer=dataplane__pb2.RepositoryModelLoadResponse.FromString,
+            request_serializer=mlserver_dot_grpc_dot_dataplane__pb2.RepositoryModelLoadRequest.SerializeToString,
+            response_deserializer=mlserver_dot_grpc_dot_dataplane__pb2.RepositoryModelLoadResponse.FromString,
         )
         self.RepositoryModelUnload = channel.unary_unary(
             "/inference.GRPCInferenceService/RepositoryModelUnload",
-            request_serializer=dataplane__pb2.RepositoryModelUnloadRequest.SerializeToString,
-            response_deserializer=dataplane__pb2.RepositoryModelUnloadResponse.FromString,
+            request_serializer=mlserver_dot_grpc_dot_dataplane__pb2.RepositoryModelUnloadRequest.SerializeToString,
+            response_deserializer=mlserver_dot_grpc_dot_dataplane__pb2.RepositoryModelUnloadResponse.FromString,
         )
 
 
@@ -106,6 +116,18 @@ class GRPCInferenceServiceServicer(object):
         context.set_details("Method not implemented!")
         raise NotImplementedError("Method not implemented!")
 
+    def ModelGenerate(self, request, context):
+        """Perform generate using a specific model."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
+
+    def ModelGenerateStream(self, request, context):
+        """Perform generate stream using a specific model."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
+
     def RepositoryIndex(self, request, context):
         """Get the index of model repository contents."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -129,48 +151,58 @@ def add_GRPCInferenceServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
         "ServerLive": grpc.unary_unary_rpc_method_handler(
             servicer.ServerLive,
-            request_deserializer=dataplane__pb2.ServerLiveRequest.FromString,
-            response_serializer=dataplane__pb2.ServerLiveResponse.SerializeToString,
+            request_deserializer=mlserver_dot_grpc_dot_dataplane__pb2.ServerLiveRequest.FromString,
+            response_serializer=mlserver_dot_grpc_dot_dataplane__pb2.ServerLiveResponse.SerializeToString,
         ),
         "ServerReady": grpc.unary_unary_rpc_method_handler(
             servicer.ServerReady,
-            request_deserializer=dataplane__pb2.ServerReadyRequest.FromString,
-            response_serializer=dataplane__pb2.ServerReadyResponse.SerializeToString,
+            request_deserializer=mlserver_dot_grpc_dot_dataplane__pb2.ServerReadyRequest.FromString,
+            response_serializer=mlserver_dot_grpc_dot_dataplane__pb2.ServerReadyResponse.SerializeToString,
         ),
         "ModelReady": grpc.unary_unary_rpc_method_handler(
             servicer.ModelReady,
-            request_deserializer=dataplane__pb2.ModelReadyRequest.FromString,
-            response_serializer=dataplane__pb2.ModelReadyResponse.SerializeToString,
+            request_deserializer=mlserver_dot_grpc_dot_dataplane__pb2.ModelReadyRequest.FromString,
+            response_serializer=mlserver_dot_grpc_dot_dataplane__pb2.ModelReadyResponse.SerializeToString,
         ),
         "ServerMetadata": grpc.unary_unary_rpc_method_handler(
             servicer.ServerMetadata,
-            request_deserializer=dataplane__pb2.ServerMetadataRequest.FromString,
-            response_serializer=dataplane__pb2.ServerMetadataResponse.SerializeToString,
+            request_deserializer=mlserver_dot_grpc_dot_dataplane__pb2.ServerMetadataRequest.FromString,
+            response_serializer=mlserver_dot_grpc_dot_dataplane__pb2.ServerMetadataResponse.SerializeToString,
         ),
         "ModelMetadata": grpc.unary_unary_rpc_method_handler(
             servicer.ModelMetadata,
-            request_deserializer=dataplane__pb2.ModelMetadataRequest.FromString,
-            response_serializer=dataplane__pb2.ModelMetadataResponse.SerializeToString,
+            request_deserializer=mlserver_dot_grpc_dot_dataplane__pb2.ModelMetadataRequest.FromString,
+            response_serializer=mlserver_dot_grpc_dot_dataplane__pb2.ModelMetadataResponse.SerializeToString,
         ),
         "ModelInfer": grpc.unary_unary_rpc_method_handler(
             servicer.ModelInfer,
-            request_deserializer=dataplane__pb2.ModelInferRequest.FromString,
-            response_serializer=dataplane__pb2.ModelInferResponse.SerializeToString,
+            request_deserializer=mlserver_dot_grpc_dot_dataplane__pb2.ModelInferRequest.FromString,
+            response_serializer=mlserver_dot_grpc_dot_dataplane__pb2.ModelInferResponse.SerializeToString,
+        ),
+        "ModelGenerate": grpc.unary_unary_rpc_method_handler(
+            servicer.ModelGenerate,
+            request_deserializer=mlserver_dot_grpc_dot_dataplane__pb2.ModelInferRequest.FromString,
+            response_serializer=mlserver_dot_grpc_dot_dataplane__pb2.ModelInferResponse.SerializeToString,
+        ),
+        "ModelGenerateStream": grpc.unary_stream_rpc_method_handler(
+            servicer.ModelGenerateStream,
+            request_deserializer=mlserver_dot_grpc_dot_dataplane__pb2.ModelInferRequest.FromString,
+            response_serializer=mlserver_dot_grpc_dot_dataplane__pb2.ModelInferResponse.SerializeToString,
         ),
         "RepositoryIndex": grpc.unary_unary_rpc_method_handler(
             servicer.RepositoryIndex,
-            request_deserializer=dataplane__pb2.RepositoryIndexRequest.FromString,
-            response_serializer=dataplane__pb2.RepositoryIndexResponse.SerializeToString,
+            request_deserializer=mlserver_dot_grpc_dot_dataplane__pb2.RepositoryIndexRequest.FromString,
+            response_serializer=mlserver_dot_grpc_dot_dataplane__pb2.RepositoryIndexResponse.SerializeToString,
         ),
         "RepositoryModelLoad": grpc.unary_unary_rpc_method_handler(
             servicer.RepositoryModelLoad,
-            request_deserializer=dataplane__pb2.RepositoryModelLoadRequest.FromString,
-            response_serializer=dataplane__pb2.RepositoryModelLoadResponse.SerializeToString,
+            request_deserializer=mlserver_dot_grpc_dot_dataplane__pb2.RepositoryModelLoadRequest.FromString,
+            response_serializer=mlserver_dot_grpc_dot_dataplane__pb2.RepositoryModelLoadResponse.SerializeToString,
         ),
         "RepositoryModelUnload": grpc.unary_unary_rpc_method_handler(
             servicer.RepositoryModelUnload,
-            request_deserializer=dataplane__pb2.RepositoryModelUnloadRequest.FromString,
-            response_serializer=dataplane__pb2.RepositoryModelUnloadResponse.SerializeToString,
+            request_deserializer=mlserver_dot_grpc_dot_dataplane__pb2.RepositoryModelUnloadRequest.FromString,
+            response_serializer=mlserver_dot_grpc_dot_dataplane__pb2.RepositoryModelUnloadResponse.SerializeToString,
         ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -203,8 +235,8 @@ class GRPCInferenceService(object):
             request,
             target,
             "/inference.GRPCInferenceService/ServerLive",
-            dataplane__pb2.ServerLiveRequest.SerializeToString,
-            dataplane__pb2.ServerLiveResponse.FromString,
+            mlserver_dot_grpc_dot_dataplane__pb2.ServerLiveRequest.SerializeToString,
+            mlserver_dot_grpc_dot_dataplane__pb2.ServerLiveResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -232,8 +264,8 @@ class GRPCInferenceService(object):
             request,
             target,
             "/inference.GRPCInferenceService/ServerReady",
-            dataplane__pb2.ServerReadyRequest.SerializeToString,
-            dataplane__pb2.ServerReadyResponse.FromString,
+            mlserver_dot_grpc_dot_dataplane__pb2.ServerReadyRequest.SerializeToString,
+            mlserver_dot_grpc_dot_dataplane__pb2.ServerReadyResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -261,8 +293,8 @@ class GRPCInferenceService(object):
             request,
             target,
             "/inference.GRPCInferenceService/ModelReady",
-            dataplane__pb2.ModelReadyRequest.SerializeToString,
-            dataplane__pb2.ModelReadyResponse.FromString,
+            mlserver_dot_grpc_dot_dataplane__pb2.ModelReadyRequest.SerializeToString,
+            mlserver_dot_grpc_dot_dataplane__pb2.ModelReadyResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -290,8 +322,8 @@ class GRPCInferenceService(object):
             request,
             target,
             "/inference.GRPCInferenceService/ServerMetadata",
-            dataplane__pb2.ServerMetadataRequest.SerializeToString,
-            dataplane__pb2.ServerMetadataResponse.FromString,
+            mlserver_dot_grpc_dot_dataplane__pb2.ServerMetadataRequest.SerializeToString,
+            mlserver_dot_grpc_dot_dataplane__pb2.ServerMetadataResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -319,8 +351,8 @@ class GRPCInferenceService(object):
             request,
             target,
             "/inference.GRPCInferenceService/ModelMetadata",
-            dataplane__pb2.ModelMetadataRequest.SerializeToString,
-            dataplane__pb2.ModelMetadataResponse.FromString,
+            mlserver_dot_grpc_dot_dataplane__pb2.ModelMetadataRequest.SerializeToString,
+            mlserver_dot_grpc_dot_dataplane__pb2.ModelMetadataResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -348,8 +380,66 @@ class GRPCInferenceService(object):
             request,
             target,
             "/inference.GRPCInferenceService/ModelInfer",
-            dataplane__pb2.ModelInferRequest.SerializeToString,
-            dataplane__pb2.ModelInferResponse.FromString,
+            mlserver_dot_grpc_dot_dataplane__pb2.ModelInferRequest.SerializeToString,
+            mlserver_dot_grpc_dot_dataplane__pb2.ModelInferResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
+
+    @staticmethod
+    def ModelGenerate(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            "/inference.GRPCInferenceService/ModelGenerate",
+            mlserver_dot_grpc_dot_dataplane__pb2.ModelInferRequest.SerializeToString,
+            mlserver_dot_grpc_dot_dataplane__pb2.ModelInferResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
+
+    @staticmethod
+    def ModelGenerateStream(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_stream(
+            request,
+            target,
+            "/inference.GRPCInferenceService/ModelGenerateStream",
+            mlserver_dot_grpc_dot_dataplane__pb2.ModelInferRequest.SerializeToString,
+            mlserver_dot_grpc_dot_dataplane__pb2.ModelInferResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -377,8 +467,8 @@ class GRPCInferenceService(object):
             request,
             target,
             "/inference.GRPCInferenceService/RepositoryIndex",
-            dataplane__pb2.RepositoryIndexRequest.SerializeToString,
-            dataplane__pb2.RepositoryIndexResponse.FromString,
+            mlserver_dot_grpc_dot_dataplane__pb2.RepositoryIndexRequest.SerializeToString,
+            mlserver_dot_grpc_dot_dataplane__pb2.RepositoryIndexResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -406,8 +496,8 @@ class GRPCInferenceService(object):
             request,
             target,
             "/inference.GRPCInferenceService/RepositoryModelLoad",
-            dataplane__pb2.RepositoryModelLoadRequest.SerializeToString,
-            dataplane__pb2.RepositoryModelLoadResponse.FromString,
+            mlserver_dot_grpc_dot_dataplane__pb2.RepositoryModelLoadRequest.SerializeToString,
+            mlserver_dot_grpc_dot_dataplane__pb2.RepositoryModelLoadResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -435,8 +525,8 @@ class GRPCInferenceService(object):
             request,
             target,
             "/inference.GRPCInferenceService/RepositoryModelUnload",
-            dataplane__pb2.RepositoryModelUnloadRequest.SerializeToString,
-            dataplane__pb2.RepositoryModelUnloadResponse.FromString,
+            mlserver_dot_grpc_dot_dataplane__pb2.RepositoryModelUnloadRequest.SerializeToString,
+            mlserver_dot_grpc_dot_dataplane__pb2.RepositoryModelUnloadResponse.FromString,
             options,
             channel_credentials,
             insecure,

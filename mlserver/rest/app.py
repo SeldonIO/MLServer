@@ -187,7 +187,9 @@ def create_app(
         )
 
     app.router.route_class = APIRoute
-    #  app.add_middleware(GZipMiddleware)
+    # TODO: Fix this
+    # app.add_middleware(GZipMiddleware)
+
     if settings.cors_settings is not None:
         app.add_middleware(
             CORSMiddleware,

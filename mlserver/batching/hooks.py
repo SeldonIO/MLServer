@@ -65,7 +65,7 @@ def not_required_warning(
     warning_template = (
         "Adaptive Batching is enabled for model {model_name} "
         "but not required for {f_name} method. Note that in "
-        "ontext of LLMs, this feature is not required since "
+        "context of LLMs, this feature is not required since "
         "continous batching is supported."
     )
 

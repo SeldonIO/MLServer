@@ -1,5 +1,8 @@
 syntax = "proto3";
 
+option java_package = "ex.grpc";
+option objc_class_prefix = "HSW";
+
 package inference;
 
 //
@@ -25,6 +28,12 @@ service GRPCInferenceService
   // Perform inference using a specific model.
   rpc ModelInfer(ModelInferRequest) returns (ModelInferResponse) {}
 
+  // Perform generate using a specific model.
+  rpc ModelGenerate(ModelInferRequest) returns (ModelInferResponse) {}
+
+  // Perform generate stream using a specific model.
+  rpc ModelGenerateStream (ModelInferRequest) returns (stream ModelInferResponse) {}
+
   // Get the index of model repository contents.
   rpc RepositoryIndex(RepositoryIndexRequest)
           returns (RepositoryIndexResponse) {}
@@ -36,6 +45,18 @@ service GRPCInferenceService
   // Unload a model.
   rpc RepositoryModelUnload(RepositoryModelUnloadRequest)
           returns (RepositoryModelUnloadResponse) {}
+}
+
+// The request message containing the user's name and how many greetings
+// they want.
+message HelloRequest {
+  string name = 1;
+  string num_greetings = 2;
+}
+
+// A response message containing a greeting
+message HelloReply {
+  string message = 1;
 }
 
 
