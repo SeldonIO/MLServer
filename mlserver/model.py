@@ -79,17 +79,8 @@ class MLModel:
         """
         raise NotImplementedError("predict() method not implemented")
 
-    async def generate(self, payload: InferenceRequest) -> InferenceResponse:
-        """
-        Method responsible for running generation on the model.
-
-        **This method can be overriden to implement your custom inference
-        logic.**
-        """
-        raise NotImplementedError("generate() method not implemented")
-
-    async def generate_stream(
-        self, payload: InferenceRequest
+    async def predict_stream(
+        self, payloads: AsyncIterator[InferenceRequest]
     ) -> AsyncIterator[InferenceResponse]:
         """
         Method responsible for running generation on the model, streaming a set
@@ -99,7 +90,7 @@ class MLModel:
         **This method can be overriden to implement your custom inference
         logic.**
         """
-        yield await self.generate(payload)
+        raise NotImplementedError("predict_stream() method not implemented")
 
     async def unload(self) -> bool:
         """

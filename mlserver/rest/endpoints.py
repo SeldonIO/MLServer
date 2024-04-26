@@ -95,33 +95,21 @@ class Endpoints:
         model_name: str,
         model_version: Optional[str] = None,
     ) -> InferenceResponse:
-        return await _infer(
-            self._data_plane.infer,
-            raw_request,
-            raw_response,
-            payload,
-            model_name,
-            model_version,
-        )
 
-    async def generate(
-        self,
-        raw_request: Request,
-        raw_response: Response,
-        payload: InferenceRequest,
-        model_name: str,
-        model_version: Optional[str] = None,
-    ) -> InferenceResponse:
-        return await _infer(
-            self._data_plane.generate,
-            raw_request,
-            raw_response,
-            payload,
-            model_name,
-            model_version,
-        )
+        request_headers = dict(raw_request.headers)
+        insert_headers(payload, request_headers)
 
-    async def generate_stream(
+        inference_response = await self._data_plane.infer(
+            payload, model_name, model_version
+        )
+        response_headers = extract_headers(inference_response)
+
+        if response_headers:
+            raw_response.headers.update(response_headers)
+
+        return inference_response
+
+    async def infer_stream(
         self,
         raw_request: Request,
         raw_response: Response,
@@ -129,67 +117,22 @@ class Endpoints:
         model_name: str,
         model_version: Optional[str] = None,
     ) -> StreamingResponse:
-        return await _infer_ostream(
-            self._data_plane.generate_stream,
-            raw_request,
-            raw_response,
-            payload,
-            model_name,
-            model_version,
+
+        request_headers = dict(raw_request.headers)
+        insert_headers(payload, request_headers)
+
+        async def payloads_async_iter(
+            payload: InferenceRequest,
+        ) -> AsyncIterator[InferenceRequest]:
+            yield payload
+
+        payloads = payloads_async_iter(payload)
+        infer_stream = self._data_plane.infer_stream(
+            payloads, model_name, model_version
         )
 
-    async def generate_stream(
-        self,
-        raw_request: Request,
-        raw_response: Response,
-        payload: InferenceRequest,
-        model_name: str,
-        model_version: Optional[str] = None,
-    ) -> StreamingResponse:
-        return await _infer_ostream(
-            self._data_plane.generate_stream,
-            raw_request,
-            raw_response,
-            payload,
-            model_name,
-            model_version,
-        )
-
-
-async def _infer(
-    dataplane_method: Coroutine[Any, Any, InferenceResponse],
-    raw_request: Request,
-    raw_response: Response,
-    payload: InferenceRequest,
-    model_name: str,
-    model_version: Optional[str] = None,
-) -> Union[InferenceResponse, AsyncIterator[InferenceResponse]]:
-    request_headers = dict(raw_request.headers)
-    insert_headers(payload, request_headers)
-
-    inference_response = await dataplane_method(payload, model_name, model_version)
-
-    response_headers = extract_headers(inference_response)
-    if response_headers:
-        raw_response.headers.update(response_headers)
-
-    return inference_response
-
-
-async def _infer_ostream(
-    dataplane_method: Coroutine[Any, Any, AsyncIterator[InferenceResponse]],
-    raw_request: Request,
-    raw_response: Response,
-    payload: InferenceRequest,
-    model_name: str,
-    model_version: Optional[str] = None,
-) -> StreamingResponse:
-    request_headers = dict(raw_request.headers)
-    insert_headers(payload, request_headers)
-
-    infer_stream = dataplane_method(payload, model_name, model_version)
-    sse_stream = _as_sse(infer_stream)
-    return StreamingResponse(content=sse_stream, media_type="text/event-stream")
+        sse_stream = _as_sse(infer_stream)
+        return StreamingResponse(content=sse_stream, media_type="text/event-stream")
 
 
 async def _as_sse(

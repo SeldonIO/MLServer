@@ -47,13 +47,8 @@ class GRPCInferenceServiceStub(object):
             request_serializer=mlserver_dot_grpc_dot_dataplane__pb2.ModelInferRequest.SerializeToString,
             response_deserializer=mlserver_dot_grpc_dot_dataplane__pb2.ModelInferResponse.FromString,
         )
-        self.ModelGenerate = channel.unary_unary(
-            "/inference.GRPCInferenceService/ModelGenerate",
-            request_serializer=mlserver_dot_grpc_dot_dataplane__pb2.ModelInferRequest.SerializeToString,
-            response_deserializer=mlserver_dot_grpc_dot_dataplane__pb2.ModelInferResponse.FromString,
-        )
-        self.ModelGenerateStream = channel.unary_stream(
-            "/inference.GRPCInferenceService/ModelGenerateStream",
+        self.ModelStreamInfer = channel.stream_stream(
+            "/inference.GRPCInferenceService/ModelStreamInfer",
             request_serializer=mlserver_dot_grpc_dot_dataplane__pb2.ModelInferRequest.SerializeToString,
             response_deserializer=mlserver_dot_grpc_dot_dataplane__pb2.ModelInferResponse.FromString,
         )
@@ -116,14 +111,8 @@ class GRPCInferenceServiceServicer(object):
         context.set_details("Method not implemented!")
         raise NotImplementedError("Method not implemented!")
 
-    def ModelGenerate(self, request, context):
-        """Perform generate using a specific model."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
-
-    def ModelGenerateStream(self, request, context):
-        """Perform generate stream using a specific model."""
+    def ModelStreamInfer(self, request_iterator, context):
+        """Perform stream inference using a specific model."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details("Method not implemented!")
         raise NotImplementedError("Method not implemented!")
@@ -179,13 +168,8 @@ def add_GRPCInferenceServiceServicer_to_server(servicer, server):
             request_deserializer=mlserver_dot_grpc_dot_dataplane__pb2.ModelInferRequest.FromString,
             response_serializer=mlserver_dot_grpc_dot_dataplane__pb2.ModelInferResponse.SerializeToString,
         ),
-        "ModelGenerate": grpc.unary_unary_rpc_method_handler(
-            servicer.ModelGenerate,
-            request_deserializer=mlserver_dot_grpc_dot_dataplane__pb2.ModelInferRequest.FromString,
-            response_serializer=mlserver_dot_grpc_dot_dataplane__pb2.ModelInferResponse.SerializeToString,
-        ),
-        "ModelGenerateStream": grpc.unary_stream_rpc_method_handler(
-            servicer.ModelGenerateStream,
+        "ModelStreamInfer": grpc.stream_stream_rpc_method_handler(
+            servicer.ModelStreamInfer,
             request_deserializer=mlserver_dot_grpc_dot_dataplane__pb2.ModelInferRequest.FromString,
             response_serializer=mlserver_dot_grpc_dot_dataplane__pb2.ModelInferResponse.SerializeToString,
         ),
@@ -393,8 +377,8 @@ class GRPCInferenceService(object):
         )
 
     @staticmethod
-    def ModelGenerate(
-        request,
+    def ModelStreamInfer(
+        request_iterator,
         target,
         options=(),
         channel_credentials=None,
@@ -405,39 +389,10 @@ class GRPCInferenceService(object):
         timeout=None,
         metadata=None,
     ):
-        return grpc.experimental.unary_unary(
-            request,
+        return grpc.experimental.stream_stream(
+            request_iterator,
             target,
-            "/inference.GRPCInferenceService/ModelGenerate",
-            mlserver_dot_grpc_dot_dataplane__pb2.ModelInferRequest.SerializeToString,
-            mlserver_dot_grpc_dot_dataplane__pb2.ModelInferResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-        )
-
-    @staticmethod
-    def ModelGenerateStream(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
-        return grpc.experimental.unary_stream(
-            request,
-            target,
-            "/inference.GRPCInferenceService/ModelGenerateStream",
+            "/inference.GRPCInferenceService/ModelStreamInfer",
             mlserver_dot_grpc_dot_dataplane__pb2.ModelInferRequest.SerializeToString,
             mlserver_dot_grpc_dot_dataplane__pb2.ModelInferResponse.FromString,
             options,

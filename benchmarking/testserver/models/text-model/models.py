@@ -1,12 +1,14 @@
 import asyncio
 from typing import AsyncIterator
 from mlserver import MLModel
+from mlserver.handlers.custom import custom_handler
 from mlserver.types import InferenceRequest, InferenceResponse
 from mlserver.codecs import StringCodec
 
 
 class TextModel(MLModel):
-    async def generate(self, payload: InferenceRequest) -> InferenceResponse:
+
+    async def predict(self, payload: InferenceRequest) -> InferenceResponse:
         text = StringCodec.decode_input(payload.inputs[0])[0]
         return InferenceResponse(
             model_name=self._settings.name,
@@ -19,9 +21,10 @@ class TextModel(MLModel):
             ],
         )
 
-    async def generate_stream(
-        self, payload: InferenceRequest
+    async def predict_stream(
+        self, payloads: AsyncIterator[InferenceRequest]
     ) -> AsyncIterator[InferenceResponse]:
+        payload = [_ async for _ in payloads][0]
         text = StringCodec.decode_input(payload.inputs[0])[0]
         words = text.split(" ")
 

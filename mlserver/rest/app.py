@@ -79,23 +79,34 @@ def create_app(
             methods=["POST"],
         ),
         APIRoute(
+            "/v2/models/{model_name}/infer_stream",
+            endpoints.infer_stream,
+            methods=["POST"],
+        ),
+        APIRoute(
+            "/v2/models/{model_name}/versions/{model_version}/infer_stream",
+            endpoints.infer_stream,
+            methods=["POST"],
+        ),
+        # Model generate
+        APIRoute(
             "/v2/models/{model_name}/generate",
-            endpoints.generate,
+            endpoints.infer,
             methods=["POST"],
         ),
         APIRoute(
             "/v2/models/{model_name}/versions/{model_version}/generate",
-            endpoints.generate,
+            endpoints.infer,
             methods=["POST"],
         ),
         APIRoute(
             "/v2/models/{model_name}/generate_stream",
-            endpoints.generate_stream,
+            endpoints.infer_stream,
             methods=["POST"],
         ),
         APIRoute(
             "/v2/models/{model_name}/versions/{model_version}/generate_stream",
-            endpoints.generate_stream,
+            endpoints.infer_stream,
             methods=["POST"],
         ),
         # Model metadata
