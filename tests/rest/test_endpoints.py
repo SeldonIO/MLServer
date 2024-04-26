@@ -146,7 +146,7 @@ async def test_infer(
 
 @pytest.mark.parametrize("sum_model", [lazy_fixture("text_model")])
 @pytest.mark.parametrize(
-    "model_name, model_version", [("text-model", "v1.2.3"), ("text-model", None)]
+    "model_name,model_version", [("text-model", "v1.2.3"), ("text-model", None)]
 )
 async def test_generate(
     rest_client: AsyncClient,
