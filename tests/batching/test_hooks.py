@@ -16,34 +16,54 @@ async def test_batching_predict(
     assert len(response.outputs) == 1
 
 
-@pytest.mark.parametrize("method_name", ["generate", "generate_stream"])
-async def test_batching_generate_warning(
-    method_name: str,
-    text_stream_model: MLModel,
-    inference_request: InferenceRequest,
-    caplog,
+# @pytest.mark.parametrize("method_name", ["generate", "generate_stream"])
+# async def test_batching_generate_warning(
+#     method_name: str,
+#     text_stream_model: MLModel,
+#     inference_request: InferenceRequest,
+#     caplog,
+# ):
+#     # Force batching to be enabled
+#     text_stream_model.settings.max_batch_size = 10
+#     text_stream_model.settings.max_batch_time = 0.4
+#     await load_batching(text_stream_model)
+
+#     method = getattr(text_stream_model, method_name)
+#     if method_name == "generate_stream":
+#         stream = method(inference_request)
+#         responses = [r async for r in stream]
+
+#         assert len(responses) > 0
+#         assert isinstance(responses[0], InferenceResponse)
+#         assert len(responses[0].outputs) == 1
+#     else:
+#         response = await method(inference_request)
+
+#         assert response is not None
+#         assert isinstance(response, InferenceResponse)
+#         assert len(response.outputs) == 1
+
+#     assert f"but not required for {method_name} method." in caplog.records[0].message
+
+
+async def test_batching_predict_stream(
+    text_stream_model: MLModel, generate_request: InferenceRequest, caplog
 ):
     # Force batching to be enabled
     text_stream_model.settings.max_batch_size = 10
     text_stream_model.settings.max_batch_time = 0.4
     await load_batching(text_stream_model)
 
-    method = getattr(text_stream_model, method_name)
-    if method_name == "generate_stream":
-        stream = method(inference_request)
-        responses = [r async for r in stream]
+    async def get_stream_request(request):
+        yield request
 
-        assert len(responses) > 0
-        assert isinstance(responses[0], InferenceResponse)
-        assert len(responses[0].outputs) == 1
-    else:
-        response = await method(inference_request)
+    stream = text_stream_model.predict_stream(get_stream_request(generate_request))
+    responses = [r async for r in stream]
 
-        assert response is not None
-        assert isinstance(response, InferenceResponse)
-        assert len(response.outputs) == 1
-
-    assert f"but not required for {method_name} method." in caplog.records[0].message
+    assert len(responses) > 0
+    assert isinstance(responses[0], InferenceResponse)
+    assert len(responses[0].outputs) == 1
+    assert "not supported for inference streaming" in caplog.records[0].message
 
 
 @pytest.mark.parametrize(
