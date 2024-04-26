@@ -75,34 +75,8 @@ async def test_model_infer(
         model_infer_request.ClearField("model_version")
 
     prediction = await inference_service_stub.ModelInfer(model_infer_request)
-
     expected = pb.InferTensorContents(int64_contents=[6])
 
-    assert len(prediction.outputs) == 1
-    assert prediction.outputs[0].contents == expected
-
-
-@pytest.mark.parametrize("sum_model_settings", [lazy_fixture("text_model_settings")])
-@pytest.mark.parametrize("sum_model", [lazy_fixture("text_model")])
-@pytest.mark.parametrize(
-    "model_name,model_version", [("text-model", "v1.2.3"), ("text-model", None)]
-)
-async def test_model_generate(
-    inference_service_stub,
-    model_generate_request,
-    model_name,
-    model_version,
-):
-    model_generate_request.model_name = model_name
-    if model_version is not None:
-        model_generate_request.model_version = model_version
-    else:
-        model_generate_request.ClearField("model_version")
-
-    prediction = await inference_service_stub.ModelGenerate(model_generate_request)
-    expected = pb.InferTensorContents(
-        bytes_contents=[b"What is the capital of France?"]
-    )
     assert len(prediction.outputs) == 1
     assert prediction.outputs[0].contents == expected
 
@@ -115,7 +89,7 @@ async def test_model_generate(
     "model_name,model_version",
     [("text-stream-model", "v1.2.3"), ("text-stream-model", None)],
 )
-async def test_model_generate_stream(
+async def test_model_stream_infer(
     inference_service_stub,
     model_generate_request,
     model_name,
@@ -130,8 +104,11 @@ async def test_model_generate_stream(
     i = -1
     text = ["What", " is", " the", " capital", " of", " France?"]
 
-    async for prediction in inference_service_stub.ModelGenerateStream(
-        model_generate_request
+    async def get_stream_request(request):
+        yield request
+
+    async for prediction in inference_service_stub.ModelStreamInfer(
+        get_stream_request(model_generate_request)
     ):
         i += 1
         expected = pb.InferTensorContents(bytes_contents=[text[i].encode()])
