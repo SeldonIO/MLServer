@@ -54,46 +54,26 @@ def adaptive_batching(f: Callable[[InferenceRequest], Awaitable[InferenceRespons
     return _inner
 
 
-def not_required_warning(
-    f: Callable[[InferenceRequest], AsyncIterable[InferenceResponse]],
-    stream: bool = False,
+def not_implemented_warning(
+    f: Callable[[InferenceRequest], AsyncIterable[InferenceResponse]]
 ):
     """
-    Decorator to lets users know that adaptive batching is not required on
+    Decorator to lets users know that adaptive batching is not enabled on
     method `f`.
     """
-    warning_template = (
-        "Adaptive Batching is enabled for model {model_name} "
-        "but not required for {f_name} method. Note that in "
-        "context of LLMs, this feature is not required since "
-        "continous batching is supported."
-    )
 
-    if not stream:
+    @wraps(f)
+    async def _inner(payload: InferenceRequest) -> AsyncIterable[InferenceResponse]:
+        model = _get_model(f)
+        logger.warning(
+            f"Adaptive Batching is enabled for model '{model.name}'"
+            " but not supported for inference streaming. "
+            "Falling back to non-batched inference streaming."
+        )
 
-        @wraps(f)
-        async def _inner(payload: InferenceRequest) -> AsyncIterable[InferenceResponse]:
-            model = _get_model(f)
-            logger.warning(
-                warning_template.format(model_name=model.name, f_name=f.__name__)
-            )
-            return await f(payload)
+        yield f(payload)
 
-        return _inner
-    else:
-
-        @wraps(f)
-        async def _inner_stream(
-            payload: InferenceRequest,
-        ) -> AsyncIterable[InferenceResponse]:
-            model = _get_model(f)
-            logger.warning(
-                warning_template.format(model_name=model.name, f_name=f.__name__)
-            )
-            async for response in f(payload):
-                yield response
-
-        return _inner_stream
+    return _inner
 
 
 async def load_batching(model: MLModel) -> MLModel:
@@ -108,18 +88,5 @@ async def load_batching(model: MLModel) -> MLModel:
 
     # Decorate predict methods
     setattr(model, "predict", adaptive_batching(model.predict))
-
-    # TODO: for the generate method, for HF runtime it makes sense
-    # to use adaptive batching as well. However, we will need to check
-    # somehow that the model does not support continuous batching, which
-    # might require some changes on the runtime. Until then, we will
-    # use the predict endpoint with adaptive batching instead of generate
-    # for the HF runtime.
-    setattr(model, "generate", not_required_warning(model.generate))
-    setattr(
-        model,
-        "generate_stream",
-        not_required_warning(model.generate_stream, stream=True),
-    )
-
+    setattr(model, "predict_stream", not_implemented_warning(model.predict_stream))
     return model
