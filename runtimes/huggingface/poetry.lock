@@ -2308,13 +2308,13 @@ tests = ["pytest", "pytest-cov", "pytest-pep8"]
 
 [[package]]
 name = "optimum"
-version = "1.19.0"
+version = "1.19.1"
 description = "Optimum Library is an extension of the Hugging Face Transformers library, providing a framework to integrate third-party libraries from Hardware Partners and interface with their specific functionality."
 optional = false
 python-versions = ">=3.7.0"
 files = [
-    {file = "optimum-1.19.0-py3-none-any.whl", hash = "sha256:b259b2379f6904d7e1bef3f9ab1c3f22ae6c42357b416311950cd65526bb485e"},
-    {file = "optimum-1.19.0.tar.gz", hash = "sha256:a1eb134d70d3093eca68160fcf84c1aff8887726641f3362adca878fda095e3d"},
+    {file = "optimum-1.19.1-py3-none-any.whl", hash = "sha256:ca474589682fe10f7827c85260d116603a5823d5c251c453620584cbc06fa5f6"},
+    {file = "optimum-1.19.1.tar.gz", hash = "sha256:fd723b723bb7fe57d98b4afbd5f9e1d923d31a9843eff32331725162994ec849"},
 ]
 
 [package.dependencies]
@@ -2332,7 +2332,7 @@ packaging = "*"
 protobuf = {version = ">=3.20.1", optional = true, markers = "extra == \"onnxruntime\""}
 sympy = "*"
 torch = ">=1.11"
-transformers = {version = ">=4.26.0,<4.40.0", extras = ["sentencepiece"]}
+transformers = {version = ">=4.26.0,<4.41.0", extras = ["sentencepiece"]}
 
 [package.extras]
 amd = ["optimum-amd"]
