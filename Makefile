@@ -67,7 +67,7 @@ test:
 		tox -c $$_runtime; \
 	done
 
-lint: generate
+lint:
 	black --check .
 	flake8 .
 	mypy ./mlserver
@@ -77,7 +77,9 @@ lint: generate
 	done
 	mypy ./benchmarking
 	mypy ./docs/examples
-	# Check if something has changed after generation
+
+# Check if something has changed after generation
+lint-generate: generate
 	git \
 		--no-pager diff \
 		--exit-code \

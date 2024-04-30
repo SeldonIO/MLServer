@@ -1,3 +1,7 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+
 ROOT_FOLDER="$(dirname "${0}")/.."
 
 _generatePB() {
