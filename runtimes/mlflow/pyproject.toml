@@ -11,7 +11,6 @@ packages = [{include = "mlserver_mlflow"}]
 python = ">=3.9,<3.12"
 mlserver = "*"
 mlflow = "*"
-pydantic = "<2.0.0"
 
 [tool.poetry.group.dev.dependencies]
 mlserver = {path = "../..", develop = true}
