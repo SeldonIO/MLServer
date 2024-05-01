@@ -94,9 +94,9 @@ class AlibiExplainSettings(BaseSettings):
     explainer_batch: Optional[bool] = False
     # In cases where the inference model can output multiple fields and
     # we are interested in a specific field for explanation
-    infer_output: Optional[str]
-    init_parameters: Optional[dict]
-    ssl_verify_path: Optional[str]
+    infer_output: Optional[str] = None
+    init_parameters: Optional[dict] = None
+    ssl_verify_path: Optional[str] = None
 
 
 def import_and_get_class(class_path: str) -> type:

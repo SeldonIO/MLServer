@@ -31,8 +31,8 @@ class ModelResponseMessage(Message):
         # This is to allow having an Exception field
         arbitrary_types_allowed = True
 
-    return_value: Optional[Any]
-    exception: Optional[Union[Exception, CancelledError]]
+    return_value: Optional[Any] = None
+    exception: Optional[Union[Exception, CancelledError]] = None
 
 
 class ModelUpdateMessage(Message):
