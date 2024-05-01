@@ -1,7 +1,7 @@
 import os
 import numpy as np
 
-from pydantic.error_wrappers import ValidationError
+from pydantic import ValidationError
 from typing import Optional, List, Dict
 from pydantic import Field
 from pydantic_settings import BaseSettings

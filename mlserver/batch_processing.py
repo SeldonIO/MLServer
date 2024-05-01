@@ -15,7 +15,7 @@ import orjson
 from time import perf_counter as timer
 from typing import Dict, List, Optional, Tuple
 
-from pydantic.error_wrappers import ValidationError
+from pydantic import ValidationError
 
 from mlserver.batching.requests import BatchedRequests
 from mlserver.types import InferenceRequest, InferenceResponse, Parameters
