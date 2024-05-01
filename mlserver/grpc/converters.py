@@ -326,7 +326,7 @@ class InferTensorContentsConverter:
     def to_types(cls, pb_object: pb.InferTensorContents) -> types.TensorData:
         data = _get_value(pb_object, default=[])
         as_list = list(data)
-        return types.TensorData.construct(__root__=as_list)
+        return types.TensorData.construct(root=as_list)
 
     @classmethod
     def from_types(

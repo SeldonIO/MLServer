@@ -37,7 +37,7 @@ def to_dtype(input_or_output: InputOrOutput) -> "np.dtype":
     dtype = _DatatypeToNumpy[Datatype(input_or_output.datatype)]
 
     if input_or_output.datatype == "BYTES":
-        data = getattr(input_or_output.data, "__root__", input_or_output.data)
+        data = getattr(input_or_output.data, "root", input_or_output.data)
         if is_list_of(data, str):
             # Handle special case of strings being treated as Numpy arrays
             return np.dtype(str)
@@ -63,7 +63,7 @@ def to_datatype(dtype: np.dtype) -> Datatype:
 
 
 def _to_ndarray(input_or_output: InputOrOutput) -> np.ndarray:
-    data = getattr(input_or_output.data, "__root__", input_or_output.data)
+    data = getattr(input_or_output.data, "root", input_or_output.data)
     dtype = to_dtype(input_or_output)
 
     if Datatype(input_or_output.datatype) == Datatype.BYTES:

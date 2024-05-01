@@ -7,6 +7,7 @@ from mlserver.types import (
     InferenceResponse,
     MetadataServerResponse,
     MetadataModelResponse,
+    TensorData,
 )
 from mlserver.cloudevents import (
     CLOUDEVENTS_HEADER_SPECVERSION_DEFAULT,
@@ -122,7 +123,7 @@ async def test_infer(
 
     prediction = InferenceResponse.parse_obj(response.json())
     assert len(prediction.outputs) == 1
-    assert prediction.outputs[0].data.__root__ == [6]
+    assert prediction.outputs[0].data == TensorData(root=[6])
 
 
 async def test_infer_headers(

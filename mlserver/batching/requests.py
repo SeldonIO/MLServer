@@ -13,7 +13,7 @@ from .shape import Shape
 
 
 def _get_data(payload: Union[RequestInput, ResponseOutput]):
-    return getattr(payload.data, "__root__", payload.data)
+    return getattr(payload.data, "root", payload.data)
 
 
 def _get_parameters(payload: ResponseOutput) -> DefaultDict[Any, Any]:

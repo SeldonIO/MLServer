@@ -4,7 +4,7 @@ from pytest_cases import fixture, parametrize_with_cases
 from transformers.pipelines.question_answering import QuestionAnsweringPipeline
 
 from mlserver.settings import ModelSettings
-from mlserver.types import InferenceRequest
+from mlserver.types import InferenceRequest, TensorData
 from mlserver_huggingface import HuggingFaceRuntime
 
 
@@ -50,7 +50,7 @@ async def test_infer_multiple(
     # Send request with two elements
     for request_input in inference_request.inputs:
         input_data = request_input.data[0]
-        request_input.data.__root__ = [input_data, input_data]
+        request_input.data = TensorData.parse_obj([input_data, input_data])
         request_input.shape = [2]
 
     res = await runtime.predict(inference_request)

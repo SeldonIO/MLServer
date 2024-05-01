@@ -263,7 +263,7 @@ def repository_index_request() -> types.RepositoryIndexRequest:
 @pytest.fixture
 def repository_index_response(sum_model_settings) -> types.RepositoryIndexResponse:
     return types.RepositoryIndexResponse(
-        __root__=[
+        root=[
             types.RepositoryIndexResponseItem(
                 name=sum_model_settings.name,
                 version=sum_model_settings.parameters.version,

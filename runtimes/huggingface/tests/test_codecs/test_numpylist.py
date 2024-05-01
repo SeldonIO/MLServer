@@ -16,7 +16,7 @@ from mlserver_huggingface.codecs import NumpyListCodec
                 shape=[2, 1, 2],
                 datatype="FP64",
                 parameters=Parameters(content_type="nplist"),
-                data=TensorData(__root__=[0.0, 0.0, 0.0, 0.0]),
+                data=TensorData(root=[0.0, 0.0, 0.0, 0.0]),
             ),
         ),
         (
@@ -26,7 +26,7 @@ from mlserver_huggingface.codecs import NumpyListCodec
             RequestInput(
                 name="int8",
                 datatype="INT8",
-                data=TensorData(__root__=[1, 2, 1, 2]),
+                data=TensorData(root=[1, 2, 1, 2]),
                 parameters=Parameters(content_type="nplist"),
                 shape=[2, 1, 2],
             ),
@@ -38,7 +38,7 @@ from mlserver_huggingface.codecs import NumpyListCodec
             RequestInput(
                 name="mixdtype",
                 datatype="FP64",
-                data=TensorData(__root__=[1, 2, 0.0, 0.0]),
+                data=TensorData(root=[1, 2, 0.0, 0.0]),
                 parameters=Parameters(content_type="nplist"),
                 shape=[2, 1, 2],
             ),
@@ -61,7 +61,7 @@ def test_encode_input(name, var, expected1, expected2):
                 name="float64",
                 shape=[2, 1, 2],
                 datatype="FP64",
-                data=TensorData(__root__=[0.0, 0.0, 0.0, 0.0]),
+                data=TensorData(root=[0.0, 0.0, 0.0, 0.0]),
                 parameters=Parameters(content_type="nplist"),
             ),
             [np.zeros([1, 2]), np.zeros([1, 2])],
@@ -70,7 +70,7 @@ def test_encode_input(name, var, expected1, expected2):
             RequestInput(
                 name="int8",
                 datatype="INT8",
-                data=TensorData(__root__=[1, 2, 1, 2]),
+                data=TensorData(root=[1, 2, 1, 2]),
                 parameters=Parameters(content_type="nplist"),
                 shape=[2, 1, 2],
             ),
@@ -80,7 +80,7 @@ def test_encode_input(name, var, expected1, expected2):
             RequestInput(
                 name="mixdtype",
                 datatype="FP64",
-                data=TensorData(__root__=[1, 2, 0.0, 0.0]),
+                data=TensorData(root=[1, 2, 0.0, 0.0]),
                 parameters=Parameters(content_type="nplist"),
                 shape=[2, 1, 2],
             ),

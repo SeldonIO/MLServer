@@ -4,7 +4,7 @@
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
-from pydantic import Extra, Field
+from pydantic import Extra, Field, RootModel
 
 from .base import BaseModel
 
@@ -47,17 +47,17 @@ class Parameters(BaseModel):
     headers: Optional[Dict[str, Any]] = None
 
 
-class TensorData(BaseModel):
-    __root__: Any = Field(..., title="TensorData")
+class TensorData(RootModel[Any]):
+    root: Any = Field(..., title="TensorData")
 
     def __iter__(self):
-        return iter(self.__root__)
+        return iter(self.root)
 
     def __getitem__(self, idx):
-        return self.__root__[idx]
+        return self.root[idx]
 
     def __len__(self):
-        return len(self.__root__)
+        return len(self.root)
 
 
 class RequestOutput(BaseModel):

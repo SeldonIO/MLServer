@@ -29,7 +29,7 @@ def decode_str(encoded: ListElement, str_codec=_DefaultStrCodec) -> str:
 
 
 def _decode_input_or_output(input_or_output: InputOrOutput) -> List[str]:
-    packed = input_or_output.data.__root__
+    packed = input_or_output.data.root
     unpacked = map(decode_str, as_list(packed))
     return list(unpacked)
 

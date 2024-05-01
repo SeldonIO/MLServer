@@ -6,7 +6,7 @@ from __future__ import annotations
 from enum import Enum
 from typing import List, Optional
 
-from pydantic import Field
+from pydantic import Field, RootModel
 
 from .base import BaseModel
 
@@ -30,19 +30,19 @@ class RepositoryIndexResponseItem(BaseModel):
     reason: str
 
 
-class RepositoryIndexResponse(BaseModel):
-    __root__: List[RepositoryIndexResponseItem] = Field(
+class RepositoryIndexResponse(RootModel[List[RepositoryIndexResponseItem]]):
+    root: List[RepositoryIndexResponseItem] = Field(
         ..., title="RepositoryIndexResponse"
     )
 
     def __iter__(self):
-        return iter(self.__root__)
+        return iter(self.root)
 
     def __getitem__(self, idx):
-        return self.__root__[idx]
+        return self.root[idx]
 
     def __len__(self):
-        return len(self.__root__)
+        return len(self.root)
 
 
 class RepositoryLoadErrorResponse(BaseModel):

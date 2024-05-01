@@ -159,6 +159,6 @@ def test_encode_input(decoded, use_bytes, expected):
         name="foo", payload=decoded, use_bytes=use_bytes
     )
 
-    assert request_input.data.__root__ == response_output.data.__root__
+    assert request_input.data == response_output.data
     assert response_output.datatype == request_input.datatype
     assert request_input.parameters.content_type == StringCodec.ContentType

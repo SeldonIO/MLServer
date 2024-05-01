@@ -3,7 +3,7 @@ import uuid
 
 from mlserver.errors import ModelNotReady
 from mlserver.settings import ModelSettings, ModelParameters
-from mlserver.types import MetadataTensor, InferenceResponse
+from mlserver.types import MetadataTensor, InferenceResponse, TensorData
 
 from ..fixtures import SumModel
 
@@ -93,7 +93,7 @@ async def test_infer(data_plane, sum_model, inference_request):
     )
 
     assert len(prediction.outputs) == 1
-    assert prediction.outputs[0].data.__root__ == [6]
+    assert prediction.outputs[0].data == TensorData(root=[6])
 
 
 async def test_infer_error_not_ready(data_plane, sum_model, inference_request):

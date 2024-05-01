@@ -1,7 +1,7 @@
-from pydantic import BaseModel as _BaseModel
+import pydantic
 
 
-class BaseModel(_BaseModel):
+class BaseModel(pydantic.BaseModel):
     """
     Override Pydantic's BaseModel class to ensure all payloads exclude unset
     fields by default.

@@ -21,7 +21,7 @@ def test_tensor_data(data):
     raw = json.dumps(data)
     tensor_data = types.TensorData.parse_raw(raw)
 
-    assert tensor_data.__root__ == data
+    assert tensor_data == types.TensorData(root=data)
     for tensor_elem, elem in zip(tensor_data, data):
         assert isinstance(tensor_elem, type(elem))
 

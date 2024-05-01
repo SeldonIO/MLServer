@@ -14,7 +14,7 @@ from mlserver_huggingface.codecs import RawCodec
             RequestInput(
                 name="foo1",
                 datatype="BYTES",
-                data=TensorData(__root__=["bar1"]),
+                data=TensorData(root=["bar1"]),
                 shape=[1],
                 parameters=Parameters(content_type="raw"),
             ),
@@ -26,7 +26,7 @@ from mlserver_huggingface.codecs import RawCodec
             RequestInput(
                 name="foo2",
                 datatype="BYTES",
-                data=TensorData(__root__=[1]),
+                data=TensorData(root=[1]),
                 parameters=Parameters(content_type="raw"),
                 shape=[1],
             ),
@@ -38,7 +38,7 @@ from mlserver_huggingface.codecs import RawCodec
             RequestInput(
                 name="foo3",
                 datatype="BYTES",
-                data=TensorData(__root__=[1.0]),
+                data=TensorData(root=[1.0]),
                 parameters=Parameters(content_type="raw"),
                 shape=[1],
             ),

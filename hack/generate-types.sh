@@ -29,6 +29,7 @@ _generatePydantic() {
     --input "${ROOT_FOLDER}/openapi/$apiName.yaml" \
     --input-file-type openapi \
     --output "${ROOT_FOLDER}/mlserver/types/$apiName.py" \
+    --output-model-type pydantic_v2.BaseModel \
     --custom-template-dir "${ROOT_FOLDER}/hack/templates" \
     --base-class ".base.BaseModel" \
     --disable-timestamp \
