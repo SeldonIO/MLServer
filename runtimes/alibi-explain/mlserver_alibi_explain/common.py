@@ -4,7 +4,7 @@ from typing import Any, Optional, Type, Union, List
 
 import numpy as np
 import requests
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 
 from mlserver.codecs import StringCodec, NumpyCodec
 from mlserver.types import (

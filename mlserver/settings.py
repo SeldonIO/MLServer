@@ -7,6 +7,7 @@ import inspect
 from typing import Any, Dict, List, Optional, Type, Union, no_type_check, TYPE_CHECKING
 from pydantic import ImportString, Extra, Field, AliasChoices
 from pydantic._internal._validators import import_string
+import pydantic_settings
 from contextlib import contextmanager
 
 from .version import __version__
@@ -47,7 +48,7 @@ def _reload_module(import_path: str):
     importlib.reload(module)
 
 
-class BaseSettings(_BaseSettings):
+class BaseSettings(pydantic_settings.BaseSettings):
     @no_type_check
     def __setattr__(self, name, value):
         """
