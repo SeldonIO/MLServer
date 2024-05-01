@@ -222,7 +222,7 @@ def test_encode_output(name, var, use_bytes, expected1, expected2):
     assert can_encode == expected1
     if can_encode:
         assert (
-            HuggingfaceConversationCodec.encode_input(name, var, use_bytes=use_bytes)
+            HuggingfaceConversationCodec.encode_output(name, var, use_bytes=use_bytes)
             == expected2
         )
 

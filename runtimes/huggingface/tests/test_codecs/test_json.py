@@ -177,7 +177,7 @@ def test_encode_response(name, var, use_bytes, expected1, expected2):
     assert can_encode == expected1
     if can_encode:
         assert (
-            HuggingfaceSingleJSONCodec.encode_input(name, var, use_bytes=use_bytes)
+            HuggingfaceSingleJSONCodec.encode_output(name, var, use_bytes=use_bytes)
             == expected2
         )
 
