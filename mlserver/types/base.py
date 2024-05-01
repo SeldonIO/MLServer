@@ -1,4 +1,5 @@
 import pydantic
+from pydantic import ConfigDict
 
 
 class BaseModel(pydantic.BaseModel):
@@ -10,6 +11,10 @@ class BaseModel(pydantic.BaseModel):
         https://github.com/pydantic/pydantic/issues/1387#issuecomment-612901525
     """
 
+    model_config = ConfigDict(
+        use_enum_values=True,
+    )
+
     def dict(self, exclude_unset=True, exclude_none=True, **kwargs):
         return super().dict(
             exclude_unset=exclude_unset, exclude_none=exclude_none, **kwargs
@@ -19,6 +24,3 @@ class BaseModel(pydantic.BaseModel):
         return super().json(
             exclude_unset=exclude_unset, exclude_none=exclude_none, **kwargs
         )
-
-    class Config:
-        use_enum_values = True

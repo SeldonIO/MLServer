@@ -4,10 +4,24 @@ import json
 import importlib
 import inspect
 
-from typing import Any, Dict, List, Optional, Type, Union, no_type_check, TYPE_CHECKING
-from pydantic import ImportString, Extra, Field, AliasChoices
+from typing import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    Type,
+    Union,
+    no_type_check,
+    TYPE_CHECKING,
+)
+from pydantic import (
+    ImportString,
+    Field,
+    AliasChoices,
+)
 from pydantic._internal._validators import import_string
 import pydantic_settings
+from pydantic_settings import SettingsConfigDict
 from contextlib import contextmanager
 
 from .version import __version__
@@ -94,9 +108,10 @@ class BaseSettings(pydantic_settings.BaseSettings):
 
 
 class CORSSettings(BaseSettings):
-    class Config:
-        env_file = ENV_FILE_SETTINGS
-        env_prefix = ENV_PREFIX_SETTINGS
+    model_config = SettingsConfigDict(
+        env_file=ENV_FILE_SETTINGS,
+        env_prefix=ENV_PREFIX_SETTINGS,
+    )
 
     allow_origins: Optional[List[str]] = []
     """
@@ -130,9 +145,10 @@ class CORSSettings(BaseSettings):
 
 
 class Settings(BaseSettings):
-    class Config:
-        env_file = ENV_FILE_SETTINGS
-        env_prefix = ENV_PREFIX_SETTINGS
+    model_config = SettingsConfigDict(
+        env_file=ENV_FILE_SETTINGS,
+        env_prefix=ENV_PREFIX_SETTINGS,
+    )
 
     debug: bool = True
 
@@ -259,10 +275,11 @@ class ModelParameters(BaseSettings):
     can change on each instance (e.g. each version) of the model.
     """
 
-    class Config:
-        extra = Extra.allow
-        env_file = ENV_FILE_SETTINGS
-        env_prefix = ENV_PREFIX_MODEL_SETTINGS
+    model_config = SettingsConfigDict(
+        extra="allow",
+        env_file=ENV_FILE_SETTINGS,
+        env_prefix=ENV_PREFIX_SETTINGS,
+    )
 
     uri: Optional[str] = None
     """
@@ -289,10 +306,10 @@ class ModelParameters(BaseSettings):
 
 
 class ModelSettings(BaseSettings):
-    class Config:
-        env_file = ENV_FILE_SETTINGS
-        env_prefix = ENV_PREFIX_MODEL_SETTINGS
-        underscore_attrs_are_private = True
+    model_config = SettingsConfigDict(
+        env_file=ENV_FILE_SETTINGS,
+        env_prefix=ENV_PREFIX_SETTINGS,
+    )
 
     # Source points to the file where model settings were loaded from
     _source: Optional[str] = None

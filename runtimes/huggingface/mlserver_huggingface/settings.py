@@ -2,8 +2,7 @@ import os
 import orjson
 
 from typing import Optional, Dict, Union, NewType
-from pydantic import Extra
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from distutils.util import strtobool
 from transformers.pipelines import SUPPORTED_TASKS
 
@@ -36,9 +35,10 @@ class HuggingFaceSettings(BaseSettings):
     Parameters that apply only to HuggingFace models
     """
 
-    class Config:
-        env_prefix = ENV_PREFIX_HUGGINGFACE_SETTINGS
-        extra = Extra.ignore
+    model_config = SettingsConfigDict(
+        extra="ignore",
+        env_prefix=ENV_PREFIX_HUGGINGFACE_SETTINGS,
+    )
 
     # TODO: Document fields
     task: str = ""

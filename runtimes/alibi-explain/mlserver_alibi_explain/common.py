@@ -4,7 +4,7 @@ from typing import Any, Optional, Type, Union, List
 
 import numpy as np
 import requests
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from mlserver.codecs import StringCodec, NumpyCodec
 from mlserver.types import (
@@ -86,8 +86,9 @@ class AlibiExplainSettings(BaseSettings):
     Parameters that apply only to alibi explain models
     """
 
-    class Config:
-        env_prefix = ENV_PREFIX_ALIBI_EXPLAIN_SETTINGS
+    model_config = SettingsConfigDict(
+        env_prefix=ENV_PREFIX_ALIBI_EXPLAIN_SETTINGS,
+    )
 
     infer_uri: str
     explainer_type: str

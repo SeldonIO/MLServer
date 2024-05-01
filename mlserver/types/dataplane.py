@@ -4,7 +4,7 @@
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
-from pydantic import Extra, Field, RootModel
+from pydantic import Field, RootModel, ConfigDict
 
 from .base import BaseModel
 
@@ -40,8 +40,9 @@ class MetadataModelErrorResponse(BaseModel):
 
 
 class Parameters(BaseModel):
-    class Config:
-        extra = Extra.allow
+    model_config = ConfigDict(
+        extra="allow",
+    )
 
     content_type: Optional[str] = None
     headers: Optional[Dict[str, Any]] = None
