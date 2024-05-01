@@ -392,8 +392,12 @@ class ModelSettings(BaseSettings):
     # `implementation_` as a private attr (due to Pydantic - we can't just
     # prefix the attr with `_`).
     implementation_: str = Field(
-        alias="implementation", env="MLSERVER_MODEL_IMPLEMENTATION"
+        validation_alias=AliasChoices(
+            "implementation", "MLSERVER_MODEL_IMPLEMENTATION"
+        ),
+        serialization_alias="implementation",
     )
+
     """*Python path* to the inference runtime to use to serve this model (e.g.
     ``mlserver_sklearn.SKLearnModel``)."""
 
