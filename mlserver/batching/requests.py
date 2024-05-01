@@ -19,7 +19,7 @@ def _get_data(payload: Union[RequestInput, ResponseOutput]):
 def _get_parameters(payload: ResponseOutput) -> DefaultDict[Any, Any]:
     parameters = defaultdict(list)
     if payload.parameters is not None:
-        payload_parameters = payload.parameters.dict()
+        payload_parameters = payload.parameters.model_dump()
     for param_name, param_values in payload_parameters.items():
         if param_name in ["content_type", "headers"]:
             continue
@@ -41,7 +41,7 @@ def _merge_parameters(
     if not parametrised_obj.parameters:
         return all_params
 
-    obj_params = parametrised_obj.parameters.dict()
+    obj_params = parametrised_obj.parameters.model_dump()
     return {**all_params, **obj_params}
 
 
@@ -53,7 +53,7 @@ def _merge_input_parameters(
 ) -> dict:
     if not parametrised_obj.parameters:
         return all_params
-    obj_params = parametrised_obj.parameters.dict()
+    obj_params = parametrised_obj.parameters.model_dump()
     if all_params == {}:
         return obj_params
     else:

@@ -56,7 +56,7 @@ def remote_predict(
         verify = ssl_verify_path
     response_raw = requests.post(
         predictor_url,
-        json=v2_payload.dict(),
+        json=v2_payload.model_dump(),
         headers={SELDON_SKIP_LOGGING_HEADER: "true"},
         verify=verify,
     )

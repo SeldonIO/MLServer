@@ -106,7 +106,7 @@ class AlibiExplainRuntimeBase(MLModel):
     ) -> ResponseOutput:
         explain_parameters = dict()
         if settings is not None:
-            settings_dict = settings.dict()
+            settings_dict = settings.model_dump()
             if EXPLAIN_PARAMETERS_TAG in settings_dict:
                 explain_parameters = settings_dict[EXPLAIN_PARAMETERS_TAG]
 

@@ -60,7 +60,7 @@ def case_custom_module(
     # Write model settings pointing to local module
     model_settings_path = os.path.join(model_folder, DEFAULT_MODEL_SETTINGS_FILENAME)
     with open(model_settings_path, "w") as model_settings_file:
-        as_dict = sum_model_settings.dict()
+        as_dict = sum_model_settings.model_dump()
         as_dict["implementation"] = "custom.SumModel"
         model_settings_file.write(json.dumps(as_dict))
 

@@ -267,7 +267,7 @@ async def anchor_image_runtime_with_remote_predict_patch(
                 uri=str(anchor_image_directory),
                 extra=AlibiExplainSettings(
                     explainer_type="anchor_image", infer_uri="dummy_call"
-                ),
+                ).model_dump(),
             ),
         )
     )
@@ -289,7 +289,7 @@ async def integrated_gradients_runtime(tf_mnist_model_uri: str) -> AlibiExplainR
         ModelSettings(
             parallel_workers=1,
             implementation=AlibiExplainRuntime,
-            parameters=ModelParameters(extra=explainer_settings.dict()),
+            parameters=ModelParameters(extra=explainer_settings.model_dump()),
         )
     )
     assert isinstance(rt, MLModel)
@@ -332,7 +332,7 @@ def dummy_explainer_settings() -> Iterable[ModelSettings]:
             parameters=ModelParameters(
                 extra=AlibiExplainSettings(
                     explainer_type="anchor_image", infer_uri="dummy_call"
-                ),
+                ).model_dump(),
             ),
         )
 

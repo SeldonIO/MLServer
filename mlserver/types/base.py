@@ -16,8 +16,8 @@ class BaseModel(pydantic.BaseModel):
         use_enum_values=True,
     )
 
-    def dict(self, exclude_unset=True, exclude_none=True, **kwargs):
-        return super().dict(
+    def model_dump(self, exclude_unset=True, exclude_none=True, **kwargs):
+        return super().model_dump(
             exclude_unset=exclude_unset, exclude_none=exclude_none, **kwargs
         )
 

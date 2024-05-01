@@ -117,7 +117,7 @@ async def test_infer(
     endpoint = f"/v2/models/{model_name}/infer"
     if model_version is not None:
         endpoint = f"/v2/models/{model_name}/versions/{model_version}/infer"
-    response = await rest_client.post(endpoint, json=inference_request.dict())
+    response = await rest_client.post(endpoint, json=inference_request.model_dump())
 
     assert response.status_code == 200
 
@@ -133,7 +133,7 @@ async def test_infer_headers(
 ):
     endpoint = f"/v2/models/{sum_model_settings.name}/infer"
     response = await rest_client.post(
-        endpoint, json=inference_request.dict(), headers={"x-foo": "bar"}
+        endpoint, json=inference_request.model_dump(), headers={"x-foo": "bar"}
     )
 
     assert response.status_code == 200
@@ -149,7 +149,7 @@ async def test_infer_headers(
 
 async def test_infer_error(rest_client, inference_request):
     endpoint = "/v2/models/my-model/versions/v0/infer"
-    response = await rest_client.post(endpoint, json=inference_request.dict())
+    response = await rest_client.post(endpoint, json=inference_request.model_dump())
 
     assert response.status_code == 404
     assert response.json()["error"] == "Model my-model with version v0 not found"
@@ -157,7 +157,9 @@ async def test_infer_error(rest_client, inference_request):
 
 async def test_model_repository_index(rest_client, repository_index_request):
     endpoint = "/v2/repository/index"
-    response = await rest_client.post(endpoint, json=repository_index_request.dict())
+    response = await rest_client.post(
+        endpoint, json=repository_index_request.model_dump()
+    )
 
     assert response.status_code == 200
 

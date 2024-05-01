@@ -200,7 +200,7 @@ async def test_custom_explain_endpoint(dummy_alibi_explain_client):
     )
 
     response = await dummy_alibi_explain_client.post(
-        "/explain", json=inference_request.dict()
+        "/explain", json=inference_request.model_dump()
     )
     response_text = json.loads(response.text)
     assert "meta" in response_text

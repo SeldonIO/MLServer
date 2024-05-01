@@ -50,7 +50,7 @@ inference_request = InferenceRequest(
 
 # Send the inference request and capture response
 print("Sending Inference Request...")
-res = requests.post(inference_url, json=inference_request.dict())
+res = requests.post(inference_url, json=inference_request.model_dump())
 print("Got Response...")
 
 # Parse the JSON string into a Python dictionary

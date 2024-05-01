@@ -41,7 +41,7 @@ def test_load_pipeline(optimum_model: bool, expected):
     model_settings = ModelSettings(
         name="foo",
         implementation=HuggingFaceRuntime,
-        parameters=ModelParameters(extra=hf_settings.dict()),
+        parameters=ModelParameters(extra=hf_settings.model_dump()),
     )
 
     pipeline = load_pipeline_from_settings(hf_settings, model_settings)

@@ -296,7 +296,7 @@ class ParametersConverter:
         cls, type_object: types.Parameters
     ) -> Mapping[str, pb.InferParameter]:
         pb_object = {}
-        as_dict = type_object.dict()
+        as_dict = type_object.model_dump()
 
         for key, value in as_dict.items():
             infer_parameter_key = cls._get_inferparameter_key(value)

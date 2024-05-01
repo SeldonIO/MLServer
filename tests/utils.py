@@ -167,7 +167,9 @@ class RESTClient:
         self, model_name: str, inference_request: InferenceRequest
     ) -> InferenceResponse:
         endpoint = f"http://{self._http_server}/v2/models/{model_name}/infer"
-        response = await self._session.post(endpoint, json=inference_request.dict())
+        response = await self._session.post(
+            endpoint, json=inference_request.model_dump()
+        )
 
         raw_payload = await response.text()
         return InferenceResponse.parse_raw(raw_payload)

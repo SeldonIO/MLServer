@@ -53,7 +53,7 @@ async def test_name_fallback(
     # Create empty model-settings.json file
     model_settings_path = os.path.join(model_folder, DEFAULT_MODEL_SETTINGS_FILENAME)
     with open(model_settings_path, "w") as model_settings_file:
-        d = sum_model_settings.dict()
+        d = sum_model_settings.model_dump()
         del d["name"]
         json.dump(d, model_settings_file)
 

@@ -12,7 +12,7 @@ class APIErrorResponse(BaseModel):
 
 async def handle_mlserver_error(request: Request, exc: MLServerError) -> Response:
     err_res = APIErrorResponse(error=str(exc))
-    return Response(status_code=exc.status_code, content=err_res.dict())
+    return Response(status_code=exc.status_code, content=err_res.model_dump())
 
 
 _EXCEPTION_HANDLERS = {MLServerError: handle_mlserver_error}

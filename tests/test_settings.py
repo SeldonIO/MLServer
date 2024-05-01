@@ -86,7 +86,7 @@ def test_model_settings_serialisation():
     assert model_settings.implementation == SumModel
     assert model_settings.implementation_ == expected
 
-    as_dict = model_settings.dict()
+    as_dict = model_settings.model_dump()
     as_dict["implementation"] == expected
 
     as_json = model_settings.json()
