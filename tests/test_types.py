@@ -30,6 +30,6 @@ async def test_request_invalid_datatype(
     inference_request_invalid_datatype, datatype_error_message
 ):
     with pytest.raises(ValidationError) as excinfo:
-        InferenceRequest.parse_obj(inference_request_invalid_datatype)
+        InferenceRequest.model_validate(inference_request_invalid_datatype)
 
     assert excinfo.value.errors()[0]["msg"] == datatype_error_message

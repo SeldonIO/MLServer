@@ -201,7 +201,7 @@ def preprocess_items(
     invalid_inputs = []
     for item in items:
         try:
-            inference_request = InferenceRequest.parse_obj(orjson.loads(item.item))
+            inference_request = InferenceRequest.model_validate(orjson.loads(item.item))
             # try to use `id` from the input file to identify each request in the batch
             if inference_request.id is None:
                 inference_request.id = generate_uuid()

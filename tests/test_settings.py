@@ -67,9 +67,9 @@ def test_model_settings_from_env(monkeypatch):
         ),
     ],
 )
-def test_model_settings_parse_obj(obj: dict):
+def test_model_settings_model_validate(obj: dict):
     pre_sys_path = sys.path[:]
-    model_settings = ModelSettings.parse_obj(obj)
+    model_settings = ModelSettings.model_validate(obj)
     post_sys_path = sys.path[:]
 
     assert pre_sys_path == post_sys_path

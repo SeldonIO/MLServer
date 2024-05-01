@@ -31,7 +31,7 @@ def generate_test_requests() -> List[types.InferenceRequest]:
                         name="input-0",
                         shape=[contents_len],
                         datatype="FP32",
-                        data=types.TensorData.parse_obj(inputs.tolist()),
+                        data=types.TensorData.model_validate(inputs.tolist()),
                     )
                 ]
             )

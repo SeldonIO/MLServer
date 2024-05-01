@@ -50,7 +50,7 @@ async def test_infer_multiple(
     # Send request with two elements
     for request_input in inference_request.inputs:
         input_data = request_input.data[0]
-        request_input.data = TensorData.parse_obj([input_data, input_data])
+        request_input.data = TensorData.model_validate([input_data, input_data])
         request_input.shape = [2]
 
     res = await runtime.predict(inference_request)

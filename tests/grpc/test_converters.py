@@ -100,7 +100,7 @@ def test_modelinferrequest_to_types(model_infer_request):
                 name="input-0",
                 datatype="INT32",
                 shape=[1, 3],
-                data=types.TensorData.parse_obj([1, 2, 3]),
+                data=types.TensorData.model_validate([1, 2, 3]),
                 parameters=types.Parameters(content_type="np"),
             )
         ],
@@ -154,7 +154,7 @@ def test_modelinferrequest_from_types(use_raw, expected):
                 name="input-0",
                 datatype="FP32",
                 shape=[1],
-                data=types.TensorData.parse_obj([21.0]),
+                data=types.TensorData.model_validate([21.0]),
             )
         ],
     )

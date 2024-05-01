@@ -311,12 +311,12 @@ class ModelSettings(BaseSettings):
         with open(path, "r") as f:
             obj = json.load(f)
             obj["_source"] = path
-            return cls.parse_obj(obj)
+            return cls.model_validate(obj)
 
     @classmethod
-    def parse_obj(cls, obj: Any) -> "ModelSettings":
+    def model_validate(cls, obj: Any) -> "ModelSettings":  # type: ignore
         source = obj.pop("_source", None)
-        model_settings = super().parse_obj(obj)
+        model_settings = super().model_validate(obj)
         if source:
             model_settings._source = source
 

@@ -26,7 +26,7 @@ from mlserver_huggingface.common import load_pipeline_from_settings
     ],
 )
 def test_settings_task_name(envs: Dict[str, str], expected: str):
-    setting = HuggingFaceSettings.parse_obj(envs)
+    setting = HuggingFaceSettings.model_validate(envs)
     assert setting.task_name == expected
 
 

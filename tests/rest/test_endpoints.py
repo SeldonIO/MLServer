@@ -40,7 +40,7 @@ async def test_metadata(rest_client):
     endpoint = "/v2"
     response = await rest_client.get(endpoint)
 
-    metadata = MetadataServerResponse.parse_obj(response.json())
+    metadata = MetadataServerResponse.model_validate(response.json())
 
     assert metadata.name == "mlserver"
     assert metadata.version == __version__
@@ -67,7 +67,7 @@ async def test_model_metadata(rest_client, sum_model_settings):
     endpoint = f"v2/models/{sum_model_settings.name}"
     response = await rest_client.get(endpoint)
 
-    metadata = MetadataModelResponse.parse_obj(response.json())
+    metadata = MetadataModelResponse.model_validate(response.json())
 
     assert metadata.name == sum_model_settings.name
     assert metadata.platform == sum_model_settings.platform
@@ -121,7 +121,7 @@ async def test_infer(
 
     assert response.status_code == 200
 
-    prediction = InferenceResponse.parse_obj(response.json())
+    prediction = InferenceResponse.model_validate(response.json())
     assert len(prediction.outputs) == 1
     assert prediction.outputs[0].data == TensorData(root=[6])
 
