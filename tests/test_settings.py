@@ -89,6 +89,6 @@ def test_model_settings_serialisation():
     as_dict = model_settings.model_dump()
     as_dict["implementation"] == expected
 
-    as_json = model_settings.json()
+    as_json = model_settings.model_dump_json()
     as_dict = json.loads(as_json)
     as_dict["implementation"] == expected

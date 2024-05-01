@@ -117,7 +117,7 @@ async def test_infer_generates_uuid(data_plane, sum_model, inference_request):
 
 
 async def test_infer_response_cache(cached_data_plane, sum_model, inference_request):
-    cache_key = inference_request.json()
+    cache_key = inference_request.model_dump_json()
     payload = inference_request.copy(deep=True)
     prediction = await cached_data_plane.infer(
         payload=payload, name=sum_model.name, version=sum_model.version

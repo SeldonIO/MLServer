@@ -21,7 +21,7 @@ class BaseModel(pydantic.BaseModel):
             exclude_unset=exclude_unset, exclude_none=exclude_none, **kwargs
         )
 
-    def json(self, exclude_unset=True, exclude_none=True, **kwargs):
-        return super().json(
+    def model_dump_json(self, exclude_unset=True, exclude_none=True, **kwargs):
+        return super().model_dump_json(
             exclude_unset=exclude_unset, exclude_none=exclude_none, **kwargs
         )

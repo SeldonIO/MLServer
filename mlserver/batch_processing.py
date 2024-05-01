@@ -247,7 +247,8 @@ def postprocess_items(
 
         output_items.append(
             BatchOutputItem(
-                index=item_indices[item_id], item=inference_response.json().encode()
+                index=item_indices[item_id],
+                item=inference_response.model_dump_json().encode(),
             )
         )
     return output_items
