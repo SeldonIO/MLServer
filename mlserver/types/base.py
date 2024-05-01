@@ -12,6 +12,7 @@ class BaseModel(pydantic.BaseModel):
     """
 
     model_config = ConfigDict(
+        protected_namespaces=(),
         use_enum_values=True,
     )
 

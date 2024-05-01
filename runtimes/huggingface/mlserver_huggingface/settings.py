@@ -36,8 +36,9 @@ class HuggingFaceSettings(BaseSettings):
     """
 
     model_config = SettingsConfigDict(
-        extra="ignore",
         env_prefix=ENV_PREFIX_HUGGINGFACE_SETTINGS,
+        extra="ignore",
+        protected_namespaces=(),
     )
 
     # TODO: Document fields

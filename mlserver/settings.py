@@ -146,6 +146,7 @@ class CORSSettings(BaseSettings):
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
+        protected_namespaces=(),
         env_file=ENV_FILE_SETTINGS,
         env_prefix=ENV_PREFIX_SETTINGS,
     )
