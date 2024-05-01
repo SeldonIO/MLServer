@@ -5,7 +5,8 @@ import importlib
 import inspect
 
 from typing import Any, Dict, List, Optional, Type, Union, no_type_check, TYPE_CHECKING
-from pydantic import PyObject, Extra, Field, BaseSettings as _BaseSettings
+from pydantic import ImportString, Extra, Field, AliasChoices
+from pydantic._internal._validators import import_string
 from contextlib import contextmanager
 
 from .version import __version__
@@ -149,7 +150,7 @@ class Settings(BaseSettings):
     """
 
     # Custom model repository class implementation
-    model_repository_implementation: Optional[PyObject] = None
+    model_repository_implementation: Optional[ImportString] = None
     """*Python path* to the inference runtime to model repository (e.g.
     ``mlserver.repository.repository.SchemalessModelRepository``)."""
 
@@ -323,12 +324,12 @@ class ModelSettings(BaseSettings):
     @property
     def implementation(self) -> Type["MLModel"]:
         if not self._source:
-            return PyObject.validate(self.implementation_)  # type: ignore
+            return import_string(self.implementation_)  # type: ignore
 
         model_folder = os.path.dirname(self._source)
         with _extra_sys_path(model_folder):
             _reload_module(self.implementation_)
-            return PyObject.validate(self.implementation_)  # type: ignore
+            return import_string(self.implementation_)  # type: ignore
 
     @implementation.setter
     def implementation(self, value: Type["MLModel"]):
