@@ -32,11 +32,24 @@ def test_settings_task_name(envs: Dict[str, str], expected: str):
 
 @pytest.mark.parametrize(
     "optimum_model, expected",
-    [(True, ORTModelForQuestionAnswering), (False, DistilBertForQuestionAnswering)],
+    [
+        (
+            True,
+            ORTModelForQuestionAnswering,
+        ),
+        (
+            False,
+            DistilBertForQuestionAnswering,
+        ),
+    ],
 )
-def test_load_pipeline(optimum_model: bool, expected):
+def test_load_pipeline(
+    optimum_model: bool,
+    expected: Union[ORTModelForQuestionAnswering, DistilBertForQuestionAnswering],
+):
     hf_settings = HuggingFaceSettings(
-        task="question-answering", optimum_model=optimum_model
+        task="question-answering",
+        optimum_model=optimum_model,
     )
     model_settings = ModelSettings(
         name="foo",
