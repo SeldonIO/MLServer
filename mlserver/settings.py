@@ -317,7 +317,7 @@ class ModelSettings(BaseSettings):
 
     def __init__(self, *args, **kwargs):
         # Ensure we still support inline init, e.g.
-        # ModelSettings(implementation=SumModel)
+        # `ModelSettings(implementation=SumModel)`.
         implementation = kwargs.get("implementation", None)
         if inspect.isclass(implementation):
             kwargs["implementation"] = _get_import_path(implementation)
