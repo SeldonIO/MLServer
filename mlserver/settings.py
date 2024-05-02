@@ -111,6 +111,11 @@ class CORSSettings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=ENV_FILE_SETTINGS,
         env_prefix=ENV_PREFIX_SETTINGS,
+        # > For compatibility with pydantic 1.x BaseSettings you
+        # > should use extra=ignore: [1]
+        #
+        # [1] https://docs.pydantic.dev/2.7/concepts/pydantic_settings/#dotenv-env-support  # noqa: E501
+        extra="ignore",
     )
 
     allow_origins: Optional[List[str]] = []
@@ -149,6 +154,11 @@ class Settings(BaseSettings):
         protected_namespaces=(),
         env_file=ENV_FILE_SETTINGS,
         env_prefix=ENV_PREFIX_SETTINGS,
+        # > For compatibility with pydantic 1.x BaseSettings you
+        # > should use extra=ignore: [1]
+        #
+        # [1] https://docs.pydantic.dev/2.7/concepts/pydantic_settings/#dotenv-env-support  # noqa: E501
+        extra="ignore",
     )
 
     debug: bool = True
@@ -310,6 +320,11 @@ class ModelSettings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=ENV_FILE_SETTINGS,
         env_prefix=ENV_PREFIX_SETTINGS,
+        # > For compatibility with pydantic 1.x BaseSettings you
+        # > should use extra=ignore: [1]
+        #
+        # [1] https://docs.pydantic.dev/2.7/concepts/pydantic_settings/#dotenv-env-support  # noqa: E501
+        extra="ignore",
     )
 
     # Source points to the file where model settings were loaded from
