@@ -340,12 +340,27 @@ class ModelSettings(BaseSettings):
 
         return model_settings
 
+    # Custom model class implementation
+    #
+    # NOTE: The `implementation_` attr will only point to the string import.
+    #
+    # The actual import will occur within the `implementation` property - think
+    # of this as a lazy import.
+    #
+    # You should always use `model_settings.implementation` and treat
+    # `implementation_` as a private attr.
+
     @property
     def implementation(self) -> Type["MLModel"]:
+        # If the source is not set, use the path for the model module
         if not self._source:
             return import_string(self.implementation_)  # type: ignore
 
+        # Get a nice path to the model's (disk) location
         model_folder = os.path.dirname(self._source)
+
+        # Temporarily inject the model's module into the Python
+        # system path.
         with _extra_sys_path(model_folder):
             _reload_module(self.implementation_)
             return import_string(self.implementation_)  # type: ignore
@@ -353,6 +368,13 @@ class ModelSettings(BaseSettings):
     @implementation.setter
     def implementation(self, value: Type["MLModel"]):
         self.implementation_ = _get_import_path(value)
+
+    implementation_: str = Field(
+        validation_alias=AliasChoices(
+            "implementation", "MLSERVER_MODEL_IMPLEMENTATION"
+        ),
+        serialization_alias="implementation",
+    )
 
     @property
     def version(self) -> Optional[str]:
@@ -401,20 +423,6 @@ class ModelSettings(BaseSettings):
     max_batch_time: float = 0.0
     """When adaptive batching is enabled, maximum amount of time (in seconds)
     to wait for enough requests to build a full batch."""
-
-    # Custom model class implementation
-    # NOTE: The `implementation_` attr will only point to the string import.
-    # The actual import will occur within the `implementation` property - think
-    # of this as a lazy import.
-    # You should always use `model_settings.implementation` and treat
-    # `implementation_` as a private attr (due to Pydantic - we can't just
-    # prefix the attr with `_`).
-    implementation_: str = Field(
-        validation_alias=AliasChoices(
-            "implementation", "MLSERVER_MODEL_IMPLEMENTATION"
-        ),
-        serialization_alias="implementation",
-    )
 
     """*Python path* to the inference runtime to use to serve this model (e.g.
     ``mlserver_sklearn.SKLearnModel``)."""
