@@ -287,9 +287,9 @@ class ModelParameters(BaseSettings):
     """
 
     model_config = SettingsConfigDict(
-        extra="allow",
         env_file=ENV_FILE_SETTINGS,
-        env_prefix=ENV_PREFIX_SETTINGS,
+        env_prefix=ENV_PREFIX_MODEL_SETTINGS,
+        extra="allow",
     )
 
     uri: Optional[str] = None
@@ -319,7 +319,7 @@ class ModelParameters(BaseSettings):
 class ModelSettings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=ENV_FILE_SETTINGS,
-        env_prefix=ENV_PREFIX_SETTINGS,
+        env_prefix=ENV_PREFIX_MODEL_SETTINGS,
         # > For compatibility with pydantic 1.x BaseSettings you
         # > should use extra=ignore: [1]
         #
