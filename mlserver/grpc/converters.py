@@ -223,7 +223,7 @@ class InferInputTensorConverter:
         return types.RequestInput.construct(
             name=pb_object.name,
             shape=list(pb_object.shape),
-            datatype=Datatype(pb_object.datatype),
+            datatype=pb_object.datatype,
             parameters=ParametersConverter.to_types(pb_object.parameters),
             data=InferTensorContentsConverter.to_types(pb_object.contents),
         )
