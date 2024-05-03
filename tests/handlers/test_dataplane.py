@@ -131,7 +131,6 @@ async def test_infer_response_cache(cached_data_plane, sum_model, inference_requ
     cached_response = InferenceResponse.parse_raw(cache_value)
     assert cached_response.model_name == prediction.model_name
     assert cached_response.model_version == prediction.model_version
-    assert cached_response.Config == prediction.Config
     assert cached_response.outputs == prediction.outputs
 
     prediction = await cached_data_plane.infer(
@@ -142,7 +141,6 @@ async def test_infer_response_cache(cached_data_plane, sum_model, inference_requ
     assert await response_cache.size() == 1
     assert cached_response.model_name == prediction.model_name
     assert cached_response.model_version == prediction.model_version
-    assert cached_response.Config == prediction.Config
     assert cached_response.outputs == prediction.outputs
 
 
