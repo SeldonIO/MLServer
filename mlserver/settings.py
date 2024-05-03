@@ -36,6 +36,7 @@ DEFAULT_PARALLEL_WORKERS = 1
 DEFAULT_ENVIRONMENTS_DIR = os.path.join(os.getcwd(), ".envs")
 DEFAULT_METRICS_DIR = os.path.join(os.getcwd(), ".metrics")
 
+# Conditionally imported due to cyclic dependencies
 if TYPE_CHECKING:
     from ..model import MLModel
 
