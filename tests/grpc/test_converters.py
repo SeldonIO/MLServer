@@ -250,14 +250,16 @@ def test_modelinferresponse_from_types(inference_response, use_raw, expected):
 )
 def test_modelinferresponse_to_types(model_infer_response):
     expected = types.InferenceResponse(
-        id="",
         model_name="foo",
+        model_version=None,
+        id="",
+        parameters=None,
         outputs=[
             types.ResponseOutput(
                 name="input-0",
-                datatype="INT32",
                 shape=[1, 3],
-                parameters=types.Parameters(content_type="np"),
+                datatype="INT32",
+                parameters=types.Parameters(content_type="np", headers=None),
                 data=[1, 2, 3],
             )
         ],
