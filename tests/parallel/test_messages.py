@@ -10,7 +10,9 @@ from mlserver.parallel.messages import (
 from ..fixtures import SumModel
 
 # Used to fill in all the default values
-_dummy_model_settings = ModelSettings(name="foo", implementation=SumModel).model_dump()
+_dummy_model_settings = ModelSettings(name="foo", implementation=SumModel).model_dump(
+    by_alias=True
+)
 
 
 @pytest.mark.parametrize(

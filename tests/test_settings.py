@@ -91,9 +91,9 @@ def test_model_settings_serialisation():
     #
     # > Whether to serialize using field aliases. [2][3]
     #
-    # [1] https://github.com/jesse-c/MLServer/blob/4ac2da1d0dd7aa4b3796c047013b841fffa60e58/mlserver/settings.py#L373-L376
-    # [2]  https://docs.pydantic.dev/latest/api/base_model/#pydantic.BaseModel.model_dump
-    # [3]  https://docs.pydantic.dev/latest/api/base_model/#pydantic.BaseModel.model_dump_json
+    # [1] https://github.com/jesse-c/MLServer/blob/4ac2da1d0dd7aa4b3796c047013b841fffa60e58/mlserver/settings.py#L373-L376  # noqa: E501
+    # [2]  https://docs.pydantic.dev/latest/api/base_model/#pydantic.BaseModel.model_dump  # noqa: E501
+    # [3]  https://docs.pydantic.dev/latest/api/base_model/#pydantic.BaseModel.model_dump_json  # noqa: E501
 
     as_dict = model_settings.model_dump(by_alias=True)
     as_dict["implementation"] == expected

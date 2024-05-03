@@ -30,7 +30,7 @@ def multi_model_folder(model_folder: str, sum_model_settings: ModelSettings) -> 
             model_version_folder, DEFAULT_MODEL_SETTINGS_FILENAME
         )
         with open(model_settings_path, "w") as f:
-            settings_json = sum_model_settings.model_dump_json()
+            settings_json = sum_model_settings.model_dump_json(by_alias=True)
             f.write(settings_json)
 
     return model_folder
