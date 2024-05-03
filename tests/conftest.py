@@ -337,9 +337,9 @@ async def inference_pool_registry(
 @pytest.fixture
 def datatype_error_message():
     error_message = (
-        "value is not a valid enumeration member;"
-        " permitted: 'BOOL', 'UINT8', 'UINT16', 'UINT32',"
+        "Input should be"
+        " 'BOOL', 'UINT8', 'UINT16', 'UINT32',"
         " 'UINT64', 'INT8', 'INT16', 'INT32', 'INT64',"
-        " 'FP16', 'FP32', 'FP64', 'BYTES'"
+        " 'FP16', 'FP32', 'FP64' or 'BYTES'"
     )
     return error_message
