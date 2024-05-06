@@ -25,7 +25,7 @@ PredictMethod = Callable[[InferenceRequest], Awaitable[InferenceResponse]]
 InferencePoolHook = Callable[[Worker], Awaitable[None]]
 
 
-def _spawn_worker(settings: Settings, responses: Queue[ModelResponseMessage], env: Optional[Environment]):
+def _spawn_worker(settings: Settings, responses: Queue, env: Optional[Environment]):
     with env or nullcontext():
         worker = Worker(settings, responses, env)
         worker.start()
@@ -87,7 +87,7 @@ class InferencePool:
         self._worker_registry = WorkerRegistry()
         self._settings = settings
         self._responses: Queue[ModelResponseMessage] = Queue()
-        for idx in range(self._settings.parallel_workers):
+        for _ in range(self._settings.parallel_workers):
             worker = _spawn_worker(self._settings, self._responses, self._env)
             self._workers[worker.pid] = worker  # type: ignore
 

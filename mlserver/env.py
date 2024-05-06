@@ -101,7 +101,7 @@ class Environment:
         return os.path.join(self._env_path, "bin")
 
     @cached_property
-    def _python_path(self) -> str:
+    def _exec_path(self) -> str:
         """
         Path to python executable in our custom environment.
         """
@@ -126,7 +126,7 @@ class Environment:
         self._prev_sys_path = sys.path
         self._prev_bin_path = os.environ["PATH"]
 
-        multiprocessing.set_executable(self._python_path)
+        multiprocessing.set_executable(self._exec_path)
         sys.path = [*self._sys_path, *self._prev_sys_path]
         os.environ["PATH"] = os.pathsep.join([self._bin_path, self._prev_bin_path])
 
