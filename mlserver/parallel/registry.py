@@ -72,7 +72,7 @@ class InferencePoolRegistry:
 
         await self._default_pool.on_worker_stop(pid, exit_code)
         await asyncio.gather(
-            *[pool.on_worker_stop(pid) for pool in self._pools.values()]
+            *[pool.on_worker_stop(pid, exit_code) for pool in self._pools.values()]
         )
 
     async def _get_or_create(self, model: MLModel) -> InferencePool:
