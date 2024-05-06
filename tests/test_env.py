@@ -68,6 +68,10 @@ def test_bin_path(env: Environment):
     assert env._bin_path == f"{env._env_path}/bin"
 
 
+def test_exec_path(env: Environment):
+    assert env._exec_path == f"{env._env_path}/bin/python"
+
+
 def test_activate_env(env: Environment):
     assert env._env_path not in ",".join(sys.path)
     assert env._env_path not in os.environ["PATH"]
@@ -81,6 +85,9 @@ def test_activate_env(env: Environment):
 
         bin_paths = os.environ["PATH"].split(os.pathsep)
         assert bin_paths[0] == env._bin_path
+
+        exec_path = os.path.join(bin_paths[0], "python")
+        assert exec_path == env._exec_path
 
     assert env._env_path not in ",".join(sys.path)
     assert env._env_path not in os.environ["PATH"]

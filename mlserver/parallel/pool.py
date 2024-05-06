@@ -25,7 +25,7 @@ PredictMethod = Callable[[InferenceRequest], Awaitable[InferenceResponse]]
 InferencePoolHook = Callable[[Worker], Awaitable[None]]
 
 
-def _spawn_worker(settings: Settings, responses: Queue, env: Optional[Environment]):
+def spawn_worker(settings: Settings, responses: Queue, env: Optional[Environment]):
     with env or nullcontext():
         worker = Worker(settings, responses, env)
         worker.start()
@@ -88,7 +88,7 @@ class InferencePool:
         self._settings = settings
         self._responses: Queue[ModelResponseMessage] = Queue()
         for _ in range(self._settings.parallel_workers):
-            worker = _spawn_worker(self._settings, self._responses, self._env)
+            worker = spawn_worker(self._settings, self._responses, self._env)
             self._workers[worker.pid] = worker  # type: ignore
 
         self._dispatcher = Dispatcher(self._workers, self._responses)
@@ -131,7 +131,7 @@ class InferencePool:
         await self._start_worker()
 
     async def _start_worker(self) -> Worker:
-        worker = _spawn_worker(self._settings, self._responses, self._env)
+        worker = spawn_worker(self._settings, self._responses, self._env)
         logger.info(f"Starting new worker with PID {worker.pid} on {self.name}...")
 
         # Add to dispatcher so that it can receive load requests and reload all
