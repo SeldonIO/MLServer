@@ -7,7 +7,11 @@ def case_optimum_settings() -> ModelSettings:
         name="foo",
         implementation=HuggingFaceRuntime,
         parameters=ModelParameters(
-            extra={"task": "question-answering", "optimum_model": True}
+            extra={
+                "task": "text-generation",
+                "pretrained_model": "distilgpt2",
+                "optimum_model": True,
+            }
         ),
     )
 
@@ -19,6 +23,7 @@ def case_transformers_settings() -> ModelSettings:
         parameters=ModelParameters(
             extra={
                 "task": "question-answering",
+                "optimum_model": False,
             }
         ),
     )

@@ -3,10 +3,8 @@ from unittest.mock import MagicMock, patch
 import pytest
 import torch
 from typing import Dict, Optional, Union
-from optimum.onnxruntime.modeling_ort import ORTModelForQuestionAnswering
-from transformers.models.distilbert.modeling_distilbert import (
-    DistilBertForQuestionAnswering,
-)
+from optimum.onnxruntime.modeling_decoder import ORTModelForCausalLM
+from transformers.models.gpt2 import GPT2ForQuestionAnswering
 
 from mlserver.settings import ModelSettings, ModelParameters
 
@@ -31,25 +29,32 @@ def test_settings_task_name(envs: Dict[str, str], expected: str):
 
 
 @pytest.mark.parametrize(
-    "optimum_model, expected",
+    "task, optimum_model, model, expected",
     [
         (
+            "text-generation",
             True,
-            ORTModelForQuestionAnswering,
+            "distilgpt2",
+            ORTModelForCausalLM,
         ),
         (
+            "question-answering",
             False,
-            DistilBertForQuestionAnswering,
+            "distilgpt2",
+            GPT2ForQuestionAnswering,
         ),
     ],
 )
 def test_load_pipeline(
+    task: str,
     optimum_model: bool,
-    expected: Union[ORTModelForQuestionAnswering, DistilBertForQuestionAnswering],
+    model: str,
+    expected: Union[ORTModelForCausalLM, GPT2ForQuestionAnswering],
 ):
     hf_settings = HuggingFaceSettings(
-        task="question-answering",
+        task=task,
         optimum_model=optimum_model,
+        pretrained_model=model,
     )
     model_settings = ModelSettings(
         name="foo",
