@@ -145,8 +145,15 @@ def to_v2_inference_request(
             input_name = metadata.inputs[0].name
         if metadata.outputs:
             if not output:
-                default_outputs = [metadata.outputs[0]]
+                default_outputs = [
+                    {
+                        "name": metadata.outputs[0].name,
+                        "parameters": metadata.outputs[0].parameters,
+                    },
+                ]
 
+    print(outputs)
+    print(default_outputs)
     # For List[str] (e.g. AnchorText), we use StringCodec for input
     input_payload_codec = StringCodec if isinstance(input_data, list) else NumpyCodec
     v2_request = InferenceRequest(
