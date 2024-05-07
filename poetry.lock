@@ -703,6 +703,52 @@ files = [
 ]
 
 [[package]]
+name = "catboost"
+version = "1.2.5"
+description = "CatBoost Python Package"
+optional = false
+python-versions = "*"
+files = [
+    {file = "catboost-1.2.5-cp310-cp310-macosx_11_0_universal2.whl", hash = "sha256:d266bcd87e7afa8c8c4cae1dbdb66f9487368ee2c1d2bbcefda0cbff7cb48ac4"},
+    {file = "catboost-1.2.5-cp310-cp310-manylinux2014_aarch64.whl", hash = "sha256:4143449dae1efc2752cbde2537b90611f36716e4e1e6827fc6856d07de16b431"},
+    {file = "catboost-1.2.5-cp310-cp310-manylinux2014_x86_64.whl", hash = "sha256:a92da61e95919b03d611045f0f3373799deec6f8192d7d1211714a21ff0da65e"},
+    {file = "catboost-1.2.5-cp310-cp310-win_amd64.whl", hash = "sha256:ad6ae9387759ca121042db60f4c73014027cb160a9dde1f52d353ca18b471e7c"},
+    {file = "catboost-1.2.5-cp311-cp311-macosx_11_0_universal2.whl", hash = "sha256:68dc17e6850f1ad8256fbbfbfac2c26b7be291c78b0961b135adf3aa6ed503bf"},
+    {file = "catboost-1.2.5-cp311-cp311-manylinux2014_aarch64.whl", hash = "sha256:b6e1617b57deca52c8880ec2439d0fb514d7e9f78479bae8dbfbd2f95bb3b28e"},
+    {file = "catboost-1.2.5-cp311-cp311-manylinux2014_x86_64.whl", hash = "sha256:9e0aac17d1a25e0f67770ba7362c6275db611ebb5dc6179daed84f55c3db976c"},
+    {file = "catboost-1.2.5-cp311-cp311-win_amd64.whl", hash = "sha256:901bf56e43334ce42f45b5c62fab1d8a14d54160b6da0645c798b7b7ad415da1"},
+    {file = "catboost-1.2.5-cp312-cp312-macosx_11_0_universal2.whl", hash = "sha256:82a321ba006abdeae9beb6e53c2d407b0eaaeadb4c1b56de1344f693e7512d08"},
+    {file = "catboost-1.2.5-cp312-cp312-manylinux2014_aarch64.whl", hash = "sha256:4180fe03d110acf44d09df7e3fd8e1ef62bfd3ac22ce90185332f52e24e96ac9"},
+    {file = "catboost-1.2.5-cp312-cp312-manylinux2014_x86_64.whl", hash = "sha256:e1925714d40a2a0d9fd086c33f2a668610c07630201527018f3f17a3d530c464"},
+    {file = "catboost-1.2.5-cp312-cp312-win_amd64.whl", hash = "sha256:f13acbcf2f3639d3d06808428db3207c7d776314041619cc32578927ec752221"},
+    {file = "catboost-1.2.5-cp37-cp37m-macosx_11_0_universal2.whl", hash = "sha256:1d8b06333495a90192618ddc4b0ea15186a35a53f55b7743e4c9758de1bb785d"},
+    {file = "catboost-1.2.5-cp37-cp37m-manylinux2014_aarch64.whl", hash = "sha256:87a556dfdad702d958b2f7bb1b6fc8bee4b1bf9bf3e7736aac3f70cb9522d53a"},
+    {file = "catboost-1.2.5-cp37-cp37m-manylinux2014_x86_64.whl", hash = "sha256:d0db06d11dd9446bcb1cd1417bced0c4f956abe3f50f72df79f1b2b6789a6bde"},
+    {file = "catboost-1.2.5-cp37-cp37m-win_amd64.whl", hash = "sha256:a1149bedba20fff940ece5ddd8e56420ebe26850b23533dfc6e5e4994049d220"},
+    {file = "catboost-1.2.5-cp38-cp38-macosx_11_0_universal2.whl", hash = "sha256:6e3a9bd84c3a92f7cab0a9c3451df21d930f4ebb4716f85513b4feac2b0ef209"},
+    {file = "catboost-1.2.5-cp38-cp38-manylinux2014_aarch64.whl", hash = "sha256:51acfea3bf141d25e3bc43e8dfc505920a8e701cb06c8d4164661a118e3e1178"},
+    {file = "catboost-1.2.5-cp38-cp38-manylinux2014_x86_64.whl", hash = "sha256:6acfc79e2be02b34caa26a339ace52c5991b1d9862dcb94f5ced1bd9ca9a8c18"},
+    {file = "catboost-1.2.5-cp38-cp38-win_amd64.whl", hash = "sha256:dabd1ea1bda91f72792b7f348d0301e637f98251fc4d50b62ffc872721997f47"},
+    {file = "catboost-1.2.5-cp39-cp39-macosx_11_0_universal2.whl", hash = "sha256:ed9521ce617f370dd7f8214f6b5ea2cdb2bfb47a2be0fb19a03b7c9d4399b4d1"},
+    {file = "catboost-1.2.5-cp39-cp39-manylinux2014_aarch64.whl", hash = "sha256:6cd81cb508031cb5feccdecb6f309fc9562b7114bc82fa06c17ffdbdb079198c"},
+    {file = "catboost-1.2.5-cp39-cp39-manylinux2014_x86_64.whl", hash = "sha256:86e05596a5330de7a8376f344079c3333fd3254e4300549654e343703f7315b0"},
+    {file = "catboost-1.2.5-cp39-cp39-win_amd64.whl", hash = "sha256:c75f57b1df9893d67ed8f04c32d5e8fe3d591ee873a94a2ff8279e32549397b0"},
+    {file = "catboost-1.2.5.tar.gz", hash = "sha256:12c31650fa55944e9ab5863d4eef194533914920c358b52a7a7d7b0b855cba9f"},
+]
+
+[package.dependencies]
+graphviz = "*"
+matplotlib = "*"
+numpy = ">=1.16.0"
+pandas = ">=0.24"
+plotly = "*"
+scipy = "*"
+six = "*"
+
+[package.extras]
+widget = ["ipython", "ipywidgets (>=7.0,<9.0)", "traitlets"]
+
+[[package]]
 name = "certifi"
 version = "2024.2.2"
 description = "Python package for providing Mozilla's CA Bundle."
@@ -2074,6 +2120,22 @@ files = [
 graphql-core = ">=3.2,<3.3"
 
 [[package]]
+name = "graphviz"
+version = "0.20.3"
+description = "Simple Python interface for Graphviz"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "graphviz-0.20.3-py3-none-any.whl", hash = "sha256:81f848f2904515d8cd359cc611faba817598d2feaac4027b266aa3eda7b3dde5"},
+    {file = "graphviz-0.20.3.zip", hash = "sha256:09d6bc81e6a9fa392e7ba52135a9d49f1ed62526f96499325930e87ca1b5925d"},
+]
+
+[package.extras]
+dev = ["flake8", "pep8-naming", "tox (>=3)", "twine", "wheel"]
+docs = ["sphinx (>=5,<7)", "sphinx-autodoc-typehints", "sphinx-rtd-theme"]
+test = ["coverage", "pytest (>=7,<8.1)", "pytest-cov", "pytest-mock (>=3)"]
+
+[[package]]
 name = "greenlet"
 version = "3.0.3"
 description = "Lightweight in-process concurrent programming"
@@ -3330,6 +3392,24 @@ pydantic = "2.7.1"
 [package.source]
 type = "directory"
 url = "runtimes/alibi-explain"
+
+[[package]]
+name = "mlserver-catboost"
+version = "1.5.0.dev1"
+description = "Catboost runtime for MLServer"
+optional = false
+python-versions = ">=3.9,<3.12"
+files = []
+develop = true
+
+[package.dependencies]
+catboost = "*"
+joblib = "*"
+mlserver = "*"
+
+[package.source]
+type = "directory"
+url = "runtimes/catboost"
 
 [[package]]
 name = "mlserver-huggingface"
@@ -4595,6 +4675,21 @@ files = [
 [package.extras]
 docs = ["furo (>=2023.9.10)", "proselint (>=0.13)", "sphinx (>=7.2.6)", "sphinx-autodoc-typehints (>=1.25.2)"]
 test = ["appdirs (==1.4.4)", "covdefaults (>=2.3)", "pytest (>=7.4.3)", "pytest-cov (>=4.1)", "pytest-mock (>=3.12)"]
+
+[[package]]
+name = "plotly"
+version = "5.22.0"
+description = "An open-source, interactive data visualization library for Python"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "plotly-5.22.0-py3-none-any.whl", hash = "sha256:68fc1901f098daeb233cc3dd44ec9dc31fb3ca4f4e53189344199c43496ed006"},
+    {file = "plotly-5.22.0.tar.gz", hash = "sha256:859fdadbd86b5770ae2466e542b761b247d1c6b49daed765b95bb8c7063e7469"},
+]
+
+[package.dependencies]
+packaging = "*"
+tenacity = ">=6.2.0"
 
 [[package]]
 name = "pluggy"
@@ -8277,4 +8372,4 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<3.12"
-content-hash = "df28a60ac5cc856ab4838ea107461dc25064dceba02fa5df7a9690f4379c6716"
+content-hash = "b1e3497106501f36372b86a9cac4e8a6b5a302210821fabba21a4620a927eb9c"
