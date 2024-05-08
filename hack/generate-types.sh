@@ -4,6 +4,8 @@ set -Eeuo pipefail
 
 ROOT_FOLDER="$(dirname "${0}")/.."
 
+TARGET="$1"
+
 _generatePB() {
   local apiName=$1
 
@@ -33,8 +35,5 @@ _generatePydantic() {
     --target-python-version 3.6
 }
 
-_generatePB dataplane
-_generatePydantic dataplane
-
-_generatePB model_repository
-_generatePydantic model_repository
+_generatePB "$TARGET"
+_generatePydantic "$TARGET"
