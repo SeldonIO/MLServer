@@ -11,8 +11,10 @@ on:
 jobs:
   generate:
     strategy:
+      fail-fast: false
       matrix:
         python-version: ["3.9", "3.10"]
+        target: ["dataplane", "model-repository"]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -26,10 +28,10 @@ jobs:
           virtualenvs-create: false
       - name: Install dependencies
         run: poetry install --sync --only dev
-      - name: Generate
-        run: make generate
+      - name: Generate ${{ matrix.target }}
+        run: make generate-${{ matrix.target }}
       - name: Check for changes
-        run: git --no-pager diff --exit-code .
+        run: make lint-no-changes
 
   lint:
     strategy:
