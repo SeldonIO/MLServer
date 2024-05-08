@@ -1,4 +1,4 @@
-# seperate file to side step circular dependecy on the decode_str function
+# seperate file to side step circular dependency on the decode_str function
 
 from typing import Any, Union
 import json

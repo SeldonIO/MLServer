@@ -19,11 +19,12 @@ from mlserver.codecs.json import decode_from_bytelike_json_to_dict, encode_to_js
         ),
     ],
 )
-def test_decode_input(input: Union[str, bytes], expected):
+def test_decode_input(input: Union[str, bytes], expected: dict):
     assert expected == decode_from_bytelike_json_to_dict(input)
 
 
 @pytest.mark.parametrize(
+    # input and expected are flipped here for easier CTRL+C / V
     "expected, input",
     [
         (b"{}", dict()),
