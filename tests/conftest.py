@@ -282,6 +282,12 @@ def settings() -> Settings:
 
 
 @pytest.fixture
+def settings_stream() -> Settings:
+    settings_path = os.path.join(TESTDATA_PATH, "settings-stream.json")
+    return Settings.parse_file(settings_path)
+
+
+@pytest.fixture
 def data_plane(
     settings: Settings,
     model_registry: MultiModelRegistry,

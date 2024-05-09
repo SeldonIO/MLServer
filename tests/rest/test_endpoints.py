@@ -166,6 +166,7 @@ async def test_generate(
     assert prediction.outputs[0].data.__root__ == ["What is the capital of France?"]
 
 
+@pytest.mark.parametrize("settings", [lazy_fixture("settings_stream")])
 @pytest.mark.parametrize("sum_model", [lazy_fixture("text_stream_model")])
 async def test_generate_stream(
     rest_client: AsyncClient,
