@@ -1,11 +1,11 @@
 import json
 
-from typing import Any, AsyncIterator
+from typing import Any
 
 from pydantic import BaseModel
 from starlette.responses import JSONResponse as _JSONResponse
 
-from ..codecs.string import encode_str, decode_str
+from ..codecs.string import decode_str
 
 try:
     import orjson

@@ -23,7 +23,7 @@ from mlserver.types import (
     ResponseOutput,
     Parameters,
 )
-from mlserver.codecs import NumpyRequestCodec, NumpyCodec, decode_args, StringCodec
+from mlserver.codecs import NumpyCodec, decode_args, StringCodec
 from mlserver.handlers.custom import custom_handler
 from mlserver.errors import MLServerError
 

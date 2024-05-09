@@ -105,6 +105,6 @@ def test_model_settings_serialisation():
 
 def test_model_settings_streaming(caplog):
     with pytest.raises(ValueError) as err:
-        settings = Settings(parallel_workers=2, streaming_enabled=True)
+        _ = Settings(parallel_workers=2, streaming_enabled=True)
 
     assert "Streaming is not supported with `parallel_workers' > 0" in str(err.value)

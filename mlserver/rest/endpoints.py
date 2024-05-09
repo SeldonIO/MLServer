@@ -1,9 +1,8 @@
 from fastapi.requests import Request
 from fastapi.responses import Response, HTMLResponse, StreamingResponse
 from fastapi.openapi.docs import get_swagger_ui_html
-from sse_starlette.sse import EventSourceResponse
 
-from typing import Any, AsyncIterator, Coroutine, Optional, Union
+from typing import AsyncIterator, Optional
 
 from ..types import (
     MetadataModelResponse,
@@ -137,14 +136,14 @@ class Endpoints:
 
 async def _as_sse(
     infer_stream: AsyncIterator[InferenceResponse],
-) -> AsyncIterator[ServerSentEvent]:
+) -> AsyncIterator[bytes]:
     """
     Helper to convert all the responses coming out of a generator to a
     Server-Sent Event object.
     """
     async for inference_response in infer_stream:
         # TODO: How should we send headers back?
-        response_headers = extract_headers(inference_response)
+        # response_headers = extract_headers(inference_response)
         yield ServerSentEvent(inference_response).encode()
 
 

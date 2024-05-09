@@ -15,7 +15,7 @@ from .utils import to_headers, to_metadata, handle_mlserver_error
 from ..utils import insert_headers, extract_headers
 from ..handlers import DataPlane, ModelRepositoryHandlers
 from ..types import InferenceResponse
-from typing import AsyncIterator, Any, Optional, List
+from typing import AsyncIterator
 
 
 class InferenceServicer(GRPCInferenceServiceServicer):

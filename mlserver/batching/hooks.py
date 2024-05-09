@@ -1,5 +1,5 @@
 from functools import wraps
-from typing import Awaitable, Callable, Optional, AsyncIterable
+from typing import Awaitable, Callable, Optional, AsyncIterator
 
 from ..errors import MLServerError
 from ..model import MLModel
@@ -55,7 +55,7 @@ def adaptive_batching(f: Callable[[InferenceRequest], Awaitable[InferenceRespons
 
 
 def not_implemented_warning(
-    f: Callable[[AsyncIterable[InferenceResponse]], AsyncIterable[InferenceResponse]],
+    f: Callable[[AsyncIterator[InferenceRequest]], AsyncIterator[InferenceResponse]],
 ):
     """
     Decorator to lets users know that adaptive batching is not required on
@@ -69,8 +69,8 @@ def not_implemented_warning(
 
     @wraps(f)
     async def _inner_stream(
-        payload: InferenceRequest,
-    ) -> AsyncIterable[InferenceResponse]:
+        payload: AsyncIterator[InferenceRequest],
+    ) -> AsyncIterator[InferenceResponse]:
         model = _get_model(f)
         logger.warning(
             warning_template.format(model_name=model.name, f_name=f.__name__)
