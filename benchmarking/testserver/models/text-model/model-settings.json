@@ -3,7 +3,6 @@
 
   "implementation": "models.TextModel",
   
-  "parallel_workers": 0,
   "versions": ["text-model/v1.2.3"],
   "platform": "mlserver",
   "inputs": [

@@ -1,7 +1,6 @@
 import asyncio
 from typing import AsyncIterator
 from mlserver import MLModel
-from mlserver.handlers.custom import custom_handler
 from mlserver.types import InferenceRequest, InferenceResponse
 from mlserver.codecs import StringCodec
 

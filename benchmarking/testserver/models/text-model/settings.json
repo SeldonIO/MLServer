@@ -1,0 +1,5 @@
+{
+  "debug": false,
+  "streaming_enabled": true,
+  "parallel_workers": 0
+}
