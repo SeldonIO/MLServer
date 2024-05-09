@@ -79,16 +79,6 @@ def create_app(
             endpoints.infer,
             methods=["POST"],
         ),
-        APIRoute(
-            "/v2/models/{model_name}/infer_stream",
-            endpoints.infer_stream,
-            methods=["POST"],
-        ),
-        APIRoute(
-            "/v2/models/{model_name}/versions/{model_version}/infer_stream",
-            endpoints.infer_stream,
-            methods=["POST"],
-        ),
         # Model generate
         APIRoute(
             "/v2/models/{model_name}/generate",
@@ -166,6 +156,16 @@ def create_app(
 
     if settings.streaming_enabled:
         routes += [
+            APIRoute(
+                "/v2/models/{model_name}/infer_stream",
+                endpoints.infer_stream,
+                methods=["POST"],
+            ),
+            APIRoute(
+                "/v2/models/{model_name}/versions/{model_version}/infer_stream",
+                endpoints.infer_stream,
+                methods=["POST"],
+            ),
             APIRoute(
                 "/v2/models/{model_name}/generate_stream",
                 endpoints.infer_stream,
