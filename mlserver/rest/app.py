@@ -99,16 +99,6 @@ def create_app(
             endpoints.infer,
             methods=["POST"],
         ),
-        APIRoute(
-            "/v2/models/{model_name}/generate_stream",
-            endpoints.infer_stream,
-            methods=["POST"],
-        ),
-        APIRoute(
-            "/v2/models/{model_name}/versions/{model_version}/generate_stream",
-            endpoints.infer_stream,
-            methods=["POST"],
-        ),
         # Model metadata
         APIRoute(
             "/v2/models/{model_name}",
@@ -173,6 +163,20 @@ def create_app(
         ),
     ]
 
+    if settings.streaming_enabled:
+        routes += [
+            APIRoute(
+                "/v2/models/{model_name}/generate_stream",
+                endpoints.infer_stream,
+                methods=["POST"],
+            ),
+            APIRoute(
+                "/v2/models/{model_name}/versions/{model_version}/generate_stream",
+                endpoints.infer_stream,
+                methods=["POST"],
+            ),
+        ]
+
     app = FastAPI(
         debug=settings.debug,
         routes=routes,  # type: ignore
@@ -198,8 +202,11 @@ def create_app(
         )
 
     app.router.route_class = APIRoute
-    # TODO: Fix this
-    # app.add_middleware(GZipMiddleware)
+
+    if not settings.streaming_enabled:
+        # GZip middleware does not work with streaming
+        # see here: https://github.com/encode/starlette/issues/20#issuecomment-704106436
+        app.add_middleware(GZipMiddleware)
 
     if settings.cors_settings is not None:
         app.add_middleware(

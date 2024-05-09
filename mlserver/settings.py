@@ -277,6 +277,10 @@ class Settings(BaseSettings):
     cache_size: int = 100
     """Cache size to be used if caching is enabled."""
 
+    streaming_enabled: bool = False
+    """Enable streaming for the model predictions. Note that this will
+    deactivate some middleware."""
+
 
 class ModelParameters(BaseSettings):
     """
