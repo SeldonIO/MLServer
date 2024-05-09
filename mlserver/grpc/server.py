@@ -68,11 +68,14 @@ class GRPCServer:
                 )
             )
 
+        if self._settings.streaming_enabled:
+            logger.warning("Interceptors are not enabled while streaming.")
+            interceptors = []
+
         self._server = aio.server(
             ThreadPoolExecutor(max_workers=DefaultGrpcWorkers),
-            # TODO: Fix this
-            # interceptors=tuple(interceptors),
-            # options=self._get_options(),
+            interceptors=tuple(interceptors),
+            options=self._get_options(),
         )
 
         add_GRPCInferenceServiceServicer_to_server(

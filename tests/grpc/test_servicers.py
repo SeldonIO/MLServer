@@ -81,6 +81,7 @@ async def test_model_infer(
     assert prediction.outputs[0].contents == expected
 
 
+@pytest.mark.parametrize("settings", [lazy_fixture("settings_stream")])
 @pytest.mark.parametrize(
     "sum_model_settings", [lazy_fixture("text_stream_model_settings")]
 )
