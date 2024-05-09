@@ -1866,7 +1866,7 @@ fastapi = ">=0.88.0,!=0.89.0,<=0.110.0"
 gevent = "*"
 geventhttpclient = "*"
 grpcio = "*"
-importlib-resources = ">=5.12,<7.0"
+importlib-resources = "^5.12.0"
 numpy = "*"
 opentelemetry-exporter-otlp-proto-grpc = "^1.22.0"
 opentelemetry-instrumentation-fastapi = ">=0.43b0"
@@ -1880,7 +1880,6 @@ pydantic = "2.7.1"
 pydantic-settings = "2.2.1"
 python-dotenv = "*"
 python-multipart = "*"
-sse-starlette = "^1.6.1"
 starlette-exporter = "*"
 tritonclient = {version = ">=2.42", extras = ["http"]}
 uvicorn = "*"
@@ -3383,23 +3382,6 @@ files = [
 [package.extras]
 dev = ["build", "hatch"]
 doc = ["sphinx"]
-
-[[package]]
-name = "sse-starlette"
-version = "1.8.2"
-description = "SSE plugin for Starlette"
-optional = false
-python-versions = ">=3.8"
-files = [
-    {file = "sse_starlette-1.8.2-py3-none-any.whl", hash = "sha256:70cc7ef5aca4abe8a25dec1284cce4fe644dd7bf0c406d3e852e516092b7f849"},
-    {file = "sse_starlette-1.8.2.tar.gz", hash = "sha256:e0f9b8dec41adc092a0a6e0694334bd3cfd3084c44c497a6ebc1fb4bdd919acd"},
-]
-
-[package.dependencies]
-anyio = "*"
-fastapi = "*"
-starlette = "*"
-uvicorn = "*"
 
 [[package]]
 name = "starlette"
