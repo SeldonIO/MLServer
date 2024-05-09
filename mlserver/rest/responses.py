@@ -4,7 +4,6 @@ from typing import Any, AsyncIterator
 
 from pydantic import BaseModel
 from starlette.responses import JSONResponse as _JSONResponse
-from sse_starlette import ServerSentEvent as _ServerSentEvent
 
 from ..codecs.string import encode_str, decode_str
 
@@ -36,13 +35,13 @@ class Response(_JSONResponse):
         return _render(content)
 
 
-class ServerSentEvent(_ServerSentEvent):
+class ServerSentEvent:
     def __init__(self, data: BaseModel, *args, **kwargs):
-        super().__init__(data, *args, **kwargs)
         # NOTE: SSE should use `\n\n` as separator
         # https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events#event_stream_format
         self._sep = b"\n\n"
         self._pre = b"data: "
+        self.data = data
 
     def encode(self) -> bytes:
         as_dict = self.data.dict()
