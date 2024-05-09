@@ -321,10 +321,10 @@ def test_encode_request(
                 inputs=[
                     RequestInput(
                         name="a",
-                        data=[1, 2, 3],
-                        datatype="FP32",
-                        shape=[1, 3],
-                        parameters=Parameters(_decoded_payload=np.array([[1, 2, 3]])),
+                        data=[[1, 2, 3]],
+                        datatype="BYTES",
+                        shape=[1, 1],
+                        parameters=Parameters(_decoded_payload=[[1, 2, 3]]),
                     ),
                     RequestInput(
                         name="b",
@@ -335,7 +335,7 @@ def test_encode_request(
                     ),
                 ]
             ),
-            pd.DataFrame({"a": [np.array([1, 2, 3])], "b": ["hello world"]}),
+            pd.DataFrame({"a": [[1, 2, 3]], "b": ["hello world"]}),
         ),
         (
             InferenceRequest(
@@ -343,7 +343,7 @@ def test_encode_request(
                     RequestInput(
                         name="a",
                         data=[1, 2, 3],
-                        datatype="FP32",
+                        datatype="INT64",
                         shape=[3, 1],
                         parameters=Parameters(
                             _decoded_payload=np.array([[1], [2], [3]])
@@ -359,7 +359,7 @@ def test_encode_request(
             ),
             pd.DataFrame(
                 {
-                    "a": [[1], [2], [3]],
+                    "a": [1, 2, 3],
                     "b": [a for a in b"ABC"],
                 }
             ),
