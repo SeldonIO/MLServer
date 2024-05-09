@@ -14,11 +14,15 @@ from mlserver.model import MLModel
 from .fixtures import TextModel, TextStreamModel
 
 
-async def test_generate_stream_fallback(
+async def stream_generator(generate_request):
+    yield generate_request
+
+
+async def test_predict_stream_fallback(
     text_model: TextModel,
     generate_request: InferenceRequest,
 ):
-    generator = text_model.generate_stream(generate_request)
+    generator = text_model.predict_stream(stream_generator(generate_request))
     assert inspect.isasyncgen(generator)
 
     responses = []
@@ -29,11 +33,11 @@ async def test_generate_stream_fallback(
     assert len(responses[0].outputs) > 0
 
 
-async def test_generate_stream(
+async def test_predict_stream(
     text_stream_model: TextStreamModel,
     generate_request: InferenceRequest,
 ):
-    generator = text_stream_model.generate_stream(generate_request)
+    generator = text_stream_model.predict_stream(stream_generator(generate_request))
     assert inspect.isasyncgen(generator)
 
     responses = []

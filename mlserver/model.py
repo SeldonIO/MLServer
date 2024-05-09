@@ -90,7 +90,7 @@ class MLModel:
         **This method can be overriden to implement your custom inference
         logic.**
         """
-        raise NotImplementedError("predict_stream() method not implemented")
+        yield await self.predict((await payloads.__anext__()))
 
     async def unload(self) -> bool:
         """
