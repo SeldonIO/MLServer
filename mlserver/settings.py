@@ -281,6 +281,16 @@ class Settings(BaseSettings):
     """Enable streaming for the model predictions. Note that this will
     deactivate some middleware."""
 
+    @root_validator
+    def streaming_validator(cls, values: Dict[str, Any]) -> Dict[str, Any]:
+        if values["streaming_enabled"] and values["parallel_workers"] > 0:
+            raise ValueError(
+                "Streaming is not supported with `parallel_workers' > 0."
+                "Set `parallel_workers=0` when `streaming_enabled=True`."
+            )
+
+        return values
+
 
 class ModelParameters(BaseSettings):
     """
