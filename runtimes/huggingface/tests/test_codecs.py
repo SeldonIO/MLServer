@@ -44,7 +44,7 @@ def test_decode_request(inference_request, expected):
             {"foo": ["bar1", "bar2"], "foo2": ["var1"]},
             True,
             InferenceRequest(
-                parameters=Parameters(content_type="str"),
+                parameters=Parameters(content_type="hf"),
                 inputs=[
                     RequestInput(
                         name="foo",
@@ -68,7 +68,7 @@ def test_decode_request(inference_request, expected):
             False,
             InferenceRequest(
                 model_name="my-model",
-                parameters=Parameters(content_type="str"),
+                parameters=Parameters(content_type="hf"),
                 inputs=[
                     RequestInput(
                         name="foo",
@@ -135,10 +135,10 @@ def test_decode_response(inference_response, expected):
                 model_name="my-model",
                 outputs=[
                     ResponseOutput(
-                        name="output_0",
-                        shape=[1],
+                        name="output",
+                        shape=[1, 1],
                         datatype="BYTES",
-                        parameters=Parameters(content_type="hg_json"),
+                        parameters=Parameters(content_type="hg_jsonlist"),
                         data=[b'{"foo": ["bar1", "bar2"], "foo2": ["var1"]}'],
                     )
                 ],
@@ -151,11 +151,11 @@ def test_decode_response(inference_response, expected):
                 model_name="my-model",
                 outputs=[
                     ResponseOutput(
-                        name="output_0",
-                        shape=[1],
+                        name="output",
+                        shape=[1, 1],
                         datatype="BYTES",
-                        parameters=Parameters(content_type="hg_json"),
-                        data=['{"foo": ["bar1", "bar2"], "foo2": ["var1"]}'],
+                        parameters=Parameters(content_type="hg_jsonlist"),
+                        data=[b'{"foo": ["bar1", "bar2"], "foo2": ["var1"]}'],
                     )
                 ],
             ),
