@@ -12,6 +12,7 @@ from .endpoints import Endpoints, ModelRepositoryEndpoints
 from .requests import Request
 from .responses import Response
 from .errors import _EXCEPTION_HANDLERS
+from .logging import logger
 
 from ..settings import Settings
 from ..handlers import DataPlane, ModelRepositoryHandlers
@@ -206,6 +207,7 @@ def create_app(
     if not settings.streaming_enabled:
         # GZip middleware does not work with streaming
         # see here: https://github.com/encode/starlette/issues/20#issuecomment-704106436
+        logger.warning("GZip middleware is not enabled while streaming.")
         app.add_middleware(GZipMiddleware)
 
     if settings.cors_settings is not None:
