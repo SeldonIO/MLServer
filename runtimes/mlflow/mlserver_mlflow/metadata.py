@@ -46,7 +46,7 @@ def _get_shape(input_spec: InputSpec) -> List[int]:
     if isinstance(input_spec, TensorSpec):
         return list(input_spec.shape)
 
-    return [-1]
+    return [-1, 1]
 
 
 def to_metadata_tensors(
