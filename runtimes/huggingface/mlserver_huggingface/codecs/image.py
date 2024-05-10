@@ -54,7 +54,7 @@ class PILImageCodec(InputCodec):
 
     @classmethod
     def decode_output(cls, response_output: ResponseOutput) -> List["Image.Image"]:
-        packed = response_output.data.__root__
+        packed = response_output.data.root
         return list(map(_pil_base64decode, as_list(packed)))
 
     @classmethod
@@ -74,5 +74,5 @@ class PILImageCodec(InputCodec):
 
     @classmethod
     def decode_input(cls, request_input: RequestInput) -> List["Image.Image"]:
-        packed = request_input.data.__root__
+        packed = request_input.data.root
         return list(map(_pil_base64decode, as_list(packed)))

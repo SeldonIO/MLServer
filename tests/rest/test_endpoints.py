@@ -7,6 +7,7 @@ from mlserver.types import (
     InferenceResponse,
     MetadataServerResponse,
     MetadataModelResponse,
+    TensorData,
 )
 from mlserver.cloudevents import (
     CLOUDEVENTS_HEADER_SPECVERSION_DEFAULT,
@@ -39,7 +40,7 @@ async def test_metadata(rest_client):
     endpoint = "/v2"
     response = await rest_client.get(endpoint)
 
-    metadata = MetadataServerResponse.parse_obj(response.json())
+    metadata = MetadataServerResponse.model_validate(response.json())
 
     assert metadata.name == "mlserver"
     assert metadata.version == __version__
@@ -66,7 +67,7 @@ async def test_model_metadata(rest_client, sum_model_settings):
     endpoint = f"v2/models/{sum_model_settings.name}"
     response = await rest_client.get(endpoint)
 
-    metadata = MetadataModelResponse.parse_obj(response.json())
+    metadata = MetadataModelResponse.model_validate(response.json())
 
     assert metadata.name == sum_model_settings.name
     assert metadata.platform == sum_model_settings.platform
@@ -116,13 +117,13 @@ async def test_infer(
     endpoint = f"/v2/models/{model_name}/infer"
     if model_version is not None:
         endpoint = f"/v2/models/{model_name}/versions/{model_version}/infer"
-    response = await rest_client.post(endpoint, json=inference_request.dict())
+    response = await rest_client.post(endpoint, json=inference_request.model_dump())
 
     assert response.status_code == 200
 
-    prediction = InferenceResponse.parse_obj(response.json())
+    prediction = InferenceResponse.model_validate(response.json())
     assert len(prediction.outputs) == 1
-    assert prediction.outputs[0].data.__root__ == [6]
+    assert prediction.outputs[0].data == TensorData(root=[6])
 
 
 async def test_infer_headers(
@@ -132,7 +133,7 @@ async def test_infer_headers(
 ):
     endpoint = f"/v2/models/{sum_model_settings.name}/infer"
     response = await rest_client.post(
-        endpoint, json=inference_request.dict(), headers={"x-foo": "bar"}
+        endpoint, json=inference_request.model_dump(), headers={"x-foo": "bar"}
     )
 
     assert response.status_code == 200
@@ -148,7 +149,7 @@ async def test_infer_headers(
 
 async def test_infer_error(rest_client, inference_request):
     endpoint = "/v2/models/my-model/versions/v0/infer"
-    response = await rest_client.post(endpoint, json=inference_request.dict())
+    response = await rest_client.post(endpoint, json=inference_request.model_dump())
 
     assert response.status_code == 404
     assert response.json()["error"] == "Model my-model with version v0 not found"
@@ -156,7 +157,9 @@ async def test_infer_error(rest_client, inference_request):
 
 async def test_model_repository_index(rest_client, repository_index_request):
     endpoint = "/v2/repository/index"
-    response = await rest_client.post(endpoint, json=repository_index_request.dict())
+    response = await rest_client.post(
+        endpoint, json=repository_index_request.model_dump()
+    )
 
     assert response.status_code == 200
 

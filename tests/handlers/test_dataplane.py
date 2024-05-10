@@ -3,7 +3,7 @@ import uuid
 
 from mlserver.errors import ModelNotReady
 from mlserver.settings import ModelSettings, ModelParameters
-from mlserver.types import MetadataTensor, InferenceResponse
+from mlserver.types import MetadataTensor, InferenceResponse, TensorData
 
 from ..fixtures import SumModel
 
@@ -93,7 +93,7 @@ async def test_infer(data_plane, sum_model, inference_request):
     )
 
     assert len(prediction.outputs) == 1
-    assert prediction.outputs[0].data.__root__ == [6]
+    assert prediction.outputs[0].data == TensorData(root=[6])
 
 
 async def test_infer_error_not_ready(data_plane, sum_model, inference_request):
@@ -117,7 +117,7 @@ async def test_infer_generates_uuid(data_plane, sum_model, inference_request):
 
 
 async def test_infer_response_cache(cached_data_plane, sum_model, inference_request):
-    cache_key = inference_request.json()
+    cache_key = inference_request.model_dump_json()
     payload = inference_request.copy(deep=True)
     prediction = await cached_data_plane.infer(
         payload=payload, name=sum_model.name, version=sum_model.version
@@ -131,7 +131,6 @@ async def test_infer_response_cache(cached_data_plane, sum_model, inference_requ
     cached_response = InferenceResponse.parse_raw(cache_value)
     assert cached_response.model_name == prediction.model_name
     assert cached_response.model_version == prediction.model_version
-    assert cached_response.Config == prediction.Config
     assert cached_response.outputs == prediction.outputs
 
     prediction = await cached_data_plane.infer(
@@ -142,7 +141,6 @@ async def test_infer_response_cache(cached_data_plane, sum_model, inference_requ
     assert await response_cache.size() == 1
     assert cached_response.model_name == prediction.model_name
     assert cached_response.model_version == prediction.model_version
-    assert cached_response.Config == prediction.Config
     assert cached_response.outputs == prediction.outputs
 
 

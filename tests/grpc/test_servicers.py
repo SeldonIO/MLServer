@@ -199,4 +199,10 @@ async def test_infer_invalid_datatype_error(
             model_infer_request_invalid_datatype
         )
 
-    assert exc_info.value.details() == "'INT322' is not a valid Datatype"
+    assert exc_info.value.details() == (
+        "1 validation error for RequestInput\ndatatype\n  Input should be "
+        "'BOOL', 'UINT8', 'UINT16', 'UINT32', 'UINT64', 'INT8', 'INT16', "
+        "'INT32', 'INT64', 'FP16', 'FP32', 'FP64' or 'BYTES' [type=enum, "
+        "input_value='INT322', input_type=str]\n    For further "
+        "information visit https://errors.pydantic.dev/2.7/v/enum"
+    )

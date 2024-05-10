@@ -15,7 +15,7 @@ import orjson
 from time import perf_counter as timer
 from typing import Dict, List, Optional, Tuple
 
-from pydantic.error_wrappers import ValidationError
+from pydantic import ValidationError
 
 from mlserver.batching.requests import BatchedRequests
 from mlserver.types import InferenceRequest, InferenceResponse, Parameters
@@ -201,7 +201,7 @@ def preprocess_items(
     invalid_inputs = []
     for item in items:
         try:
-            inference_request = InferenceRequest.parse_obj(orjson.loads(item.item))
+            inference_request = InferenceRequest.model_validate(orjson.loads(item.item))
             # try to use `id` from the input file to identify each request in the batch
             if inference_request.id is None:
                 inference_request.id = generate_uuid()
@@ -247,7 +247,8 @@ def postprocess_items(
 
         output_items.append(
             BatchOutputItem(
-                index=item_indices[item_id], item=inference_response.json().encode()
+                index=item_indices[item_id],
+                item=inference_response.model_dump_json().encode(),
             )
         )
     return output_items

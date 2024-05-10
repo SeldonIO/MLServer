@@ -33,7 +33,7 @@ class HuggingfaceSingleJSONCodec(InputCodec):
 
     @classmethod
     def decode_output(cls, response_output: ResponseOutput) -> Dict[Any, Any]:
-        packed = response_output.data.__root__
+        packed = response_output.data
         return json_decode(packed[0])
 
     @classmethod
@@ -53,5 +53,5 @@ class HuggingfaceSingleJSONCodec(InputCodec):
 
     @classmethod
     def decode_input(cls, request_input: RequestInput) -> List[bytes]:
-        packed = request_input.data.__root__
+        packed = request_input.data
         return json_decode(packed[0])

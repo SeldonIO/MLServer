@@ -4,7 +4,7 @@ from typing import Any, Optional, Type, Union, List
 
 import numpy as np
 import requests
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from mlserver.codecs import StringCodec, NumpyCodec
 from mlserver.types import (
@@ -56,7 +56,7 @@ def remote_predict(
         verify = ssl_verify_path
     response_raw = requests.post(
         predictor_url,
-        json=v2_payload.dict(),
+        json=v2_payload.model_dump(),
         headers={SELDON_SKIP_LOGGING_HEADER: "true"},
         verify=verify,
     )
@@ -86,17 +86,18 @@ class AlibiExplainSettings(BaseSettings):
     Parameters that apply only to alibi explain models
     """
 
-    class Config:
-        env_prefix = ENV_PREFIX_ALIBI_EXPLAIN_SETTINGS
+    model_config = SettingsConfigDict(
+        env_prefix=ENV_PREFIX_ALIBI_EXPLAIN_SETTINGS,
+    )
 
     infer_uri: str
     explainer_type: str
     explainer_batch: Optional[bool] = False
     # In cases where the inference model can output multiple fields and
     # we are interested in a specific field for explanation
-    infer_output: Optional[str]
-    init_parameters: Optional[dict]
-    ssl_verify_path: Optional[str]
+    infer_output: Optional[str] = None
+    init_parameters: Optional[dict] = None
+    ssl_verify_path: Optional[str] = None
 
 
 def import_and_get_class(class_path: str) -> type:
@@ -144,8 +145,15 @@ def to_v2_inference_request(
             input_name = metadata.inputs[0].name
         if metadata.outputs:
             if not output:
-                default_outputs = [metadata.outputs[0]]
+                default_outputs = [
+                    {
+                        "name": metadata.outputs[0].name,
+                        "parameters": metadata.outputs[0].parameters,
+                    },
+                ]
 
+    print(outputs)
+    print(default_outputs)
     # For List[str] (e.g. AnchorText), we use StringCodec for input
     input_payload_codec = StringCodec if isinstance(input_data, list) else NumpyCodec
     v2_request = InferenceRequest(

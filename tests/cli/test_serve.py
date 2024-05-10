@@ -20,7 +20,7 @@ async def test_disable_load_models(settings: Settings, model_folder: str):
 
     settings_path = os.path.join(model_folder, DEFAULT_SETTINGS_FILENAME)
     with open(settings_path, "w") as settings_file:
-        settings_file.write(settings.json())
+        settings_file.write(settings.model_dump_json())
 
     _, models_settings = await load_settings(model_folder)
 

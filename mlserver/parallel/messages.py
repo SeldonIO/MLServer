@@ -2,7 +2,7 @@ import json
 
 from asyncio import CancelledError
 from enum import IntEnum
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Any, Dict, List, Optional, Union
 
 from ..utils import generate_uuid
@@ -15,6 +15,10 @@ class ModelUpdateType(IntEnum):
 
 
 class Message(BaseModel):
+    model_config = ConfigDict(
+        protected_namespaces=(),
+    )
+
     id: str = Field(default_factory=generate_uuid)
 
 
@@ -27,12 +31,12 @@ class ModelRequestMessage(Message):
 
 
 class ModelResponseMessage(Message):
-    class Config:
-        # This is to allow having an Exception field
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(
+        arbitrary_types_allowed=True,
+    )
 
-    return_value: Optional[Any]
-    exception: Optional[Union[Exception, CancelledError]]
+    return_value: Optional[Any] = None
+    exception: Optional[Union[Exception, CancelledError]] = None
 
 
 class ModelUpdateMessage(Message):
@@ -42,7 +46,7 @@ class ModelUpdateMessage(Message):
     def __init__(self, *args, **kwargs):
         model_settings = kwargs.pop("model_settings", None)
         if model_settings:
-            as_dict = model_settings.dict()
+            as_dict = model_settings.model_dump(by_alias=True)
             # Ensure the private `_source` attr also gets serialised
             if model_settings._source:
                 as_dict["_source"] = model_settings._source

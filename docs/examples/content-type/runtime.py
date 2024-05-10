@@ -36,7 +36,7 @@ class PillowCodec(InputCodec):
             image_array = super().decode_input(input_or_output)  # type: ignore
             return Image.fromarray(image_array, mode=cls.DefaultMode)
 
-        encoded = input_or_output.data.__root__
+        encoded = input_or_output.data
         if isinstance(encoded, str):
             encoded = encoded.encode()
 

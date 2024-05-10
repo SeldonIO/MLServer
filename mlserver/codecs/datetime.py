@@ -67,7 +67,7 @@ class DatetimeCodec(InputCodec):
 
     @classmethod
     def decode_output(cls, response_output: ResponseOutput) -> List[datetime]:
-        packed = response_output.data.__root__
+        packed = response_output.data.root
 
         return list(map(_decode_datetime, as_list(packed)))
 
@@ -86,6 +86,6 @@ class DatetimeCodec(InputCodec):
 
     @classmethod
     def decode_input(cls, request_input: RequestInput) -> List[datetime]:
-        packed = request_input.data.__root__
+        packed = request_input.data.root
 
         return list(map(_decode_datetime, as_list(packed)))

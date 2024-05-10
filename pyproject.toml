@@ -62,7 +62,8 @@ gevent = "*"
 aiofiles = "*"
 orjson = "*"
 uvloop = {version = "*", markers = "sys_platform != 'win32' and (sys_platform != 'cygwin' and platform_python_implementation != 'PyPy')"}
-pydantic = "<2.0.0"
+pydantic = "2.7.1"
+pydantic-settings = "2.2.1"
 python-multipart = "*"
 
 ## The importlib-resources backport is required to use some
@@ -119,6 +120,7 @@ mlserver-mlflow = {path = "./runtimes/mlflow", develop = true}
 mlserver-huggingface = {path = "./runtimes/huggingface", develop = true}
 mlserver-alibi-explain = {path = "./runtimes/alibi-explain", develop = true}
 mlserver-alibi-detect = {path = "./runtimes/alibi-detect", develop = true}
+mlserver-catboost = {path = "./runtimes/catboost", develop = true}
 
 [tool.poetry.group.all-runtimes-dev]
 optional = true
@@ -147,7 +149,7 @@ sphinx_material = "0.0.36"
 readthedocs-sphinx-search = "0.3.2"
 myst-parser = "2.0.0"
 sphinxcontrib-bibtex = "2.5.0"
-autodoc_pydantic = "1.9.0"
+autodoc_pydantic = "2.2.0"
 sphinx-click = "5.1.0"
 sphinx_design = "0.4.1"
 sphinx-autobuild = "2024.4.16"

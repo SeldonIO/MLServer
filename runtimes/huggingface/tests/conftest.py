@@ -2,7 +2,6 @@ import pytest
 import asyncio
 
 from mlserver.utils import install_uvloop_event_loop
-from mlserver.types import InferenceRequest, RequestInput
 
 
 # test a prediction spend long time, so add this command argument to enable test tasks
@@ -20,23 +19,3 @@ def event_loop():
     loop = asyncio.get_event_loop()
     yield loop
     loop.close()
-
-
-@pytest.fixture
-def inference_request() -> InferenceRequest:
-    return InferenceRequest(
-        inputs=[
-            RequestInput(
-                name="question",
-                shape=[1],
-                datatype="BYTES",
-                data=["what is your name?"],
-            ),
-            RequestInput(
-                name="context",
-                shape=[1],
-                datatype="BYTES",
-                data=["Hello, I am Seldon, how is it going"],
-            ),
-        ]
-    )

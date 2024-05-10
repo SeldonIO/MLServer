@@ -19,7 +19,10 @@ from mlserver.rest.responses import Response
                 "datatype": "FP64",
                 "shape": [1, 1],
                 "data": [21.0],
-                "parameters": {"content_type": NumpyCodec.ContentType},
+                "parameters": {
+                    "content_type": NumpyCodec.ContentType,
+                    "headers": None,
+                },
             },
         ),
         (
@@ -30,7 +33,10 @@ from mlserver.rest.responses import Response
                 "datatype": "BYTES",
                 "shape": [2, 1],
                 "data": ["\x01\x02"],
-                "parameters": {"content_type": NumpyCodec.ContentType},
+                "parameters": {
+                    "content_type": NumpyCodec.ContentType,
+                    "headers": None,
+                },
             },
         ),
         (
@@ -41,7 +47,10 @@ from mlserver.rest.responses import Response
                 "datatype": "BYTES",
                 "shape": [3, 1],
                 "data": ["hey", "what's", "up"],
-                "parameters": {"content_type": StringCodec.ContentType},
+                "parameters": {
+                    "content_type": StringCodec.ContentType,
+                    "headers": None,
+                },
             },
         ),
         (
@@ -49,10 +58,13 @@ from mlserver.rest.responses import Response
             Base64Codec,
             {
                 "name": "output-0",
-                "datatype": "BYTES",
                 "shape": [1, 1],
+                "datatype": "BYTES",
                 "data": ["UHl0aG9uIGlzIGZ1bg=="],
-                "parameters": {"content_type": Base64Codec.ContentType},
+                "parameters": {
+                    "content_type": Base64Codec.ContentType,
+                    "headers": None,
+                },
             },
         ),
     ],

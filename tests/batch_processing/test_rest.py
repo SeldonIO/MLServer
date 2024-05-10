@@ -134,9 +134,11 @@ async def test_invalid(
             "status": "preprocessing error",
             "msg": [
                 {
+                    "type": "missing",
                     "loc": ["inputs", 0, "datatype"],
-                    "msg": "field required",
-                    "type": "value_error.missing",
+                    "msg": "Field required",
+                    "input": {"name": "input-0", "shape": [1, 3], "data": [1, 2, 3]},
+                    "url": "https://errors.pydantic.dev/2.7/v/missing",
                 }
             ],
         },
@@ -185,9 +187,11 @@ async def test_invalid_among_many(
             "status": "preprocessing error",
             "msg": [
                 {
+                    "type": "missing",
                     "loc": ["inputs", 0, "datatype"],
-                    "msg": "field required",
-                    "type": "value_error.missing",
+                    "msg": "Field required",
+                    "input": {"name": "input-0", "shape": [1, 3], "data": [1, 2, 3]},
+                    "url": "https://errors.pydantic.dev/2.7/v/missing",
                 }
             ],
         },

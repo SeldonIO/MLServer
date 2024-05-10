@@ -36,7 +36,7 @@ class HuggingfaceListJSONCodec(InputCodec):
 
     @classmethod
     def decode_output(cls, response_output: ResponseOutput) -> List[Dict[Any, Any]]:
-        packed = response_output.data.__root__
+        packed = response_output.data
         return [json_decode(el) for el in packed]
 
     @classmethod
@@ -56,5 +56,5 @@ class HuggingfaceListJSONCodec(InputCodec):
 
     @classmethod
     def decode_input(cls, request_input: RequestInput) -> List[Dict[Any, Any]]:
-        packed = request_input.data.__root__
+        packed = request_input.data
         return [json_decode(el) for el in packed]

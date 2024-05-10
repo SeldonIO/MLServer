@@ -93,7 +93,7 @@ class DataPlane:
         ).count_exceptions()
 
         if self._response_cache is not None:
-            cache_key = payload.json()
+            cache_key = payload.model_dump_json()
 
         with infer_duration, infer_errors:
             if payload.id is None:
@@ -117,7 +117,9 @@ class DataPlane:
                     else:
                         prediction = await model.predict(payload)
                         # ignore cache insertion error if any
-                        await self._response_cache.insert(cache_key, prediction.json())
+                        await self._response_cache.insert(
+                            cache_key, prediction.model_dump_json()
+                        )
                 else:
                     prediction = await model.predict(payload)
 

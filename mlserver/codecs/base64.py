@@ -69,7 +69,8 @@ class Base64Codec(InputCodec):
 
     @classmethod
     def decode_output(cls, response_output: ResponseOutput) -> List[bytes]:
-        packed = response_output.data.__root__
+        packed = response_output.data.root
+
         return list(map(_decode_base64, as_list(packed)))
 
     @classmethod
@@ -88,6 +89,6 @@ class Base64Codec(InputCodec):
 
     @classmethod
     def decode_input(cls, request_input: RequestInput) -> List[bytes]:
-        packed = request_input.data.__root__
+        packed = request_input.data.root
 
         return list(map(_decode_base64, as_list(packed)))

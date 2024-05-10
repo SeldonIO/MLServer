@@ -427,6 +427,7 @@ components:
         - data
     TensorData:
       title: TensorData
+      type: array
     RequestOutput:
       title: RequestOutput
       type: object

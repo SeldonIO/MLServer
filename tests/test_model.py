@@ -58,7 +58,7 @@ from mlserver.model import MLModel
                 datatype="FP32",
                 parameters=Parameters(),
             ),
-            TensorData(__root__=[1, 2]),
+            TensorData(root=[1, 2]),
         ),
         (
             RequestInput(
@@ -67,7 +67,7 @@ from mlserver.model import MLModel
                 data=[1, 2],
                 datatype="FP32",
             ),
-            TensorData(__root__=[1, 2]),
+            TensorData(root=[1, 2]),
         ),
     ],
 )
@@ -176,7 +176,6 @@ def test_decode(sum_model: MLModel, request_input: RequestInput, expected: Any):
                         datatype="BYTES",
                         parameters=Parameters(
                             content_type="str",
-                            _decoded_payload=["abc"],
                         ),
                     )
                 ],

@@ -13,7 +13,7 @@ def _init_mlserver_folder(tmp_path: str, settings: Settings):
     # Write settings.json with free ports
     settings_path = os.path.join(tmp_path, DEFAULT_SETTINGS_FILENAME)
     with open(settings_path, "w") as settings_file:
-        settings_file.write(settings.json())
+        settings_file.write(settings.model_dump_json())
 
     # Copy fixtures.py module
     src_path = os.path.join(TESTS_PATH, "fixtures.py")
@@ -60,7 +60,7 @@ def case_custom_module(
     # Write model settings pointing to local module
     model_settings_path = os.path.join(model_folder, DEFAULT_MODEL_SETTINGS_FILENAME)
     with open(model_settings_path, "w") as model_settings_file:
-        as_dict = sum_model_settings.dict()
+        as_dict = sum_model_settings.model_dump()
         as_dict["implementation"] = "custom.SumModel"
         model_settings_file.write(json.dumps(as_dict))
 

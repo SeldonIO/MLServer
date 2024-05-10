@@ -3,10 +3,8 @@ from unittest.mock import MagicMock, patch
 import pytest
 import torch
 from typing import Dict, Optional, Union
-from optimum.onnxruntime.modeling_ort import ORTModelForQuestionAnswering
-from transformers.models.distilbert.modeling_distilbert import (
-    DistilBertForQuestionAnswering,
-)
+from optimum.onnxruntime.modeling_decoder import ORTModelForCausalLM
+from transformers.models.gpt2 import GPT2ForQuestionAnswering
 
 from mlserver.settings import ModelSettings, ModelParameters
 
@@ -26,22 +24,42 @@ from mlserver_huggingface.common import load_pipeline_from_settings
     ],
 )
 def test_settings_task_name(envs: Dict[str, str], expected: str):
-    setting = HuggingFaceSettings(**envs)
+    setting = HuggingFaceSettings.model_validate(envs)
     assert setting.task_name == expected
 
 
 @pytest.mark.parametrize(
-    "optimum_model, expected",
-    [(True, ORTModelForQuestionAnswering), (False, DistilBertForQuestionAnswering)],
+    "task, optimum_model, model, expected",
+    [
+        (
+            "text-generation",
+            True,
+            "distilgpt2",
+            ORTModelForCausalLM,
+        ),
+        (
+            "question-answering",
+            False,
+            "distilgpt2",
+            GPT2ForQuestionAnswering,
+        ),
+    ],
 )
-def test_load_pipeline(optimum_model: bool, expected):
+def test_load_pipeline(
+    task: str,
+    optimum_model: bool,
+    model: str,
+    expected: Union[ORTModelForCausalLM, GPT2ForQuestionAnswering],
+):
     hf_settings = HuggingFaceSettings(
-        task="question-answering", optimum_model=optimum_model
+        task=task,
+        optimum_model=optimum_model,
+        pretrained_model=model,
     )
     model_settings = ModelSettings(
         name="foo",
         implementation=HuggingFaceRuntime,
-        parameters=ModelParameters(extra=hf_settings.dict()),
+        parameters=ModelParameters(extra=hf_settings.model_dump()),
     )
 
     pipeline = load_pipeline_from_settings(hf_settings, model_settings)

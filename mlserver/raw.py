@@ -3,7 +3,7 @@ import struct
 from functools import reduce
 from operator import mul
 from typing import List, Tuple
-from .types import Datatype
+from .types import Datatype, TensorData
 
 from .codecs.string import encode_str
 from .codecs.utils import InputOrOutput
@@ -112,7 +112,7 @@ def inject_raw(
             # This is to allow for mixed reqs / resp, where some entries have
             # data, some entries are raw
             raw = raw_contents[raw_idx]
-            elem.data = unpack(elem, raw)  # type: ignore
+            elem.data = TensorData(unpack(elem, raw))  # type: ignore
             raw_idx += 1
 
     return elems

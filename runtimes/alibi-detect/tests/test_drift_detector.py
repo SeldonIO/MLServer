@@ -53,6 +53,9 @@ async def test_predict_batch(drift_detector: AlibiDetectRuntime, mocker):
     # Mock detector
     mocked_predict = mocker.patch.object(drift_detector._model, "predict")
 
+    # Set the return value of the mocked predict method
+    mocked_predict.return_value = {"data": {}, "meta": {}}
+
     # For #(batch - 1) requests, outputs should be empty
     batch_size = drift_detector._ad_settings.batch_size
     expected = np.random.randint(10, size=(batch_size, 3))  # type: ignore

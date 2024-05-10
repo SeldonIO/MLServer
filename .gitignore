@@ -11,7 +11,7 @@ bin
 
 # Mac file system
 **/.DS_Store
- 
+
 # editor and IDE paraphernalia
 .idea
 .vscode
@@ -51,6 +51,8 @@ mlruns
 dataset
 lightning_logs
 
+# Runtime: CatBoost
+catboost_info/
 
 # Sphinx documentation
 docs/_build/
@@ -59,7 +61,7 @@ docs/_build/
 **/tests/testdata/.cache/**
 ## The .data path is longer used, but let's keep the line to avoid people
 ## pushing their old .data folder by mistake
-runtimes/alibi-explain/tests/.data/** 
+runtimes/alibi-explain/tests/.data/**
 
 # Docker metadata
 .docker/
