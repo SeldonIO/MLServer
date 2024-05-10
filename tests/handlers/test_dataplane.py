@@ -96,18 +96,12 @@ async def test_infer(data_plane, sum_model, inference_request):
     assert prediction.outputs[0].data == TensorData(root=[6])
 
 
-async def test_generate(data_plane, text_model, generate_request):
-    completion = await data_plane.generate(
-        payload=generate_request, name=text_model.name, version=text_model.version
-    )
+async def test_infer_stream(data_plane, text_stream_model, generate_request):
+    async def streamed_request(request):
+        yield request
 
-    assert len(completion.outputs) == 1
-    assert completion.outputs[0].data.__root__ == [b"What is the capital of France?"]
-
-
-async def test_generate_stream(data_plane, text_stream_model, generate_request):
-    stream = data_plane.generate_stream(
-        payload=generate_request,
+    stream = data_plane.infer_stream(
+        payloads=streamed_request(generate_request),
         name=text_stream_model.name,
         version=text_stream_model.version,
     )
