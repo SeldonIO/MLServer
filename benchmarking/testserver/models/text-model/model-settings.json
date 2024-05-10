@@ -1,7 +1,7 @@
 {
   "name": "text-model",
 
-  "implementation": "models.TextModel",
+  "implementation": "text_model.TextModel",
   
   "versions": ["text-model/v1.2.3"],
   "platform": "mlserver",
