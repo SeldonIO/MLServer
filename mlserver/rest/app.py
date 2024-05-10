@@ -90,6 +90,28 @@ def create_app(
             endpoints.infer,
             methods=["POST"],
         ),
+        # Model infer_stream
+        APIRoute(
+            "/v2/models/{model_name}/infer_stream",
+            endpoints.infer_stream,
+            methods=["POST"],
+        ),
+        APIRoute(
+            "/v2/models/{model_name}/versions/{model_version}/infer_stream",
+            endpoints.infer_stream,
+            methods=["POST"],
+        ),
+        # Model generate_stream
+        APIRoute(
+            "/v2/models/{model_name}/generate_stream",
+            endpoints.infer_stream,
+            methods=["POST"],
+        ),
+        APIRoute(
+            "/v2/models/{model_name}/versions/{model_version}/generate_stream",
+            endpoints.infer_stream,
+            methods=["POST"],
+        ),
         # Model metadata
         APIRoute(
             "/v2/models/{model_name}",
@@ -154,30 +176,6 @@ def create_app(
         ),
     ]
 
-    if settings.streaming_enabled:
-        routes += [
-            APIRoute(
-                "/v2/models/{model_name}/infer_stream",
-                endpoints.infer_stream,
-                methods=["POST"],
-            ),
-            APIRoute(
-                "/v2/models/{model_name}/versions/{model_version}/infer_stream",
-                endpoints.infer_stream,
-                methods=["POST"],
-            ),
-            APIRoute(
-                "/v2/models/{model_name}/generate_stream",
-                endpoints.infer_stream,
-                methods=["POST"],
-            ),
-            APIRoute(
-                "/v2/models/{model_name}/versions/{model_version}/generate_stream",
-                endpoints.infer_stream,
-                methods=["POST"],
-            ),
-        ]
-
     app = FastAPI(
         debug=settings.debug,
         routes=routes,  # type: ignore
@@ -204,10 +202,9 @@ def create_app(
 
     app.router.route_class = APIRoute
 
-    if not settings.streaming_enabled:
+    if settings.gzip_enabled:
         # GZip middleware does not work with streaming
         # see here: https://github.com/encode/starlette/issues/20#issuecomment-704106436
-        logger.warning("GZip middleware is not enabled while streaming.")
         app.add_middleware(GZipMiddleware)
 
     if settings.cors_settings is not None:

@@ -1,5 +1,6 @@
 {
   "debug": false,
-  "streaming_enabled": true,
-  "parallel_workers": 0
+  "parallel_workers": 0,
+  "gzip_enabled": false,
+  "metrics_endpoint": null
 }

@@ -101,10 +101,3 @@ def test_model_settings_serialisation():
     as_json = model_settings.model_dump_json(by_alias=True)
     as_dict = json.loads(as_json)
     as_dict["implementation"] == expected
-
-
-def test_model_settings_streaming(caplog):
-    with pytest.raises(ValueError) as err:
-        _ = Settings(parallel_workers=2, streaming_enabled=True)
-
-    assert "Streaming is not supported with `parallel_workers' > 0" in str(err.value)
