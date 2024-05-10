@@ -12,7 +12,6 @@ from .endpoints import Endpoints, ModelRepositoryEndpoints
 from .requests import Request
 from .responses import Response
 from .errors import _EXCEPTION_HANDLERS
-from .logging import logger
 
 from ..settings import Settings
 from ..handlers import DataPlane, ModelRepositoryHandlers
