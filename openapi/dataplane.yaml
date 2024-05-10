@@ -429,7 +429,9 @@ components:
         - data
     TensorData:
       title: TensorData
-      type: array
+      oneOf:
+        - type: array
+        - type: string
     RequestOutput:
       title: RequestOutput
       type: object

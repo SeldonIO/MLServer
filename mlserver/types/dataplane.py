@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from pydantic import ConfigDict, Field, RootModel
 
@@ -33,8 +33,8 @@ class Parameters(BaseModel):
     headers: Optional[Dict[str, Any]] = None
 
 
-class TensorData(RootModel[List]):
-    root: List = Field(..., title="TensorData")
+class TensorData(RootModel[Union[List, str]]):
+    root: Union[List, str] = Field(..., title="TensorData")
 
     def __iter__(self):
         return iter(self.root)
