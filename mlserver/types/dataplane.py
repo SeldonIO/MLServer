@@ -19,22 +19,6 @@ class MetadataServerErrorResponse(BaseModel):
     error: str
 
 
-class Datatype(Enum):
-    BOOL = "BOOL"
-    UINT8 = "UINT8"
-    UINT16 = "UINT16"
-    UINT32 = "UINT32"
-    UINT64 = "UINT64"
-    INT8 = "INT8"
-    INT16 = "INT16"
-    INT32 = "INT32"
-    INT64 = "INT64"
-    FP16 = "FP16"
-    FP32 = "FP32"
-    FP64 = "FP64"
-    BYTES = "BYTES"
-
-
 class MetadataModelErrorResponse(BaseModel):
     error: str
 
@@ -66,24 +50,24 @@ class RequestOutput(BaseModel):
     parameters: Optional["Parameters"] = None
 
 
-class ResponseOutput(BaseModel):
-    name: str
-    shape: List[int]
-    datatype: "Datatype"
-    parameters: Optional["Parameters"] = None
-    data: "TensorData"
-
-
-class InferenceResponse(BaseModel):
-    model_name: str
-    model_version: Optional[str] = None
-    id: Optional[str] = None
-    parameters: Optional["Parameters"] = None
-    outputs: List["ResponseOutput"]
-
-
 class InferenceErrorResponse(BaseModel):
     error: Optional[str] = None
+
+
+class Datatype(Enum):
+    BOOL = "BOOL"
+    UINT8 = "UINT8"
+    UINT16 = "UINT16"
+    UINT32 = "UINT32"
+    UINT64 = "UINT64"
+    INT8 = "INT8"
+    INT16 = "INT16"
+    INT32 = "INT32"
+    INT64 = "INT64"
+    FP16 = "FP16"
+    FP32 = "FP32"
+    FP64 = "FP64"
+    BYTES = "BYTES"
 
 
 class MetadataTensor(BaseModel):
@@ -99,6 +83,22 @@ class RequestInput(BaseModel):
     datatype: "Datatype"
     parameters: Optional["Parameters"] = None
     data: "TensorData"
+
+
+class ResponseOutput(BaseModel):
+    name: str
+    shape: List[int]
+    datatype: "Datatype"
+    parameters: Optional["Parameters"] = None
+    data: "TensorData"
+
+
+class InferenceResponse(BaseModel):
+    model_name: str
+    model_version: Optional[str] = None
+    id: Optional[str] = None
+    parameters: Optional["Parameters"] = None
+    outputs: List["ResponseOutput"]
 
 
 class MetadataModelResponse(BaseModel):
