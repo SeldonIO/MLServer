@@ -224,10 +224,12 @@ To load a custom environment, [parallel inference](./parallel-inference)
 ```
 
 ```{warning}
-When loading custom environments, MLServer will always use the same Python
-interpreter that is used to run the main process.
-In other words, all custom environments will use the same version of Python
-than the main MLServer process.
+The main MLServer process communicates with workers in custom environments via
+[`multiprocessing.Queue`](https://docs.python.org/3/library/multiprocessing.html#multiprocessing.Queue)
+using pickled objects. Custom environments therefore **must** use the same
+version of MLServer and a compatible version of Python with the same [default
+pickle protocol](https://docs.python.org/3/library/pickle.html#pickle.DEFAULT_PROTOCOL)
+as the main process.
 ```
 
 If we take the [previous example](#loading-a-custom-mlserver-runtime) above as
