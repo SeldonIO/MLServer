@@ -90,20 +90,28 @@ async def test_load_model_with_env(
     assert sklearn_version == "1.0.2"
 
 
-async def test_load_creates_or_reuses_pool(
+async def test_load_creates_pool(
     inference_pool_registry: InferencePoolRegistry,
     env_model_settings: MLModel,
 ):
-    # Create new pool
     assert len(inference_pool_registry._pools) == 0
     env_model = EnvModel(env_model_settings)
     await inference_pool_registry.load_model(env_model)
+
     assert len(inference_pool_registry._pools) == 1
 
-    # Reuse pool
+
+async def test_load_reuses_pool(
+    inference_pool_registry: InferencePoolRegistry,
+    env_model: MLModel,
+    env_model_settings: ModelSettings,
+):
     env_model_settings.name = "foo"
     new_model = EnvModel(env_model_settings)
+
+    assert len(inference_pool_registry._pools) == 1
     await inference_pool_registry.load_model(new_model)
+
     assert len(inference_pool_registry._pools) == 1
 
 
