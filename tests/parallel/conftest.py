@@ -10,7 +10,7 @@ from mlserver.model import MLModel
 from mlserver.env import Environment
 from mlserver.parallel.dispatcher import Dispatcher
 from mlserver.parallel.model import ModelMethods
-from mlserver.parallel.pool import InferencePool, spawn_worker
+from mlserver.parallel.pool import InferencePool, _spawn_worker
 from mlserver.parallel.worker import Worker
 from mlserver.parallel.utils import configure_inference_pool, cancel_task
 from mlserver.parallel.messages import (
@@ -170,7 +170,7 @@ async def worker_with_env(
 ):
     # NOTE: This fixture will start an actual worker running on a separate
     # process.
-    worker = spawn_worker(settings, responses, env)
+    worker = _spawn_worker(settings, responses, env)
 
     load_message = ModelUpdateMessage(
         update_type=ModelUpdateType.Load, model_settings=env_model_settings

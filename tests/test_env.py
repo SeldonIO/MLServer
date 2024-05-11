@@ -3,13 +3,15 @@ import sys
 import os
 import shutil
 
+from typing import Tuple
+
 from mlserver.env import Environment, compute_hash
 
 
 @pytest.fixture
-def expected_python_folder() -> str:
-    v = sys.version_info
-    return f"python{v.major}.{v.minor}"
+def expected_python_folder(env_python_version: Tuple[int, int]) -> str:
+    major, minor = env_python_version
+    return f"python{major}.{minor}"
 
 
 async def test_compute_hash(env_tarball: str):

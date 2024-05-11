@@ -4,9 +4,10 @@ import shutil
 import asyncio
 import glob
 import json
+import sys
 
 from filelock import FileLock
-from typing import Dict, Any
+from typing import Dict, Any, Tuple
 from starlette_exporter import PrometheusMiddleware
 from prometheus_client.registry import REGISTRY, CollectorRegistry
 from unittest.mock import Mock
@@ -29,6 +30,9 @@ from .metrics.utils import unregister_metrics
 from .fixtures import SumModel, ErrorModel, SimpleModel
 from .utils import RESTClient, get_available_ports, _pack, _get_tarball_name
 
+PYTHON_VERSION = (sys.version_info.major, sys.version_info.minor)
+MIN_PYTHON_VERSION = (3, 9)
+MAX_PYTHON_VERSION = (3, 10)
 TESTS_PATH = os.path.dirname(__file__)
 TESTDATA_PATH = os.path.join(TESTS_PATH, "testdata")
 TESTDATA_CACHE_PATH = os.path.join(TESTDATA_PATH, ".cache")
@@ -59,9 +63,35 @@ def testdata_cache_path() -> str:
     return TESTDATA_CACHE_PATH
 
 
+@pytest.fixture(
+    params=[
+        PYTHON_VERSION,
+        pytest.param(
+            MIN_PYTHON_VERSION,
+            marks=pytest.mark.skipif(
+                MIN_PYTHON_VERSION >= PYTHON_VERSION,
+                reason="requires lower Python version",
+            ),
+        ),
+        pytest.param(
+            MAX_PYTHON_VERSION,
+            marks=pytest.mark.skipif(
+                MAX_PYTHON_VERSION <= PYTHON_VERSION,
+                reason="requires higher Python version",
+            ),
+        ),
+    ],
+)
+def env_python_version(request: pytest.FixtureRequest) -> Tuple[int, int]:
+    return request.param
+
+
 @pytest.fixture
-async def env_tarball(testdata_cache_path: str) -> str:
-    tarball_name = _get_tarball_name()
+async def env_tarball(
+    env_python_version: Tuple[int, int],
+    testdata_cache_path: str,
+) -> str:
+    tarball_name = _get_tarball_name(env_python_version)
     tarball_path = os.path.join(testdata_cache_path, tarball_name)
 
     with FileLock(f"{tarball_path}.lock"):
@@ -69,7 +99,7 @@ async def env_tarball(testdata_cache_path: str) -> str:
             return tarball_path
 
         env_yml = os.path.join(TESTDATA_PATH, "environment.yml")
-        await _pack(env_yml, tarball_path)
+        await _pack(env_python_version, env_yml, tarball_path)
 
     return tarball_path
 

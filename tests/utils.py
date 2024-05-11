@@ -3,13 +3,12 @@ import aiohttp
 import socket
 import yaml
 
-import sys
 import os
 
 from itertools import filterfalse
 
 from asyncio import subprocess
-from typing import List
+from typing import List, Tuple
 
 from aiohttp.client_exceptions import (
     ClientConnectorError,
@@ -65,29 +64,26 @@ def _is_python(dep: str) -> bool:
     return "python" in dep
 
 
-def _inject_python_version(env_yml: str, tarball_path: str) -> str:
+def _inject_python_version(version: Tuple[int, int], env_yml: str) -> str:
     """
-    To ensure the same environment.yml fixture we've got works across
-    environments, we inject dynamically the current Python version.
-    That way, we ensure tests using the tarball to load a dynamic custom
-    environment are using the same Python version used to run the tests.
+    To test the same environment.yml fixture we've got with different Python
+    versions across environments, we inject dynamically the requested version.
     """
     env = _read_env(env_yml)
-
-    v = sys.version_info
+    major, minor = version
     without_python = list(filterfalse(_is_python, env["dependencies"]))
-    with_env_python = [f"python == {v.major}.{v.minor}", *without_python]
+    with_env_python = [f"python == {major}.{minor}", *without_python]
     env["dependencies"] = with_env_python
 
-    dst_folder = os.path.dirname(tarball_path)
-    new_env_yml = os.path.join(dst_folder, f"environment-py{v.major}{v.minor}.yml")
+    dst_folder = os.path.dirname(env_yml)
+    new_env_yml = os.path.join(dst_folder, f"environment-py{major}{minor}.yml")
     _write_env(env, new_env_yml)
     return new_env_yml
 
 
-async def _pack(env_yml: str, tarball_path: str):
+async def _pack(version: Tuple[int, int], env_yml: str, tarball_path: str):
     uuid = generate_uuid()
-    fixed_env_yml = _inject_python_version(env_yml, tarball_path)
+    fixed_env_yml = _inject_python_version(version, env_yml)
     env_name = f"mlserver-{uuid}"
     try:
         await _run(f"conda env create -n {env_name} -f {fixed_env_yml}")
@@ -104,9 +100,9 @@ async def _pack(env_yml: str, tarball_path: str):
         await _run(f"conda env remove -n {env_name}")
 
 
-def _get_tarball_name() -> str:
-    v = sys.version_info
-    return f"environment-py{v.major}{v.minor}.tar.gz"
+def _get_tarball_name(version: Tuple[int, int]) -> str:
+    major, minor = version
+    return f"environment-py{major}{minor}.tar.gz"
 
 
 class RESTClient:
