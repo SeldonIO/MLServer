@@ -21,7 +21,6 @@ from mlserver.rest.responses import Response
                 "data": [21.0],
                 "parameters": {
                     "content_type": NumpyCodec.ContentType,
-                    "headers": None,
                 },
             },
         ),
@@ -35,7 +34,6 @@ from mlserver.rest.responses import Response
                 "data": ["\x01\x02"],
                 "parameters": {
                     "content_type": NumpyCodec.ContentType,
-                    "headers": None,
                 },
             },
         ),
@@ -49,7 +47,6 @@ from mlserver.rest.responses import Response
                 "data": ["hey", "what's", "up"],
                 "parameters": {
                     "content_type": StringCodec.ContentType,
-                    "headers": None,
                 },
             },
         ),
@@ -63,7 +60,6 @@ from mlserver.rest.responses import Response
                 "data": ["UHl0aG9uIGlzIGZ1bg=="],
                 "parameters": {
                     "content_type": Base64Codec.ContentType,
-                    "headers": None,
                 },
             },
         ),
@@ -73,7 +69,7 @@ def test_encode_output_tensor(decoded: Any, codec: InputCodec, expected: dict):
     # Serialise response into final output bytes
     payload = codec.encode_output(name="output-0", payload=decoded)
     response = Response(content=None)
-    rendered_as_bytes = response.render(payload.dict())
+    rendered_as_bytes = response.render(payload.model_dump())
 
     # Decode response back into JSON and check if it matches the expected one
     rendered = rendered_as_bytes.decode("utf8")

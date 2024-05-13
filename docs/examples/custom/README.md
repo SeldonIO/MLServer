@@ -226,7 +226,7 @@ inference_request = InferenceRequest(
 )
 
 endpoint = "http://localhost:8080/v2/models/numpyro-divorce/infer"
-response = requests.post(endpoint, json=inference_request.dict())
+response = requests.post(endpoint, json=inference_request.model_dump())
 
 response.json()
 ```
@@ -285,7 +285,7 @@ inference_request = InferenceRequest(
 )
 
 endpoint = "http://localhost:8080/v2/models/numpyro-divorce/infer"
-response = requests.post(endpoint, json=inference_request.dict())
+response = requests.post(endpoint, json=inference_request.model_dump())
 
 response.json()
 ```
