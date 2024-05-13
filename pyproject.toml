@@ -107,7 +107,7 @@ filelock = "^3.13.1"
 
 [tool.poetry.group.docker.dependencies]
 protobuf = "3.20.3"
-tensorflow = "<2.15"
+tensorflow = "<2.17"
 
 [tool.poetry.group.all-runtimes]
 optional = true
