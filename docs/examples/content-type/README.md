@@ -146,7 +146,7 @@ payload = InferenceRequest(
 
 response = requests.post(
     "http://localhost:8080/v2/models/content-type-example/infer",
-    json=payload.dict()
+    json=payload.model_dump()
 )
 
 response_payload = InferenceResponse.parse_raw(response.text)

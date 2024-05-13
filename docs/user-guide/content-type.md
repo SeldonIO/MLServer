@@ -169,7 +169,7 @@ MLServer) you will need to **convert them to a Python dict or a JSON string**.
 
 Luckily, these classes leverage [Pydantic](https://docs.pydantic.dev/latest/)
 under the hood.
-Therefore you can just call the `.dict()` or `.json()` method to convert them.
+Therefore you can just call the `.model_dump()` or `.model_dump_json()` method to convert them.
 Likewise, to read them back from JSON, we can always pass the JSON fields as
 kwargs to the class' constructor (or use any of the [other
 methods](https://docs.pydantic.dev/latest/usage/models/#model-properties)

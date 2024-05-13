@@ -24,7 +24,7 @@ def custom_module_settings_path(
     # Add modified settings, pointing to local module
     model_settings_path = os.path.join(tmp_path, DEFAULT_MODEL_SETTINGS_FILENAME)
     with open(model_settings_path, "w") as f:
-        settings_dict = sum_model_settings.dict()
+        settings_dict = sum_model_settings.model_dump()
         # Point to local module
         settings_dict["implementation"] = "fixtures.SumModel"
         f.write(json.dumps(settings_dict))
