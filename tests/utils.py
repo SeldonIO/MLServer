@@ -64,7 +64,11 @@ def _is_python(dep: str) -> bool:
     return "python" in dep
 
 
-def _inject_python_version(version: Tuple[int, int], env_yml: str, tarball_path: str) -> str:
+def _inject_python_version(
+    version: Tuple[int, int],
+    env_yml: str,
+    tarball_path: str,
+) -> str:
     """
     To test the same environment.yml fixture we've got with different Python
     versions across environments, we inject dynamically the requested version.
