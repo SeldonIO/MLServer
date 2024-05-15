@@ -16,14 +16,14 @@ formats:
 build:
   os: ubuntu-22.04
   tools:
-    python: "3.8"
+    python: "3.10"
   jobs:
     # Set up Poetry
     # From https://docs.readthedocs.io/en/stable/build-customization.html#install-dependencies-with-poetry
     post_create_environment:
       # Install poetry
       # https://python-poetry.org/docs/#installing-manually
-      - pip install poetry==1.4.2
+      - pip install poetry==1.8.1
       # Tell poetry to not use a virtual environment
       - poetry config virtualenvs.create false
       # Install dependencies with 'docs' dependency group
