@@ -431,7 +431,7 @@ components:
       title: TensorData
       oneOf:
         - type: array
-        - type: string
+        - type: bytes
     RequestOutput:
       title: RequestOutput
       type: object

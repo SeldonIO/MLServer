@@ -33,8 +33,8 @@ class Parameters(BaseModel):
     headers: Optional[Dict[str, Any]] = None
 
 
-class TensorData(RootModel[Union[List, str]]):
-    root: Union[List, str] = Field(..., title="TensorData")
+class TensorData(RootModel[Union[List, Any]]):
+    root: Union[List, Any] = Field(..., title="TensorData")
 
     def __iter__(self):
         return iter(self.root)
