@@ -229,8 +229,20 @@ The main MLServer process communicates with workers in custom environments via
 using pickled objects. Custom environments therefore **must** use the same
 version of MLServer and a compatible version of Python with the same [default
 pickle protocol](https://docs.python.org/3/library/pickle.html#pickle.DEFAULT_PROTOCOL)
-as the main process.
+as the main process. Consult the tables below for environment compatibility.
 ```
+
+| Status | Description  |
+| ------ | ------------ |
+| 🔴     | Unsupported  |
+| 🟢     | Supported    |
+| 🔵     | Untested     |
+
+| Worker Python \ Server Python | 3.9 | 3.10 | 3.11 |
+| ----------------------------- | --- | ---- | ---- |
+| 3.9                           | 🟢  | 🟢   | 🔵   |
+| 3.10                          | 🟢  | 🟢   | 🔵   |
+| 3.11                          | 🔵  | 🔵   | 🔵   |
 
 If we take the [previous example](#loading-a-custom-mlserver-runtime) above as
 a reference, we could extend it to include our custom environment as:
