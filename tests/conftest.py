@@ -4,7 +4,6 @@ import shutil
 import asyncio
 import glob
 import json
-import sys
 
 from filelock import FileLock
 from typing import Dict, Any, Tuple
@@ -30,9 +29,13 @@ from .metrics.utils import unregister_metrics
 from .fixtures import SumModel, ErrorModel, SimpleModel
 from .utils import RESTClient, get_available_ports, _pack, _get_tarball_name
 
-PYTHON_VERSION = (sys.version_info.major, sys.version_info.minor)
 MIN_PYTHON_VERSION = (3, 9)
 MAX_PYTHON_VERSION = (3, 10)
+PYTHON_VERSIONS = [
+    (major, minor)
+    for major in range(MIN_PYTHON_VERSION[0], MAX_PYTHON_VERSION[0] + 1)
+    for minor in range(MIN_PYTHON_VERSION[1], MAX_PYTHON_VERSION[1] + 1)
+]
 TESTS_PATH = os.path.dirname(__file__)
 TESTDATA_PATH = os.path.join(TESTS_PATH, "testdata")
 TESTDATA_CACHE_PATH = os.path.join(TESTDATA_PATH, ".cache")
@@ -64,23 +67,8 @@ def testdata_cache_path() -> str:
 
 
 @pytest.fixture(
-    params=[
-        PYTHON_VERSION,
-        pytest.param(
-            MIN_PYTHON_VERSION,
-            marks=pytest.mark.skipif(
-                MIN_PYTHON_VERSION >= PYTHON_VERSION,
-                reason="requires lower Python version",
-            ),
-        ),
-        pytest.param(
-            MAX_PYTHON_VERSION,
-            marks=pytest.mark.skipif(
-                MAX_PYTHON_VERSION <= PYTHON_VERSION,
-                reason="requires higher Python version",
-            ),
-        ),
-    ],
+    params=PYTHON_VERSIONS,
+    ids=[f"py{major}{minor}" for (major, minor) in PYTHON_VERSIONS],
 )
 def env_python_version(request: pytest.FixtureRequest) -> Tuple[int, int]:
     return request.param
