@@ -247,7 +247,7 @@ paths:
         - model
 components:
   enums:
-    Datatype:
+    TensorDataTypes:
       type: string
       enum:
         - BOOL
@@ -321,8 +321,7 @@ components:
       properties:
         name:
           type: string
-        datatype:
-          $ref: '#/components/enums/Datatype'
+        datatype: $ref: '#/components/enums/TensorDataTypes'
         shape:
           type: array
           items:
@@ -416,8 +415,7 @@ components:
           type: array
           items:
             type: integer
-        datatype:
-          $ref: '#/components/enums/Datatype'
+        datatype: $ref: '#/components/enums/TensorDataTypes'
         parameters:
           $ref: '#/components/schemas/Parameters'
         data:
@@ -429,9 +427,7 @@ components:
         - data
     TensorData:
       title: TensorData
-      oneOf:
-        - type: array
-        - type: string
+      type: array
     RequestOutput:
       title: RequestOutput
       type: object
@@ -452,8 +448,7 @@ components:
           type: array
           items:
             type: integer
-        datatype:
-          $ref: '#/components/enums/Datatype'
+        datatype: $ref: '#/components/enums/TensorDataTypes'
         parameters:
           $ref: '#/components/schemas/Parameters'
         data:
