@@ -19,7 +19,7 @@
 import sphinx_material
 
 project = "MLServer"
-copyright = "2023, Seldon Technologies"
+copyright = "2024, Seldon Technologies"
 html_title = "MLServer Documentation"
 author = "Seldon Technologies"
 
