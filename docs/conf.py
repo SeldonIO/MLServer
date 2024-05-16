@@ -83,6 +83,7 @@ if html_theme == "sphinx_material":
         "globaltoc_depth": 4,
         "globaltoc_collapse": True,
         "globaltoc_includehidden": True,
+        "localtoc_label_text": "Contents",
         "repo_type": "github",
         "nav_links": [
             {
