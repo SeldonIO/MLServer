@@ -62,7 +62,7 @@ def test_get_content_type(input_spec: InputSpec, expected: Tuple[MDatatype, str]
         ),
         (
             ColSpec(name="foo", type=DataType.string),
-            [-1],
+            [-1, 1],
         ),
     ],
 )
@@ -131,13 +131,13 @@ def test_get_shape(input_spec: InputSpec, expected: List[int]):
                 MetadataTensor(
                     name="input-0",
                     datatype="BYTES",
-                    shape=[-1],
+                    shape=[-1, 1],
                     parameters=Parameters(content_type=StringCodec.ContentType),
                 ),
                 MetadataTensor(
                     name="input-1",
                     datatype="INT32",
-                    shape=[-1],
+                    shape=[-1, 1],
                     parameters=Parameters(content_type=NumpyCodec.ContentType),
                 ),
             ],
@@ -169,8 +169,8 @@ def test_to_metadata_tensors(schema: Schema, expected: List[MetadataTensor]):
                 name="foo",
                 datatype="BYTES",
                 parameters=Parameters(content_type=StringCodec.ContentType),
-                shape=[2, 11],
-                data=b"hello worldhello world",
+                shape=[2],
+                data=[b"hello", b"world"],
             ),
         ),
         (
@@ -179,8 +179,8 @@ def test_to_metadata_tensors(schema: Schema, expected: List[MetadataTensor]):
                 name="foo",
                 datatype="BYTES",
                 parameters=Parameters(content_type=Base64Codec.ContentType),
-                shape=[1, 20],
-                data=b"UHl0aG9uIGlzIGZ1bg==",
+                shape=[1],
+                data=[b"UHl0aG9uIGlzIGZ1bg=="],
             ),
         ),
         (
@@ -189,8 +189,8 @@ def test_to_metadata_tensors(schema: Schema, expected: List[MetadataTensor]):
                 name="foo",
                 datatype="BYTES",
                 parameters=Parameters(content_type=DatetimeCodec.ContentType),
-                shape=[1, 19],
-                data=b"2021-08-24T15:01:19",
+                shape=[1],
+                data=[b"2021-08-24T15:01:19"],
             ),
         ),
     ],
