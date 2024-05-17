@@ -5,4 +5,4 @@ dependencies:
   - python == 3.9
   - scikit-learn == 1.0.2
   - pip:
-      - mlserver @ git+${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}.git@${GITHUB_REF_NAME}
+      - mlserver @ git+${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}.git@${GITHUB_REF}
