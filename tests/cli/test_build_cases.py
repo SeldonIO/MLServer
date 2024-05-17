@@ -5,6 +5,7 @@ import json
 from typing import List
 
 from ..conftest import TESTS_PATH, TESTDATA_PATH
+from ..utils import _render_env_yml
 
 
 def _copy_test_files(
@@ -38,7 +39,11 @@ def case_environment_yml(tmp_path: str) -> str:
     """
     Custom model with environment provided through an environment.yml file.
     """
-    to_copy = ["env_models.py", "environment.yml"]
+    to_copy = ["env_models.py"]
+    _render_env_yml(
+        os.path.join(TESTDATA_PATH, "environment.yml"),
+        os.path.join(tmp_path, "environment.yml"),
+    )
     model_settings = {
         "name": "environment-yml",
         "implementation": "env_models.DummySKLearnModel",
