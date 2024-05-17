@@ -25,7 +25,11 @@ PredictMethod = Callable[[InferenceRequest], Awaitable[InferenceResponse]]
 InferencePoolHook = Callable[[Worker], Awaitable[None]]
 
 
-def _spawn_worker(settings: Settings, responses: Queue, env: Optional[Environment]):
+def _spawn_worker(
+    settings: Settings,
+    responses: Queue,
+    env: Optional[Environment],
+) -> Worker:
     with env or nullcontext():
         worker = Worker(settings, responses, env)
         worker.start()
