@@ -115,7 +115,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 Jinja2
-3.1.3
+3.1.4
 BSD License
 Copyright 2007 Pallets
 
@@ -288,7 +288,7 @@ SOFTWARE.
 
 
 Werkzeug
-3.0.1
+3.0.3
 BSD License
 Copyright 2007 Pallets
 
@@ -8937,8 +8937,8 @@ Exhibit B - "Incompatible With Secondary Licenses" Notice
 
 
 mlflow
-2.11.1
-Apache License 2.0
+2.12.1
+Apache Software License
 Copyright 2018 Databricks, Inc.  All rights reserved.
 
 				Apache License
@@ -33812,7 +33812,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 tqdm
-4.66.2
+4.66.3
 MIT License; Mozilla Public License 2.0 (MPL 2.0)
 `tqdm` is a product of collaborative work.
 Unless otherwise stated, all authors (see commit logs) retain copyright
@@ -34145,7 +34145,7 @@ Apache Software License
 UNKNOWN
 
 types-protobuf
-4.24.0.20240129
+5.26.0.20240422
 Apache Software License
 UNKNOWN
 
