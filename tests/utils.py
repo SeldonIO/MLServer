@@ -6,7 +6,7 @@ import yaml
 import os
 
 from itertools import filterfalse
-
+from string import Template
 from asyncio import subprocess
 from typing import List, Tuple
 
@@ -50,7 +50,14 @@ async def _run(cmd):
         raise Exception(f"Command '{cmd}' failed with code '{return_code}'")
 
 
-def _read_env(env_yml) -> dict:
+def _render_env_yml(src_env_yml: str, dst_env_yml: str):
+    with open(src_env_yml, "r") as src_env_file:
+        env = Template(src_env_file.read()).substitute(os.environ)
+    with open(dst_env_yml, "w") as dst_env_file:
+        dst_env_file.write(env)
+
+
+def _read_env(env_yml: str) -> dict:
     with open(env_yml, "r") as env_file:
         return yaml.safe_load(env_file.read())
 
