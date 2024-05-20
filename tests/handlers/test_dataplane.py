@@ -109,9 +109,7 @@ async def test_infer_stream(data_plane, text_stream_model, generate_request):
     completion = [tok async for tok in stream]
     assert len(completion) == 6
 
-    concat_completion = b"".join(
-        [tok.outputs[0].data.__root__[0] for tok in completion]
-    )
+    concat_completion = b"".join([tok.outputs[0].data.root[0] for tok in completion])
     assert concat_completion == b"What is the capital of France?"
 
 
