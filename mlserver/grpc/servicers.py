@@ -82,7 +82,7 @@ class InferenceServicer(GRPCInferenceServiceServicer):
             break
 
         use_raw = InferenceServicer._GetReturnRaw(request)
-        payloads = self._PayloadsDecorator(request, requests_stream, context)
+        payloads = self._PayloadsMetadataGenerator(request, requests_stream, context)
 
         async for result in self._data_plane.infer_stream(
             payloads=payloads, name=request.model_name, version=request.model_version
@@ -92,7 +92,7 @@ class InferenceServicer(GRPCInferenceServiceServicer):
 
         self._SetTrailingMetadata(result, context)
 
-    async def _PayloadsDecorator(
+    async def _PayloadsMetadataGenerator(
         self,
         request: pb.ModelInferRequest,
         requests_stream: AsyncIterator[pb.ModelInferRequest],

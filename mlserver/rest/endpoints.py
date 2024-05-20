@@ -111,7 +111,6 @@ class Endpoints:
     async def infer_stream(
         self,
         raw_request: Request,
-        raw_response: Response,
         payload: InferenceRequest,
         model_name: str,
         model_version: Optional[str] = None,
@@ -120,12 +119,12 @@ class Endpoints:
         request_headers = dict(raw_request.headers)
         insert_headers(payload, request_headers)
 
-        async def payloads_async_iter(
+        async def payloads_generator(
             payload: InferenceRequest,
         ) -> AsyncIterator[InferenceRequest]:
             yield payload
 
-        payloads = payloads_async_iter(payload)
+        payloads = payloads_generator(payload)
         infer_stream = self._data_plane.infer_stream(
             payloads, model_name, model_version
         )

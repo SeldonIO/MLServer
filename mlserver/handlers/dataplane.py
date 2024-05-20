@@ -90,7 +90,7 @@ class DataPlane:
         # need to cache the payload here since it
         # will be modified in the context manager
         if self._response_cache is not None:
-            cache_key = payload.json()
+            cache_key = payload.model_dump_json()
 
         async with self._infer_contextmanager(name, version) as model:
             payload = self._prepare_payload(payload, model)
@@ -101,11 +101,13 @@ class DataPlane:
             ):
                 cache_value = await self._response_cache.lookup(cache_key)
                 if cache_value != "":
-                    prediction = InferenceResponse.parse_raw(cache_value)
+                    prediction = InferenceResponse.model_validate_json(cache_value)
                 else:
                     prediction = await model.predict(payload)
                     # ignore cache insertion error if any
-                    await self._response_cache.insert(cache_key, prediction.json())
+                    await self._response_cache.insert(
+                        cache_key, prediction.model_dump_json()
+                    )
             else:
                 prediction = await model.predict(payload)
 
@@ -121,13 +123,15 @@ class DataPlane:
         version: Optional[str] = None,
     ) -> AsyncIterator[InferenceResponse]:
         # TODO: Implement cache for stream
+
         async with self._infer_contextmanager(name, version) as model:
+            # we need to get the first payload to get the ID
             async for payload in payloads:
                 break
 
-            payload = self._prepare_payload(payload, model)
-            payloads_decorated = self._payloads_decorator(payload, payloads, model)
-
+            payloads_decorated = self._prepare_payloads_generator(
+                payload, payloads, model
+            )
             async for prediction in model.predict_stream(payloads_decorated):
                 prediction.id = payload.id  # Ensure ID matches
                 self._inference_middleware.response_middleware(
@@ -144,17 +148,24 @@ class DataPlane:
         self._inference_middleware.request_middleware(payload, model.settings)
         return payload
 
-    async def _payloads_decorator(
+    async def _prepare_payloads_generator(
         self,
-        payload: InferenceRequest,
-        payloads: AsyncIterator[InferenceRequest],
+        first_payload: InferenceRequest,
+        subsequent_payloads: AsyncIterator[InferenceRequest],
         model: MLModel,
     ) -> AsyncIterator[InferenceRequest]:
+        # yield the first payload after preparing it
+        first_payload = self._prepare_payload(first_payload, model)
+        yield first_payload
 
-        payload = self._prepare_payload(payload, model)
-        yield payload
-
-        async for payload in payloads:
+        # Yield the rest of the payloads after preparing them
+        # and set the ID to match the first payload. Note that
+        # we don't make any assumptions about how many inputs and
+        # outputs there are. Thus, everything gets the same ID, cause
+        # otherwise we could have one to many, many to one, or many to
+        # many id mappings.
+        async for payload in subsequent_payloads:
+            payload.id = first_payload.id
             payload = self._prepare_payload(payload, model)
             yield payload
 

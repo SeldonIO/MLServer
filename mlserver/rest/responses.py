@@ -44,7 +44,7 @@ class ServerSentEvent:
         self.data = data
 
     def encode(self) -> bytes:
-        as_dict = self.data.dict()
+        as_dict = self.data.model_dump()
         return self._pre + _render(as_dict) + self._sep
 
 

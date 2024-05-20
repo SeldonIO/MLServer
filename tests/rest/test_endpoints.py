@@ -151,31 +151,37 @@ async def test_generate(
     if model_version is not None:
         endpoint = f"/v2/models/{model_name}/versions/{model_version}/generate"
 
-    response = await rest_client.post(endpoint, json=generate_request.dict())
+    response = await rest_client.post(endpoint, json=generate_request.model_dump())
     assert response.status_code == 200
 
-    prediction = InferenceResponse.parse_obj(response.json())
+    prediction = InferenceResponse.model_validate(response.json())
     assert len(prediction.outputs) == 1
-    assert prediction.outputs[0].data.__root__ == ["What is the capital of France?"]
+    assert prediction.outputs[0].data == TensorData(
+        root=["What is the capital of France?"]
+    )
 
 
 @pytest.mark.parametrize("settings", [lazy_fixture("settings_stream")])
 @pytest.mark.parametrize("sum_model", [lazy_fixture("text_stream_model")])
+@pytest.mark.parametrize("endpoint", ["generate_stream", "infer_stream"])
 async def test_generate_stream(
     rest_client: AsyncClient,
     generate_request: InferenceRequest,
     text_stream_model: MLModel,
+    endpoint: str,
 ):
-    endpoint = f"/v2/models/{text_stream_model.name}/generate_stream"
-    conn = aconnect_sse(rest_client, "POST", endpoint, json=generate_request.dict())
+    endpoint = f"/v2/models/{text_stream_model.name}/{endpoint}"
+    conn = aconnect_sse(
+        rest_client, "POST", endpoint, json=generate_request.model_dump()
+    )
     ref_text = ["What", " is", " the", " capital", " of", " France?"]
 
     async with conn as stream:
         i = 0
         async for response in stream.aiter_sse():
-            prediction = InferenceResponse.parse_obj(response.json())
+            prediction = InferenceResponse.model_validate(response.json())
             assert len(prediction.outputs) == 1
-            assert prediction.outputs[0].data.__root__ == [ref_text[i]]
+            assert prediction.outputs[0].data == TensorData(root=[ref_text[i]])
             i += 1
 
 
@@ -200,10 +206,11 @@ async def test_infer_headers(
     )
 
 
+@pytest.mark.parametrize("endpoint", ["infer", "generate"])
 async def test_infer_error(
-    rest_client: AsyncClient, inference_request: InferenceRequest
+    rest_client: AsyncClient, inference_request: InferenceRequest, endpoint: str
 ):
-    endpoint = "/v2/models/my-model/versions/v0/infer"
+    endpoint = f"/v2/models/my-model/versions/v0/{endpoint}"
     response = await rest_client.post(endpoint, json=inference_request.model_dump())
 
     assert response.status_code == 404

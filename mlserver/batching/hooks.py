@@ -61,20 +61,17 @@ def not_implemented_warning(
     Decorator to lets users know that adaptive batching is not required on
     method `f`.
     """
-    warning_template = (
-        "Adaptive Batching is enabled for model '{model_name}'"
-        " but not supported for inference streaming. "
-        "Falling back to non-batched inference streaming."
+    model = _get_model(f)
+    logger.warning(
+        f"Adaptive Batching is enabled for model '{model.name}'"
+        " but not supported for inference streaming."
+        " Falling back to non-batched inference streaming."
     )
 
     @wraps(f)
     async def _inner_stream(
         payload: AsyncIterator[InferenceRequest],
     ) -> AsyncIterator[InferenceResponse]:
-        model = _get_model(f)
-        logger.warning(
-            warning_template.format(model_name=model.name, f_name=f.__name__)
-        )
         async for response in f(payload):
             yield response
 
@@ -87,6 +84,14 @@ async def load_batching(model: MLModel) -> MLModel:
 
     if model.settings.max_batch_time <= 0:
         return model
+
+    if model.settings.max_batch_size > 1 and model.settings.max_batch_time <= 0:
+        logger.warning(
+            "Setting max_batch_time equal to zero will result"
+            " in batching having no effect, if you intend to "
+            "use batching try setting it to a value > 0 for"
+            " batching to take effect"
+        )
 
     batcher = AdaptiveBatcher(model)
     setattr(model, _AdaptiveBatchingAttr, batcher)
