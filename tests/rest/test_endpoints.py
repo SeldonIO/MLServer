@@ -13,11 +13,8 @@ from mlserver.types import (
     InferenceResponse,
     MetadataServerResponse,
     MetadataModelResponse,
-<<<<<<< HEAD
     TensorData,
-=======
     RepositoryIndexRequest,
->>>>>>> Add tests for infer-stream endpoint
 )
 from mlserver.cloudevents import (
     CLOUDEVENTS_HEADER_SPECVERSION_DEFAULT,
@@ -131,12 +128,8 @@ async def test_infer(
     endpoint = f"/v2/models/{model_name}/infer"
     if model_version is not None:
         endpoint = f"/v2/models/{model_name}/versions/{model_version}/infer"
-<<<<<<< HEAD
-    response = await rest_client.post(endpoint, json=inference_request.model_dump())
-=======
->>>>>>> Included endpoint tests for generate and generate_stream.
 
-    response = await rest_client.post(endpoint, json=inference_request.dict())
+    response = await rest_client.post(endpoint, json=inference_request.model_dump())
     assert response.status_code == 200
 
     prediction = InferenceResponse.model_validate(response.json())
