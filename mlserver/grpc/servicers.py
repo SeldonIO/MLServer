@@ -14,7 +14,7 @@ from .utils import to_headers, to_metadata, handle_mlserver_error
 
 from ..utils import insert_headers, extract_headers
 from ..handlers import DataPlane, ModelRepositoryHandlers
-from ..types import InferenceResponse
+from ..types import InferenceResponse, InferenceRequest
 from typing import AsyncIterator
 
 
@@ -97,7 +97,7 @@ class InferenceServicer(GRPCInferenceServiceServicer):
         request: pb.ModelInferRequest,
         requests_stream: AsyncIterator[pb.ModelInferRequest],
         context: grpc.ServicerContext,
-    ):
+    ) -> AsyncIterator[InferenceRequest]:
         payload = self._InsertHeaders(request, context)
         yield payload
 
@@ -106,12 +106,12 @@ class InferenceServicer(GRPCInferenceServiceServicer):
             yield payload
 
     @staticmethod
-    def _GetReturnRaw(request: pb.ModelInferRequest):
+    def _GetReturnRaw(request: pb.ModelInferRequest) -> bool:
         return True if request.raw_input_contents else False
 
     def _InsertHeaders(
         self, request: pb.ModelInferRequest, context: grpc.ServicerContext
-    ):
+    ) -> InferenceRequest:
         payload = ModelInferRequestConverter.to_types(request)
         request_headers = to_headers(context)
         insert_headers(payload, request_headers)
@@ -119,7 +119,7 @@ class InferenceServicer(GRPCInferenceServiceServicer):
 
     def _SetTrailingMetadata(
         self, result: InferenceResponse, context: grpc.ServicerContext
-    ):
+    ) -> None:
         response_headers = extract_headers(result)
         if response_headers:
             response_metadata = to_metadata(response_headers)
