@@ -44,18 +44,6 @@ service GRPCInferenceService
           returns (RepositoryModelUnloadResponse) {}
 }
 
-// The request message containing the user's name and how many greetings
-// they want.
-message HelloRequest {
-  string name = 1;
-  string num_greetings = 2;
-}
-
-// A response message containing a greeting
-message HelloReply {
-  string message = 1;
-}
-
 
 //
 // ServerLive messages.
