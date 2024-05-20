@@ -389,6 +389,17 @@ files = [
 ]
 
 [[package]]
+name = "cachetools"
+version = "5.3.3"
+description = "Extensible memoizing collections and decorators"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "cachetools-5.3.3-py3-none-any.whl", hash = "sha256:0abad1021d3f8325b2fc1d2e9c8b9c9d57b04c3932657a72465447332c24d945"},
+    {file = "cachetools-5.3.3.tar.gz", hash = "sha256:ba29e2dfa0b8b556606f097407ed1aa62080ee108ab0dc5ec9d6a723a007d105"},
+]
+
+[[package]]
 name = "certifi"
 version = "2024.2.2"
 description = "Python package for providing Mozilla's CA Bundle."
@@ -1784,17 +1795,18 @@ python-dateutil = ">=2.7"
 
 [[package]]
 name = "mlflow"
-version = "2.12.1"
+version = "2.13.0"
 description = "MLflow is an open source platform for the complete machine learning lifecycle"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "mlflow-2.12.1-py3-none-any.whl", hash = "sha256:4c8f631df7ceea75c53464c976f3fef5bd0f80fc4ba5e871f3416d8c139a0312"},
-    {file = "mlflow-2.12.1.tar.gz", hash = "sha256:aa92aebb2379a9c5484cbe901cdf779d5408ac96a641e4b1f8a2d1ff974db7c9"},
+    {file = "mlflow-2.13.0-py3-none-any.whl", hash = "sha256:0e568a353e57e4bd44b79ea646e46882431804862ab8040469376a0ff29737e3"},
+    {file = "mlflow-2.13.0.tar.gz", hash = "sha256:5ac62430d4dc863b3bafdf7b59cfc9a31ab18878c1c0ff687d8783fdc08a0659"},
 ]
 
 [package.dependencies]
 alembic = "<1.10.0 || >1.10.0,<2"
+cachetools = ">=5.0.0,<6"
 click = ">=7.0,<9"
 cloudpickle = "<4"
 docker = ">=4.0.0,<8"
@@ -1802,7 +1814,7 @@ entrypoints = "<1"
 Flask = "<4"
 gitpython = ">=3.1.9,<4"
 graphene = "<4"
-gunicorn = {version = "<22", markers = "platform_system != \"Windows\""}
+gunicorn = {version = "<23", markers = "platform_system != \"Windows\""}
 importlib-metadata = ">=3.7.0,<4.7.0 || >4.7.0,<8"
 Jinja2 = [
     {version = ">=2.11,<4", markers = "platform_system != \"Windows\""},
@@ -1811,9 +1823,11 @@ Jinja2 = [
 markdown = ">=3.3,<4"
 matplotlib = "<4"
 numpy = "<2"
+opentelemetry-api = ">=1.0.0,<3"
+opentelemetry-sdk = ">=1.0.0,<3"
 packaging = "<25"
 pandas = "<3"
-protobuf = ">=3.12.0,<6"
+protobuf = ">=3.12.0,<5"
 pyarrow = ">=4.0.0,<16"
 pytz = "<2025"
 pyyaml = ">=5.1,<7"
@@ -1831,6 +1845,7 @@ databricks = ["azure-storage-file-datalake (>12)", "boto3 (>1)", "botocore", "go
 extras = ["azureml-core (>=1.2.0)", "boto3", "botocore", "google-cloud-storage (>=1.30.0)", "kubernetes", "mlserver (>=1.2.0,!=1.3.1,<1.4.0)", "mlserver-mlflow (>=1.2.0,!=1.3.1,<1.4.0)", "prometheus-flask-exporter", "pyarrow", "pysftp", "requests-auth-aws-sigv4", "virtualenv"]
 gateway = ["aiohttp (<4)", "boto3 (>=1.28.56,<2)", "fastapi (<1)", "pydantic (>=1.0,<3)", "slowapi (>=0.1.9,<1)", "tiktoken (<1)", "uvicorn[standard] (<1)", "watchfiles (<1)"]
 genai = ["aiohttp (<4)", "boto3 (>=1.28.56,<2)", "fastapi (<1)", "pydantic (>=1.0,<3)", "slowapi (>=0.1.9,<1)", "tiktoken (<1)", "uvicorn[standard] (<1)", "watchfiles (<1)"]
+jfrog = ["mlflow-jfrog-plugin"]
 sqlserver = ["mlflow-dbstore"]
 xethub = ["mlflow-xethub"]
 
@@ -4028,4 +4043,4 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<3.12"
-content-hash = "46cde12235564c39a9740a1a3c8003b6b3e14eb09b7cb8b832381fde9da81ac2"
+content-hash = "f7a63841735eb00a624a3768a03a4963f9ccc0a4b266a799d5e49c55ff53ac96"
