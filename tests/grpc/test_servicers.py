@@ -194,8 +194,8 @@ async def test_model_stream_infer_error(inference_service_stub, model_generate_r
         ):
             pass
 
-        assert err.value.code() == grpc.StatusCode.NOT_FOUND
-        assert err.value.details() == "Model text-model with version v1.2.3 not found"
+    assert err.value.code() == grpc.StatusCode.NOT_FOUND
+    assert err.value.details() == "Model my-model with version v1.2.3 not found"
 
 
 async def test_model_repository_index(
