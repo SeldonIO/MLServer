@@ -178,6 +178,26 @@ async def test_model_infer_error(inference_service_stub, model_infer_request):
     assert err.value.details() == "Model my-model with version v1.2.3 not found"
 
 
+@pytest.mark.parametrize("settings", [lazy_fixture("settings_stream")])
+@pytest.mark.parametrize(
+    "sum_model_settings", [lazy_fixture("text_stream_model_settings")]
+)
+@pytest.mark.parametrize("sum_model", [lazy_fixture("text_stream_model")])
+async def test_model_stream_infer_error(inference_service_stub, model_generate_request):
+    async def get_stream_request(request):
+        yield request
+
+    with pytest.raises(grpc.RpcError) as err:
+        model_generate_request.model_name = "my-model"
+        async for _ in inference_service_stub.ModelStreamInfer(
+            get_stream_request(model_generate_request)
+        ):
+            pass
+
+        assert err.value.code() == grpc.StatusCode.NOT_FOUND
+        assert err.value.details() == "Model text-model with version v1.2.3 not found"
+
+
 async def test_model_repository_index(
     inference_service_stub,
     grpc_repository_index_request,

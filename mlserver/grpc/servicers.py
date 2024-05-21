@@ -10,7 +10,12 @@ from .converters import (
     RepositoryIndexRequestConverter,
     RepositoryIndexResponseConverter,
 )
-from .utils import to_headers, to_metadata, handle_mlserver_error
+from .utils import (
+    to_headers,
+    to_metadata,
+    handle_mlserver_error,
+    handle_mlserver_stream_error,
+)
 
 from ..utils import insert_headers, extract_headers
 from ..handlers import DataPlane, ModelRepositoryHandlers
@@ -73,6 +78,7 @@ class InferenceServicer(GRPCInferenceServiceServicer):
         self._SetTrailingMetadata(result, context)
         return ModelInferResponseConverter.from_types(result, use_raw=use_raw)
 
+    @handle_mlserver_stream_error
     async def ModelStreamInfer(
         self,
         requests_stream: AsyncIterator[pb.ModelInferRequest],
