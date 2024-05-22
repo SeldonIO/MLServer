@@ -277,6 +277,9 @@ class Settings(BaseSettings):
     cache_size: int = 100
     """Cache size to be used if caching is enabled."""
 
+    gzip_enabled: bool = True
+    """Enable GZipMiddleware."""
+
 
 class ModelParameters(BaseSettings):
     """

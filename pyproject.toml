@@ -74,6 +74,7 @@ opentelemetry-sdk = "^1.22.0"
 opentelemetry-instrumentation-fastapi = ">=0.43b0"
 opentelemetry-instrumentation-grpc = ">=0.43b0"
 opentelemetry-exporter-otlp-proto-grpc = "^1.22.0"
+pytest-lazy-fixture = "^0.6.3"
 
 [tool.poetry.group.dev.dependencies]
 datamodel-code-generator = "0.25.5"
@@ -104,6 +105,7 @@ black = "24.4.0"
 pip-licenses = "4.4.0"
 pytest-xdist = "3.5.0"
 filelock = "^3.13.1"
+httpx-sse = "^0.3.1"
 
 [tool.poetry.group.docker.dependencies]
 protobuf = "3.20.3"

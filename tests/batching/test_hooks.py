@@ -16,6 +16,26 @@ async def test_batching_predict(
     assert len(response.outputs) == 1
 
 
+async def test_batching_predict_stream(
+    text_stream_model: MLModel, generate_request: InferenceRequest, caplog
+):
+    # Force batching to be enabled
+    text_stream_model.settings.max_batch_size = 10
+    text_stream_model.settings.max_batch_time = 0.4
+    await load_batching(text_stream_model)
+
+    async def get_stream_request(request):
+        yield request
+
+    stream = text_stream_model.predict_stream(get_stream_request(generate_request))
+    responses = [r async for r in stream]
+
+    assert len(responses) > 0
+    assert isinstance(responses[0], InferenceResponse)
+    assert len(responses[0].outputs) == 1
+    assert "not supported for inference streaming" in caplog.records[0].message
+
+
 @pytest.mark.parametrize(
     "max_batch_size, max_batch_time",
     [

@@ -1,0 +1,19 @@
+{
+  "model_name": "text-model",
+  "model_version": "v1.2.3",
+  "inputs": [
+    {
+      "name": "prompt",
+      "datatype": "BYTES",
+      "shape": [1, 1],
+      "contents": {
+        "bytes_contents": ["V2hhdCBpcyB0aGUgY2FwaXRhbCBvZiBGcmFuY2U/"]
+      }
+    }
+  ],
+  "outputs":[
+    {
+      "name": "output"
+    }
+  ]
+}

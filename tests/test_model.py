@@ -1,4 +1,5 @@
 import pytest
+import inspect
 import numpy as np
 import pandas as pd
 
@@ -9,6 +10,45 @@ from mlserver.codecs import RequestCodec, NumpyCodec, StringCodec
 from mlserver.codecs.numpy import NumpyRequestCodec
 from mlserver.codecs.pandas import PandasCodec
 from mlserver.model import MLModel
+
+from .fixtures import TextModel, TextStreamModel
+
+
+async def stream_generator(generate_request):
+    yield generate_request
+
+
+async def test_predict_stream_fallback(
+    text_model: TextModel,
+    generate_request: InferenceRequest,
+):
+    generator = text_model.predict_stream(stream_generator(generate_request))
+    assert inspect.isasyncgen(generator)
+
+    responses = []
+    async for response in generator:
+        responses.append(response)
+
+    assert len(responses) == 1
+    assert len(responses[0].outputs) > 0
+
+
+async def test_predict_stream(
+    text_stream_model: TextStreamModel,
+    generate_request: InferenceRequest,
+):
+    generator = text_stream_model.predict_stream(stream_generator(generate_request))
+    assert inspect.isasyncgen(generator)
+
+    responses = []
+    async for response in generator:
+        responses.append(response)
+
+    ref_text = ["What", " is", " the", " capital", " of", " France?"]
+    assert len(responses) == len(ref_text)
+
+    for idx in range(len(ref_text)):
+        assert ref_text[idx] == StringCodec.decode_output(responses[idx].outputs[0])[0]
 
 
 @pytest.mark.parametrize(

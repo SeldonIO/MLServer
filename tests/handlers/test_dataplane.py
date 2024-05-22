@@ -96,6 +96,23 @@ async def test_infer(data_plane, sum_model, inference_request):
     assert prediction.outputs[0].data == TensorData(root=[6])
 
 
+async def test_infer_stream(data_plane, text_stream_model, generate_request):
+    async def streamed_request(request):
+        yield request
+
+    stream = data_plane.infer_stream(
+        payloads=streamed_request(generate_request),
+        name=text_stream_model.name,
+        version=text_stream_model.version,
+    )
+
+    completion = [tok async for tok in stream]
+    assert len(completion) == 6
+
+    concat_completion = b"".join([tok.outputs[0].data.root[0] for tok in completion])
+    assert concat_completion == b"What is the capital of France?"
+
+
 async def test_infer_error_not_ready(data_plane, sum_model, inference_request):
     sum_model.ready = False
     with pytest.raises(ModelNotReady):

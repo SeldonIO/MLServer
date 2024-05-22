@@ -1,0 +1,6 @@
+{
+  "debug": false,
+  "parallel_workers": 0,
+  "gzip_enabled": false,
+  "metrics_endpoint": null
+}

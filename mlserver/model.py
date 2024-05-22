@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional, List
+from typing import Any, Dict, Optional, List, AsyncIterator
 
 from .codecs import (
     encode_response_output,
@@ -64,7 +64,7 @@ class MLModel:
         Its return value will represent the model's readiness status.
         A return value of ``True`` will mean the model is ready.
 
-        **This method should be overriden to implement your custom load
+        **This method can be overriden to implement your custom load
         logic.**
         """
         return True
@@ -74,10 +74,23 @@ class MLModel:
         Method responsible for running inference on the model.
 
 
-        **This method should be overriden to implement your custom inference
+        **This method can be overriden to implement your custom inference
         logic.**
         """
         raise NotImplementedError("predict() method not implemented")
+
+    async def predict_stream(
+        self, payloads: AsyncIterator[InferenceRequest]
+    ) -> AsyncIterator[InferenceResponse]:
+        """
+        Method responsible for running generation on the model, streaming a set
+        of responses back to the client.
+
+
+        **This method can be overriden to implement your custom inference
+        logic.**
+        """
+        yield await self.predict((await payloads.__anext__()))
 
     async def unload(self) -> bool:
         """
@@ -88,7 +101,7 @@ class MLModel:
         enabled).
         A return value of ``True`` will mean the model is now unloaded.
 
-        **This method should be overriden to implement your custom unload
+        **This method can be overriden to implement your custom unload
         logic.**
         """
         return True
