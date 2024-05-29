@@ -10,10 +10,17 @@ from .converters import (
     RepositoryIndexRequestConverter,
     RepositoryIndexResponseConverter,
 )
-from .utils import to_headers, to_metadata, handle_mlserver_error
+from .utils import (
+    to_headers,
+    to_metadata,
+    handle_mlserver_error,
+    handle_mlserver_stream_error,
+)
 
 from ..utils import insert_headers, extract_headers
 from ..handlers import DataPlane, ModelRepositoryHandlers
+from ..types import InferenceResponse, InferenceRequest
+from typing import AsyncIterator
 
 
 class InferenceServicer(GRPCInferenceServiceServicer):
@@ -63,28 +70,66 @@ class InferenceServicer(GRPCInferenceServiceServicer):
     async def ModelInfer(
         self, request: pb.ModelInferRequest, context: grpc.ServicerContext
     ) -> pb.ModelInferResponse:
-        return_raw = False
-        if request.raw_input_contents:
-            # If the request contains raw input contents, then use the same for
-            # the output
-            return_raw = True
-
-        payload = ModelInferRequestConverter.to_types(request)
-
-        request_headers = to_headers(context)
-        insert_headers(payload, request_headers)
-
+        use_raw = InferenceServicer._GetReturnRaw(request)
+        payload = self._InsertHeaders(request, context)
         result = await self._data_plane.infer(
             payload=payload, name=request.model_name, version=request.model_version
         )
+        self._SetTrailingMetadata(result, context)
+        return ModelInferResponseConverter.from_types(result, use_raw=use_raw)
 
+    @handle_mlserver_stream_error
+    async def ModelStreamInfer(
+        self,
+        requests_stream: AsyncIterator[pb.ModelInferRequest],
+        context: grpc.ServicerContext,
+    ) -> AsyncIterator[pb.ModelInferResponse]:
+        async for request in requests_stream:
+            break
+
+        use_raw = InferenceServicer._GetReturnRaw(request)
+        payloads = self._PayloadsMetadataGenerator(request, requests_stream, context)
+
+        async for result in self._data_plane.infer_stream(
+            payloads=payloads, name=request.model_name, version=request.model_version
+        ):
+            response = ModelInferResponseConverter.from_types(result, use_raw=use_raw)
+            yield response
+
+        self._SetTrailingMetadata(result, context)
+
+    async def _PayloadsMetadataGenerator(
+        self,
+        request: pb.ModelInferRequest,
+        requests_stream: AsyncIterator[pb.ModelInferRequest],
+        context: grpc.ServicerContext,
+    ) -> AsyncIterator[InferenceRequest]:
+        payload = self._InsertHeaders(request, context)
+        yield payload
+
+        async for request in requests_stream:
+            payload = self._InsertHeaders(request, context)
+            yield payload
+
+    @staticmethod
+    def _GetReturnRaw(request: pb.ModelInferRequest) -> bool:
+        return True if request.raw_input_contents else False
+
+    def _InsertHeaders(
+        self, request: pb.ModelInferRequest, context: grpc.ServicerContext
+    ) -> InferenceRequest:
+        payload = ModelInferRequestConverter.to_types(request)
+        request_headers = to_headers(context)
+        insert_headers(payload, request_headers)
+        return payload
+
+    def _SetTrailingMetadata(
+        self, result: InferenceResponse, context: grpc.ServicerContext
+    ) -> None:
         response_headers = extract_headers(result)
         if response_headers:
             response_metadata = to_metadata(response_headers)
             context.set_trailing_metadata(response_metadata)
-
-        response = ModelInferResponseConverter.from_types(result, use_raw=return_raw)
-        return response
 
     async def RepositoryIndex(
         self, request: pb.RepositoryIndexRequest, context

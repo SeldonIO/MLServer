@@ -50,3 +50,18 @@ def handle_mlserver_error(f: Callable):
             await context.abort(code=grpc.StatusCode.INTERNAL, details=str(err))
 
     return _inner
+
+
+def handle_mlserver_stream_error(f: Callable):
+    async def _inner(self, request_stream, context):
+        try:
+            async for response in f(self, request_stream, context):
+                yield response
+        except MLServerError as err:
+            logger.exception(err)
+            await context.abort(code=_grpc_status_code(err), details=str(err))
+        except Exception as err:
+            logger.exception(err)
+            await context.abort(code=grpc.StatusCode.INTERNAL, details=str(err))
+
+    return _inner

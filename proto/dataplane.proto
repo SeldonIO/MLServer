@@ -1,5 +1,8 @@
 syntax = "proto3";
 
+option java_package = "ex.grpc";
+option objc_class_prefix = "HSW";
+
 package inference;
 
 //
@@ -24,6 +27,9 @@ service GRPCInferenceService
 
   // Perform inference using a specific model.
   rpc ModelInfer(ModelInferRequest) returns (ModelInferResponse) {}
+  
+  // Perform stream inference using a specific model.
+  rpc ModelStreamInfer(stream ModelInferRequest) returns (stream ModelInferResponse) {}
 
   // Get the index of model repository contents.
   rpc RepositoryIndex(RepositoryIndexRequest)

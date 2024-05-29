@@ -1,0 +1,10 @@
+{
+  "debug": true,
+  "host": "127.0.0.1",
+  "parallel_workers": 0,
+  "gzip_enabled": false,
+  "metrics_endpoint": null,
+  "cors_settings": {
+    "allow_origins": ["*"]
+  }
+}

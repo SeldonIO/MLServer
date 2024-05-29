@@ -1,12 +1,12 @@
 from .repository import ModelRepository, SchemalessModelRepository
 from ..settings import Settings
-from pydantic import PyObject
+from pydantic import ImportString
 
 
 class ModelRepositoryFactory:
     @staticmethod
     def resolve_model_repository(settings: Settings) -> ModelRepository:
-        model_repository_implementation: PyObject = SchemalessModelRepository
+        model_repository_implementation: ImportString = SchemalessModelRepository
 
         result: ModelRepository
         if settings.model_repository_implementation:

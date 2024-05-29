@@ -1,8 +1,4 @@
 approvers:
-- cliveseldon
-- adriangonz
-- RafalSkolasinski
+- SeldonIO/mlops
 reviewers:
-- cliveseldon
-- adriangonz
-- RafalSkolasinski
+- SeldonIO/mlops

@@ -1,9 +1,10 @@
 import os
 import numpy as np
 
-from pydantic.error_wrappers import ValidationError
+from pydantic import ValidationError
 from typing import Optional, List, Dict
-from pydantic import BaseSettings, Field
+from pydantic import Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from functools import cached_property
 
 from alibi_detect.saving import load_detector
@@ -28,8 +29,9 @@ class AlibiDetectSettings(BaseSettings):
     Parameters that apply only to alibi detect models
     """
 
-    class Config:
-        env_prefix = ENV_PREFIX_ALIBI_DETECT_SETTINGS
+    model_config = SettingsConfigDict(
+        env_prefix=ENV_PREFIX_ALIBI_DETECT_SETTINGS,
+    )
 
     predict_parameters: dict = {}
     """

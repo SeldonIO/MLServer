@@ -62,28 +62,30 @@ gevent = "*"
 aiofiles = "*"
 orjson = "*"
 uvloop = {version = "*", markers = "sys_platform != 'win32' and (sys_platform != 'cygwin' and platform_python_implementation != 'PyPy')"}
-pydantic = "<2.0.0"
+pydantic = "2.7.1"
+pydantic-settings = "2.2.1"
 python-multipart = "*"
 
 ## The importlib-resources backport is required to use some
 ## functionality added in Python 3.10
 ## https://setuptools.pypa.io/en/latest/userguide/datafiles.html#accessing-data-files-at-runtime
-importlib-resources = "^5.12.0"
+importlib-resources = ">=5.12,<7.0"
 opentelemetry-sdk = "^1.22.0"
 opentelemetry-instrumentation-fastapi = ">=0.43b0"
 opentelemetry-instrumentation-grpc = ">=0.43b0"
 opentelemetry-exporter-otlp-proto-grpc = "^1.22.0"
+pytest-lazy-fixture = "^0.6.3"
 
 [tool.poetry.group.dev.dependencies]
-datamodel-code-generator = "0.25.4"
+datamodel-code-generator = "0.25.5"
 grpcio-tools = "1.48.2"
 pytest = "7.4.4"
 pytest-asyncio = "0.21.1"
 pytest-mock = "3.12.0"
-pytest-cases = "3.8.2"
-tox = "4.6.3"
+pytest-cases = "3.8.5"
+tox = "4.14.2"
 docker = "7.0.0"
-aiohttp = "3.9.3"
+aiohttp = "3.9.4"
 aiohttp-retry = "2.8.3"
 ## Used for FastAPI Async testing
 httpx = "0.27.0"
@@ -95,14 +97,15 @@ flake8 = "7.0.0"
 flake8-black = "0.3.6"
 mypy = "1.9.0"
 mypy-protobuf = "3.1.0"
-types-protobuf = "4.24.0.20240129"
+types-protobuf = "5.26.0.20240422"
 types-orjson = "3.6.2"
 types-aiofiles = "23.2.0.20240106"
 types-requests = "2.31.0.20240311"
-black = "24.2.0"
-pip-licenses = "4.3.4"
+black = "24.4.0"
+pip-licenses = "4.4.0"
 pytest-xdist = "3.5.0"
 filelock = "^3.13.1"
+httpx-sse = "^0.3.1"
 
 [tool.poetry.group.docker.dependencies]
 protobuf = "3.20.3"
@@ -119,6 +122,7 @@ mlserver-mlflow = {path = "./runtimes/mlflow", develop = true}
 mlserver-huggingface = {path = "./runtimes/huggingface", develop = true}
 mlserver-alibi-explain = {path = "./runtimes/alibi-explain", develop = true}
 mlserver-alibi-detect = {path = "./runtimes/alibi-detect", develop = true}
+mlserver-catboost = {path = "./runtimes/catboost", develop = true}
 
 [tool.poetry.group.all-runtimes-dev]
 optional = true
@@ -133,7 +137,7 @@ torch = "2.2.1"
 pytorch-lightning = "2.2.0.post0"
 torchmetrics = "1.3.1"
 torchvision = "0.17.1"
-mlflow = "2.10.2"
+mlflow = "2.12.1"
 
 ## Dev dependencies from HuggingFace
 transformers = ">=4.30,<5.0"
@@ -147,10 +151,10 @@ sphinx_material = "0.0.36"
 readthedocs-sphinx-search = "0.3.2"
 myst-parser = "2.0.0"
 sphinxcontrib-bibtex = "2.5.0"
-autodoc_pydantic = "1.9.0"
-sphinx-click = "5.1.0"
+autodoc_pydantic = "2.2.0"
+sphinx-click = "6.0.0"
 sphinx_design = "0.4.1"
-sphinx-autobuild = "2021.3.14"
+sphinx-autobuild = "2024.4.16"
 sphinx-copybutton = "^0.5.2"
 
 [build-system]

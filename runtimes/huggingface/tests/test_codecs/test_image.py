@@ -131,7 +131,7 @@ def test_encode_output(name, var, use_bytes, expected1, expected2):
     can_encode = PILImageCodec.can_encode(var)
     assert can_encode == expected1
     if can_encode:
-        assert PILImageCodec.encode_input(name, var, use_bytes) == expected2
+        assert PILImageCodec.encode_output(name, var, use_bytes) == expected2
 
 
 @pytest.mark.parametrize(

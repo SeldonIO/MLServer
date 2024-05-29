@@ -34,7 +34,7 @@ from ..utils import file_path, file_content
                 shape=[2, 1],
                 datatype="BYTES",
                 parameters=Parameters(content_type="hg_jsonlist"),
-                data=TensorData(__root__=[]),
+                data=TensorData(root=[]),
             ),
         ),
         ("mixed", [1, {}], False, None),
@@ -60,7 +60,7 @@ def test_encode_input(name, var, expected1, expected2):
                 shape=[2, 1],
                 datatype="BYTES",
                 parameters=Parameters(content_type="hg_jsonlist"),
-                data=TensorData(__root__=["{}", "{}"]),
+                data=TensorData(root=["{}", "{}"]),
             ),
             [{}, {}],
         ),
@@ -70,7 +70,7 @@ def test_encode_input(name, var, expected1, expected2):
                 shape=[1, 1],
                 datatype="BYTES",
                 parameters=Parameters(content_type="hg_jsonlist"),
-                data=TensorData(__root__=[file_content("image_base64.txt")]),
+                data=TensorData(root=[file_content("image_base64.txt")]),
             ),
             [{"i": Image.open(file_path("dogs.jpg"))}],
         ),
@@ -81,7 +81,7 @@ def test_encode_input(name, var, expected1, expected2):
                 datatype="BYTES",
                 parameters=Parameters(content_type="hg_jsonlist"),
                 data=TensorData(
-                    __root__=[
+                    root=[
                         '{"uuid": "59a1121c-831b-40ae-b33b-320b9dd60770", "past_user_inputs": [], "new_user_input": "hi", "generated_responses": []}'  # noqa
                     ]
                 ),
@@ -102,7 +102,7 @@ def test_encode_input(name, var, expected1, expected2):
                 datatype="BYTES",
                 parameters=Parameters(content_type="hg_jsonlist"),
                 data=TensorData(
-                    __root__=[
+                    root=[
                         '{"c": {"uuid": "59a1121c-831b-40ae-b33b-320b9dd60770", "past_user_inputs": [], "new_user_input": "hi", "generated_responses": []}}',  # noqa
                         file_content("image_base64.txt"),
                     ]
@@ -152,7 +152,7 @@ def test_decode_input(var, expected):
                 shape=[2, 1],
                 datatype="BYTES",
                 parameters=Parameters(content_type="hg_jsonlist"),
-                data=TensorData(__root__=["{}", "{}"]),
+                data=TensorData(root=["{}", "{}"]),
             ),
         )
     ],
@@ -174,7 +174,7 @@ def test_encode_output(name, var, expected):
                 shape=[2, 1],
                 datatype="BYTES",
                 parameters=Parameters(content_type="hg_jsonlist"),
-                data=TensorData(__root__=["{}", "{}"]),
+                data=TensorData(root=["{}", "{}"]),
             ),
             [{}, {}],
         ),
@@ -184,7 +184,7 @@ def test_encode_output(name, var, expected):
                 shape=[1, 1],
                 datatype="BYTES",
                 parameters=Parameters(content_type="hg_jsonlist"),
-                data=TensorData(__root__=[file_content("image_base64.txt")]),
+                data=TensorData(root=[file_content("image_base64.txt")]),
             ),
             [{"i": Image.open(file_path("dogs.jpg"))}],
         ),
@@ -195,7 +195,7 @@ def test_encode_output(name, var, expected):
                 datatype="BYTES",
                 parameters=Parameters(content_type="hg_jsonlist"),
                 data=TensorData(
-                    __root__=[
+                    root=[
                         '{"uuid": "59a1121c-831b-40ae-b33b-320b9dd60770", "past_user_inputs": [], "new_user_input": "hi", "generated_responses": []}'  # noqa
                     ]
                 ),
@@ -216,7 +216,7 @@ def test_encode_output(name, var, expected):
                 datatype="BYTES",
                 parameters=Parameters(content_type="hg_jsonlist"),
                 data=TensorData(
-                    __root__=[
+                    root=[
                         '{"c": {"uuid": "59a1121c-831b-40ae-b33b-320b9dd60770", "past_user_inputs": [], "new_user_input": "hi", "generated_responses": []}}',  # noqa
                         file_content("image_base64.txt"),
                     ]

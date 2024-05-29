@@ -4,8 +4,24 @@ import json
 import importlib
 import inspect
 
-from typing import Any, Dict, List, Optional, Type, Union, no_type_check, TYPE_CHECKING
-from pydantic import PyObject, Extra, Field, BaseSettings as _BaseSettings
+from typing import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    Type,
+    Union,
+    no_type_check,
+    TYPE_CHECKING,
+)
+from pydantic import (
+    ImportString,
+    Field,
+    AliasChoices,
+)
+from pydantic._internal._validators import import_string
+import pydantic_settings
+from pydantic_settings import SettingsConfigDict
 from contextlib import contextmanager
 
 from .version import __version__
@@ -20,6 +36,7 @@ DEFAULT_PARALLEL_WORKERS = 1
 DEFAULT_ENVIRONMENTS_DIR = os.path.join(os.getcwd(), ".envs")
 DEFAULT_METRICS_DIR = os.path.join(os.getcwd(), ".metrics")
 
+# Conditionally imported due to cyclic dependencies
 if TYPE_CHECKING:
     from ..model import MLModel
 
@@ -46,7 +63,7 @@ def _reload_module(import_path: str):
     importlib.reload(module)
 
 
-class BaseSettings(_BaseSettings):
+class BaseSettings(pydantic_settings.BaseSettings):
     @no_type_check
     def __setattr__(self, name, value):
         """
@@ -92,9 +109,15 @@ class BaseSettings(_BaseSettings):
 
 
 class CORSSettings(BaseSettings):
-    class Config:
-        env_file = ENV_FILE_SETTINGS
-        env_prefix = ENV_PREFIX_SETTINGS
+    model_config = SettingsConfigDict(
+        env_file=ENV_FILE_SETTINGS,
+        env_prefix=ENV_PREFIX_SETTINGS,
+        # > For compatibility with pydantic 1.x BaseSettings you
+        # > should use extra=ignore: [1]
+        #
+        # [1] https://docs.pydantic.dev/2.7/concepts/pydantic_settings/#dotenv-env-support  # noqa: E501
+        extra="ignore",
+    )
 
     allow_origins: Optional[List[str]] = []
     """
@@ -128,9 +151,16 @@ class CORSSettings(BaseSettings):
 
 
 class Settings(BaseSettings):
-    class Config:
-        env_file = ENV_FILE_SETTINGS
-        env_prefix = ENV_PREFIX_SETTINGS
+    model_config = SettingsConfigDict(
+        protected_namespaces=(),
+        env_file=ENV_FILE_SETTINGS,
+        env_prefix=ENV_PREFIX_SETTINGS,
+        # > For compatibility with pydantic 1.x BaseSettings you
+        # > should use extra=ignore: [1]
+        #
+        # [1] https://docs.pydantic.dev/2.7/concepts/pydantic_settings/#dotenv-env-support  # noqa: E501
+        extra="ignore",
+    )
 
     debug: bool = True
 
@@ -149,7 +179,7 @@ class Settings(BaseSettings):
     """
 
     # Custom model repository class implementation
-    model_repository_implementation: Optional[PyObject] = None
+    model_repository_implementation: Optional[ImportString] = None
     """*Python path* to the inference runtime to model repository (e.g.
     ``mlserver.repository.repository.SchemalessModelRepository``)."""
 
@@ -247,6 +277,9 @@ class Settings(BaseSettings):
     cache_size: int = 100
     """Cache size to be used if caching is enabled."""
 
+    gzip_enabled: bool = True
+    """Enable GZipMiddleware."""
+
 
 class ModelParameters(BaseSettings):
     """
@@ -257,10 +290,11 @@ class ModelParameters(BaseSettings):
     can change on each instance (e.g. each version) of the model.
     """
 
-    class Config:
-        extra = Extra.allow
-        env_file = ENV_FILE_SETTINGS
-        env_prefix = ENV_PREFIX_MODEL_SETTINGS
+    model_config = SettingsConfigDict(
+        env_file=ENV_FILE_SETTINGS,
+        env_prefix=ENV_PREFIX_MODEL_SETTINGS,
+        extra="allow",
+    )
 
     uri: Optional[str] = None
     """
@@ -287,17 +321,22 @@ class ModelParameters(BaseSettings):
 
 
 class ModelSettings(BaseSettings):
-    class Config:
-        env_file = ENV_FILE_SETTINGS
-        env_prefix = ENV_PREFIX_MODEL_SETTINGS
-        underscore_attrs_are_private = True
+    model_config = SettingsConfigDict(
+        env_file=ENV_FILE_SETTINGS,
+        env_prefix=ENV_PREFIX_MODEL_SETTINGS,
+        # > For compatibility with pydantic 1.x BaseSettings you
+        # > should use extra=ignore: [1]
+        #
+        # [1] https://docs.pydantic.dev/2.7/concepts/pydantic_settings/#dotenv-env-support  # noqa: E501
+        extra="ignore",
+    )
 
     # Source points to the file where model settings were loaded from
     _source: Optional[str] = None
 
     def __init__(self, *args, **kwargs):
         # Ensure we still support inline init, e.g.
-        # ModelSettings(implementation=SumModel)
+        # `ModelSettings(implementation=SumModel)`.
         implementation = kwargs.get("implementation", None)
         if inspect.isclass(implementation):
             kwargs["implementation"] = _get_import_path(implementation)
@@ -309,30 +348,52 @@ class ModelSettings(BaseSettings):
         with open(path, "r") as f:
             obj = json.load(f)
             obj["_source"] = path
-            return cls.parse_obj(obj)
+            return cls.model_validate(obj)
 
     @classmethod
-    def parse_obj(cls, obj: Any) -> "ModelSettings":
+    def model_validate(cls, obj: Any) -> "ModelSettings":  # type: ignore
         source = obj.pop("_source", None)
-        model_settings = super().parse_obj(obj)
+        model_settings = super().model_validate(obj)
         if source:
             model_settings._source = source
 
         return model_settings
 
+    # Custom model class implementation
+    #
+    # NOTE: The `implementation_` attr will only point to the string import.
+    #
+    # The actual import will occur within the `implementation` property - think
+    # of this as a lazy import.
+    #
+    # You should always use `model_settings.implementation` and treat
+    # `implementation_` as a private attr.
+
     @property
     def implementation(self) -> Type["MLModel"]:
+        # If the source is not set, use the path for the model module
         if not self._source:
-            return PyObject.validate(self.implementation_)  # type: ignore
+            return import_string(self.implementation_)  # type: ignore
 
+        # Get a nice path to the model's (disk) location
         model_folder = os.path.dirname(self._source)
+
+        # Temporarily inject the model's module into the Python
+        # system path.
         with _extra_sys_path(model_folder):
             _reload_module(self.implementation_)
-            return PyObject.validate(self.implementation_)  # type: ignore
+            return import_string(self.implementation_)  # type: ignore
 
     @implementation.setter
     def implementation(self, value: Type["MLModel"]):
         self.implementation_ = _get_import_path(value)
+
+    implementation_: str = Field(
+        validation_alias=AliasChoices(
+            "implementation", "MLSERVER_MODEL_IMPLEMENTATION"
+        ),
+        serialization_alias="implementation",
+    )
 
     @property
     def version(self) -> Optional[str]:
@@ -382,16 +443,6 @@ class ModelSettings(BaseSettings):
     """When adaptive batching is enabled, maximum amount of time (in seconds)
     to wait for enough requests to build a full batch."""
 
-    # Custom model class implementation
-    # NOTE: The `implementation_` attr will only point to the string import.
-    # The actual import will occur within the `implementation` property - think
-    # of this as a lazy import.
-    # You should always use `model_settings.implementation` and treat
-    # `implementation_` as a private attr (due to Pydantic - we can't just
-    # prefix the attr with `_`).
-    implementation_: str = Field(
-        alias="implementation", env="MLSERVER_MODEL_IMPLEMENTATION"
-    )
     """*Python path* to the inference runtime to use to serve this model (e.g.
     ``mlserver_sklearn.SKLearnModel``)."""
 

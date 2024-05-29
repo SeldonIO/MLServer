@@ -1,5 +1,6 @@
 import asyncio
 
+from contextlib import nullcontext
 from multiprocessing import Queue
 from typing import Awaitable, Callable, Dict, Optional, List, Iterable
 
@@ -22,6 +23,18 @@ from .dispatcher import Dispatcher
 
 PredictMethod = Callable[[InferenceRequest], Awaitable[InferenceResponse]]
 InferencePoolHook = Callable[[Worker], Awaitable[None]]
+
+
+def _spawn_worker(
+    settings: Settings,
+    responses: Queue,
+    env: Optional[Environment],
+) -> Worker:
+    with env or nullcontext():
+        worker = Worker(settings, responses, env)
+        worker.start()
+
+    return worker
 
 
 class WorkerRegistry:
@@ -78,9 +91,8 @@ class InferencePool:
         self._worker_registry = WorkerRegistry()
         self._settings = settings
         self._responses: Queue[ModelResponseMessage] = Queue()
-        for idx in range(self._settings.parallel_workers):
-            worker = Worker(self._settings, self._responses, self._env)
-            worker.start()
+        for _ in range(self._settings.parallel_workers):
+            worker = _spawn_worker(self._settings, self._responses, self._env)
             self._workers[worker.pid] = worker  # type: ignore
 
         self._dispatcher = Dispatcher(self._workers, self._responses)
@@ -123,8 +135,7 @@ class InferencePool:
         await self._start_worker()
 
     async def _start_worker(self) -> Worker:
-        worker = Worker(self._settings, self._responses, self._env)
-        worker.start()
+        worker = _spawn_worker(self._settings, self._responses, self._env)
         logger.info(f"Starting new worker with PID {worker.pid} on {self.name}...")
 
         # Add to dispatcher so that it can receive load requests and reload all

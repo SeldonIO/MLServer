@@ -64,6 +64,13 @@ updates:
     reviewers:
       - "SeldonIO/mlops"
 
+  - package-ecosystem: "pip"
+    directory: "/runtimes/catboost"
+    schedule:
+      interval: "weekly"
+    reviewers:
+      - "SeldonIO/mlops"
+
   - package-ecosystem: "docker"
     directory: "/"
     schedule:

@@ -60,7 +60,7 @@ jobs:
           remove-android: 'true'
           remove-codeql: 'true'
           remove-docker-images: 'true'
-          root-reserve-mb: 30720
+          overprovision-lvm: 'true'
           swap-size-mb: 1024
       - uses: actions/checkout@v4
       - name: Build Docker Image

@@ -129,7 +129,10 @@ def test_pack_tensor(tensor: np.ndarray):
                 b"\x03\x00\x00\x00one\x03\x00\x00\x00two\x05\x00\x00\x00three",
                 np.array([1, 2, 3, 4, 5, 6], dtype=np.single).tobytes(),
             ],
-            [[b"one", b"two", b"three"], [1, 2, 3, 4, 5, 6]],
+            [
+                TensorData([b"one", b"two", b"three"]),
+                TensorData([1, 2, 3, 4, 5, 6]),
+            ],
         ),
         # With mixed entries (i.e. raw and normal)
         (
@@ -145,9 +148,9 @@ def test_pack_tensor(tensor: np.ndarray):
                 np.array([7, 8, 9, 10], dtype=np.single).tobytes(),
             ],
             [
-                [b"one", b"two", b"three"],
-                TensorData.parse_obj([1, 2, 3, 4, 5, 6]),
-                [7, 8, 9, 10],
+                TensorData([b"one", b"two", b"three"]),
+                TensorData([1, 2, 3, 4, 5, 6]),
+                TensorData([7, 8, 9, 10]),
             ],
         ),
     ],

@@ -17,10 +17,17 @@ lock:
 		poetry lock --no-update -C $$_runtime; \
 	done
 
-_generate: # "private" target to call `fmt` after `generate`
-	poetry run bash ./hack/generate-types.sh
+_generate_model_repository: # "private" target to call `fmt` after `generate`
+	poetry run bash ./hack/generate-types.sh model_repository
 
-generate: | _generate fmt
+_generate_dataplane: # "private" target to call `fmt` after `generate`
+	poetry run bash ./hack/generate-types.sh dataplane
+
+generate-model-repository: | _generate_model_repository fmt
+
+generate-dataplane: | _generate_dataplane fmt
+
+generate: | _generate_model_repository _generate_dataplane fmt
 
 run:
 	mlserver start \
@@ -67,7 +74,7 @@ test:
 		tox -c $$_runtime; \
 	done
 
-lint: generate
+lint:
 	black --check .
 	flake8 .
 	mypy ./mlserver
@@ -77,11 +84,14 @@ lint: generate
 	done
 	mypy ./benchmarking
 	mypy ./docs/examples
-	# Check if something has changed after generation
+
+lint-no-changes:
 	git \
 		--no-pager diff \
 		--exit-code \
 		.
+
+lint-generate: generate lint-no-changes
 
 licenses:
 	tox --recreate -e licenses

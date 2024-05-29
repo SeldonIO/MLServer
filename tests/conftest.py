@@ -6,7 +6,7 @@ import glob
 import json
 
 from filelock import FileLock
-from typing import Dict, Any
+from typing import Dict, Any, Tuple
 from starlette_exporter import PrometheusMiddleware
 from prometheus_client.registry import REGISTRY, CollectorRegistry
 from unittest.mock import Mock
@@ -26,9 +26,16 @@ from mlserver.metrics.registry import MetricsRegistry, REGISTRY as METRICS_REGIS
 from mlserver import types, Settings, ModelSettings, MLServer
 
 from .metrics.utils import unregister_metrics
-from .fixtures import SumModel, ErrorModel, SimpleModel
+from .fixtures import SumModel, TextModel, TextStreamModel, ErrorModel, SimpleModel
 from .utils import RESTClient, get_available_ports, _pack, _get_tarball_name
 
+MIN_PYTHON_VERSION = (3, 9)
+MAX_PYTHON_VERSION = (3, 10)
+PYTHON_VERSIONS = [
+    (major, minor)
+    for major in range(MIN_PYTHON_VERSION[0], MAX_PYTHON_VERSION[0] + 1)
+    for minor in range(MIN_PYTHON_VERSION[1], MAX_PYTHON_VERSION[1] + 1)
+]
 TESTS_PATH = os.path.dirname(__file__)
 TESTDATA_PATH = os.path.join(TESTS_PATH, "testdata")
 TESTDATA_CACHE_PATH = os.path.join(TESTDATA_PATH, ".cache")
@@ -59,9 +66,20 @@ def testdata_cache_path() -> str:
     return TESTDATA_CACHE_PATH
 
 
+@pytest.fixture(
+    params=PYTHON_VERSIONS,
+    ids=[f"py{major}{minor}" for (major, minor) in PYTHON_VERSIONS],
+)
+def env_python_version(request: pytest.FixtureRequest) -> Tuple[int, int]:
+    return request.param
+
+
 @pytest.fixture
-async def env_tarball(testdata_cache_path: str) -> str:
-    tarball_name = _get_tarball_name()
+async def env_tarball(
+    env_python_version: Tuple[int, int],
+    testdata_cache_path: str,
+) -> str:
+    tarball_name = _get_tarball_name(env_python_version)
     tarball_path = os.path.join(testdata_cache_path, tarball_name)
 
     with FileLock(f"{tarball_path}.lock"):
@@ -69,7 +87,7 @@ async def env_tarball(testdata_cache_path: str) -> str:
             return tarball_path
 
         env_yml = os.path.join(TESTDATA_PATH, "environment.yml")
-        await _pack(env_yml, tarball_path)
+        await _pack(env_python_version, env_yml, tarball_path)
 
     return tarball_path
 
@@ -174,6 +192,43 @@ async def sum_model(
 
 
 @pytest.fixture
+def text_model_settings() -> ModelSettings:
+    return ModelSettings(
+        name="text-model",
+        implementation=TextModel,
+        parallel_workers=0,
+        parameters={"version": "v1.2.3"},
+    )
+
+
+@pytest.fixture
+async def text_model(
+    model_registry: MultiModelRegistry, text_model_settings: ModelSettings
+) -> TextModel:
+    await model_registry.load(text_model_settings)
+    return await model_registry.get_model(text_model_settings.name)
+
+
+@pytest.fixture
+def text_stream_model_settings() -> ModelSettings:
+    # TODO: Enable parallel_workers once stream is supported
+    return ModelSettings(
+        name="text-stream-model",
+        implementation=TextStreamModel,
+        parallel_workers=0,
+        parameters={"version": "v1.2.3"},
+    )
+
+
+@pytest.fixture
+async def text_stream_model(
+    model_registry: MultiModelRegistry, text_stream_model_settings: ModelSettings
+) -> TextModel:
+    await model_registry.load(text_stream_model_settings)
+    return await model_registry.get_model(text_stream_model_settings.name)
+
+
+@pytest.fixture
 def metadata_server_response() -> types.MetadataServerResponse:
     payload_path = os.path.join(TESTDATA_PATH, "metadata-server-response.json")
     return types.MetadataServerResponse.parse_file(payload_path)
@@ -188,6 +243,12 @@ def metadata_model_response() -> types.MetadataModelResponse:
 @pytest.fixture
 def inference_request() -> types.InferenceRequest:
     payload_path = os.path.join(TESTDATA_PATH, "inference-request.json")
+    return types.InferenceRequest.parse_file(payload_path)
+
+
+@pytest.fixture
+def generate_request() -> types.InferenceRequest:
+    payload_path = os.path.join(TESTDATA_PATH, "generate-request.json")
     return types.InferenceRequest.parse_file(payload_path)
 
 
@@ -217,6 +278,12 @@ async def model_registry(sum_model_settings: ModelSettings) -> MultiModelRegistr
 @pytest.fixture
 def settings() -> Settings:
     settings_path = os.path.join(TESTDATA_PATH, "settings.json")
+    return Settings.parse_file(settings_path)
+
+
+@pytest.fixture
+def settings_stream() -> Settings:
+    settings_path = os.path.join(TESTDATA_PATH, "settings-stream.json")
     return Settings.parse_file(settings_path)
 
 
@@ -263,7 +330,7 @@ def repository_index_request() -> types.RepositoryIndexRequest:
 @pytest.fixture
 def repository_index_response(sum_model_settings) -> types.RepositoryIndexResponse:
     return types.RepositoryIndexResponse(
-        __root__=[
+        root=[
             types.RepositoryIndexResponseItem(
                 name=sum_model_settings.name,
                 version=sum_model_settings.parameters.version,
@@ -337,9 +404,9 @@ async def inference_pool_registry(
 @pytest.fixture
 def datatype_error_message():
     error_message = (
-        "value is not a valid enumeration member;"
-        " permitted: 'BOOL', 'UINT8', 'UINT16', 'UINT32',"
+        "Input should be"
+        " 'BOOL', 'UINT8', 'UINT16', 'UINT32',"
         " 'UINT64', 'INT8', 'INT16', 'INT32', 'INT64',"
-        " 'FP16', 'FP32', 'FP64', 'BYTES'"
+        " 'FP16', 'FP32', 'FP64' or 'BYTES'"
     )
     return error_message

@@ -26,7 +26,7 @@ def _pil_base64decode(imgbytes: Union[bytes, str]) -> "Image.Image":
 @register_input_codec
 class PILImageCodec(InputCodec):
     """
-    Codec that convers to / from a PIL.Image input.
+    Codec that converts to / from a PIL.Image.Image input.
     """
 
     ContentType = "pillow_image"
@@ -53,13 +53,13 @@ class PILImageCodec(InputCodec):
         )
 
     @classmethod
-    def decode_output(cls, response_output: ResponseOutput) -> List[bytes]:
-        packed = response_output.data.__root__
+    def decode_output(cls, response_output: ResponseOutput) -> List["Image.Image"]:
+        packed = response_output.data.root
         return list(map(_pil_base64decode, as_list(packed)))
 
     @classmethod
     def encode_input(
-        cls, name: str, payload: List[bytes], use_bytes: bool = True, **kwargs
+        cls, name: str, payload: List[Image.Image], use_bytes: bool = True, **kwargs
     ) -> RequestInput:
         output = cls.encode_output(name, payload, use_bytes)
         return RequestInput(
@@ -73,6 +73,6 @@ class PILImageCodec(InputCodec):
         )
 
     @classmethod
-    def decode_input(cls, request_input: RequestInput) -> List[bytes]:
-        packed = request_input.data.__root__
+    def decode_input(cls, request_input: RequestInput) -> List["Image.Image"]:
+        packed = request_input.data.root
         return list(map(_pil_base64decode, as_list(packed)))

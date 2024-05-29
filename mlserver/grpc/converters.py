@@ -223,7 +223,7 @@ class InferInputTensorConverter:
         return types.RequestInput.construct(
             name=pb_object.name,
             shape=list(pb_object.shape),
-            datatype=Datatype(pb_object.datatype),
+            datatype=pb_object.datatype,
             parameters=ParametersConverter.to_types(pb_object.parameters),
             data=InferTensorContentsConverter.to_types(pb_object.contents),
         )
@@ -296,7 +296,7 @@ class ParametersConverter:
         cls, type_object: types.Parameters
     ) -> Mapping[str, pb.InferParameter]:
         pb_object = {}
-        as_dict = type_object.dict()
+        as_dict = type_object.model_dump(by_alias=True)
 
         for key, value in as_dict.items():
             infer_parameter_key = cls._get_inferparameter_key(value)
@@ -326,7 +326,7 @@ class InferTensorContentsConverter:
     def to_types(cls, pb_object: pb.InferTensorContents) -> types.TensorData:
         data = _get_value(pb_object, default=[])
         as_list = list(data)
-        return types.TensorData.construct(__root__=as_list)
+        return types.TensorData(root=as_list)
 
     @classmethod
     def from_types(

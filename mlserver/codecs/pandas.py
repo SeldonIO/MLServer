@@ -26,8 +26,7 @@ def _to_series(input_or_output: InputOrOutput) -> pd.Series:
         return pd.Series(payload)
 
     if isinstance(payload, np.ndarray):
-        # Necessary so that it's compatible with pd.Series
-        payload = list(payload)
+        payload = payload.reshape(input_or_output.shape[0], 1).squeeze(axis=1)
 
     dtype = to_dtype(input_or_output)
     return pd.Series(payload, dtype=dtype)

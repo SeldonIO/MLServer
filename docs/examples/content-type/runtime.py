@@ -10,7 +10,7 @@ from mlserver.types import (
     RequestInput,
     ResponseOutput,
 )
-from mlserver.codecs import NumpyCodec, register_input_codec, DecodedParameterName
+from mlserver.codecs import InputCodec, register_input_codec, DecodedParameterName
 from mlserver.codecs.utils import InputOrOutput
 
 
@@ -21,22 +21,22 @@ _to_exclude = {
 
 
 @register_input_codec
-class PillowCodec(NumpyCodec):
+class PillowCodec(InputCodec):
     ContentType = "img"
     DefaultMode = "L"
 
     @classmethod
-    def can_encode(cls, payload: Image) -> bool:
-        return isinstance(payload, Image)
+    def can_encode(cls, payload: Image.Image) -> bool:
+        return isinstance(payload, Image.Image)
 
     @classmethod
-    def _decode(cls, input_or_output: InputOrOutput) -> Image:
+    def _decode(cls, input_or_output: InputOrOutput) -> Image.Image:
         if input_or_output.datatype != "BYTES":
             # If not bytes, assume it's an array
             image_array = super().decode_input(input_or_output)  # type: ignore
             return Image.fromarray(image_array, mode=cls.DefaultMode)
 
-        encoded = input_or_output.data.__root__
+        encoded = input_or_output.data
         if isinstance(encoded, str):
             encoded = encoded.encode()
 
@@ -45,7 +45,11 @@ class PillowCodec(NumpyCodec):
         )
 
     @classmethod
-    def encode_output(cls, name: str, payload: Image) -> ResponseOutput:  # type: ignore
+    def encode_output(  # type: ignore
+        cls,
+        name: str,
+        payload: Image.Image,
+    ) -> ResponseOutput:  # type: ignore
         byte_array = io.BytesIO()
         payload.save(byte_array, mode=cls.DefaultMode)
 
@@ -54,11 +58,15 @@ class PillowCodec(NumpyCodec):
         )
 
     @classmethod
-    def decode_output(cls, response_output: ResponseOutput) -> Image:
+    def decode_output(cls, response_output: ResponseOutput) -> Image.Image:
         return cls._decode(response_output)
 
     @classmethod
-    def encode_input(cls, name: str, payload: Image) -> RequestInput:  # type: ignore
+    def encode_input(  # type: ignore
+        cls,
+        name: str,
+        payload: Image.Image,
+    ) -> RequestInput:  # type: ignore
         output = cls.encode_output(name, payload)
         return RequestInput(
             name=output.name,
@@ -68,7 +76,7 @@ class PillowCodec(NumpyCodec):
         )
 
     @classmethod
-    def decode_input(cls, request_input: RequestInput) -> Image:
+    def decode_input(cls, request_input: RequestInput) -> Image.Image:
         return cls._decode(request_input)
 
 

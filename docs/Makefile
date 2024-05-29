@@ -20,7 +20,7 @@ help:
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 start:
-	sphinx-autobuild . ./_build/html
+	poetry run sphinx-autobuild . ./_build/html
 
 install-dev:
 	poetry install -C .. --with docs --with all-runtimes --with all-runtimes-dev

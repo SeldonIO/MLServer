@@ -14,7 +14,7 @@ try:
 except ImportError:
     sklearn = None
 
-from typing import Dict, List
+from typing import Dict, List, AsyncIterator
 
 from mlserver import MLModel
 from mlserver.types import (
@@ -62,6 +62,47 @@ class SumModel(MLModel):
             response.parameters = Parameters(headers=response_headers)
 
         return response
+
+
+class TextModel(MLModel):
+    async def predict(self, payload: InferenceRequest) -> InferenceResponse:
+        text = StringCodec.decode_input(payload.inputs[0])[0]
+        return InferenceResponse(
+            model_name=self._settings.name,
+            outputs=[
+                StringCodec.encode_output(
+                    name="output",
+                    payload=[text],
+                    use_bytes=True,
+                ),
+            ],
+        )
+
+
+class TextStreamModel(MLModel):
+    async def predict_stream(
+        self, payloads: AsyncIterator[InferenceRequest]
+    ) -> AsyncIterator[InferenceResponse]:
+        payload = [_ async for _ in payloads][0]
+        text = StringCodec.decode_input(payload.inputs[0])[0]
+        words = text.split(" ")
+
+        split_text = []
+        for i, word in enumerate(words):
+            split_text.append(word if i == 0 else " " + word)
+
+        for word in split_text:
+            await asyncio.sleep(0.5)
+            yield InferenceResponse(
+                model_name=self._settings.name,
+                outputs=[
+                    StringCodec.encode_output(
+                        name="output",
+                        payload=[word],
+                        use_bytes=True,
+                    ),
+                ],
+            )
 
 
 class ErrorModel(MLModel):

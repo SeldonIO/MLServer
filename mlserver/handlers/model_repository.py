@@ -31,7 +31,7 @@ class ModelRepositoryHandlers:
             else:
                 repository_items.append(index_item)
 
-        return RepositoryIndexResponse(__root__=repository_items)
+        return RepositoryIndexResponse(root=repository_items)
 
     async def _to_item(
         self, model_settings: ModelSettings

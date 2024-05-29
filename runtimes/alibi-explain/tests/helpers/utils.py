@@ -111,7 +111,7 @@ def build_test_case(
     else:
         init_params = init_kwargs.copy()
         alibi_explain_settings["init_parameters"] = init_params
-    model_params["extra"] = AlibiExplainSettings(**alibi_explain_settings)
+    model_params["extra"] = AlibiExplainSettings(**alibi_explain_settings).model_dump()
 
     model_settings = ModelSettings(
         name="foo",

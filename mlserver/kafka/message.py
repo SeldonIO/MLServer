@@ -21,7 +21,7 @@ class KafkaMessage(BaseModel):
     def from_types(
         cls, key: Optional[str], value: BaseModel, headers: Dict[str, str]
     ) -> "KafkaMessage":
-        as_dict = value.dict()
+        as_dict = value.model_dump()
         return KafkaMessage(key=key, value=as_dict, headers=headers)
 
     @classmethod

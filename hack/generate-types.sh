@@ -1,4 +1,10 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+
 ROOT_FOLDER="$(dirname "${0}")/.."
+
+TARGET="$1"
 
 _generatePB() {
   local apiName=$1
@@ -23,14 +29,12 @@ _generatePydantic() {
     --input "${ROOT_FOLDER}/openapi/$apiName.yaml" \
     --input-file-type openapi \
     --output "${ROOT_FOLDER}/mlserver/types/$apiName.py" \
+    --output-model-type pydantic_v2.BaseModel \
     --custom-template-dir "${ROOT_FOLDER}/hack/templates" \
     --base-class ".base.BaseModel" \
     --disable-timestamp \
-    --target-python-version 3.6
+    --target-python-version 3.10
 }
 
-_generatePB dataplane
-_generatePydantic dataplane
-
-_generatePB model_repository
-_generatePydantic model_repository
+_generatePB "$TARGET"
+_generatePydantic "$TARGET"

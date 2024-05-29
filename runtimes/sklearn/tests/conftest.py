@@ -160,7 +160,7 @@ def pandas_inference_request() -> InferenceRequest:
             },
         ],
     }
-    return InferenceRequest.parse_obj(inference_request)
+    return InferenceRequest.model_validate(inference_request)
 
 
 class DummyDataframeModel(BaseEstimator):

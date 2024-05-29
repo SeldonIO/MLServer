@@ -40,7 +40,7 @@ def test_remote_predict(requests_mock):
 
     requests_mock.post(
         uri,
-        text=inference_response.json(),
+        text=inference_response.model_dump_json(),
         request_headers={SELDON_SKIP_LOGGING_HEADER: "true"},
     )
     res = remote_predict(inference_request, uri, True)

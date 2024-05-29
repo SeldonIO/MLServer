@@ -43,9 +43,7 @@ def send_request(
 
         # Generate random data to ensure we catch any out-of-order issues
         request_input = inference_request.inputs[0]
-        request_input.data = TensorData(
-            __root__=[random.randint(1, 100) for _ in range(3)]
-        )
+        request_input.data = TensorData(root=[random.randint(1, 100) for _ in range(3)])
         new_req = InferenceRequest(id=pred_id, inputs=[request_input])
         internal_id, _ = await adaptive_batcher._queue_request(new_req)
 
