@@ -84,9 +84,16 @@ jobs:
           brew install docker docker-buildx
           mkdir -p $HOME/.docker/cli-plugins
           ln -sfn $(which docker-buildx) $HOME/.docker/cli-plugins/docker-buildx
-          # colima version: 0.6.8
-          brew install colima
-          colima start --memory 5
+          # Install Lima
+          brew install lima
+          limactl start
+          # Install Colima
+          sudo mkdir -p /usr/local/bin
+          sudo curl -L -o /usr/local/bin/colima https://github.com/abiosoft/colima/releases/download/v0.5.6/colima-Darwin-x86_64 && sudo chmod +x /usr/local/bin/colima
+          # NOTE: Use the `slirp` driver rather than the default to avoid
+          # random connection errors.
+          # From https://github.com/abiosoft/colima/issues/577
+          colima start --memory 5 --network-driver slirp
           sudo ln -sf $HOME/.colima/default/docker.sock /var/run/docker.sock
       - name: Install OpenMP (in MacOS)
         if: runner.os == 'macOS'
@@ -147,10 +154,10 @@ jobs:
             os: macos-13
     runs-on: ${{ matrix.os }}
     steps:
+      - uses: actions/checkout@v4
       - name: Install OpenMP (in MacOS)
         if: runner.os == 'macOS'
         run: brew install libomp
-      - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
@@ -211,9 +218,16 @@ jobs:
           brew install docker docker-buildx
           mkdir -p $HOME/.docker/cli-plugins
           ln -sfn $(which docker-buildx) $HOME/.docker/cli-plugins/docker-buildx
-          # 0.6.8
-          brew install colima
-          colima start --memory 5
+          # Install Lima
+          brew install lima
+          limactl start
+          # Install Colima
+          sudo mkdir -p /usr/local/bin
+          sudo curl -L -o /usr/local/bin/colima https://github.com/abiosoft/colima/releases/download/v0.5.6/colima-Darwin-x86_64 && sudo chmod +x /usr/local/bin/colima
+          # NOTE: Use the `slirp` driver rather than the default to avoid
+          # random connection errors.
+          # From https://github.com/abiosoft/colima/issues/577
+          colima start --memory 5 --network-driver slirp
           sudo ln -sf $HOME/.colima/default/docker.sock /var/run/docker.sock
       - name: Install OpenMP (in MacOS)
         if: runner.os == 'macOS'
