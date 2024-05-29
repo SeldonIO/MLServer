@@ -98,15 +98,13 @@ jobs:
       - name: Install Dependencies
         run: |
           if [[ ${{ runner.os == 'macOS' }} ]]; then
-            export LDFLAGS="-L/usr/local/opt/libomp/lib"
-            export CPPFLAGS="-I/usr/local/opt/libomp/include"
+            source ./hack/activate-libomp-macos.sh
           fi
           poetry install --sync --only dev
       - name: Test
         run: |
           if [[ ${{ runner.os == 'macOS' }} ]]; then
-            export LDFLAGS="-L/usr/local/opt/libomp/lib"
-            export CPPFLAGS="-I/usr/local/opt/libomp/include"
+            source ./hack/activate-libomp-macos.sh
           fi
           tox -e mlserver
 
@@ -157,15 +155,13 @@ jobs:
       - name: Install Dependencies
         run: |
           if [[ ${{ runner.os == 'macOS' }} ]]; then
-            export LDFLAGS="-L/usr/local/opt/libomp/lib"
-            export CPPFLAGS="-I/usr/local/opt/libomp/include"
+            source ./hack/activate-libomp-macos.sh
           fi
           poetry install --sync --only dev
       - name: Test
         run: |
           if [[ ${{ runner.os == 'macOS' }} ]]; then
-            export LDFLAGS="-L/usr/local/opt/libomp/lib"
-            export CPPFLAGS="-I/usr/local/opt/libomp/include"
+            source ./hack/activate-libomp-macos.sh
           fi
           tox -c ./runtimes/${{ matrix.tox-environment }}
 
@@ -216,14 +212,12 @@ jobs:
       - name: Install Dependencies
         run: |
           if [[ ${{ runner.os == 'macOS' }} ]]; then
-            export LDFLAGS="-L/usr/local/opt/libomp/lib"
-            export CPPFLAGS="-I/usr/local/opt/libomp/include"
+            source ./hack/activate-libomp-macos.sh
           fi
           poetry install --sync --only dev
       - name: Test
         run: |
           if [[ ${{ runner.os == 'macOS' }} ]]; then
-            export LDFLAGS="-L/usr/local/opt/libomp/lib"
-            export CPPFLAGS="-I/usr/local/opt/libomp/include"
+            source ./hack/activate-libomp-macos.sh
           fi
           tox -e all-runtimes
