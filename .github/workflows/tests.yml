@@ -55,7 +55,7 @@ jobs:
       - name: Lint
         run: make lint
 
-  mlserver:
+  test-mlserver:
     strategy:
       fail-fast: false
       matrix:
@@ -104,7 +104,7 @@ jobs:
           fi
           poetry run tox -e mlserver
 
-  runtimes:
+  test-runtimes:
     strategy:
       fail-fast: false
       matrix:
@@ -158,7 +158,7 @@ jobs:
           poetry run tox -c ./runtimes/${{ matrix.tox-environment }}
 
   # Ensure that having all the runtimes installed together works
-  all-runtimes:
+  test-all-runtimes:
     if: github.event_name == 'push'
     strategy:
       fail-fast: false
