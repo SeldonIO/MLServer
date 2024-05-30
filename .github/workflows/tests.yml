@@ -95,18 +95,14 @@ jobs:
         uses: snok/install-poetry@v1
         with:
           virtualenvs-create: false
-      - name: Install Dependencies
-        run: |
-          if [[ ${{ runner.os == 'macOS' }} ]]; then
-            source ./hack/activate-libomp-macos.sh
-          fi
-          poetry install --sync --only dev
+      - name: Install dependencies
+        run: poetry install --only test
       - name: Test
         run: |
           if [[ ${{ runner.os == 'macOS' }} ]]; then
             source ./hack/activate-libomp-macos.sh
           fi
-          tox -e mlserver
+          poetry run tox -e mlserver
 
   runtimes:
     strategy:
@@ -152,18 +148,14 @@ jobs:
         uses: snok/install-poetry@v1
         with:
           virtualenvs-create: false
-      - name: Install Dependencies
-        run: |
-          if [[ ${{ runner.os == 'macOS' }} ]]; then
-            source ./hack/activate-libomp-macos.sh
-          fi
-          poetry install --sync --only dev
+      - name: Install dependencies
+        run: poetry install --only test
       - name: Test
         run: |
           if [[ ${{ runner.os == 'macOS' }} ]]; then
             source ./hack/activate-libomp-macos.sh
           fi
-          tox -c ./runtimes/${{ matrix.tox-environment }}
+          poetry run tox -c ./runtimes/${{ matrix.tox-environment }}
 
   # Ensure that having all the runtimes installed together works
   all-runtimes:
@@ -209,15 +201,11 @@ jobs:
         uses: snok/install-poetry@v1
         with:
           virtualenvs-create: false
-      - name: Install Dependencies
-        run: |
-          if [[ ${{ runner.os == 'macOS' }} ]]; then
-            source ./hack/activate-libomp-macos.sh
-          fi
-          poetry install --sync --only dev
+      - name: Install dependencies
+        run: poetry install --only test
       - name: Test
         run: |
           if [[ ${{ runner.os == 'macOS' }} ]]; then
             source ./hack/activate-libomp-macos.sh
           fi
-          tox -e all-runtimes
+          poetry run tox -e all-runtimes
