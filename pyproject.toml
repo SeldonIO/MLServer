@@ -70,7 +70,7 @@ python-multipart = "*"
 ## functionality added in Python 3.10
 ## https://setuptools.pypa.io/en/latest/userguide/datafiles.html#accessing-data-files-at-runtime
 importlib-resources = ">=5.12,<7.0"
-opentelemetry-sdk = "^1.22.0"
+opentelemetry-sdk = "^1.22.0,<1.25.0"
 opentelemetry-instrumentation-fastapi = ">=0.43b0"
 opentelemetry-instrumentation-grpc = ">=0.43b0"
 opentelemetry-exporter-otlp-proto-grpc = "^1.22.0"
