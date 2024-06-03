@@ -1,22 +1,22 @@
 # Streaming support
 
-The `mlserver` package comes with built-in support for streaming data. This allows you to process data in real-time, without having to wait for the entire response to be available. It support both REST and gRPC APIs.
+The `mlserver` package comes with built-in support for streaming data. This allows you to process data in real-time, without having to wait for the entire response to be available. It supports both REST and gRPC APIs.
 
 ## Overview
 
-In this example, we create a simple `Identity Text Model` which simply splits the input text into words and returns them one by one. We will use this model to demonstrate how to stream the response from the server to the client. This particular example can provide a good starting point for building more complex streaming models such the ones based on Large Language Models (LLMs) where streaming is an essential feature to hide the latency of the model.
+In this example, we create a simple `Identity Text Model` which simply splits the input text into words and returns them one by one. We will use this model to demonstrate how to stream the response from the server to the client. This particular example can provide a good starting point for building more complex streaming models such as the ones based on Large Language Models (LLMs) where streaming is an essential feature to hide the latency of the model.
 
 ## Serving
 
-The next step will be to serve our model using `mlserver`. For that, we will first implement an extension which serve as the runtime to perform inference using our custom `TextModel`.
+The next step will be to serve our model using `mlserver`. For that, we will first implement an extension that serves as the runtime to perform inference using our custom `TextModel`.
 
 ### Custom inference runtime
 
 This is a trivial model to demonstrate streaming support. The model simply splits the input text into words and returns them one by one. In this example we do the following:
 
-- Split the text into words using the white space as the delimiter.
-- Wait 0.5 seconds between each word to simulate a slow model.
-- Return each word one by one.
+- split the text into words using the white space as the delimiter.
+- wait 0.5 seconds between each word to simulate a slow model.
+- return each word one by one.
 
 
 ```python
@@ -57,7 +57,7 @@ class TextModel(MLModel):
 
 ```
 
-As it can be seen, the `predict_stream` method receives as an input a `AsyncIterator` of `InferenceRequest` and returns an `AsyncIterator` of `InferenceResponse`. This definition covers all types of possible input-output combinations for streaming: unary-stream, stream-unary, stream-stream. It is up to the client and server to send/receive the appropriate number of requests/responses which should be known apriori.
+As it can be seen, the `predict_stream` method receives as an input an `AsyncIterator` of `InferenceRequest` and returns an `AsyncIterator` of `InferenceResponse`. This definition covers all types of possible input-output combinations for streaming: unary-stream, stream-unary, stream-stream. It is up to the client and server to send/receive the appropriate number of requests/responses which should be known apriori.
 
 Note that although unary-unary can be covered by `predict_stream` method as well, `mlserver` already covers that through the `predict` method.
 
@@ -88,7 +88,7 @@ Note the currently there are three main limitations of the streaming support in 
 
 - distributed workers are not supported (i.e., the `parallel_workers` setting should be set to `0`)
 - `gzip` middleware is not supported for REST (i.e., `gzip_enabled` setting should be set to `false`)
-- metrics endpoint is not available (i.e. `metrics_endpoint` are also disabled for streaming for gRPC)
+- metrics endpoint is not available (i.e. `metrics_endpoint` is also disabled for streaming for gRPC)
 
 #### model-settings.json
 
@@ -122,13 +122,13 @@ Note the currently there are three main limitations of the streaming support in 
 
 #### Start serving the model
 
-Now that we have our config in-place, we can start the server by running mlserver start .. This needs to either be ran from the same directory where our config files are or pointing to the folder where they are.
+Now that we have our config in-place, we can start the server by running `mlserver start .`. This needs to either be run from the same directory where our config files are or point to the folder where they are.
 
 ```bash
 mlserver start .
 ```
 
-Since this command will start the server and block the terminal, waiting for requests, this will need to be ran in the background on a separate terminal.
+Since this command will start the server and block the terminal, waiting for requests, this will need to be run in the background on a separate terminal.
 
 #### Inference request
 
@@ -212,4 +212,6 @@ async with grpc.aio.insecure_channel("localhost:8081") as grpc_channel:
         print(StringCodec.decode_output(response.outputs[0]))
 ```
 
-Note that for gRPC, the request is transformed into a async generator which is then passed to the `ModelStreamInfer` method. The response is also an async generator which can be iterated over to get the response.
+Note that for gRPC, the request is transformed into an async generator which is then passed to the `ModelStreamInfer` method. The response is also an async generator which can be iterated over to get the response.
+
+
