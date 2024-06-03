@@ -245,6 +245,285 @@ paths:
       tags:
         - inference
         - model
+  '/v2/models/{model_name}/versions/{model_version}/infer_stream':
+    parameters:
+      - schema:
+          type: string
+        name: model_name
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: model_version
+        in: path
+        required: true
+    post:
+      summary: Model Inference Stream
+      operationId: model-version-inference-stream
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InferenceResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InferenceErrorResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InferenceErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InferenceErrorResponse'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InferenceRequest'
+      description: An inference request is made with an HTTP POST to an inference endpoint. The model name and (optionally) version must be available in the URL. If a version is not provided the server may choose a version based on its own policies or return an error.
+      tags:
+        - inference
+        - model
+  '/v2/models/{model_name}/infer_stream':
+    parameters:
+      - schema:
+          type: string
+        name: model_name
+        in: path
+        required: true
+    post:
+      summary: Model Inference Stream
+      operationId: model-inference-stream
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InferenceResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InferenceErrorResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InferenceErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InferenceErrorResponse'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InferenceRequest'
+      description: An inference request is made with an HTTP POST to an inference endpoint. The model name and (optionally) version must be available in the URL. If a version is not provided the server may choose a version based on its own policies or return an error.
+      tags:
+        - inference
+        - model
+  '/v2/models/{model_name}/versions/{model_version}/generate':
+    parameters:
+      - schema:
+          type: string
+        name: model_name
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: model_version
+        in: path
+        required: true
+    post:
+      summary: Model Generate
+      operationId: model-version-generate
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InferenceResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InferenceErrorResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InferenceErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InferenceErrorResponse'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InferenceRequest'
+      description: An inference request is made with an HTTP POST to an inference endpoint. The model name and (optionally) version must be available in the URL. If a version is not provided the server may choose a version based on its own policies or return an error.
+      tags:
+        - inference
+        - model
+  '/v2/models/{model_name}/generate':
+    parameters:
+      - schema:
+          type: string
+        name: model_name
+        in: path
+        required: true
+    post:
+      summary: Model Generate
+      operationId: model-generate
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InferenceResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InferenceErrorResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InferenceErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InferenceErrorResponse'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InferenceRequest'
+      description: An inference request is made with an HTTP POST to an inference endpoint. The model name and (optionally) version must be available in the URL. If a version is not provided the server may choose a version based on its own policies or return an error.
+      tags:
+        - inference
+        - model
+  '/v2/models/{model_name}/versions/{model_version}/generate_stream':
+    parameters:
+      - schema:
+          type: string
+        name: model_name
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: model_version
+        in: path
+        required: true
+    post:
+      summary: Model Generate Stream
+      operationId: model-version-generate-stream
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InferenceResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InferenceErrorResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InferenceErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InferenceErrorResponse'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InferenceRequest'
+      description: An inference request is made with an HTTP POST to an inference endpoint. The model name and (optionally) version must be available in the URL. If a version is not provided the server may choose a version based on its own policies or return an error.
+      tags:
+        - inference
+        - model
+  '/v2/models/{model_name}/generate_stream':
+    parameters:
+      - schema:
+          type: string
+        name: model_name
+        in: path
+        required: true
+    post:
+      summary: Model Generate Stream
+      operationId: model-generate-stream
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InferenceResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InferenceErrorResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InferenceErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InferenceErrorResponse'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InferenceRequest'
+      description: An inference request is made with an HTTP POST to an inference endpoint. The model name and (optionally) version must be available in the URL. If a version is not provided the server may choose a version based on its own policies or return an error.
+      tags:
+        - inference
+        - model
 components:
   enums:
     Datatype:
