@@ -13,4 +13,5 @@ how to use them.
 ./custom
 ./metrics
 ./deployment/index
+./streaming
 ```
