@@ -16,7 +16,7 @@ def _extract_env(tarball_path: str, env_path: str) -> None:
     print("* traball_path", tarball_path)
     print("* env_path", env_path)
     print("==============")
-    
+
     logger.info(f"Extracting environment tarball from {tarball_path}...")
     with tarfile.open(tarball_path, "r") as tarball:
         tarball.extractall(path=env_path)
@@ -123,7 +123,7 @@ class Environment:
         for match in matches:
             if match.endswith("3.1"):
                 continue
-            
+
             if os.path.isdir(match):
                 return match
 
