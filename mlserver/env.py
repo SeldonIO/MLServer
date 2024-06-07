@@ -124,6 +124,8 @@ class Environment:
         matches = glob.glob(pattern)
 
         for match in matches:
+            # avoid matching python 3.1 instead of 3.10 - the
+            # pattern above matches both of them
             if match.endswith("3.1"):
                 continue
 
