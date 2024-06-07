@@ -13,7 +13,7 @@ from json import JSONDecodeError
 import os
 
 from typing import List, Tuple, Type
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 
 from mlserver.settings import Settings, ModelSettings, ModelParameters
 from mlserver.cli.serve import DEFAULT_SETTINGS_FILENAME
