@@ -1,4 +1,5 @@
 import uvicorn
+import signal
 
 from ..settings import Settings
 from ..handlers import DataPlane, ModelRepositoryHandlers, get_custom_handlers
@@ -96,4 +97,9 @@ class RESTServer:
         return uvicorn.Config(self._app, **kwargs)
 
     async def stop(self, sig: Optional[int] = None):
+        if sig is None:
+            # `sig` is no longer optional for `handle_exit` in
+            # latest `uvicorn`
+            sig = signal.SIGINT
+
         self._server.handle_exit(sig=sig, frame=None)
