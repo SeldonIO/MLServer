@@ -61,28 +61,14 @@ jobs:
       matrix:
         os:
           - ubuntu-22.04
-          - macos-13
         # NOTE: There's no pre-built `grpcio` wheel for Python 3.11 yet
         # https://github.com/grpc/grpc/issues/32454
         python-version:
           - "3.9"
           - "3.10"
-        is-pr:
-          - ${{ github.event_name == 'pull_request' }}
-        exclude:
-          # MacOS tests take a lot of time, so we will run them only on merge
-          # From https://github.com/orgs/community/discussions/26253
-          - is-pr: true
-            os: macos-13
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Docker (missing on MacOS)
-        if: runner.os == 'macos'
-        run: ./hack/install-docker-macos.sh
-      - name: Install OpenMP (in MacOS)
-        if: runner.os == 'macOS'
-        run: brew install libomp
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
@@ -97,15 +83,9 @@ jobs:
           virtualenvs-create: false
       - name: Install Dependencies
         run: |
-          if [[ ${{ runner.os == 'macOS' }} ]]; then
-            source ./hack/activate-libomp-macos.sh
-          fi
           poetry install --sync --only dev
       - name: Test
         run: |
-          if [[ ${{ runner.os == 'macOS' }} ]]; then
-            source ./hack/activate-libomp-macos.sh
-          fi
           tox -e mlserver
 
   runtimes:
@@ -114,7 +94,6 @@ jobs:
       matrix:
         os:
           - ubuntu-22.04
-          - macos-13
         python-version:
           - "3.9"
           - "3.10"
@@ -127,19 +106,9 @@ jobs:
           - alibi-explain
           - alibi-detect
           - catboost
-        is-pr:
-          - ${{ github.event_name == 'pull_request' }}
-        exclude:
-          # MacOS tests take a lot of time, so we will run them only on merge
-          # From https://github.com/orgs/community/discussions/26253
-          - is-pr: true
-            os: macos-13
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
-      - name: Install OpenMP (in MacOS)
-        if: runner.os == 'macOS'
-        run: brew install libomp
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
@@ -154,15 +123,9 @@ jobs:
           virtualenvs-create: false
       - name: Install Dependencies
         run: |
-          if [[ ${{ runner.os == 'macOS' }} ]]; then
-            source ./hack/activate-libomp-macos.sh
-          fi
           poetry install --sync --only dev
       - name: Test
         run: |
-          if [[ ${{ runner.os == 'macOS' }} ]]; then
-            source ./hack/activate-libomp-macos.sh
-          fi
           tox -c ./runtimes/${{ matrix.tox-environment }}
 
   # Ensure that having all the runtimes installed together works
@@ -173,7 +136,6 @@ jobs:
       matrix:
         os:
           - ubuntu-22.04
-          - macos-13
         python-version:
           - "3.9"
           - "3.10"
@@ -191,12 +153,6 @@ jobs:
           overprovision-lvm: 'true'
           swap-size-mb: 1024
       - uses: actions/checkout@v4
-      - name: Setup Docker (missing on MacOS)
-        if: runner.os == 'macOS'
-        run: ./hack/install-docker-macos.sh
-      - name: Install OpenMP (in MacOS)
-        if: runner.os == 'macOS'
-        run: brew install libomp
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
@@ -211,13 +167,7 @@ jobs:
           virtualenvs-create: false
       - name: Install Dependencies
         run: |
-          if [[ ${{ runner.os == 'macOS' }} ]]; then
-            source ./hack/activate-libomp-macos.sh
-          fi
           poetry install --sync --only dev
       - name: Test
         run: |
-          if [[ ${{ runner.os == 'macOS' }} ]]; then
-            source ./hack/activate-libomp-macos.sh
-          fi
           tox -e all-runtimes
