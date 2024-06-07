@@ -167,11 +167,13 @@ jobs:
 
   # Ensure that having all the runtimes installed together works
   all-runtimes:
+    if: github.event_name == 'push'
     strategy:
       fail-fast: false
       matrix:
         os:
           - ubuntu-22.04
+          - macos-13
         python-version:
           - "3.9"
           - "3.10"
