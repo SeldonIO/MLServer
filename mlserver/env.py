@@ -13,13 +13,6 @@ from .logging import logger
 
 
 def _extract_env(tarball_path: str, env_path: str) -> None:
-<<<<<<< HEAD
-    print("* traball_path", tarball_path)
-    print("* env_path", env_path)
-    print("==============")
-
-=======
->>>>>>> f8ea4407 (Fix linting issues.)
     logger.info(f"Extracting environment tarball from {tarball_path}...")
     with tarfile.open(tarball_path, "r") as tarball:
         tarball.extractall(path=env_path)
@@ -124,11 +117,6 @@ class Environment:
         matches = glob.glob(pattern)
 
         for match in matches:
-            # avoid matching python 3.1 instead of 3.10 - the
-            # pattern above matches both of them
-            if match.endswith("3.1"):
-                continue
-
             if os.path.isdir(match):
                 return match
 
