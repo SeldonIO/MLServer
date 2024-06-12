@@ -76,6 +76,9 @@ opentelemetry-instrumentation-grpc = ">=0.43b0"
 opentelemetry-exporter-otlp-proto-grpc = "^1.22.0"
 pytest-lazy-fixture = "^0.6.3"
 
+[tool.poetry.group.test.dependencies]
+tox = "4.14.2"
+
 [tool.poetry.group.dev.dependencies]
 datamodel-code-generator = "0.25.5"
 grpcio-tools = "1.48.2"
