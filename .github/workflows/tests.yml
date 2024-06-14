@@ -69,11 +69,11 @@ jobs:
           - "3.10"
         is-pr:
           - ${{ github.event_name == 'pull_request' }}
-        exclude:
-          # MacOS tests take a lot of time, so we will run them only on merge
-          # From https://github.com/orgs/community/discussions/26253
-          - is-pr: true
-            os: macos-13
+        # exclude:
+        #   # MacOS tests take a lot of time, so we will run them only on merge
+        #   # From https://github.com/orgs/community/discussions/26253
+        #   - is-pr: true
+        #     os: macos-13
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -125,11 +125,11 @@ jobs:
           - catboost
         is-pr:
           - ${{ github.event_name == 'pull_request' }}
-        exclude:
-          # MacOS tests take a lot of time, so we will run them only on merge
-          # From https://github.com/orgs/community/discussions/26253
-          - is-pr: true
-            os: macos-13
+        # exclude:
+        #   # MacOS tests take a lot of time, so we will run them only on merge
+        #   # From https://github.com/orgs/community/discussions/26253
+        #   - is-pr: true
+        #     os: macos-13
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
