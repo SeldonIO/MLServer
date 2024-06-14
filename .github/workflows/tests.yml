@@ -110,7 +110,6 @@ jobs:
       matrix:
         os:
           - ubuntu-22.04
-          - macos-13
         python-version:
           - "3.9"
           - "3.10"
@@ -125,41 +124,14 @@ jobs:
           - catboost
         is-pr:
           - ${{ github.event_name == 'pull_request' }}
-        architecture:
-          - x86_64
-          - arm64
-        exclude:
-          # Exclude macos and huggingface combination on x86_64
-          - os: macos-13
-            tox-environment: huggingface
-            architecture: x86_64
-          # Exclude all other macos combinations on arm64
-          - os: macos-13
-            architecture: arm64
-            tox-environment: sklearn
-          - os: macos-13
-            architecture: arm64
-            tox-environment: xgboost
-          - os: macos-13
-            architecture: arm64
-            tox-environment: lightgbm
-          - os: macos-13
-            architecture: arm64
-            tox-environment: mlflow
-          - os: macos-13
-            architecture: arm64
-            tox-environment: alibi-explain
-          - os: macos-13
-            architecture: arm64
-            tox-environment: alibi-detect
-          - os: macos-13
-            architecture: arm64
-            tox-environment: catboost
-          # Exclude all ubuntu on arm64
-          - os: ubuntu-22.04
-            architecture: arm64
     runs-on: ${{ matrix.os }}
     steps:
+      - name: Setup QEMU
+        if: matrix.tox-environment == 'huggingface'
+        uses: docker/setup-qemu-action@v3
+        with:
+          image: tonistiigi/binfmt:latest	
+          platforms: arm64
       - uses: actions/checkout@v4
       - name: Install OpenMP (in MacOS)
         if: runner.os == 'macOS'
