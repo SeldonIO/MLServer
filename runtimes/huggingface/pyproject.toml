@@ -21,7 +21,7 @@ mlserver = {path = "../..", develop = true}
 # see: https://github.com/pytorch/pytorch/issues/114602
 torch = [
     {markers = "sys_platform == 'darwin' and platform_machine == 'x86_64'", version = "<2.3.0"},
-    {markers = "sys_platform != 'darwin' or platform_machine != 'x86_64'", version = "2.3.0"}
+    {markers = "sys_platform != 'darwin' or platform_machine != 'x86_64'", version = "<2.4.0"}
 ]
 transformers = ">=4.30,<5.0"
 tensorflow = ">=2.12,<2.17"
