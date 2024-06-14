@@ -17,7 +17,10 @@ pydantic = "2.7.1"
 
 [tool.poetry.group.dev.dependencies]
 mlserver = {path = "../..", develop = true}
-torch = "2.3.0"
+torch = [
+    {markers = "sys_platform == 'darwin' and platform_machine == 'x86_64'", version = "<2.3.0"},
+    {markers = "sys_platform != 'darwin' or platform_machine != 'x86_64'", version = "2.3.0"}
+]
 transformers = ">=4.30,<5.0"
 tensorflow = ">=2.12,<2.17"
 

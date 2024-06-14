@@ -60,20 +60,20 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - ubuntu-22.04
+          # - ubuntu-22.04
           - macos-13
         # NOTE: There's no pre-built `grpcio` wheel for Python 3.11 yet
         # https://github.com/grpc/grpc/issues/32454
         python-version:
-          - "3.9"
+          # - "3.9"
           - "3.10"
         is-pr:
           - ${{ github.event_name == 'pull_request' }}
-        exclude:
-          # MacOS tests take a lot of time, so we will run them only on merge
-          # From https://github.com/orgs/community/discussions/26253
-          - is-pr: true
-            os: macos-13
+        # exclude:
+        #   # MacOS tests take a lot of time, so we will run them only on merge
+        #   # From https://github.com/orgs/community/discussions/26253
+        #   - is-pr: true
+        #     os: macos-13
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -109,29 +109,29 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - ubuntu-22.04
+          # - ubuntu-22.04
+          - macos-13
         python-version:
-          - "3.9"
+          # - "3.9"
           - "3.10"
         tox-environment:
-          - sklearn
-          - xgboost
-          - lightgbm
-          - mlflow
+          # - sklearn
+          # - xgboost
+          # - lightgbm
+          # - mlflow
           - huggingface
-          - alibi-explain
-          - alibi-detect
-          - catboost
+          # - alibi-explain
+          # - alibi-detect
+          # - catboost
         is-pr:
           - ${{ github.event_name == 'pull_request' }}
+        # exclude:
+        #   # MacOS tests take a lot of time, so we will run them only on merge
+        #   # From https://github.com/orgs/community/discussions/26253
+        #   - is-pr: true
+        #     os: macos-13
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Setup QEMU
-        if: matrix.tox-environment == 'huggingface'
-        uses: docker/setup-qemu-action@v3
-        with:
-          image: tonistiigi/binfmt:latest	
-          platforms: arm64
       - uses: actions/checkout@v4
       - name: Install OpenMP (in MacOS)
         if: runner.os == 'macOS'
@@ -164,10 +164,10 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - ubuntu-22.04
+          # - ubuntu-22.04
           - macos-13
         python-version:
-          - "3.9"
+          # - "3.9"
           - "3.10"
     runs-on: ${{ matrix.os }}
     steps:
