@@ -125,11 +125,39 @@ jobs:
           - catboost
         is-pr:
           - ${{ github.event_name == 'pull_request' }}
+        architecture:
+          - x86_64
+          - arm64
         exclude:
-          # MacOS tests take a lot of time, so we will run them only on merge
-          # From https://github.com/orgs/community/discussions/26253
-          - is-pr: true
-            os: macos-13
+          # Exclude macos and huggingface combination on x86_64
+          - os: macos-13
+            tox-environment: huggingface
+            architecture: x86_64
+          # Exclude all other macos combinations on arm64
+          - os: macos-13
+            architecture: arm64
+            tox-environment: sklearn
+          - os: macos-13
+            architecture: arm64
+            tox-environment: xgboost
+          - os: macos-13
+            architecture: arm64
+            tox-environment: lightgbm
+          - os: macos-13
+            architecture: arm64
+            tox-environment: mlflow
+          - os: macos-13
+            architecture: arm64
+            tox-environment: alibi-explain
+          - os: macos-13
+            architecture: arm64
+            tox-environment: alibi-detect
+          - os: macos-13
+            architecture: arm64
+            tox-environment: catboost
+          # Exclude all ubuntu on arm64
+          - os: ubuntu-22.04
+            architecture: arm64
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
