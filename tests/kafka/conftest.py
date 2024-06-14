@@ -75,7 +75,7 @@ def zookeeper(docker_client: DockerClient, kafka_network: str) -> str:
 
     container = docker_client.containers.run(
         name=zookeeper_name,
-        image="confluentinc/cp-zookeeper:6.2.0",
+        image="confluentinc/cp-zookeeper:latest",
         ports={
             f"{zookeeper_port}/tcp": str(zookeeper_port),
         },
@@ -85,6 +85,10 @@ def zookeeper(docker_client: DockerClient, kafka_network: str) -> str:
         },
         network=kafka_network,
         detach=True,
+        extra_hosts={
+            "moby": "127.0.0.1",
+            "localhost": "127.0.0.1"
+        }
     )
 
     zookeeper_addr = f"{zookeeper_name}:{zookeeper_port}"
@@ -102,21 +106,23 @@ async def kafka(docker_client: DockerClient, zookeeper: str, kafka_network: str)
 
     container = docker_client.containers.run(
         name=kafka_name,
-        image="confluentinc/cp-kafka:6.2.0",
+        image="confluentinc/cp-kafka:latest",
         ports={
-            f"9092/tcp": "9092",
             f"{kafka_port}/tcp": str(kafka_port),
         },
         environment={
             "KAFKA_BROKER_ID": 1,
             "KAFKA_ZOOKEEPER_CONNECT": zookeeper,
-            "KAFKA_ADVERTISED_LISTENERS": f"PLAINTEXT://{kafka_name}:9092,PLAINTEXT_HOST://localhost:{kafka_port}",  # noqa: E501
-            "KAFKA_LISTENER_SECURITY_PROTOCOL_MAP": "PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT",  # noqa: E501
+            "KAFKA_ADVERTISED_LISTENERS": f"PLAINTEXT://{kafka_name}:9092,PLAINTEXT_INTERNAL://localhost:{kafka_port}",  # noqa: E501
+            "KAFKA_LISTENER_SECURITY_PROTOCOL_MAP": "PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT",  # noqa: E501
             "KAFKA_INTER_BROKER_LISTENER_NAME": "PLAINTEXT",
-            "KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR": 1
         },
         network=kafka_network,
         detach=True,
+        extra_hosts={
+            "moby": "127.0.0.1",
+            "localhost": "127.0.0.1"
+        }
     )
 
     kafka_addr = f"localhost:{kafka_port}"
