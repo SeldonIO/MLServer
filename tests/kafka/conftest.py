@@ -102,7 +102,7 @@ async def kafka(docker_client: DockerClient, zookeeper: str, kafka_network: str)
 
     container = docker_client.containers.run(
         name=kafka_name,
-        image="confluentinc/cp-kafka:latest",
+        image="confluentinc/cp-kafka:7.6.1",
         ports={
             f"{kafka_port}/tcp": str(kafka_port),
         },
