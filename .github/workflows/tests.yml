@@ -97,6 +97,8 @@ jobs:
           virtualenvs-create: false
       - name: Install dependencies
         run: poetry install --only test
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
       - name: Test
         run: |
           if [[ ${{ runner.os == 'macOS' }} ]]; then
