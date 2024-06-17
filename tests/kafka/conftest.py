@@ -85,10 +85,6 @@ def zookeeper(docker_client: DockerClient, kafka_network: str) -> str:
         },
         network=kafka_network,
         detach=True,
-        extra_hosts={
-            "moby": "127.0.0.1",
-            "localhost": "127.0.0.1"
-        }
     )
 
     zookeeper_addr = f"{zookeeper_name}:{zookeeper_port}"
@@ -119,10 +115,6 @@ async def kafka(docker_client: DockerClient, zookeeper: str, kafka_network: str)
         },
         network=kafka_network,
         detach=True,
-        extra_hosts={
-            "moby": "127.0.0.1",
-            "localhost": "127.0.0.1"
-        }
     )
 
     kafka_addr = f"localhost:{kafka_port}"
