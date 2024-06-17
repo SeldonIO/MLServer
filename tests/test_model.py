@@ -22,7 +22,6 @@ async def test_predict_stream_fallback(
     text_model: TextModel,
     generate_request: InferenceRequest,
 ):
-    assert 1 == 2
     generator = text_model.predict_stream(stream_generator(generate_request))
     assert inspect.isasyncgen(generator)
 
