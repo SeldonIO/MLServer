@@ -61,7 +61,7 @@ jobs:
       matrix:
         os:
           - ubuntu-22.04
-          - macos-13
+          - macos-12
         # NOTE: There's no pre-built `grpcio` wheel for Python 3.11 yet
         # https://github.com/grpc/grpc/issues/32454
         python-version:
@@ -79,7 +79,9 @@ jobs:
       - uses: actions/checkout@v4
       - name: Setup Docker (missing on MacOS)
         if: runner.os == 'macos'
-        run: ./hack/install-docker-macos.sh
+        run: |
+          brew install docker
+          colima start
       - name: Install OpenMP (in MacOS)
         if: runner.os == 'macOS'
         run: brew install libomp
@@ -165,7 +167,7 @@ jobs:
       matrix:
         os:
           - ubuntu-22.04
-          - macos-13
+          - macos-12
         python-version:
           - "3.9"
           - "3.10"
@@ -185,7 +187,9 @@ jobs:
       - uses: actions/checkout@v4
       - name: Setup Docker (missing on MacOS)
         if: runner.os == 'macOS'
-        run: ./hack/install-docker-macos.sh
+        run: |
+          brew install docker
+          colima start
       - name: Install OpenMP (in MacOS)
         if: runner.os == 'macOS'
         run: brew install libomp
