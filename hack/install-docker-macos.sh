@@ -18,7 +18,7 @@ brew install lima
 # Install Colima
 sudo mkdir -p /usr/local/bin
 sudo curl -L -o /usr/local/bin/colima https://github.com/abiosoft/colima/releases/download/v0.6.9/colima-Darwin-x86_64 && sudo chmod +x /usr/local/bin/colima
-colima start --memory 2 --runtime docker
+colima start --memory 5 --runtime docker
 
 # Link Colima and Docker
 sudo ln -sf $HOME/.colima/default/docker.sock /var/run/docker.sock
