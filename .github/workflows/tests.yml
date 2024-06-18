@@ -101,8 +101,11 @@ jobs:
         run: |
           if [[ ${{ runner.os == 'macOS' }} ]]; then
             source ./hack/activate-libomp-macos.sh
+            poetry run tox -e mlserver
+          else
+            poetry run tox -e mlserver -- -- -n auto
           fi
-          poetry run tox -e mlserver
+          
 
   test-runtimes:
     strategy:
@@ -155,7 +158,7 @@ jobs:
           if [[ ${{ runner.os == 'macOS' }} ]]; then
             source ./hack/activate-libomp-macos.sh
           fi
-          poetry run tox -c ./runtimes/${{ matrix.tox-environment }}
+          poetry run tox -c ./runtimes/${{ matrix.tox-environment }} -- -- -n auto
 
   # Ensure that having all the runtimes installed together works
   test-all-runtimes:
@@ -207,5 +210,8 @@ jobs:
         run: |
           if [[ ${{ runner.os == 'macOS' }} ]]; then
             source ./hack/activate-libomp-macos.sh
-          fi
-          poetry run tox -e all-runtimes
+            poetry run tox -e all-runtimes
+          else
+            poetry run tox -e all-runtimes -- -- -n auto
+          if
+          
