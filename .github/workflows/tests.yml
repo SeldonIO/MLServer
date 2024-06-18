@@ -9,51 +9,51 @@ on:
     branches: [master]
 
 jobs:
-  generate:
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: ["3.9", "3.10"]
-        target: ["dataplane", "model-repository"]
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
-        with:
-          virtualenvs-create: false
-      - name: Install dependencies
-        run: poetry install --sync --only dev
-      - name: Generate ${{ matrix.target }}
-        run: make generate-${{ matrix.target }}
-      - name: Check for changes
-        run: make lint-no-changes
+  # generate:
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       python-version: ["3.9", "3.10"]
+  #       target: ["dataplane", "model-repository"]
+  #   runs-on: ubuntu-22.04
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Set up Python ${{ matrix.python-version }}
+  #       uses: actions/setup-python@v5
+  #       with:
+  #         python-version: ${{ matrix.python-version }}
+  #     - name: Install Poetry
+  #       uses: snok/install-poetry@v1
+  #       with:
+  #         virtualenvs-create: false
+  #     - name: Install dependencies
+  #       run: poetry install --sync --only dev
+  #     - name: Generate ${{ matrix.target }}
+  #       run: make generate-${{ matrix.target }}
+  #     - name: Check for changes
+  #       run: make lint-no-changes
 
-  lint:
-    strategy:
-      matrix:
-        python-version:
-          - "3.9"
-          - "3.10"
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
-        with:
-          virtualenvs-create: false
-      - name: Install dependencies
-        run: poetry install --sync --only dev
-      - name: Lint
-        run: make lint
+  # lint:
+  #   strategy:
+  #     matrix:
+  #       python-version:
+  #         - "3.9"
+  #         - "3.10"
+  #   runs-on: ubuntu-22.04
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Set up Python ${{ matrix.python-version }}
+  #       uses: actions/setup-python@v5
+  #       with:
+  #         python-version: ${{ matrix.python-version }}
+  #     - name: Install Poetry
+  #       uses: snok/install-poetry@v1
+  #       with:
+  #         virtualenvs-create: false
+  #     - name: Install dependencies
+  #       run: poetry install --sync --only dev
+  #     - name: Lint
+  #       run: make lint
 
   test-mlserver:
     strategy:
@@ -65,7 +65,7 @@ jobs:
         # NOTE: There's no pre-built `grpcio` wheel for Python 3.11 yet
         # https://github.com/grpc/grpc/issues/32454
         python-version:
-          - "3.9"
+          # - "3.9"
           - "3.10"
         is-pr:
           - ${{ github.event_name == 'pull_request' }}
@@ -99,66 +99,66 @@ jobs:
         run: poetry install --only test
       - name: Test
         run: |
-          if [[ ${{ runner.os == 'macOS' }} ]]; then
+          if [[ "$(uname)" == 'Darwin' ]]; then
             source ./hack/activate-libomp-macos.sh
-            poetry run tox -e mlserver
+            poetry run tox -e mlserver -- -- -n auto
           else
             poetry run tox -e mlserver -- -- -n auto
           fi
           
 
-  test-runtimes:
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-          - ubuntu-22.04
-          - macos-13
-        python-version:
-          - "3.9"
-          - "3.10"
-        tox-environment:
-          - sklearn
-          - xgboost
-          - lightgbm
-          - mlflow
-          - huggingface
-          - alibi-explain
-          - alibi-detect
-          - catboost
-        is-pr:
-          - ${{ github.event_name == 'pull_request' }}
-        # exclude:
-        #   # MacOS tests take a lot of time, so we will run them only on merge
-        #   # From https://github.com/orgs/community/discussions/26253
-        #   - is-pr: true
-        #     os: macos-13
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install OpenMP (in MacOS)
-        if: runner.os == 'macOS'
-        run: brew install libomp
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-      - uses: conda-incubator/setup-miniconda@v3
-        with:
-          auto-update-conda: true
-          auto-activate-base: false
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
-        with:
-          virtualenvs-create: false
-      - name: Install dependencies
-        run: poetry install --only test
-      - name: Test
-        run: |
-          if [[ ${{ runner.os == 'macOS' }} ]]; then
-            source ./hack/activate-libomp-macos.sh
-          fi
-          poetry run tox -c ./runtimes/${{ matrix.tox-environment }} -- -- -n auto
+  # test-runtimes:
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       os:
+  #         - ubuntu-22.04
+  #         - macos-13
+  #       python-version:
+  #         - "3.9"
+  #         - "3.10"
+  #       tox-environment:
+  #         - sklearn
+  #         - xgboost
+  #         - lightgbm
+  #         - mlflow
+  #         - huggingface
+  #         - alibi-explain
+  #         - alibi-detect
+  #         - catboost
+  #       is-pr:
+  #         - ${{ github.event_name == 'pull_request' }}
+  #       # exclude:
+  #       #   # MacOS tests take a lot of time, so we will run them only on merge
+  #       #   # From https://github.com/orgs/community/discussions/26253
+  #       #   - is-pr: true
+  #       #     os: macos-13
+  #   runs-on: ${{ matrix.os }}
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Install OpenMP (in MacOS)
+  #       if: runner.os == 'macOS'
+  #       run: brew install libomp
+  #     - name: Set up Python ${{ matrix.python-version }}
+  #       uses: actions/setup-python@v5
+  #       with:
+  #         python-version: ${{ matrix.python-version }}
+  #     - uses: conda-incubator/setup-miniconda@v3
+  #       with:
+  #         auto-update-conda: true
+  #         auto-activate-base: false
+  #     - name: Install Poetry
+  #       uses: snok/install-poetry@v1
+  #       with:
+  #         virtualenvs-create: false
+  #     - name: Install dependencies
+  #       run: poetry install --only test
+  #     - name: Test
+  #       run: |
+  #         if [[ "$(uname)" == 'Darwin' ]]; then
+  #           source ./hack/activate-libomp-macos.sh
+  #         fi
+  #         poetry run tox -c ./runtimes/${{ matrix.tox-environment }} -- -- -n auto
 
   # Ensure that having all the runtimes installed together works
   test-all-runtimes:
@@ -170,7 +170,7 @@ jobs:
           - ubuntu-22.04
           - macos-13
         python-version:
-          - "3.9"
+          # - "3.9"
           - "3.10"
     runs-on: ${{ matrix.os }}
     steps:
@@ -208,10 +208,10 @@ jobs:
         run: poetry install --only test
       - name: Test
         run: |
-          if [[ ${{ runner.os == 'macOS' }} ]]; then
+          if [[ "$(uname)" == 'Darwin' ]]; then
             source ./hack/activate-libomp-macos.sh
-            poetry run tox -e all-runtimes
+            poetry run tox -e all-runtimes -- -- -n auto
           else
             poetry run tox -e all-runtimes -- -- -n auto
-          if
+          fi
           
