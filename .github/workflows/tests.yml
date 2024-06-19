@@ -165,7 +165,7 @@ jobs:
       matrix:
         os:
           - ubuntu-22.04
-          - macos-13
+          - macos-12
         python-version:
           - "3.9"
           - "3.10"
