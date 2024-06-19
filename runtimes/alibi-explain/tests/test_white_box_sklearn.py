@@ -92,8 +92,6 @@ def mocked_sklearn_runtime(mocker):
         RandomForestRegressor,
         XGBClassifier,
         XGBRegressor,
-        LGBMClassifier,
-        LGBMRegressor,
     ],
 )
 def white_box_model(
