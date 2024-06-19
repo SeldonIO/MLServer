@@ -97,11 +97,12 @@ jobs:
           virtualenvs-create: false
       - name: Install dependencies
         run: poetry install --only test
-      - name: Activate LibOMP (in MacOS)
-        if: runner.os == 'macOS'
-        run: source ./hack/activate-libomp-macos.sh
       - name: Test
-        run: poetry run tox -e mlserver
+        run: |
+          if [[ ${{ runner.os == 'macOS' }} ]]; then
+            source ./hack/activate-libomp-macos.sh
+          fi
+          poetry run tox -e mlserver
 
   test-runtimes:
     strategy:
@@ -149,11 +150,12 @@ jobs:
           virtualenvs-create: false
       - name: Install dependencies
         run: poetry install --only test
-      - name: Activate LibOMP (in MacOS)
-        if: runner.os == 'macOS'
-        run: source ./hack/activate-libomp-macos.sh
       - name: Test
-        run: poetry run tox -c ./runtimes/${{ matrix.tox-environment }}
+        run: |
+          if [[ ${{ runner.os == 'macOS' }} ]]; then
+            source ./hack/activate-libomp-macos.sh
+          fi
+          poetry run tox -c ./runtimes/${{ matrix.tox-environment }}
 
   # Ensure that having all the runtimes installed together works
   test-all-runtimes:
@@ -181,10 +183,19 @@ jobs:
           overprovision-lvm: 'true'
           swap-size-mb: 1024
       - uses: actions/checkout@v4
-      
-      - name: Install OpenMP (in MacOS)
+      - name: Setup Docker (missing on MacOS)
         if: runner.os == 'macOS'
-        run: brew install libomp
+        run: ./hack/install-docker-macos.sh
+      - name: Downgrade OpenMP (in MacOS)
+        if: runner.os == 'macos'
+        run: |
+          # Recent versions of OpenMP cause segfaults in MacOS when training
+          # LightGBM / XGBoost models (but only when Torch is present)
+          # https://github.com/microsoft/LightGBM/issues/4229
+          # https://github.com/autogluon/autogluon/issues/1442
+          wget https://raw.githubusercontent.com/Homebrew/homebrew-core/fb8323f2b170bd4ae97e1bac9bf3e2983af3fdb0/Formula/libomp.rb
+          brew unlink libomp
+          brew install libomp.rb
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
@@ -199,16 +210,9 @@ jobs:
           virtualenvs-create: false
       - name: Install dependencies
         run: poetry install --only test
-      - name: Activate LibOMP (in MacOS)
-        if: runner.os == 'macOS'
-        run: source ./hack/activate-libomp-macos.sh
-      - name: Test all runtimes
-        run: poetry run tox -e all-runtimes
-      # Install Docker here cause for macOS we get SegFault
-      # when running runtimes tests with Docker installed - might
-      # be caused by colima memory usage
-      - name: Setup Docker (missing on MacOS)
-        if: runner.os == 'macOS'
-        run: ./hack/install-docker-macos.sh
-      - name: Test mlserver with all runtimes
-        run: poetry run tox -e all-mlserver
+      - name: Test
+        run: |
+          if [[ ${{ runner.os == 'macOS' }} ]]; then
+            source ./hack/activate-libomp-macos.sh
+          fi
+          poetry run tox -e all-runtimes
