@@ -25,6 +25,17 @@ lock:
 		poetry lock --no-update -C $$_runtime; \
 	done
 
+
+update:
+	echo "Locking mlserver deps..."
+	poetry update lightgbm
+	for _runtime in ./runtimes/*; \
+	do \
+		echo "Locking $$_runtime deps..."; \
+		poetry update lightgbm -C $$_runtime; \
+	done
+
+
 _generate_model_repository: # "private" target to call `fmt` after `generate`
 	poetry run bash ./hack/generate-types.sh model_repository
 
