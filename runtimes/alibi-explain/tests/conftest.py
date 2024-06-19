@@ -287,7 +287,7 @@ async def integrated_gradients_runtime(tf_mnist_model_uri: str) -> AlibiExplainR
 
     rt = AlibiExplainRuntime(
         ModelSettings(
-            parallel_workers=1,
+            parallel_workers=0,
             implementation=AlibiExplainRuntime,
             parameters=ModelParameters(extra=explainer_settings.model_dump()),
         )

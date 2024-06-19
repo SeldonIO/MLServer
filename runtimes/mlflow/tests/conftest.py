@@ -86,9 +86,9 @@ def pytorch_model_uri(
         if os.path.exists(model_path):
             return model_path
 
-        model = LightningMNISTClassifier(batch_size=64, num_workers=3, lr=0.001)
+        model = LightningMNISTClassifier(batch_size=64, num_workers=0, lr=0.001)
 
-        dm = MNISTDataModule(batch_size=64, num_workers=3)
+        dm = MNISTDataModule(batch_size=64, num_workers=0)
         dm.setup(stage="fit")
 
         early_stopping = EarlyStopping(
