@@ -186,9 +186,17 @@ jobs:
       - name: Setup Docker (missing on MacOS)
         if: runner.os == 'macOS'
         run: ./hack/install-docker-macos.sh
-      - name: Install OpenMP (in MacOS)
-        if: runner.os == 'macOS'
-        run: brew install libomp
+      - name: Downgrade OpenMP (in MacOS)
+        if: runner.os == 'macos'
+        run: |
+          # Recent versions of OpenMP cause segfaults in MacOS when training
+          # LightGBM / XGBoost models (but only when Torch is present)
+          # https://github.com/microsoft/LightGBM/issues/4229
+          # https://github.com/autogluon/autogluon/issues/1442
+          wget https://raw.githubusercontent.com/chenrui333/homebrew-core/0094d1513ce9e2e85e07443b8b5930ad298aad91/Formula/libomp.rb
+          brew unlink libomp
+          brew install --build-from-source ./libomp.rb
+          brew list --version libomp
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
