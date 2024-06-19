@@ -47,4 +47,4 @@ jobs:
             subdependency.
             This automated PR will re-generate the licenses to keep them up to
             date."
-          reviewers: adriangonz
+          reviewers: "SeldonIO/mlops"

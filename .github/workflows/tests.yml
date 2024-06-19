@@ -55,7 +55,7 @@ jobs:
       - name: Lint
         run: make lint
 
-  mlserver:
+  test-mlserver:
     strategy:
       fail-fast: false
       matrix:
@@ -95,20 +95,16 @@ jobs:
         uses: snok/install-poetry@v1
         with:
           virtualenvs-create: false
-      - name: Install Dependencies
-        run: |
-          if [[ ${{ runner.os == 'macOS' }} ]]; then
-            source ./hack/activate-libomp-macos.sh
-          fi
-          poetry install --sync --only dev
+      - name: Install dependencies
+        run: poetry install --only test
       - name: Test
         run: |
           if [[ ${{ runner.os == 'macOS' }} ]]; then
             source ./hack/activate-libomp-macos.sh
           fi
-          tox -e mlserver
+          poetry run tox -e mlserver
 
-  runtimes:
+  test-runtimes:
     strategy:
       fail-fast: false
       matrix:
@@ -152,28 +148,24 @@ jobs:
         uses: snok/install-poetry@v1
         with:
           virtualenvs-create: false
-      - name: Install Dependencies
-        run: |
-          if [[ ${{ runner.os == 'macOS' }} ]]; then
-            source ./hack/activate-libomp-macos.sh
-          fi
-          poetry install --sync --only dev
+      - name: Install dependencies
+        run: poetry install --only test
       - name: Test
         run: |
           if [[ ${{ runner.os == 'macOS' }} ]]; then
             source ./hack/activate-libomp-macos.sh
           fi
-          tox -c ./runtimes/${{ matrix.tox-environment }}
+          poetry run tox -c ./runtimes/${{ matrix.tox-environment }}
 
   # Ensure that having all the runtimes installed together works
-  all-runtimes:
+  test-all-runtimes:
     if: github.event_name == 'push'
     strategy:
       fail-fast: false
       matrix:
         os:
           - ubuntu-22.04
-          - macos-13
+          - macos-12
         python-version:
           - "3.9"
           - "3.10"
@@ -194,9 +186,17 @@ jobs:
       - name: Setup Docker (missing on MacOS)
         if: runner.os == 'macOS'
         run: ./hack/install-docker-macos.sh
-      - name: Install OpenMP (in MacOS)
-        if: runner.os == 'macOS'
-        run: brew install libomp
+      - name: Downgrade OpenMP (in MacOS)
+        if: runner.os == 'macos'
+        run: |
+          # Recent versions of OpenMP cause segfaults in MacOS when training
+          # LightGBM / XGBoost models (but only when Torch is present)
+          # https://github.com/microsoft/LightGBM/issues/4229
+          # https://github.com/autogluon/autogluon/issues/1442
+          wget https://raw.githubusercontent.com/chenrui333/homebrew-core/0094d1513ce9e2e85e07443b8b5930ad298aad91/Formula/libomp.rb
+          brew unlink libomp
+          brew install --build-from-source ./libomp.rb
+          brew list --version libomp
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
@@ -209,15 +209,11 @@ jobs:
         uses: snok/install-poetry@v1
         with:
           virtualenvs-create: false
-      - name: Install Dependencies
-        run: |
-          if [[ ${{ runner.os == 'macOS' }} ]]; then
-            source ./hack/activate-libomp-macos.sh
-          fi
-          poetry install --sync --only dev
+      - name: Install dependencies
+        run: poetry install --only test
       - name: Test
         run: |
           if [[ ${{ runner.os == 'macOS' }} ]]; then
             source ./hack/activate-libomp-macos.sh
           fi
-          tox -e all-runtimes
+          poetry run tox -e all-runtimes
