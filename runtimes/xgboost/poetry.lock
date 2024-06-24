@@ -1140,6 +1140,16 @@ files = [
 ]
 
 [[package]]
+name = "nvidia-nccl-cu12"
+version = "2.22.3"
+description = "NVIDIA Collective Communication Library (NCCL) Runtime"
+optional = false
+python-versions = ">=3"
+files = [
+    {file = "nvidia_nccl_cu12-2.22.3-py3-none-manylinux2014_x86_64.whl", hash = "sha256:f9f5e03c00269dee2cd1aa57019f9a024478a74ae6e9b32d5341c849fe6f6302"},
+]
+
+[[package]]
 name = "opentelemetry-api"
 version = "1.25.0"
 description = "OpenTelemetry Python API"
@@ -2160,21 +2170,22 @@ files = [
 
 [[package]]
 name = "xgboost"
-version = "2.0.3"
+version = "2.1.0"
 description = "XGBoost Python Package"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "xgboost-2.0.3-py3-none-macosx_10_15_x86_64.macosx_11_0_x86_64.macosx_12_0_x86_64.whl", hash = "sha256:b21b2bb188b162c615fce468db93e3f995f3690e6184aadc7743b58466dc7f13"},
-    {file = "xgboost-2.0.3-py3-none-macosx_12_0_arm64.whl", hash = "sha256:722d5b9351dfdf61973490dfd28abd42844db1cc469d07ed9b0cde9d1ffcdb32"},
-    {file = "xgboost-2.0.3-py3-none-manylinux2014_aarch64.whl", hash = "sha256:2315a57b1883221e2f78dd514559aa9797e6c272d995d22e45495a04adac93cc"},
-    {file = "xgboost-2.0.3-py3-none-manylinux2014_x86_64.whl", hash = "sha256:30bd5f789fad467fd49e04e5d19e04238b931682c3951a514da5c2410b3bf59c"},
-    {file = "xgboost-2.0.3-py3-none-win_amd64.whl", hash = "sha256:462f131d7bfb1bc42f67c57fa5aa3e57d2b5755b1573a6e0d2c7e8895164e0fc"},
-    {file = "xgboost-2.0.3.tar.gz", hash = "sha256:505955b5d770f8217a049beecce79e04a93787371c06dfb4b2414fec9d496bf3"},
+    {file = "xgboost-2.1.0-py3-none-macosx_10_15_x86_64.macosx_11_0_x86_64.macosx_12_0_x86_64.whl", hash = "sha256:19d145eb847b070c32342b1bf2d7331c102783e07a484f8b13b7d759d707c6b0"},
+    {file = "xgboost-2.1.0-py3-none-macosx_12_0_arm64.whl", hash = "sha256:840a0c6e2119d8c8f260a5dace996ea064a267f62b301a25d7d452488a7ac860"},
+    {file = "xgboost-2.1.0-py3-none-manylinux_2_28_aarch64.whl", hash = "sha256:cedc2e386e686795735448fd4597533acacc5ba6fb47dd910c204c468b80bb96"},
+    {file = "xgboost-2.1.0-py3-none-manylinux_2_28_x86_64.whl", hash = "sha256:b2a456eb0f3d3e8fd8ab37e44ac288292bf8ea8744c294be9fd88713d27af810"},
+    {file = "xgboost-2.1.0-py3-none-win_amd64.whl", hash = "sha256:74904b91c42524a6c32147fe5718569e78fb65911ff4499b053f81d0964514d4"},
+    {file = "xgboost-2.1.0.tar.gz", hash = "sha256:7144980923e76ce741c7b03a14d3bd7514db6de5c7cabe96ba95b229d274f5ca"},
 ]
 
 [package.dependencies]
 numpy = "*"
+nvidia-nccl-cu12 = {version = "*", markers = "platform_system == \"Linux\" and platform_machine != \"aarch64\""}
 scikit-learn = {version = "*", optional = true, markers = "extra == \"scikit-learn\""}
 scipy = "*"
 
