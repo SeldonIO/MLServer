@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mlserver"
-version = "1.6.0.rc1"
+version = "1.6.0"
 description = "MLServer"
 authors = ["Seldon Technologies Ltd. <hello@seldon.io>"]
 license = "Apache-2.0"
