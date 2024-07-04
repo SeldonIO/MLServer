@@ -1,5 +1,6 @@
 import uvicorn
 import os
+import signal
 
 from typing import Optional, TYPE_CHECKING
 
@@ -72,5 +73,10 @@ class MetricsServer:
         return uvicorn.Config(self._app, **kwargs)
 
     async def stop(self, sig: Optional[int] = None):
+        if sig is None:
+            # `sig` is no longer optional for `handle_exit` in
+            # latest `uvicorn`
+            sig = signal.SIGINT
+
         await stop_metrics(self._settings, os.getpid())
         self._server.handle_exit(sig=sig, frame=None)

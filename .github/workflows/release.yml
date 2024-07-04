@@ -92,7 +92,7 @@ jobs:
           sudo mv preflight-linux-amd64 /usr/local/bin/preflight
           preflight --version
         env:
-          PREFLIGHT_VERSION: 1.4.2
+          PREFLIGHT_VERSION: 1.9.7
       - name: Submit preflight results
         run: |
           preflight check container \
@@ -164,7 +164,7 @@ jobs:
           sudo mv preflight-linux-amd64 /usr/local/bin/preflight
           preflight --version
         env:
-          PREFLIGHT_VERSION: 1.4.2
+          PREFLIGHT_VERSION: 1.9.7
       - name: Submit preflight results
         run: |
           preflight check container \
@@ -216,6 +216,7 @@ jobs:
           - mllib
           - sklearn
           - xgboost
+          - catboost
     steps:
       - name: Maximize build space
         uses: easimon/maximize-build-space@master
@@ -287,7 +288,7 @@ jobs:
           sudo mv preflight-linux-amd64 /usr/local/bin/preflight
           preflight --version
         env:
-          PREFLIGHT_VERSION: 1.4.2
+          PREFLIGHT_VERSION: 1.9.7
       - name: Submit preflight results
         run: |
           preflight check container \

@@ -1,10 +1,92 @@
 # Changelog
 
 
+<a name="1.6.0"></a>
+## [1.6.0](https://github.com/SeldonIO/MLServer/releases/tag/1.6.0) - 26 Jun 2024
+
+ ## Overview
+
+
+### Upgrades
+ MLServer supports Pydantic V2. 
+
+### Features
+ MLServer supports streaming data to and from your models. 
+
+ Streaming support is available for both the REST and gRPC servers: 
+ * for the REST server is limited only to server streaming. This means that the client sends a single request to the server, and the server responds with a stream of data. 
+ * for the gRPC server is available for both client and server streaming. This means that the client sends a stream of data to the server, and the server responds with a stream of data.
+
+ See our [docs](https://mlserver.readthedocs.io/en/1.6.0/user-guide/streaming.html) and [example](https://mlserver.readthedocs.io/en/1.6.0/examples/streaming/README.html) for more details.
+
+## What's Changed
+* fix(ci): fix typo in CI name by [@sakoush](https://github.com/sakoush) in https://github.com/SeldonIO/MLServer/pull/1623
+* Update CHANGELOG by [@github-actions](https://github.com/github-actions) in https://github.com/SeldonIO/MLServer/pull/1624
+* Re-generate License Info by [@github-actions](https://github.com/github-actions) in https://github.com/SeldonIO/MLServer/pull/1634
+* Fix mlserver_huggingface settings device type by [@geodavic](https://github.com/geodavic) in https://github.com/SeldonIO/MLServer/pull/1486
+* fix: Adjust HF tests post-merge of PR [#1486](https://github.com/SeldonIO/MLServer/issues/1486) by [@sakoush](https://github.com/sakoush) in https://github.com/SeldonIO/MLServer/pull/1635
+* Update README.md w licensing clarification by [@paulb-seldon](https://github.com/paulb-seldon) in https://github.com/SeldonIO/MLServer/pull/1636
+* Re-generate License Info by [@github-actions](https://github.com/github-actions) in https://github.com/SeldonIO/MLServer/pull/1642
+* fix(ci): optimise disk space for GH workers by [@sakoush](https://github.com/sakoush) in https://github.com/SeldonIO/MLServer/pull/1644
+* build: Update maintainers by [@jesse-c](https://github.com/jesse-c) in https://github.com/SeldonIO/MLServer/pull/1659
+* fix: Missing f-string directives by [@jesse-c](https://github.com/jesse-c) in https://github.com/SeldonIO/MLServer/pull/1677
+* build: Add Catboost runtime to Dependabot by [@jesse-c](https://github.com/jesse-c) in https://github.com/SeldonIO/MLServer/pull/1689
+* Fix JSON input shapes by [@ReveStobinson](https://github.com/ReveStobinson) in https://github.com/SeldonIO/MLServer/pull/1679
+* build(deps): bump alibi-detect from 0.11.5 to 0.12.0 by [@jesse-c](https://github.com/jesse-c) in https://github.com/SeldonIO/MLServer/pull/1702
+* build(deps): bump alibi from 0.9.5 to 0.9.6 by [@jesse-c](https://github.com/jesse-c) in https://github.com/SeldonIO/MLServer/pull/1704
+* Docs correction - Updated README.md in mlflow to match column names order by [@vivekk0903](https://github.com/vivekk0903) in https://github.com/SeldonIO/MLServer/pull/1703
+* fix(runtimes): Remove unused Pydantic dependencies by [@jesse-c](https://github.com/jesse-c) in https://github.com/SeldonIO/MLServer/pull/1725
+* test: Detect generate failures by [@jesse-c](https://github.com/jesse-c) in https://github.com/SeldonIO/MLServer/pull/1729
+* build: Add granularity in types generation by [@jesse-c](https://github.com/jesse-c) in https://github.com/SeldonIO/MLServer/pull/1749
+* Migrate to Pydantic v2 by [@jesse-c](https://github.com/jesse-c) in https://github.com/SeldonIO/MLServer/pull/1748
+* Re-generate License Info by [@github-actions](https://github.com/github-actions) in https://github.com/SeldonIO/MLServer/pull/1753
+* Revert "build(deps): bump uvicorn from 0.28.0 to 0.29.0" by [@jesse-c](https://github.com/jesse-c) in https://github.com/SeldonIO/MLServer/pull/1758
+* refactor(pydantic): Remaining migrations for deprecated functions by [@jesse-c](https://github.com/jesse-c) in https://github.com/SeldonIO/MLServer/pull/1757
+* Fixed openapi dataplane.yaml by [@RobertSamoilescu](https://github.com/RobertSamoilescu) in https://github.com/SeldonIO/MLServer/pull/1752
+* fix(pandas): Use Pydantic v2 compatible type by [@jesse-c](https://github.com/jesse-c) in https://github.com/SeldonIO/MLServer/pull/1760
+* Fix Pandas codec decoding from numpy arrays by [@lhnwrk](https://github.com/lhnwrk) in https://github.com/SeldonIO/MLServer/pull/1751
+* build: Bump versions for Read the Docs by [@jesse-c](https://github.com/jesse-c) in https://github.com/SeldonIO/MLServer/pull/1761
+* docs: Remove quotes around local TOC by [@jesse-c](https://github.com/jesse-c) in https://github.com/SeldonIO/MLServer/pull/1764
+* Spawn worker in custom environment by [@lhnwrk](https://github.com/lhnwrk) in https://github.com/SeldonIO/MLServer/pull/1739
+* Re-generate License Info by [@github-actions](https://github.com/github-actions) in https://github.com/SeldonIO/MLServer/pull/1767
+* basic contributing guide on contributing and opening a PR by [@bohemia420](https://github.com/bohemia420) in https://github.com/SeldonIO/MLServer/pull/1773
+* Inference streaming support by [@RobertSamoilescu](https://github.com/RobertSamoilescu) in https://github.com/SeldonIO/MLServer/pull/1750
+* Re-generate License Info by [@github-actions](https://github.com/github-actions) in https://github.com/SeldonIO/MLServer/pull/1779
+* build: Lock GitHub runners' OS by [@jesse-c](https://github.com/jesse-c) in https://github.com/SeldonIO/MLServer/pull/1765
+* Removed text-model form benchmarking by [@RobertSamoilescu](https://github.com/RobertSamoilescu) in https://github.com/SeldonIO/MLServer/pull/1790
+* Bumped mlflow to 2.13.1 and gunicorn to 22.0.0 by [@RobertSamoilescu](https://github.com/RobertSamoilescu) in https://github.com/SeldonIO/MLServer/pull/1791
+* Build(deps): Update to poetry version 1.8.3 in docker build by [@sakoush](https://github.com/sakoush) in https://github.com/SeldonIO/MLServer/pull/1792
+* Bumped werkzeug to 3.0.3 by [@RobertSamoilescu](https://github.com/RobertSamoilescu) in https://github.com/SeldonIO/MLServer/pull/1793
+* Docs streaming by [@RobertSamoilescu](https://github.com/RobertSamoilescu) in https://github.com/SeldonIO/MLServer/pull/1789
+* Bump uvicorn 0.30.1 by [@RobertSamoilescu](https://github.com/RobertSamoilescu) in https://github.com/SeldonIO/MLServer/pull/1795
+* Fixes for all-runtimes by [@RobertSamoilescu](https://github.com/RobertSamoilescu) in https://github.com/SeldonIO/MLServer/pull/1794
+* Fix BaseSettings import for pydantic v2 by [@RobertSamoilescu](https://github.com/RobertSamoilescu) in https://github.com/SeldonIO/MLServer/pull/1798
+* Bumped preflight version to 1.9.7 by [@RobertSamoilescu](https://github.com/RobertSamoilescu) in https://github.com/SeldonIO/MLServer/pull/1797
+* build: Install dependencies only in Tox environments  by [@jesse-c](https://github.com/jesse-c) in https://github.com/SeldonIO/MLServer/pull/1785
+* Bumped to 1.6.0.dev2 by [@RobertSamoilescu](https://github.com/RobertSamoilescu) in https://github.com/SeldonIO/MLServer/pull/1803
+* Fix CI/CD macos-huggingface by [@RobertSamoilescu](https://github.com/RobertSamoilescu) in https://github.com/SeldonIO/MLServer/pull/1805
+* Fixed macos kafka CI by [@RobertSamoilescu](https://github.com/RobertSamoilescu) in https://github.com/SeldonIO/MLServer/pull/1807
+* Update poetry lock by [@RobertSamoilescu](https://github.com/RobertSamoilescu) in https://github.com/SeldonIO/MLServer/pull/1808
+* Re-generate License Info by [@github-actions](https://github.com/github-actions) in https://github.com/SeldonIO/MLServer/pull/1813
+* Fix/macos all runtimes by [@RobertSamoilescu](https://github.com/RobertSamoilescu) in https://github.com/SeldonIO/MLServer/pull/1823
+* fix: Update stale reviewer in licenses.yml workflow by [@sakoush](https://github.com/sakoush) in https://github.com/SeldonIO/MLServer/pull/1824
+* ci: Merge changes from master to release branch by [@sakoush](https://github.com/sakoush) in https://github.com/SeldonIO/MLServer/pull/1825
+
+## New Contributors
+* [@paulb-seldon](https://github.com/paulb-seldon) made their first contribution in https://github.com/SeldonIO/MLServer/pull/1636
+* [@ReveStobinson](https://github.com/ReveStobinson) made their first contribution in https://github.com/SeldonIO/MLServer/pull/1679
+* [@vivekk0903](https://github.com/vivekk0903) made their first contribution in https://github.com/SeldonIO/MLServer/pull/1703
+* [@RobertSamoilescu](https://github.com/RobertSamoilescu) made their first contribution in https://github.com/SeldonIO/MLServer/pull/1752
+* [@lhnwrk](https://github.com/lhnwrk) made their first contribution in https://github.com/SeldonIO/MLServer/pull/1751
+* [@bohemia420](https://github.com/bohemia420) made their first contribution in https://github.com/SeldonIO/MLServer/pull/1773
+
+**Full Changelog**: https://github.com/SeldonIO/MLServer/compare/1.5.0...1.6.0
+
+[Changes][1.6.0]
+
+
 <a name="1.5.0"></a>
 ## [1.5.0](https://github.com/SeldonIO/MLServer/releases/tag/1.5.0) - 05 Mar 2024
-
-<!-- Release notes generated using configuration in .github/release.yml at 1.5.0 -->
 
 ## What's Changed
 
@@ -427,6 +509,7 @@ To learn more about how to use MLServer directly from the MLflow CLI, check out 
 [Changes][1.1.0]
 
 
+[1.6.0]: https://github.com/SeldonIO/MLServer/compare/1.5.0...1.6.0
 [1.5.0]: https://github.com/SeldonIO/MLServer/compare/1.4.0...1.5.0
 [1.4.0]: https://github.com/SeldonIO/MLServer/compare/1.3.5...1.4.0
 [1.3.5]: https://github.com/SeldonIO/MLServer/compare/1.3.4...1.3.5

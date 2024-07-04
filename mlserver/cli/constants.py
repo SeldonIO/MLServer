@@ -2,7 +2,7 @@ DefaultBaseImage = "seldonio/mlserver:{version}-slim"
 
 DockerfileName = "Dockerfile"
 DockerfileTemplate = """
-FROM continuumio/miniconda3:23.5.2-0 AS env-builder
+FROM continuumio/miniconda3:24.4.0-0 AS env-builder
 SHELL ["/bin/bash", "-c"]
 
 ARG MLSERVER_ENV_NAME="mlserver-custom-env" \\

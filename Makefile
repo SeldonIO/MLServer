@@ -5,6 +5,14 @@ IMAGE_NAME := seldonio/mlserver
 .PHONY: install-dev _generate generate run build \
 	push-test push test lint fmt version clean licenses
 
+.PHONY: bootstrap-test
+bootstrap-test:
+	for _runtime in ./runtimes/*; \
+	do \
+		echo "Copying Tox configuration to $$_runtime..."; \
+		cp tox.runtime.ini $$_runtime/tox.ini; \
+	done
+
 install-dev:
 	poetry install --sync --with all-runtimes --with all-runtimes-dev
 
