@@ -1,4 +1,3 @@
-
 import asyncio
 from typing import AsyncIterator
 from mlserver import MLModel
