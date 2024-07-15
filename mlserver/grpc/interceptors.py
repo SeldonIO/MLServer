@@ -1,9 +1,12 @@
-from typing import Awaitable, Callable, Tuple
+from typing import Awaitable, AsyncIterator, Callable, Tuple, Optional
 from functools import partial
 from timeit import default_timer
 
+from mlserver.grpc import dataplane_pb2 as pb
 from grpc.aio import ServerInterceptor, ServicerContext
 from grpc import HandlerCallDetails, RpcMethodHandler, RpcError, StatusCode
+
+from prometheus_client import Counter
 from py_grpc_prometheus.prometheus_server_interceptor import (
     grpc_utils,
     PromServerInterceptor as _PromServerInterceptor,
@@ -66,7 +69,9 @@ class PromServerInterceptor(ServerInterceptor):
         """
         grpc_service_name, grpc_method_name, _ = method_call
 
-        async def new_behavior(request, servicer_context):
+        async def new_behavior(
+            request: pb.ModelMetadataRequest, servicer_context: ServicerContext
+        ) -> Optional[pb.ModelMetadataRequest]:
             response = None
             try:
                 start = default_timer()
@@ -139,8 +144,9 @@ class PromServerInterceptor(ServerInterceptor):
                 raise e
 
         async def new_behavior_stream(
-            request_async_iterator, servicer_context: ServicerContext
-        ):
+            request_async_iterator: AsyncIterator[pb.ModelInferRequest],
+            servicer_context: ServicerContext,
+        ) -> AsyncIterator[pb.ModelInferRequest]:
             response_async_iterator = None
             try:
                 grpc_type = grpc_utils.get_method_type(
@@ -156,12 +162,9 @@ class PromServerInterceptor(ServerInterceptor):
                     )
 
                     # wrap the original behavior with the metrics
-                    sent_metric = self._interceptor._metrics[
-                        "grpc_server_stream_msg_sent"
-                    ]
                     response_async_iterator = wrap_async_iterator_inc_counter(
                         behavior(request_async_iterator, servicer_context),
-                        sent_metric,
+                        self._interceptor._metrics["grpc_server_stream_msg_sent"],
                         grpc_type,
                         grpc_service_name,
                         grpc_method_name,
@@ -236,8 +239,12 @@ class PromServerInterceptor(ServerInterceptor):
 
 
 async def wrap_async_iterator_inc_counter(
-    iterator, counter, grpc_type, grpc_service_name, grpc_method_name
-):
+    iterator: AsyncIterator[pb.ModelInferRequest],
+    counter: Counter,
+    grpc_type: str,
+    grpc_service_name: str,
+    grpc_method_name: str,
+) -> AsyncIterator[pb.ModelInferRequest]:
     """Wraps an async iterator and collect metrics."""
 
     async for item in iterator:

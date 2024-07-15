@@ -76,7 +76,7 @@ async def test_prometheus_stream_stream(
         yield request
 
     # send 10 requests
-    num_requests = 1
+    num_requests = 10
     for _ in range(num_requests):
         _ = [
             _
