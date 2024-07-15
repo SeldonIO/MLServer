@@ -74,6 +74,9 @@ opentelemetry-sdk = "^1.22.0"
 opentelemetry-instrumentation-fastapi = ">=0.43b0"
 opentelemetry-instrumentation-grpc = ">=0.43b0"
 opentelemetry-exporter-otlp-proto-grpc = "^1.22.0"
+tensorflow = ">2.12"
+pyarrow = ">=14.0.1"
+transformers = ">=4.36.0"
 
 [tool.poetry.group.test.dependencies]
 tox = "4.14.2"
