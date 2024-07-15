@@ -17,6 +17,7 @@ pydantic = "2.7.1"
 accelerate = "^0.27.2"
 bitsandbytes = "^0.42.0"
 sentence-transformers = "2.5.1"
+transformers = ">=4.36.0"
 
 [tool.poetry.group.dev.dependencies]
 mlserver = {path = "../..", develop = true}
