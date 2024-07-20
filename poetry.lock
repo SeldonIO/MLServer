@@ -5446,18 +5446,18 @@ dev = ["pre-commit", "pytest-asyncio", "tox"]
 
 [[package]]
 name = "pytest-xdist"
-version = "3.5.0"
+version = "3.6.1"
 description = "pytest xdist plugin for distributed testing, most importantly across multiple CPUs"
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 files = [
-    {file = "pytest-xdist-3.5.0.tar.gz", hash = "sha256:cbb36f3d67e0c478baa57fa4edc8843887e0f6cfc42d677530a36d7472b32d8a"},
-    {file = "pytest_xdist-3.5.0-py3-none-any.whl", hash = "sha256:d075629c7e00b611df89f490a5063944bee7a4362a5ff11c7cc7824a03dfce24"},
+    {file = "pytest_xdist-3.6.1-py3-none-any.whl", hash = "sha256:9ed4adfb68a016610848639bb7e02c9352d5d9f03d04809919e2dafc3be4cca7"},
+    {file = "pytest_xdist-3.6.1.tar.gz", hash = "sha256:ead156a4db231eec769737f57668ef58a2084a34b2e55c4a8fa20d861107300d"},
 ]
 
 [package.dependencies]
-execnet = ">=1.1"
-pytest = ">=6.2.0"
+execnet = ">=2.1"
+pytest = ">=7.0.0"
 
 [package.extras]
 psutil = ["psutil (>=3.0)"]
@@ -8616,4 +8616,4 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<3.12"
-content-hash = "933779d5c3bc43fc1545fe806db40c09d422afb4f4af4867665a1b717d3193dd"
+content-hash = "dcf7b72efc949ea6dffb986fb583da27819974c3bd430148bfe4d11c2c298907"

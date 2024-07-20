@@ -106,7 +106,7 @@ types-aiofiles = "23.2.0.20240106"
 types-requests = "2.31.0.20240311"
 black = "24.4.0"
 pip-licenses = "4.4.0"
-pytest-xdist = "3.5.0"
+pytest-xdist = "3.6.1"
 filelock = "^3.13.1"
 httpx-sse = "^0.3.1"
 
