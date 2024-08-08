@@ -38,14 +38,14 @@ class GRPCServer:
             self._model_repository_handlers
         )
 
-        interceptors = []
+        self._interceptors = []
 
         if self._settings.debug:
             # If debug, enable access logs
-            interceptors = [LoggingInterceptor()]
+            self._interceptors = [LoggingInterceptor()]
 
         if self._settings.metrics_endpoint:
-            interceptors.append(
+            self._interceptors.append(
                 PromServerInterceptor(enable_handling_time_histogram=True)
             )
 
@@ -62,7 +62,7 @@ class GRPCServer:
                 )
             )
 
-            interceptors.append(
+            self._interceptors.append(
                 aio_server_interceptor(
                     tracer_provider=tracer_provider, filter_=excluded_urls
                 )
@@ -70,7 +70,7 @@ class GRPCServer:
 
         self._server = aio.server(
             ThreadPoolExecutor(max_workers=DefaultGrpcWorkers),
-            interceptors=tuple(interceptors),
+            interceptors=tuple(self._interceptors),
             options=self._get_options(),
         )
 
