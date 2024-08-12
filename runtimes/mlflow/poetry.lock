@@ -1840,13 +1840,13 @@ dev = ["meson-python (>=0.13.1)", "numpy (>=1.25)", "pybind11 (>=2.6)", "setupto
 
 [[package]]
 name = "mlflow"
-version = "2.15.0"
+version = "2.15.1"
 description = "MLflow is an open source platform for the complete machine learning lifecycle"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "mlflow-2.15.0-py3-none-any.whl", hash = "sha256:1e2623fbfe7eb007efabef56bd9d31530de9407a1e4eda4cc6e61c6a00d3084b"},
-    {file = "mlflow-2.15.0.tar.gz", hash = "sha256:ad1dcfd73b5bc8167d698fb11b33f3cbb204276d1e3e80294aba15748a555b29"},
+    {file = "mlflow-2.15.1-py3-none-any.whl", hash = "sha256:f998b8ec9df9199284f52e79ea5dd0b2b76b327ed7f060531e44f1ecd197c5d9"},
+    {file = "mlflow-2.15.1.tar.gz", hash = "sha256:88da13f547cedce992d4614a4547f44bcdaf369e893179dd9a8bfa60338011bf"},
 ]
 
 [package.dependencies]
@@ -1861,7 +1861,7 @@ Jinja2 = [
 ]
 markdown = ">=3.3,<4"
 matplotlib = "<4"
-mlflow-skinny = "2.15.0"
+mlflow-skinny = "2.15.1"
 numpy = "<2"
 pandas = "<3"
 pyarrow = ">=4.0.0,<16"
@@ -1884,13 +1884,13 @@ xethub = ["mlflow-xethub"]
 
 [[package]]
 name = "mlflow-skinny"
-version = "2.15.0"
+version = "2.15.1"
 description = "MLflow is an open source platform for the complete machine learning lifecycle"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "mlflow_skinny-2.15.0-py3-none-any.whl", hash = "sha256:5dfd648c38ab6b7412bc30706e03f8bfac92aef5428269f640ded8d01baa93dd"},
-    {file = "mlflow_skinny-2.15.0.tar.gz", hash = "sha256:6e7b36023af9fb6e0ed506642c6497a4c9921df3e1595b7ac57aca4688441309"},
+    {file = "mlflow_skinny-2.15.1-py3-none-any.whl", hash = "sha256:a48c6f56106b104dc7221bad91af75a150b927d15210a41928cc8ecba086470a"},
+    {file = "mlflow_skinny-2.15.1.tar.gz", hash = "sha256:302f49757ffc8bdfc517b06f5252a02634203fec5e5ce95ad876a36af8403907"},
 ]
 
 [package.dependencies]
@@ -4158,4 +4158,4 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<3.12"
-content-hash = "95ee37d59b75ef1172762c987156e6e5865b9fff7dbf64b3f5636dbe046a61f5"
+content-hash = "7dffb3359dd668e251536270a1832c82079dba5af7e4df8e12bc8987e48494ba"
