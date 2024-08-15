@@ -32,4 +32,3 @@ There are three main limitations of the streaming support in MLServer:
 
 - the `parallel_workers` setting should be set to `0` to disable distributed workers (to be addressed in future releases)
 - for REST, the `gzip_enabled` setting should be set to `false` to disable GZIP compression, as streaming is not compatible with GZIP compression (see issue [here]( https://github.com/encode/starlette/issues/20#issuecomment-704106436))
-- `metrics_endpoint` is also disabled for streaming for gRPC (to be addressed in future releases)
