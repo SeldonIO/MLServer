@@ -13,6 +13,7 @@
 "Werkzeug","BSD License"
 "absl-py","Apache Software License"
 "aiofiles","Apache Software License"
+"aiohappyeyeballs","Python License (CNRI Python License)"
 "aiohttp","Apache Software License"
 "aiohttp-retry","MIT License"
 "aiokafka","Apache Software License"
