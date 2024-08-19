@@ -1663,23 +1663,23 @@ yaml = ["pyyaml (>=6.0.1)"]
 
 [[package]]
 name = "pyspark"
-version = "3.5.1"
+version = "3.5.2"
 description = "Apache Spark Python API"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "pyspark-3.5.1.tar.gz", hash = "sha256:dd6569e547365eadc4f887bf57f153e4d582a68c4b490de475d55b9981664910"},
+    {file = "pyspark-3.5.2.tar.gz", hash = "sha256:bbb36eba09fa24e86e0923d7e7a986041b90c714e11c6aa976f9791fe9edde5e"},
 ]
 
 [package.dependencies]
 py4j = "0.10.9.7"
 
 [package.extras]
-connect = ["googleapis-common-protos (>=1.56.4)", "grpcio (>=1.56.0)", "grpcio-status (>=1.56.0)", "numpy (>=1.15)", "pandas (>=1.0.5)", "pyarrow (>=4.0.0)"]
-ml = ["numpy (>=1.15)"]
-mllib = ["numpy (>=1.15)"]
-pandas-on-spark = ["numpy (>=1.15)", "pandas (>=1.0.5)", "pyarrow (>=4.0.0)"]
-sql = ["numpy (>=1.15)", "pandas (>=1.0.5)", "pyarrow (>=4.0.0)"]
+connect = ["googleapis-common-protos (>=1.56.4)", "grpcio (>=1.56.0)", "grpcio-status (>=1.56.0)", "numpy (>=1.15,<2)", "pandas (>=1.0.5)", "pyarrow (>=4.0.0)"]
+ml = ["numpy (>=1.15,<2)"]
+mllib = ["numpy (>=1.15,<2)"]
+pandas-on-spark = ["numpy (>=1.15,<2)", "pandas (>=1.0.5)", "pyarrow (>=4.0.0)"]
+sql = ["numpy (>=1.15,<2)", "pandas (>=1.0.5)", "pyarrow (>=4.0.0)"]
 
 [[package]]
 name = "python-dateutil"
