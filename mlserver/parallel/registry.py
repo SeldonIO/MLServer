@@ -1,6 +1,5 @@
 import asyncio
 import os
-import shutil
 import signal
 
 from typing import Optional, Dict, List
@@ -9,7 +8,7 @@ from ..settings import ModelSettings
 from ..utils import to_absolute_path
 from ..model import MLModel
 from ..settings import Settings
-from ..env import Environment, compute_hash
+from ..env import Environment, compute_hash_of_file, compute_hash_of_string
 from ..registry import model_initialiser
 
 from .errors import EnvironmentNotFound
@@ -76,18 +75,27 @@ class InferencePoolRegistry:
         )
 
     async def _get_or_create(self, model: MLModel) -> InferencePool:
-        env_tarball = _get_env_tarball(model)
-        if not env_tarball:
-            return self._default_pool
+        if model.settings.parameters and model.settings.parameters.environment_path:
+            environment_path = model.settings.parameters.environment_path
+            logger.info(f"Using environment {environment_path}")
+            env_hash = await compute_hash_of_string(environment_path)
+            if env_hash in self._pools:
+                return self._pools[env_hash]
+            env = Environment(env_path=model.settings.parameters.environment_path, env_hash=env_hash, delete_env=False)
+            pool = InferencePool(self._settings, env=env, on_worker_stop=self._on_worker_stop)
+        else:
+            env_tarball = _get_env_tarball(model)
+            if not env_tarball:
+                return self._default_pool
 
-        env_hash = await compute_hash(env_tarball)
-        if env_hash in self._pools:
-            return self._pools[env_hash]
+            env_hash = await compute_hash_of_file(env_tarball)
+            if env_hash in self._pools:
+                return self._pools[env_hash]
 
-        env = await self._extract_tarball(env_hash, env_tarball)
-        pool = InferencePool(
-            self._settings, env=env, on_worker_stop=self._on_worker_stop
-        )
+            env = await self._extract_tarball(env_hash, env_tarball)
+            pool = InferencePool(
+                self._settings, env=env, on_worker_stop=self._on_worker_stop
+            )
         self._pools[env_hash] = pool
         return pool
 
@@ -223,5 +231,3 @@ class InferencePoolRegistry:
 
         if env_hash:
             del self._pools[env_hash]
-            env_path = self._get_env_path(env_hash)
-            shutil.rmtree(env_path)

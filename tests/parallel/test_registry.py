@@ -2,7 +2,7 @@ import pytest
 import os
 import asyncio
 
-from mlserver.env import Environment, compute_hash
+from mlserver.env import Environment, compute_hash_of_file
 from mlserver.model import MLModel
 from mlserver.settings import Settings, ModelSettings
 from mlserver.types import InferenceRequest
@@ -124,7 +124,7 @@ async def test_load_reuses_env_folder(
     new_model = EnvModel(env_model_settings)
 
     # Make sure there's already existing env
-    env_hash = await compute_hash(env_tarball)
+    env_hash = await compute_hash_of_file(env_tarball)
     env_path = inference_pool_registry._get_env_path(env_hash)
     await Environment.from_tarball(env_tarball, env_path, env_hash)
 

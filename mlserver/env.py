@@ -1,6 +1,7 @@
 import asyncio
 import multiprocessing
 import os
+import shutil
 import sys
 import tarfile
 import glob
@@ -14,11 +15,14 @@ from .logging import logger
 
 def _extract_env(tarball_path: str, env_path: str) -> None:
     logger.info(f"Extracting environment tarball from {tarball_path}...")
-    with tarfile.open(tarball_path, "r") as tarball:
-        tarball.extractall(path=env_path)
+    try:
+        with tarfile.open(tarball_path, "r") as tarball:
+            tarball.extractall(path=env_path)
+    except Exception:
+        logger.info("Failed to extract environment tarball.")
 
 
-def _compute_hash(tarball_path: str) -> str:
+def _compute_hash_of_file(tarball_path: str) -> str:
     """
     From Python 3.11's implementation of `hashlib.file_digest()`:
     https://github.com/python/cpython/blob/3.11/Lib/hashlib.py#L257
@@ -38,10 +42,19 @@ def _compute_hash(tarball_path: str) -> str:
 
     return h.hexdigest()
 
+def _compute_hash_of_string(string: str) -> str:
+    h = hashlib.sha256()
+    h.update(string.encode())
+    return h.hexdigest()
 
-async def compute_hash(tarball_path: str) -> str:
+
+async def compute_hash_of_file(tarball_path: str) -> str:
     loop = asyncio.get_running_loop()
-    return await loop.run_in_executor(None, _compute_hash, tarball_path)
+    return await loop.run_in_executor(None, _compute_hash_of_file, tarball_path)
+
+async def compute_hash_of_string(string: str) -> str:
+    loop = asyncio.get_running_loop()
+    return await loop.run_in_executor(None, _compute_hash_of_string, string)
 
 
 class Environment:
@@ -51,7 +64,8 @@ class Environment:
     environment.
     """
 
-    def __init__(self, env_path: str, env_hash: str):
+    def __init__(self, env_path: str, env_hash: str, delete_env: bool = True):
+        self._delete_env = delete_env
         self._env_path = env_path
         self.env_hash = env_hash
 
@@ -67,7 +81,7 @@ class Environment:
         await loop.run_in_executor(None, _extract_env, tarball_path, env_path)
 
         if not env_hash:
-            env_hash = await compute_hash(tarball_path)
+            env_hash = await compute_hash_of_file(tarball_path)
 
         return cls(env_path, env_hash)
 
@@ -136,3 +150,8 @@ class Environment:
         multiprocessing.set_executable(sys.executable)
         sys.path = self._prev_sys_path
         os.environ["PATH"] = self._prev_bin_path
+
+    def __del__(self) -> None:
+        logger.info("Cleaning up environment")
+        if self._delete_env:
+            shutil.rmtree(self._env_path)
