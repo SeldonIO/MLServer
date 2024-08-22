@@ -97,10 +97,6 @@ async def env(env_tarball: str, tmp_path: str) -> Environment:
     env = await Environment.from_tarball(env_tarball, str(tmp_path))
     yield env
 
-    # Envs can be quite heavy, so let's make sure we're clearing them up once
-    # the test finishes
-    shutil.rmtree(tmp_path)
-
 
 @pytest.fixture(autouse=True)
 def logger(settings: Settings):
