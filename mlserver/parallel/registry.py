@@ -76,13 +76,17 @@ class InferencePoolRegistry:
 
     async def _get_or_create(self, model: MLModel) -> InferencePool:
         if model.settings.parameters and model.settings.parameters.environment_path:
-            environment_path = model.settings.parameters.environment_path
+            environment_path = os.path.abspath(
+                os.path.expanduser(
+                    os.path.expandvars(model.settings.parameters.environment_path)
+                )
+            )
             logger.info(f"Using environment {environment_path}")
             env_hash = await compute_hash_of_string(environment_path)
             if env_hash in self._pools:
                 return self._pools[env_hash]
             env = Environment(
-                env_path=model.settings.parameters.environment_path,
+                env_path=environment_path,
                 env_hash=env_hash,
                 delete_env=False,
             )
