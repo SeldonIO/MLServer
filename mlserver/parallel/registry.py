@@ -81,8 +81,14 @@ class InferencePoolRegistry:
             env_hash = await compute_hash_of_string(environment_path)
             if env_hash in self._pools:
                 return self._pools[env_hash]
-            env = Environment(env_path=model.settings.parameters.environment_path, env_hash=env_hash, delete_env=False)
-            pool = InferencePool(self._settings, env=env, on_worker_stop=self._on_worker_stop)
+            env = Environment(
+                env_path=model.settings.parameters.environment_path,
+                env_hash=env_hash,
+                delete_env=False,
+            )
+            pool = InferencePool(
+                self._settings, env=env, on_worker_stop=self._on_worker_stop
+            )
         else:
             env_tarball = _get_env_tarball(model)
             if not env_tarball:

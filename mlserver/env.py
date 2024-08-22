@@ -42,6 +42,7 @@ def _compute_hash_of_file(tarball_path: str) -> str:
 
     return h.hexdigest()
 
+
 def _compute_hash_of_string(string: str) -> str:
     h = hashlib.sha256()
     h.update(string.encode())
@@ -51,6 +52,7 @@ def _compute_hash_of_string(string: str) -> str:
 async def compute_hash_of_file(tarball_path: str) -> str:
     loop = asyncio.get_running_loop()
     return await loop.run_in_executor(None, _compute_hash_of_file, tarball_path)
+
 
 async def compute_hash_of_string(string: str) -> str:
     loop = asyncio.get_running_loop()
