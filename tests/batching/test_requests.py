@@ -202,7 +202,7 @@ def test_merge_request_inputs(
                             name="foo",
                             datatype="INT32",
                             data=[4, 5, 6, np.inf],
-                            shape=[1, 3],
+                            shape=[1, 4],
                         )
                     ],
                 ),
@@ -213,8 +213,8 @@ def test_merge_request_inputs(
                     RequestInput(
                         name="foo",
                         datatype="INT32",
-                        data=[1, 2, 3, 4, 5, 6],
-                        shape=[2, 3],
+                        data=[1, 2, 3, None, 4, 5, 6, None],
+                        shape=[2, 4],
                     )
                 ],
             ),
