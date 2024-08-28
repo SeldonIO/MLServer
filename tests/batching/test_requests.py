@@ -9,6 +9,7 @@ from mlserver.types import (
     InferenceResponse,
     Parameters,
 )
+import numpy as np
 from mlserver.batching.requests import BatchedRequests
 
 
@@ -187,7 +188,10 @@ def test_merge_request_inputs(
                     parameters=Parameters(content_type="np"),
                     inputs=[
                         RequestInput(
-                            name="foo", datatype="INT32", data=[1, 2, 3], shape=[1, 3]
+                            name="foo",
+                            datatype="INT32",
+                            data=[1, 2, 3, np.nan],
+                            shape=[1, 4],
                         )
                     ],
                 ),
@@ -195,7 +199,10 @@ def test_merge_request_inputs(
                     parameters=Parameters(foo="bar"),
                     inputs=[
                         RequestInput(
-                            name="foo", datatype="INT32", data=[4, 5, 6], shape=[1, 3]
+                            name="foo",
+                            datatype="INT32",
+                            data=[4, 5, 6, np.inf],
+                            shape=[1, 3],
                         )
                     ],
                 ),

@@ -12,8 +12,7 @@ class BaseModel(pydantic.BaseModel):
     """
 
     model_config = ConfigDict(
-        protected_namespaces=(),
-        use_enum_values=True,
+        protected_namespaces=(), use_enum_values=True, ser_json_inf_nan="null"
     )
 
     def model_dump(self, exclude_unset=True, exclude_none=True, **kwargs):
