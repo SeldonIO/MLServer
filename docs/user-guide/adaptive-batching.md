@@ -72,10 +72,10 @@ The expected values are:
 - `T`, where `T > 0`, will wait `T` seconds at most.
 - `0`, will disable adaptive batching.
 
-### Merge and split of custom paramters
+### Merge and split of custom parameters
 
 MLserver allows adding custom parameters to the `parameters` field of the requests.
-These parameters are recived as a merged list of parameters inside the server, e.g.
+These parameters are received as a merged list of parameters inside the server, e.g.
 ```python
 # request 1
 types.RequestInput(
@@ -100,7 +100,7 @@ types.RequestInput(
 )
 ```
 
-is recived as follows in the batched request in the server:
+is received as follows in the batched request in the server:
 ```python
 types.RequestInput(
     name="parameters-np",
