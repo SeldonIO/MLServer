@@ -7,7 +7,7 @@ interpreter.
 To learn more about why this can be beneficial, you can check the [concurrency
 section](#concurrency-in-python) below.
 
-![](../assets/parallel-inference.svg)
+![](../images/parallel-inference.svg)
 
 By default, MLServer will spin up a pool with only one worker process to run
 inference.
@@ -17,17 +17,16 @@ below](#usage).
 
 ## Concurrency in Python
 
-The [Global Interpreter Lock
-(GIL)](https://wiki.python.org/moin/GlobalInterpreterLock) is a mutex lock that
-exists in most Python interpreters (e.g. CPython).
+The [Global Interpreter Lock (GIL)](https://wiki.python.org/moin/GlobalInterpreterLock) 
+is a mutex lock that exists in most Python interpreters (e.g. CPython).
 Its main purpose is to lock Python’s execution so that it only runs on a single
 processor at the same time.
 This simplifies certain things to the interpreter.
 However, it also adds the limitation that a **single Python process will never
 be able to leverage multiple cores**.
 
-When we think about MLServer's support for [Multi-Model Serving
-(MMS)](../examples/mms/README.md), this could lead to scenarios where a
+When we think about MLServer's support for [Multi-Model Serving (MMS)](../examples/mms/README.md), 
+this could lead to scenarios where a
 **heavily-used model starves the other models** running within the same
 MLServer instance.
 Similarly, even if we don’t take MMS into account, the **GIL also makes it harder
@@ -44,7 +43,7 @@ Managing the Inter-Process Communication (IPC) between the main MLServer
 process and the inference pool workers brings in some overhead.
 Under the hood, MLServer uses the `multiprocessing` library to implement the
 distributed processing management, which has been shown to offer the smallest
-possible overhead when implementating these type of distributed strategies
+possible overhead when implementing these type of distributed strategies
 {cite}`zhiFiberPlatformEfficient2020`.
 
 The extra overhead introduced by other libraries is usually brought in as a
@@ -63,8 +62,7 @@ usually offset by the benefit of having multiple cores to compute inference on.
 
 ## Usage
 
-By default, MLServer will always create an inference pool with one single
-worker.
+By default, MLServer will always create an inference pool with one single worker.
 The number of workers (i.e. the size of the inference pool) can be adjusted
 globally through the server-level `parallel_workers` setting.
 
@@ -81,6 +79,4 @@ The expected values are:
 
 ## References
 
-```{bibliography}
-:filter: docname in docnames
-```
+Jiale Zhi, Rui Wang, Jeff Clune, and Kenneth O. Stanley. Fiber: A Platform for Efficient Development and Distributed Training for Reinforcement Learning and Population-Based Methods. arXiv:2003.11164 [cs, stat], March 2020. [arXiv:2003.11164](https://arxiv.org/abs/2003.11164).
