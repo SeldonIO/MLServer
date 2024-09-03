@@ -76,36 +76,55 @@ class InferencePoolRegistry:
 
     async def _get_or_create(self, model: MLModel) -> InferencePool:
         if model.settings.parameters and model.settings.parameters.environment_path:
-            environment_path = os.path.abspath(
-                os.path.expanduser(
-                    os.path.expandvars(model.settings.parameters.environment_path)
-                )
-            )
-            logger.info(f"Using environment {environment_path}")
-            env_hash = await compute_hash_of_string(environment_path)
-            if env_hash in self._pools:
-                return self._pools[env_hash]
-            env = Environment(
-                env_path=environment_path,
-                env_hash=env_hash,
-                delete_env=False,
-            )
-            pool = InferencePool(
-                self._settings, env=env, on_worker_stop=self._on_worker_stop
-            )
+            pool = await self._get_or_create_with_existing_env(model)
         else:
-            env_tarball = _get_env_tarball(model)
-            if not env_tarball:
-                return self._default_pool
+            pool = await self._get_or_create_with_tarball(model)
+        return pool
 
-            env_hash = await compute_hash_of_file(env_tarball)
-            if env_hash in self._pools:
-                return self._pools[env_hash]
-
-            env = await self._extract_tarball(env_hash, env_tarball)
-            pool = InferencePool(
-                self._settings, env=env, on_worker_stop=self._on_worker_stop
+    async def _get_or_create_with_existing_env(
+        self, model: MLModel
+    ) -> InferencePool:
+        """
+        Creates or returns the InferencePool for a model that uses an existing python environment.
+        """
+        environment_path = os.path.abspath(
+            os.path.expanduser(
+                os.path.expandvars(model.settings.parameters.environment_path)
             )
+        )
+        logger.info(f"Using environment {environment_path}")
+        env_hash = await compute_hash_of_string(environment_path)
+        if env_hash in self._pools:
+            return self._pools[env_hash]
+        env = Environment(
+            env_path=environment_path,
+            env_hash=env_hash,
+            delete_env=False,
+        )
+        pool = InferencePool(
+            self._settings, env=env, on_worker_stop=self._on_worker_stop
+        )
+        self._pools[env_hash] = pool
+        return pool
+
+    async def _get_or_create_with_tarball(
+        self, model: MLModel
+    ) -> InferencePool:
+        """
+        Creates or returns the InferencePool for a model that uses a tarball as python environment.
+        """
+        env_tarball = _get_env_tarball(model)
+        if not env_tarball:
+            return self._default_pool
+
+        env_hash = await compute_hash_of_file(env_tarball)
+        if env_hash in self._pools:
+            return self._pools[env_hash]
+
+        env = await self._extract_tarball(env_hash, env_tarball)
+        pool = InferencePool(
+            self._settings, env=env, on_worker_stop=self._on_worker_stop
+        )
         self._pools[env_hash] = pool
         return pool
 
