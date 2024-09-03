@@ -8,12 +8,12 @@ frameworks to take their model deployments to the next level of their MLOps
 journey, ensuring that they are served in a robust and scalable infrastructure.
 
 {% hint style="info" %}
-In general, it should be possible to deploy models using MLServer into **any
-serving engine compatible with the V2 protocol**.
+
+In general, it should be possible to deploy models using MLServer into **any serving engine compatible with the V2 protocol**.
 Alternatively, it's also possible to manage MLServer deployments manually as
-regular processes (i.e. in a non-Kubernetes-native way).
-However, this may be more involved and highly dependant on the deployment
-infrastructure.
+regular processes (i.e. in a non-Kubernetes-native way). However, this may be 
+more involved and highly dependant on the deployment infrastructure.
+
 {% endhint %}
 
 `````{grid} 2
