@@ -8,55 +8,7 @@ frameworks to take their model deployments to the next level of their MLOps
 journey, ensuring that they are served in a robust and scalable infrastructure.
 
 {% hint style="info" %}
-
-In general, it should be possible to deploy models using MLServer into **any serving engine compatible with the V2 protocol**.
-Alternatively, it's also possible to manage MLServer deployments manually as
-regular processes (i.e. in a non-Kubernetes-native way). However, this may be 
-more involved and highly dependant on the deployment infrastructure.
-
+In general, it should be possible to deploy models using MLServer into **any serving engine compatible with the V2 protocol**. Alternatively, it's also possible to manage MLServer deployments manually as regular processes (i.e. in a non-Kubernetes-native way). However, this may be more involved and highly dependant on the deployment infrastructure.
 {% endhint %}
 
-`````{grid} 2
-````{grid-item-card}
-:class-card: sd-px-5 sd-pt-2
-:link: ./seldon-core
-:link-type: doc
-:img-top: ../../assets/seldon-core-logo.png
-
-+++
-
-```{button-ref} ./seldon-core
-:ref-type: doc
-:align: center
-:class: stretched-link
-
-Deploy with Seldon Core
-```
-````
-
-````{grid-item-card}
-:class-card: sd-px-5 sd-pt-2
-:link: ./kserve
-:link-type: doc
-:img-top: ../../assets/kserve-logo.png
-
-+++
-
-```{button-ref} ./kserve
-:ref-type: doc
-:align: center
-:class: stretched-link
-
-Deploy with KServe
-```
-````
-`````
-
-```{toctree}
-:hidden:
-:titlesonly:
-:maxdepth: 1
-
-./seldon-core.md
-./kserve.md
-```
+<table data-card-size="large" data-view="cards"><thead><tr><th></th><th></th><th></th><th data-hidden data-card-target data-type="content-ref"></th><th data-hidden data-card-cover data-type="files"></th></tr></thead><tbody><tr><td></td><td>Seldon Core</td><td></td><td><a href="seldon-core.md">seldon-core.md</a></td><td><a href="../../.gitbook/assets/seldon-core-logo.png">seldon-core-logo.png</a></td></tr><tr><td></td><td>KServe</td><td></td><td><a href="kserve.md">kserve.md</a></td><td><a href="../../.gitbook/assets/kserve-logo.png">kserve-logo.png</a></td></tr></tbody></table>

@@ -1,8 +1,6 @@
-# Table of contents
-
 * [MLServer](README.md)
 * [Getting Started](getting-started.md)
-* [User Guide](user-guide/README.md)
+* [User Guide](user-guide/index.md)
   * [Content Types (and Codecs)](user-guide/content-type.md)
   * [OpenAPI Support](user-guide/openapi.md)
   * [Parallel Inference](user-guide/parallel-inference.md)
@@ -10,7 +8,7 @@
   * [Custom Inference Runtimes](user-guide/custom.md)
   * [Streaming](user-guide/streaming.md)
   * [Metrics](user-guide/metrics.md)
-  * [Deployment](user-guide/deployment/index.md)
+  * [Deployment](user-guide/deployment/README.md)
     * [Seldon Core](user-guide/deployment/seldon-core.md)
     * [KServe](user-guide/deployment/kserve.md)
 * [Inference Runtimes](runtimes/index.md)
