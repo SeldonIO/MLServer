@@ -1,207 +1,51 @@
 * [MLServer](README.md)
 * [Getting Started](getting-started.md)
-* [User Guide](user-guide/README.md)
-* [examples]()
-│   ├── alibi-detect
-│   │   ├── alibi-detector-artifacts
-│   │   ├── model-settings.json
-│   │   ├── README.ipynb
-│   │   ├── README.md
-│   │   └── settings.json
-│   ├── alibi-explain
-│   │   ├── data
-│   │   │   └── mnist_anchor_image
-│   │   │       ├── explainer.dill
-│   │   │       ├── meta.dill
-│   │   │       └── segmentation_fn.dill
-│   │   ├── model-settings.json
-│   │   └── settings.json
-│   ├── cassava
-│   │   ├── app.py
-│   │   ├── deployment.yaml
-│   │   ├── helpers.py
-│   │   ├── img
-│   │   │   ├── cassava_examples.png
-│   │   │   ├── slides.pdf
-│   │   │   ├── step_1.png
-│   │   │   ├── step_2.png
-│   │   │   ├── step_3.png
-│   │   │   ├── step_4.png
-│   │   │   ├── step_5.png
-│   │   │   └── video_play.png
-│   │   ├── model
-│   │   │   ├── model-settings.json
-│   │   │   ├── requirements.txt
-│   │   │   ├── saved_model.pb
-│   │   │   ├── serve-model.py
-│   │   │   ├── settings.json
-│   │   │   └── variables
-│   │   │       ├── variables.data-00000-of-00001
-│   │   │       └── variables.index
-│   │   ├── README.md
-│   │   ├── requirements.txt
-│   │   └── test.py
-│   ├── catboost
-│   │   ├── model.cbm
-│   │   ├── model-settings.json
-│   │   ├── README.ipynb
-│   │   ├── README.md
-│   │   └── settings.json
-│   ├── conda
-│   │   ├── environment.yml
-│   │   ├── Makefile
-│   │   ├── model.joblib
-│   │   ├── model-settings.json
-│   │   ├── README.ipynb
-│   │   └── README.md
-│   ├── content-type
-│   │   ├── model-settings.json
-│   │   ├── README.ipynb
-│   │   ├── README.md
-│   │   └── runtime.py
-│   ├── custom
-│   │   ├── model-settings.json
-│   │   ├── models.py
-│   │   ├── numpyro-divorce.json
-│   │   ├── README.ipynb
-│   │   ├── README.md
-│   │   ├── requirements.txt
-│   │   ├── seldondeployment.yaml
-│   │   └── settings.json
-│   ├── custom-json
-│   │   ├── jsonmodels.py
-│   │   ├── model-settings.json
-│   │   ├── README.ipynb
-│   │   ├── README.md
-│   │   └── settings.json
-│   ├── huggingface
-│   │   ├── README.ipynb
-│   │   └── README.md
-│   ├── index.md
-│   ├── kafka
-│   │   ├── inference-request.json
-│   │   ├── mnist-svm.joblib
-│   │   ├── model-settings.json
-│   │   ├── README.ipynb
-│   │   ├── README.md
-│   │   └── settings.json
-│   ├── lightgbm
-│   │   ├── iris-lightgbm.bst
-│   │   ├── model-settings.json
-│   │   ├── README.ipynb
-│   │   ├── README.md
-│   │   └── settings.json
-│   ├── Makefile
-│   ├── mlflow
-│   │   ├── model-settings.json
-│   │   ├── README.ipynb
-│   │   ├── README.md
-│   │   └── src
-│   │       └── train.py
-│   ├── mllib
-│   │   ├── data
-│   │   │   ├── part-00000-3b569ac9-e283-4220-ba6c-31088ed23cb8-c000.snappy.parquet
-│   │   │   └── _SUCCESS
-│   │   ├── metadata
-│   │   │   ├── part-00000
-│   │   │   └── _SUCCESS
-│   │   └── model-settings.json
-│   ├── mms
-│   │   ├── agaricus.txt.test
-│   │   ├── agaricus.txt.train
-│   │   ├── Makefile
-│   │   ├── models
-│   │   │   ├── mnist-svm
-│   │   │   │   ├── model.joblib
-│   │   │   │   └── model-settings.json
-│   │   │   └── mushroom-xgboost
-│   │   │       ├── model.json
-│   │   │       └── model-settings.json
-│   │   ├── README.ipynb
-│   │   ├── README.md
-│   │   └── settings.json
-│   ├── model-repository
-│   │   ├── models
-│   │   │   ├── mnist-svm
-│   │   │   │   ├── model.joblib
-│   │   │   │   └── model-settings.json
-│   │   │   └── mushroom-xgboost
-│   │   │       ├── model.json
-│   │   │       └── model-settings.json
-│   │   ├── README.ipynb
-│   │   └── README.md
-│   ├── sklearn
-│   │   ├── inference-request.json
-│   │   ├── mnist-svm.joblib
-│   │   ├── model-settings.json
-│   │   ├── README.ipynb
-│   │   ├── README.md
-│   │   └── settings.json
-│   ├── streaming
-│   │   ├── generate-request.json
-│   │   ├── model-settings.json
-│   │   ├── README.ipynb
-│   │   ├── README.md
-│   │   ├── settings.json
-│   │   └── text_model.py
-│   ├── tempo
-│   │   ├── models
-│   │   │   ├── inference-pipeline
-│   │   │   │   └── model.pickle
-│   │   │   ├── sklearn-iris
-│   │   │   │   ├── metadata.yaml
-│   │   │   │   └── model.joblib
-│   │   │   └── xgboost-iris
-│   │   │       ├── metadata.yaml
-│   │   │       └── model.bst
-│   │   ├── model-settings.json
-│   │   ├── README.ipynb
-│   │   └── README.md
-│   └── xgboost
-│       ├── agaricus.txt.test
-│       ├── agaricus.txt.train
-│       ├── model-settings.json
-│       ├── mushroom-xgboost.json
-│       ├── README.ipynb
-│       ├── README.md
-│       └── settings.json
-├── favicon.ico
-├── getting-started.md
-├── reference
-│   ├── api
-│   │   ├── codecs.md
-│   │   ├── index.md
-│   │   ├── metrics.md
-│   │   ├── model.md
-│   │   └── types.md
-│   ├── cli.md
-│   ├── index.md
-│   ├── model-settings.md
-│   └── settings.md
-├── references.bib
-├── runtimes
-│   ├── alibi-detect.md
-│   ├── alibi-explain.md
-│   ├── catboost.md
-│   ├── custom.md
-│   ├── huggingface.md
-│   ├── index.md
-│   ├── lightgbm.md
-│   ├── mlflow.md
-│   ├── mllib.md
-│   ├── sklearn.md
-│   └── xgboost.md
-└── user-guide
-    ├── adaptive-batching.md
-    ├── content-type.md
-    ├── custom.md
-    ├── deployment
-    │   ├── index.md
-    │   ├── kserve.md
-    │   └── seldon-core.md
-    ├── index.md
-    ├── metrics.md
-    ├── openapi.md
-    ├── parallel-inference.md
-    └── streaming.md
-* [](changelog.md)
+* [User Guide](user-guide/index.md)
+  * [Content Types (and Codecs)](user-guide/content-type.md)
+  * [OpenAPI Support](user-guide/openapi.md)
+  * [Parallel Inference](user-guide/parallel-inference.md)
+  * [Adaptive Batching](user-guide/adaptive-batching.md)
+  * [Custom Inference Runtimes](user-guide/custom.md)
+  * [Streaming](user-guide/streaming.md)
+  * [Metrics](user-guide/metrics.md)
+  * [Deployment](user-guide/deployment/index.md)
+    * [Seldon Core](user-guide/deployment/seldon-core.md)
+    * [KServe](user-guide/deployment/kserve.md)
+* [Inference Runtimes](runtimes/index.md)
+  * [SKLearn](runtimes/sklearn.md)
+  * [XGBoost](runtimes/xgboost.md)
+  * [MLFlow](runtimes/mlflow.md)
+  * [Spark MlLib](runtimes/mllib.md)
+  * [LightGBM](runtimes/lightgbm.md)
+  * [Catboost](runtimes/catboost.md)
+  * [Alibi-Detect](runtimes/alibi-detect.md)
+  * [Alibi-Explain](runtimes/alibi-explain.md)
+  * [HuggingFace](runtimes/huggingface.md)
+  * [Custom](runtimes/custom.md)
+* [Reference](reference/README.md)
+  * [MLServer Settings](reference/settings.md)
+  * [Model Settings](reference/model-settings.md)
+  * [MLServer CLI](reference/cli.md)
+  * [Python API](reference/python-api/README.md)
+    * [MLModel](reference/api/model.md)
+    * [Types](reference/api/types.md)
+    * [Codecs](reference/api/codecs.md)
+    * [Metrics](reference/api/metrics.md)
+* [Examples](examples/README.md)
+  * [Serving Scikit-Learn models](examples/sklearn/README.md)
+  * [Serving XGBoost models](examples/xgboost/README.md)
+  * [Serving LightGBM models](examples/lightgbm/README.md)
+  * [Running a Tempo pipeline in MLServer](examples/tempo/README.md)
+  * [Serving MLflow models](examples/mlflow/README.md)
+  * [Serving a custom model](examples/custom/README.md)
+  * [Serving Alibi-Detect models](examples/alibi-detect/README.md)
+  * [Serving HuggingFace Transformer Models](examples/huggingface/README.md)
+  * [Multi-Model Serving](examples/mms/README.md)
+  * [Model Repository API](examples/model-repository/README.md)
+  * [Content Type Decoding](examples/content-type/README.md)
+  * [Custom Conda environments in MLServer](examples/conda/README.md)
+  * [Serving a custom model with JSON serialization](examples/custom-json/README.md)
+  * [Serving models through Kafka](examples/kafka/README.md)
+  * [Deploying a Custom Tensorflow Model with MLServer and Seldon Core](examples/cassava/README.md)
+* [Changelog](changelog.md)
+* [new-batch.md](new-batch.md.md)
