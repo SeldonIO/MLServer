@@ -15,11 +15,8 @@ from .logging import logger
 
 def _extract_env(tarball_path: str, env_path: str) -> None:
     logger.info(f"Extracting environment tarball from {tarball_path}...")
-    try:
-        with tarfile.open(tarball_path, "r") as tarball:
-            tarball.extractall(path=env_path)
-    except Exception:
-        logger.info("Failed to extract environment tarball.")
+    with tarfile.open(tarball_path, "r") as tarball:
+        tarball.extractall(path=env_path)
 
 
 def _compute_hash_of_file(tarball_path: str) -> str:
