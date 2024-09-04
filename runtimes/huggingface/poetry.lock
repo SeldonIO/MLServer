@@ -2308,13 +2308,13 @@ tests = ["pytest", "pytest-cov", "pytest-pep8"]
 
 [[package]]
 name = "optimum"
-version = "1.21.2"
+version = "1.21.4"
 description = "Optimum Library is an extension of the Hugging Face Transformers library, providing a framework to integrate third-party libraries from Hardware Partners and interface with their specific functionality."
 optional = false
 python-versions = ">=3.7.0"
 files = [
-    {file = "optimum-1.21.2-py3-none-any.whl", hash = "sha256:8b3633b9312413ceac5156294a2a0cd221268baf5a2c593f4d54ec20bff296d8"},
-    {file = "optimum-1.21.2.tar.gz", hash = "sha256:037e65d265237809fac69e9003215c60cf6de56e97c62ff7565abab4a94a64ce"},
+    {file = "optimum-1.21.4-py3-none-any.whl", hash = "sha256:d18f426bcfc7bed9754af0305e1a223100195bab804d47ea5e4f8b0562f23d46"},
+    {file = "optimum-1.21.4.tar.gz", hash = "sha256:47e751f1068c81fec7846d10c67bf39c18e41fda6cd15566dfc85c3ea82262f7"},
 ]
 
 [package.dependencies]
@@ -2332,7 +2332,7 @@ packaging = "*"
 protobuf = {version = ">=3.20.1", optional = true, markers = "extra == \"onnxruntime\""}
 sympy = "*"
 torch = ">=1.11"
-transformers = {version = ">=4.26.0,<4.43.0", extras = ["sentencepiece"]}
+transformers = {version = ">=4.29.0,<4.44.0", extras = ["sentencepiece"]}
 
 [package.extras]
 amd = ["optimum-amd"]
@@ -2345,7 +2345,7 @@ exporters-gpu = ["onnx", "onnxruntime-gpu", "timm"]
 exporters-tf = ["h5py", "numpy (<1.24.0)", "onnx", "onnxruntime", "tensorflow (>=2.4,<=2.12.1)", "tf2onnx", "timm", "transformers[sentencepiece] (>=4.26.0,<4.38.0)"]
 furiosa = ["optimum-furiosa"]
 graphcore = ["optimum-graphcore"]
-habana = ["optimum-habana", "transformers (>=4.40.0,<4.41.0)"]
+habana = ["optimum-habana", "transformers (>=4.43.0,<4.44.0)"]
 intel = ["optimum-intel (>=1.18.0)"]
 ipex = ["optimum-intel[ipex] (>=1.18.0)"]
 neural-compressor = ["optimum-intel[neural-compressor] (>=1.18.0)"]
