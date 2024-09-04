@@ -46,7 +46,7 @@ change the cell type to bash.
 
 ## 02 Set Up
 
-![setup](../assets/mlserver_setup.png)
+![setup](images/mlserver_setup.png)
 
 At its core, MLServer requires that users give it 3 things, a `model-settings.json` file with
 information about the model, an (optional) `settings.json` file with information related to the server you
@@ -203,7 +203,7 @@ out for our future users. We'll initiate our server via the command line, and la
 do the same via Python files. Here's where we are at right now in the process of developing microservices
 with MLServer.
 
-![start](../assets/start_service.png)
+![start](images/start_service.png)
 
 As you can see in the image, our server will be initialized with three entry points, one for HTTP requests,
 another for gRPC, and another for the metrics. To learn more about the powerful metrics feature of MLServer,
@@ -305,7 +305,7 @@ to integrate machine learning into a wide range of applications in a standard wa
 
 All URLs you create with MLServer will have the following structure.
 
-![v2](../assets/urlv2.png)
+![v2](images/urlv2.png)
 
 This kind of protocol is a standard adopted by different companies like NVIDIA, Tensorflow Serving,
 KServe, and others, to keep everyone on the same page. If you think about driving cars globally,
@@ -349,7 +349,7 @@ Let's stop our server, change the settings of it, start it again, and test it.
 mlserver start similarity_model
 ```
 
-![multiplemodels](../assets/multiple_models.png)
+![multiplemodels](images/multiple_models.png)
 
 As you can see in the output of the terminal in the picture above, we now have 3 models running in
 parallel. The reason you might see 4 is because, by default, MLServer will print the name of the
@@ -430,7 +430,7 @@ for movie1, movie2 in zip((deep_impact, antz, the_dark_night), (armageddon, a_bu
 
 ## 06 Packaging our Service
 
-![serving3](../assets/serving_2.png)
+![serving3](images/serving_2.png)
 
 For the last step of this guide, we are going to package our model and service into a
 docker image that we can reuse in another project or share with colleagues immediately. This step
