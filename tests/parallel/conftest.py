@@ -160,9 +160,11 @@ def env_model_settings(env_tarball: str) -> ModelSettings:
         parameters=ModelParameters(environment_tarball=env_tarball),
     )
 
+
 @pytest.fixture
 def existing_env_model_settings(env_tarball: str, tmp_path) -> ModelSettings:
     from mlserver.env import _extract_env
+
     env_path = str(tmp_path)
 
     _extract_env(env_tarball, env_path)

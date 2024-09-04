@@ -306,7 +306,8 @@ class ModelParameters(BaseSettings):
     """Version of the model."""
 
     environment_path: Optional[str] = None
-    """Path to a directory that contains the python environment to be used to load this model."""
+    """Path to a directory that contains the python environment to be used
+    to load this model."""
 
     environment_tarball: Optional[str] = None
     """Path to the environment tarball which should be used to load this

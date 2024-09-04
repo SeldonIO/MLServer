@@ -32,7 +32,8 @@ async def env_model(
 
 @pytest.fixture
 async def existing_env_model(
-    inference_pool_registry: InferencePoolRegistry, existing_env_model_settings: ModelSettings
+    inference_pool_registry: InferencePoolRegistry,
+    existing_env_model_settings: ModelSettings,
 ) -> MLModel:
     env_model = EnvModel(existing_env_model_settings)
     model = await inference_pool_registry.load_model(env_model)
@@ -40,6 +41,7 @@ async def existing_env_model(
     yield model
 
     await inference_pool_registry.unload_model(model)
+
 
 def test_set_environment_hash(sum_model: MLModel):
     env_hash = "0e46fce1decb7a89a8b91c71d8b6975630a17224d4f00094e02e1a732f8e95f3"

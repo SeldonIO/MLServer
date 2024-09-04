@@ -75,29 +75,33 @@ class InferencePoolRegistry:
         )
 
     async def _get_or_create(self, model: MLModel) -> InferencePool:
-        if model.settings.parameters and model.settings.parameters.environment_path:
-            pool = await self._get_or_create_with_existing_env(model)
+        if (
+            model.settings.parameters is not None
+            and model.settings.parameters.environment_path
+        ):
+            pool = await self._get_or_create_with_existing_env(
+                model.settings.parameters.environment_path
+            )
         else:
             pool = await self._get_or_create_with_tarball(model)
         return pool
 
     async def _get_or_create_with_existing_env(
-        self, model: MLModel
+        self, environment_path: str
     ) -> InferencePool:
         """
-        Creates or returns the InferencePool for a model that uses an existing python environment.
+        Creates or returns the InferencePool for a model that uses an existing
+        python environment.
         """
-        environment_path = os.path.abspath(
-            os.path.expanduser(
-                os.path.expandvars(model.settings.parameters.environment_path)
-            )
+        expanded_environment_path = os.path.abspath(
+            os.path.expanduser(os.path.expandvars(environment_path))
         )
-        logger.info(f"Using environment {environment_path}")
-        env_hash = await compute_hash_of_string(environment_path)
+        logger.info(f"Using environment {expanded_environment_path}")
+        env_hash = await compute_hash_of_string(expanded_environment_path)
         if env_hash in self._pools:
             return self._pools[env_hash]
         env = Environment(
-            env_path=environment_path,
+            env_path=expanded_environment_path,
             env_hash=env_hash,
             delete_env=False,
         )
@@ -107,11 +111,10 @@ class InferencePoolRegistry:
         self._pools[env_hash] = pool
         return pool
 
-    async def _get_or_create_with_tarball(
-        self, model: MLModel
-    ) -> InferencePool:
+    async def _get_or_create_with_tarball(self, model: MLModel) -> InferencePool:
         """
-        Creates or returns the InferencePool for a model that uses a tarball as python environment.
+        Creates or returns the InferencePool for a model that uses a
+        tarball as python environment.
         """
         env_tarball = _get_env_tarball(model)
         if not env_tarball:
