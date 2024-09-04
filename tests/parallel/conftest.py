@@ -162,6 +162,21 @@ def env_model_settings(env_tarball: str) -> ModelSettings:
 
 
 @pytest.fixture
+def existing_env_model_settings(env_tarball: str, tmp_path) -> ModelSettings:
+    from mlserver.env import _extract_env
+
+    env_path = str(tmp_path)
+
+    _extract_env(env_tarball, env_path)
+    model_settings = ModelSettings(
+        name="exising_env_model",
+        implementation=EnvModel,
+        parameters=ModelParameters(environment_path=env_path),
+    )
+    yield model_settings
+
+
+@pytest.fixture
 async def worker_with_env(
     settings: Settings,
     responses: Queue,
