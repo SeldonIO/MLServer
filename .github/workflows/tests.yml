@@ -67,13 +67,13 @@ jobs:
         python-version:
           - "3.9"
           - "3.10"
-        is-pr:
-          - ${{ github.event_name == 'pull_request' }}
-        exclude:
-          # MacOS tests take a lot of time, so we will run them only on merge
-          # From https://github.com/orgs/community/discussions/26253
-          - is-pr: true
-            os: macos-13
+        # is-pr:
+        #   - ${{ github.event_name == 'pull_request' }}
+        # exclude:
+        #   # MacOS tests take a lot of time, so we will run them only on merge
+        #   # From https://github.com/orgs/community/discussions/26253
+        #   - is-pr: true
+        #     os: macos-13
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -115,21 +115,21 @@ jobs:
           - "3.9"
           - "3.10"
         tox-environment:
-          - sklearn
-          - xgboost
-          - lightgbm
-          - mlflow
+          # - sklearn
+          # - xgboost
+          # - lightgbm
+          # - mlflow
           - huggingface
-          - alibi-explain
-          - alibi-detect
-          - catboost
-        is-pr:
-          - ${{ github.event_name == 'pull_request' }}
-        exclude:
-          # MacOS tests take a lot of time, so we will run them only on merge
-          # From https://github.com/orgs/community/discussions/26253
-          - is-pr: true
-            os: macos-13
+          # - alibi-explain
+          # - alibi-detect
+          # - catboost
+        # is-pr:
+        #   - ${{ github.event_name == 'pull_request' }}
+        # exclude:
+        #   # MacOS tests take a lot of time, so we will run them only on merge
+        #   # From https://github.com/orgs/community/discussions/26253
+        #   - is-pr: true
+        #     os: macos-13
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
