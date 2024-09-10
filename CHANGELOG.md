@@ -1,6 +1,47 @@
 # Changelog
 
 
+<a name="1.6.1"></a>
+## [1.6.1](https://github.com/SeldonIO/MLServer/releases/tag/1.6.1) - 10 Sep 2024
+
+<!-- Release notes generated using configuration in .github/release.yml at 1.6.1 -->
+
+## Overview
+
+### Features
+MLServer now offers an option to use pre-existing Python environments by specifying a path to the environment to be used - by [@idlefella](https://github.com/idlefella) in ([#1891](https://github.com/SeldonIO/MLServer/issues/1891))
+
+### Releases
+MLServer released catboost runtime which allows serving [catboost](https://catboost.ai/) models with MLServer - by [@sakoush](https://github.com/sakoush) in ([#1839](https://github.com/SeldonIO/MLServer/issues/1839))
+
+### Fixes
+* Kafka json byte encoding fix to match rest server by [@DerTiedemann](https://github.com/DerTiedemann) and [@sakoush](https://github.com/sakoush) in ([#1622](https://github.com/SeldonIO/MLServer/issues/1622))
+* Prometheus interceptor fix for gRPC streaming by [@RobertSamoilescu](https://github.com/RobertSamoilescu) in ([#1858](https://github.com/SeldonIO/MLServer/issues/1858))
+
+
+## What's Changed
+* Re-generate License Info by [@github-actions](https://github.com/github-actions) in https://github.com/SeldonIO/MLServer/pull/1812
+* Update CHANGELOG by [@github-actions](https://github.com/github-actions) in https://github.com/SeldonIO/MLServer/pull/1830
+* Update release.yml to include catboost by [@sakoush](https://github.com/sakoush) in https://github.com/SeldonIO/MLServer/pull/1839
+* Fix kafka json byte encoding to match rest server by [@DerTiedemann](https://github.com/DerTiedemann) in https://github.com/SeldonIO/MLServer/pull/1622
+* Included Prometheus interceptor support for gRPC streaming by [@RobertSamoilescu](https://github.com/RobertSamoilescu) in https://github.com/SeldonIO/MLServer/pull/1858
+* Run gRPC test serially by [@RobertSamoilescu](https://github.com/RobertSamoilescu) in https://github.com/SeldonIO/MLServer/pull/1872
+* Re-generate License Info by [@github-actions](https://github.com/github-actions) in https://github.com/SeldonIO/MLServer/pull/1886
+* Feature/support existing environments by [@idlefella](https://github.com/idlefella) in https://github.com/SeldonIO/MLServer/pull/1891
+* Fix tensorflow upperbound macos by [@RobertSamoilescu](https://github.com/RobertSamoilescu) in https://github.com/SeldonIO/MLServer/pull/1901
+* ci: Merge change for release 1.6.1  by [@RobertSamoilescu](https://github.com/RobertSamoilescu) in https://github.com/SeldonIO/MLServer/pull/1902
+* Bump preflight to 1.10.0 by [@RobertSamoilescu](https://github.com/RobertSamoilescu) in https://github.com/SeldonIO/MLServer/pull/1903
+* ci: Merge change for release 1.6.1 [2] by [@RobertSamoilescu](https://github.com/RobertSamoilescu) in https://github.com/SeldonIO/MLServer/pull/1904
+
+## New Contributors
+* [@DerTiedemann](https://github.com/DerTiedemann) made their first contribution in https://github.com/SeldonIO/MLServer/pull/1622
+* [@idlefella](https://github.com/idlefella) made their first contribution in https://github.com/SeldonIO/MLServer/pull/1891
+
+**Full Changelog**: https://github.com/SeldonIO/MLServer/compare/1.6.0...1.6.1
+
+[Changes][1.6.1]
+
+
 <a name="1.6.0"></a>
 ## [1.6.0](https://github.com/SeldonIO/MLServer/releases/tag/1.6.0) - 26 Jun 2024
 
@@ -509,6 +550,7 @@ To learn more about how to use MLServer directly from the MLflow CLI, check out 
 [Changes][1.1.0]
 
 
+[1.6.1]: https://github.com/SeldonIO/MLServer/compare/1.6.0...1.6.1
 [1.6.0]: https://github.com/SeldonIO/MLServer/compare/1.5.0...1.6.0
 [1.5.0]: https://github.com/SeldonIO/MLServer/compare/1.4.0...1.5.0
 [1.4.0]: https://github.com/SeldonIO/MLServer/compare/1.3.5...1.4.0
