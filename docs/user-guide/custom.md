@@ -215,7 +215,8 @@ In these cases, to load your custom runtime, MLServer will need access to these
 dependencies.
 
 It is possible to load this custom set of dependencies by providing them
-through an [environment tarball](../examples/conda/README), whose path can be
+through an [environment tarball](../examples/conda/README) or by giving a
+path to an already exisiting python environment. Both paths can be
 specified within your `model-settings.json` file.
 
 ```{warning}
@@ -276,6 +277,21 @@ Note that, in the folder layout above, we are assuming that:
     }
   }
   ```
+
+If you want to use an already exisiting python environment, you can use the parameter `environment_path` of your `model-settings.json`:
+
+```
+---
+emphasize-lines: 5
+---
+{
+  "model": "sum-model",
+  "implementation": "models.MyCustomRuntime",
+  "parameters": {
+    "environment_path": "~/micromambda/envs/my-conda-environment"
+  }
+}
+```
 
 ## Building a custom MLServer image
 

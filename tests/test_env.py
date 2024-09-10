@@ -5,7 +5,7 @@ import shutil
 
 from typing import Tuple
 
-from mlserver.env import Environment, compute_hash
+from mlserver.env import Environment, compute_hash_of_file
 
 
 @pytest.fixture
@@ -15,7 +15,7 @@ def expected_python_folder(env_python_version: Tuple[int, int]) -> str:
 
 
 async def test_compute_hash(env_tarball: str):
-    env_hash = await compute_hash(env_tarball)
+    env_hash = await compute_hash_of_file(env_tarball)
     assert len(env_hash) == 64
 
 

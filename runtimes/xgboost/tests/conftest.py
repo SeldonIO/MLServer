@@ -50,7 +50,7 @@ def classifier_uri(tmp_path) -> str:
     clf = xgb.XGBClassifier(
         num_class=c, use_label_encoder=False, objective="multi:softprob"
     )
-    clf.fit(X_train, y_train, eval_metric="mlogloss")
+    clf.fit(X_train, y_train, eval_set=[(X_train, y_train)])
 
     model_uri = os.path.join(tmp_path, "xgboost-model.json")
     clf.save_model(model_uri)

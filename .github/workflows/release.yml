@@ -216,6 +216,7 @@ jobs:
           - mllib
           - sklearn
           - xgboost
+          - catboost
     steps:
       - name: Maximize build space
         uses: easimon/maximize-build-space@master

@@ -78,8 +78,7 @@ The next step will be to create 2 configuration files:
 {
   "debug": false,
   "parallel_workers": 0,
-  "gzip_enabled": false,
-  "metrics_endpoint": null
+  "gzip_enabled": false
 }
 
 ```
@@ -88,7 +87,6 @@ Note the currently there are three main limitations of the streaming support in 
 
 - distributed workers are not supported (i.e., the `parallel_workers` setting should be set to `0`)
 - `gzip` middleware is not supported for REST (i.e., `gzip_enabled` setting should be set to `false`)
-- metrics endpoint is not available (i.e. `metrics_endpoint` is also disabled for streaming for gRPC)
 
 #### model-settings.json
 
@@ -195,7 +193,7 @@ import mlserver.grpc.dataplane_pb2_grpc as dataplane
 inference_request = types.InferenceRequest.parse_file("./generate-request.json")
 
 # need to convert from string to bytes for grpc
-inference_request.inputs[0] = StringCodec.encode_input("prompt", inference_request.inputs[0].data.__root__)
+inference_request.inputs[0] = StringCodec.encode_input("prompt", inference_request.inputs[0].data.root)
 inference_request_g = converters.ModelInferRequestConverter.from_types(
     inference_request, model_name="text-model", model_version=None
 )
@@ -213,5 +211,3 @@ async with grpc.aio.insecure_channel("localhost:8081") as grpc_channel:
 ```
 
 Note that for gRPC, the request is transformed into an async generator which is then passed to the `ModelStreamInfer` method. The response is also an async generator which can be iterated over to get the response.
-
-
