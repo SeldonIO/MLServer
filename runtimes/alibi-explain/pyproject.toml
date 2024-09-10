@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mlserver-alibi-explain"
-version = "1.6.1.rc2"
+version = "1.6.1"
 description = "Alibi-Explain runtime for MLServer"
 authors = ["Seldon Technologies Ltd. <hello@seldon.io>"]
 license = "Apache-2.0"
