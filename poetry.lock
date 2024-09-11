@@ -7769,13 +7769,13 @@ typing-extensions = ">=3.7.4.3"
 
 [[package]]
 name = "types-aiofiles"
-version = "23.2.0.20240106"
+version = "24.1.0.20240626"
 description = "Typing stubs for aiofiles"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "types-aiofiles-23.2.0.20240106.tar.gz", hash = "sha256:ef4fa3072441c58beaadbd0d07ba18e89beff49c71648dd223e2ca861f3dac53"},
-    {file = "types_aiofiles-23.2.0.20240106-py3-none-any.whl", hash = "sha256:7324f9a9f7200c1f4986a9e40a42b548290f707b967709f30b280e99fdacbd99"},
+    {file = "types-aiofiles-24.1.0.20240626.tar.gz", hash = "sha256:48604663e24bc2d5038eac05ccc33e75799b0779e93e13d6a8f711ddc306ac08"},
+    {file = "types_aiofiles-24.1.0.20240626-py3-none-any.whl", hash = "sha256:7939eca4a8b4f9c6491b6e8ef160caee9a21d32e18534a57d5ed90aee47c66b4"},
 ]
 
 [[package]]
@@ -8628,4 +8628,4 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<3.12"
-content-hash = "e7c7cb8792c21f7c9f64454b4711f8e47e572a9cd9dc333adf922a5d3d5e1313"
+content-hash = "2bb3ad2beb038c401fa12393db010ae8b16164b9e4a6523b77e47ad198df8870"
