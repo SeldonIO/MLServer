@@ -18,7 +18,7 @@ torch = "2.2.1"
 pytorch-lightning = "2.4.0"
 torchmetrics = "1.4.1"
 torchvision = "0.17.1"
-mlflow = "2.16.0"
+mlflow = "2.16.1"
 
 [build-system]
 requires = ["poetry-core"]
