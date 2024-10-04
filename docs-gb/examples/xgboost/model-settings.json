@@ -1,0 +1,8 @@
+{
+    "name": "mushroom-xgboost",
+    "implementation": "mlserver_xgboost.XGBoostModel",
+    "parameters": {
+        "uri": "./mushroom-xgboost.json",
+        "version": "v0.1.0"
+    }
+}
