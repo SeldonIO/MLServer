@@ -1,0 +1,19 @@
+
+{
+    "inputs": [
+        {
+            "name": "prompt",
+            "shape": [1],
+            "datatype": "BYTES",
+            "data": ["What is the capital of France?"],
+            "parameters": {
+            "content_type": "str"
+            }
+        }
+    ],
+    "outputs": [
+        {
+          "name": "output"
+        }
+    ]
+}
