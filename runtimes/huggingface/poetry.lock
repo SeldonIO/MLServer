@@ -2308,13 +2308,13 @@ tests = ["pytest", "pytest-cov", "pytest-pep8"]
 
 [[package]]
 name = "optimum"
-version = "1.22.0"
+version = "1.23.1"
 description = "Optimum Library is an extension of the Hugging Face Transformers library, providing a framework to integrate third-party libraries from Hardware Partners and interface with their specific functionality."
 optional = false
 python-versions = ">=3.7.0"
 files = [
-    {file = "optimum-1.22.0-py3-none-any.whl", hash = "sha256:80d2ba0c34f60e1c5e0fc0840647d3899f48924a86caedd97d47fc64836a0a5a"},
-    {file = "optimum-1.22.0.tar.gz", hash = "sha256:b0fcbe08987d453c685b4fdb6b3afe408ee7cfa74ffa1230eb20a1272e67952c"},
+    {file = "optimum-1.23.1-py3-none-any.whl", hash = "sha256:9a910601b665ac617ef14df99a44fe06e51040bcf945093f7b111d0e692fa5ac"},
+    {file = "optimum-1.23.1.tar.gz", hash = "sha256:bdef34c20d702a0856b0f35720287f561e55854e0fc4655512a99365ac480dde"},
 ]
 
 [package.dependencies]
@@ -2325,14 +2325,17 @@ datasets = [
 ]
 evaluate = {version = "*", optional = true, markers = "extra == \"onnxruntime\""}
 huggingface-hub = ">=0.8.0"
-numpy = "<2.0"
+numpy = "*"
 onnx = {version = "*", optional = true, markers = "extra == \"onnxruntime\""}
 onnxruntime = {version = ">=1.11.0", optional = true, markers = "extra == \"onnxruntime\""}
 packaging = "*"
 protobuf = {version = ">=3.20.1", optional = true, markers = "extra == \"onnxruntime\""}
 sympy = "*"
 torch = ">=1.11"
-transformers = {version = ">=4.29,<4.45.0", extras = ["sentencepiece"]}
+transformers = [
+    {version = ">=4.29", extras = ["sentencepiece"]},
+    {version = "<4.46.0", optional = true, markers = "extra == \"onnxruntime\""},
+]
 
 [package.extras]
 amd = ["optimum-amd"]
@@ -2340,8 +2343,8 @@ benchmark = ["evaluate (>=0.2.0)", "optuna", "scikit-learn", "seqeval", "torchvi
 dev = ["Pillow", "accelerate", "black (>=23.1,<24.0)", "diffusers (>=0.17.0)", "einops", "invisible-watermark", "parameterized", "pytest (<=8.0.0)", "pytest-xdist", "requests", "rjieba", "ruff (==0.1.5)", "sacremoses", "scikit-learn", "timm", "torchaudio", "torchvision"]
 diffusers = ["diffusers"]
 doc-build = ["accelerate"]
-exporters = ["onnx", "onnxruntime", "timm"]
-exporters-gpu = ["onnx", "onnxruntime-gpu", "timm"]
+exporters = ["onnx", "onnxruntime", "timm", "transformers (<4.46.0)"]
+exporters-gpu = ["onnx", "onnxruntime-gpu", "timm", "transformers (<4.46.0)"]
 exporters-tf = ["datasets (<=2.16)", "h5py", "numpy (<1.24.0)", "onnx", "onnxruntime", "tensorflow (>=2.4,<=2.12.1)", "tf2onnx", "timm", "transformers[sentencepiece] (>=4.26,<4.38)"]
 furiosa = ["optimum-furiosa"]
 graphcore = ["optimum-graphcore"]
@@ -2352,8 +2355,8 @@ neural-compressor = ["optimum-intel[neural-compressor] (>=1.18.0)"]
 neuron = ["optimum-neuron[neuron] (>=0.0.20)", "transformers (>=4.36.2,<4.42.0)"]
 neuronx = ["optimum-neuron[neuronx] (>=0.0.20)", "transformers (>=4.36.2,<4.42.0)"]
 nncf = ["optimum-intel[nncf] (>=1.18.0)"]
-onnxruntime = ["datasets (>=1.2.1)", "evaluate", "onnx", "onnxruntime (>=1.11.0)", "protobuf (>=3.20.1)"]
-onnxruntime-gpu = ["accelerate", "datasets (>=1.2.1)", "evaluate", "onnx", "onnxruntime-gpu (>=1.11.0)", "protobuf (>=3.20.1)"]
+onnxruntime = ["datasets (>=1.2.1)", "evaluate", "onnx", "onnxruntime (>=1.11.0)", "protobuf (>=3.20.1)", "transformers (<4.46.0)"]
+onnxruntime-gpu = ["accelerate", "datasets (>=1.2.1)", "evaluate", "onnx", "onnxruntime-gpu (>=1.11.0)", "protobuf (>=3.20.1)", "transformers (<4.46.0)"]
 openvino = ["optimum-intel[openvino] (>=1.18.0)"]
 quality = ["black (>=23.1,<24.0)", "ruff (==0.1.5)"]
 quanto = ["optimum-quanto (>=0.2.4)"]
