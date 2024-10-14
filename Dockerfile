@@ -1,4 +1,4 @@
-FROM python:3.10-slim AS wheel-builder
+FROM python:3.13-slim AS wheel-builder
 SHELL ["/bin/bash", "-l", "-c"]
 
 ARG POETRY_VERSION="1.8.3"
