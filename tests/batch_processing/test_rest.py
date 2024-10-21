@@ -138,7 +138,7 @@ async def test_invalid(
                     "loc": ["inputs", 0, "datatype"],
                     "msg": "Field required",
                     "input": {"name": "input-0", "shape": [1, 3], "data": [1, 2, 3]},
-                    "url": "https://errors.pydantic.dev/2.7/v/missing",
+                    "url": "https://errors.pydantic.dev/2.9/v/missing",
                 }
             ],
         },
@@ -191,7 +191,7 @@ async def test_invalid_among_many(
                     "loc": ["inputs", 0, "datatype"],
                     "msg": "Field required",
                     "input": {"name": "input-0", "shape": [1, 3], "data": [1, 2, 3]},
-                    "url": "https://errors.pydantic.dev/2.7/v/missing",
+                    "url": "https://errors.pydantic.dev/2.9/v/missing",
                 }
             ],
         },
