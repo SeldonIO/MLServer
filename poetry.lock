@@ -3609,7 +3609,6 @@ develop = true
 [package.dependencies]
 alibi-detect = {version = "*", extras = ["tensorflow"]}
 mlserver = "*"
-pydantic = "2.7.1"
 
 [package.source]
 type = "directory"
@@ -3631,7 +3630,6 @@ mlserver_lightgbm = "*"
 mlserver_sklearn = "*"
 mlserver_xgboost = "*"
 orjson = "*"
-pydantic = "2.7.1"
 
 [package.source]
 type = "directory"
@@ -3668,7 +3666,6 @@ develop = true
 mlserver = "*"
 optimum = {version = ">=1.4,<2.0", extras = ["onnxruntime"]}
 pillow = "*"
-pydantic = "2.7.1"
 tensorflow = "*"
 
 [package.source]
