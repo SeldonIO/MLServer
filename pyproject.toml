@@ -80,6 +80,7 @@ tox = "4.16.0"
 
 [tool.poetry.group.dev.dependencies]
 datamodel-code-generator = "0.26.0"
+grpcio-tools = "*"
 pytest = "7.4.4"
 pytest-asyncio = "0.21.1"
 pytest-mock = "3.12.0"
