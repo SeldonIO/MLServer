@@ -260,5 +260,5 @@ async def test_infer_invalid_datatype_error(
         "'BOOL', 'UINT8', 'UINT16', 'UINT32', 'UINT64', 'INT8', 'INT16', "
         "'INT32', 'INT64', 'FP16', 'FP32', 'FP64' or 'BYTES' [type=enum, "
         "input_value='INT322', input_type=str]\n    For further "
-        "information visit https://errors.pydantic.dev/2.7/v/enum"
+        "information visit https://errors.pydantic.dev/2.9/v/enum"
     )
