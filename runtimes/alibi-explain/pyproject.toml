@@ -15,7 +15,6 @@ mlserver_xgboost = "*"
 mlserver_lightgbm = "*"
 orjson = "*"
 alibi = {extras = ["shap", "tensorflow"], version = "*"}
-pydantic = "2.7.1"
 
 [tool.poetry.group.dev.dependencies]
 mlserver = {path = "../..", develop = true}

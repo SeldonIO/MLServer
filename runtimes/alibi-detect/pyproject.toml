@@ -11,7 +11,6 @@ packages = [{include = "mlserver_alibi_detect"}]
 python = ">=3.9,<3.12"
 mlserver = "*"
 alibi-detect = {extras = ["tensorflow"], version = "*"}
-pydantic = "2.7.1"
 
 [tool.poetry.group.dev.dependencies]
 mlserver = {path = "../..", develop = true}
