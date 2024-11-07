@@ -1,7 +1,7 @@
-FROM python:3.10-slim AS wheel-builder
+FROM python:3.12-slim AS wheel-builder
 SHELL ["/bin/bash", "-l", "-c"]
 
-ARG POETRY_VERSION="1.8.3"
+ARG POETRY_VERSION="1.8.4"
 
 COPY ./hack/build-wheels.sh ./hack/build-wheels.sh
 COPY ./mlserver ./mlserver
@@ -27,8 +27,8 @@ RUN pip install poetry==$POETRY_VERSION && \
 FROM registry.access.redhat.com/ubi9/ubi-minimal
 SHELL ["/bin/bash", "-c"]
 
-ARG PYTHON_VERSION=3.10.12
-ARG CONDA_VERSION=23.11.0
+ARG PYTHON_VERSION=3.12.0
+ARG CONDA_VERSION=24.9.0
 ARG MINIFORGE_VERSION=${CONDA_VERSION}-0
 ARG RUNTIMES="all"
 
@@ -41,7 +41,7 @@ ENV MLSERVER_MODELS_DIR=/mnt/models \
     MLSERVER_PATH=/opt/mlserver \
     CONDA_PATH=/opt/conda \
     PATH=/opt/mlserver/.local/bin:/opt/conda/bin:$PATH \
-    LD_LIBRARY_PATH=/usr/local/nvidia/lib64:/opt/conda/lib/python3.10/site-packages/nvidia/cuda_runtime/lib:$LD_LIBRARY_PATH \
+    LD_LIBRARY_PATH=/usr/local/nvidia/lib64:/opt/conda/lib/python3.12/site-packages/nvidia/cuda_runtime/lib:$LD_LIBRARY_PATH \
     HF_HOME=/opt/mlserver/.cache \
     NUMBA_CACHE_DIR=/opt/mlserver/.cache
 
@@ -108,7 +108,7 @@ RUN . $CONDA_PATH/etc/profile.d/conda.sh && \
         done \
     fi && \
     pip install $(ls "./dist/mlserver-"*.whl) --constraint ./dist/constraints.txt && \
-    rm -f /opt/conda/lib/python3.10/site-packages/spacy/tests/package/requirements.txt && \
+    rm -f /opt/conda/lib/python3.12/site-packages/spacy/tests/package/requirements.txt && \
     rm -rf /root/.cache/pip
 
 COPY ./licenses/license.txt .

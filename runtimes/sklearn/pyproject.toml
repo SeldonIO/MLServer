@@ -8,7 +8,7 @@ readme = "README.md"
 packages = [{include = "mlserver_sklearn"}]
 
 [tool.poetry.dependencies]
-python = ">=3.9,<3.12"
+python = ">=3.9,<3.13"
 scikit-learn = "*"
 joblib = "*"
 mlserver = "*"

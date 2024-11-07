@@ -47,7 +47,7 @@ def test_sys_path_empty(env: Environment):
 
 @pytest.mark.parametrize(
     "folder_name",
-    ["python3.9", "python37", "python3.11", ""],
+    ["python3.9", "python37", "python3.11", "python3.12"],
 )
 def test_lib_path(env: Environment, folder_name: str, expected_python_folder: str):
     default_lib_path = env._lib_path
