@@ -8,12 +8,13 @@ readme = "README.md"
 packages = [{include = "mlserver_alibi_detect"}]
 
 [tool.poetry.dependencies]
-python = ">=3.9,<3.12"
+python = ">=3.9,<3.13"
 mlserver = "*"
 alibi-detect = {extras = ["tensorflow"], version = "*"}
 
 [tool.poetry.group.dev.dependencies]
 mlserver = {path = "../..", develop = true}
+#tensorflow-macos = { version = "^2.15.0", markers = "platform_system=='Darwin' and platform_machine=='arm64'" }
 tensorflow = "<2.15"
 
 [build-system]

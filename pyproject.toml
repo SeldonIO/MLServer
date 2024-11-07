@@ -43,12 +43,12 @@ asyncio_mode = "auto"
 addopts = "--import-mode=importlib"
 
 [tool.poetry.dependencies]
-python = ">=3.9,<3.12"
+python = ">=3.9,<3.13"
 click = "*"
 fastapi = ">=0.88.0,!=0.89.0,<0.116.0"
 python-dotenv = "*"
 grpcio = "*"
-numpy = "*"
+numpy = ">1.26.0"
 pandas = "*"
 protobuf = "*"
 uvicorn = "*"
@@ -111,7 +111,8 @@ filelock = "^3.13.1"
 httpx-sse = ">=0.3.1,<0.5.0"
 
 [tool.poetry.group.docker.dependencies]
-tensorflow = "<2.15"
+#tensorflow-macos = { version = "^2.15.0", markers = "platform_system=='Darwin' and platform_machine=='arm64'" }
+tensorflow = ">=2.16"
 
 [tool.poetry.group.all-runtimes]
 optional = true
