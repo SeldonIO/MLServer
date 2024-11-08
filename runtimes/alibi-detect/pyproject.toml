@@ -15,7 +15,7 @@ alibi-detect = {extras = ["tensorflow"], version = "*"}
 [tool.poetry.group.dev.dependencies]
 mlserver = {path = "../..", develop = true}
 #tensorflow-macos = { version = "^2.15.0", markers = "platform_system=='Darwin' and platform_machine=='arm64'" }
-tensorflow = "<2.15"
+tensorflow = ">=2.16"
 
 [build-system]
 requires = ["poetry-core"]
