@@ -45,7 +45,7 @@ addopts = "--import-mode=importlib"
 [tool.poetry.dependencies]
 python = ">=3.9,<3.13"
 click = "*"
-fastapi = ">=0.88.0,!=0.89.0,<=0.115.2"
+fastapi = ">=0.115.2"
 python-dotenv = "*"
 grpcio = "*"
 numpy = ">1.26.0"
@@ -62,8 +62,8 @@ gevent = "*"
 aiofiles = "*"
 orjson = "*"
 uvloop = {version = "*", markers = "sys_platform != 'win32' and (sys_platform != 'cygwin' and platform_python_implementation != 'PyPy')"}
-pydantic = "^2.7.1"
-pydantic-settings = "^2.2.1"
+pydantic = ">=2.9.0"
+pydantic-settings = ">=2.6.0"
 python-multipart = "*"
 
 ## The importlib-resources backport is required to use some
@@ -80,6 +80,7 @@ tox = "4.16.0"
 
 [tool.poetry.group.dev.dependencies]
 datamodel-code-generator = "0.26.0"
+pydantic = "*"
 grpcio-tools = "*"
 pytest = "7.4.4"
 pytest-asyncio = "0.21.1"
