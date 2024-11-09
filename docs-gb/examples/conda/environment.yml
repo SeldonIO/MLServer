@@ -3,11 +3,11 @@ name: old-sklearn
 channels:
     - conda-forge
 dependencies:
-    - python == 3.8
-    - scikit-learn == 0.24.2
-    - joblib == 0.17.0
+    - python == 3.12
+    - scikit-learn == 1.5.2
+    - joblib == 1.4.2
     - requests
     - pip
     - pip:
-        - mlserver == 1.1.0
-        - mlserver-sklearn == 1.1.0
+        - mlserver == 1.6.1
+        - mlserver-sklearn == 1.6.1
