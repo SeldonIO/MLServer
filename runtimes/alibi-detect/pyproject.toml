@@ -10,7 +10,8 @@ packages = [{include = "mlserver_alibi_detect"}]
 [tool.poetry.dependencies]
 python = ">=3.9,<3.13"
 mlserver = "*"
-alibi-detect = {extras = ["tensorflow"], version = "*"}
+alibi-detect = "0.12.0"
+tensorflow = ">=2.16"
 
 [tool.poetry.group.dev.dependencies]
 mlserver = {path = "../..", develop = true}
