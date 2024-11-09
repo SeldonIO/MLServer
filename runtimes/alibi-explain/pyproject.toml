@@ -14,7 +14,7 @@ mlserver_sklearn = "*"
 mlserver_xgboost = "*"
 mlserver_lightgbm = "*"
 orjson = "*"
-alibi = {extras = ["shap", "tensorflow"], version = "*"}
+alibi = {extras = ["shap", "tensorflow"], version = "0.9.6"}
 
 [tool.poetry.group.dev.dependencies]
 mlserver = {path = "../..", develop = true}
