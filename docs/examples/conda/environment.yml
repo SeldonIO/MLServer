@@ -6,6 +6,8 @@ dependencies:
     - python == 3.8
     - scikit-learn == 0.24.2
     - joblib == 0.17.0
+    - gcc_linux-aarch64
+    - gxx_linux-aarch64
     - requests
     - pip
     - pip:
