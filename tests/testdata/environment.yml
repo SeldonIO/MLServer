@@ -4,6 +4,7 @@ channels:
 dependencies:
   - python == 3.12
   - gcc_linux-aarch64
+  - gxx_linux-aarch64
   - scikit-learn >= 1.3.0
   - pip:
       - mlserver @ git+${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}.git@${GITHUB_REF}
