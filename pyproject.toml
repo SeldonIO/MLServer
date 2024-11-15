@@ -45,7 +45,7 @@ addopts = "--import-mode=importlib"
 [tool.poetry.dependencies]
 python = ">=3.9,<3.13"
 click = "*"
-fastapi = ">=0.115.2"
+fastapi = ">=0.88.0,!=0.89.0,<0.116.0"
 python-dotenv = "*"
 grpcio = "*"
 numpy = ">1.26.0"
