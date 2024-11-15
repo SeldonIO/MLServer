@@ -1,7 +1,7 @@
 FROM python:3.10-slim AS wheel-builder
 SHELL ["/bin/bash", "-l", "-c"]
 
-ARG POETRY_VERSION="1.8.4"
+ARG POETRY_VERSION="1.8.3"
 
 COPY ./hack/build-wheels.sh ./hack/build-wheels.sh
 COPY ./mlserver ./mlserver
@@ -27,7 +27,7 @@ RUN pip install poetry==$POETRY_VERSION && \
 FROM registry.access.redhat.com/ubi9/ubi-minimal
 SHELL ["/bin/bash", "-c"]
 
-ARG PYTHON_VERSION=3.10.0
+ARG PYTHON_VERSION=3.10.12
 ARG CONDA_VERSION=23.11.0
 ARG MINIFORGE_VERSION=${CONDA_VERSION}-0
 ARG RUNTIMES="all"

@@ -3,8 +3,6 @@ channels:
   - conda-forge
 dependencies:
   - python == 3.9
-  - gcc_linux-aarch64
-  - gxx_linux-aarch64
   - scikit-learn == 1.0.2
   - pip:
       - mlserver @ git+${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}.git@${GITHUB_REF}

@@ -3,7 +3,7 @@ name: old-sklearn
 channels:
     - conda-forge
 dependencies:
-    - python == 3.18
+    - python == 3.8
     - scikit-learn == 0.24.2
     - joblib == 0.17.0
     - requests
