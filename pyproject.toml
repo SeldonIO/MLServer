@@ -80,7 +80,6 @@ tox = "4.16.0"
 
 [tool.poetry.group.dev.dependencies]
 datamodel-code-generator = "0.26.0"
-pydantic = "*"
 grpcio-tools = "*"
 pytest = "7.4.4"
 pytest-asyncio = "0.21.1"
@@ -112,8 +111,7 @@ filelock = "^3.13.1"
 httpx-sse = ">=0.3.1,<0.5.0"
 
 [tool.poetry.group.docker.dependencies]
-#tensorflow-macos = { version = "^2.15.0", markers = "platform_system=='Darwin' and platform_machine=='arm64'" }
-tensorflow = ">=2.16"
+tensorflow = "<2.15"
 
 [tool.poetry.group.all-runtimes]
 optional = true

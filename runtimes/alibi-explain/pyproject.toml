@@ -14,15 +14,14 @@ mlserver_sklearn = "*"
 mlserver_xgboost = "*"
 mlserver_lightgbm = "*"
 orjson = "*"
-alibi = "0.9.6"
+alibi = {extras = ["shap", "tensorflow"], version = "*"}
 
 [tool.poetry.group.dev.dependencies]
 mlserver = {path = "../..", develop = true}
 mlserver_sklearn = {path = "../../runtimes/sklearn", develop = true}
 mlserver_xgboost = {path = "../../runtimes/xgboost", develop = true}
 mlserver_lightgbm = {path = "../../runtimes/lightgbm", develop = true}
-#tensorflow-macos = { version = "^2.15.0", markers = "platform_system=='Darwin' and platform_machine=='arm64'" }
-tensorflow = ">=2.16"
+tensorflow = "<2.15"
 requests-mock = "~1.10.0"
 types-requests = "~2.28.11.5"
 
