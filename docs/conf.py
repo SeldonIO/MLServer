@@ -78,7 +78,7 @@ if html_theme == "sphinx_material":
         "base_url": "https://mlserver.readthedocs.io",
         "color_primary": "teal",
         "color_accent": "light-blue",
-        "repo_url": "https://github.com/shivakrishnaah/MLServer/",
+        "repo_url": "https://github.com/SeldonIO/MLServer/",
         "repo_name": "MLServer",
         "globaltoc_depth": 4,
         "globaltoc_collapse": True,

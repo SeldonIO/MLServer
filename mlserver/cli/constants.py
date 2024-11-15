@@ -11,9 +11,7 @@ ARG MLSERVER_ENV_NAME="mlserver-custom-env" \\
 RUN conda config --add channels conda-forge && \\
     conda install conda-libmamba-solver==23.7.0 && \\
     conda config --set solver libmamba && \\
-    conda install conda-pack && \\
-    conda install gcc_linux-aarch64 && \\
-    conda install gxx_linux-aarch64 && source activate
+    conda install conda-pack
 
 # The `[]` character range will ensure that Docker doesn't complain if the
 # files don't exist:
