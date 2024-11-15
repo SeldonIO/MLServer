@@ -39,6 +39,7 @@ jobs:
         python-version:
           - "3.9"
           - "3.10"
+          - "3.11"
           - "3.12"
     runs-on: ubuntu-22.04
     steps:
@@ -68,6 +69,7 @@ jobs:
         python-version:
           - "3.9"
           - "3.10"
+          - "3.11"
           - "3.12"
         is-pr:
           - ${{ github.event_name == 'pull_request' }}
@@ -173,6 +175,7 @@ jobs:
         python-version:
           - "3.9"
           - "3.10"
+          - "3.11"
           - "3.12"
     runs-on: ${{ matrix.os }}
     steps:
