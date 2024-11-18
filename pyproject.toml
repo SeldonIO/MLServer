@@ -111,7 +111,7 @@ filelock = "^3.13.1"
 httpx-sse = ">=0.3.1,<0.5.0"
 
 [tool.poetry.group.docker.dependencies]
-tensorflow = ">=2.16"
+tensorflow = "^2.16"
 
 [tool.poetry.group.all-runtimes]
 optional = true
@@ -135,7 +135,7 @@ requests-mock = "~1.11.0"
 types-requests = ">=2.28.11.5,<2.32.0.0"
 
 ## Dev dependencies from MLflow
-torch = "2.2.1"
+torch = "^2.4"
 pytorch-lightning = "2.4.0"
 torchmetrics = "1.5.0"
 torchvision = "0.17.1"
