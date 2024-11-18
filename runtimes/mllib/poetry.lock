@@ -1004,7 +1004,7 @@ name = "mlserver"
 version = "1.6.0.dev2"
 description = "MLServer"
 optional = false
-python-versions = ">=3.9,<3.12"
+python-versions = ">=3.9,<3.13"
 files = []
 develop = true
 
@@ -1012,7 +1012,7 @@ develop = true
 aiofiles = "*"
 aiokafka = "*"
 click = "*"
-fastapi = ">=0.88.0,!=0.89.0,<=0.115.2"
+fastapi = ">=0.88.0,!=0.89.0,<0.116.0"
 gevent = "*"
 geventhttpclient = "*"
 grpcio = "*"
@@ -1473,6 +1473,7 @@ files = [
 numpy = [
     {version = ">=1.22.4", markers = "python_version < \"3.11\""},
     {version = ">=1.23.2", markers = "python_version == \"3.11\""},
+    {version = ">=1.26.0", markers = "python_version >= \"3.12\""},
 ]
 python-dateutil = ">=2.8.2"
 pytz = ">=2020.1"
@@ -2337,5 +2338,5 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 
 [metadata]
 lock-version = "2.0"
-python-versions = ">=3.9,<3.12"
-content-hash = "175e85a10226539ba857db31ccc04039b69ea70ac81ffabb18a3d6e61291045f"
+python-versions = ">=3.9,<3.13"
+content-hash = "bd7471d9e13013e7252c11640b892d7a148759cc7872ec65596f57ecd72b2f21"
