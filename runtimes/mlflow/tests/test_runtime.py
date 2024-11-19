@@ -4,7 +4,6 @@ import numpy as np
 import pandas as pd
 
 from typing import Any
-
 from mlserver.codecs import NumpyCodec, PandasCodec, StringCodec
 from mlserver.types import (
     InferenceRequest,
@@ -257,3 +256,51 @@ async def test_invocation_with_params(
             predict_mock.call_args[0][0].get("foo"), expected["data"]["foo"]
         )
         assert predict_mock.call_args.kwargs["params"] == expected["params"]
+
+
+@pytest.mark.parametrize(
+    "input, params",
+    [
+        (
+            InferenceRequest(
+                parameters=Parameters(
+                    content_type=NumpyCodec.ContentType, extra_param="extra_value"
+                ),
+                inputs=[
+                    RequestInput(
+                        name="predict",
+                        shape=[1, 10],
+                        data=[range(0, 10)],
+                        datatype="INT64",
+                        parameters=Parameters(extra_param2="extra_value2"),
+                    )
+                ],
+            ),
+            {"extra_param": "extra_value"},
+        ),
+        (
+            InferenceRequest(
+                parameters=Parameters(content_type=NumpyCodec.ContentType),
+                inputs=[
+                    RequestInput(
+                        name="predict",
+                        shape=[1, 10],
+                        data=[range(0, 10)],
+                        datatype="INT64",
+                    )
+                ],
+            ),
+            None,
+        ),
+    ],
+)
+async def test_predict_with_params(
+    runtime: MLflowRuntime,
+    input: InferenceRequest,
+    params: dict,
+):
+    with mock.patch.object(
+        runtime._model, "predict", return_value={"test": np.array([1, 2, 3])}
+    ) as predict_mock:
+        await runtime.predict(input)
+        assert predict_mock.call_args.kwargs == {"params": params}
