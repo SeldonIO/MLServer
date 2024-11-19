@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.9", "3.10"]
         target: ["dataplane", "model-repository"]
     runs-on: ubuntu-22.04
     steps:
@@ -39,8 +39,6 @@ jobs:
         python-version:
           - "3.9"
           - "3.10"
-          - "3.11"
-          - "3.12"
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
@@ -69,8 +67,6 @@ jobs:
         python-version:
           - "3.9"
           - "3.10"
-          - "3.11"
-          - "3.12"
         is-pr:
           - ${{ github.event_name == 'pull_request' }}
         exclude:
@@ -118,8 +114,6 @@ jobs:
         python-version:
           - "3.9"
           - "3.10"
-          - "3.11"
-          - "3.12"
         tox-environment:
           - sklearn
           - xgboost
@@ -175,8 +169,6 @@ jobs:
         python-version:
           - "3.9"
           - "3.10"
-          - "3.11"
-          - "3.12"
     runs-on: ${{ matrix.os }}
     steps:
       - name: Maximize build space

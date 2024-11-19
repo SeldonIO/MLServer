@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mlserver"
-version = "1.6.0.dev2"
+version = "1.6.1"
 description = "MLServer"
 authors = ["Seldon Technologies Ltd. <hello@seldon.io>"]
 license = "Apache-2.0"
@@ -63,7 +63,7 @@ aiofiles = "*"
 orjson = "*"
 uvloop = {version = "*", markers = "sys_platform != 'win32' and (sys_platform != 'cygwin' and platform_python_implementation != 'PyPy')"}
 pydantic = "^2.7.1"
-pydantic-settings = "^2.2.1"
+pydantic-settings = "^2.3.0"
 python-multipart = "*"
 
 ## The importlib-resources backport is required to use some
