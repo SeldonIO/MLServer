@@ -100,7 +100,7 @@ async def test_load_model_with_env(
     # `./tests/testdata/environment.yaml`
     assert response.outputs[0].name == "sklearn_version"
     [sklearn_version] = StringCodec.decode_output(response.outputs[0])
-    assert sklearn_version == "1.0.2"
+    assert sklearn_version == "1.3.1"
 
 
 async def test_load_model_with_existing_env(
@@ -116,7 +116,7 @@ async def test_load_model_with_existing_env(
     # `./tests/testdata/environment.yaml`
     assert response.outputs[0].name == "sklearn_version"
     [sklearn_version] = StringCodec.decode_output(response.outputs[0])
-    assert sklearn_version == "1.0.2"
+    assert sklearn_version == "1.3.1"
 
 
 async def test_load_creates_pool(
