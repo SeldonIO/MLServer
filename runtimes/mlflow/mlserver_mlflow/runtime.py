@@ -196,5 +196,8 @@ class MLflowRuntime(MLModel):
 
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
         decoded_payload = self.decode_request(payload)
-        model_output = self._model.predict(decoded_payload)
+        params = None
+        if payload.parameters and payload.parameters.model_extra:
+            params = payload.parameters.model_extra
+        model_output = self._model.predict(decoded_payload, params=params)
         return self.encode_response(model_output, default_codec=TensorDictCodec)

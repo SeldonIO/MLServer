@@ -16,9 +16,9 @@ mlflow = "*"
 mlserver = {path = "../..", develop = true}
 torch = "2.2.1"
 pytorch-lightning = "2.4.0"
-torchmetrics = "1.4.1"
+torchmetrics = "1.5.2"
 torchvision = "0.17.1"
-mlflow = "2.16.0"
+mlflow = "2.18.0"
 
 [build-system]
 requires = ["poetry-core"]

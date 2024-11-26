@@ -1,0 +1,23 @@
+
+{
+  "name": "text-model",
+
+  "implementation": "text_model.TextModel",
+  
+  "versions": ["text-model/v1.2.3"],
+  "platform": "mlserver",
+  "inputs": [
+    {
+      "datatype": "BYTES",
+      "name": "prompt",
+      "shape": [1]
+    }
+  ],
+  "outputs": [
+    {
+      "datatype": "BYTES",
+      "name": "output",
+      "shape": [1]
+    }
+  ]
+}

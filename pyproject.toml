@@ -45,7 +45,7 @@ addopts = "--import-mode=importlib"
 [tool.poetry.dependencies]
 python = ">=3.9,<3.12"
 click = "*"
-fastapi = ">=0.88.0,!=0.89.0,<=0.110.0"
+fastapi = ">=0.88.0,!=0.89.0,<0.116.0"
 python-dotenv = "*"
 grpcio = "*"
 numpy = "*"
@@ -62,8 +62,8 @@ gevent = "*"
 aiofiles = "*"
 orjson = "*"
 uvloop = {version = "*", markers = "sys_platform != 'win32' and (sys_platform != 'cygwin' and platform_python_implementation != 'PyPy')"}
-pydantic = "2.7.1"
-pydantic-settings = "2.2.1"
+pydantic = "^2.7.1"
+pydantic-settings = "^2.2.1"
 python-multipart = "*"
 
 ## The importlib-resources backport is required to use some
@@ -79,8 +79,8 @@ opentelemetry-exporter-otlp-proto-grpc = "^1.22.0"
 tox = "4.16.0"
 
 [tool.poetry.group.dev.dependencies]
-datamodel-code-generator = "0.25.5"
-grpcio-tools = "1.48.2"
+datamodel-code-generator = "0.26.0"
+grpcio-tools = "*"
 pytest = "7.4.4"
 pytest-asyncio = "0.21.1"
 pytest-mock = "3.12.0"
@@ -111,7 +111,6 @@ filelock = "^3.13.1"
 httpx-sse = ">=0.3.1,<0.5.0"
 
 [tool.poetry.group.docker.dependencies]
-protobuf = "3.20.3"
 tensorflow = "<2.15"
 
 [tool.poetry.group.all-runtimes]
@@ -137,10 +136,10 @@ types-requests = ">=2.28.11.5,<2.32.0.0"
 
 ## Dev dependencies from MLflow
 torch = "2.2.1"
-pytorch-lightning = "2.3.1"
-torchmetrics = "1.4.0.post0"
+pytorch-lightning = "2.4.0"
+torchmetrics = "1.5.0"
 torchvision = "0.17.1"
-mlflow = "2.13.1"
+mlflow = "2.17.0"
 
 ## Dev dependencies from HuggingFace
 transformers = ">=4.30,<5.0"
@@ -154,7 +153,7 @@ sphinx_material = "0.0.36"
 readthedocs-sphinx-search = "0.3.2"
 myst-parser = "2.0.0"
 sphinxcontrib-bibtex = "2.5.0"
-autodoc_pydantic = "2.2.0"
+autodoc_pydantic = "^2.2.0"
 sphinx-click = "6.0.0"
 sphinx_design = "0.4.1"
 sphinx-autobuild = "2024.4.16"
