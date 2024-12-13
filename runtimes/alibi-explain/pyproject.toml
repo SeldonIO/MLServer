@@ -14,7 +14,8 @@ mlserver_sklearn = "*"
 mlserver_xgboost = "*"
 mlserver_lightgbm = "*"
 orjson = "*"
-alibi = {extras = ["shap", "tensorflow"], version = "*"}
+# remove when alibi v0.10 is released
+alibi = {extras = ["shap", "tensorflow"], git = "https://github.com/SeldonIO/alibi.git", branch = "master"}
 
 [tool.poetry.group.dev.dependencies]
 mlserver = {path = "../..", develop = true}
