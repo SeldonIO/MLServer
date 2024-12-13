@@ -36,9 +36,7 @@ jobs:
   lint:
     strategy:
       matrix:
-        python-version:
-          - "3.9"
-          - "3.10"
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
@@ -64,9 +62,7 @@ jobs:
           - macos-13
         # NOTE: There's no pre-built `grpcio` wheel for Python 3.11 yet
         # https://github.com/grpc/grpc/issues/32454
-        python-version:
-          - "3.9"
-          - "3.10"
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
         is-pr:
           - ${{ github.event_name == 'pull_request' }}
         exclude:
@@ -111,9 +107,7 @@ jobs:
         os:
           - ubuntu-22.04
           - macos-13
-        python-version:
-          - "3.9"
-          - "3.10"
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
         tox-environment:
           - sklearn
           - xgboost
@@ -166,9 +160,7 @@ jobs:
         os:
           - ubuntu-22.04
           - macos-12
-        python-version:
-          - "3.9"
-          - "3.10"
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Maximize build space
