@@ -15,6 +15,9 @@ mlflow = "*"
 [tool.poetry.group.dev.dependencies]
 mlserver = {path = "../..", develop = true}
 torch = "^2.4"
+pytorch-lightning = "^2.4"
+torchmetrics = "1.6.0"
+torchvision = "0.19.1"
 
 [build-system]
 requires = ["poetry-core"]
