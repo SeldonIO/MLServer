@@ -3820,6 +3820,7 @@ mlserver = "*"
 optimum = {version = ">=1.4,<2.0", extras = ["onnxruntime"]}
 pillow = "*"
 tensorflow = "*"
+tf-keras = ">=2.16.0"
 
 [package.source]
 type = "directory"
