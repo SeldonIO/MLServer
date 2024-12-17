@@ -10,7 +10,7 @@ packages = [{include = "mlserver_alibi_detect"}]
 [tool.poetry.dependencies]
 python = ">=3.9,<3.13"
 mlserver = "*"
-# remove after alibi-detect 0.13 is release
+# remove after alibi-detect 0.13 is released
 alibi-detect = {extras = ["tensorflow"], git = "https://github.com/SeldonIO/alibi-detect.git", branch = "master"}
 
 [tool.poetry.group.dev.dependencies]
