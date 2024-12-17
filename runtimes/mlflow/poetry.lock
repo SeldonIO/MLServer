@@ -1967,7 +1967,7 @@ xethub = ["mlflow-xethub"]
 
 [[package]]
 name = "mlserver"
-version = "1.6.0.dev2"
+version = "1.7.0.dev0"
 description = "MLServer"
 optional = false
 python-versions = ">=3.9,<3.13"
