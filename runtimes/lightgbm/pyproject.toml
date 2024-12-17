@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mlserver-lightgbm"
-version = "1.6.0.dev2"
+version = "1.7.0.dev0"
 description = "LightGBM runtime for MLServer"
 authors = ["Seldon Technologies Ltd. <hello@seldon.io>"]
 license = "Apache-2.0"
