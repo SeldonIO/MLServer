@@ -53,7 +53,10 @@ RUN microdnf update -y && \
         libgomp \
         mesa-libGL \
         glib2-devel \
-        shadow-utils
+        shadow-utils \
+        # git is used to pull alibi-detect and alibi-explain as we point now to master branches
+        # remove git requirements when alibi-detect and alibi-explain are released
+        git
 
 # Install Conda, Python 3.10 and FFmpeg
 RUN microdnf install -y wget && \
