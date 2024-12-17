@@ -137,4 +137,4 @@ async def test_worker_env(
     # `./tests/testdata/environment.yaml`
     assert response.outputs[0].name == "sklearn_version"
     [sklearn_version] = StringCodec.decode_output(response.outputs[0])
-    assert sklearn_version == "1.0.2"
+    assert sklearn_version == "1.3.1"

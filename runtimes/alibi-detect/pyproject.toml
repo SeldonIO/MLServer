@@ -8,13 +8,14 @@ readme = "README.md"
 packages = [{include = "mlserver_alibi_detect"}]
 
 [tool.poetry.dependencies]
-python = ">=3.9,<3.12"
+python = ">=3.9,<3.13"
 mlserver = "*"
-alibi-detect = {extras = ["tensorflow"], version = "*"}
+# remove after alibi-detect 0.13 is release
+alibi-detect = {extras = ["tensorflow"], git = "https://github.com/SeldonIO/alibi-detect.git", branch = "master"}
 
 [tool.poetry.group.dev.dependencies]
 mlserver = {path = "../..", develop = true}
-tensorflow = "<2.15"
+tensorflow = "<2.19"
 
 [build-system]
 requires = ["poetry-core"]

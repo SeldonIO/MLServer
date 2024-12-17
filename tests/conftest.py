@@ -30,7 +30,7 @@ from .fixtures import SumModel, TextModel, TextStreamModel, ErrorModel, SimpleMo
 from .utils import RESTClient, get_available_ports, _pack, _get_tarball_name
 
 MIN_PYTHON_VERSION = (3, 9)
-MAX_PYTHON_VERSION = (3, 10)
+MAX_PYTHON_VERSION = (3, 12)
 PYTHON_VERSIONS = [
     (major, minor)
     for major in range(MIN_PYTHON_VERSION[0], MAX_PYTHON_VERSION[0] + 1)

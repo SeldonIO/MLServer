@@ -1648,7 +1648,8 @@ files = [
 numpy = [
     {version = ">=1.21.2", markers = "python_version >= \"3.10\" and python_version < \"3.11\""},
     {version = ">1.20", markers = "python_version < \"3.10\""},
-    {version = ">=1.23.3", markers = "python_version >= \"3.11\""},
+    {version = ">=1.23.3", markers = "python_version >= \"3.11\" and python_version < \"3.12\""},
+    {version = ">=1.26.0", markers = "python_version >= \"3.12\""},
 ]
 
 [package.extras]
@@ -1659,7 +1660,7 @@ name = "mlserver"
 version = "1.6.0.dev2"
 description = "MLServer"
 optional = false
-python-versions = ">=3.9,<3.12"
+python-versions = ">=3.9,<3.13"
 files = []
 develop = true
 
@@ -1667,7 +1668,7 @@ develop = true
 aiofiles = "*"
 aiokafka = "*"
 click = "*"
-fastapi = ">=0.88.0,!=0.89.0,<=0.115.2"
+fastapi = ">=0.88.0,!=0.89.0,<0.116.0"
 gevent = "*"
 geventhttpclient = "*"
 grpcio = "*"
@@ -1682,7 +1683,7 @@ pandas = "*"
 protobuf = "*"
 py-grpc-prometheus = "*"
 pydantic = "^2.7.1"
-pydantic-settings = "^2.2.1"
+pydantic-settings = "^2.3.0"
 python-dotenv = "*"
 python-multipart = "*"
 starlette-exporter = "*"
@@ -2573,6 +2574,7 @@ files = [
 numpy = [
     {version = ">=1.22.4", markers = "python_version < \"3.11\""},
     {version = ">=1.23.2", markers = "python_version == \"3.11\""},
+    {version = ">=1.26.0", markers = "python_version >= \"3.12\""},
 ]
 python-dateutil = ">=2.8.2"
 pytz = ">=2020.1"
@@ -2927,20 +2929,21 @@ typing-extensions = ">=4.6.0,<4.7.0 || >4.7.0"
 
 [[package]]
 name = "pydantic-settings"
-version = "2.2.1"
+version = "2.6.1"
 description = "Settings management using Pydantic"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "pydantic_settings-2.2.1-py3-none-any.whl", hash = "sha256:0235391d26db4d2190cb9b31051c4b46882d28a51533f97440867f012d4da091"},
-    {file = "pydantic_settings-2.2.1.tar.gz", hash = "sha256:00b9f6a5e95553590434c0fa01ead0b216c3e10bc54ae02e37f359948643c5ed"},
+    {file = "pydantic_settings-2.6.1-py3-none-any.whl", hash = "sha256:7fb0637c786a558d3103436278a7c4f1cfd29ba8973238a50c5bb9a55387da87"},
+    {file = "pydantic_settings-2.6.1.tar.gz", hash = "sha256:e0f92546d8a9923cb8941689abf85d6601a8c19a23e97a34b2964a2e3f813ca0"},
 ]
 
 [package.dependencies]
-pydantic = ">=2.3.0"
+pydantic = ">=2.7.0"
 python-dotenv = ">=0.21.0"
 
 [package.extras]
+azure-key-vault = ["azure-identity (>=1.16.0)", "azure-keyvault-secrets (>=4.8.0)"]
 toml = ["tomli (>=2.0.1)"]
 yaml = ["pyyaml (>=6.0.1)"]
 
@@ -3532,6 +3535,28 @@ tensorboard-data-server = ">=0.7.0,<0.8.0"
 werkzeug = ">=1.0.1"
 
 [[package]]
+name = "tensorboard"
+version = "2.17.1"
+description = "TensorBoard lets you watch Tensors Flow"
+optional = false
+python-versions = ">=3.9"
+files = [
+    {file = "tensorboard-2.17.1-py3-none-any.whl", hash = "sha256:253701a224000eeca01eee6f7e978aea7b408f60b91eb0babdb04e78947b773e"},
+]
+
+[package.dependencies]
+absl-py = ">=0.4"
+grpcio = ">=1.48.2"
+markdown = ">=2.6.8"
+numpy = ">=1.12.0"
+packaging = "*"
+protobuf = ">=3.19.6,<4.24.0 || >4.24.0"
+setuptools = ">=41.0.0"
+six = ">1.9"
+tensorboard-data-server = ">=0.7.0,<0.8.0"
+werkzeug = ">=1.0.1"
+
+[[package]]
 name = "tensorboard-data-server"
 version = "0.7.2"
 description = "Fast data loading for TensorBoard"
@@ -3583,7 +3608,10 @@ h5py = ">=3.10.0"
 keras = ">=3.0.0"
 libclang = ">=13.0.0"
 ml-dtypes = ">=0.3.1,<0.4.0"
-numpy = {version = ">=1.23.5,<2.0.0", markers = "python_version <= \"3.11\""}
+numpy = [
+    {version = ">=1.23.5,<2.0.0", markers = "python_version <= \"3.11\""},
+    {version = ">=1.26.0,<2.0.0", markers = "python_version >= \"3.12\""},
+]
 opt-einsum = ">=2.3.2"
 packaging = "*"
 protobuf = ">=3.20.3,<4.21.0 || >4.21.0,<4.21.1 || >4.21.1,<4.21.2 || >4.21.2,<4.21.3 || >4.21.3,<4.21.4 || >4.21.4,<4.21.5 || >4.21.5,<5.0.0dev"
@@ -3591,6 +3619,61 @@ requests = ">=2.21.0,<3"
 setuptools = "*"
 six = ">=1.12.0"
 tensorboard = ">=2.16,<2.17"
+tensorflow-io-gcs-filesystem = {version = ">=0.23.1", markers = "python_version < \"3.12\""}
+termcolor = ">=1.1.0"
+typing-extensions = ">=3.6.6"
+wrapt = ">=1.11.0"
+
+[package.extras]
+and-cuda = ["nvidia-cublas-cu12 (==12.3.4.1)", "nvidia-cuda-cupti-cu12 (==12.3.101)", "nvidia-cuda-nvcc-cu12 (==12.3.107)", "nvidia-cuda-nvrtc-cu12 (==12.3.107)", "nvidia-cuda-runtime-cu12 (==12.3.101)", "nvidia-cudnn-cu12 (==8.9.7.29)", "nvidia-cufft-cu12 (==11.0.12.1)", "nvidia-curand-cu12 (==10.3.4.107)", "nvidia-cusolver-cu12 (==11.5.4.101)", "nvidia-cusparse-cu12 (==12.2.0.103)", "nvidia-nccl-cu12 (==2.19.3)", "nvidia-nvjitlink-cu12 (==12.3.101)"]
+
+[[package]]
+name = "tensorflow"
+version = "2.17.1"
+description = "TensorFlow is an open source machine learning framework for everyone."
+optional = false
+python-versions = ">=3.9"
+files = [
+    {file = "tensorflow-2.17.1-cp310-cp310-macosx_12_0_arm64.whl", hash = "sha256:61f45ca991cf3dddf0b1069674c455fdbf38edf749dab962bb4bb8a3f99fb25f"},
+    {file = "tensorflow-2.17.1-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:8aa202e17894dcb0582283e5a5c703391d793ccce11c5c02b1fe8f839ae09f3c"},
+    {file = "tensorflow-2.17.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:d618cc21b0adf695fc8b4323f56ccd17c1408379422e1a177481d4fd8523fa8e"},
+    {file = "tensorflow-2.17.1-cp310-cp310-win_amd64.whl", hash = "sha256:4c23498b370c9d6b2521722b6acc89fab61e6a593e886df16bed3075584bf1c7"},
+    {file = "tensorflow-2.17.1-cp311-cp311-macosx_12_0_arm64.whl", hash = "sha256:595c220b0febe2295a150e0d870c742a75c56b145a63ed878f78d64aa43c6ca6"},
+    {file = "tensorflow-2.17.1-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:bc41bc3e31d205dcf6e4b8afc0514de05445303d93fade03549085ef8c45a2b2"},
+    {file = "tensorflow-2.17.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:68841e17e573301d8ba9192f929b8096b0b341567cb81414096305c723de68d0"},
+    {file = "tensorflow-2.17.1-cp311-cp311-win_amd64.whl", hash = "sha256:a6bd9474f1e0dedb7deb331c8e93cf2d5997da8781a1949f75c4a7cf8923d2e3"},
+    {file = "tensorflow-2.17.1-cp312-cp312-macosx_12_0_arm64.whl", hash = "sha256:d43698039fd057ee6d7c3f908c4e9a6e310be6e77adda419bae3fee5ca7192fe"},
+    {file = "tensorflow-2.17.1-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:695741b80ea9b2603a8d3f423051476c02a9cf48f4721d18c4dafbe0a8a5ca91"},
+    {file = "tensorflow-2.17.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:0c3452ab09940cbc3be896641b256855ba92154b79a90c864c5b2be79db78a64"},
+    {file = "tensorflow-2.17.1-cp312-cp312-win_amd64.whl", hash = "sha256:faf032fae35de0071f20850abd23d78e0e3ae116ce7fbfb9d034da2acc900543"},
+    {file = "tensorflow-2.17.1-cp39-cp39-macosx_12_0_arm64.whl", hash = "sha256:eacaa75fe3a9b912180a98a61dcc8f0fc23cddfbdbccfc43a654932506d6a3f8"},
+    {file = "tensorflow-2.17.1-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:65a8cb84496da6abe08a579ef5cc8452c88affdb98a7e14ae84a0dd303798804"},
+    {file = "tensorflow-2.17.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:92c4bbd80013d3ce2f2908923907317286d80be15f8687eb02a54b0af4ff4351"},
+    {file = "tensorflow-2.17.1-cp39-cp39-win_amd64.whl", hash = "sha256:67df8c8f2920cfc6d6585a23650e170abcc487f7cdeed13c1550df65d3265966"},
+]
+
+[package.dependencies]
+absl-py = ">=1.0.0"
+astunparse = ">=1.6.0"
+flatbuffers = ">=24.3.25"
+gast = ">=0.2.1,<0.5.0 || >0.5.0,<0.5.1 || >0.5.1,<0.5.2 || >0.5.2"
+google-pasta = ">=0.1.1"
+grpcio = ">=1.24.3,<2.0"
+h5py = ">=3.10.0"
+keras = ">=3.2.0"
+libclang = ">=13.0.0"
+ml-dtypes = ">=0.3.1,<0.5.0"
+numpy = [
+    {version = ">=1.23.5,<2.0.0", markers = "python_version <= \"3.11\""},
+    {version = ">=1.26.0,<2.0.0", markers = "python_version >= \"3.12\""},
+]
+opt-einsum = ">=2.3.2"
+packaging = "*"
+protobuf = ">=3.20.3,<4.21.0 || >4.21.0,<4.21.1 || >4.21.1,<4.21.2 || >4.21.2,<4.21.3 || >4.21.3,<4.21.4 || >4.21.4,<4.21.5 || >4.21.5,<5.0.0dev"
+requests = ">=2.21.0,<3"
+setuptools = "*"
+six = ">=1.12.0"
+tensorboard = ">=2.17,<2.18"
 tensorflow-io-gcs-filesystem = {version = ">=0.23.1", markers = "python_version < \"3.12\""}
 termcolor = ">=1.1.0"
 typing-extensions = ">=3.6.6"
@@ -3644,6 +3727,34 @@ files = [
 
 [package.extras]
 tests = ["pytest", "pytest-cov"]
+
+[[package]]
+name = "tf-keras"
+version = "2.16.0"
+description = "Deep learning for humans."
+optional = false
+python-versions = ">=3.9"
+files = [
+    {file = "tf_keras-2.16.0-py3-none-any.whl", hash = "sha256:b2ad0541fa7d9e92c4b7a1b96593377afb58aaff374299a6ca6be1a42f51d899"},
+    {file = "tf_keras-2.16.0.tar.gz", hash = "sha256:db53891f1ac98197c2acced98cdca8c06ba8255655a6cb7eb95ed49676118280"},
+]
+
+[package.dependencies]
+tensorflow = ">=2.16,<2.17"
+
+[[package]]
+name = "tf-keras"
+version = "2.17.0"
+description = "Deep learning for humans."
+optional = false
+python-versions = ">=3.9"
+files = [
+    {file = "tf_keras-2.17.0-py3-none-any.whl", hash = "sha256:cc97717e4dc08487f327b0740a984043a9e0123c7a4e21206711669d3ec41c88"},
+    {file = "tf_keras-2.17.0.tar.gz", hash = "sha256:fda97c18da30da0f72a5a7e80f3eee343b09f4c206dad6c57c944fb2cd18560e"},
+]
+
+[package.dependencies]
+tensorflow = ">=2.17,<2.18"
 
 [[package]]
 name = "tokenizers"
@@ -4551,5 +4662,5 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 
 [metadata]
 lock-version = "2.0"
-python-versions = ">=3.9,<3.12"
-content-hash = "e7910929544e72e03f2e423d1989b0011ce469d8afe1db7bde67a4ccba385102"
+python-versions = ">=3.9,<3.13"
+content-hash = "7f732a657cfdd29774e6a0c5f3bc07d97349a5fe1e3eb392b6ec7d040435d331"

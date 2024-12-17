@@ -8,9 +8,10 @@ readme = "README.md"
 packages = [{include = "mlserver_huggingface"}]
 
 [tool.poetry.dependencies]
-python = ">=3.9,<3.12"
+python = ">=3.9,<3.13"
 mlserver = "*"
 tensorflow = "*"
+tf-keras = ">=2.16.0"
 pillow = "*"
 optimum = {extras = ["onnxruntime"], version = ">=1.4,<2.0"}
 

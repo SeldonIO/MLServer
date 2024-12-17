@@ -8,17 +8,16 @@ readme = "README.md"
 packages = [{include = "mlserver_mlflow"}]
 
 [tool.poetry.dependencies]
-python = ">=3.9,<3.12"
+python = ">=3.9,<3.13"
 mlserver = "*"
 mlflow = "*"
 
 [tool.poetry.group.dev.dependencies]
 mlserver = {path = "../..", develop = true}
-torch = "2.2.1"
-pytorch-lightning = "2.4.0"
-torchmetrics = "1.5.2"
-torchvision = "0.17.1"
-mlflow = "2.18.0"
+torch = "^2.4"
+pytorch-lightning = "^2.4"
+torchmetrics = "1.6.0"
+torchvision = "0.19.1"
 
 [build-system]
 requires = ["poetry-core"]

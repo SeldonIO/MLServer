@@ -8,20 +8,21 @@ readme = "README.md"
 packages = [{include = "mlserver_alibi_explain"}]
 
 [tool.poetry.dependencies]
-python = ">=3.9,<3.12"
+python = ">=3.9,<3.13"
 mlserver = "*"
 mlserver_sklearn = "*"
 mlserver_xgboost = "*"
 mlserver_lightgbm = "*"
 orjson = "*"
-alibi = {extras = ["shap", "tensorflow"], version = "*"}
+# remove when alibi v0.10 is released
+alibi = {extras = ["shap", "tensorflow"], git = "https://github.com/SeldonIO/alibi.git", branch = "master"}
 
 [tool.poetry.group.dev.dependencies]
 mlserver = {path = "../..", develop = true}
 mlserver_sklearn = {path = "../../runtimes/sklearn", develop = true}
 mlserver_xgboost = {path = "../../runtimes/xgboost", develop = true}
 mlserver_lightgbm = {path = "../../runtimes/lightgbm", develop = true}
-tensorflow = "<2.15"
+tensorflow = "<2.19"
 requests-mock = "~1.10.0"
 types-requests = "~2.28.11.5"
 

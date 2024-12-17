@@ -9,7 +9,7 @@ readme = "README.md"
 packages = [{include = "mlserver_catboost"}]
 
 [tool.poetry.dependencies]
-python = ">=3.9,<3.12"
+python = ">=3.9,<3.13"
 catboost = "*"
 joblib = "*"
 mlserver = "*"
