@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mlserver"
-version = "1.6.0.dev2"
+version = "1.7.0.dev0"
 description = "MLServer"
 authors = ["Seldon Technologies Ltd. <hello@seldon.io>"]
 license = "Apache-2.0"
@@ -92,7 +92,7 @@ aiohttp = "3.10.2"
 aiohttp-retry = "2.8.3"
 ## Used for FastAPI Async testing
 httpx = "0.27.0"
-kafka-python = "2.0.2"
+kafka-python-ng = "2.2.3"
 tenacity = "8.4.1"
 pyyaml = "6.0.1"
 conda-pack = "0.7.1"
@@ -136,9 +136,15 @@ types-requests = ">=2.28.11.5,<2.32.0.0"
 
 ## Dev dependencies from MLflow
 torch = "^2.4"
+pytorch-lightning = "^2.4"
+torchmetrics = "1.6.0"
+torchvision = "0.19.1"
+mlflow = "2.19.0"
 
 ## Dev dependencies from HuggingFace
-transformers = ">=4.30,<5.0"
+# TODO: Relax when we deprecate Conversation pipeline
+# see: https://github.com/SeldonIO/MLServer/issues/1955
+transformers = "4.41.2"
 
 [tool.poetry.group.docs]
 optional = true

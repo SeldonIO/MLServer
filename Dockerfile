@@ -22,7 +22,10 @@ RUN pip install poetry==$POETRY_VERSION && \
         --without-hashes \
         --format constraints.txt \
         -o /opt/mlserver/dist/constraints.txt && \
-    sed -i 's/\[.*\]//g' /opt/mlserver/dist/constraints.txt
+    sed -i 's/\[.*\]//g' /opt/mlserver/dist/constraints.txt && \
+    # skip constraints for alibi libraries as they are currently pointing to git and thus confusing constraints \
+    # remove when the alibi libraries versions are pointing to a released version
+    sed -i '/git+https:\/\/github.com\/SeldonIO/d' /opt/mlserver/dist/constraints.txt
 
 FROM registry.access.redhat.com/ubi9/ubi-minimal
 SHELL ["/bin/bash", "-c"]
@@ -53,7 +56,10 @@ RUN microdnf update -y && \
         libgomp \
         mesa-libGL \
         glib2-devel \
-        shadow-utils
+        shadow-utils \
+        # git is used to pull alibi-detect and alibi-explain as we point now to master branches
+        # remove git requirements when alibi-detect and alibi-explain are released
+        git
 
 # Install Conda, Python 3.10 and FFmpeg
 RUN microdnf install -y wget && \
