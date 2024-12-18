@@ -142,7 +142,8 @@ torchvision = "0.19.1"
 mlflow = "2.19.0"
 
 ## Dev dependencies from HuggingFace
-transformers = ">=4.30,<5.0"
+# TODO: Relax when we deprecate Conversation pipeline
+transformers = "4.41.2"
 
 [tool.poetry.group.docs]
 optional = true
