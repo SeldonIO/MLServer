@@ -143,6 +143,7 @@ mlflow = "2.19.0"
 
 ## Dev dependencies from HuggingFace
 # TODO: Relax when we deprecate Conversation pipeline
+# see: https://github.com/SeldonIO/MLServer/issues/1955
 transformers = "4.41.2"
 
 [tool.poetry.group.docs]
