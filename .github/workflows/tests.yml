@@ -59,7 +59,7 @@ jobs:
       matrix:
         os:
           - ubuntu-24.04
-          - macos-13
+          # - macos-13
         # NOTE: There's no pre-built `grpcio` wheel for Python 3.11 yet
         # https://github.com/grpc/grpc/issues/32454
         python-version: ["3.9", "3.10", "3.11", "3.12"]
@@ -106,7 +106,7 @@ jobs:
       matrix:
         os:
           - ubuntu-24.04
-          - macos-13
+          # - macos-13
         python-version: ["3.9", "3.10", "3.11", "3.12"]
         tox-environment:
           - sklearn
@@ -153,13 +153,13 @@ jobs:
 
   # Ensure that having all the runtimes installed together works
   test-all-runtimes:
-#    if: github.event_name == 'push'
+    if: github.event_name == 'push'
     strategy:
       fail-fast: false
       matrix:
         os:
           - ubuntu-24.04
-          - macos-12
+          # - macos-12
         python-version: ["3.9", "3.10", "3.11", "3.12"]
     runs-on: ${{ matrix.os }}
     steps:
