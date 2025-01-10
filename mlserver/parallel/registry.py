@@ -262,4 +262,6 @@ class InferencePoolRegistry:
         logger.info(f"Shutdown of {pool.name} complete")
 
         if env_hash:
+            # force calling __del__ on `Environment` to clean up
+            self._pools[env_hash]._env = None  # pylint: disable=protected-access
             del self._pools[env_hash]
