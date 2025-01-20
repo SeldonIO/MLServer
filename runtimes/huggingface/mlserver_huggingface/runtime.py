@@ -25,7 +25,7 @@ class HuggingFaceRuntime(MLModel):
     async def load(self) -> bool:
         # Loading & caching pipeline in asyncio loop to avoid blocking
         logger.info(f"Loading model for task '{self.hf_settings.task_name}'...")
-        await asyncio.get_running_loop().run_in_executor(
+        self._model = await asyncio.get_running_loop().run_in_executor(
             None,
             load_pipeline_from_settings,
             self.hf_settings,
@@ -33,7 +33,7 @@ class HuggingFaceRuntime(MLModel):
         )
 
         # Now we load the cached model which should not block asyncio
-        self._model = load_pipeline_from_settings(self.hf_settings, self.settings)
+        # self._model = load_pipeline_from_settings(self.hf_settings, self.settings)
         self._merge_metadata()
         return True
 
