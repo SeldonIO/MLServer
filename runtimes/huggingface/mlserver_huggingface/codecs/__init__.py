@@ -7,6 +7,7 @@ from .conversation import HuggingfaceConversationCodec
 from .raw import RawCodec
 from .utils import EqualUtil
 from .chariot import ChariotImgModelOutputCodec
+
 __all__ = [
     "MultiInputRequestCodec",
     "HuggingfaceRequestCodec",

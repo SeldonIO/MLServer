@@ -12,7 +12,7 @@ from mlserver.types import (
 
 from .settings import get_huggingface_settings
 from .common import load_pipeline_from_settings
-from .codecs import HuggingfaceRequestCodec,ChariotImgModelOutputCodec
+from .codecs import HuggingfaceRequestCodec, ChariotImgModelOutputCodec
 from .metadata import METADATA
 
 
@@ -46,9 +46,15 @@ class HuggingFaceRuntime(MLModel):
         if array_inputs:
             args = [list(array_inputs)] + args
         predictions = self._model(*args, **kwargs)
-        if self.hf_settings.task in ["image-classification","image-segmentation","object-detection"]:   
-            predictions = ChariotImgModelOutputCodec.encode_output(predictions,task_type=self.hf_settings.task,pipeline=self._model)
-        response =self.encode_response(
+        if self.hf_settings.task in [
+            "image-classification",
+            "image-segmentation",
+            "object-detection",
+        ]:
+            predictions = ChariotImgModelOutputCodec.encode_output(
+                predictions, task_type=self.hf_settings.task, pipeline=self._model
+            )
+        response = self.encode_response(
             payload=predictions, default_codec=HuggingfaceRequestCodec
         )
         return response
