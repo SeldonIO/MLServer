@@ -44,7 +44,7 @@ def get_chariot_seg_mask_from_hf_seg_output(seg_pred,class_int_to_str):
     return predictions
         
     
-class ChariotModelOutputCodec():
+class ChariotImgModelOutputCodec():
     """Encoder that converts HF model output to the standard Chariot model output 
     """
     @classmethod
