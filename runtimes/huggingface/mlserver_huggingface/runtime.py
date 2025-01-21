@@ -51,7 +51,9 @@ class HuggingFaceRuntime(MLModel):
             "object-detection",
         ]:
             predictions = ChariotImgModelOutputCodec.encode_output(
-                predictions, task_type=self.hf_settings.task, pipeline=self._model
+                predictions,
+                task_type=self.hf_settings.task,
+                class_int_to_str=self._model.model.config.id2label,
             )
         response = self.encode_response(
             payload=predictions, default_codec=HuggingfaceRequestCodec

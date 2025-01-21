@@ -50,7 +50,7 @@ def get_chariot_seg_mask_from_hf_seg_output(seg_pred, class_int_to_str):
         class_str = i["label"]
         class_int = class_str_to_int[class_str]
         combined_mask[np.where(mask > 0)] = class_int
-    predictions = [combined_mask]
+    predictions = [combined_mask.tolist()]
     return predictions
 
 
@@ -58,7 +58,7 @@ class ChariotImgModelOutputCodec:
     """Encoder that converts HF model output to the standard Chariot model output"""
 
     @classmethod
-    def encode_output(cls, predictions, task_type, pipeline):
+    def encode_output(cls, predictions, task_type, class_int_to_str):
         if task_type == "image-classification":
             if all([is_list_of_dicts(p) for p in predictions]):
                 # get Top-1 predicted class
@@ -70,20 +70,20 @@ class ChariotImgModelOutputCodec:
 
         elif task_type == "object-detection":
             if is_list_of_dicts(predictions):
-                # convert HF output: [{'score': 0.9897010326385498,
-                #                       'label': 'cat',
-                #                       'box': {'xmin': 53, 'ymin': 313,
-                #                               'xmax': 697, 'ymax': 986}},
-                #                       {'score': 0.9896764159202576,
-                #                       'label': 'cat',
-                #                       'box': {'xmin': 974, 'ymin': 221,
-                #                               'xmax': 1526, 'ymax': 1071}}]
+                # convert HF output: [{"score": 0.9897010326385498,
+                #                       "label": 'cat',
+                #                       "box": {"xmin": 53, "ymin": 313,
+                #                               "xmax": 697, "ymax": 986}},
+                #                       {"score": 0.9896764159202576,
+                #                       "label": "cat",
+                #                       "box": {"xmin": 974, "ymin": 221,
+                #                               "xmax": 1526, "ymax": 1071}}]
 
-                # to standard Chariot output: [{"num_detections":2,
+                # to standard Chariot output: {"num_detections":2,
                 #                             "detection_classes":["cat","cat"],
                 #                             "detection_scores":[0.9897010326385498,0.9896764159202576],
                 #                             "detection_boxes":[[53,313,697,986],
-                #                                                [974,221,1526,1071]]}]
+                #                                                [974,221,1526,1071]]}
                 predictions = get_det_dict_from_hf_obj_detect(predictions)
 
         elif task_type == "image-segmentation":
@@ -94,11 +94,9 @@ class ChariotImgModelOutputCodec:
                 #                     {"score": None,
                 #                      "label": "floor",
                 #                      "mask": <PIL.Image.Image>}]
-
                 # to standard Chariot output: [[0,0,...,0],...,[0,0,0,...,0]]
                 # 2d array with size of the original image. Each pixel is a class int
                 # Background uses class_int 0
-                class_int_to_str = pipeline.model.config.id2label
                 predictions = get_chariot_seg_mask_from_hf_seg_output(
                     predictions, class_int_to_str
                 )
