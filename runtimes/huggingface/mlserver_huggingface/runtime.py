@@ -1,7 +1,6 @@
 import asyncio
 import torch
 
-from mlserver.codecs.lists import is_list_of
 from mlserver.model import MLModel
 from mlserver.settings import ModelSettings
 from mlserver.logging import logger

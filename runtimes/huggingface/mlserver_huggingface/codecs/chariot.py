@@ -72,10 +72,12 @@ class ChariotImgModelOutputCodec:
             if is_list_of_dicts(predictions):
                 # convert HF output: [{'score': 0.9897010326385498,
                 #                       'label': 'cat',
-                #                       'box': {'xmin': 53, 'ymin': 313, 'xmax': 697, 'ymax': 986}},
+                #                       'box': {'xmin': 53, 'ymin': 313,
+                #                               'xmax': 697, 'ymax': 986}},
                 #                       {'score': 0.9896764159202576,
                 #                       'label': 'cat',
-                #                       'box': {'xmin': 974, 'ymin': 221, 'xmax': 1526, 'ymax': 1071}}]
+                #                       'box': {'xmin': 974, 'ymin': 221,
+                #                               'xmax': 1526, 'ymax': 1071}}]
 
                 # to standard Chariot output: [{"num_detections":2,
                 #                             "detection_classes":["cat","cat"],
@@ -88,10 +90,10 @@ class ChariotImgModelOutputCodec:
             if is_list_of_dicts(predictions):
                 # convert HF output: [{"score": None,
                 #                      "label": "wall",
-                #                      "mask": <PIL.Image.Image image mode=L size=5362x3016>},
+                #                      "mask": <PIL.Image.Image>},
                 #                     {"score": None,
                 #                      "label": "floor",
-                #                      "mask": <PIL.Image.Image image mode=L size=5362x3016>}]
+                #                      "mask": <PIL.Image.Image>}]
 
                 # to standard Chariot output: [[0,0,...,0],...,[0,0,0,...,0]]
                 # 2d array with size of the original image. Each pixel is a class int

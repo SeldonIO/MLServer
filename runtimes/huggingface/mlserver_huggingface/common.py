@@ -47,7 +47,8 @@ def load_pipeline_from_settings(
             torch.set_num_interop_threads(hf_settings.inter_op_threads)
         if hf_settings.intra_op_threads is not None:
             torch.set_num_threads(hf_settings.intra_op_threads)
-    # HF pipeline would automatically load tokenizer from model directory if no tokenizer is provided in the config
+    # If no tokenizer is provided in the config
+    # HF pipeline would automatically load tokenizer from model directory
     hf_pipeline = pipeline(
         hf_settings.task_name,
         model=model,
@@ -65,10 +66,11 @@ def load_pipeline_from_settings(
             if not hf_pipeline.tokenizer.pad_token_id:
                 eos_token_id = model.config.eos_token_id  # type: ignore
                 if eos_token_id:
-                    hf_pipeline.tokenizer.pad_token_id = [str(eos_token_id)]  # type: ignore
+                    hf_pipeline.tokenizer.pad_token_id = [str(eos_token_id)]
                 else:
                     logger.warning(
-                        "Model has neither pad_token or eos_token, setting batch size to 1"
+                        "Model has neither pad_token or eos_token, \
+                        setting batch size to 1"
                     )
                     hf_pipeline._batch_size = 1
 
