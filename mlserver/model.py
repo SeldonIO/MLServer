@@ -247,7 +247,6 @@ class MLModel:
         response_output = encode_response_output(
             payload, request_output, self._outputs_index
         )
-
         if response_output:
             return response_output
 

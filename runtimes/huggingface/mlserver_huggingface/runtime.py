@@ -1,6 +1,7 @@
 import asyncio
 import torch
 
+from mlserver.codecs.lists import is_list_of
 from mlserver.model import MLModel
 from mlserver.settings import ModelSettings
 from mlserver.logging import logger
@@ -11,7 +12,7 @@ from mlserver.types import (
 
 from .settings import get_huggingface_settings
 from .common import load_pipeline_from_settings
-from .codecs import HuggingfaceRequestCodec
+from .codecs import HuggingfaceRequestCodec,ChariotModelOutputCodec
 from .metadata import METADATA
 
 
@@ -44,11 +45,13 @@ class HuggingFaceRuntime(MLModel):
         array_inputs = kwargs.pop("array_inputs", [])
         if array_inputs:
             args = [list(array_inputs)] + args
-        prediction = self._model(*args, **kwargs)
-
-        return self.encode_response(
-            payload=prediction, default_codec=HuggingfaceRequestCodec
+        predictions = self._model(*args, **kwargs)
+        if self.hf_settings.task in ["image-classification","image-segmentation","object-detection"]:   
+            predictions = ChariotModelOutputCodec.encode_output(predictions,task_type=self.hf_settings.task,pipeline=self._model)
+        response =self.encode_response(
+            payload=predictions, default_codec=HuggingfaceRequestCodec
         )
+        return response
 
     async def unload(self) -> bool:
         # TODO: Free up Tensorflow's GPU memory
