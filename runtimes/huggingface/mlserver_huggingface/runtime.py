@@ -14,6 +14,12 @@ from .common import load_pipeline_from_settings
 from .codecs import HuggingfaceRequestCodec, ChariotImgModelOutputCodec
 from .metadata import METADATA
 
+CHARIOT_IMAGE_TASK = [
+    "image-classification",
+    "image-segmentation",
+    "object-detection",
+]
+
 
 class HuggingFaceRuntime(MLModel):
     """Runtime class for specific Huggingface models"""
@@ -37,6 +43,20 @@ class HuggingFaceRuntime(MLModel):
         return True
 
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
+        predict_proba = {
+            (
+                request_input.parameters.predict_proba
+                if request_input.parameters
+                else False
+            )
+            for request_input in payload.inputs
+        }
+        if len(predict_proba) > 1:
+            raise ValueError(
+                f"If processing a batch all 'predict_proba' must be the same \
+                but got 'predict_proba': {predict_proba}"
+            )
+        predict_proba = predict_proba.pop()
         # TODO: convert and validate?
         kwargs = HuggingfaceRequestCodec.decode_request(payload)
         args = kwargs.pop("args", [])
@@ -44,16 +64,15 @@ class HuggingFaceRuntime(MLModel):
         array_inputs = kwargs.pop("array_inputs", [])
         if array_inputs:
             args = [list(array_inputs)] + args
+        if predict_proba and self.hf_settings.task == "image-classification":
+            kwargs["top_k"] = self._model.model.config.num_labels
         predictions = self._model(*args, **kwargs)
-        if self.hf_settings.task in [
-            "image-classification",
-            "image-segmentation",
-            "object-detection",
-        ]:
+        if self.hf_settings.task in CHARIOT_IMAGE_TASK:
             predictions = ChariotImgModelOutputCodec.encode_output(
                 predictions,
                 task_type=self.hf_settings.task,
                 class_int_to_str=self._model.model.config.id2label,
+                predict_proba=predict_proba,
             )
         response = self.encode_response(
             payload=predictions, default_codec=HuggingfaceRequestCodec
