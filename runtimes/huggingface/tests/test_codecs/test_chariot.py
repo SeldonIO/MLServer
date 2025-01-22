@@ -38,16 +38,24 @@ import numpy as np
                 "num_detections": 2,
                 "detection_classes": ["cat", "cat"],
                 "detection_scores": [0.9897010326385498, 0.9896764159202576],
-                "detection_boxes": [[53, 313, 697, 986], [974, 221, 1526, 1071]],
+                "detection_boxes": [[313, 53, 986, 697], [221, 974, 1071, 1526]],
             },
         ),
         (
             "image-segmentation",
-            {0: "class_a", 1: "class_b"},
+            {0: "class_0", 1: "class_1",2:"class_2"},
             [
                 {
                     "score": None,
-                    "label": "class_a",
+                    "label": "class_0",
+                    "mask": Image.fromarray(
+                        np.array([[255, 255, 255], [255, 0, 0], [255, 0, 255]]).astype("uint8"),
+                        mode="L",
+                    ),
+                },
+                {
+                    "score": None,
+                    "label": "class_1",
                     "mask": Image.fromarray(
                         np.array([[0, 0, 0], [0, 255, 255], [0, 0, 0]]).astype("uint8"),
                         mode="L",
@@ -55,7 +63,7 @@ import numpy as np
                 },
                 {
                     "score": None,
-                    "label": "class_b",
+                    "label": "class_2",
                     "mask": Image.fromarray(
                         np.array([[0, 0, 0], [0, 0, 0], [0, 255, 0]]).astype("uint8"),
                         mode="L",

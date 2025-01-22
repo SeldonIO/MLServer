@@ -21,29 +21,25 @@ def get_det_dict_from_hf_obj_detect(obj_detect):
     }
     for det in obj_detect:
         conf, cls = det["score"], det["label"]
-        x1, y1, x2, y2 = (
-            det["box"]["xmin"],
+        y1, x1, y2, x2 = (
             det["box"]["ymin"],
-            det["box"]["xmax"],
+            det["box"]["xmin"],
             det["box"]["ymax"],
+            det["box"]["xmax"],
         )
         det_dict["num_detections"] += 1
         det_dict["detection_classes"].append(cls)
         det_dict["detection_scores"].append(conf)
-        det_dict["detection_boxes"].append([x1, y1, x2, y2])
+        det_dict["detection_boxes"].append([y1, x1, y2, x2])
     return det_dict
 
 
 def get_chariot_seg_mask_from_hf_seg_output(seg_pred, class_int_to_str):
     """Convert hf segmentation output to standard chariot segmentation output"""
-    img_w, img_h = seg_pred[0]["mask"].size
-    if class_int_to_str[0] != "background":
-        # Let class_int 0 be background and increment all the other class_int by 1
-        class_str_to_int = {v: k + 1 for k, v in class_int_to_str.items()}
-    else:
-        class_str_to_int = {v: k for k, v in class_int_to_str.items()}
+    mask_shape =np.array(seg_pred[0]["mask"]).shape
+    class_str_to_int = {v: k for k, v in class_int_to_str.items()}
     # Create an empty mask
-    combined_mask = np.zeros((img_h, img_w), dtype=np.uint8)
+    combined_mask = np.full(mask_shape,None)
     for i in seg_pred:
         # Convert mask from PIL image to numpy array
         mask = np.array(i["mask"])
@@ -82,8 +78,8 @@ class ChariotImgModelOutputCodec:
                 # to standard Chariot output: {"num_detections":2,
                 #                             "detection_classes":["cat","cat"],
                 #                             "detection_scores":[0.9897010326385498,0.9896764159202576],
-                #                             "detection_boxes":[[53,313,697,986],
-                #                                                [974,221,1526,1071]]}
+                #                             "detection_boxes":[[313,53,986,697],
+                #                                                [221,974,1071,1562]]}
                 predictions = get_det_dict_from_hf_obj_detect(predictions)
 
         elif task_type == "image-segmentation":
