@@ -44,13 +44,13 @@ class HuggingFaceRuntime(MLModel):
 
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
         predict_proba = {
-                    (
-                        getattr(request_input.parameters,"predict_proba")
-                        if request_input.parameters
-                        else False
-                    )
-                    for request_input in payload.inputs
-                } 
+            (
+                getattr(request_input.parameters, "predict_proba")
+                if request_input.parameters
+                else False
+            )
+            for request_input in payload.inputs
+        }
         if len(predict_proba) > 1:
             raise ValueError(
                 f"If processing a batch all 'predict_proba' must be the same \
