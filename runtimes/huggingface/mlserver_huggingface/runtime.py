@@ -1,6 +1,6 @@
 import asyncio
 import torch
-
+from typing import Any
 from mlserver.model import MLModel
 from mlserver.settings import ModelSettings
 from mlserver.logging import logger
@@ -63,7 +63,7 @@ class HuggingFaceRuntime(MLModel):
         )
         return response
 
-    def get_predict_proba_kwargs(self, payload: InferenceRequest) -> InferenceResponse:
+    def get_predict_proba_kwargs(self, payload: InferenceRequest) -> tuple[bool,dict[str, Any]]:
         actions = {
             (
                 getattr(request_input.parameters, "action", "predict")
