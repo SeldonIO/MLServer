@@ -63,7 +63,9 @@ class HuggingFaceRuntime(MLModel):
         )
         return response
 
-    def get_predict_proba_kwargs(self, payload: InferenceRequest) -> tuple[bool,dict[str, Any]]:
+    def get_predict_proba_kwargs(
+        self, payload: InferenceRequest
+    ) -> tuple[bool, dict[str, Any]]:
         actions = {
             (
                 getattr(request_input.parameters, "action", "predict")
