@@ -43,30 +43,14 @@ class HuggingFaceRuntime(MLModel):
         return True
 
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
-        predict_proba = {
-            (
-                getattr(request_input.parameters, "predict_proba")
-                if request_input.parameters
-                else False
-            )
-            for request_input in payload.inputs
-        }
-        if len(predict_proba) > 1:
-            raise ValueError(
-                f"If processing a batch all 'predict_proba' must be the same \
-                but got 'predict_proba': {predict_proba}"
-            )
-        predict_proba = predict_proba.pop()
         # TODO: convert and validate?
         kwargs = HuggingfaceRequestCodec.decode_request(payload)
         args = kwargs.pop("args", [])
-
         array_inputs = kwargs.pop("array_inputs", [])
         if array_inputs:
             args = [list(array_inputs)] + args
-        if predict_proba and self.hf_settings.task == "image-classification":
-            kwargs["top_k"] = self._model.model.config.num_labels
-        predictions = self._model(*args, **kwargs)
+        predict_proba, predict_proba_kwargs = self.get_predict_proba_kwargs(payload)
+        predictions = self._model(*args, **kwargs, **predict_proba_kwargs)
         if self.hf_settings.task in CHARIOT_IMAGE_TASK:
             predictions = ChariotImgModelOutputCodec.encode_output(
                 predictions,
@@ -78,6 +62,27 @@ class HuggingFaceRuntime(MLModel):
             payload=predictions, default_codec=HuggingfaceRequestCodec
         )
         return response
+
+    def get_predict_proba_kwargs(self, payload: InferenceRequest) -> InferenceResponse:
+        actions = {
+            (
+                getattr(request_input.parameters, "action", "predict")
+                if request_input.parameters
+                else "predict"
+            )
+            for request_input in payload.inputs
+        }
+        if len(actions) > 1:
+            raise ValueError(
+                f"If processing a batch all 'actions' must be the same \
+                but got 'actions': {actions}"
+            )
+        action = actions.pop()
+        predict_proba = action == "predict_proba"
+        predict_proba_kwargs = dict()
+        if predict_proba and self.hf_settings.task == "image-classification":
+            predict_proba_kwargs["top_k"] = self._model.model.config.num_labels
+        return predict_proba, predict_proba_kwargs
 
     async def unload(self) -> bool:
         # TODO: Free up Tensorflow's GPU memory
