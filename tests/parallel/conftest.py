@@ -152,17 +152,26 @@ def custom_request_message(sum_model_settings: ModelSettings) -> ModelRequestMes
     )
 
 
+@pytest.fixture(params=[None, "dummy_gid"])
+def inference_pool_gid(request) -> str:
+    return request.param
+
+
 @pytest.fixture
-def env_model_settings(env_tarball: str) -> ModelSettings:
+def env_model_settings(env_tarball: str, inference_pool_gid: str) -> ModelSettings:
     return ModelSettings(
         name="env-model",
         implementation=EnvModel,
-        parameters=ModelParameters(environment_tarball=env_tarball),
+        parameters=ModelParameters(
+            environment_tarball=env_tarball, inference_pool_gid=inference_pool_gid
+        ),
     )
 
 
 @pytest.fixture
-def existing_env_model_settings(env_tarball: str, tmp_path) -> ModelSettings:
+def existing_env_model_settings(
+    env_tarball: str, inference_pool_gid: str, tmp_path
+) -> ModelSettings:
     from mlserver.env import _extract_env
 
     env_path = str(tmp_path)
@@ -171,7 +180,9 @@ def existing_env_model_settings(env_tarball: str, tmp_path) -> ModelSettings:
     model_settings = ModelSettings(
         name="exising_env_model",
         implementation=EnvModel,
-        parameters=ModelParameters(environment_path=env_path),
+        parameters=ModelParameters(
+            environment_path=env_path, inference_pool_gid=inference_pool_gid
+        ),
     )
     yield model_settings
 

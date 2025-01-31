@@ -75,8 +75,11 @@ async def test_load_model(
     inference_pool_registry: InferencePoolRegistry,
     sum_model: MLModel,
     inference_request: InferenceRequest,
+    inference_pool_gid: str,
 ):
     sum_model.settings.name = "foo"
+    sum_model.settings.parameters.inference_pool_gid = inference_pool_gid
+
     model = await inference_pool_registry.load_model(sum_model)
     inference_response = await model.predict(inference_request)
 
