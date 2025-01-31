@@ -313,6 +313,9 @@ class ModelParameters(BaseSettings):
     """Path to the environment tarball which should be used to load this
     model."""
 
+    inference_pool_gid: Optional[str] = None
+    """Inference pool group id to be used to serve this model."""
+
     format: Optional[str] = None
     """Format of the model (only available on certain runtimes)."""
 
