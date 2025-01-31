@@ -1,6 +1,7 @@
 import numpy as np
 import json
 
+
 def is_list_of_dicts(var):
     """Check if a variable is a list of dicts"""
     if not isinstance(var, list):
