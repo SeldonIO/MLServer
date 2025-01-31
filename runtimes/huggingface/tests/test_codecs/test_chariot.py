@@ -18,7 +18,7 @@ import numpy as np
                     {"label": "Egyptian cat", "score": 0.02},
                 ]
             ],
-            ["tabby, tabby cat"],
+            ['"tabby, tabby cat"'],
         ),
         (
             "image-classification",

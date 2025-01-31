@@ -1,5 +1,5 @@
 import numpy as np
-
+import json
 
 def is_list_of_dicts(var):
     """Check if a variable is a list of dicts"""
@@ -66,7 +66,7 @@ class ChariotImgModelOutputCodec:
                 #                    1:"tabby, tabby cat",
                 #                    2:"tiger cat"}
                 # convert HF output: [[{"label": "tabby, tabby cat", "score": 0.94},
-                #                      {"label": "tiger cat", "score": 0.04},
+                #                      {"label": "tiger cat", "score"': 0.04},
                 #                      {"label": "Egyptian cat", "score": 0.02}]]
                 # to standard Chariot probability output: [[0.02,0.94,0.04]]
                 # The probability scores are ordered by class id
@@ -83,8 +83,8 @@ class ChariotImgModelOutputCodec:
                 # convert HF output: [[{"label": "tabby, tabby cat", "score": 0.94},
                 #                      {"label": "tiger cat", "score": 0.04},
                 #                      {"label": "Egyptian cat", "score": 0.02}]]
-                # to standard Chariot output: ["tabby, tabby cat"]
-                predictions = [p[0]["label"] for p in predictions]
+                # to standard Chariot output: ['"tabby, tabby cat"']
+                predictions = [json.dumps(p[0]["label"]) for p in predictions]
         elif task_type == "object-detection":
 
             # convert HF output: [[{"score": 0.9897010326385498,
