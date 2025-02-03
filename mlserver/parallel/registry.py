@@ -38,6 +38,14 @@ def _get_env_tarball(model: MLModel) -> Optional[str]:
     return to_absolute_path(model_settings, env_tarball)
 
 
+def _get_environment_hash_gid(
+    env_hash: str, inference_pool_gid: Optional[str] = None
+) -> str:
+    if inference_pool_gid:
+        return f"{env_hash}-{inference_pool_gid}"
+    return env_hash
+
+
 class InferencePoolRegistry:
     """
     Keeps track of the different inference pools loaded in the server.
@@ -101,9 +109,7 @@ class InferencePoolRegistry:
         )
         logger.info(f"Using environment {expanded_environment_path}")
         env_hash = await compute_hash_of_string(expanded_environment_path)
-
-        if inference_pool_gid is not None:
-            env_hash = f"{env_hash}-{inference_pool_gid}"
+        env_hash = _get_environment_hash_gid(env_hash, inference_pool_gid)
 
         if env_hash in self._pools:
             return self._pools[env_hash]
@@ -142,8 +148,7 @@ class InferencePoolRegistry:
             )
 
         env_hash = await compute_hash_of_file(env_tarball)
-        if inference_pool_gid:
-            env_hash = f"{env_hash}-{inference_pool_gid}"
+        env_hash = _get_environment_hash_gid(env_hash, inference_pool_gid)
 
         if env_hash in self._pools:
             return self._pools[env_hash]

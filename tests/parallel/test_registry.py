@@ -2,6 +2,7 @@ import pytest
 import os
 import asyncio
 from copy import deepcopy
+from typing import Optional
 
 from mlserver.env import Environment, compute_hash_of_file
 from mlserver.model import MLModel
@@ -13,6 +14,7 @@ from mlserver.parallel.registry import (
     InferencePoolRegistry,
     _set_environment_hash,
     _get_environment_hash,
+    _get_environment_hash_gid,
     ENV_HASH_ATTR,
 )
 
@@ -97,6 +99,7 @@ async def test_load_model(
 def check_sklearn_version(response):
     # Note: These versions come from the `environment.yml` found in
     # `./tests/testdata/environment.yaml`
+    assert len(response.outputs) == 1
     assert response.outputs[0].name == "sklearn_version"
     [sklearn_version] = StringCodec.decode_output(response.outputs[0])
     assert sklearn_version == "1.3.1"
@@ -108,7 +111,6 @@ async def test_load_model_with_env(
     inference_request: InferenceRequest,
 ):
     response = await env_model.predict(inference_request)
-    assert len(response.outputs) == 1
     check_sklearn_version(response)
 
 
@@ -118,7 +120,6 @@ async def test_load_model_with_existing_env(
     inference_request: InferenceRequest,
 ):
     response = await existing_env_model.predict(inference_request)
-    assert len(response.outputs) == 1
     check_sklearn_version(response)
 
 
@@ -229,6 +230,20 @@ async def test_worker_stop(
         assert len(inference_response.outputs) > 0
 
 
+@pytest.mark.parametrize(
+    "env_hash, inference_pool_gid, expected_env_hash",
+    [
+        ("dummy_hash", None, "dummy_hash"),
+        ("dummy_hash", "dummy_gid", "dummy_hash-dummy_gid"),
+    ],
+)
+async def test__get_environment_hash_gid(
+    env_hash: str, inference_pool_gid: Optional[str], expected_env_hash: str
+):
+    _env_hash = _get_environment_hash_gid(env_hash, inference_pool_gid)
+    assert _env_hash == expected_env_hash
+
+
 async def test_default_and_default_gid(
     inference_pool_registry: InferencePoolRegistry,
     simple_model_settings: ModelSettings,
@@ -250,10 +265,10 @@ async def test_default_and_default_gid(
 async def test_env_and_env_gid(
     inference_request: InferenceRequest,
     inference_pool_registry: InferencePoolRegistry,
-    simple_model_settings: ModelSettings,
+    env_model_settings: ModelSettings,
     env_tarball: str,
 ):
-    env_model_settings = deepcopy(simple_model_settings)
+    env_model_settings = deepcopy(env_model_settings)
     env_model_settings.parameters.environment_tarball = env_tarball
 
     env_model_settings_gid = deepcopy(env_model_settings)
