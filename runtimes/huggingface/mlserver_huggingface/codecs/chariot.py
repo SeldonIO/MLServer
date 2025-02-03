@@ -1,15 +1,6 @@
 import numpy as np
+from mlserver.codecs.lists import is_list_of
 import json
-
-
-def is_list_of_dicts(var):
-    """Check if a variable is a list of dicts"""
-    if not isinstance(var, list):
-        return False
-    for item in var:
-        if not isinstance(item, dict):
-            return False
-    return True
 
 
 def get_det_dict_from_hf_obj_detect(obj_detect):
@@ -58,7 +49,7 @@ class ChariotImgModelOutputCodec:
     def encode_output(
         cls, predictions, task_type, class_int_to_str, predict_proba=False
     ):
-        if is_list_of_dicts(predictions):
+        if is_list_of(predictions, dict):
             predictions = [predictions]
         if task_type == "image-classification":
 
@@ -84,7 +75,7 @@ class ChariotImgModelOutputCodec:
                 # convert HF output: [[{"label": "tabby, tabby cat", "score": 0.94},
                 #                      {"label": "tiger cat", "score": 0.04},
                 #                      {"label": "Egyptian cat", "score": 0.02}]]
-                # to standard Chariot output: ['"tabby, tabby cat"']
+                # to standard Chariot output: ["tabby, tabby cat"]
                 predictions = [json.dumps(p[0]["label"]) for p in predictions]
         elif task_type == "object-detection":
 
