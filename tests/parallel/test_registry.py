@@ -1,6 +1,7 @@
 import pytest
 import os
 import asyncio
+from copy import deepcopy
 
 from mlserver.env import Environment, compute_hash_of_file
 from mlserver.model import MLModel
@@ -15,7 +16,7 @@ from mlserver.parallel.registry import (
     ENV_HASH_ATTR,
 )
 
-from ..fixtures import EnvModel
+from ..fixtures import SumModel, EnvModel
 
 
 @pytest.fixture
@@ -71,14 +72,17 @@ async def test_default_pool(
     assert worker_count == settings.parallel_workers
 
 
+@pytest.mark.parametrize("inference_pool_gid", ["dummy_id", None])
 async def test_load_model(
     inference_pool_registry: InferencePoolRegistry,
-    sum_model: MLModel,
+    sum_model_settings: ModelSettings,
     inference_request: InferenceRequest,
     inference_pool_gid: str,
 ):
-    sum_model.settings.name = "foo"
-    sum_model.settings.parameters.inference_pool_gid = inference_pool_gid
+    sum_model_settings = deepcopy(sum_model_settings)
+    sum_model_settings.name = "foo"
+    sum_model_settings.parameters.inference_pool_gid = inference_pool_gid
+    sum_model = SumModel(sum_model_settings)
 
     model = await inference_pool_registry.load_model(sum_model)
     inference_response = await model.predict(inference_request)
@@ -90,20 +94,22 @@ async def test_load_model(
     await inference_pool_registry.unload_model(sum_model)
 
 
+def check_sklearn_version(response):
+    # Note: These versions come from the `environment.yml` found in
+    # `./tests/testdata/environment.yaml`
+    assert response.outputs[0].name == "sklearn_version"
+    [sklearn_version] = StringCodec.decode_output(response.outputs[0])
+    assert sklearn_version == "1.3.1"
+
+
 async def test_load_model_with_env(
     inference_pool_registry: InferencePoolRegistry,
     env_model: MLModel,
     inference_request: InferenceRequest,
 ):
     response = await env_model.predict(inference_request)
-
     assert len(response.outputs) == 1
-
-    # Note: These versions come from the `environment.yml` found in
-    # `./tests/testdata/environment.yaml`
-    assert response.outputs[0].name == "sklearn_version"
-    [sklearn_version] = StringCodec.decode_output(response.outputs[0])
-    assert sklearn_version == "1.3.1"
+    check_sklearn_version(response)
 
 
 async def test_load_model_with_existing_env(
@@ -112,14 +118,8 @@ async def test_load_model_with_existing_env(
     inference_request: InferenceRequest,
 ):
     response = await existing_env_model.predict(inference_request)
-
     assert len(response.outputs) == 1
-
-    # Note: These versions come from the `environment.yml` found in
-    # `./tests/testdata/environment.yaml`
-    assert response.outputs[0].name == "sklearn_version"
-    [sklearn_version] = StringCodec.decode_output(response.outputs[0])
-    assert sklearn_version == "1.3.1"
+    check_sklearn_version(response)
 
 
 async def test_load_creates_pool(
@@ -227,3 +227,49 @@ async def test_worker_stop(
     for _ in range(settings.parallel_workers + 2):
         inference_response = await sum_model.predict(inference_request)
         assert len(inference_response.outputs) > 0
+
+
+async def test_default_and_default_gid(
+    inference_pool_registry: InferencePoolRegistry,
+    simple_model_settings: ModelSettings,
+):
+    simple_model_settings_gid = deepcopy(simple_model_settings)
+    simple_model_settings_gid.parameters.inference_pool_gid = "dummy_id"
+
+    simple_model = SumModel(simple_model_settings)
+    simple_model_gid = SumModel(simple_model_settings_gid)
+
+    model = await inference_pool_registry.load_model(simple_model)
+    model_gid = await inference_pool_registry.load_model(simple_model_gid)
+
+    assert len(inference_pool_registry._pools) == 1
+    await inference_pool_registry.unload_model(model)
+    await inference_pool_registry.unload_model(model_gid)
+
+
+async def test_env_and_env_gid(
+    inference_request: InferenceRequest,
+    inference_pool_registry: InferencePoolRegistry,
+    simple_model_settings: ModelSettings,
+    env_tarball: str,
+):
+    env_model_settings = deepcopy(simple_model_settings)
+    env_model_settings.parameters.environment_tarball = env_tarball
+
+    env_model_settings_gid = deepcopy(env_model_settings)
+    env_model_settings_gid.parameters.inference_pool_gid = "dummy_id"
+
+    env_model = EnvModel(env_model_settings)
+    env_model_gid = EnvModel(env_model_settings_gid)
+
+    model = await inference_pool_registry.load_model(env_model)
+    model_gid = await inference_pool_registry.load_model(env_model_gid)
+    assert len(inference_pool_registry._pools) == 2
+
+    response = await model.predict(inference_request)
+    response_gid = await model_gid.predict(inference_request)
+    check_sklearn_version(response)
+    check_sklearn_version(response_gid)
+
+    await inference_pool_registry.unload_model(model)
+    await inference_pool_registry.unload_model(model_gid)
