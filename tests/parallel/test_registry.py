@@ -3,10 +3,11 @@ import os
 import asyncio
 from copy import deepcopy
 from typing import Optional
+from unittest.mock import patch
 
 from mlserver.env import Environment, compute_hash_of_file
 from mlserver.model import MLModel
-from mlserver.settings import Settings, ModelSettings
+from mlserver.settings import Settings, ModelSettings, ModelParameters
 from mlserver.types import InferenceRequest
 from mlserver.codecs import StringCodec
 from mlserver.parallel.errors import EnvironmentNotFound
@@ -288,3 +289,34 @@ async def test_env_and_env_gid(
 
     await inference_pool_registry.unload_model(model)
     await inference_pool_registry.unload_model(model_gid)
+
+
+@pytest.mark.parametrize(
+    "inference_pool_grid, autogenerate_inference_pool_grid",
+    [
+        ("dummy_gid", False),
+        ("dummy_gid", True),
+        (None, True),
+        (None, False),
+    ],
+)
+def test_autogenerate_inference_pool_gid(
+    inference_pool_grid: str, autogenerate_inference_pool_grid: bool
+):
+    patch_uuid = "patch-uuid"
+    with patch("uuid.uuid4", return_value=patch_uuid):
+        model_settings = ModelSettings(
+            name="dummy-model",
+            implementation=MLModel,
+            parameters=ModelParameters(
+                inference_pool_gid=inference_pool_grid,
+                autogenerate_inference_pool_gid=autogenerate_inference_pool_grid,
+            ),
+        )
+
+    expected_gid = (
+        inference_pool_grid
+        if not autogenerate_inference_pool_grid
+        else (inference_pool_grid or patch_uuid)
+    )
+    assert model_settings.parameters.inference_pool_gid == expected_gid

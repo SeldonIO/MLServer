@@ -1,5 +1,6 @@
 import sys
 import os
+import uuid
 import json
 import importlib
 import inspect
@@ -19,6 +20,7 @@ from pydantic import (
     Field,
     AliasChoices,
 )
+from pydantic import model_validator
 from pydantic._internal._validators import import_string
 import pydantic_settings
 from pydantic_settings import SettingsConfigDict
@@ -316,6 +318,9 @@ class ModelParameters(BaseSettings):
     inference_pool_gid: Optional[str] = None
     """Inference pool group id to be used to serve this model."""
 
+    autogenerate_inference_pool_gid: bool = False
+    """Flag to autogenerate the inference pool group id for this model."""
+
     format: Optional[str] = None
     """Format of the model (only available on certain runtimes)."""
 
@@ -325,6 +330,12 @@ class ModelParameters(BaseSettings):
     extra: Optional[dict] = {}
     """Arbitrary settings, dependent on the inference runtime
     implementation."""
+
+    @model_validator(mode="after")
+    def set_inference_pool_gid(cls, values: "ModelParameters") -> "ModelParameters":
+        if values.autogenerate_inference_pool_gid and values.inference_pool_gid is None:
+            return values.model_copy(update={"inference_pool_gid": str(uuid.uuid4())})
+        return values
 
 
 class ModelSettings(BaseSettings):
