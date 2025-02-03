@@ -15,6 +15,7 @@ from typing import (
     no_type_check,
     TYPE_CHECKING,
 )
+from typing_extensions import Self
 from pydantic import (
     ImportString,
     Field,
@@ -332,10 +333,10 @@ class ModelParameters(BaseSettings):
     implementation."""
 
     @model_validator(mode="after")
-    def set_inference_pool_gid(cls, values: "ModelParameters") -> "ModelParameters":
-        if values.autogenerate_inference_pool_gid and values.inference_pool_gid is None:
-            return values.model_copy(update={"inference_pool_gid": str(uuid.uuid4())})
-        return values
+    def set_inference_pool_gid(self) -> Self:
+        if self.autogenerate_inference_pool_gid and self.inference_pool_gid is None:
+            self.inference_pool_gid = str(uuid.uuid4())
+        return self
 
 
 class ModelSettings(BaseSettings):
