@@ -89,12 +89,11 @@ jobs:
           QUAY_MLSERVER_IMAGE: quay.io/redhat-isv-containers/635670d3624969b495b6936f:${{ github.event.inputs.version }}
       - name: Install preflight
         run: |
+          PREFLIGHT_VERSION=$(curl -s https://api.github.com/repos/redhat-openshift-ecosystem/openshift-preflight/releases/latest | jq -r .tag_name)
           wget https://github.com/redhat-openshift-ecosystem/openshift-preflight/releases/download/$PREFLIGHT_VERSION/preflight-linux-amd64
           chmod u+x preflight-linux-amd64
           sudo mv preflight-linux-amd64 /usr/local/bin/preflight
           preflight --version
-        env:
-          PREFLIGHT_VERSION: 1.10.0
       - name: Submit preflight results
         run: |
           preflight check container \
@@ -159,12 +158,11 @@ jobs:
           QUAY_MLSERVER_IMAGE: quay.io/redhat-isv-containers/63567143624969b495b69370:${{ github.event.inputs.version }}
       - name: Install preflight
         run: |
+          PREFLIGHT_VERSION=$(curl -s https://api.github.com/repos/redhat-openshift-ecosystem/openshift-preflight/releases/latest | jq -r .tag_name)
           wget https://github.com/redhat-openshift-ecosystem/openshift-preflight/releases/download/$PREFLIGHT_VERSION/preflight-linux-amd64
           chmod u+x preflight-linux-amd64
           sudo mv preflight-linux-amd64 /usr/local/bin/preflight
           preflight --version
-        env:
-          PREFLIGHT_VERSION: 1.10.0
       - name: Submit preflight results
         run: |
           preflight check container \
