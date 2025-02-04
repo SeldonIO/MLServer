@@ -75,7 +75,7 @@ class ChariotImgModelOutputCodec:
                 # convert HF output: [[{"label": "tabby, tabby cat", "score": 0.94},
                 #                      {"label": "tiger cat", "score": 0.04},
                 #                      {"label": "Egyptian cat", "score": 0.02}]]
-                # to standard Chariot output: ["tabby, tabby cat"]
+                # to standard Chariot output: ['"tabby, tabby cat"']
                 predictions = [json.dumps(p[0]["label"]) for p in predictions]
         elif task_type == "object-detection":
 
