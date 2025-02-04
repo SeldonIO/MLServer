@@ -6,6 +6,7 @@ from .numpylist import NumpyListCodec
 from .conversation import HuggingfaceConversationCodec
 from .raw import RawCodec
 from .utils import EqualUtil
+from .chariot import ChariotImgModelOutputCodec
 
 __all__ = [
     "MultiInputRequestCodec",
@@ -14,6 +15,7 @@ __all__ = [
     "HuggingfaceSingleJSONCodec",
     "HuggingfaceListJSONCodec",
     "HuggingfaceConversationCodec",
+    "ChariotImgModelOutputCodec",
     "NumpyListCodec",
     "RawCodec",
     "EqualUtil",
