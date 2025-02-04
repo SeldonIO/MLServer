@@ -1,5 +1,6 @@
 import sys
 import os
+import uuid
 import json
 import importlib
 import inspect
@@ -14,11 +15,13 @@ from typing import (
     no_type_check,
     TYPE_CHECKING,
 )
+from typing_extensions import Self
 from pydantic import (
     ImportString,
     Field,
     AliasChoices,
 )
+from pydantic import model_validator
 from pydantic._internal._validators import import_string
 import pydantic_settings
 from pydantic_settings import SettingsConfigDict
@@ -313,6 +316,12 @@ class ModelParameters(BaseSettings):
     """Path to the environment tarball which should be used to load this
     model."""
 
+    inference_pool_gid: Optional[str] = None
+    """Inference pool group id to be used to serve this model."""
+
+    autogenerate_inference_pool_gid: bool = False
+    """Flag to autogenerate the inference pool group id for this model."""
+
     format: Optional[str] = None
     """Format of the model (only available on certain runtimes)."""
 
@@ -322,6 +331,12 @@ class ModelParameters(BaseSettings):
     extra: Optional[dict] = {}
     """Arbitrary settings, dependent on the inference runtime
     implementation."""
+
+    @model_validator(mode="after")
+    def set_inference_pool_gid(self) -> Self:
+        if self.autogenerate_inference_pool_gid and self.inference_pool_gid is None:
+            self.inference_pool_gid = str(uuid.uuid4())
+        return self
 
 
 class ModelSettings(BaseSettings):
