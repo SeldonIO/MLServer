@@ -38,7 +38,7 @@ def _get_env_tarball(model: MLModel) -> Optional[str]:
     return to_absolute_path(model_settings, env_tarball)
 
 
-def _get_environment_hash_gid(
+def _append_gid_environment_hash(
     env_hash: str, inference_pool_gid: Optional[str] = None
 ) -> str:
     if inference_pool_gid:
@@ -109,7 +109,7 @@ class InferencePoolRegistry:
         )
         logger.info(f"Using environment {expanded_environment_path}")
         env_hash = await compute_hash_of_string(expanded_environment_path)
-        env_hash = _get_environment_hash_gid(env_hash, inference_pool_gid)
+        env_hash = _append_gid_environment_hash(env_hash, inference_pool_gid)
 
         if env_hash in self._pools:
             return self._pools[env_hash]
@@ -148,7 +148,7 @@ class InferencePoolRegistry:
             )
 
         env_hash = await compute_hash_of_file(env_tarball)
-        env_hash = _get_environment_hash_gid(env_hash, inference_pool_gid)
+        env_hash = _append_gid_environment_hash(env_hash, inference_pool_gid)
 
         if env_hash in self._pools:
             return self._pools[env_hash]

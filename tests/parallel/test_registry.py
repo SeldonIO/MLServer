@@ -15,7 +15,7 @@ from mlserver.parallel.registry import (
     InferencePoolRegistry,
     _set_environment_hash,
     _get_environment_hash,
-    _get_environment_hash_gid,
+    _append_gid_environment_hash,
     ENV_HASH_ATTR,
 )
 
@@ -241,7 +241,7 @@ async def test_worker_stop(
 async def test__get_environment_hash_gid(
     env_hash: str, inference_pool_gid: Optional[str], expected_env_hash: str
 ):
-    _env_hash = _get_environment_hash_gid(env_hash, inference_pool_gid)
+    _env_hash = _append_gid_environment_hash(env_hash, inference_pool_gid)
     assert _env_hash == expected_env_hash
 
 
