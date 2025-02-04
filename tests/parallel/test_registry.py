@@ -234,7 +234,6 @@ async def test_worker_stop(
 @pytest.mark.parametrize(
     "env_hash, inference_pool_gid, expected_env_hash",
     [
-        ("dummy_hash", None, "dummy_hash"),
         ("dummy_hash", "dummy_gid", "dummy_hash-dummy_gid"),
     ],
 )
