@@ -181,11 +181,10 @@ class InferencePoolRegistry:
         )
 
         if not env_hash:
-            return (
-                self._default_pool
-                if not inference_pool_gid
-                else self._pools[inference_pool_gid]
-            )
+            if not inference_pool_gid:
+                return self._default_pool
+            else:
+                return self._pools[inference_pool_gid]
 
         if env_hash not in self._pools:
             raise EnvironmentNotFound(model, env_hash)
