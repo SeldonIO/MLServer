@@ -77,6 +77,13 @@ The expected values are:
 - `0`, will disable the parallel inference feature.
   In other words, inference will happen within the main MLServer process.
 
+### `inference_pool_gid` 
+
+The `inference_pool_gid` field of the `model-settings.json` file (or alternatively, the `MLSERVER_MODEL_INFERENCE_POOL_GID` global environment variable) allows to load models on a dedicated inference pool based on the group ID (GID) to prevent starvation behavior.
+
+Complementing the `inference_pool_gid`, if the `autogenerate_inference_pool_gid` field of the `model-settings.json` file (or alternatively, the `MLSERVER_MODEL_AUTOGENERATE_INFERENCE_POOL_GID` global environment variable) is set to `True`, a UUID is automatically generated, and a dedicated inference pool will load the given model. This option is useful if the user wants to load a single model on an dedicated inference pool without having to manage the GID themselves.
+
+
 ## References
 
 Jiale Zhi, Rui Wang, Jeff Clune, and Kenneth O. Stanley. Fiber: A Platform for Efficient Development and Distributed Training for Reinforcement Learning and Population-Based Methods. arXiv:2003.11164 [cs, stat], March 2020. [arXiv:2003.11164](https://arxiv.org/abs/2003.11164).
