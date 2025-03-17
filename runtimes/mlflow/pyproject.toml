@@ -16,7 +16,7 @@ mlflow = "*"
 mlserver = {path = "../..", develop = true}
 torch = "^2.4"
 pytorch-lightning = "^2.4"
-torchmetrics = "1.6.1"
+torchmetrics = "1.6.3"
 torchvision = "0.19.1"
 
 [build-system]
