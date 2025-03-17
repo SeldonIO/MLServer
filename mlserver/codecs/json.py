@@ -89,7 +89,11 @@ class JSONCodec(InputCodec):
 
     @classmethod
     def can_encode(cls, payload: Any) -> bool:
-        return True  # TODO: fix this
+        try:
+            encode_to_json(payload)
+            return True
+        except Exception:
+            return False
 
     @classmethod
     def encode_output(
