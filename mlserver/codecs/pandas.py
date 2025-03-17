@@ -4,7 +4,8 @@ import numpy as np
 from typing import Optional, Any, List, Tuple
 
 from .base import RequestCodec, register_request_codec
-from .numpy import to_datatype, to_dtype, convert_nan
+from .numpy import to_dtype, convert_nan, dtype_to_str, str_to_np_dtype
+from .json import decode_input_or_output, JSONCodec
 from .string import encode_str, StringCodec
 from .utils import get_decoded_or_raw, InputOrOutput, inject_batch_dimension
 from .lists import ListElement
@@ -19,8 +20,12 @@ from ..types import (
 
 
 def _to_series(input_or_output: InputOrOutput) -> pd.Series:
-    payload = get_decoded_or_raw(input_or_output)
+    parameters = input_or_output.parameters
 
+    if parameters and parameters.content_type == JSONCodec.ContentType:
+        return pd.Series(decode_input_or_output(input_or_output))
+
+    payload = get_decoded_or_raw(input_or_output)
     if Datatype(input_or_output.datatype) == Datatype.BYTES:
         # Don't convert the dtype of BYTES
         return pd.Series(payload)
@@ -33,8 +38,11 @@ def _to_series(input_or_output: InputOrOutput) -> pd.Series:
 
 
 def _to_response_output(series: pd.Series, use_bytes: bool = True) -> ResponseOutput:
-    datatype = to_datatype(series.dtype)
+    str_datatype = dtype_to_str(series.dtype)
     data = series.tolist()
+
+    if str_datatype == "object":
+        return JSONCodec.encode_output(series.name, data, use_bytes=use_bytes)
 
     # Replace NaN with null
     has_nan = series.isnull().any()
@@ -42,6 +50,8 @@ def _to_response_output(series: pd.Series, use_bytes: bool = True) -> ResponseOu
         data = list(map(convert_nan, data))
 
     content_type = None
+    datatype = str_to_np_dtype(str_datatype)
+
     if datatype == Datatype.BYTES:
         data, content_type = _process_bytes(data, use_bytes)
 
