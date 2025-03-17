@@ -49,10 +49,17 @@ def test_encode_input(input: Any, expected: bytes):
 @pytest.mark.parametrize(
     "payload, expected",
     [
-        ([1, 2, 3], True),
-        ({"dummy_1": 1, "dummy_2": 2}, True),
-        (np.array([1, 2, 3]), False),
-        (set([1, 2, 3]), False),
+        ([[1, 2, 3]], True),
+        ([{"dummy_1": 1, "dummy_2": 2}], True),
+        (
+            [
+                {"dummy_1": 1},
+                {"dummy_2": [{"dummy_3": 3, "dummy_4": 4}, {"dummy_5": 5}]},
+            ],
+            True,
+        ),
+        ([np.array([1, 2, 3])], False),
+        ([{1, 2, 3}], False),
     ],
 )
 def test_json_codec_can_encode(payload: Any, expected: bool):

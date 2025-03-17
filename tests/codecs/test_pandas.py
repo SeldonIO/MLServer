@@ -6,6 +6,7 @@ from typing import Any
 
 from mlserver.codecs.pandas import PandasCodec, _to_response_output
 from mlserver.codecs.string import StringCodec
+from mlserver.codecs.json import JSONCodec
 from mlserver.types import (
     InferenceRequest,
     InferenceResponse,
@@ -67,7 +68,11 @@ def test_can_encode(payload: Any, expected: bool):
             pd.Series(data=[[1, 2, 3], [4, 5, 6]], name="bar"),
             True,
             ResponseOutput(
-                name="bar", shape=[2, 1], data=[[1, 2, 3], [4, 5, 6]], datatype="BYTES"
+                name="bar",
+                shape=[2, 1],
+                data=[b"[1,2,3]", b"[4,5,6]"],
+                datatype="BYTES",
+                parameters=Parameters(content_type=JSONCodec.ContentType),
             ),
         ),
         (

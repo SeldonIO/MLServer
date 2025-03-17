@@ -78,6 +78,23 @@ def encode_to_json(v: Any, use_bytes: bool = True) -> Union[str, bytes]:
     return enc_v
 
 
+def _is_primitive(obj):
+    return isinstance(obj, (int, float, str, bool, type(None)))
+
+
+def _is_nested_primitives(obj):
+    if _is_primitive(obj):
+        return True
+    elif isinstance(obj, list):
+        return all(_is_nested_primitives(item) for item in obj)
+    elif isinstance(obj, dict):
+        return all(
+            isinstance(key, str) and _is_nested_primitives(value)
+            for key, value in obj.items()
+        )
+    return False
+
+
 @register_input_codec
 class JSONCodec(InputCodec):
     """
@@ -89,11 +106,22 @@ class JSONCodec(InputCodec):
 
     @classmethod
     def can_encode(cls, payload: Any) -> bool:
-        try:
-            encode_to_json(payload)
-            return True
-        except Exception:
+        is_json = all(_is_nested_primitives(item) for item in payload)
+
+        if not is_json:
             return False
+
+        all_primitive = all(_is_primitive(item) for item in payload)
+
+        # have to do it this way in case payload is not indexable
+        types = [type(item) for item in payload]
+        same_type = [types[0] == item for item in types]
+
+        # Don't want to json encode a list of primitives of the same type
+        if all_primitive and same_type:
+            return False
+
+        return True
 
     @classmethod
     def encode_output(
