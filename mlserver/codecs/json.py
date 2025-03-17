@@ -12,7 +12,7 @@ except ImportError:
 from .string import decode_str
 from .lists import as_list
 from .utils import InputOrOutput, SingleInputRequestCodec
-from .base import InputCodec, register_input_codec, register_request_codec
+from .base import InputCodec
 from ..types import RequestInput, ResponseOutput, Parameters
 
 
@@ -95,7 +95,6 @@ def _is_nested_primitives(obj):
     return False
 
 
-@register_input_codec
 class JSONCodec(InputCodec):
     """
     Encodes a list of Python objects as a BYTES input (output).
@@ -160,7 +159,6 @@ class JSONCodec(InputCodec):
         )
 
 
-@register_request_codec
 class JSONRequestCodec(SingleInputRequestCodec):
     """
     Decodes the first input (output) of request (response) as a NumPy array.
