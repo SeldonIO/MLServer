@@ -5,7 +5,7 @@ from typing import Optional, Any, List, Tuple
 
 from .base import RequestCodec, register_request_codec
 from .numpy import to_dtype, convert_nan, dtype_to_str, str_to_np_dtype
-from .json import decode_input_or_output, JSONCodec
+from .json import decode_input_or_output, JSONCodec, encode_to_json
 from .string import encode_str, StringCodec
 from .utils import get_decoded_or_raw, InputOrOutput, inject_batch_dimension
 from .lists import ListElement
@@ -38,11 +38,7 @@ def _to_series(input_or_output: InputOrOutput) -> pd.Series:
 
 
 def _to_response_output(series: pd.Series, use_bytes: bool = True) -> ResponseOutput:
-    str_datatype = dtype_to_str(series.dtype)
     data = series.tolist()
-
-    if str_datatype == "object":
-        return JSONCodec.encode_output(series.name, data, use_bytes=use_bytes)
 
     # Replace NaN with null
     has_nan = series.isnull().any()
@@ -50,10 +46,11 @@ def _to_response_output(series: pd.Series, use_bytes: bool = True) -> ResponseOu
         data = list(map(convert_nan, data))
 
     content_type = None
+    str_datatype = dtype_to_str(series.dtype)
     datatype = str_to_np_dtype(str_datatype)
 
     if datatype == Datatype.BYTES:
-        data, content_type = _process_bytes(data, use_bytes)
+        data, content_type = _process_bytes(data, str_datatype, use_bytes)
 
     shape = inject_batch_dimension(list(series.shape))
     parameters = None
@@ -70,7 +67,7 @@ def _to_response_output(series: pd.Series, use_bytes: bool = True) -> ResponseOu
 
 
 def _process_bytes(
-    data: List[ListElement], use_bytes: bool = True
+    data: List[ListElement], datatype: str, use_bytes: bool = True
 ) -> Tuple[List[ListElement], Optional[str]]:
     # To ensure that "string" columns can be encoded in gRPC, we need to
     # encode them as bytes.
@@ -81,9 +78,13 @@ def _process_bytes(
     for elem in data:
         converted = elem
         if not isinstance(elem, str):
-            # There was a non-string element, so we can't determine a content
-            # type
-            content_type = None
+            if datatype == "object":
+                content_type = JSONCodec.ContentType
+                converted = encode_to_json(elem, use_bytes)
+            else:
+                # There was a non-string element of primitive type,
+                # so we don't do anything
+                content_type = None
         elif use_bytes:
             converted = encode_str(elem)
 
