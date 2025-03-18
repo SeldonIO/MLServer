@@ -22,7 +22,7 @@ from mlserver.handlers import custom_handler
 from mlserver.errors import InferenceError
 from mlserver.settings import ModelParameters
 from mlserver.logging import logger
-from mlserver.codecs import JSONCodec
+from mlserver.codecs import JSONRequestCodec
 
 from .codecs import TensorDictCodec
 from .metadata import (
@@ -196,7 +196,7 @@ class MLflowRuntime(MLModel):
         )
 
     async def predict(self, payload: InferenceRequest) -> InferenceResponse:
-        decoded_payload = self.decode_request(payload, default_codec=JSONCodec)
+        decoded_payload = self.decode_request(payload, default_codec=JSONRequestCodec)
         params = None
         if payload.parameters and payload.parameters.model_extra:
             params = payload.parameters.model_extra
