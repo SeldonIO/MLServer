@@ -58,7 +58,7 @@ def test_encode_input(input: Any, expected: bytes):
             ],
             True,
         ),
-        ([np.array([1, 2, 3])], False),
+        ([np.array([1, 2, 3])], True),
         ([{1, 2, 3}], False),
     ],
 )

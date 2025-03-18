@@ -3,7 +3,7 @@
 import json
 import numpy as np
 from functools import partial
-from typing import Any, List, Union, Type
+from typing import Any, List, Union
 
 try:
     import orjson
@@ -11,7 +11,7 @@ except ImportError:
     orjson = None  # type: ignore
 
 from .string import decode_str
-from .lists import as_list, is_list_of
+from .lists import as_list
 from .utils import InputOrOutput, SingleInputRequestCodec
 from .base import InputCodec
 
@@ -41,7 +41,7 @@ def _encode_object_to_bytes(obj: Any) -> str:
     raise TypeError
 
 
-def encode_to_json_bytes(v: Any, cls: Type = _BytesJSONEncoder) -> bytes:
+def encode_to_json_bytes(v: Any) -> bytes:
     """encodes a dict into json bytes, can deal with byte like values gracefully"""
     if orjson is None:
         # Original implementation of starlette's JSONResponse, using our
@@ -55,7 +55,7 @@ def encode_to_json_bytes(v: Any, cls: Type = _BytesJSONEncoder) -> bytes:
             allow_nan=False,
             indent=None,
             separators=(",", ":"),
-            cls=cls,
+            cls=_BytesJSONEncoder,
         ).encode("utf-8")
 
     return orjson.dumps(v, default=_encode_object_to_bytes)
@@ -86,10 +86,36 @@ def decode_json_input_or_output(input_or_output: InputOrOutput) -> List[Any]:
 
 
 def encode_to_json(v: Any, use_bytes: bool = True) -> Union[str, bytes]:
-    enc_v = encode_to_json_bytes(v, cls=JSONEncoderWithArray)
-    if not use_bytes:
-        enc_v = enc_v.decode("utf-8")  # type: ignore[union-attr, assignment]
+    enc_v = json.dumps(
+        v,
+        ensure_ascii=False,
+        allow_nan=False,
+        indent=None,
+        separators=(",", ":"),
+        cls=JSONEncoderWithArray,
+    )
+    if use_bytes:
+        enc_v = enc_v.encode("utf-8")  # type: ignore[assignment]
     return enc_v
+
+
+def _is_primitive(obj):
+    return isinstance(
+        obj, (int, float, str, bool, type(None), np.floating, np.integer, np.ndarray)
+    )
+
+
+def _is_nested_primitives(obj):
+    if _is_primitive(obj):
+        return True
+    elif isinstance(obj, list):
+        return all(_is_nested_primitives(item) for item in obj)
+    elif isinstance(obj, dict):
+        return all(
+            isinstance(key, str) and _is_nested_primitives(value)
+            for key, value in obj.items()
+        )
+    return False
 
 
 class JSONCodec(InputCodec):
@@ -101,8 +127,11 @@ class JSONCodec(InputCodec):
     TypeHint = List[Any]
 
     @classmethod
-    def can_encode(cls, payload: Any) -> bool:
-        return is_list_of(payload, str) or is_list_of(payload, dict)
+    def can_encode(cls, payload: List[Any]) -> bool:
+        if not isinstance(payload, list):
+            return False
+
+        return all(_is_nested_primitives(item) for item in payload)
 
     @classmethod
     def encode_output(
