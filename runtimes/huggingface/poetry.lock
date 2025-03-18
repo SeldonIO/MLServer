@@ -1499,14 +1499,14 @@ i18n = ["Babel (>=2.7)"]
 
 [[package]]
 name = "keras"
-version = "3.7.0"
+version = "3.9.0"
 description = "Multi-backend Keras"
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "keras-3.7.0-py3-none-any.whl", hash = "sha256:546a64f302e4779c129c06d9826fa586de752cdfd43d7dc4010c31b282587969"},
-    {file = "keras-3.7.0.tar.gz", hash = "sha256:a4451a5591e75dfb414d0b84a3fd2fb9c0240cc87ebe7e397f547ce10b0e67b7"},
+    {file = "keras-3.9.0-py3-none-any.whl", hash = "sha256:71078e833994384f45d5ea192d18f0969a12bd2572a5d15968c755945ad91d1c"},
+    {file = "keras-3.9.0.tar.gz", hash = "sha256:b5bf04e7c64c3176eda5124d035005bb7a676fb505f42496c7b03a99d5683652"},
 ]
 
 [package.dependencies]
