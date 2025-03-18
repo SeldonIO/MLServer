@@ -449,7 +449,7 @@ files = [
     {file = "async-timeout-4.0.3.tar.gz", hash = "sha256:4640d96be84d82d02ed59ea2b7105a0f7b33abe8703703cd0ab0bf87c427522f"},
     {file = "async_timeout-4.0.3-py3-none-any.whl", hash = "sha256:7405140ff1230c310e51dc27b3145b9092d659ce68ff733fb0cefe3ee42be028"},
 ]
-markers = {main = "(platform_system == \"Linux\" or platform_system == \"Windows\") and platform_machine == \"aarch64\" or platform_system == \"Windows\"", all-runtimes = "python_version == \"3.9\" or (platform_system == \"Linux\" or platform_system == \"Windows\") and python_version <= \"3.10\" and platform_machine == \"aarch64\" or python_version == \"3.10\" or platform_system == \"Windows\" and python_version <= \"3.10\"", all-runtimes-dev = "python_version == \"3.9\" or (platform_system == \"Linux\" or platform_system == \"Windows\") and python_version <= \"3.10\" and platform_machine == \"aarch64\" or python_version == \"3.10\" or platform_system == \"Windows\" and python_version <= \"3.10\"", dev = "python_version == \"3.9\" or (platform_system == \"Linux\" or platform_system == \"Windows\") and python_version <= \"3.10\" and platform_machine == \"aarch64\" or python_version == \"3.10\" or platform_system == \"Windows\" and python_version <= \"3.10\""}
+markers = {main = "(platform_system == \"Linux\" or platform_system == \"Windows\") and platform_machine == \"aarch64\" or platform_system == \"Windows\"", all-runtimes = "python_version == \"3.9\" or python_version <= \"3.10\" and (platform_system == \"Linux\" or platform_system == \"Windows\") and platform_machine == \"aarch64\" or platform_system == \"Windows\" and python_version <= \"3.10\" or python_version == \"3.10\"", all-runtimes-dev = "python_version == \"3.9\" or python_version <= \"3.10\" and (platform_system == \"Linux\" or platform_system == \"Windows\") and platform_machine == \"aarch64\" or platform_system == \"Windows\" and python_version <= \"3.10\" or python_version == \"3.10\"", dev = "python_version == \"3.9\" or python_version <= \"3.10\" and (platform_system == \"Linux\" or platform_system == \"Windows\") and platform_machine == \"aarch64\" or platform_system == \"Windows\" and python_version <= \"3.10\" or python_version == \"3.10\""}
 
 [[package]]
 name = "attrs"
@@ -1140,7 +1140,7 @@ files = [
     {file = "colorama-0.4.6-py2.py3-none-any.whl", hash = "sha256:4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6"},
     {file = "colorama-0.4.6.tar.gz", hash = "sha256:08695f5cb7ed6e0531a20572697297273c47b8cae5a63ffc6d6ed5c201be6e44"},
 ]
-markers = {main = "platform_system == \"Windows\"", all-runtimes = "platform_system == \"Linux\" and sys_platform == \"win32\" and platform_machine == \"aarch64\" or platform_system == \"Windows\"", all-runtimes-dev = "platform_system == \"Windows\"", dev = "(platform_system == \"Linux\" or platform_system == \"Windows\") and platform_machine == \"aarch64\" or platform_system == \"Windows\"", docs = "(platform_system == \"Linux\" or platform_system == \"Windows\") and platform_machine == \"aarch64\" or platform_system == \"Windows\"", test = "(platform_system == \"Linux\" or platform_system == \"Windows\") and platform_machine == \"aarch64\" or platform_system == \"Windows\""}
+markers = {main = "platform_system == \"Windows\"", all-runtimes = "sys_platform == \"win32\" or platform_system == \"Windows\"", all-runtimes-dev = "platform_system == \"Windows\"", dev = "(platform_system == \"Linux\" or platform_system == \"Windows\") and platform_machine == \"aarch64\" or platform_system == \"Windows\"", docs = "(platform_system == \"Linux\" or platform_system == \"Windows\") and platform_machine == \"aarch64\" or platform_system == \"Windows\"", test = "(platform_system == \"Linux\" or platform_system == \"Windows\") and platform_machine == \"aarch64\" or platform_system == \"Windows\""}
 
 [[package]]
 name = "coloredlogs"
@@ -1710,7 +1710,7 @@ description = "Backport of PEP 654 (exception groups)"
 optional = false
 python-versions = ">=3.7"
 groups = ["main", "dev", "docs"]
-markers = "python_version == \"3.9\" or (platform_system == \"Linux\" or platform_system == \"Windows\") and python_version <= \"3.10\" and platform_machine == \"aarch64\" or python_version == \"3.10\" or platform_system == \"Windows\" and python_version <= \"3.10\""
+markers = "python_version == \"3.9\" or python_version <= \"3.10\" and (platform_system == \"Linux\" or platform_system == \"Windows\") and platform_machine == \"aarch64\" or platform_system == \"Windows\" and python_version <= \"3.10\" or python_version == \"3.10\""
 files = [
     {file = "exceptiongroup-1.2.2-py3-none-any.whl", hash = "sha256:3111b9d131c238bec2f8f516e123e14ba243563fb135d3fe885990585aa7795b"},
     {file = "exceptiongroup-1.2.2.tar.gz", hash = "sha256:47c2edf7c6738fafb49fd34290706d1a1a2f4d1c6df275526b62cbb4aa5393cc"},
@@ -2507,7 +2507,7 @@ files = [
     {file = "greenlet-3.1.1-cp39-cp39-win_amd64.whl", hash = "sha256:3319aa75e0e0639bc15ff54ca327e8dc7a6fe404003496e3c6925cd3142e0e22"},
     {file = "greenlet-3.1.1.tar.gz", hash = "sha256:4ce3ac6cdb6adf7946475d7ef31777c26d94bccc377e070a7986bd2d5c515467"},
 ]
-markers = {main = "platform_python_implementation == \"CPython\" and platform_system == \"Windows\"", all-runtimes = "(platform_machine == \"aarch64\" or platform_machine == \"ppc64le\" or platform_machine == \"x86_64\" or platform_machine == \"amd64\" or platform_machine == \"AMD64\" or platform_machine == \"win32\" or platform_machine == \"WIN32\") and platform_system == \"Windows\"", all-runtimes-dev = "(platform_machine == \"aarch64\" or platform_machine == \"ppc64le\" or platform_machine == \"x86_64\" or platform_machine == \"amd64\" or platform_machine == \"AMD64\" or platform_machine == \"win32\" or platform_machine == \"WIN32\") and platform_system == \"Windows\""}
+markers = {main = "platform_system == \"Windows\" and platform_python_implementation == \"CPython\"", all-runtimes = "platform_system == \"Windows\" and (platform_machine == \"aarch64\" or platform_machine == \"ppc64le\" or platform_machine == \"x86_64\" or platform_machine == \"amd64\" or platform_machine == \"AMD64\" or platform_machine == \"win32\" or platform_machine == \"WIN32\")", all-runtimes-dev = "platform_system == \"Windows\" and (platform_machine == \"aarch64\" or platform_machine == \"ppc64le\" or platform_machine == \"x86_64\" or platform_machine == \"amd64\" or platform_machine == \"AMD64\" or platform_machine == \"win32\" or platform_machine == \"WIN32\")"}
 
 [package.extras]
 docs = ["Sphinx", "furo"]
@@ -6236,7 +6236,7 @@ description = "A python implementation of GNU readline."
 optional = false
 python-versions = ">=3.8"
 groups = ["all-runtimes"]
-markers = "sys_platform == \"win32\" and (platform_system == \"Linux\" or platform_system == \"Windows\") and (platform_machine == \"aarch64\" or platform_system == \"Windows\")"
+markers = "(platform_system == \"Linux\" or platform_system == \"Windows\") and sys_platform == \"win32\" and (platform_machine == \"aarch64\" or platform_system == \"Windows\")"
 files = [
     {file = "pyreadline3-3.5.4-py3-none-any.whl", hash = "sha256:eaf8e6cc3c49bcccf145fc6067ba8643d1df34d604a1ec0eccbf7a18e6d3fae6"},
     {file = "pyreadline3-3.5.4.tar.gz", hash = "sha256:8d57d53039a1c75adba8e50dd3d992b28143480816187ea5efbd5c78e6c885b7"},
@@ -6565,7 +6565,7 @@ description = "Python for Window Extensions"
 optional = false
 python-versions = "*"
 groups = ["all-runtimes", "all-runtimes-dev", "dev"]
-markers = "sys_platform == \"win32\" and platform_system == \"Windows\""
+markers = "platform_system == \"Windows\" and sys_platform == \"win32\""
 files = [
     {file = "pywin32-308-cp310-cp310-win32.whl", hash = "sha256:796ff4426437896550d2981b9c2ac0ffd75238ad9ea2d3bfa67a1abd546d262e"},
     {file = "pywin32-308-cp310-cp310-win_amd64.whl", hash = "sha256:4fc888c59b3c0bef905ce7eb7e2106a07712015ea1c8234b703a088d46110e8e"},
@@ -8060,7 +8060,7 @@ description = "TensorFlow IO"
 optional = false
 python-versions = "<3.13,>=3.7"
 groups = ["all-runtimes", "docker"]
-markers = "python_version == \"3.11\" or python_version == \"3.9\" or (platform_system == \"Linux\" or platform_system == \"Windows\") and python_version < \"3.12\" and platform_machine == \"aarch64\" or python_version == \"3.10\" or platform_system == \"Windows\" and python_version < \"3.12\""
+markers = "python_version == \"3.9\" or python_version < \"3.12\" and (platform_system == \"Linux\" or platform_system == \"Windows\") and platform_machine == \"aarch64\" or platform_system == \"Windows\" and python_version < \"3.12\" or python_version == \"3.11\" or python_version == \"3.10\""
 files = [
     {file = "tensorflow_io_gcs_filesystem-0.37.1-cp310-cp310-macosx_10_14_x86_64.whl", hash = "sha256:249c12b830165841411ba71e08215d0e94277a49c551e6dd5d72aab54fe5491b"},
     {file = "tensorflow_io_gcs_filesystem-0.37.1-cp310-cp310-macosx_12_0_arm64.whl", hash = "sha256:257aab23470a0796978efc9c2bcf8b0bc80f22e6298612a4c0a50d3f4e88060c"},
@@ -8396,7 +8396,7 @@ files = [
     {file = "toml-0.10.2-py2.py3-none-any.whl", hash = "sha256:806143ae5bfb6a3c6e736a764057db0e6a0e05e338b5630894a5f779cabb4f9b"},
     {file = "toml-0.10.2.tar.gz", hash = "sha256:b3bda1d108d5dd99f4a20d24d9c348e91c4db7ab1b749200bded2f839ccbe68f"},
 ]
-markers = {all-runtimes = "(platform_system == \"Linux\" or platform_system == \"Windows\") and platform_machine == \"aarch64\" or platform_system == \"Windows\"", dev = "python_version == \"3.9\" or (platform_system == \"Linux\" or platform_system == \"Windows\") and python_version <= \"3.10\" and platform_machine == \"aarch64\" or python_version == \"3.10\" or platform_system == \"Windows\" and python_version <= \"3.10\""}
+markers = {all-runtimes = "(platform_system == \"Linux\" or platform_system == \"Windows\") and platform_machine == \"aarch64\" or platform_system == \"Windows\"", dev = "python_version == \"3.9\" or python_version <= \"3.10\" and (platform_system == \"Linux\" or platform_system == \"Windows\") and platform_machine == \"aarch64\" or platform_system == \"Windows\" and python_version <= \"3.10\" or python_version == \"3.10\""}
 
 [[package]]
 name = "tomli"
@@ -8405,7 +8405,7 @@ description = "A lil' TOML parser"
 optional = false
 python-versions = ">=3.8"
 groups = ["dev", "test"]
-markers = "python_version == \"3.9\" or (platform_system == \"Linux\" or platform_system == \"Windows\") and python_version <= \"3.10\" and platform_machine == \"aarch64\" or python_version == \"3.10\" or platform_system == \"Windows\" and python_version <= \"3.10\""
+markers = "python_version == \"3.9\" or python_version <= \"3.10\" and (platform_system == \"Linux\" or platform_system == \"Windows\") and platform_machine == \"aarch64\" or platform_system == \"Windows\" and python_version <= \"3.10\" or python_version == \"3.10\""
 files = [
     {file = "tomli-2.0.2-py3-none-any.whl", hash = "sha256:2ebe24485c53d303f690b0ec092806a085f07af5a5aa1464f3931eec36caaa38"},
     {file = "tomli-2.0.2.tar.gz", hash = "sha256:d46d457a85337051c36524bc5349dd91b1877838e2979ac5ced3e710ed8a60ed"},
@@ -8768,15 +8768,15 @@ files = [
 
 [[package]]
 name = "types-requests"
-version = "2.31.0.20240311"
+version = "2.32.0.20250306"
 description = "Typing stubs for requests"
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.9"
 groups = ["all-runtimes-dev", "dev"]
 markers = "(platform_system == \"Linux\" or platform_system == \"Windows\") and platform_machine == \"aarch64\" or platform_system == \"Windows\""
 files = [
-    {file = "types-requests-2.31.0.20240311.tar.gz", hash = "sha256:b1c1b66abfb7fa79aae09097a811c4aa97130eb8831c60e47aee4ca344731ca5"},
-    {file = "types_requests-2.31.0.20240311-py3-none-any.whl", hash = "sha256:47872893d65a38e282ee9f277a4ee50d1b28bd592040df7d1fdaffdf3779937d"},
+    {file = "types_requests-2.32.0.20250306-py3-none-any.whl", hash = "sha256:25f2cbb5c8710b2022f8bbee7b2b66f319ef14aeea2f35d80f18c9dbf3b60a0b"},
+    {file = "types_requests-2.32.0.20250306.tar.gz", hash = "sha256:0962352694ec5b2f95fda877ee60a159abdf84a0fc6fdace599f20acb41a03d1"},
 ]
 
 [package.dependencies]
@@ -9681,4 +9681,4 @@ testing = ["coverage[toml]", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.9,<3.13"
-content-hash = "f6a228eb016a838d49fc9875edd274c06cca93238c8e7fdfa6a493d796af8642"
+content-hash = "b012a193f0c3f62496e210bd987f5f609168796441a6fb754af88eaa947765c0"
