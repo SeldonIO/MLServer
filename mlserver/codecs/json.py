@@ -79,12 +79,6 @@ class JSONEncoderWithArray(json.JSONEncoder):
             return json.JSONEncoder.default(self, obj)
 
 
-def decode_json_input_or_output(input_or_output: InputOrOutput) -> List[Any]:
-    packed = input_or_output.data.root
-    unpacked = map(decode_from_bytelike_json_to_dict, as_list(packed))
-    return list(unpacked)
-
-
 def encode_to_json(v: Any, use_bytes: bool = True) -> Union[str, bytes]:
     enc_v = json.dumps(
         v,
@@ -97,6 +91,12 @@ def encode_to_json(v: Any, use_bytes: bool = True) -> Union[str, bytes]:
     if use_bytes:
         enc_v = enc_v.encode("utf-8")  # type: ignore[assignment]
     return enc_v
+
+
+def decode_json_input_or_output(input_or_output: InputOrOutput) -> List[Any]:
+    packed = input_or_output.data.root
+    unpacked = map(json.loads, as_list(packed))
+    return list(unpacked)
 
 
 def _is_primitive(obj):

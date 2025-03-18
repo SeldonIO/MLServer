@@ -195,7 +195,7 @@ async def test_predict_pytorch(runtime_pytorch: MLflowRuntime):
                         name="baz",
                         datatype="BYTES",
                         shape=[3, 1],
-                        data=[b"a", b"b", b'{"a":1}'],
+                        data=[b'"a"', b'"b"', b'{"a":1}'],
                         parameters=Parameters(content_type=JSONCodec.ContentType),
                     ),
                     ResponseOutput(

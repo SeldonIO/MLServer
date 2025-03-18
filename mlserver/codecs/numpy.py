@@ -50,23 +50,16 @@ def to_dtype(input_or_output: InputOrOutput) -> "np.dtype":
     return np.dtype(dtype)
 
 
-def dtype_to_str(dtype: np.dtype) -> str:
+def to_datatype(dtype: np.dtype) -> Datatype:
     as_str = str(dtype)
 
-    # If not present, try with kind
     if as_str not in _NumpyToDatatype:
+        # If not present, try with kind
         as_str = getattr(dtype, "kind")
 
-    return as_str
+    datatype = _NumpyToDatatype[as_str]
 
-
-def str_to_np_dtype(dtype: str) -> Datatype:
-    return _NumpyToDatatype[dtype]
-
-
-def to_datatype(dtype: np.dtype) -> Datatype:
-    as_str = dtype_to_str(dtype)
-    return str_to_np_dtype(as_str)
+    return datatype
 
 
 def _to_ndarray(input_or_output: InputOrOutput) -> np.ndarray:
