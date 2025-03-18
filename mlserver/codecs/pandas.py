@@ -82,8 +82,8 @@ def _process_bytes(
     for elem in data:
         converted = elem
         if not isinstance(elem, str):
-            # There was a non-string element of primitive type,
-            # so we don't do anything
+            # There was a non-string element, so we can't determine a content
+            # type
             content_type = None
         elif use_bytes:
             converted = encode_str(elem)
