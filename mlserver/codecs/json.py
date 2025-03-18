@@ -79,7 +79,7 @@ class JSONEncoderWithArray(json.JSONEncoder):
             return json.JSONEncoder.default(self, obj)
 
 
-def decode_input_or_output(input_or_output: InputOrOutput) -> List[Any]:
+def decode_json_input_or_output(input_or_output: InputOrOutput) -> List[Any]:
     packed = input_or_output.data.root
     unpacked = map(decode_from_bytelike_json_to_dict, as_list(packed))
     return list(unpacked)
@@ -121,11 +121,11 @@ class JSONCodec(InputCodec):
 
     @classmethod
     def decode_output(cls, response_output: ResponseOutput) -> List[Any]:
-        return decode_input_or_output(response_output)
+        return decode_json_input_or_output(response_output)
 
     @classmethod
     def decode_input(cls, request_input: RequestInput) -> List[Any]:
-        return decode_input_or_output(request_input)
+        return decode_json_input_or_output(request_input)
 
     @classmethod
     def encode_input(
