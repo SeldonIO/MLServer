@@ -18,11 +18,11 @@ install-dev:
 
 lock:
 	echo "Locking mlserver deps..."
-	poetry lock --no-update
+	poetry lock
 	for _runtime in ./runtimes/*; \
 	do \
 		echo "Locking $$_runtime deps..."; \
-		poetry lock --no-update -C $$_runtime; \
+		poetry lock -C $$_runtime; \
 	done
 
 _generate_model_repository: # "private" target to call `fmt` after `generate`
