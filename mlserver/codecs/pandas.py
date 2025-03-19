@@ -5,7 +5,7 @@ from typing import Optional, Any, List, Tuple
 
 from .base import RequestCodec, register_request_codec
 from .numpy import to_dtype, convert_nan, to_datatype
-from .json import decode_json_input_or_output, JSONCodec, encode_to_json
+from .json import decode_json_input_or_output, encode_to_json
 from .string import encode_str, StringCodec
 from .utils import get_decoded_or_raw, InputOrOutput, inject_batch_dimension
 from .lists import ListElement
@@ -18,11 +18,13 @@ from ..types import (
     Datatype,
 )
 
+PandasJsonContentType = "json"
+
 
 def _to_series(input_or_output: InputOrOutput) -> pd.Series:
     parameters = input_or_output.parameters
 
-    if parameters and parameters.content_type == JSONCodec.ContentType:
+    if parameters and parameters.content_type == PandasJsonContentType:
         return pd.Series(decode_json_input_or_output(input_or_output))
 
     payload = get_decoded_or_raw(input_or_output)
@@ -52,7 +54,7 @@ def _to_response_output(series: pd.Series, use_bytes: bool = True) -> ResponseOu
 
         if content_type is None:
             data = [encode_to_json(elem, use_bytes) for elem in data]
-            content_type = JSONCodec.ContentType
+            content_type = PandasJsonContentType
         else:
             data = processed_data
 

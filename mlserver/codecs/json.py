@@ -2,7 +2,6 @@
 
 import json
 import numpy as np
-from functools import partial
 from typing import Any, List, Union
 
 try:
@@ -12,10 +11,7 @@ except ImportError:
 
 from .string import decode_str
 from .lists import as_list
-from .utils import InputOrOutput, SingleInputRequestCodec
-from .base import InputCodec
-
-from ..types import RequestInput, ResponseOutput, Parameters
+from .utils import InputOrOutput
 
 
 # originally taken from: mlserver/rest/responses.py
@@ -97,85 +93,3 @@ def decode_json_input_or_output(input_or_output: InputOrOutput) -> List[Any]:
     packed = input_or_output.data.root
     unpacked = map(json.loads, as_list(packed))
     return list(unpacked)
-
-
-def _is_primitive(obj):
-    return isinstance(
-        obj, (int, float, str, bool, type(None), np.floating, np.integer, np.ndarray)
-    )
-
-
-def _is_nested_primitives(obj):
-    if _is_primitive(obj):
-        return True
-    elif isinstance(obj, list):
-        return all(_is_nested_primitives(item) for item in obj)
-    elif isinstance(obj, dict):
-        return all(
-            isinstance(key, str) and _is_nested_primitives(value)
-            for key, value in obj.items()
-        )
-    return False
-
-
-class JSONCodec(InputCodec):
-    """
-    Encodes a list of Python objects as a BYTES input (output).
-    """
-
-    ContentType = "json"
-    TypeHint = List[Any]
-
-    @classmethod
-    def can_encode(cls, payload: List[Any]) -> bool:
-        if not isinstance(payload, list):
-            return False
-
-        return all(_is_nested_primitives(item) for item in payload)
-
-    @classmethod
-    def encode_output(
-        cls, name: str, payload: List[Any], use_bytes: bool = True, **kwargs
-    ) -> ResponseOutput:
-
-        packed = list(map(partial(encode_to_json, use_bytes=use_bytes), payload))
-        shape = [len(payload), 1]
-        return ResponseOutput(
-            name=name,
-            datatype="BYTES",
-            shape=shape,
-            data=packed,
-            parameters=Parameters(content_type=cls.ContentType),
-        )
-
-    @classmethod
-    def decode_output(cls, response_output: ResponseOutput) -> List[Any]:
-        return decode_json_input_or_output(response_output)
-
-    @classmethod
-    def decode_input(cls, request_input: RequestInput) -> List[Any]:
-        return decode_json_input_or_output(request_input)
-
-    @classmethod
-    def encode_input(
-        cls, name: str, payload: List[Any], use_bytes: bool = True, **kwargs
-    ) -> RequestInput:
-        output = cls.encode_output(name, payload, use_bytes)
-        return RequestInput(
-            name=output.name,
-            datatype=output.datatype,
-            shape=output.shape,
-            data=output.data,
-            parameters=output.parameters,
-        )
-
-
-class JSONRequestCodec(SingleInputRequestCodec):
-    """
-    Decodes the first input (output) of request (response) as a NumPy array.
-    This codec can be useful for cases where the whole payload is a single
-    NumPy tensor.
-    """
-
-    InputCodec = JSONCodec
-    ContentType = JSONCodec.ContentType

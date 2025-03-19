@@ -4,9 +4,12 @@ import numpy as np
 
 from typing import Any
 
-from mlserver.codecs.pandas import PandasCodec, _to_response_output
+from mlserver.codecs.pandas import (
+    PandasCodec,
+    _to_response_output,
+    PandasJsonContentType,
+)
 from mlserver.codecs.string import StringCodec
-from mlserver.codecs.json import JSONCodec
 from mlserver.types import (
     InferenceRequest,
     InferenceResponse,
@@ -72,7 +75,7 @@ def test_can_encode(payload: Any, expected: bool):
                 shape=[2, 1],
                 data=[b"[1,2,3]", b"[4,5,6]"],
                 datatype="BYTES",
-                parameters=Parameters(content_type=JSONCodec.ContentType),
+                parameters=Parameters(content_type=PandasJsonContentType),
             ),
         ),
         (

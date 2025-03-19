@@ -1,4 +1,3 @@
-from .json import JSONCodec, JSONRequestCodec
 from .numpy import NumpyCodec, NumpyRequestCodec
 from .pandas import PandasCodec
 from .string import StringCodec, StringRequestCodec
@@ -27,8 +26,6 @@ from .utils import (
 
 __all__ = [
     "CodecError",
-    "JSONCodec",
-    "JSONRequestCodec",
     "NumpyCodec",
     "NumpyRequestCodec",
     "StringCodec",

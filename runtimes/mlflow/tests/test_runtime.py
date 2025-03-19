@@ -4,7 +4,8 @@ import numpy as np
 import pandas as pd
 
 from typing import Any
-from mlserver.codecs import NumpyCodec, PandasCodec, StringCodec, JSONCodec
+from mlserver.codecs import NumpyCodec, PandasCodec, StringCodec
+from mlserver.codecs.pandas import PandasJsonContentType
 from mlserver.types import (
     InferenceRequest,
     Parameters,
@@ -182,21 +183,21 @@ async def test_predict_pytorch(runtime_pytorch: MLflowRuntime):
                         datatype="BYTES",
                         shape=[3, 1],
                         data=[b"[1]", b"[1,2]", b"[1,2,3]"],
-                        parameters=Parameters(content_type=JSONCodec.ContentType),
+                        parameters=Parameters(content_type=PandasJsonContentType),
                     ),
                     ResponseOutput(
                         name="bar",
                         datatype="BYTES",
                         shape=[3, 1],
                         data=[b'{"a":1}', b'{"a":1,"b":2}', b'{"a":1,"b":2,"c":3}'],
-                        parameters=Parameters(content_type=JSONCodec.ContentType),
+                        parameters=Parameters(content_type=PandasJsonContentType),
                     ),
                     ResponseOutput(
                         name="baz",
                         datatype="BYTES",
                         shape=[3, 1],
                         data=[b'"a"', b'"b"', b'{"a":1}'],
-                        parameters=Parameters(content_type=JSONCodec.ContentType),
+                        parameters=Parameters(content_type=PandasJsonContentType),
                     ),
                     ResponseOutput(
                         name="qux",
@@ -207,7 +208,7 @@ async def test_predict_pytorch(runtime_pytorch: MLflowRuntime):
                             b'{"a":1,"b":{"c":{"d":1}},"e":2}',
                             b'{"a":1,"b":{"c":{"d":1}},"e":2,"f":3}',
                         ],
-                        parameters=Parameters(content_type=JSONCodec.ContentType),
+                        parameters=Parameters(content_type=PandasJsonContentType),
                     ),
                 ],
             ),
