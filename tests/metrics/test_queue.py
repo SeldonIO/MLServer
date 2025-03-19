@@ -57,6 +57,10 @@ async def test_batch_queue_metrics(
         ]
     )
 
+    import time
+
+    time.sleep(10)
+
     metrics = await metrics_client.metrics()
     batch_request_queue = find_metric(metrics, metric_name)
     assert batch_request_queue is not None
