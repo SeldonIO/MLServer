@@ -68,17 +68,6 @@ def test_can_encode(payload: Any, expected: bool):
             ),
         ),
         (
-            pd.Series(data=[[1, 2, 3], [4, 5, 6]], name="bar"),
-            True,
-            ResponseOutput(
-                name="bar",
-                shape=[2, 1],
-                data=[b"[1,2,3]", b"[4,5,6]"],
-                datatype="BYTES",
-                parameters=Parameters(content_type=PandasJsonContentType),
-            ),
-        ),
-        (
             pd.Series(data=[4, np.NaN, 6], name="bar"),
             True,
             ResponseOutput(
@@ -86,6 +75,67 @@ def test_can_encode(payload: Any, expected: bool):
                 shape=[3, 1],
                 data=[4, None, 6],
                 datatype="FP64",
+            ),
+        ),
+        (
+            pd.Series(data=[[1, 2], [3, 4, 5]], name="bar"),
+            True,
+            ResponseOutput(
+                name="bar",
+                shape=[2, 1],
+                data=[b"[1,2]", b"[3,4,5]"],
+                datatype="BYTES",
+                parameters=Parameters(content_type=PandasJsonContentType),
+            ),
+        ),
+        (
+            pd.Series(data=[{"a": 1}, {"b": 2, "c": 3}], name="bar"),
+            True,
+            ResponseOutput(
+                name="bar",
+                shape=[2, 1],
+                data=[b'{"a":1}', b'{"b":2,"c":3}'],
+                datatype="BYTES",
+                parameters=Parameters(content_type=PandasJsonContentType),
+            ),
+        ),
+        (
+            pd.Series(data=["a", "b", {"a": 1}], name="bar"),
+            True,
+            ResponseOutput(
+                name="bar",
+                shape=[3, 1],
+                data=[b'"a"', b'"b"', b'{"a":1}'],
+                datatype="BYTES",
+                parameters=Parameters(content_type=PandasJsonContentType),
+            ),
+        ),
+        (
+            pd.Series(data=[np.array([1, 2]), np.array([3, 4, 5])], name="bar"),
+            True,
+            ResponseOutput(
+                name="bar",
+                shape=[2, 1],
+                data=[b"[1,2]", b"[3,4,5]"],
+                datatype="BYTES",
+                parameters=Parameters(content_type=PandasJsonContentType),
+            ),
+        ),
+        (
+            pd.Series(
+                data=[
+                    {"a": 1, "b": {"c": 2}},
+                    {"d": 3, "e": {"f": 4, "g": 5}},
+                ],
+                name="bar",
+            ),
+            True,
+            ResponseOutput(
+                name="bar",
+                shape=[2, 1],
+                data=[b'{"a":1,"b":{"c":2}}', b'{"d":3,"e":{"f":4,"g":5}}'],
+                datatype="BYTES",
+                parameters=Parameters(content_type=PandasJsonContentType),
             ),
         ),
     ],
@@ -166,6 +216,62 @@ def test_to_response_output(series, use_bytes, expected):
                     ResponseOutput(
                         name="a", shape=[3, 1], datatype="FP64", data=[1, None, 3]
                     )
+                ],
+            ),
+        ),
+        (
+            pd.DataFrame(
+                {
+                    "a": [[1], [1, 2]],
+                    "b": [{"a": 1}, {"a": 1, "b": 2}],
+                    "c": [np.array([1, 2]), np.array([1, 2, 3])],
+                    "d": ["a", {"a": 1}],
+                    "e": [
+                        {"a": 1, "b": {"c": 2}},
+                        {"d": 3, "e": {"f": 4, "g": 5}},
+                    ],
+                }
+            ),
+            False,
+            InferenceResponse(
+                model_name="my-model",
+                parameters=Parameters(content_type=PandasCodec.ContentType),
+                outputs=[
+                    ResponseOutput(
+                        name="a",
+                        shape=[2, 1],
+                        datatype="BYTES",
+                        data=["[1]", "[1,2]"],
+                        parameters=Parameters(content_type=PandasJsonContentType),
+                    ),
+                    ResponseOutput(
+                        name="b",
+                        shape=[2, 1],
+                        datatype="BYTES",
+                        data=['{"a":1}', '{"a":1,"b":2}'],
+                        parameters=Parameters(content_type=PandasJsonContentType),
+                    ),
+                    ResponseOutput(
+                        name="c",
+                        shape=[2, 1],
+                        datatype="BYTES",
+                        data=["[1,2]", "[1,2,3]"],
+                        parameters=Parameters(content_type=PandasJsonContentType),
+                    ),
+                    ResponseOutput(
+                        name="d",
+                        shape=[2, 1],
+                        datatype="BYTES",
+                        data=['"a"', '{"a":1}'],
+                        parameters=Parameters(content_type=PandasJsonContentType),
+                    ),
+                    ResponseOutput(
+                        name="e",
+                        shape=[2, 1],
+                        datatype="BYTES",
+                        data=['{"a":1,"b":{"c":2}}', '{"d":3,"e":{"f":4,"g":5}}'],
+                        parameters=Parameters(content_type=PandasJsonContentType),
+                    ),
                 ],
             ),
         ),
@@ -254,6 +360,61 @@ def test_encode_response(dataframe, use_bytes, expected):
                 }
             ),
         ),
+        (
+            InferenceResponse(
+                model_name="my-model",
+                parameters=Parameters(content_type=PandasCodec.ContentType),
+                outputs=[
+                    ResponseOutput(
+                        name="a",
+                        shape=[2, 1],
+                        datatype="BYTES",
+                        data=["[1]", "[1,2]"],
+                        parameters=Parameters(content_type=PandasJsonContentType),
+                    ),
+                    ResponseOutput(
+                        name="b",
+                        shape=[2, 1],
+                        datatype="BYTES",
+                        data=['{"a":1}', '{"a":1,"b":2}'],
+                        parameters=Parameters(content_type=PandasJsonContentType),
+                    ),
+                    ResponseOutput(
+                        name="c",
+                        shape=[2, 1],
+                        datatype="BYTES",
+                        data=["[1,2]", "[1,2,3]"],
+                        parameters=Parameters(content_type=PandasJsonContentType),
+                    ),
+                    ResponseOutput(
+                        name="d",
+                        shape=[2, 1],
+                        datatype="BYTES",
+                        data=['"a"', '{"a":1}'],
+                        parameters=Parameters(content_type=PandasJsonContentType),
+                    ),
+                    ResponseOutput(
+                        name="e",
+                        shape=[2, 1],
+                        datatype="BYTES",
+                        data=['{"a":1,"b":{"c":2}}', '{"d":3,"e":{"f":4,"g":5}}'],
+                        parameters=Parameters(content_type=PandasJsonContentType),
+                    ),
+                ],
+            ),
+            pd.DataFrame(
+                {
+                    "a": [[1], [1, 2]],
+                    "b": [{"a": 1}, {"a": 1, "b": 2}],
+                    "c": [np.array([1, 2]), np.array([1, 2, 3])],
+                    "d": ["a", {"a": 1}],
+                    "e": [
+                        {"a": 1, "b": {"c": 2}},
+                        {"d": 3, "e": {"f": 4, "g": 5}},
+                    ],
+                }
+            ),
+        ),
     ],
 )
 def test_decode_response(response: InferenceResponse, expected: pd.DataFrame):
@@ -308,6 +469,61 @@ def test_decode_response(response: InferenceResponse, expected: pd.DataFrame):
                         datatype="BYTES",
                         data=["A", "B", "C"],
                         parameters=Parameters(content_type=StringCodec.ContentType),
+                    ),
+                ],
+            ),
+        ),
+        (
+            pd.DataFrame(
+                {
+                    "a": [[1], [1, 2]],
+                    "b": [{"a": 1}, {"a": 1, "b": 2}],
+                    "c": [np.array([1, 2]), np.array([1, 2, 3])],
+                    "d": ["a", {"a": 1}],
+                    "e": [
+                        {"a": 1, "b": {"c": 2}},
+                        {"d": 3, "e": {"f": 4, "g": 5}},
+                    ],
+                }
+            ),
+            False,
+            InferenceRequest(
+                parameters=Parameters(content_type=PandasCodec.ContentType),
+                inputs=[
+                    RequestInput(
+                        name="a",
+                        shape=[2, 1],
+                        datatype="BYTES",
+                        data=["[1]", "[1,2]"],
+                        parameters=Parameters(content_type=PandasJsonContentType),
+                    ),
+                    RequestInput(
+                        name="b",
+                        shape=[2, 1],
+                        datatype="BYTES",
+                        data=['{"a":1}', '{"a":1,"b":2}'],
+                        parameters=Parameters(content_type=PandasJsonContentType),
+                    ),
+                    RequestInput(
+                        name="c",
+                        shape=[2, 1],
+                        datatype="BYTES",
+                        data=["[1,2]", "[1,2,3]"],
+                        parameters=Parameters(content_type=PandasJsonContentType),
+                    ),
+                    RequestInput(
+                        name="d",
+                        shape=[2, 1],
+                        datatype="BYTES",
+                        data=['"a"', '{"a":1}'],
+                        parameters=Parameters(content_type=PandasJsonContentType),
+                    ),
+                    RequestInput(
+                        name="e",
+                        shape=[2, 1],
+                        datatype="BYTES",
+                        data=['{"a":1,"b":{"c":2}}', '{"d":3,"e":{"f":4,"g":5}}'],
+                        parameters=Parameters(content_type=PandasJsonContentType),
                     ),
                 ],
             ),
@@ -442,6 +658,60 @@ def test_encode_request(
                     "c": "int32",
                     "d": "uint8",
                     "f": "bool",
+                }
+            ),
+        ),
+        (
+            InferenceRequest(
+                parameters=Parameters(content_type=PandasCodec.ContentType),
+                inputs=[
+                    RequestInput(
+                        name="a",
+                        shape=[2, 1],
+                        datatype="BYTES",
+                        data=["[1]", "[1,2]"],
+                        parameters=Parameters(content_type=PandasJsonContentType),
+                    ),
+                    RequestInput(
+                        name="b",
+                        shape=[2, 1],
+                        datatype="BYTES",
+                        data=['{"a":1}', '{"a":1,"b":2}'],
+                        parameters=Parameters(content_type=PandasJsonContentType),
+                    ),
+                    RequestInput(
+                        name="c",
+                        shape=[2, 1],
+                        datatype="BYTES",
+                        data=["[1,2]", "[1,2,3]"],
+                        parameters=Parameters(content_type=PandasJsonContentType),
+                    ),
+                    RequestInput(
+                        name="d",
+                        shape=[2, 1],
+                        datatype="BYTES",
+                        data=['"a"', '{"a":1}'],
+                        parameters=Parameters(content_type=PandasJsonContentType),
+                    ),
+                    RequestInput(
+                        name="e",
+                        shape=[2, 1],
+                        datatype="BYTES",
+                        data=['{"a":1,"b":{"c":2}}', '{"d":3,"e":{"f":4,"g":5}}'],
+                        parameters=Parameters(content_type=PandasJsonContentType),
+                    ),
+                ],
+            ),
+            pd.DataFrame(
+                {
+                    "a": [[1], [1, 2]],
+                    "b": [{"a": 1}, {"a": 1, "b": 2}],
+                    "c": [np.array([1, 2]), np.array([1, 2, 3])],
+                    "d": ["a", {"a": 1}],
+                    "e": [
+                        {"a": 1, "b": {"c": 2}},
+                        {"d": 3, "e": {"f": 4, "g": 5}},
+                    ],
                 }
             ),
         ),
