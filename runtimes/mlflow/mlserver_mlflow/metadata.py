@@ -21,7 +21,6 @@ from mlserver.codecs import (
     DatetimeCodec,
 )
 from mlserver.codecs.numpy import to_datatype
-from mlserver.codecs.pandas import PandasJsonContentType
 
 from .codecs import TensorDictCodec
 
@@ -48,7 +47,7 @@ def _get_content_type(input_spec: InputSpec) -> Tuple[MDatatype, str]:
         return datatype, NumpyCodec.ContentType
 
     if isinstance(input_spec.type, (Array, Object, Map, AnyType)):
-        return MDatatype.BYTES, PandasJsonContentType
+        return MDatatype.BYTES, PandasCodec.JsonContentType
 
     # TODO: Check if new type, which may not exist
     return _MLflowToContentType[input_spec.type]

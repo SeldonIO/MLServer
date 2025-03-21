@@ -30,7 +30,6 @@ from mlserver.types import (
     Parameters,
 )
 from mlserver.types import Datatype as MDatatype
-from mlserver.codecs.pandas import PandasJsonContentType
 
 from mlserver_mlflow.codecs import TensorDictCodec
 from mlserver_mlflow.metadata import (
@@ -59,11 +58,11 @@ from mlserver_mlflow.metadata import (
         ),
         (
             ColSpec(name="foo", type=Array(dtype=DataType.long)),
-            (MDatatype.BYTES, PandasJsonContentType),
+            (MDatatype.BYTES, PandasCodec.JsonContentType),
         ),
         (
             ColSpec(name="foo", type=Map(Array(dtype=DataType.long))),
-            (MDatatype.BYTES, PandasJsonContentType),
+            (MDatatype.BYTES, PandasCodec.JsonContentType),
         ),
         (
             ColSpec(
@@ -75,11 +74,11 @@ from mlserver_mlflow.metadata import (
                     ]
                 ),
             ),
-            (MDatatype.BYTES, PandasJsonContentType),
+            (MDatatype.BYTES, PandasCodec.JsonContentType),
         ),
         (
             ColSpec(name="foo", type=AnyType()),
-            (MDatatype.BYTES, PandasJsonContentType),
+            (MDatatype.BYTES, PandasCodec.JsonContentType),
         ),
     ],
 )
@@ -198,25 +197,25 @@ def test_get_shape(input_spec: InputSpec, expected: List[int]):
                     name="input-0",
                     datatype="BYTES",
                     shape=[-1, 1],
-                    parameters=Parameters(content_type=PandasJsonContentType),
+                    parameters=Parameters(content_type=PandasCodec.JsonContentType),
                 ),
                 MetadataTensor(
                     name="input-1",
                     datatype="BYTES",
                     shape=[-1, 1],
-                    parameters=Parameters(content_type=PandasJsonContentType),
+                    parameters=Parameters(content_type=PandasCodec.JsonContentType),
                 ),
                 MetadataTensor(
                     name="input-2",
                     datatype="BYTES",
                     shape=[-1, 1],
-                    parameters=Parameters(content_type=PandasJsonContentType),
+                    parameters=Parameters(content_type=PandasCodec.JsonContentType),
                 ),
                 MetadataTensor(
                     name="input-3",
                     datatype="BYTES",
                     shape=[-1, 1],
-                    parameters=Parameters(content_type=PandasJsonContentType),
+                    parameters=Parameters(content_type=PandasCodec.JsonContentType),
                 ),
             ],
         ),
@@ -276,7 +275,7 @@ def test_to_metadata_tensors(schema: Schema, expected: List[MetadataTensor]):
             RequestInput(
                 name="foo",
                 datatype="BYTES",
-                parameters=Parameters(content_type=PandasJsonContentType),
+                parameters=Parameters(content_type=PandasCodec.JsonContentType),
                 shape=[2],
                 data=[b"[1,2]", b"[3,4]"],
             ),
@@ -286,7 +285,7 @@ def test_to_metadata_tensors(schema: Schema, expected: List[MetadataTensor]):
             RequestInput(
                 name="foo",
                 datatype="BYTES",
-                parameters=Parameters(content_type=PandasJsonContentType),
+                parameters=Parameters(content_type=PandasCodec.JsonContentType),
                 shape=[3],
                 data=[b'{"a":[1,2]}', b'{"b":[3,4]}', b'{"c":[5,6]}'],
             ),
@@ -304,7 +303,7 @@ def test_to_metadata_tensors(schema: Schema, expected: List[MetadataTensor]):
             RequestInput(
                 name="foo",
                 datatype="BYTES",
-                parameters=Parameters(content_type=PandasJsonContentType),
+                parameters=Parameters(content_type=PandasCodec.JsonContentType),
                 shape=[2],
                 data=[b'{"a":1,"b":"hello"}', b'{"a":2,"b":"world"}'],
             ),
@@ -314,7 +313,7 @@ def test_to_metadata_tensors(schema: Schema, expected: List[MetadataTensor]):
             RequestInput(
                 name="foo",
                 datatype="BYTES",
-                parameters=Parameters(content_type=PandasJsonContentType),
+                parameters=Parameters(content_type=PandasCodec.JsonContentType),
                 shape=[3],
                 data=[b'"a"', b"[1,2]", b'{"b":2}'],
             ),

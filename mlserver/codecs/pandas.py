@@ -18,13 +18,11 @@ from ..types import (
     Datatype,
 )
 
-PandasJsonContentType = "json"
-
 
 def _to_series(input_or_output: InputOrOutput) -> pd.Series:
     parameters = input_or_output.parameters
 
-    if parameters and parameters.content_type == PandasJsonContentType:
+    if parameters and parameters.content_type == PandasCodec.JsonContentType:
         return pd.Series(decode_json_input_or_output(input_or_output))
 
     payload = get_decoded_or_raw(input_or_output)
@@ -54,7 +52,7 @@ def _to_response_output(series: pd.Series, use_bytes: bool = True) -> ResponseOu
 
         if content_type is None:
             data = [encode_to_json(elem, use_bytes) for elem in data]
-            content_type = PandasJsonContentType
+            content_type = PandasCodec.JsonContentType
         else:
             data = processed_data
 
@@ -103,6 +101,7 @@ class PandasCodec(RequestCodec):
     """
 
     ContentType = "pd"
+    JsonContentType = "pd_json"
     TypeHint = pd.DataFrame
 
     @classmethod
