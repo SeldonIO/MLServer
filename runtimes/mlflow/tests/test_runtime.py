@@ -160,6 +160,58 @@ async def test_predict_pytorch(runtime_pytorch: MLflowRuntime):
                 ],
             ),
         ),
+        (
+            pd.DataFrame(
+                {
+                    "foo": [[1], [1, 2], [1, 2, 3]],
+                    "bar": [{"a": 1}, {"a": 1, "b": 2}, {"a": 1, "b": 2, "c": 3}],
+                    "baz": ["a", "b", {"a": 1}],
+                    "qux": [
+                        {"a": 1, "b": {"c": {"d": 1}}},
+                        {"a": 1, "b": {"c": {"d": 1}}, "e": 2},
+                        {"a": 1, "b": {"c": {"d": 1}}, "e": 2, "f": 3},
+                    ],
+                }
+            ),
+            InferenceResponse(
+                model_name="mlflow-model",
+                parameters=Parameters(content_type=PandasCodec.ContentType),
+                outputs=[
+                    ResponseOutput(
+                        name="foo",
+                        datatype="BYTES",
+                        shape=[3, 1],
+                        data=[b"[1]", b"[1,2]", b"[1,2,3]"],
+                        parameters=Parameters(content_type=PandasCodec.JsonContentType),
+                    ),
+                    ResponseOutput(
+                        name="bar",
+                        datatype="BYTES",
+                        shape=[3, 1],
+                        data=[b'{"a":1}', b'{"a":1,"b":2}', b'{"a":1,"b":2,"c":3}'],
+                        parameters=Parameters(content_type=PandasCodec.JsonContentType),
+                    ),
+                    ResponseOutput(
+                        name="baz",
+                        datatype="BYTES",
+                        shape=[3, 1],
+                        data=[b'"a"', b'"b"', b'{"a":1}'],
+                        parameters=Parameters(content_type=PandasCodec.JsonContentType),
+                    ),
+                    ResponseOutput(
+                        name="qux",
+                        datatype="BYTES",
+                        shape=[3, 1],
+                        data=[
+                            b'{"a":1,"b":{"c":{"d":1}}}',
+                            b'{"a":1,"b":{"c":{"d":1}},"e":2}',
+                            b'{"a":1,"b":{"c":{"d":1}},"e":2,"f":3}',
+                        ],
+                        parameters=Parameters(content_type=PandasCodec.JsonContentType),
+                    ),
+                ],
+            ),
+        ),
     ],
 )
 async def test_predict_outputs(
