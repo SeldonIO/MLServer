@@ -70,7 +70,7 @@ class GRPCServer:
 
         self._server = aio.server(
             ThreadPoolExecutor(max_workers=DefaultGrpcWorkers),
-            interceptors=tuple(self._interceptors),
+            interceptors=list(self._interceptors),
             options=self._get_options(),
         )
 
