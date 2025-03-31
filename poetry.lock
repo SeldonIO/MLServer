@@ -3316,7 +3316,7 @@ version = "4.6.0"
 description = "LightGBM Python-package"
 optional = false
 python-versions = ">=3.7"
-groups = ["all-runtimes", "dev"]
+groups = ["all-runtimes"]
 markers = "(platform_system == \"Linux\" or platform_system == \"Windows\") and platform_machine == \"aarch64\" or platform_system == \"Windows\""
 files = [
     {file = "lightgbm-4.6.0-py3-none-macosx_10_15_x86_64.whl", hash = "sha256:b7a393de8a334d5c8e490df91270f0763f83f959574d504c7ccb9eee4aef70ed"},
@@ -4575,7 +4575,7 @@ version = "1.26.4"
 description = "Fundamental package for array computing in Python"
 optional = false
 python-versions = ">=3.9"
-groups = ["main", "all-runtimes", "all-runtimes-dev", "dev", "docker"]
+groups = ["main", "all-runtimes", "all-runtimes-dev", "docker"]
 markers = "(platform_system == \"Linux\" or platform_system == \"Windows\") and platform_machine == \"aarch64\" or platform_system == \"Windows\""
 files = [
     {file = "numpy-1.26.4-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:9ff0f4f29c51e2803569d7a51c2304de5554655a60c5d776e35b4a41413830d0"},
@@ -7090,7 +7090,7 @@ version = "1.13.1"
 description = "Fundamental algorithms for scientific computing in Python"
 optional = false
 python-versions = ">=3.9"
-groups = ["all-runtimes", "all-runtimes-dev", "dev"]
+groups = ["all-runtimes", "all-runtimes-dev"]
 markers = "(platform_system == \"Linux\" or platform_system == \"Windows\") and platform_machine == \"aarch64\" or platform_system == \"Windows\""
 files = [
     {file = "scipy-1.13.1-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:20335853b85e9a49ff7572ab453794298bcf0354d8068c5f6775a0eabf350aca"},
@@ -8729,15 +8729,15 @@ typing-extensions = ">=3.7.4.3"
 
 [[package]]
 name = "types-aiofiles"
-version = "23.2.0.20240106"
+version = "24.1.0.20250326"
 description = "Typing stubs for aiofiles"
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.9"
 groups = ["dev"]
 markers = "(platform_system == \"Linux\" or platform_system == \"Windows\") and platform_machine == \"aarch64\" or platform_system == \"Windows\""
 files = [
-    {file = "types-aiofiles-23.2.0.20240106.tar.gz", hash = "sha256:ef4fa3072441c58beaadbd0d07ba18e89beff49c71648dd223e2ca861f3dac53"},
-    {file = "types_aiofiles-23.2.0.20240106-py3-none-any.whl", hash = "sha256:7324f9a9f7200c1f4986a9e40a42b548290f707b967709f30b280e99fdacbd99"},
+    {file = "types_aiofiles-24.1.0.20250326-py3-none-any.whl", hash = "sha256:dfb58c9aa18bd449e80fb5d7f49dc3dd20d31de920a46223a61798ee4a521a70"},
+    {file = "types_aiofiles-24.1.0.20250326.tar.gz", hash = "sha256:c4bbe432fd043911ba83fb635456f5cc54f6d05fda2aadf6bef12a84f07a6efe"},
 ]
 
 [[package]]
@@ -9681,4 +9681,4 @@ testing = ["coverage[toml]", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.9,<3.13"
-content-hash = "f6a228eb016a838d49fc9875edd274c06cca93238c8e7fdfa6a493d796af8642"
+content-hash = "f288dab3da9be6cc2c1bec3e97e30d094545ac542cbd50de780258ec64fb19df"
