@@ -200,11 +200,19 @@ METADATA: Dict[str, Dict[str, List[MetadataTensor]]] = {
     ),
     "text-generation": dict(
         inputs=[
+            # string input
             MetadataTensor(
                 name="array_inputs",
                 shape=[-1],
                 datatype="BYTES",
                 parameters=dict(content_type="str"),
+            ),
+            # list of dict inputs
+            MetadataTensor(
+                name="array_inputs",
+                shape=[-1],
+                datatype="BYTES",
+                parameters=dict(content_type="hg_jsonlist"),
             ),
         ],
         outputs=[],
@@ -254,17 +262,6 @@ METADATA: Dict[str, Dict[str, List[MetadataTensor]]] = {
                 shape=[-1],
                 datatype="BYTES",
                 parameters=dict(content_type="str"),
-            ),
-        ],
-        outputs=[],
-    ),
-    "conversational": dict(
-        inputs=[
-            MetadataTensor(
-                name="array_inputs",
-                shape=[-1],
-                datatype="FP32",
-                parameters=dict(content_type="hg_conversation"),
             ),
         ],
         outputs=[],

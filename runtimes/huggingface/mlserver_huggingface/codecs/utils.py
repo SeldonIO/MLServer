@@ -4,7 +4,6 @@ from typing import Dict, Any, List
 import base64
 import numpy as np
 from PIL import Image, ImageChops
-from transformers.pipelines import Conversation
 
 IMAGE_PREFIX = "data:image/"
 DEFAULT_IMAGE_FORMAT = "PNG"
@@ -29,13 +28,6 @@ class HuggingfaceJSONEncoder(json.JSONEncoder):
                 + ";base64,"
                 + base64.b64encode(buf.getvalue()).decode()
             )
-        elif isinstance(obj, Conversation):
-            return {
-                "uuid": str(obj.uuid),
-                "past_user_inputs": obj.past_user_inputs,
-                "generated_responses": obj.generated_responses,
-                "new_user_input": obj.new_user_input,
-            }
         else:
             return json.JSONEncoder.default(self, obj)
 
@@ -70,28 +62,11 @@ class Convertor:
             return raw
 
     @classmethod
-    def convert_conversation(cls, d: Dict[str, Any]):
-        if set(d.keys()) == conversation_keys:
-            return Conversation(
-                text=d["new_user_input"],
-                conversation_id=d["uuid"],
-                past_user_inputs=d["past_user_inputs"],
-                generated_responses=d["generated_responses"],
-            )
-        return None
-
-    @classmethod
     def convert_dict(cls, d: Dict[str, Any]):
-        conversation = cls.convert_conversation(d)
-        if conversation is not None:
-            return conversation
         tmp = {}
         for k, v in d.items():
             if isinstance(v, dict):
-                if set(v.keys()) == conversation_keys:
-                    tmp[k] = Conversation(text=v["new_user_input"])
-                else:
-                    tmp[k] = cls.convert_dict(v)
+                tmp[k] = cls.convert_dict(v)
             elif isinstance(v, list):
                 tmp[k] = cls.convert_list(v)
             elif isinstance(v, str):

@@ -25,7 +25,6 @@ from mlserver.types import (
 from .image import PILImageCodec
 from .json import HuggingfaceSingleJSONCodec
 from .jsonlist import HuggingfaceListJSONCodec
-from .conversation import HuggingfaceConversationCodec
 from .numpylist import NumpyListCodec
 from .raw import RawCodec
 
@@ -207,7 +206,6 @@ class HuggingfaceRequestCodec(MultiInputRequestCodec):
         PILImageCodec,
         HuggingfaceSingleJSONCodec,
         HuggingfaceListJSONCodec,
-        HuggingfaceConversationCodec,
         NumpyListCodec,
         RawCodec,
     ]

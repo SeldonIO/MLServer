@@ -2,7 +2,6 @@ import pytest
 import numpy as np
 from PIL import Image
 from mlserver.types import RequestInput, ResponseOutput, Parameters, TensorData
-from transformers.pipelines import Conversation
 from mlserver_huggingface.codecs import HuggingfaceListJSONCodec
 from mlserver_huggingface.codecs.utils import EqualUtil
 from ..utils import file_path, file_content
@@ -18,7 +17,7 @@ from ..utils import file_path, file_content
                     "str": "str",
                     "npval": np.int8(1),
                     "pil": Image.open(file_path("hancat.jpeg")),
-                    "conversation": Conversation(text="hhhh"),
+                    "conversation": [{"role": "user", "content": "hhhh"}],
                 },
                 {
                     "nested": {
@@ -82,17 +81,12 @@ def test_encode_input(name, var, expected1, expected2):
                 parameters=Parameters(content_type="hg_jsonlist"),
                 data=TensorData(
                     root=[
-                        '{"uuid": "59a1121c-831b-40ae-b33b-320b9dd60770", "past_user_inputs": [], "new_user_input": "hi", "generated_responses": []}'  # noqa
+                        '[{"role": "user", "content": "hi"}]'  # noqa
                     ]
                 ),
             ),
             [
-                Conversation(
-                    conversation_id="59a1121c-831b-40ae-b33b-320b9dd60770",
-                    past_user_inputs=[],
-                    text="hi",
-                    generated_responses=[],
-                )
+                [{"role": "user", "content": "hi"}],
             ],
         ),
         (
@@ -103,19 +97,14 @@ def test_encode_input(name, var, expected1, expected2):
                 parameters=Parameters(content_type="hg_jsonlist"),
                 data=TensorData(
                     root=[
-                        '{"c": {"uuid": "59a1121c-831b-40ae-b33b-320b9dd60770", "past_user_inputs": [], "new_user_input": "hi", "generated_responses": []}}',  # noqa
+                        '{"c": [{"role": "user", "content": "hi"}]}',  # noqa
                         file_content("image_base64.txt"),
                     ]
                 ),
             ),
             [
                 {
-                    "c": Conversation(
-                        conversation_id="59a1121c-831b-40ae-b33b-320b9dd60770",
-                        past_user_inputs=[],
-                        text="hi",
-                        generated_responses=[],
-                    )
+                    "c": [{"role": "user", "content": "hi"}],
                 },
                 {"i": Image.open(file_path("dogs.jpg"))},
             ],
@@ -137,7 +126,7 @@ def test_decode_input(var, expected):
                     "str": "str",
                     "npval": np.int8(1),
                     "pil": Image.open(file_path("hancat.jpeg")),
-                    "conversation": Conversation(text="hhhh"),
+                    "conversation": [{"role": "user", "content": "hhhh"}],
                 },
                 {
                     "nested": {
@@ -196,17 +185,12 @@ def test_encode_output(name, var, expected):
                 parameters=Parameters(content_type="hg_jsonlist"),
                 data=TensorData(
                     root=[
-                        '{"uuid": "59a1121c-831b-40ae-b33b-320b9dd60770", "past_user_inputs": [], "new_user_input": "hi", "generated_responses": []}'  # noqa
+                        '[{"role": "user", "content": "hi"}]'  # noqa
                     ]
                 ),
             ),
             [
-                Conversation(
-                    conversation_id="59a1121c-831b-40ae-b33b-320b9dd60770",
-                    past_user_inputs=[],
-                    text="hi",
-                    generated_responses=[],
-                )
+                [{"role": "user", "content": "hi"}]
             ],
         ),
         (
@@ -217,19 +201,14 @@ def test_encode_output(name, var, expected):
                 parameters=Parameters(content_type="hg_jsonlist"),
                 data=TensorData(
                     root=[
-                        '{"c": {"uuid": "59a1121c-831b-40ae-b33b-320b9dd60770", "past_user_inputs": [], "new_user_input": "hi", "generated_responses": []}}',  # noqa
+                        '{"c": [{"role": "user", "content": "hi"}]}',  # noqa
                         file_content("image_base64.txt"),
                     ]
                 ),
             ),
             [
                 {
-                    "c": Conversation(
-                        conversation_id="59a1121c-831b-40ae-b33b-320b9dd60770",
-                        past_user_inputs=[],
-                        text="hi",
-                        generated_responses=[],
-                    )
+                    "c": [{"role": "user", "content": "hi"}],
                 },
                 {"i": Image.open(file_path("dogs.jpg"))},
             ],

@@ -1,6 +1,5 @@
 import pytest
 import numpy as np
-from transformers.pipelines import Conversation
 from mlserver.types import (
     RequestInput,
     ResponseOutput,
@@ -18,9 +17,7 @@ from mlserver_huggingface.codecs import HuggingfaceSingleJSONCodec
             {
                 "str": "str",
                 "npval": np.int8(1),
-                "conversation": Conversation(
-                    text="hello", conversation_id="8524ebb5-2f63-4f36-866f-f6152e9da03f"
-                ),
+                "conversation": [{"role": "user", "content": "hello"}]
             },
             True,
             True,
@@ -32,7 +29,7 @@ from mlserver_huggingface.codecs import HuggingfaceSingleJSONCodec
                     content_type=HuggingfaceSingleJSONCodec.ContentType
                 ),
                 data=[
-                    b'{"str": "str", "npval": 1, "conversation": {"uuid": "8524ebb5-2f63-4f36-866f-f6152e9da03f", "past_user_inputs": [], "generated_responses": [], "new_user_input": "hello"}}'  # noqa
+                    b'{"str": "str", "npval": 1, "conversation": [{"role": "user", "content": "hello"}]}'  # noqa
                 ],
             ),
         ),
@@ -41,9 +38,7 @@ from mlserver_huggingface.codecs import HuggingfaceSingleJSONCodec
             {
                 "str": "str",
                 "npval": np.int8(1),
-                "conversation": Conversation(
-                    text="hello", conversation_id="8524ebb5-2f63-4f36-866f-f6152e9da03f"
-                ),
+                "conversation": [{"role": "user", "content": "hello"}]
             },
             False,
             True,
@@ -55,7 +50,7 @@ from mlserver_huggingface.codecs import HuggingfaceSingleJSONCodec
                     content_type=HuggingfaceSingleJSONCodec.ContentType
                 ),
                 data=[
-                    '{"str": "str", "npval": 1, "conversation": {"uuid": "8524ebb5-2f63-4f36-866f-f6152e9da03f", "past_user_inputs": [], "generated_responses": [], "new_user_input": "hello"}}'  # noqa
+                    '{"str": "str", "npval": 1, "conversation": [{"role": "user", "content": "hello"}]}'  # noqa
                 ],
             ),
         ),
@@ -83,15 +78,13 @@ def test_encode_request(name, var, use_bytes, expected1, expected2):
                     content_type=HuggingfaceSingleJSONCodec.ContentType
                 ),
                 data=[
-                    b'{"str": "str", "npval": 1, "conversation": {"uuid": "8524ebb5-2f63-4f36-866f-f6152e9da03f", "past_user_inputs": [], "generated_responses": [], "new_user_input": "hello"}}'  # noqa
+                    b'{"str": "str", "npval": 1, "conversation": [{"role": "user", "content": "hello"}]}'  # noqa
                 ],
             ),
             {
                 "str": "str",
                 "npval": np.int8(1),
-                "conversation": Conversation(
-                    text="hello", conversation_id="8524ebb5-2f63-4f36-866f-f6152e9da03f"
-                ),
+                "conversation": [{"role": "user", "content": "hello"}]
             },
         ),
         (
@@ -103,15 +96,13 @@ def test_encode_request(name, var, use_bytes, expected1, expected2):
                     content_type=HuggingfaceSingleJSONCodec.ContentType
                 ),
                 data=[
-                    '{"str": "str", "npval": 1, "conversation": {"uuid": "8524ebb5-2f63-4f36-866f-f6152e9da03f", "past_user_inputs": [], "generated_responses": [], "new_user_input": "hello"}}'  # noqa
+                    '{"str": "str", "npval": 1, "conversation": [{"role": "user", "content": "hello"}]}'  # noqa
                 ],
             ),
             {
                 "str": "str",
                 "npval": np.int8(1),
-                "conversation": Conversation(
-                    text="hello", conversation_id="8524ebb5-2f63-4f36-866f-f6152e9da03f"
-                ),
+                "conversation": [{"role": "user", "content": "hello"}]
             },
         ),
     ],
@@ -128,10 +119,7 @@ def test_decode_request(var, expected):
             {
                 "str": "str",
                 "npval": np.int8(1),
-                "conversation": Conversation(
-                    text="hello",
-                    conversation_id="8524ebb5-2f63-4f36-866f-f6152e9da03f",
-                ),
+                "conversation": [{"role": "user", "content": "hello"}]
             },
             True,
             True,
@@ -143,7 +131,7 @@ def test_decode_request(var, expected):
                     content_type=HuggingfaceSingleJSONCodec.ContentType
                 ),
                 data=[
-                    b'{"str": "str", "npval": 1, "conversation": {"uuid": "8524ebb5-2f63-4f36-866f-f6152e9da03f", "past_user_inputs": [], "generated_responses": [], "new_user_input": "hello"}}'  # noqa
+                    b'{"str": "str", "npval": 1, "conversation": [{"role": "user", "content": "hello"}]}'  # noqa
                 ],
             ),
         ),
@@ -152,9 +140,7 @@ def test_decode_request(var, expected):
             {
                 "str": "str",
                 "npval": np.int8(1),
-                "conversation": Conversation(
-                    text="hello", conversation_id="8524ebb5-2f63-4f36-866f-f6152e9da03f"
-                ),
+                "conversation": [{"role": "user", "content": "hello"}]
             },
             False,
             True,
@@ -166,7 +152,7 @@ def test_decode_request(var, expected):
                     content_type=HuggingfaceSingleJSONCodec.ContentType
                 ),
                 data=[
-                    '{"str": "str", "npval": 1, "conversation": {"uuid": "8524ebb5-2f63-4f36-866f-f6152e9da03f", "past_user_inputs": [], "generated_responses": [], "new_user_input": "hello"}}'  # noqa
+                    '{"str": "str", "npval": 1, "conversation": [{"role": "user", "content": "hello"}]}'  # noqa
                 ],
             ),
         ),
@@ -194,15 +180,13 @@ def test_encode_response(name, var, use_bytes, expected1, expected2):
                     content_type=HuggingfaceSingleJSONCodec.ContentType
                 ),
                 data=[
-                    b'{"str": "str", "npval": 1, "conversation": {"uuid": "8524ebb5-2f63-4f36-866f-f6152e9da03f", "past_user_inputs": [], "generated_responses": [], "new_user_input": "hello"}}'  # noqa
+                    b'{"str": "str", "npval": 1, "conversation": [{"role": "user", "content": "hello"}]}'  # noqa
                 ],
             ),
             {
                 "str": "str",
                 "npval": np.int8(1),
-                "conversation": Conversation(
-                    text="hello", conversation_id="8524ebb5-2f63-4f36-866f-f6152e9da03f"
-                ),
+                "conversation": [{"role": "user", "content": "hello"}]
             },
         ),
         (
@@ -214,15 +198,13 @@ def test_encode_response(name, var, use_bytes, expected1, expected2):
                     content_type=HuggingfaceSingleJSONCodec.ContentType
                 ),
                 data=[
-                    '{"str": "str", "npval": 1, "conversation": {"uuid": "8524ebb5-2f63-4f36-866f-f6152e9da03f", "past_user_inputs": [], "generated_responses": [], "new_user_input": "hello"}}'  # noqa
+                    '{"str": "str", "npval": 1, "conversation": [{"role": "user", "content": "hello"}]}'  # noqa
                 ],
             ),
             {
                 "str": "str",
                 "npval": np.int8(1),
-                "conversation": Conversation(
-                    text="hello", conversation_id="8524ebb5-2f63-4f36-866f-f6152e9da03f"
-                ),
+                "conversation": [{"role": "user", "content": "hello"}]
             },
         ),
     ],

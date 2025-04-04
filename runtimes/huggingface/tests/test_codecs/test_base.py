@@ -9,7 +9,6 @@ from mlserver.types import (
 )
 from mlserver_huggingface.codecs import HuggingfaceRequestCodec
 from mlserver_huggingface.codecs.utils import EqualUtil
-from transformers.pipelines import Conversation
 from ..utils import (
     file_path,
     image_base64,
@@ -115,66 +114,6 @@ from ..utils import (
         ),
         (
             {
-                "conversations": [
-                    Conversation(
-                        text="hello",
-                        conversation_id="0576f04b-9214-4210-8195-7ac88c741d72",
-                    ),
-                    Conversation(
-                        text="bye",
-                        conversation_id="1031ec5b-fb76-4bb9-a55f-0f0f4ee04392",
-                    ),
-                ],
-            },
-            True,
-            InferenceRequest(
-                parameters=Parameters(content_type="hf"),
-                inputs=[
-                    RequestInput(
-                        name="conversations",
-                        datatype="BYTES",
-                        data=[
-                            b'{"uuid": "0576f04b-9214-4210-8195-7ac88c741d72", "past_user_inputs": [], "generated_responses": [], "new_user_input": "hello"}',  # noqa
-                            b'{"uuid": "1031ec5b-fb76-4bb9-a55f-0f0f4ee04392", "past_user_inputs": [], "generated_responses": [], "new_user_input": "bye"}',  # noqa
-                        ],
-                        shape=[2, 1],
-                        parameters=Parameters(content_type="hg_conversation"),
-                    ),
-                ],
-            ),
-        ),
-        (
-            {
-                "conversations": [
-                    Conversation(
-                        text="hello",
-                        conversation_id="0576f04b-9214-4210-8195-7ac88c741d72",
-                    ),
-                    Conversation(
-                        text="bye",
-                        conversation_id="1031ec5b-fb76-4bb9-a55f-0f0f4ee04392",
-                    ),
-                ],
-            },
-            False,
-            InferenceRequest(
-                parameters=Parameters(content_type="hf"),
-                inputs=[
-                    RequestInput(
-                        name="conversations",
-                        datatype="BYTES",
-                        data=[
-                            '{"uuid": "0576f04b-9214-4210-8195-7ac88c741d72", "past_user_inputs": [], "generated_responses": [], "new_user_input": "hello"}',  # noqa
-                            '{"uuid": "1031ec5b-fb76-4bb9-a55f-0f0f4ee04392", "past_user_inputs": [], "generated_responses": [], "new_user_input": "bye"}',  # noqa
-                        ],
-                        shape=[2, 1],
-                        parameters=Parameters(content_type="hg_conversation"),
-                    ),
-                ],
-            ),
-        ),
-        (
-            {
                 "singlejson": {
                     "image": Image.open(file_path("dogs.jpg")),
                     "question": "how many dogs?",
@@ -219,78 +158,6 @@ from ..utils import (
                         ],
                         shape=[1],
                         parameters=Parameters(content_type="hg_json"),
-                    ),
-                ],
-            ),
-        ),
-        (
-            {
-                "jsonlist": [
-                    {"np": np.int8([[2, 2], [2, 2]])},
-                    {
-                        "image": Image.open(file_path("dogs.jpg")),
-                        "question": "how many dogs?",
-                    },
-                    {
-                        "conversation": Conversation(
-                            text="hi",
-                            conversation_id="1031ec5b-fb76-4bb9-a55f-0f0f4ee04392",
-                        ),
-                    },
-                ]
-            },
-            True,
-            InferenceRequest(
-                parameters=Parameters(content_type="hf"),
-                inputs=[
-                    RequestInput(
-                        name="jsonlist",
-                        datatype="BYTES",
-                        data=[
-                            b'{"np": [[2, 2], [2, 2]]}',
-                            b'{"image": "'
-                            + image_base64_bytes("dogs.jpg")
-                            + b'", "question": "how many dogs?"}',
-                            b'{"conversation": {"uuid": "1031ec5b-fb76-4bb9-a55f-0f0f4ee04392", "past_user_inputs": [], "generated_responses": [], "new_user_input": "hi"}}',  # noqa
-                        ],
-                        shape=[3, 1],
-                        parameters=Parameters(content_type="hg_jsonlist"),
-                    ),
-                ],
-            ),
-        ),
-        (
-            {
-                "jsonlist": [
-                    {"np": np.int8([[2, 2], [2, 2]])},
-                    {
-                        "image": Image.open(file_path("dogs.jpg")),
-                        "question": "how many dogs?",
-                    },
-                    {
-                        "conversation": Conversation(
-                            text="hi",
-                            conversation_id="1031ec5b-fb76-4bb9-a55f-0f0f4ee04392",
-                        ),
-                    },
-                ]
-            },
-            False,
-            InferenceRequest(
-                parameters=Parameters(content_type="hf"),
-                inputs=[
-                    RequestInput(
-                        name="jsonlist",
-                        datatype="BYTES",
-                        data=[
-                            '{"np": [[2, 2], [2, 2]]}',
-                            '{"image": "'
-                            + image_base64_str("dogs.jpg")
-                            + '", "question": "how many dogs?"}',
-                            '{"conversation": {"uuid": "1031ec5b-fb76-4bb9-a55f-0f0f4ee04392", "past_user_inputs": [], "generated_responses": [], "new_user_input": "hi"}}',  # noqa
-                        ],
-                        shape=[3, 1],
-                        parameters=Parameters(content_type="hg_jsonlist"),
                     ),
                 ],
             ),
@@ -439,64 +306,6 @@ def test_encode_request(inputs, use_bytes, expected):
                 parameters=Parameters(content_type="str"),
                 inputs=[
                     RequestInput(
-                        name="conversations",
-                        datatype="BYTES",
-                        data=[
-                            b'{"uuid": "0576f04b-9214-4210-8195-7ac88c741d72", "past_user_inputs": [], "generated_responses": [], "new_user_input": "hello"}',  # noqa
-                            b'{"uuid": "1031ec5b-fb76-4bb9-a55f-0f0f4ee04392", "past_user_inputs": [], "generated_responses": [], "new_user_input": "bye"}',  # noqa
-                        ],
-                        shape=[2, 1],
-                        parameters=Parameters(content_type="hg_conversation"),
-                    ),
-                ],
-            ),
-            {
-                "conversations": [
-                    Conversation(
-                        text="hello",
-                        conversation_id="0576f04b-9214-4210-8195-7ac88c741d72",
-                    ),
-                    Conversation(
-                        text="bye",
-                        conversation_id="1031ec5b-fb76-4bb9-a55f-0f0f4ee04392",
-                    ),
-                ],
-            },
-        ),
-        (
-            InferenceRequest(
-                parameters=Parameters(content_type="str"),
-                inputs=[
-                    RequestInput(
-                        name="conversations",
-                        datatype="BYTES",
-                        data=[
-                            '{"uuid": "0576f04b-9214-4210-8195-7ac88c741d72", "past_user_inputs": [], "generated_responses": [], "new_user_input": "hello"}',  # noqa
-                            '{"uuid": "1031ec5b-fb76-4bb9-a55f-0f0f4ee04392", "past_user_inputs": [], "generated_responses": [], "new_user_input": "bye"}',  # noqa
-                        ],
-                        shape=[2, 1],
-                        parameters=Parameters(content_type="hg_conversation"),
-                    ),
-                ],
-            ),
-            {
-                "conversations": [
-                    Conversation(
-                        text="hello",
-                        conversation_id="0576f04b-9214-4210-8195-7ac88c741d72",
-                    ),
-                    Conversation(
-                        text="bye",
-                        conversation_id="1031ec5b-fb76-4bb9-a55f-0f0f4ee04392",
-                    ),
-                ],
-            },
-        ),
-        (
-            InferenceRequest(
-                parameters=Parameters(content_type="str"),
-                inputs=[
-                    RequestInput(
                         name="singlejson",
                         datatype="BYTES",
                         data=[
@@ -538,76 +347,6 @@ def test_encode_request(inputs, use_bytes, expected):
                     "image": Image.open(file_path("dogs.jpg")),
                     "question": "how many dogs?",
                 }
-            },
-        ),
-        (
-            InferenceRequest(
-                parameters=Parameters(content_type="str"),
-                inputs=[
-                    RequestInput(
-                        name="jsonlist",
-                        datatype="BYTES",
-                        data=[
-                            b'{"np": [[2, 2], [2, 2]]}',
-                            b'{"image": "'
-                            + image_base64_bytes("dogs.jpg")
-                            + b'", "question": "how many dogs?"}',
-                            b'{"conversation": {"uuid": "1031ec5b-fb76-4bb9-a55f-0f0f4ee04392", "past_user_inputs": [], "generated_responses": [], "new_user_input": "hi"}}',  # noqa
-                        ],
-                        shape=[3, 1],
-                        parameters=Parameters(content_type="hg_jsonlist"),
-                    ),
-                ],
-            ),
-            {
-                "jsonlist": [
-                    {"np": np.int8([[2, 2], [2, 2]])},
-                    {
-                        "image": Image.open(file_path("dogs.jpg")),
-                        "question": "how many dogs?",
-                    },
-                    {
-                        "conversation": Conversation(
-                            text="hi",
-                            conversation_id="1031ec5b-fb76-4bb9-a55f-0f0f4ee04392",
-                        ),
-                    },
-                ]
-            },
-        ),
-        (
-            InferenceRequest(
-                parameters=Parameters(content_type="str"),
-                inputs=[
-                    RequestInput(
-                        name="jsonlist",
-                        datatype="BYTES",
-                        data=[
-                            '{"np": [[2, 2], [2, 2]]}',
-                            '{"image": "'
-                            + image_base64_str("dogs.jpg")
-                            + '", "question": "how many dogs?"}',
-                            '{"conversation": {"uuid": "1031ec5b-fb76-4bb9-a55f-0f0f4ee04392", "past_user_inputs": [], "generated_responses": [], "new_user_input": "hi"}}',  # noqa
-                        ],
-                        shape=[3, 1],
-                        parameters=Parameters(content_type="hg_jsonlist"),
-                    ),
-                ],
-            ),
-            {
-                "jsonlist": [
-                    {"np": np.int8([[2, 2], [2, 2]])},
-                    {
-                        "image": Image.open(file_path("dogs.jpg")),
-                        "question": "how many dogs?",
-                    },
-                    {
-                        "conversation": Conversation(
-                            text="hi",
-                            conversation_id="1031ec5b-fb76-4bb9-a55f-0f0f4ee04392",
-                        ),
-                    },
-                ]
             },
         ),
         (
