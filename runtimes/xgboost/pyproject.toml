@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mlserver-xgboost"
-version = "1.7.0.dev0"
+version = "1.7.0.rc5"
 description = "XGBoost runtime for MLServer"
 authors = ["Seldon Technologies Ltd. <hello@seldon.io>"]
 license = "Apache-2.0"
