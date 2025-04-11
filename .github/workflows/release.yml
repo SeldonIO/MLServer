@@ -55,6 +55,13 @@ jobs:
         run: |
           DOCKER_BUILDKIT=1 docker build . \
             --build-arg RUNTIMES=all \
+            --label name="mlserver" \
+            --label vendor="SeldonIO" \
+            --label version="${{ github.event.inputs.version }}" \
+            --label release="${{ github.event.inputs.version }}" \
+            --label summary="An open source inference server for your machine learning models." \
+            --label description="MLServer aims to provide an easy way to start serving your machine learning models through a REST and gRPC interface, fully compliant with KFServing’s V2 Dataplane spec." \
+            --label maintainer="hello@seldon.io" \
             -t $MLSERVER_IMAGE
       - name: Scan Docker Image
         uses: snyk/actions/docker@master
@@ -126,6 +133,13 @@ jobs:
         run: |
           DOCKER_BUILDKIT=1 docker build . \
             --build-arg RUNTIMES="" \
+            --label name="mlserver" \
+            --label vendor="SeldonIO" \
+            --label version="${{ github.event.inputs.version }}" \
+            --label release="${{ github.event.inputs.version }}" \
+            --label summary="An open source inference server for your machine learning models." \
+            --label description="MLServer aims to provide an easy way to start serving your machine learning models through a REST and gRPC interface, fully compliant with KFServing’s V2 Dataplane spec." \
+            --label maintainer="hello@seldon.io" \
             -t $MLSERVER_IMAGE-slim
       - name: Scan Docker Image
         uses: snyk/actions/docker@master
@@ -249,6 +263,13 @@ jobs:
         run: |
           DOCKER_BUILDKIT=1 docker build . \
             --build-arg RUNTIMES=mlserver-${{ matrix.runtime }} \
+            --label name="mlserver" \
+            --label vendor="SeldonIO" \
+            --label version="${{ github.event.inputs.version }}" \
+            --label release="${{ github.event.inputs.version }}" \
+            --label summary="An open source inference server for your machine learning models." \
+            --label description="MLServer aims to provide an easy way to start serving your machine learning models through a REST and gRPC interface, fully compliant with KFServing’s V2 Dataplane spec." \
+            --label maintainer="hello@seldon.io" \
             -t $MLSERVER_IMAGE-${{ matrix.runtime }}
       - name: Scan Docker Image
         uses: snyk/actions/docker@master
