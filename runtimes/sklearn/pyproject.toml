@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mlserver-sklearn"
-version = "1.7.0.dev0"
+version = "1.7.0.rc3"
 description = "Scikit-Learn runtime for MLServer"
 authors = ["Seldon Technologies Ltd. <hello@seldon.io>"]
 license = "Apache-2.0"
