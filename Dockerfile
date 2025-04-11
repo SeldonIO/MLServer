@@ -1,6 +1,9 @@
 FROM python:3.10-slim AS wheel-builder
 SHELL ["/bin/bash", "-l", "-c"]
 
+LABEL vendor="SeldonIO"
+LABEL maintainer="hello@seldon.io"
+
 # TODO: Upgrade poetry version to 2.x
 # Currently it fails in `poetry export --with all-runtimes --without-hashes --format constraints.txt -o /opt/mlserver/dist/constraints.txt`
 ARG POETRY_VERSION="1.8.5"
