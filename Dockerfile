@@ -1,9 +1,6 @@
 FROM python:3.10-slim AS wheel-builder
 SHELL ["/bin/bash", "-l", "-c"]
 
-LABEL vendor="SeldonIO"
-LABEL maintainer="hello@seldon.io"
-
 ARG POETRY_VERSION="2.1.1"
 
 COPY ./hack/build-wheels.sh ./hack/build-wheels.sh
