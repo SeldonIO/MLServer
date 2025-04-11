@@ -20,6 +20,7 @@ COPY \
 # by pip:
 # https://github.com/python-poetry/poetry-plugin-export/issues/210
 RUN pip install poetry==$POETRY_VERSION && \
+    pip install poetry-plugin-export && \
     ./hack/build-wheels.sh /opt/mlserver/dist && \
     poetry export --with all-runtimes \
         --without-hashes \
