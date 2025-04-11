@@ -139,7 +139,7 @@ torch = "^2.4"
 pytorch-lightning = "^2.4"
 torchmetrics = "1.6.0"
 torchvision = "0.19.1"
-mlflow = "2.19.0"
+mlflow = "2.21.3"
 
 ## Dev dependencies from HuggingFace
 # TODO: Relax when we deprecate Conversation pipeline
