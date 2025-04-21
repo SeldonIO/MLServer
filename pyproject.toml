@@ -88,7 +88,7 @@ pytest-cases = "3.8.5"
 pytest-lazy-fixture = "^0.6.3"
 tox = "4.16.0"
 docker = "7.1.0"
-aiohttp = "3.10.2"
+aiohttp = "3.11.17"
 aiohttp-retry = "2.8.3"
 ## Used for FastAPI Async testing
 httpx = "0.27.0"
