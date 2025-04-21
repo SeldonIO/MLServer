@@ -10,7 +10,7 @@ packages = [{include = "mlserver_mlflow"}]
 [tool.poetry.dependencies]
 python = ">=3.9,<3.13"
 mlserver = "*"
-mlflow = "*"
+mlflow = ">=2.19.0"
 
 [tool.poetry.group.dev.dependencies]
 mlserver = {path = "../..", develop = true}
