@@ -33,6 +33,28 @@ def test_can_encode(payload: Any, expected: bool):
     "series, use_bytes, expected",
     [
         (
+            pd.Series(data=[b"hey", b"abc"], name="foo"),
+            True,
+            ResponseOutput(
+                name="foo",
+                shape=[2, 1],
+                data=[b"hey", b"abc"],
+                datatype="BYTES",
+                parameters=Parameters(content_type=StringCodec.ContentType),
+            ),
+        ),
+        (
+            pd.Series(data=[b"hey", b"abc"], name="foo"),
+            False,
+            ResponseOutput(
+                name="foo",
+                shape=[2, 1],
+                data=[b"hey", b"abc"],
+                datatype="BYTES",
+                parameters=Parameters(content_type=StringCodec.ContentType),
+            ),
+        ),
+        (
             pd.Series(data=["hey", "abc"], name="foo"),
             True,
             ResponseOutput(

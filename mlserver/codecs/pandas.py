@@ -81,11 +81,11 @@ def _process_bytes(
     content_type: Optional[str] = StringCodec.ContentType
     for elem in data:
         converted = elem
-        if not isinstance(elem, str):
+        if not isinstance(elem, (str, bytes)):
             # There was a non-string element, so we can't determine a content
             # type
             content_type = None
-        elif use_bytes:
+        elif isinstance(elem, str) and use_bytes:
             converted = encode_str(elem)
 
         processed.append(converted)
