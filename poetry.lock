@@ -8803,15 +8803,15 @@ files = [
 
 [[package]]
 name = "types-protobuf"
-version = "5.26.0.20240422"
+version = "6.30.2.20250516"
 description = "Typing stubs for protobuf"
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.9"
 groups = ["dev"]
 markers = "(platform_system == \"Linux\" or platform_system == \"Windows\") and platform_machine == \"aarch64\" or platform_system == \"Windows\""
 files = [
-    {file = "types-protobuf-5.26.0.20240422.tar.gz", hash = "sha256:e6074178109f97efe9f0b20a035ba61d7c3b03e867eb47d254d2b2ab6a805e36"},
-    {file = "types_protobuf-5.26.0.20240422-py3-none-any.whl", hash = "sha256:e4dc2554d342501d5aebc3c71203868b51118340e105fc190e3a64ca1be43831"},
+    {file = "types_protobuf-6.30.2.20250516-py3-none-any.whl", hash = "sha256:8c226d05b5e8b2623111765fa32d6e648bbc24832b4c2fddf0fa340ba5d5b722"},
+    {file = "types_protobuf-6.30.2.20250516.tar.gz", hash = "sha256:aecd1881770a9bb225ede66872ef7f0da4505edd0b193108edd9892e48d49a41"},
 ]
 
 [[package]]
@@ -9729,4 +9729,4 @@ testing = ["coverage[toml]", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.9,<3.13"
-content-hash = "2ed6028c01d9a34e5c6d77362419884f575caf8da6e71e3270ffb09371501fa4"
+content-hash = "cca491061a1a8103bb592b2df535c79a726a9c32ae5761f8ebe7b9b2aa9d0533"
