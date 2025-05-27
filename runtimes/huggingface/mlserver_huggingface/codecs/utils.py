@@ -5,20 +5,15 @@ import base64
 import numpy as np
 from PIL import Image, ImageChops
 from transformers.pipelines import Conversation
+from mlserver.codecs.json import JSONEncoderWithArray
 
 IMAGE_PREFIX = "data:image/"
 DEFAULT_IMAGE_FORMAT = "PNG"
 
 
-class HuggingfaceJSONEncoder(json.JSONEncoder):
+class HuggingfaceJSONEncoder(JSONEncoderWithArray):
     def default(self, obj):
-        if isinstance(obj, np.ndarray):
-            return obj.tolist()
-        elif isinstance(obj, np.floating):
-            return float(obj)
-        elif isinstance(obj, np.integer):
-            return int(obj)
-        elif isinstance(obj, Image.Image):
+        if isinstance(obj, Image.Image):
             buf = io.BytesIO()
             if not obj.format:
                 obj.format = DEFAULT_IMAGE_FORMAT
@@ -37,7 +32,7 @@ class HuggingfaceJSONEncoder(json.JSONEncoder):
                 "new_user_input": obj.new_user_input,
             }
         else:
-            return json.JSONEncoder.default(self, obj)
+            return super().default(obj)
 
 
 def json_encode(payload: Any, use_bytes: bool = False):

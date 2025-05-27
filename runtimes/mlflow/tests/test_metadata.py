@@ -3,7 +3,17 @@ import numpy as np
 
 from typing import Tuple, List
 
-from mlflow.types.schema import ColSpec, TensorSpec, DataType, Schema
+from mlflow.types.schema import (
+    ColSpec,
+    TensorSpec,
+    DataType,
+    Schema,
+    Array,
+    Map,
+    Object,
+    Property,
+    AnyType,
+)
 from mlflow.pyfunc import _enforce_schema
 from mlserver.codecs import (
     NumpyCodec,
@@ -45,6 +55,30 @@ from mlserver_mlflow.metadata import (
         (
             ColSpec(name="foo", type=DataType.binary),
             (MDatatype.BYTES, Base64Codec.ContentType),
+        ),
+        (
+            ColSpec(name="foo", type=Array(dtype=DataType.long)),
+            (MDatatype.BYTES, PandasCodec.JsonContentType),
+        ),
+        (
+            ColSpec(name="foo", type=Map(Array(dtype=DataType.long))),
+            (MDatatype.BYTES, PandasCodec.JsonContentType),
+        ),
+        (
+            ColSpec(
+                name="foo",
+                type=Object(
+                    properties=[
+                        Property("a", DataType.long),
+                        Property("b", DataType.string),
+                    ]
+                ),
+            ),
+            (MDatatype.BYTES, PandasCodec.JsonContentType),
+        ),
+        (
+            ColSpec(name="foo", type=AnyType()),
+            (MDatatype.BYTES, PandasCodec.JsonContentType),
         ),
     ],
 )
@@ -142,6 +176,49 @@ def test_get_shape(input_spec: InputSpec, expected: List[int]):
                 ),
             ],
         ),
+        (
+            Schema(
+                inputs=[
+                    ColSpec(type=Array(dtype=DataType.long)),
+                    ColSpec(type=Map(Array(dtype=DataType.long))),
+                    ColSpec(
+                        type=Object(
+                            properties=[
+                                Property("a", DataType.long),
+                                Property("b", DataType.string),
+                            ]
+                        )
+                    ),
+                    ColSpec(type=AnyType()),
+                ]
+            ),
+            [
+                MetadataTensor(
+                    name="input-0",
+                    datatype="BYTES",
+                    shape=[-1, 1],
+                    parameters=Parameters(content_type=PandasCodec.JsonContentType),
+                ),
+                MetadataTensor(
+                    name="input-1",
+                    datatype="BYTES",
+                    shape=[-1, 1],
+                    parameters=Parameters(content_type=PandasCodec.JsonContentType),
+                ),
+                MetadataTensor(
+                    name="input-2",
+                    datatype="BYTES",
+                    shape=[-1, 1],
+                    parameters=Parameters(content_type=PandasCodec.JsonContentType),
+                ),
+                MetadataTensor(
+                    name="input-3",
+                    datatype="BYTES",
+                    shape=[-1, 1],
+                    parameters=Parameters(content_type=PandasCodec.JsonContentType),
+                ),
+            ],
+        ),
     ],
 )
 def test_to_metadata_tensors(schema: Schema, expected: List[MetadataTensor]):
@@ -193,6 +270,54 @@ def test_to_metadata_tensors(schema: Schema, expected: List[MetadataTensor]):
                 data=[b"2021-08-24T15:01:19"],
             ),
         ),
+        (
+            ColSpec(name="foo", type=Array(dtype=DataType.long)),
+            RequestInput(
+                name="foo",
+                datatype="BYTES",
+                parameters=Parameters(content_type=PandasCodec.JsonContentType),
+                shape=[2],
+                data=[b"[1,2]", b"[3,4]"],
+            ),
+        ),
+        (
+            ColSpec(name="foo", type=Map(Array(dtype=DataType.long))),
+            RequestInput(
+                name="foo",
+                datatype="BYTES",
+                parameters=Parameters(content_type=PandasCodec.JsonContentType),
+                shape=[3],
+                data=[b'{"a":[1,2]}', b'{"b":[3,4]}', b'{"c":[5,6]}'],
+            ),
+        ),
+        (
+            ColSpec(
+                name="foo",
+                type=Object(
+                    properties=[
+                        Property("a", DataType.long),
+                        Property("b", DataType.string),
+                    ]
+                ),
+            ),
+            RequestInput(
+                name="foo",
+                datatype="BYTES",
+                parameters=Parameters(content_type=PandasCodec.JsonContentType),
+                shape=[2],
+                data=[b'{"a":1,"b":"hello"}', b'{"a":2,"b":"world"}'],
+            ),
+        ),
+        (
+            ColSpec(name="foo", type=AnyType()),
+            RequestInput(
+                name="foo",
+                datatype="BYTES",
+                parameters=Parameters(content_type=PandasCodec.JsonContentType),
+                shape=[3],
+                data=[b'"a"', b"[1,2]", b'{"b":2}'],
+            ),
+        ),
     ],
 )
 def test_content_types(tensor_spec: TensorSpec, request_input: RequestInput):
@@ -218,6 +343,25 @@ def test_content_types(tensor_spec: TensorSpec, request_input: RequestInput):
                     ColSpec(name="foo", type=DataType.boolean),
                     ColSpec(name="bar", type=DataType.boolean),
                 ]
+            ),
+            PandasCodec.ContentType,
+        ),
+        (
+            # Expect DataFrame for named column inputs
+            Schema(
+                inputs=[
+                    ColSpec(type=Array(dtype=DataType.long)),
+                    ColSpec(type=Map(Array(dtype=DataType.long))),
+                    ColSpec(
+                        type=Object(
+                            properties=[
+                                Property("a", DataType.long),
+                                Property("b", DataType.string),
+                            ]
+                        ),
+                    ),
+                    ColSpec(type=AnyType()),
+                ],
             ),
             PandasCodec.ContentType,
         ),

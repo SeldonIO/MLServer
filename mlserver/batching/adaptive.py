@@ -136,7 +136,7 @@ class AdaptiveBatcher:
 
                     # Update remaining timeout
                     current = time.time()
-                    timeout = timeout - (current - start)
+                    timeout = self._max_batch_time - (current - start)
             except asyncio.TimeoutError:
                 # NOTE: Hit timeout, continue
                 pass

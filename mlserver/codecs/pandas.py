@@ -4,7 +4,8 @@ import numpy as np
 from typing import Optional, Any, List, Tuple
 
 from .base import RequestCodec, register_request_codec
-from .numpy import to_datatype, to_dtype, convert_nan
+from .numpy import to_dtype, convert_nan, to_datatype
+from .json import decode_json_input_or_output, encode_to_json
 from .string import encode_str, StringCodec
 from .utils import get_decoded_or_raw, InputOrOutput, inject_batch_dimension
 from .lists import ListElement
@@ -19,8 +20,12 @@ from ..types import (
 
 
 def _to_series(input_or_output: InputOrOutput) -> pd.Series:
-    payload = get_decoded_or_raw(input_or_output)
+    parameters = input_or_output.parameters
 
+    if parameters and parameters.content_type == PandasCodec.JsonContentType:
+        return pd.Series(decode_json_input_or_output(input_or_output))
+
+    payload = get_decoded_or_raw(input_or_output)
     if Datatype(input_or_output.datatype) == Datatype.BYTES:
         # Don't convert the dtype of BYTES
         return pd.Series(payload)
@@ -43,7 +48,13 @@ def _to_response_output(series: pd.Series, use_bytes: bool = True) -> ResponseOu
 
     content_type = None
     if datatype == Datatype.BYTES:
-        data, content_type = _process_bytes(data, use_bytes)
+        processed_data, content_type = _process_bytes(data, use_bytes)
+
+        if content_type is None:
+            data = [encode_to_json(elem, use_bytes) for elem in data]
+            content_type = PandasCodec.JsonContentType
+        else:
+            data = processed_data
 
     shape = inject_batch_dimension(list(series.shape))
     parameters = None
@@ -70,11 +81,11 @@ def _process_bytes(
     content_type: Optional[str] = StringCodec.ContentType
     for elem in data:
         converted = elem
-        if not isinstance(elem, str):
+        if not isinstance(elem, (str, bytes)):
             # There was a non-string element, so we can't determine a content
             # type
             content_type = None
-        elif use_bytes:
+        elif isinstance(elem, str) and use_bytes:
             converted = encode_str(elem)
 
         processed.append(converted)
@@ -90,6 +101,7 @@ class PandasCodec(RequestCodec):
     """
 
     ContentType = "pd"
+    JsonContentType = "pd_json"
     TypeHint = pd.DataFrame
 
     @classmethod

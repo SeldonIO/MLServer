@@ -1,7 +1,7 @@
 FROM python:3.10-slim AS wheel-builder
 SHELL ["/bin/bash", "-l", "-c"]
 
-ARG POETRY_VERSION="1.8.3"
+ARG POETRY_VERSION="2.1.1"
 
 COPY ./hack/build-wheels.sh ./hack/build-wheels.sh
 COPY ./mlserver ./mlserver
@@ -17,6 +17,7 @@ COPY \
 # by pip:
 # https://github.com/python-poetry/poetry-plugin-export/issues/210
 RUN pip install poetry==$POETRY_VERSION && \
+    pip install poetry-plugin-export && \
     ./hack/build-wheels.sh /opt/mlserver/dist && \
     poetry export --with all-runtimes \
         --without-hashes \
