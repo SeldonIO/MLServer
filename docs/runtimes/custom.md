@@ -6,7 +6,7 @@ custom functionality** which is not included in MLServer (e.g. custom codecs).
 To cover these cases, MLServer lets you create custom runtimes very easily.
 
 To learn more about how you can write custom runtimes with MLServer, check out
-the [Custom Runtimes user guide](../user-guide/custom).
+the [Custom Runtimes user guide](../user-guide/custom.md).
 Alternatively, you can also see this [end-to-end
-example](../examples/custom/README) which walks through the process of writing
+example](../examples/custom/README.md) which walks through the process of writing
 a custom runtime.
