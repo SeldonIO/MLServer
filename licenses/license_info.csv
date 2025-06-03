@@ -255,7 +255,7 @@
 "types-aiofiles","24.1.0.20250516","UNKNOWN"
 "types-orjson","3.6.2","Apache Software License"
 "types-protobuf","5.26.0.20240422","Apache Software License"
-"types-requests","2.31.0.20240311","Apache Software License"
+"types-requests","2.32.0.20250602","UNKNOWN"
 "typing_extensions","4.12.2","Python Software Foundation License"
 "tzdata","2024.2","Apache Software License"
 "urllib3","2.2.3","MIT License"

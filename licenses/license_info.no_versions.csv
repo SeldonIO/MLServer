@@ -255,7 +255,7 @@
 "types-aiofiles","UNKNOWN"
 "types-orjson","Apache Software License"
 "types-protobuf","Apache Software License"
-"types-requests","Apache Software License"
+"types-requests","UNKNOWN"
 "typing_extensions","Python Software Foundation License"
 "tzdata","Apache Software License"
 "urllib3","MIT License"
