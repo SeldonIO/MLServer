@@ -1,6 +1,37 @@
 # Changelog
 
 
+<a id="1.7.1"></a>
+## [1.7.1](https://github.com/SeldonIO/MLServer/releases/tag/1.7.1) - 2025-06-06
+
+<!-- Release notes generated using configuration in .github/release.yml at 1.7.1 -->
+
+## Fixes
+* Set a lower bound for `mlflow` in `mlserver-mlflow` by [@crispin-ki](https://github.com/crispin-ki) in [#2114](https://github.com/SeldonIO/MLServer/pull/2114)
+* Set lower bounds for `protobuf`, `grpcio`, and `grpcio-tools` by [@RobertSamoilescu](https://github.com/RobertSamoilescu) in [#2175](https://github.com/SeldonIO/MLServer/pull/2175)
+* Added support for bytes encoding in `PandasCodec` by [@RobertSamoilescu](https://github.com/RobertSamoilescu) in [#2117](https://github.com/SeldonIO/MLServer/pull/2117)
+
+## What's Changed
+* Included more docker labels by [@RobertSamoilescu](https://github.com/RobertSamoilescu) in [#2106](https://github.com/SeldonIO/MLServer/pull/2106)
+* Fix too loose mlflow dependency constraint in mlserver-mlflow by [@crispin-ki](https://github.com/crispin-ki) in [#2114](https://github.com/SeldonIO/MLServer/pull/2114)
+* Fixed byte encoding in the PandasCodec by [@RobertSamoilescu](https://github.com/RobertSamoilescu) in [#2117](https://github.com/SeldonIO/MLServer/pull/2117)
+* Update CHANGELOG by [@github-actions](https://github.com/github-actions) in [#2108](https://github.com/SeldonIO/MLServer/pull/2108)
+* Re-generate License Info by [@github-actions](https://github.com/github-actions) in [#2174](https://github.com/SeldonIO/MLServer/pull/2174)
+* Re-generate License Info by [@github-actions](https://github.com/github-actions) in [#2176](https://github.com/SeldonIO/MLServer/pull/2176)
+* Fix protobuf bounds by [@RobertSamoilescu](https://github.com/RobertSamoilescu) in [#2175](https://github.com/SeldonIO/MLServer/pull/2175)
+* Revert "build(deps-dev): bump transformers from 4.41.2 to 4.52.4 ([#2170](https://github.com/SeldonIO/MLServer/issues/2170))" by [@RobertSamoilescu](https://github.com/RobertSamoilescu) in [#2177](https://github.com/SeldonIO/MLServer/pull/2177)
+* ci: Merge change for release 1.7.1 by [@RobertSamoilescu](https://github.com/RobertSamoilescu) in [#2178](https://github.com/SeldonIO/MLServer/pull/2178)
+* Re-generate License Info by [@github-actions](https://github.com/github-actions) in [#2180](https://github.com/SeldonIO/MLServer/pull/2180)
+* ci: Merge change for release 1.7.1 [2]  ([#2180](https://github.com/SeldonIO/MLServer/issues/2180)) by [@RobertSamoilescu](https://github.com/RobertSamoilescu) in [#2182](https://github.com/SeldonIO/MLServer/pull/2182)
+
+## New Contributors
+* [@crispin-ki](https://github.com/crispin-ki) made their first contribution in [#2114](https://github.com/SeldonIO/MLServer/pull/2114)
+
+**Full Changelog**: https://github.com/SeldonIO/MLServer/compare/1.7.0...1.7.1
+
+[Changes][1.7.1]
+
+
 <a id="1.7.0"></a>
 ## [1.7.0](https://github.com/SeldonIO/MLServer/releases/tag/1.7.0) - 2025-04-11
 
@@ -606,6 +637,7 @@ To learn more about how to use MLServer directly from the MLflow CLI, check out 
 [Changes][1.1.0]
 
 
+[1.7.1]: https://github.com/SeldonIO/MLServer/compare/1.7.0...1.7.1
 [1.7.0]: https://github.com/SeldonIO/MLServer/compare/1.6.1...1.7.0
 [1.6.1]: https://github.com/SeldonIO/MLServer/compare/1.6.0...1.6.1
 [1.6.0]: https://github.com/SeldonIO/MLServer/compare/1.5.0...1.6.0
