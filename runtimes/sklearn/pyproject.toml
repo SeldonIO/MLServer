@@ -9,9 +9,10 @@ packages = [{include = "mlserver_sklearn"}]
 
 [tool.poetry.dependencies]
 python = ">=3.9,<3.12"
-scikit-learn = "*"
-joblib = "*"
-mlserver = "*"
+scikit-learn = "1.5.0"
+joblib = "1.4.2"
+mlserver = "1.6.0.dev2"
+h11 = "0.16.0"
 
 [tool.poetry.group.dev.dependencies]
 mlserver = {path = "../..", develop = true}

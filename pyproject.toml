@@ -65,6 +65,7 @@ uvloop = {version = "*", markers = "sys_platform != 'win32' and (sys_platform !=
 pydantic = "2.7.1"
 pydantic-settings = "2.2.1"
 python-multipart = "*"
+h11 = "0.16.0"
 
 ## The importlib-resources backport is required to use some
 ## functionality added in Python 3.10
