@@ -24,7 +24,7 @@ RUN pip install poetry==$POETRY_VERSION && \
         -o /opt/mlserver/dist/constraints.txt && \
     sed -i 's/\[.*\]//g' /opt/mlserver/dist/constraints.txt
 
-FROM registry.access.redhat.com/ubi9/ubi-minimal
+FROM 724664234782.dkr.ecr.us-east-1.amazonaws.com/docker.io/library/rockylinux:9.3.20231119-minimal
 SHELL ["/bin/bash", "-c"]
 
 ARG PYTHON_VERSION=3.10.12
@@ -91,7 +91,7 @@ COPY --from=wheel-builder /opt/mlserver/dist ./dist
 # NOTE: Removing explicitly requirements.txt file from spaCy's test
 # dependencies causing false positives in Snyk.
 RUN . $CONDA_PATH/etc/profile.d/conda.sh && \
-    pip install --upgrade pip wheel setuptools && \
+    pip install --upgrade wheel setuptools && \
     if [[ $RUNTIMES == "all" ]]; then \
         for _wheel in "./dist/mlserver_"*.whl; do \
             if [[ ! $_wheel == *"mllib"* ]]; then \
@@ -118,6 +118,28 @@ COPY \
     ./hack/generate_dotenv.py \
     ./hack/activate-env.sh \
     ./hack/
+
+#RUN microdnf remove -y python3.9 glib2-devel python-unversioned-command python3-setuptools-wheel python3-libs libX11 libX11-common libX11-xcb libXext mesa-libGL libXfixes libglvnd-glx libXxf86vm
+RUN pip install --upgrade certifi tqdm requests urllib3 && pip install --upgrade aiohttp python-multipart starlette
+RUN microdnf upgrade -y && microdnf clean all -y
+
+#Remove force remove rpms since these are dependant on microdnf
+#RPM uninstall could not find files to uninstall
+RUN rpm -e \
+#            pcre2  \
+#            pcre2-devel  \
+#            pcre2-syntax  \
+#            pcre2-utf16  \
+#            pcre2-utf32  \
+           microdnf \
+           openldap  \
+           gawk  \
+           tar  \
+           # This is the os version of python certifi which is managed by pip
+           ca-certificates  \
+           libzstd  \
+           libyaml  \
+           --nodeps
 
 USER 1000
 

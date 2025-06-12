@@ -17,7 +17,7 @@ _buildImage() {
   local _runtimes=$1
   local _tag=$2
 
-  DOCKER_BUILDKIT=1 docker build $ROOT_FOLDER \
+  DOCKER_BUILDKIT=1 podman build --cgroup-manager cgroupfs $ROOT_FOLDER \
     --build-arg RUNTIMES="$_runtimes" \
     -t "$IMAGE_NAME:$_tag"
 }

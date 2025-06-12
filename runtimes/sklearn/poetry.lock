@@ -1520,7 +1520,7 @@ dev = ["absl-py", "pyink", "pylint (>=2.6.0)", "pytest", "pytest-xdist"]
 
 [[package]]
 name = "mlserver"
-version = "1.6.0.dev2"
+version = "1.6.1"
 description = "MLServer"
 optional = false
 python-versions = ">=3.9,<3.12"
