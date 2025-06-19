@@ -1,6 +1,8 @@
+# Table of contents
+
 * [MLServer](README.md)
 * [Getting Started](getting-started.md)
-* [User Guide](user-guide/index.md)
+* [User Guide](user-guide/README.md)
   * [Content Types (and Codecs)](user-guide/content-type.md)
   * [OpenAPI Support](user-guide/openapi.md)
   * [Parallel Inference](user-guide/parallel-inference.md)
@@ -48,3 +50,4 @@
   * [Streaming](examples/streaming/README.md)
   * [Deploying a Custom Tensorflow Model with MLServer and Seldon Core](examples/cassava/README.md)
 * [Changelog](changelog.md)
+* [Release Notes](https://github.com/SeldonIO/MLServer/releases)
