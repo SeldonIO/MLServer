@@ -18,6 +18,8 @@ def get_conversation_class():
             return None
         
 Conversation = get_conversation_class()
+
+
 class HuggingfaceJSONEncoder(JSONEncoderWithArray):    
     def default(self, obj):
         if isinstance(obj, Image.Image):
