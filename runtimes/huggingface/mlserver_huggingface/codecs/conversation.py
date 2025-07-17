@@ -1,7 +1,6 @@
 from typing import List, Any
 from mlserver.codecs.base import InputCodec, register_input_codec
 from mlserver.types import RequestInput, ResponseOutput, Parameters
-from transformers.pipelines import Conversation
 from mlserver.codecs.lists import is_list_of
 from .utils import json_decode, json_encode, get_conversation_class
 
