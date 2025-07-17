@@ -4,14 +4,23 @@ from typing import Dict, Any, List
 import base64
 import numpy as np
 from PIL import Image, ImageChops
-from transformers.pipelines import Conversation
 from mlserver.codecs.json import JSONEncoderWithArray
 
 IMAGE_PREFIX = "data:image/"
 DEFAULT_IMAGE_FORMAT = "PNG"
 
 
-class HuggingfaceJSONEncoder(JSONEncoderWithArray):
+def get_conversation_class():
+        try:
+            from transformers.pipelines import Conversation
+            return Conversation
+        except ImportError:
+            return None
+        
+Conversation = get_conversation_class()
+
+
+class HuggingfaceJSONEncoder(JSONEncoderWithArray):    
     def default(self, obj):
         if isinstance(obj, Image.Image):
             buf = io.BytesIO()
@@ -24,7 +33,7 @@ class HuggingfaceJSONEncoder(JSONEncoderWithArray):
                 + ";base64,"
                 + base64.b64encode(buf.getvalue()).decode()
             )
-        elif isinstance(obj, Conversation):
+        elif Conversation and isinstance(obj, Conversation):
             return {
                 "uuid": str(obj.uuid),
                 "past_user_inputs": obj.past_user_inputs,
@@ -66,7 +75,7 @@ class Convertor:
 
     @classmethod
     def convert_conversation(cls, d: Dict[str, Any]):
-        if set(d.keys()) == conversation_keys:
+        if Conversation and set(d.keys()) == conversation_keys:
             return Conversation(
                 text=d["new_user_input"],
                 conversation_id=d["uuid"],
@@ -83,8 +92,12 @@ class Convertor:
         tmp = {}
         for k, v in d.items():
             if isinstance(v, dict):
-                if set(v.keys()) == conversation_keys:
-                    tmp[k] = Conversation(text=v["new_user_input"])
+                if set(d.keys()) == conversation_keys:
+                    tmp[k] = (
+                        Conversation(text=v["new_user_input"]) 
+                        if Conversation 
+                        else v
+                    )
                 else:
                     tmp[k] = cls.convert_dict(v)
             elif isinstance(v, list):
