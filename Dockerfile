@@ -119,9 +119,13 @@ COPY \
     ./hack/activate-env.sh \
     ./hack/
 
-#RUN microdnf remove -y python3.9 glib2-devel python-unversioned-command python3-setuptools-wheel python3-libs libX11 libX11-common libX11-xcb libXext mesa-libGL libXfixes libglvnd-glx libXxf86vm
 RUN pip install --upgrade certifi tqdm requests urllib3 && pip install --upgrade aiohttp python-multipart starlette
 RUN microdnf upgrade -y && microdnf clean all -y
+RUN pip install --upgrade setuptools
+RUN pip install protobuf==4.25.8
+# RUN microdnf remove -y python3.9 glib2-devel python-unversioned-command python3-setuptools-wheel python3-libs libX11 libX11-common libX11-xcb libXext mesa-libGL libXfixes libglvnd-glx libXxf86vm
+RUN microdnf remove -y python3.9 glib2-devel python-unversioned-command python3-setuptools-wheel python3-libs 
+#libX11 libX11-common libX11-xcb libXext libXfixes libglvnd-glx libXxf86vm
 
 #Remove force remove rpms since these are dependant on microdnf
 #RPM uninstall could not find files to uninstall

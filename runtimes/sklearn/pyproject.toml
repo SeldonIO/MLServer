@@ -12,7 +12,10 @@ python = ">=3.9,<3.12"
 scikit-learn = "1.5.0"
 joblib = "1.4.2"
 mlserver = "1.6.1"
-h11 = "0.16.0"
+h11 = "0.16.*"
+werkzeug = "3.*"
+keras = "3.*"
+transformers = "4.52.1"
 
 [tool.poetry.group.dev.dependencies]
 mlserver = {path = "../..", develop = true}

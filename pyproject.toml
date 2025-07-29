@@ -65,7 +65,9 @@ uvloop = {version = "*", markers = "sys_platform != 'win32' and (sys_platform !=
 pydantic = "2.7.1"
 pydantic-settings = "2.2.1"
 python-multipart = "*"
-h11 = "0.16.0"
+h11 = "0.16.*"
+werkzeug = "^3.0.6"
+keras = "3.*"
 
 ## The importlib-resources backport is required to use some
 ## functionality added in Python 3.10
@@ -116,20 +118,20 @@ httpx-sse = "^0.3.1"
 
 [tool.poetry.group.docker.dependencies]
 protobuf = "3.20.3"
-tensorflow = "<2.15"
+# tensorflow = "<2.15" #TODO(strive): is this really needed?
 
 [tool.poetry.group.all-runtimes]
 optional = true
 
 [tool.poetry.group.all-runtimes.dependencies]
 mlserver-sklearn = {path = "./runtimes/sklearn", develop = true}
-mlserver-xgboost = {path = "./runtimes/xgboost", develop = true}
-mlserver-lightgbm = {path = "./runtimes/lightgbm", develop = true}
-mlserver-mlflow = {path = "./runtimes/mlflow", develop = true}
+# mlserver-xgboost = {path = "./runtimes/xgboost", develop = true}
+# mlserver-lightgbm = {path = "./runtimes/lightgbm", develop = true}
+# mlserver-mlflow = {path = "./runtimes/mlflow", develop = true}
 mlserver-huggingface = {path = "./runtimes/huggingface", develop = true}
-mlserver-alibi-explain = {path = "./runtimes/alibi-explain", develop = true}
-mlserver-alibi-detect = {path = "./runtimes/alibi-detect", develop = true}
-mlserver-catboost = {path = "./runtimes/catboost", develop = true}
+# mlserver-alibi-explain = {path = "./runtimes/alibi-explain", develop = true}
+# mlserver-alibi-detect = {path = "./runtimes/alibi-detect", develop = true}
+# mlserver-catboost = {path = "./runtimes/catboost", develop = true}
 
 [tool.poetry.group.all-runtimes-dev]
 optional = true
