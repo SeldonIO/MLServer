@@ -1,8 +1,6 @@
 # mlserver.model
 
-### *class* mlserver.model.MLModel(settings: ModelSettings)
-
-Bases: `object`
+### *class* MLModel(settings: ModelSettings)
 
 Abstract inference runtime which exposes the main interface to interact
 with ML models.
@@ -106,5 +104,3 @@ This method will find the most appropiate input codec based on the model’s met
 output’s content type or payload’s type.
 Otherwise, it will fall back to the codec specified in the
 `default_codec` kwarg.
-
-#### *async* metadata()

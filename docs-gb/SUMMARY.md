@@ -35,10 +35,10 @@
     * [Metrics](reference/api/metrics.md) -->
 
 * [API Reference](api/index.md)
-  * [mlserver.model](api/mlserver.model.md)
-  * [mlserver.codecs](api/mlserver.codecs.md)
-  * [mlserver.types](api/mlserver.types.md)
-  * [mlserver.metrics](api/mlserver.metrics.md)
+  * [Model](api/mlserver.model.md)
+  * [Codecs](api/mlserver.codecs.md)
+  * [Types](api/mlserver.types.md)
+  * [Metrics](api/mlserver.metrics.md)
 
 * [Examples](examples/README.md)
   * [Serving Scikit-Learn models](examples/sklearn/README.md)

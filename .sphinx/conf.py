@@ -31,3 +31,9 @@ except Exception:
 
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
+
+# shorter titles 
+add_module_names = False
+
+# keep logical grouping or follow source order (pick one)
+autodoc_member_order = "bysource"   # or "groupwise"
