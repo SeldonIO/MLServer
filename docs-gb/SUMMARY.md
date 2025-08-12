@@ -28,11 +28,18 @@
   * [MLServer Settings](reference/settings.md)
   * [Model Settings](reference/model-settings.md)
   * [MLServer CLI](reference/cli.md)
-  * [Python API](reference/python-api/README.md)
+  <!-- * [Python API](reference/python-api/README.md)
     * [MLModel](reference/api/model.md)
     * [Types](reference/api/types.md)
     * [Codecs](reference/api/codecs.md)
-    * [Metrics](reference/api/metrics.md)
+    * [Metrics](reference/api/metrics.md) -->
+
+* [API Reference](api/index.md)
+  * [mlserver.model](api/mlserver.model.md)
+  * [mlserver.codecs](api/mlserver.codecs.md)
+  * [mlserver.types](api/mlserver.types.md)
+  * [mlserver.metrics](api/mlserver.metrics.md)
+
 * [Examples](examples/README.md)
   * [Serving Scikit-Learn models](examples/sklearn/README.md)
   * [Serving XGBoost models](examples/xgboost/README.md)
