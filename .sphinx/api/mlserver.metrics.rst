@@ -2,4 +2,4 @@ mlserver.metrics
 ================
 
 .. automodule:: mlserver.metrics
-   :members:
+   :members: register, log

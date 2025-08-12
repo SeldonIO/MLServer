@@ -2,4 +2,4 @@ mlserver.types
 ==============
 
 .. automodule:: mlserver.types
-   :members:
+  :members:
