@@ -4,12 +4,12 @@ import signal
 
 from typing import Optional, Dict, List
 
-from ..settings import ModelSettings
-from ..utils import to_absolute_path
-from ..model import MLModel
-from ..settings import Settings
-from ..env import Environment, compute_hash_of_file, compute_hash_of_string
-from ..registry import model_initialiser
+from mlserver.settings import ModelSettings
+from mlserver.utils import to_absolute_path
+from mlserver.model import MLModel
+from mlserver.settings import Settings
+from mlserver.env import Environment, compute_hash_of_file, compute_hash_of_string
+from mlserver.registry import model_initialiser
 
 from .errors import EnvironmentNotFound
 from .logging import logger

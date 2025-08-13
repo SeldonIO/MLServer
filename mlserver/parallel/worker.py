@@ -9,13 +9,13 @@ from concurrent.futures import ThreadPoolExecutor
 from contextlib import nullcontext
 from typing import Optional
 
-from ..registry import MultiModelRegistry
-from ..utils import install_uvloop_event_loop, schedule_with_callback
-from ..logging import configure_logger
-from ..settings import Settings
-from ..metrics import configure_metrics
-from ..context import model_context
-from ..env import Environment
+from mlserver.registry import MultiModelRegistry
+from mlserver.utils import install_uvloop_event_loop, schedule_with_callback
+from mlserver.logging import configure_logger
+from mlserver.settings import Settings
+from mlserver.metrics import configure_metrics
+from mlserver.context import model_context
+from mlserver.env import Environment
 
 from .messages import (
     ModelRequestMessage,

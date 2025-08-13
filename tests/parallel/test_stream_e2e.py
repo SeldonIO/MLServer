@@ -12,6 +12,7 @@ from mlserver.parallel.model import ParallelModel
 
 # -------- Model that streams one character per chunk --------
 
+
 class ParallelCharStreamModel(ParallelModel):
     async def predict_stream(
         self, payloads: AsyncIterator[InferenceRequest]
@@ -38,13 +39,14 @@ class ParallelCharStreamModel(ParallelModel):
                     StringCodec.encode_output(
                         name="output",
                         payload=[ch],
-                        use_bytes=True,   # IMPORTANT
+                        use_bytes=True,  # IMPORTANT
                     )
                 ],
             )
 
 
 # ------------------ Fixtures ------------------
+
 
 @pytest.fixture
 def model_settings() -> ModelSettings:
@@ -57,12 +59,19 @@ def model_settings() -> ModelSettings:
 
 
 @pytest.fixture
-def char_stream_model(model_settings: ModelSettings, dispatcher) -> ParallelCharStreamModel:
+def char_stream_model(
+    model_settings: ModelSettings, dispatcher
+) -> ParallelCharStreamModel:
     # Minimal inner model to satisfy ParallelModel's constructor
     class _Inner(MLModel):
-        async def load(self): return
-        async def predict(self, _): return InferenceResponse(model_name=self.settings.name, outputs=[])
-        async def metadata(self): return MetadataModelResponse(name=self.settings.name, platform="dummy")
+        async def load(self):
+            return
+
+        async def predict(self, _):
+            return InferenceResponse(model_name=self.settings.name, outputs=[])
+
+        async def metadata(self):
+            return MetadataModelResponse(name=self.settings.name, platform="dummy")
 
     inner = _Inner(model_settings)
     return ParallelCharStreamModel(inner, dispatcher)
@@ -73,7 +82,9 @@ def req_text() -> InferenceRequest:
     return InferenceRequest(
         inputs=[
             # IMPORTANT: use_bytes=True so decode_input returns a single string
-            StringCodec.encode_input(name="input", payload="hello streaming world", use_bytes=True)
+            StringCodec.encode_input(
+                name="input", payload="hello streaming world", use_bytes=True
+            )
         ]
     )
 
@@ -88,14 +99,19 @@ def req_empty() -> InferenceRequest:
 @pytest.fixture
 def req_punct() -> InferenceRequest:
     return InferenceRequest(
-        inputs=[StringCodec.encode_input(name="input", payload="hi, world!", use_bytes=True)]
+        inputs=[
+            StringCodec.encode_input(name="input", payload="hi, world!", use_bytes=True)
+        ]
     )
 
 
 # ------------------ Tests ------------------
 
+
 @pytest.mark.asyncio
-async def test_stream_chars_happy_path(char_stream_model: ParallelCharStreamModel, req_text: InferenceRequest):
+async def test_stream_chars_happy_path(
+    char_stream_model: ParallelCharStreamModel, req_text: InferenceRequest
+):
     async def _reqs():
         yield req_text
 
@@ -108,26 +124,38 @@ async def test_stream_chars_happy_path(char_stream_model: ParallelCharStreamMode
 
 
 @pytest.mark.asyncio
-async def test_stream_empty_input_yields_no_chunks(char_stream_model: ParallelCharStreamModel, req_empty: InferenceRequest):
+async def test_stream_empty_input_yields_no_chunks(
+    char_stream_model: ParallelCharStreamModel, req_empty: InferenceRequest
+):
     async def _reqs():
         yield req_empty
 
-    pieces = [StringCodec.decode_output(c.outputs[0])[0] async for c in char_stream_model.predict_stream(_reqs())]
+    pieces = [
+        StringCodec.decode_output(c.outputs[0])[0]
+        async for c in char_stream_model.predict_stream(_reqs())
+    ]
     assert pieces == []  # nothing to stream
 
 
 @pytest.mark.asyncio
-async def test_stream_punctuation_as_chars(char_stream_model: ParallelCharStreamModel, req_punct: InferenceRequest):
+async def test_stream_punctuation_as_chars(
+    char_stream_model: ParallelCharStreamModel, req_punct: InferenceRequest
+):
     async def _reqs():
         yield req_punct
 
-    pieces = [StringCodec.decode_output(c.outputs[0])[0] async for c in char_stream_model.predict_stream(_reqs())]
+    pieces = [
+        StringCodec.decode_output(c.outputs[0])[0]
+        async for c in char_stream_model.predict_stream(_reqs())
+    ]
     assert pieces == list("hi, world!")
     assert "".join(pieces) == "hi, world!"
 
 
 @pytest.mark.asyncio
-async def test_stream_early_exit_and_close(char_stream_model: ParallelCharStreamModel, req_text: InferenceRequest):
+async def test_stream_early_exit_and_close(
+    char_stream_model: ParallelCharStreamModel, req_text: InferenceRequest
+):
     async def _reqs():
         yield req_text
 
@@ -141,7 +169,6 @@ async def test_stream_early_exit_and_close(char_stream_model: ParallelCharStream
 
     assert first == "h"
     await agen.aclose()
-
 
 
 @pytest.fixture
@@ -162,20 +189,24 @@ def req_unicode() -> InferenceRequest:
 @pytest.fixture
 def req_long() -> InferenceRequest:
     # Keep it reasonably short so the test stays fast (~0.12s given 0.001s per char)
-    s = ("abcde" * 24)  # 120 chars
+    s = "abcde" * 24  # 120 chars
     return InferenceRequest(
         inputs=[StringCodec.encode_input(name="input", payload=s, use_bytes=True)]
     )
 
 
 @pytest.mark.asyncio
-async def test_stream_no_payloads_yields_no_chunks(char_stream_model: ParallelCharStreamModel):
+async def test_stream_no_payloads_yields_no_chunks(
+    char_stream_model: ParallelCharStreamModel,
+):
     async def _no_reqs():
         if False:
             yield  # never yield anything
 
-    pieces = [StringCodec.decode_output(c.outputs[0])[0]
-              async for c in char_stream_model.predict_stream(_no_reqs())]
+    pieces = [
+        StringCodec.decode_output(c.outputs[0])[0]
+        async for c in char_stream_model.predict_stream(_no_reqs())
+    ]
     assert pieces == []
 
 
@@ -187,8 +218,10 @@ async def test_stream_request_with_no_inputs_yields_no_chunks(
     async def _reqs():
         yield req_no_inputs
 
-    pieces = [StringCodec.decode_output(c.outputs[0])[0]
-              async for c in char_stream_model.predict_stream(_reqs())]
+    pieces = [
+        StringCodec.decode_output(c.outputs[0])[0]
+        async for c in char_stream_model.predict_stream(_reqs())
+    ]
     assert pieces == []
 
 
@@ -220,8 +253,10 @@ async def test_only_first_request_is_consumed(
     tracker = TrackingReqs(req_text, req_punct)
 
     # Consume the entire char stream from the *first* request
-    out = [StringCodec.decode_output(c.outputs[0])[0]
-           async for c in char_stream_model.predict_stream(tracker)]
+    out = [
+        StringCodec.decode_output(c.outputs[0])[0]
+        async for c in char_stream_model.predict_stream(tracker)
+    ]
     assert "".join(out) == "hello streaming world"
     # Should have pulled only the first request from the iterator
     assert tracker.calls == 1
@@ -230,13 +265,15 @@ async def test_only_first_request_is_consumed(
 @pytest.mark.asyncio
 async def test_concurrent_streams(char_stream_model: ParallelCharStreamModel):
     async def _make_reqs(s: str):
-        yield InferenceRequest(inputs=[
-            StringCodec.encode_input(name="input", payload=s, use_bytes=True)
-        ])
+        yield InferenceRequest(
+            inputs=[StringCodec.encode_input(name="input", payload=s, use_bytes=True)]
+        )
 
     async def _collect(s: str):
-        return [StringCodec.decode_output(c.outputs[0])[0]
-                async for c in char_stream_model.predict_stream(_make_reqs(s))]
+        return [
+            StringCodec.decode_output(c.outputs[0])[0]
+            async for c in char_stream_model.predict_stream(_make_reqs(s))
+        ]
 
     s1 = "abc 123"
     s2 = "xyz!"
@@ -246,24 +283,31 @@ async def test_concurrent_streams(char_stream_model: ParallelCharStreamModel):
 
 
 @pytest.mark.asyncio
-async def test_stream_unicode_chars(char_stream_model: ParallelCharStreamModel, req_unicode: InferenceRequest):
+async def test_stream_unicode_chars(
+    char_stream_model: ParallelCharStreamModel, req_unicode: InferenceRequest
+):
     async def _reqs():
         yield req_unicode
 
-    pieces = [StringCodec.decode_output(c.outputs[0])[0]
-              async for c in char_stream_model.predict_stream(_reqs())]
-    # For the chosen string, iterating the Python str yields the same characters we expect.
+    pieces = [
+        StringCodec.decode_output(c.outputs[0])[0]
+        async for c in char_stream_model.predict_stream(_reqs())
+    ]
     assert "".join(pieces) == "héllö 😊🚀"
     assert pieces == list("héllö 😊🚀")
 
 
 @pytest.mark.asyncio
-async def test_stream_large_input(char_stream_model: ParallelCharStreamModel, req_long: InferenceRequest):
+async def test_stream_large_input(
+    char_stream_model: ParallelCharStreamModel, req_long: InferenceRequest
+):
     async def _reqs():
         yield req_long
 
-    pieces = [StringCodec.decode_output(c.outputs[0])[0]
-              async for c in char_stream_model.predict_stream(_reqs())]
+    pieces = [
+        StringCodec.decode_output(c.outputs[0])[0]
+        async for c in char_stream_model.predict_stream(_reqs())
+    ]
     joined = "".join(pieces)
     assert len(pieces) == len(joined)  # one char per chunk
     assert joined.startswith("abcde")
@@ -271,7 +315,9 @@ async def test_stream_large_input(char_stream_model: ParallelCharStreamModel, re
 
 
 @pytest.mark.asyncio
-async def test_each_chunk_has_single_output_value(char_stream_model: ParallelCharStreamModel, req_punct: InferenceRequest):
+async def test_each_chunk_has_single_output_value(
+    char_stream_model: ParallelCharStreamModel, req_punct: InferenceRequest
+):
     async def _reqs():
         yield req_punct
 
@@ -284,4 +330,3 @@ async def test_each_chunk_has_single_output_value(char_stream_model: ParallelCha
         assert len(decoded) == 1
         assert isinstance(decoded[0], str)
         break  # one sample is enough for structure checks
-

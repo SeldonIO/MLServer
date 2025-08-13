@@ -7,8 +7,8 @@ from multiprocessing import Queue
 from concurrent.futures import ThreadPoolExecutor
 from asyncio import Future
 
-from ..utils import schedule_with_callback, generate_uuid
-from ..metrics import REGISTRY
+from mlserver.utils import schedule_with_callback, generate_uuid
+from mlserver.metrics import REGISTRY
 
 from .errors import WorkerStop
 from .worker import Worker

@@ -21,6 +21,7 @@ from mlserver.utils import generate_uuid
 # Helpers
 # ==============================================================================
 
+
 def mk_metadata_msg(ms: ModelSettings) -> ModelRequestMessage:
     return ModelRequestMessage(
         id=generate_uuid(),
@@ -30,6 +31,7 @@ def mk_metadata_msg(ms: ModelSettings) -> ModelRequestMessage:
         method_args=[],
         method_kwargs={},
     )
+
 
 def mk_predict_msg(ms: ModelSettings, req: InferenceRequest) -> ModelRequestMessage:
     return ModelRequestMessage(
@@ -41,7 +43,10 @@ def mk_predict_msg(ms: ModelSettings, req: InferenceRequest) -> ModelRequestMess
         method_kwargs={},
     )
 
-def mk_stream_msg(ms: ModelSettings, method_name: str = "stream_tokens") -> ModelRequestMessage:
+
+def mk_stream_msg(
+    ms: ModelSettings, method_name: str = "stream_tokens"
+) -> ModelRequestMessage:
     return ModelRequestMessage(
         id=generate_uuid(),
         model_name=ms.name,
@@ -51,11 +56,13 @@ def mk_stream_msg(ms: ModelSettings, method_name: str = "stream_tokens") -> Mode
         method_kwargs={},
     )
 
+
 class AssignSpy:
     """
     Records worker PIDs used for dispatch by temporarily wrapping
     AsyncResponses._track_message.
     """
+
     def __init__(self, dispatcher: Dispatcher):
         self.dispatcher = dispatcher
         self.original = dispatcher._async_responses._track_message
@@ -83,15 +90,17 @@ class AssignSpy:
             self._mp = None
 
 
-
 # ==============================================================================
 # Shared fixtures for a 2-worker inference_pool and a loaded simple model
 # ==============================================================================
 
 
 @pytest.fixture
-async def parallel_model(inference_pool: InferencePool, sum_model_settings: ModelSettings):
+async def parallel_model(
+    inference_pool: InferencePool, sum_model_settings: ModelSettings
+):
     from tests.fixtures import SumModel
+
     model = SumModel(sum_model_settings)
     pm = await inference_pool.load_model(model)
     try:
@@ -104,15 +113,23 @@ async def parallel_model(inference_pool: InferencePool, sum_model_settings: Mode
 # Worker count & distribution
 # ==============================================================================
 
-@pytest.mark.asyncio
-async def test_worker_count(inference_pool: InferencePool):
-    assert len(inference_pool._workers) == inference_pool._settings.parallel_workers == 2
-    pids = [w.pid for w in inference_pool._workers.values()]
-    assert len(pids) == len(set(pids))
-    assert all(inference_pool._workers[pid].is_alive() for pid in pids)  # type: ignore[index]
 
 @pytest.mark.asyncio
-async def test_round_robin_small(inference_pool: InferencePool, parallel_model, sum_model_settings: ModelSettings):
+async def test_worker_count(inference_pool: InferencePool):
+    assert (
+        len(inference_pool._workers) == inference_pool._settings.parallel_workers == 2
+    )
+    pids = [w.pid for w in inference_pool._workers.values()]
+    assert len(pids) == len(set(pids))
+    assert all(
+        inference_pool._workers[pid].is_alive() for pid in pids
+    )  # type: ignore[index]
+
+
+@pytest.mark.asyncio
+async def test_round_robin_small(
+    inference_pool: InferencePool, parallel_model, sum_model_settings: ModelSettings
+):
     dispatcher: Dispatcher = inference_pool._dispatcher
     with AssignSpy(dispatcher) as spy:
         reqs = [mk_metadata_msg(sum_model_settings) for _ in range(6)]
@@ -121,8 +138,11 @@ async def test_round_robin_small(inference_pool: InferencePool, parallel_model, 
     assert all(r.exception is None for r in resps)
     assert len(set(spy.pids)) == 2  # both workers used
 
+
 @pytest.mark.asyncio
-async def test_concurrent_fairness(inference_pool: InferencePool, parallel_model, sum_model_settings: ModelSettings):
+async def test_concurrent_fairness(
+    inference_pool: InferencePool, parallel_model, sum_model_settings: ModelSettings
+):
     dispatcher: Dispatcher = inference_pool._dispatcher
     N = 100
     with AssignSpy(dispatcher) as spy:
@@ -145,8 +165,11 @@ async def test_concurrent_fairness(inference_pool: InferencePool, parallel_model
 # In-flight maps lifecycle
 # ==============================================================================
 
+
 @pytest.mark.asyncio
-async def test_inflight_maps_clean(inference_pool: InferencePool, parallel_model, sum_model_settings: ModelSettings):
+async def test_inflight_maps_clean(
+    inference_pool: InferencePool, parallel_model, sum_model_settings: ModelSettings
+):
     dispatcher: Dispatcher = inference_pool._dispatcher
     ar = dispatcher._async_responses
 
@@ -170,8 +193,11 @@ async def test_inflight_maps_clean(inference_pool: InferencePool, parallel_model
 # Streaming path: demux, errors, interleaving, backpressure, cancel
 # ==============================================================================
 
+
 @pytest.mark.asyncio
-async def test_stream_demux_and_cleanup(inference_pool: InferencePool, parallel_model, sum_model_settings: ModelSettings):
+async def test_stream_demux_and_cleanup(
+    inference_pool: InferencePool, parallel_model, sum_model_settings: ModelSettings
+):
     dispatcher: Dispatcher = inference_pool._dispatcher
     req = mk_stream_msg(sum_model_settings, "stream_tokens")
     agen = await dispatcher.dispatch_request_stream(req)
@@ -189,15 +215,20 @@ async def test_stream_demux_and_cleanup(inference_pool: InferencePool, parallel_
     assert set(seen) == set([b"a", b"b"])
     assert req.id not in dispatcher._async_responses._streams
 
+
 @pytest.mark.asyncio
-async def test_stream_error_propagation(inference_pool: InferencePool, parallel_model, sum_model_settings: ModelSettings):
+async def test_stream_error_propagation(
+    inference_pool: InferencePool, parallel_model, sum_model_settings: ModelSettings
+):
     dispatcher: Dispatcher = inference_pool._dispatcher
     req = mk_stream_msg(sum_model_settings, "stream_err")
     agen = await dispatcher.dispatch_request_stream(req)
     await asyncio.sleep(0)
 
     dispatcher._responses.put(ModelStreamChunkMessage(id=req.id, chunk=b"x"))
-    dispatcher._responses.put(ModelStreamEndMessage(id=req.id, exception=RuntimeError("boom")))
+    dispatcher._responses.put(
+        ModelStreamEndMessage(id=req.id, exception=RuntimeError("boom"))
+    )
     dispatcher._responses.put(ModelResponseMessage(id=req.id, return_value=None))
 
     first = await agen.__anext__()
@@ -207,8 +238,11 @@ async def test_stream_error_propagation(inference_pool: InferencePool, parallel_
     assert "boom" in str(err.value)
     assert req.id not in dispatcher._async_responses._streams
 
+
 @pytest.mark.asyncio
-async def test_stream_interleaving(inference_pool: InferencePool, parallel_model, sum_model_settings: ModelSettings):
+async def test_stream_interleaving(
+    inference_pool: InferencePool, parallel_model, sum_model_settings: ModelSettings
+):
     dispatcher: Dispatcher = inference_pool._dispatcher
     req_a = mk_stream_msg(sum_model_settings, "stream_A")
     req_b = mk_stream_msg(sum_model_settings, "stream_B")
@@ -239,8 +273,14 @@ async def test_stream_interleaving(inference_pool: InferencePool, parallel_model
     assert req_a.id not in dispatcher._async_responses._streams
     assert req_b.id not in dispatcher._async_responses._streams
 
+
 @pytest.mark.asyncio
-async def test_stream_backpressure(inference_pool: InferencePool, parallel_model, sum_model_settings: ModelSettings, monkeypatch):
+async def test_stream_backpressure(
+    inference_pool: InferencePool,
+    parallel_model,
+    sum_model_settings: ModelSettings,
+    monkeypatch,
+):
     dispatcher: Dispatcher = inference_pool._dispatcher
     # Enlarge per-request stream queue capacity to avoid QueueFull during the burst
     real_create = dispatcher._async_responses.create_stream_queue
@@ -264,7 +304,9 @@ async def test_stream_backpressure(inference_pool: InferencePool, parallel_model
     consumer_task = asyncio.create_task(consume())
 
     for i in range(50):
-        dispatcher._responses.put(ModelStreamChunkMessage(id=req.id, chunk=f"c{i}".encode()))
+        dispatcher._responses.put(
+            ModelStreamChunkMessage(id=req.id, chunk=f"c{i}".encode())
+        )
         await asyncio.sleep(0)
 
     dispatcher._responses.put(ModelStreamEndMessage(id=req.id))
@@ -274,8 +316,11 @@ async def test_stream_backpressure(inference_pool: InferencePool, parallel_model
     assert set(collected) == set([f"c{i}".encode() for i in range(50)])
     assert req.id not in dispatcher._async_responses._streams
 
+
 @pytest.mark.asyncio
-async def test_stream_consumer_cancel(inference_pool: InferencePool, parallel_model, sum_model_settings: ModelSettings):
+async def test_stream_consumer_cancel(
+    inference_pool: InferencePool, parallel_model, sum_model_settings: ModelSettings
+):
     dispatcher: Dispatcher = inference_pool._dispatcher
     req = mk_stream_msg(sum_model_settings, "stream_cancel")
     agen = await dispatcher.dispatch_request_stream(req)
@@ -289,4 +334,3 @@ async def test_stream_consumer_cancel(inference_pool: InferencePool, parallel_mo
 
     await agen.aclose()
     assert req.id not in dispatcher._async_responses._streams
-

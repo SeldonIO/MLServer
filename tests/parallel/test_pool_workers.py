@@ -11,6 +11,7 @@ from mlserver.parallel.pool import InferencePool
 
 # ---------------- Worker-side PID models ----------------
 
+
 class PidUnaryModel(MLModel):
     async def load(self) -> None:
         return
@@ -22,7 +23,11 @@ class PidUnaryModel(MLModel):
         # Return this worker's PID as the single string output
         return InferenceResponse(
             model_name=self.settings.name,
-            outputs=[StringCodec.encode_output(name="output", payload=[str(os.getpid())], use_bytes=False)],
+            outputs=[
+                StringCodec.encode_output(
+                    name="output", payload=[str(os.getpid())], use_bytes=False
+                )
+            ],
         )
 
 
@@ -45,7 +50,9 @@ class PidStreamModel(MLModel):
             outputs=[StringCodec.encode_output("output", [pid], use_bytes=True)],
         )
 
+
 # ---------------- Settings helpers ----------------
+
 
 @pytest.fixture
 def pid_unary_settings() -> ModelSettings:
@@ -55,6 +62,7 @@ def pid_unary_settings() -> ModelSettings:
         parallel_workers=2,  # <-- what we're asserting about
         parameters={"version": "v-test"},
     )
+
 
 @pytest.fixture
 def pid_stream_settings() -> ModelSettings:
@@ -68,6 +76,7 @@ def pid_stream_settings() -> ModelSettings:
 
 # ---------------- Requests ----------------
 
+
 @pytest.fixture
 def trivial_req() -> InferenceRequest:
     # Only needed to keep the fixture shape similar to others
@@ -78,8 +87,13 @@ def trivial_req() -> InferenceRequest:
 
 # ---------------- Tests ----------------
 
+
 @pytest.mark.asyncio
-async def test_pool_uses_two_workers_unary(inference_pool: InferencePool, pid_unary_settings: ModelSettings, trivial_req: InferenceRequest):
+async def test_pool_uses_two_workers_unary(
+    inference_pool: InferencePool,
+    pid_unary_settings: ModelSettings,
+    trivial_req: InferenceRequest,
+):
     """
     Load a unary model with parallel_workers=2, fire many requests concurrently,
     and assert we see at least two distinct worker PIDs in the responses.
@@ -103,7 +117,6 @@ async def test_pool_uses_two_workers_unary(inference_pool: InferencePool, pid_un
     await inference_pool.unload_model(model)
 
 
-
 @pytest.mark.asyncio
 async def test_pool_uses_two_workers_streaming(
     inference_pool: InferencePool,
@@ -123,9 +136,11 @@ async def test_pool_uses_two_workers_streaming(
         agen = parallel_model.predict_stream(None)  # <- avoids pickling error
         pieces: List[str] = []
         try:
+
             async def _consume():
                 async for c in agen:
                     pieces.append(StringCodec.decode_output(c.outputs[0])[0])
+
             await asyncio.wait_for(_consume(), timeout=3.0)
         finally:
             await agen.aclose()
@@ -138,6 +153,8 @@ async def test_pool_uses_two_workers_streaming(
         pid = await run_one_stream()
         seen_pids.add(pid)
 
-    assert len(seen_pids) >= 2, f"Expected streams to hit 2 workers, got PIDs: {seen_pids}"
+    assert (
+        len(seen_pids) >= 2
+    ), f"Expected streams to hit 2 workers, got PIDs: {seen_pids}"
 
     await inference_pool.unload_model(model)

@@ -24,7 +24,6 @@ from mlserver.utils import generate_uuid
 from mlserver.parallel.worker import Worker  # for monkeypatching in stream tests
 
 
-
 from ..fixtures import ErrorModel
 
 
@@ -41,6 +40,7 @@ def check_pid(pid):
     else:
         return True
 
+
 @pytest.mark.asyncio
 async def test_streaming_success_and_error_demux(
     inference_pool: InferencePool,
@@ -56,7 +56,6 @@ async def test_streaming_success_and_error_demux(
     and *prevent the real worker* from trying to execute unknown methods by
     patching Worker.send_request to a no-op.
     """
-    # Load a model (not strictly used by the fake streaming method, but keeps pool in a normal state)
     await inference_pool.load_model(text_stream_model)
     dispatcher: Dispatcher = inference_pool._dispatcher
 
@@ -285,4 +284,3 @@ async def test_load_error(
     assert len(inference_pool._worker_registry) == 0
     expected_msg = f"mlserver.errors.MLServerError: {ErrorModel.error_message}"
     assert str(excinfo.value) == expected_msg
-

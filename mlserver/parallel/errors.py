@@ -1,7 +1,7 @@
 from fastapi import status
 
-from ..model import MLModel
-from ..errors import MLServerError
+from mlserver.model import MLModel
+from mlserver.errors import MLServerError
 
 
 class EnvironmentNotFound(MLServerError):

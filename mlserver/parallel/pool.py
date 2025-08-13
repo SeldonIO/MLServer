@@ -4,10 +4,10 @@ from contextlib import nullcontext
 from multiprocessing import Queue
 from typing import Awaitable, Callable, Dict, Optional, List, Iterable
 
-from ..model import MLModel
-from ..types import InferenceRequest, InferenceResponse
-from ..settings import Settings, ModelSettings
-from ..env import Environment
+from mlserver.model import MLModel
+from mlserver.types import InferenceRequest, InferenceResponse
+from mlserver.settings import Settings, ModelSettings
+from mlserver.env import Environment
 
 from .model import ParallelModel
 from .worker import Worker
@@ -81,7 +81,7 @@ class InferencePool:
         self,
         settings: Settings,
         env: Optional[Environment] = None,
-        on_worker_stop: List[InferencePoolHook] = None,
+        on_worker_stop: Optional[List[InferencePoolHook]] = None,
     ):
         configure_inference_pool(settings)
 

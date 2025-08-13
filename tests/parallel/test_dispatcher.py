@@ -1,12 +1,9 @@
 import asyncio
 import pytest
 from typing import List
-
-from mlserver.types import InferenceResponse
 from mlserver.parallel.errors import WorkerStop
 from mlserver.parallel.dispatcher import Dispatcher
 from mlserver.parallel.messages import (
-    ModelUpdateMessage,
     ModelRequestMessage,
     ModelResponseMessage,
     ModelStreamChunkMessage,

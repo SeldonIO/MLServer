@@ -5,8 +5,8 @@ from enum import IntEnum
 from pydantic import BaseModel, Field, ConfigDict
 from typing import Any, Dict, List, Optional, Union
 
-from ..utils import generate_uuid
-from ..settings import ModelSettings
+from mlserver.utils import generate_uuid
+from mlserver.settings import ModelSettings
 
 
 class ModelUpdateType(IntEnum):

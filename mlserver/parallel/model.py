@@ -2,10 +2,10 @@ from typing import Any, Callable, Optional, AsyncIterator
 from enum import Enum
 from functools import wraps
 
-from ..errors import InferenceError
-from ..handlers.custom import get_custom_handlers, register_custom_handler
-from ..model import MLModel
-from ..types import MetadataModelResponse, InferenceRequest, InferenceResponse
+from mlserver.errors import InferenceError
+from mlserver.handlers.custom import get_custom_handlers, register_custom_handler
+from mlserver.model import MLModel
+from mlserver.types import MetadataModelResponse, InferenceRequest, InferenceResponse
 
 from .messages import ModelRequestMessage
 from .dispatcher import Dispatcher
