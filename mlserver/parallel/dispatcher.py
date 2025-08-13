@@ -1,7 +1,7 @@
 import asyncio
 
 from collections import defaultdict
-from typing import Dict, List, Tuple, Set, Iterator
+from typing import Dict, List, Tuple, Set, Iterator, AsyncIterator, Any
 from itertools import cycle
 from multiprocessing import Queue
 from concurrent.futures import ThreadPoolExecutor
@@ -19,6 +19,9 @@ from .messages import (
     ModelUpdateMessage,
     ModelRequestMessage,
     ModelResponseMessage,
+    # NEW: streaming message types
+    ModelStreamChunkMessage,
+    ModelStreamEndMessage,
 )
 from prometheus_client import Histogram
 
@@ -35,6 +38,9 @@ class AsyncResponses:
         # _futures_map keeps track of which worker is serving each in-flight
         # request
         self._futures_map: Dict[str, int] = {}
+
+        # NEW: per-request streaming queues (only for streaming calls)
+        self._streams: Dict[str, asyncio.Queue] = {}
 
         self.parallel_request_queue_size = self._get_or_create_metric()
 
@@ -57,6 +63,10 @@ class AsyncResponses:
         message_id = message.id
         self._schedule(message, worker)
         return await self._wait(message_id)
+
+    # NEW: schedule without waiting (used by streaming path)
+    def schedule_only(self, message: Message, worker: Worker) -> Future:
+        return self._schedule(message, worker)
 
     def _schedule(self, message: Message, worker: Worker) -> Future:
         """
@@ -90,9 +100,11 @@ class AsyncResponses:
             self._clear_message(message_id)
 
     def _clear_message(self, message_id: str) -> None:
+        # Clear scheduled future refs and any stream queue
         del self._futures[message_id]
         worker_pid = self._futures_map.pop(message_id)
         self._workers_map[worker_pid].remove(message_id)
+        self._streams.pop(message_id, None)
 
     def resolve(self, response: ModelResponseMessage):
         """
@@ -112,8 +124,7 @@ class AsyncResponses:
 
     def cancel(self, worker: Worker, exit_code: int):
         """
-        Cancel in-flight requests for worker (e.g. because it died
-        unexpectedly).
+        Cancel in-flight requests for worker (e.g. because it died unexpectedly).
         """
         in_flight = self._workers_map[worker.pid]  # type: ignore
         if in_flight:
@@ -122,11 +133,36 @@ class AsyncResponses:
                 f"worker {worker.pid} which died unexpectedly with "
                 f"exit code {exit_code}..."
             )
-        for message_id in in_flight:
+        for message_id in list(in_flight):
             err = WorkerStop(exit_code)
-            future = self._futures[message_id]
-            loop = future.get_loop()
-            loop.call_soon_threadsafe(future.set_exception, err)
+            future = self._futures.get(message_id)
+            if future is not None:
+                loop = future.get_loop()
+                loop.call_soon_threadsafe(future.set_exception, err)
+            # Also drop any stream queue so consumers don't hang
+            self._streams.pop(message_id, None)
+
+    # -------- NEW: streaming queue helpers -----------------------------------
+
+    def create_stream_queue(self, message_id: str, maxsize: int = 16) -> asyncio.Queue:
+        """
+        Create and register an asyncio.Queue used to deliver streaming messages
+        for a given request id. Bounded to provide basic backpressure.
+        """
+        q: asyncio.Queue = asyncio.Queue(maxsize=maxsize)
+        self._streams[message_id] = q
+        return q
+
+    def put_stream_message(self, msg: Any) -> None:
+        """
+        Deliver a streaming message (chunk or end) into the per-request queue.
+        """
+        q = self._streams.get(msg.id)
+        if q is not None:
+            q.put_nowait(msg)
+
+    def pop_stream_queue(self, message_id: str) -> None:
+        self._streams.pop(message_id, None)
 
 
 class Dispatcher:
@@ -147,26 +183,20 @@ class Dispatcher:
 
     async def on_worker_start(self, worker: Worker):
         """
-        Handler for workers who have just started but are still not ready to
-        receive traffic.
-        This is used for workers that got restarted and need to reload all
-        models.
+        Worker just started (not yet ready to receive traffic).
         """
-        # Lock while worker is coming up to ensure no model updates get lost in
-        # translation
         async with self._worker_starting_lock:
             self._workers[worker.pid] = worker  # type: ignore
 
     def on_worker_ready(self, worker: Worker):
         """
-        Handler for workers who are now ready to receive traffic.
+        Worker ready to receive traffic.
         """
         self._reset_round_robin()
 
     def on_worker_stop(self, worker: Worker, exit_code: int):
         """
-        Handler used for workers who stopped unexpectedly and there need to be
-        removed from the round robin rotation.
+        Worker stopped unexpectedly; remove from rotation and cancel in-flight.
         """
         pid = worker.pid
         if pid in self._workers:
@@ -185,12 +215,9 @@ class Dispatcher:
         try:
             process_responses.result()
         except asyncio.CancelledError:
-            # NOTE: The response loop was cancelled from the outside, so don't
-            # restart
             return
         except Exception:
             logger.exception("Response processing loop crashed. Restarting the loop...")
-            # If process loop crashed, restart it
             self.start()
 
     async def _process_responses(self):
@@ -199,25 +226,75 @@ class Dispatcher:
         while self._active:
             response = await loop.run_in_executor(self._executor, self._responses.get)
 
-            # If the queue gets terminated, detect the "sentinel value" and
-            # stop reading
+            # Sentinel value -> stop
             if response is END_OF_QUEUE:
                 return
 
+            # NEW: handle streaming messages first (demux by id)
+            if isinstance(response, (ModelStreamChunkMessage, ModelStreamEndMessage)):
+                self._async_responses.put_stream_message(response)
+                continue
+
+            # Unary resolution
             self._async_responses.resolve(response)
 
     async def dispatch_request(
         self, request_message: ModelRequestMessage
     ) -> ModelResponseMessage:
-        worker, wpid = self._get_worker()
+        worker, _ = self._get_worker()
+        worker.send_request(request_message)
+        return await self._async_responses.schedule_and_wait(request_message, worker)
+
+    # -------- NEW: streaming request path ------------------------------------
+
+    async def dispatch_request_stream(
+        self, request_message: ModelRequestMessage
+    ) -> AsyncIterator[Any]:
+        """
+        Dispatch a request that streams multiple chunks.
+        Yields chunks until END; raises if the stream ends with an exception.
+
+        IMPORTANT: do NOT await the worker ack before yielding, or you’d block
+        streaming until the end.
+        """
+        worker, _ = self._get_worker()
+
+        # Create the per-request stream queue and schedule the unary future
+        q = self._async_responses.create_stream_queue(request_message.id, maxsize=16)
+        fut = self._async_responses.schedule_only(request_message, worker)
+
+        # Send the request
         worker.send_request(request_message)
 
-        return await self._async_responses.schedule_and_wait(request_message, worker)
+        # Observe the unary ack (or error) in the background without blocking
+        async def _observe_ack():
+            try:
+                await fut
+            except Exception:
+                # Let worker's END carry the error if any.
+                pass
+
+        asyncio.create_task(_observe_ack())
+
+        async def agen():
+            try:
+                while True:
+                    msg = await q.get()
+                    if isinstance(msg, ModelStreamChunkMessage):
+                        yield msg.chunk
+                    elif isinstance(msg, ModelStreamEndMessage):
+                        if msg.exception:
+                            raise msg.exception
+                        break
+            finally:
+                # Clean up stream queue registration
+                self._async_responses.pop_stream_queue(request_message.id)
+
+        return agen()
 
     def _get_worker(self) -> Tuple[Worker, int]:
         """
-        Get next available worker.
-        By default, this is just a round-robin through all the workers.
+        Round-robin selection of the next worker.
         """
         worker_pid = next(self._workers_round_robin)
         return self._workers[worker_pid], worker_pid
@@ -236,8 +313,6 @@ class Dispatcher:
     async def dispatch_update_to_worker(
         self, worker: Worker, model_update: ModelUpdateMessage
     ) -> ModelResponseMessage:
-        # NOTE: Need to rewrite the UUID to ensure each worker sends back a
-        # unique result
         worker_update = model_update.copy()
         worker_update.id = generate_uuid()
         worker.send_update(worker_update)

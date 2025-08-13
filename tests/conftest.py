@@ -192,7 +192,7 @@ def text_model_settings() -> ModelSettings:
     return ModelSettings(
         name="text-model",
         implementation=TextModel,
-        parallel_workers=0,
+        parallel_workers=2,
         parameters={"version": "v1.2.3"},
     )
 
@@ -211,7 +211,7 @@ def text_stream_model_settings() -> ModelSettings:
     return ModelSettings(
         name="text-stream-model",
         implementation=TextStreamModel,
-        parallel_workers=0,
+        parallel_workers=2,
         parameters={"version": "v1.2.3"},
     )
 
@@ -406,3 +406,6 @@ def datatype_error_message():
         " 'FP16', 'FP32', 'FP64' or 'BYTES'"
     )
     return error_message
+
+
+

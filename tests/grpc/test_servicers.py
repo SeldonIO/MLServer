@@ -18,6 +18,7 @@ from mlserver.types import Datatype
 from mlserver import __version__
 
 
+
 async def test_server_live(inference_service_stub):
     req = pb.ServerLiveRequest()
     response = await inference_service_stub.ServerLive(req)
