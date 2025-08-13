@@ -81,11 +81,11 @@ class InferencePool:
         self,
         settings: Settings,
         env: Optional[Environment] = None,
-        on_worker_stop: List[InferencePoolHook] = [],
+        on_worker_stop: List[InferencePoolHook] = None,
     ):
         configure_inference_pool(settings)
 
-        self._on_worker_stop = on_worker_stop
+        self._on_worker_stop = on_worker_stop or []
         self._env = env
         self._workers: Dict[int, Worker] = {}
         self._worker_registry = WorkerRegistry()
@@ -194,10 +194,11 @@ class InferencePool:
         return len(self._worker_registry) == 0
 
     async def close(self):
+        # ← Stop the dispatcher first so it doesn't race against queue/FD tear-down
+        await self._dispatcher.stop()
         await self._close_workers()
         await terminate_queue(self._responses)
         self._responses.close()
-        await self._dispatcher.stop()
 
     async def _close_workers(self):
         # First close down model updates loop
