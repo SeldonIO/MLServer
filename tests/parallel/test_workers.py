@@ -1,5 +1,3 @@
-# tests/parallel/test_parallel_workers_and_streams.py
-
 import asyncio
 import statistics
 import pytest

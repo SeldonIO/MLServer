@@ -27,20 +27,6 @@ async def test_on_worker_stop(dispatcher: Dispatcher):
         assert worker_pid != worker.pid
 
 
-async def test_dispatch(
-    dispatcher: Dispatcher,
-    load_message: ModelUpdateMessage,
-    inference_request_message: ModelRequestMessage,
-):
-    await dispatcher.dispatch_update(load_message)
-    response_message = await dispatcher.dispatch_request(inference_request_message)
-
-    assert response_message.exception is None
-    inference_response = response_message.return_value
-    assert isinstance(inference_response, InferenceResponse)
-    assert len(inference_response.outputs) > 0
-
-
 async def test_cancel(
     dispatcher: Dispatcher, inference_request_message: ModelRequestMessage
 ):

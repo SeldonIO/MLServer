@@ -127,50 +127,6 @@ async def test_exception(
     assert response.exception.__class__ == WorkerError
     assert str(response.exception) == f"builtins.Exception: {error_msg}"
 
-
-# ---------------------------
-# MODIFIED: for speed
-# ---------------------------
-
-
-async def test_worker_env(
-    worker_with_env: Worker,
-    responses: Queue,
-    env_model_settings: ModelSettings,
-    inference_request: InferenceRequest,
-):
-    # Build a fresh request targeting the env model
-    env_req = ModelRequestMessage(
-        model_name=env_model_settings.name,
-        model_version=env_model_settings.version,
-        method_name=ModelMethods.Predict.value,
-        method_args=[inference_request],
-        method_kwargs={},
-    )
-
-    worker_with_env.send_request(env_req)
-
-    # Avoid indefinite hang: fail fast if nothing arrives
-    try:
-        response_message = responses.get(timeout=5)
-    except Exception as e:
-        pytest.fail(f"No response received from env worker within timeout: {e}")
-
-    assert response_message is not None
-    assert response_message.id == env_req.id
-    assert response_message.exception is None
-
-    response = response_message.return_value
-    assert response is not None
-    assert len(response.outputs) == 1
-
-    # Note: These versions come from the `environment.yml` found in
-    # `./tests/testdata/environment.yaml`
-    assert response.outputs[0].name == "sklearn_version"
-    [sklearn_version] = StringCodec.decode_output(response.outputs[0])
-    assert sklearn_version == "1.3.1"
-
-
 # ---------------------------
 # NEW: streaming-specific tests
 # ---------------------------
@@ -261,3 +217,47 @@ async def test_streaming_error(
 
     assert isinstance(msg3, ModelResponseMessage)
     assert msg3.id == stream_error_request_message.id and msg3.return_value is None
+
+
+# ---------------------------
+# MODIFIED: for speed
+# ---------------------------
+
+
+async def test_worker_env(
+    worker_with_env: Worker,
+    responses: Queue,
+    env_model_settings: ModelSettings,
+    inference_request: InferenceRequest,
+):
+    # Build a fresh request targeting the env model
+    env_req = ModelRequestMessage(
+        model_name=env_model_settings.name,
+        model_version=env_model_settings.version,
+        method_name=ModelMethods.Predict.value,
+        method_args=[inference_request],
+        method_kwargs={},
+    )
+
+    worker_with_env.send_request(env_req)
+
+    # Avoid indefinite hang: fail fast if nothing arrives
+    try:
+        response_message = responses.get(timeout=5)
+    except Exception as e:
+        pytest.fail(f"No response received from env worker within timeout: {e}")
+
+    assert response_message is not None
+    assert response_message.id == env_req.id
+    assert response_message.exception is None
+
+    response = response_message.return_value
+    assert response is not None
+    assert len(response.outputs) == 1
+
+    # Note: These versions come from the `environment.yml` found in
+    # `./tests/testdata/environment.yaml`
+    assert response.outputs[0].name == "sklearn_version"
+    [sklearn_version] = StringCodec.decode_output(response.outputs[0])
+    assert sklearn_version == "1.3.1"
+

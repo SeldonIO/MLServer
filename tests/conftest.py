@@ -406,3 +406,6 @@ def datatype_error_message():
         " 'FP16', 'FP32', 'FP64' or 'BYTES'"
     )
     return error_message
+
+
+

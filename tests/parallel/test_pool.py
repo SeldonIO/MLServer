@@ -44,8 +44,8 @@ def check_pid(pid):
 @pytest.mark.asyncio
 async def test_streaming_success_and_error_demux(
     inference_pool: InferencePool,
-    sum_model: MLModel,
-    sum_model_settings,
+    text_stream_model: MLModel,
+    text_stream_model_settings,
     monkeypatch: pytest.MonkeyPatch,
 ):
     """
@@ -57,7 +57,7 @@ async def test_streaming_success_and_error_demux(
     patching Worker.send_request to a no-op.
     """
     # Load a model (not strictly used by the fake streaming method, but keeps pool in a normal state)
-    await inference_pool.load_model(sum_model)
+    await inference_pool.load_model(text_stream_model)
     dispatcher: Dispatcher = inference_pool._dispatcher
 
     # Prevent real worker RPC for our fake streaming methods
@@ -66,8 +66,8 @@ async def test_streaming_success_and_error_demux(
     # --- Success case ---
     stream_ok = ModelRequestMessage(
         id=generate_uuid(),
-        model_name=sum_model_settings.name,
-        model_version=sum_model_settings.parameters.version,
+        model_name=text_stream_model_settings.name,
+        model_version=text_stream_model_settings.parameters.version,
         method_name="stream_ok",
         method_args=[],
         method_kwargs={},
@@ -92,8 +92,8 @@ async def test_streaming_success_and_error_demux(
     # --- Error case ---
     stream_err = ModelRequestMessage(
         id=generate_uuid(),
-        model_name=sum_model_settings.name,
-        model_version=sum_model_settings.parameters.version,
+        model_name=text_stream_model_settings.name,
+        model_version=text_stream_model_settings.parameters.version,
         method_name="stream_err",
         method_args=[],
         method_kwargs={},
@@ -118,8 +118,8 @@ async def test_streaming_success_and_error_demux(
 @pytest.mark.asyncio
 async def test_two_workers_and_distribution(
     inference_pool: InferencePool,
-    sum_model: MLModel,
-    sum_model_settings,
+    text_stream_model: MLModel,
+    text_stream_model_settings,
     inference_request: InferenceRequest,
     monkeypatch: pytest.MonkeyPatch,
 ):
@@ -128,7 +128,7 @@ async def test_two_workers_and_distribution(
     We spy on the internal assignment path.
     """
     # Load a model (so Metadata calls can be handled by workers)
-    await inference_pool.load_model(sum_model)
+    await inference_pool.load_model(text_stream_model)
     dispatcher: Dispatcher = inference_pool._dispatcher
 
     assert len(inference_pool._workers) == 2  # parallel_workers should be 2
@@ -148,8 +148,8 @@ async def test_two_workers_and_distribution(
     reqs = [
         ModelRequestMessage(
             id=generate_uuid(),
-            model_name=sum_model_settings.name,
-            model_version=sum_model_settings.parameters.version,
+            model_name=text_stream_model_settings.name,
+            model_version=text_stream_model_settings.parameters.version,
             method_name=ModelMethods.Metadata.value,
             method_args=[],
             method_kwargs={},
@@ -171,10 +171,10 @@ def test_workers_start(inference_pool: InferencePool, settings: Settings):
 
 
 async def test_on_worker_stop(
-    settings: Settings, inference_pool: InferencePool, sum_model: MLModel
+    settings: Settings, inference_pool: InferencePool, text_stream_model: MLModel
 ):
     # Ensure pool has some loaded models
-    await inference_pool.load_model(sum_model)
+    await inference_pool.load_model(text_stream_model)
 
     prev_workers = list(inference_pool._workers.values())
     stopped_worker = prev_workers[0]
