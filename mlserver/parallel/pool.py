@@ -195,10 +195,10 @@ class InferencePool:
 
     async def close(self):
         # ← Stop the dispatcher first so it doesn't race against queue/FD tear-down
-        await self._dispatcher.stop()
         await self._close_workers()
         await terminate_queue(self._responses)
         self._responses.close()
+        await self._dispatcher.stop()
 
     async def _close_workers(self):
         # First close down model updates loop
