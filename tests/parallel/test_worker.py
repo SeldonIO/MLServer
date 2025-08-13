@@ -127,6 +127,102 @@ async def test_exception(
     assert response.exception.__class__ == WorkerError
     assert str(response.exception) == f"builtins.Exception: {error_msg}"
 
+# ---------------------------
+# NEW: streaming-specific tests
+# ---------------------------
+
+
+async def test_streaming_success(
+    worker: Worker,
+    stream_request_message: ModelRequestMessage,
+    responses: Queue,
+    mocker,
+):
+    """
+    Verify that the worker emits chunk messages and an end message for an
+    async-generator model method, plus the final unary ack.
+    """
+    model = await worker._model_registry.get_model(stream_request_message.model_name)
+
+    async def stream_tokens(*args, **kwargs):
+        async def agen():
+            yield b"tok1"
+            yield b"tok2"
+
+        return agen()
+
+    # Important: create=True lets us add a new attribute that isn't present
+    mocker.patch.object(model, "stream_tokens", stream_tokens, create=True)
+
+    # Drive the worker
+    worker.send_request(stream_request_message)
+
+    # Expect: chunk, chunk, end, then unary ack ModelResponseMessage
+    msg1 = responses.get()
+    msg2 = responses.get()
+    msg3 = responses.get()
+    msg4 = responses.get()
+
+    assert isinstance(msg1, ModelStreamChunkMessage)
+    assert msg1.id == stream_request_message.id and msg1.chunk == b"tok1"
+
+    assert isinstance(msg2, ModelStreamChunkMessage)
+    assert msg2.id == stream_request_message.id and msg2.chunk == b"tok2"
+
+    assert isinstance(msg3, ModelStreamEndMessage)
+    assert msg3.id == stream_request_message.id and msg3.exception is None
+
+    assert isinstance(msg4, ModelResponseMessage)
+    assert msg4.id == stream_request_message.id and msg4.return_value is None
+
+
+async def test_streaming_error(
+    worker: Worker,
+    stream_error_request_message: ModelRequestMessage,
+    responses: Queue,
+    mocker,
+):
+    """
+    Verify that a mid-stream error results in an END message carrying an
+    exception, plus the unary ack.
+    """
+    model = await worker._model_registry.get_model(
+        stream_error_request_message.model_name
+    )
+
+    async def stream_tokens_err(*args, **kwargs):
+        async def agen():
+            yield b"ok"
+            # Use a picklable (built-in) exception type for multiprocessing.Queue
+            raise RuntimeError("kaboom")
+
+        return agen()
+
+    # Important: create=True since the attribute doesn't exist on SumModel
+    mocker.patch.object(model, "stream_tokens_err", stream_tokens_err, create=True)
+
+    worker.send_request(stream_error_request_message)
+
+    # Expect: one chunk, then END with exception, then unary ack
+    msg1 = responses.get()
+    msg2 = responses.get()
+    msg3 = responses.get()
+
+    assert isinstance(msg1, ModelStreamChunkMessage)
+    assert msg1.id == stream_error_request_message.id and msg1.chunk == b"ok"
+
+    assert isinstance(msg2, ModelStreamEndMessage)
+    assert msg2.id == stream_error_request_message.id and msg2.exception is not None
+    assert "kaboom" in str(msg2.exception)
+
+    assert isinstance(msg3, ModelResponseMessage)
+    assert msg3.id == stream_error_request_message.id and msg3.return_value is None
+
+
+# ---------------------------
+# MODIFIED: for speed
+# ---------------------------
+
 
 # ---------------------------
 # NEW: streaming-specific tests
@@ -261,3 +357,4 @@ async def test_worker_env(
     assert response.outputs[0].name == "sklearn_version"
     [sklearn_version] = StringCodec.decode_output(response.outputs[0])
     assert sklearn_version == "1.3.1"
+

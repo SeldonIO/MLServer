@@ -4,7 +4,6 @@ import pytest
 from multiprocessing import Queue
 
 from mlserver.settings import Settings, ModelSettings, ModelParameters
-from mlserver.types import InferenceRequest, InferenceResponse
 from mlserver.model import MLModel
 from mlserver.env import Environment
 from mlserver.parallel.dispatcher import Dispatcher
@@ -18,6 +17,67 @@ from mlserver.parallel.messages import (
 )
 
 from ..fixtures import ErrorModel, EnvModel
+import asyncio
+import pytest
+from typing import AsyncIterator, List
+
+from mlserver.model import MLModel
+from mlserver.settings import ModelSettings
+from mlserver.types import InferenceRequest, InferenceResponse
+from mlserver.types import MetadataModelResponse
+from mlserver.parallel.dispatcher import Dispatcher
+from mlserver.parallel.model import ParallelModel, ModelMethods
+
+
+# ---------- Fixtures: minimal inner model + dispatcher ----------
+
+@pytest.fixture
+def parallel_model_settings() -> ModelSettings:
+    return ModelSettings(
+        name="dummy-parallel-model",
+        implementation="tests.parallel.test_parallel_model_streaming_api.Dummy",  # not used
+        parameters={"version": "v0"},
+    )
+
+
+@pytest.fixture
+def inner_model(parallel_model_settings: ModelSettings) -> MLModel:
+    class Dummy(MLModel):
+        async def load(self) -> None:
+            return
+
+        # NEW: built-in streaming method with AsyncIterator annotation
+        async def predict_stream(
+            self, payloads: AsyncIterator[InferenceRequest]
+        ) -> AsyncIterator[InferenceResponse]:
+            # Consume just the first payload (like many streaming APIs do)
+            first: InferenceRequest | None = None
+            async for r in payloads:
+                first = r
+                break
+
+            # Emit two small, valid responses
+            yield InferenceResponse(model_name=self.settings.name, outputs=[])
+            yield InferenceResponse(model_name=self.settings.name, outputs=[])
+
+        async def predict(self, request: InferenceRequest) -> InferenceResponse:
+            # Not used in these tests directly (we patch dispatcher), but valid
+            return InferenceResponse(model_name=self.settings.name, outputs=[])
+
+        async def metadata(self) -> MetadataModelResponse:
+            return MetadataModelResponse(name=self.settings.name, platform="dummy")
+
+        # Custom async-iterator method to verify _parallelise()
+        async def tokens(self) -> AsyncIterator[int]:  # pragma: no cover
+            yield 1
+            yield 2
+
+    return Dummy(parallel_model_settings)
+
+
+@pytest.fixture
+def parallel(inner_model: MLModel, dispatcher: Dispatcher) -> ParallelModel:
+    return ParallelModel(inner_model, dispatcher)
 
 from typing import AsyncIterator
 
@@ -168,6 +228,7 @@ def unload_message(sum_model_settings: ModelSettings) -> ModelUpdateMessage:
 def inference_request_message(
     sum_model_settings: ModelSettings, inference_request: InferenceRequest
 ) -> ModelRequestMessage:
+    # Let the Pydantic model auto-generate `id`; keep args as a list.
     return ModelRequestMessage(
         model_name=sum_model_settings.name,
         model_version=sum_model_settings.parameters.version,
