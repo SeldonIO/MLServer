@@ -6,6 +6,9 @@ from mlserver.types import InferenceRequest, MetadataModelResponse
 from mlserver.model import MLModel
 from mlserver.settings import ModelSettings
 from mlserver.parallel.pool import InferencePool
+from mlserver.types import InferenceResponse
+from mlserver.utils import generate_uuid
+from typing import AsyncIterator, List
 
 from ..fixtures import ErrorModel
 
@@ -78,3 +81,44 @@ async def test_custom_handlers(sum_model: MLModel):
 
     response = await sum_model.my_payload([1, 2, 3])
     assert response == 6
+
+
+async def test_predict_stream(
+    sum_model: MLModel,
+    inference_request: InferenceRequest,
+    mocker,
+):
+    """
+    Validate that ParallelModel.predict_stream forwards to the dispatcher
+    streaming path and yields InferenceResponse chunks as they arrive.
+    We stub the dispatcher's streaming method so no model-side streaming
+    implementation is required.
+    """
+
+    # Build two fake streamed responses
+    r1 = InferenceResponse(model_name=sum_model.settings.name, id=generate_uuid(), outputs=[])
+    r2 = InferenceResponse(model_name=sum_model.settings.name, id=generate_uuid(), outputs=[])
+
+    async def _fake_dispatch_stream(_req_msg) -> AsyncIterator[InferenceResponse]:
+        # Simulate two streamed chunks from the worker
+        yield r1
+        yield r2
+
+    # Patch the underlying dispatcher's streaming method
+    mocker.patch.object(
+        sum_model._dispatcher,  # type: ignore[attr-defined]
+        "dispatch_request_stream",
+        side_effect=_fake_dispatch_stream,
+    )
+
+    # Create a tiny async generator of requests (API expects an AsyncIterator)
+    async def _reqs() -> AsyncIterator[InferenceRequest]:
+        yield inference_request
+
+    seen: List[InferenceResponse] = []
+    async for chunk in sum_model.predict_stream(_reqs()):
+        seen.append(chunk)
+
+    assert len(seen) == 2
+    assert isinstance(seen[0], InferenceResponse)
+    assert isinstance(seen[1], InferenceResponse)

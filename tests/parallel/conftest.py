@@ -26,21 +26,19 @@ from ..fixtures import ErrorModel, EnvModel
 async def inference_pool(settings: Settings) -> InferencePool:
     pool = InferencePool(settings)
     yield pool
-
     await pool.close()
 
 
 @pytest.fixture
 async def dispatcher(inference_pool) -> Dispatcher:
+    # The InferencePool starts the dispatcher processing loop internally.
     return inference_pool._dispatcher
 
 
 @pytest.fixture
 async def error_model(inference_pool: InferencePool, error_model: MLModel) -> MLModel:
     model = await inference_pool.load_model(error_model)
-
     yield model
-
     await inference_pool.unload_model(error_model)
 
 
@@ -52,27 +50,23 @@ async def load_error_model() -> MLModel:
         parameters=ModelParameters(load_error=True),
     )
     error_model = ErrorModel(error_model_settings)
-
     yield error_model
 
 
 @pytest.fixture
 def settings(settings: Settings, tmp_path: str) -> Settings:
+    # Keep parallelism explicit; tests expect a pool to exist.
     settings.parallel_workers = 2
     settings.environments_dir = str(tmp_path)
-
     configure_inference_pool(settings)
     return settings
 
 
 @pytest.fixture
 async def responses(settings: Settings) -> Queue:
-    # NOTE: This fixture depends on settings to ensure the multiprocessing
-    # context has been set ahead of time to `spawn` (handled in the
-    # configure_inference_pool method)
+    # Ensure MP context configured (handled by configure_inference_pool).
     q = Queue()
     yield q
-
     q.close()
 
 
@@ -85,15 +79,13 @@ async def worker(
 ) -> Worker:
     worker = Worker(settings, responses)
 
-    # Simulate the worker running on a different process, but keep it to a
-    # thread to simplify debugging.
-    # Note that we call `worker.coro_run` instead of `worker.run` to avoid also
-    # triggering the other set up methods of `worker.run`.
+    # Simulate a separate process by running the worker loop in a thread.
+    # Use coro_run (not run) to avoid extra setup duplication.
     worker_task = event_loop.run_in_executor(
         None, lambda: asyncio.run(worker.coro_run())
     )
 
-    # Send an update and wait for its response (although we ignore it)
+    # Load the baseline model into this worker and wait for the ack.
     worker.send_update(load_message)
     responses.get()
 
@@ -121,8 +113,8 @@ def unload_message(sum_model_settings: ModelSettings) -> ModelUpdateMessage:
 def inference_request_message(
     sum_model_settings: ModelSettings, inference_request: InferenceRequest
 ) -> ModelRequestMessage:
+    # Let the Pydantic model auto-generate `id`; keep args as a list.
     return ModelRequestMessage(
-        id=generate_uuid(),
         model_name=sum_model_settings.name,
         model_version=sum_model_settings.parameters.version,
         method_name=ModelMethods.Predict.value,
@@ -133,7 +125,6 @@ def inference_request_message(
 @pytest.fixture
 def metadata_request_message(sum_model_settings: ModelSettings) -> ModelRequestMessage:
     return ModelRequestMessage(
-        id=generate_uuid(),
         model_name=sum_model_settings.name,
         model_version=sum_model_settings.parameters.version,
         method_name=ModelMethods.Metadata.value,
@@ -142,11 +133,10 @@ def metadata_request_message(sum_model_settings: ModelSettings) -> ModelRequestM
 
 @pytest.fixture
 def custom_request_message(sum_model_settings: ModelSettings) -> ModelRequestMessage:
+    # From `SumModel` class in tests/fixtures.py
     return ModelRequestMessage(
-        id=generate_uuid(),
         model_name=sum_model_settings.name,
         model_version=sum_model_settings.parameters.version,
-        # From `SumModel` class in tests/fixtures.py
         method_name="my_payload",
         method_kwargs={"payload": [1, 2, 3]},
     )
@@ -166,7 +156,6 @@ def existing_env_model_settings(env_tarball: str, tmp_path) -> ModelSettings:
     from mlserver.env import _extract_env
 
     env_path = str(tmp_path)
-
     _extract_env(env_tarball, env_path)
     model_settings = ModelSettings(
         name="exising_env_model",
@@ -183,8 +172,7 @@ async def worker_with_env(
     env: Environment,
     env_model_settings: ModelSettings,
 ):
-    # NOTE: This fixture will start an actual worker running on a separate
-    # process.
+    # Start a real worker in a separate process for env-dependent tests.
     worker = _spawn_worker(settings, responses, env)
 
     load_message = ModelUpdateMessage(
@@ -196,3 +184,36 @@ async def worker_with_env(
     yield worker
 
     await worker.stop()
+
+# ---------------------------------------------------------------------
+# NEW: helper fixtures for streaming requests (used by streaming tests)
+# ---------------------------------------------------------------------
+
+@pytest.fixture
+def stream_request_message(sum_model_settings: ModelSettings) -> ModelRequestMessage:
+    """
+    Build a request message targeting a (mocked) streaming method.
+    The tests can patch the model to add `stream_tokens` and then use this.
+    """
+    return ModelRequestMessage(
+        model_name=sum_model_settings.name,
+        model_version=sum_model_settings.parameters.version,
+        method_name="stream_tokens",
+        method_args=[],
+        method_kwargs={},
+    )
+
+
+@pytest.fixture
+def stream_error_request_message(sum_model_settings: ModelSettings) -> ModelRequestMessage:
+    """
+    Build a request message targeting a (mocked) streaming method that errors.
+    """
+    return ModelRequestMessage(
+        model_name=sum_model_settings.name,
+        model_version=sum_model_settings.parameters.version,
+        method_name="stream_tokens_err",
+        method_args=[],
+        method_kwargs={},
+    )
+

@@ -58,3 +58,26 @@ class ModelUpdateMessage(Message):
     @property
     def model_settings(self) -> ModelSettings:
         return ModelSettings.parse_raw(self.serialised_model_settings)
+
+
+class ModelStreamChunkMessage(Message):
+    """
+    One chunk of a streaming response for the request with the same `id`.
+    """
+    model_config = ConfigDict(
+        arbitrary_types_allowed=True,
+    )
+
+    chunk: Any
+
+
+class ModelStreamEndMessage(Message):
+    """
+    Marks the end of a streaming response for the request with the same `id`.
+    If `exception` is set, the stream terminated with an error.
+    """
+    model_config = ConfigDict(
+        arbitrary_types_allowed=True,
+    )
+
+    exception: Optional[Union[Exception, CancelledError]] = None
