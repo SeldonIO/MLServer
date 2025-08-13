@@ -4,10 +4,10 @@ from contextlib import nullcontext
 from multiprocessing import Queue
 from typing import Awaitable, Callable, Dict, Optional, List, Iterable
 
-from ..model import MLModel
-from ..types import InferenceRequest, InferenceResponse
-from ..settings import Settings, ModelSettings
-from ..env import Environment
+from mlserver.model import MLModel
+from mlserver.types import InferenceRequest, InferenceResponse
+from mlserver.settings import Settings, ModelSettings
+from mlserver.env import Environment
 
 from .model import ParallelModel
 from .worker import Worker
@@ -81,11 +81,11 @@ class InferencePool:
         self,
         settings: Settings,
         env: Optional[Environment] = None,
-        on_worker_stop: List[InferencePoolHook] = [],
+        on_worker_stop: Optional[List[InferencePoolHook]] = None,
     ):
         configure_inference_pool(settings)
 
-        self._on_worker_stop = on_worker_stop
+        self._on_worker_stop = on_worker_stop or []
         self._env = env
         self._workers: Dict[int, Worker] = {}
         self._worker_registry = WorkerRegistry()
@@ -194,6 +194,7 @@ class InferencePool:
         return len(self._worker_registry) == 0
 
     async def close(self):
+        # ← Stop the dispatcher first so it doesn't race against queue/FD tear-down
         await self._close_workers()
         await terminate_queue(self._responses)
         self._responses.close()

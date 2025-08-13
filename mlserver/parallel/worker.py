@@ -1,6 +1,7 @@
 import asyncio
 import select
 import signal
+import inspect  # NEW
 
 from asyncio import Task, CancelledError
 from multiprocessing import Process, Queue
@@ -8,19 +9,22 @@ from concurrent.futures import ThreadPoolExecutor
 from contextlib import nullcontext
 from typing import Optional
 
-from ..registry import MultiModelRegistry
-from ..utils import install_uvloop_event_loop, schedule_with_callback
-from ..logging import configure_logger
-from ..settings import Settings
-from ..metrics import configure_metrics
-from ..context import model_context
-from ..env import Environment
+from mlserver.registry import MultiModelRegistry
+from mlserver.utils import install_uvloop_event_loop, schedule_with_callback
+from mlserver.logging import configure_logger
+from mlserver.settings import Settings
+from mlserver.metrics import configure_metrics
+from mlserver.context import model_context
+from mlserver.env import Environment
 
 from .messages import (
     ModelRequestMessage,
     ModelUpdateType,
     ModelUpdateMessage,
     ModelResponseMessage,
+    # NEW: streaming message types
+    ModelStreamChunkMessage,
+    ModelStreamEndMessage,
 )
 from .utils import terminate_queue, END_OF_QUEUE
 from .logging import logger
@@ -133,10 +137,38 @@ class Worker(Process):
 
             method = getattr(model, request.method_name)
             with model_context(model.settings):
-                return_value = await method(
-                    *request.method_args, **request.method_kwargs
-                )
-            return ModelResponseMessage(id=request.id, return_value=return_value)
+                # Call without prematurely awaiting; we need to detect generators
+                result = method(*request.method_args, **request.method_kwargs)
+
+                # Await plain awaitables (but not async generators)
+                if inspect.isawaitable(result) and not inspect.isasyncgen(result):
+                    result = await result
+
+                # STREAMING PATH: async generator / async iterator
+                if inspect.isasyncgen(result) or hasattr(result, "__aiter__"):
+                    try:
+                        async for chunk in result:
+                            self._responses.put(
+                                ModelStreamChunkMessage(id=request.id, chunk=chunk)
+                            )
+                        # normal end of stream
+                        self._responses.put(ModelStreamEndMessage(id=request.id))
+                    except (Exception, CancelledError) as e:
+                        logger.exception(
+                            f"Streaming error in '{request.method_name}' "
+                            f"from model '{request.model_name}'."
+                        )
+                        self._responses.put(
+                            ModelStreamEndMessage(
+                                id=request.id, exception=WorkerError(e)
+                            )
+                        )
+                    # Return a minimal response to complete the scheduled task.
+                    return ModelResponseMessage(id=request.id, return_value=None)
+
+                # UNARY PATH
+                return ModelResponseMessage(id=request.id, return_value=result)
+
         except (Exception, CancelledError) as e:
             logger.exception(
                 f"An error occurred calling method '{request.method_name}' "

@@ -4,7 +4,7 @@ import multiprocessing
 from asyncio import Task
 from multiprocessing import Queue
 
-from ..settings import Settings
+from mlserver.settings import Settings
 
 from .logging import logger
 
