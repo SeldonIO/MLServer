@@ -1,0 +1,203 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MLServer Sphinx Documentation (GitBook Optimized) &mdash; MLServer Documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="_static/autodoc_pydantic.css" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/rtd_sphinx_search.min.css" />
+      <link rel="stylesheet" type="text/css" href="_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+      <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+      <script src="_static/doctools.js"></script>
+      <script src="_static/sphinx_highlight.js"></script>
+      <script src="_static/clipboard.min.js"></script>
+      <script src="_static/copybutton.js"></script>
+      <script src="_static/js/rtd_search_config.js"></script>
+      <script src="_static/js/rtd_sphinx_search.min.js"></script>
+      <script src="_static/design-tabs.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            MLServer
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="api/reference.html">Python API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/reference.html#module-mlserver.model"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mlserver.model</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/reference.html#module-mlserver.codecs"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mlserver.codecs</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/reference.html#module-mlserver.types"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mlserver.types</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/reference.html#module-mlserver.metrics"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mlserver.metrics</span></code></a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">MLServer</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">MLServer Sphinx Documentation (GitBook Optimized)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/README.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="mlserver-sphinx-documentation-gitbook-optimized">
+<h1>MLServer Sphinx Documentation (GitBook Optimized)<a class="headerlink" href="#mlserver-sphinx-documentation-gitbook-optimized" title="Permalink to this heading"></a></h1>
+<p>This directory contains the Sphinx configuration for building MLServer documentation that is optimized for GitBook deployment.</p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading"></a></h2>
+<p>This setup follows the same approach as the main <code class="docutils literal notranslate"><span class="pre">docs/</span></code> folder but is specifically configured for:</p>
+<ul class="simple">
+<li><p><strong>Sphinx + GitBook compatibility</strong>: Outputs Markdown that works well with GitBook</p></li>
+<li><p><strong>API documentation</strong>: Auto-generated from the MLServer Python code</p></li>
+<li><p><strong>Clean structure</strong>: Organized documentation following the main docs approach</p></li>
+</ul>
+</section>
+<section id="structure">
+<h2>Structure<a class="headerlink" href="#structure" title="Permalink to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>.sphinx/
+├── conf.py              # Sphinx configuration
+├── index.md             # Main documentation index
+├── api/                 # API documentation
+│   ├── reference.md     # API overview
+│   ├── model.md         # MLModel documentation
+│   ├── codecs.md        # Codecs documentation
+│   ├── types.md         # Types documentation
+│   └── metrics.md       # Metrics documentation
+├── _static/             # Static assets
+│   └── css/
+│       └── custom.css   # Custom styling
+├── Makefile             # Build commands
+└── README.md            # This file
+</pre></div>
+</div>
+</section>
+<section id="building-documentation">
+<h2>Building Documentation<a class="headerlink" href="#building-documentation" title="Permalink to this heading"></a></h2>
+<section id="prerequisites">
+<h3>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this heading"></a></h3>
+<p>Install the required dependencies:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>install-dev
+</pre></div>
+</div>
+</section>
+<section id="build-commands">
+<h3>Build Commands<a class="headerlink" href="#build-commands" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>HTML documentation</strong>: <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">html</span></code></p></li>
+<li><p><strong>GitBook Markdown</strong>: <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">gitbook</span></code></p></li>
+<li><p><strong>Development server</strong>: <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">start</span></code></p></li>
+<li><p><strong>Clean build</strong>: <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">clean</span></code></p></li>
+</ul>
+</section>
+<section id="gitbook-deployment">
+<h3>GitBook Deployment<a class="headerlink" href="#gitbook-deployment" title="Permalink to this heading"></a></h3>
+<p>To build for GitBook deployment:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>gitbook
+</pre></div>
+</div>
+<p>This will generate Markdown files in <code class="docutils literal notranslate"><span class="pre">_build/markdown/</span></code> that can be used with GitBook.</p>
+</section>
+</section>
+<section id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">conf.py</span></code> file is configured to:</p>
+<ul class="simple">
+<li><p>Use the same extensions as the main docs</p></li>
+<li><p>Output Markdown for GitBook compatibility</p></li>
+<li><p>Auto-generate API documentation using autodoc2</p></li>
+<li><p>Include proper styling and navigation</p></li>
+</ul>
+</section>
+<section id="differences-from-main-docs">
+<h2>Differences from Main Docs<a class="headerlink" href="#differences-from-main-docs" title="Permalink to this heading"></a></h2>
+<p>This setup differs from the main <code class="docutils literal notranslate"><span class="pre">docs/</span></code> folder in that it:</p>
+<ol class="arabic simple">
+<li><p><strong>Focuses on API documentation</strong>: Primarily for reference material</p></li>
+<li><p><strong>GitBook optimized</strong>: Outputs Markdown instead of HTML</p></li>
+<li><p><strong>Simplified structure</strong>: Less content, more focused on code reference</p></li>
+<li><p><strong>Same approach</strong>: Uses the same configuration patterns and extensions</p></li>
+</ol>
+</section>
+<section id="customization">
+<h2>Customization<a class="headerlink" href="#customization" title="Permalink to this heading"></a></h2>
+<p>To customize the documentation:</p>
+<ol class="arabic simple">
+<li><p><strong>Add new API modules</strong>: Update <code class="docutils literal notranslate"><span class="pre">autodoc2_packages</span></code> in <code class="docutils literal notranslate"><span class="pre">conf.py</span></code></p></li>
+<li><p><strong>Modify styling</strong>: Edit <code class="docutils literal notranslate"><span class="pre">_static/css/custom.css</span></code></p></li>
+<li><p><strong>Add content</strong>: Create new <code class="docutils literal notranslate"><span class="pre">.md</span></code> files and update the toctree</p></li>
+<li><p><strong>Change theme</strong>: Modify <code class="docutils literal notranslate"><span class="pre">html_theme_options</span></code> in <code class="docutils literal notranslate"><span class="pre">conf.py</span></code></p></li>
+</ol>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Seldon Technologies.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

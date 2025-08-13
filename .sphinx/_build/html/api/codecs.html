@@ -1,0 +1,174 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Codecs &mdash; MLServer Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/autodoc_pydantic.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/rtd_sphinx_search.min.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css" />
+
+  
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+      <script src="../_static/jquery.js"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+      <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+      <script src="../_static/doctools.js"></script>
+      <script src="../_static/sphinx_highlight.js"></script>
+      <script src="../_static/clipboard.min.js"></script>
+      <script src="../_static/copybutton.js"></script>
+      <script src="../_static/js/rtd_search_config.js"></script>
+      <script src="../_static/js/rtd_sphinx_search.min.js"></script>
+      <script src="../_static/design-tabs.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Metrics" href="metrics.html" />
+    <link rel="prev" title="Types" href="types.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            MLServer
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="reference.html">Python API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="model.html">MLModel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model.html#module-mlserver.model"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mlserver.model</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="types.html">Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="types.html#module-mlserver.types"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mlserver.types</span></code></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Codecs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-mlserver.codecs"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mlserver.codecs</span></code></a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="metrics.html">Metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="metrics.html#module-mlserver.metrics"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mlserver.metrics</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html#module-mlserver.model"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mlserver.model</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html#module-mlserver.codecs"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mlserver.codecs</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html#module-mlserver.types"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mlserver.types</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html#module-mlserver.metrics"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mlserver.metrics</span></code></a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">MLServer</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="reference.html">Python API</a></li>
+      <li class="breadcrumb-item active">Codecs</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/codecs.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="codecs">
+<h1>Codecs<a class="headerlink" href="#codecs" title="Permalink to this heading"></a></h1>
+<p>Codecs in MLServer handle the encoding and decoding of requests and responses
+between different content types. They provide a flexible way to handle various
+data formats and serialization methods.</p>
+<p>The codecs module provides:</p>
+<ul class="simple">
+<li><p><strong>Input Codecs</strong>: For decoding incoming requests</p></li>
+<li><p><strong>Output Codecs</strong>: For encoding outgoing responses</p></li>
+<li><p><strong>Request Codecs</strong>: For handling complete request/response cycles</p></li>
+<li><p><strong>Utility Functions</strong>: For working with encoded/decoded data</p></li>
+</ul>
+<section id="codec-interface">
+<h2>Codec Interface<a class="headerlink" href="#codec-interface" title="Permalink to this heading"></a></h2>
+<p>All codecs implement a common interface that allows MLServer to:</p>
+<ol class="arabic simple">
+<li><p><strong>Detect</strong> if a codec can handle a specific content type</p></li>
+<li><p><strong>Decode</strong> incoming data into Python objects</p></li>
+<li><p><strong>Encode</strong> Python objects into the appropriate format</p></li>
+<li><p><strong>Validate</strong> data structures and types</p></li>
+</ol>
+</section>
+<section id="built-in-codecs">
+<h2>Built-in Codecs<a class="headerlink" href="#built-in-codecs" title="Permalink to this heading"></a></h2>
+<p>MLServer comes with several built-in codecs for common formats:</p>
+<ul class="simple">
+<li><p><strong>JSON</strong>: For JSON-formatted data</p></li>
+<li><p><strong>Numpy</strong>: For NumPy arrays</p></li>
+<li><p><strong>Pandas</strong>: For Pandas DataFrames</p></li>
+<li><p><strong>String</strong>: For plain text data</p></li>
+<li><p><strong>Base64</strong>: For binary data encoded as base64</p></li>
+</ul>
+</section>
+</section>
+<section id="module-mlserver.codecs">
+<span id="mlserver-codecs"></span><h1><a class="reference internal" href="reference.html#module-mlserver.codecs" title="mlserver.codecs"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mlserver.codecs</span></code></a><a class="headerlink" href="#module-mlserver.codecs" title="Permalink to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="types.html" class="btn btn-neutral float-left" title="Types" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="metrics.html" class="btn btn-neutral float-right" title="Metrics" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Seldon Technologies.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,328 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MLServer &mdash; MLServer Documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="_static/autodoc_pydantic.css" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/rtd_sphinx_search.min.css" />
+      <link rel="stylesheet" type="text/css" href="_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+      <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+      <script src="_static/doctools.js"></script>
+      <script src="_static/sphinx_highlight.js"></script>
+      <script src="_static/clipboard.min.js"></script>
+      <script src="_static/copybutton.js"></script>
+      <script src="_static/js/rtd_search_config.js"></script>
+      <script src="_static/js/rtd_sphinx_search.min.js"></script>
+      <script src="_static/design-tabs.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Python API" href="api/reference.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            MLServer
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="api/reference.html">Python API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/reference.html#module-mlserver.model"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mlserver.model</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/reference.html#module-mlserver.codecs"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mlserver.codecs</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/reference.html#module-mlserver.types"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mlserver.types</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/reference.html#module-mlserver.metrics"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mlserver.metrics</span></code></a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">MLServer</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">MLServer</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="toctree-wrapper compound">
+</div>
+<section id="mlserver">
+<h1>MLServer<a class="headerlink" href="#mlserver" title="Permalink to this heading"></a></h1>
+<p>An open source inference server for your machine learning models.</p>
+<p><a class="reference external" href="https://www.youtube.com/watch?v=aZHe3z-8C_w"><img alt="video_play_icon" src="https://user-images.githubusercontent.com/10466106/151803854-75d17c32-541c-4eee-b589-d45b07ea486d.png" /></a></p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading"></a></h2>
+<p>MLServer aims to provide an easy way to start serving your machine learning
+models through a REST and gRPC interface, fully compliant with <a class="reference external" href="https://docs.seldon.io/projects/seldon-core/en/latest/reference/apis/v2-protocol.html">KFServing’s V2
+Dataplane</a>
+spec. Watch a quick video introducing the project <a class="reference external" href="https://www.youtube.com/watch?v=aZHe3z-8C_w">here</a>.</p>
+<ul class="simple">
+<li><p>Multi-model serving, letting users run multiple models within the same
+process.</p></li>
+<li><p>Ability to run <a class="reference external" href="https://mlserver.readthedocs.io/en/latest/user-guide/parallel-inference.html">inference in parallel for vertical
+scaling</a>
+across multiple models through a pool of inference workers.</p></li>
+<li><p>Support for <a class="reference external" href="https://mlserver.readthedocs.io/en/latest/user-guide/adaptive-batching.html">adaptive
+batching</a>,
+to group inference requests together on the fly.</p></li>
+<li><p>Scalability with deployment in Kubernetes native frameworks, including
+<a class="reference external" href="https://docs.seldon.io/projects/seldon-core/en/latest/graph/protocols.html#v2-kfserving-protocol">Seldon Core</a> and
+<a class="reference external" href="https://kserve.github.io/website/modelserving/v1beta1/sklearn/v2/">KServe (formerly known as KFServing)</a>, where
+MLServer is the core Python inference server used to serve machine learning
+models.</p></li>
+<li><p>Support for the standard <a class="reference external" href="https://docs.seldon.io/projects/seldon-core/en/latest/reference/apis/v2-protocol.html">V2 Inference Protocol</a> on
+both the gRPC and REST flavours, which has been standardised and adopted by
+various model serving frameworks.</p></li>
+</ul>
+<p>You can read more about the goals of this project on the <a class="reference external" href="https://docs.google.com/document/d/1C2uf4SaAtwLTlBCciOhvdiKQ2Eay4U72VxAD4bXe7iU/edit?usp=sharing">initial design
+document</a>.</p>
+</section>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this heading"></a></h2>
+<p>You can install the <code class="docutils literal notranslate"><span class="pre">mlserver</span></code> package running:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>mlserver
+</pre></div>
+</div>
+<p>Note that to use any of the optional <a class="reference internal" href="#inference-runtimes">inference runtimes</a>,
+you’ll need to install the relevant package.
+For example, to serve a <code class="docutils literal notranslate"><span class="pre">scikit-learn</span></code> model, you would need to install the
+<code class="docutils literal notranslate"><span class="pre">mlserver-sklearn</span></code> package:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>mlserver-sklearn
+</pre></div>
+</div>
+<p>For further information on how to use MLServer, you can check any of the
+<a class="reference internal" href="#examples">available examples</a>.</p>
+</section>
+<section id="inference-runtimes">
+<h2>Inference Runtimes<a class="headerlink" href="#inference-runtimes" title="Permalink to this heading"></a></h2>
+<p>Inference runtimes allow you to define how your model should be used within
+MLServer.
+You can think of them as the <strong>backend glue</strong> between MLServer and your machine
+learning framework of choice.
+You can read more about <span class="xref myst">inference runtimes in their documentation
+page</span>.</p>
+<p>Out of the box, MLServer comes with a set of pre-packaged runtimes which let
+you interact with a subset of common frameworks.
+This allows you to start serving models saved in these frameworks straight
+away.
+However, it’s also possible to <strong><span class="xref myst">write custom
+runtimes</span></strong>.</p>
+<p>Out of the box, MLServer provides support for:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Framework</p></th>
+<th class="head"><p>Supported</p></th>
+<th class="head"><p>Documentation</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Scikit-Learn</p></td>
+<td><p>✅</p></td>
+<td><p><a class="reference internal" href="#../runtimes/sklearn"><span class="xref myst">MLServer SKLearn</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>XGBoost</p></td>
+<td><p>✅</p></td>
+<td><p><a class="reference internal" href="#../runtimes/xgboost"><span class="xref myst">MLServer XGBoost</span></a></p></td>
+</tr>
+<tr class="row-even"><td><p>Spark MLlib</p></td>
+<td><p>✅</p></td>
+<td><p><a class="reference internal" href="#../runtimes/mllib"><span class="xref myst">MLServer MLlib</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>LightGBM</p></td>
+<td><p>✅</p></td>
+<td><p><a class="reference internal" href="#../runtimes/lightgbm"><span class="xref myst">MLServer LightGBM</span></a></p></td>
+</tr>
+<tr class="row-even"><td><p>CatBoost</p></td>
+<td><p>✅</p></td>
+<td><p><a class="reference internal" href="#../runtimes/catboost"><span class="xref myst">MLServer CatBoost</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Tempo</p></td>
+<td><p>✅</p></td>
+<td><p><a class="reference external" href="https://github.com/SeldonIO/tempo"><code class="docutils literal notranslate"><span class="pre">github.com/SeldonIO/tempo</span></code></a></p></td>
+</tr>
+<tr class="row-even"><td><p>MLflow</p></td>
+<td><p>✅</p></td>
+<td><p><a class="reference internal" href="#../runtimes/mlflow"><span class="xref myst">MLServer MLflow</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Alibi-Detect</p></td>
+<td><p>✅</p></td>
+<td><p><a class="reference internal" href="#../runtimes/alibi-detect"><span class="xref myst">MLServer Alibi Detect</span></a></p></td>
+</tr>
+<tr class="row-even"><td><p>Alibi-Explain</p></td>
+<td><p>✅</p></td>
+<td><p><a class="reference internal" href="#../runtimes/alibi-explain"><span class="xref myst">MLServer Alibi Explain</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>HuggingFace</p></td>
+<td><p>✅</p></td>
+<td><p><a class="reference internal" href="#../runtimes/huggingface"><span class="xref myst">MLServer HuggingFace</span></a></p></td>
+</tr>
+</tbody>
+</table>
+<p>MLServer is licensed under the Apache License, Version 2.0. However please note that software used in conjunction with, or alongside, MLServer may be licensed under different terms. For example, Alibi Detect and Alibi Explain are both licensed under the Business Source License 1.1. For more information about the legal terms of products that are used in conjunction with or alongside MLServer, please refer to their respective documentation.</p>
+</section>
+<section id="supported-python-versions">
+<h2>Supported Python Versions<a class="headerlink" href="#supported-python-versions" title="Permalink to this heading"></a></h2>
+<p>🔴 Unsupported</p>
+<p>🟠 Deprecated: To be removed in a future version</p>
+<p>🟢 Supported</p>
+<p>🔵 Untested</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Python Version</p></th>
+<th class="head"><p>Status</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>3.7</p></td>
+<td><p>🔴</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.8</p></td>
+<td><p>🔴</p></td>
+</tr>
+<tr class="row-even"><td><p>3.9</p></td>
+<td><p>🟢</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.10</p></td>
+<td><p>🟢</p></td>
+</tr>
+<tr class="row-even"><td><p>3.11</p></td>
+<td><p>🟢</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.12</p></td>
+<td><p>🟢</p></td>
+</tr>
+<tr class="row-even"><td><p>3.13</p></td>
+<td><p>🔴</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
+<p>To see MLServer in action, check out <span class="xref myst">our full list of
+examples</span>.
+You can find below a few selected examples showcasing how you can leverage
+MLServer to start serving your machine learning models.</p>
+<ul class="simple">
+<li><p><span class="xref myst">Serving a <code class="docutils literal notranslate"><span class="pre">scikit-learn</span></code> model</span></p></li>
+<li><p><span class="xref myst">Serving a <code class="docutils literal notranslate"><span class="pre">xgboost</span></code> model</span></p></li>
+<li><p><span class="xref myst">Serving a <code class="docutils literal notranslate"><span class="pre">lightgbm</span></code> model</span></p></li>
+<li><p><span class="xref myst">Serving a <code class="docutils literal notranslate"><span class="pre">catboost</span></code> model</span></p></li>
+<li><p><span class="xref myst">Serving a <code class="docutils literal notranslate"><span class="pre">tempo</span></code> pipeline</span></p></li>
+<li><p><span class="xref myst">Serving a custom model</span></p></li>
+<li><p><span class="xref myst">Serving an <code class="docutils literal notranslate"><span class="pre">alibi-detect</span></code> model</span></p></li>
+<li><p><span class="xref myst">Serving a <code class="docutils literal notranslate"><span class="pre">HuggingFace</span></code> model</span></p></li>
+<li><p><span class="xref myst">Multi-Model Serving with multiple frameworks</span></p></li>
+<li><p><span class="xref myst">Loading / unloading models from a model repository</span></p></li>
+</ul>
+</section>
+<section id="developer-guide">
+<h2>Developer Guide<a class="headerlink" href="#developer-guide" title="Permalink to this heading"></a></h2>
+<section id="versioning">
+<h3>Versioning<a class="headerlink" href="#versioning" title="Permalink to this heading"></a></h3>
+<p>Both the main <code class="docutils literal notranslate"><span class="pre">mlserver</span></code> package and the <span class="xref myst">inference runtimes
+packages</span> try to follow the same versioning schema.
+To bump the version across all of them, you can use the
+<a class="reference download internal" download="" href="_downloads/5e03de4cd7d076dee150c131236b87ca/update-version.sh"><span class="xref download myst"><code class="docutils literal notranslate"><span class="pre">./hack/update-version.sh</span></code></span></a> script.</p>
+<p>We generally keep the version as a placeholder for an upcoming version.</p>
+<p>For example:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./hack/update-version.sh<span class="w"> </span><span class="m">0</span>.2.0.dev1
+</pre></div>
+</div>
+</section>
+<section id="testing">
+<h3>Testing<a class="headerlink" href="#testing" title="Permalink to this heading"></a></h3>
+<p>To run all of the tests for MLServer and the runtimes, use:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span><span class="nb">test</span>
+</pre></div>
+</div>
+<p>To run run tests for a single file, use something like:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>tox<span class="w"> </span>-e<span class="w"> </span>py3<span class="w"> </span>--<span class="w"> </span>tests/batch_processing/test_rest.py
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="mlserver-documentation">
+<h1>MLServer Documentation<a class="headerlink" href="#mlserver-documentation" title="Permalink to this heading"></a></h1>
+<p>Welcome to the MLServer documentation. This documentation is built using Sphinx and optimized for GitBook deployment.</p>
+<section id="quick-links">
+<h2>Quick Links<a class="headerlink" href="#quick-links" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="api/reference.html"><span class="doc std std-doc">API Reference</span></a> - Complete Python API documentation</p></li>
+<li><p><a class="reference external" href="https://github.com/SeldonIO/MLServer/">GitHub Repository</a> - Source code and issues</p></li>
+<li><p><a class="reference external" href="https://mlserver.readthedocs.io/">Main Documentation</a> - Full documentation with guides and examples</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="api/reference.html" class="btn btn-neutral float-right" title="Python API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Seldon Technologies.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

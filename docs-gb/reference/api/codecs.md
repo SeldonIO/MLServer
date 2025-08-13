@@ -15,9 +15,13 @@ or the {class}`RequestCodec <mlserver.codecs.base.RequestCodec>` base classes.
 These define the interface to deal with input (outputs) and request (responses)
 respectively.
 
-```{eval-rst}
-.. automodule:: mlserver.codecs
-   :members: InputCodec, RequestCodec
+```{include} ../../api/mlserver.codecs.md
+:start-after: "### *class* InputCodec"
+:end-before: "### *class* RequestCodec"
+```
+
+```{include} ../../api/mlserver.codecs.md
+:start-after: "### *class* RequestCodec"
 ```
 
 ## Built-in Codecs
@@ -27,7 +31,37 @@ conversions.
 You can learn more about these in the [](../../user-guide/content-type.md#available-content-types) section of
 the docs.
 
-```{eval-rst}
-.. automodule:: mlserver.codecs
-   :members: NumpyCodec, NumpyRequestCodec, StringCodec, StringRequestCodec, Base64Codec, DatetimeCodec, PandasCodec
+### NumPy Codecs
+
+```{include} ../../api/mlserver.codecs.md
+:start-after: "### *class* NumpyCodec"
+:end-before: "### *class* StringCodec"
+```
+
+### String Codecs
+
+```{include} ../../api/mlserver.codecs.md
+:start-after: "### *class* StringCodec"
+:end-before: "### *class* Base64Codec"
+```
+
+### Base64 Codec
+
+```{include} ../../api/mlserver.codecs.md
+:start-after: "### *class* Base64Codec"
+:end-before: "### *class* DatetimeCodec"
+```
+
+### Datetime Codec
+
+```{include} ../../api/mlserver.codecs.md
+:start-after: "### *class* DatetimeCodec"
+:end-before: "### *class* PandasCodec"
+```
+
+### Pandas Codec
+
+```{include} ../../api/mlserver.codecs.md
+:start-after: "### *class* PandasCodec"
+:end-before: "### *class* InputCodec"
 ```
