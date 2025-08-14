@@ -18,6 +18,13 @@ METADATA: Dict[str, Dict[str, List[MetadataTensor]]] = {
                 datatype="BYTES",
                 parameters=dict(content_type="base64"),
             ),
+            # raw audio bytes inputs
+            MetadataTensor(
+                name="inputs",
+                shape=[-1],
+                datatype="BYTES",
+                parameters=dict(content_type="audio_bytes"),
+            ),
             # numpy.ndarray inputs
             MetadataTensor(
                 name="inputs",
@@ -50,6 +57,13 @@ METADATA: Dict[str, Dict[str, List[MetadataTensor]]] = {
                 shape=[-1],
                 datatype="BYTES",
                 parameters=dict(content_type="base64"),
+            ),
+            # raw audio bytes inputs
+            MetadataTensor(
+                name="inputs",
+                shape=[-1],
+                datatype="BYTES",
+                parameters=dict(content_type="audio_bytes"),
             ),
             # numpy.ndarray inputs
             MetadataTensor(

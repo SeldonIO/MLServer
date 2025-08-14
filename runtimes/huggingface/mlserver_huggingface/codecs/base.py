@@ -22,6 +22,7 @@ from mlserver.types import (
     RequestInput,
     ResponseOutput,
 )
+from .audio import AudioBytesCodec
 from .image import PILImageCodec
 from .json import HuggingfaceSingleJSONCodec
 from .jsonlist import HuggingfaceListJSONCodec
@@ -203,6 +204,7 @@ class MultiInputRequestCodec(RequestCodec):
 @register_request_codec
 class HuggingfaceRequestCodec(MultiInputRequestCodec):
     InputCodecsWithPriority = [
+        AudioBytesCodec,
         PILImageCodec,
         HuggingfaceSingleJSONCodec,
         HuggingfaceListJSONCodec,
