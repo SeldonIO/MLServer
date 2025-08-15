@@ -1,8 +1,0 @@
-{
-    "name": "iris-lgb",
-    "implementation": "mlserver_lightgbm.LightGBMModel",
-    "parameters": {
-        "uri": "./iris-lightgbm.bst",
-        "version": "v0.1.0"
-    }
-}

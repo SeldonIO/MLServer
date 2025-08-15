@@ -1,8 +1,7 @@
+# API Reference
+
 ```{toctree}
 :maxdepth: 2
-:caption: Contents
-
-types
-codecs-interfaces
-codecs-builtins
+:caption: API
+api/index
 ```

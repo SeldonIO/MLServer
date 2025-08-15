@@ -11,7 +11,7 @@ Note that this codec applies at the individual input (output) level.
 For request-wide transformations (e.g. dataframes), use the
 `RequestCodec` interface instead.
 
-#### ContentType *: `typing.ClassVar`[`str`]* *= ''*
+#### ContentType *: ClassVar[str]* *= ''*
 
 #### TypeHint
 
@@ -21,63 +21,63 @@ alias of `None`
 
 Evaluate whether the codec can encode (decode) the payload.
 
-* **Return type:**
-  `bool`
 * **Parameters:**
-  **payload** (*Any*)
-
-#### *classmethod* encode(cls, name, payload)
-
+  **payload** (*Any*) – 
 * **Return type:**
-  [`mlserver.types.dataplane.ResponseOutput`](types.md#mlserver.types.ResponseOutput)
+  bool
+
+#### *classmethod* encode(name, payload)
+
 * **Parameters:**
-  * **name** (*str*)
-  * **payload** (*Any*)
+  * **name** (*str*) – 
+  * **payload** (*Any*) – 
+* **Return type:**
+  [*ResponseOutput*](types.md#mlserver.types.ResponseOutput)
 
 #### *classmethod* encode_output(name, payload, \*\*kwargs)
 
 Encode the given payload into a response output.
 
-* **Return type:**
-  [`mlserver.types.dataplane.ResponseOutput`](types.md#mlserver.types.ResponseOutput)
 * **Parameters:**
-  * **name** (*str*)
-  * **payload** (*Any*)
+  * **name** (*str*) – 
+  * **payload** (*Any*) – 
+* **Return type:**
+  [*ResponseOutput*](types.md#mlserver.types.ResponseOutput)
 
 #### *classmethod* decode_output(response_output)
 
 Decode a response output into a high-level Python type.
 
-* **Return type:**
-  `typing.Any`
 * **Parameters:**
-  **response_output** ([*ResponseOutput*](types.md#mlserver.types.ResponseOutput))
+  **response_output** ([*ResponseOutput*](types.md#mlserver.types.ResponseOutput)) – 
+* **Return type:**
+  *Any*
 
 #### *classmethod* encode_input(name, payload, \*\*kwargs)
 
 Encode the given payload into a `RequestInput`.
 
-* **Return type:**
-  [`mlserver.types.dataplane.RequestInput`](types.md#mlserver.types.RequestInput)
 * **Parameters:**
-  * **name** (*str*)
-  * **payload** (*Any*)
-
-#### *classmethod* decode(cls, request_input)
-
+  * **name** (*str*) – 
+  * **payload** (*Any*) – 
 * **Return type:**
-  `typing.Any`
+  [*RequestInput*](types.md#mlserver.types.RequestInput)
+
+#### *classmethod* decode(request_input)
+
 * **Parameters:**
-  **request_input** ([*RequestInput*](types.md#mlserver.types.RequestInput))
+  **request_input** ([*RequestInput*](types.md#mlserver.types.RequestInput)) – 
+* **Return type:**
+  *Any*
 
 #### *classmethod* decode_input(request_input)
 
 Decode a request input into a high-level Python type.
 
-* **Return type:**
-  `typing.Any`
 * **Parameters:**
-  **request_input** ([*RequestInput*](types.md#mlserver.types.RequestInput))
+  **request_input** ([*RequestInput*](types.md#mlserver.types.RequestInput)) – 
+* **Return type:**
+  *Any*
 
 ### *class* mlserver.codecs.RequestCodec
 
@@ -92,7 +92,7 @@ separate input head).
 For individual input-level encoding / decoding, use the `InputCodec`
 interface instead.
 
-#### ContentType *: `typing.ClassVar`[`str`]* *= ''*
+#### ContentType *: ClassVar[str]* *= ''*
 
 #### TypeHint
 
@@ -102,61 +102,61 @@ alias of `None`
 
 Evaluate whether the codec can encode (decode) the payload.
 
-* **Return type:**
-  `bool`
 * **Parameters:**
-  **payload** (*Any*)
-
-#### *classmethod* encode(cls, model_name, payload, model_version=None)
-
+  **payload** (*Any*) – 
 * **Return type:**
-  [`mlserver.types.dataplane.InferenceResponse`](types.md#mlserver.types.InferenceResponse)
+  bool
+
+#### *classmethod* encode(model_name, payload, model_version=None)
+
 * **Parameters:**
-  * **model_name** (*str*)
-  * **payload** (*Any*)
-  * **model_version** (*str* *|* *None*)
+  * **model_name** (*str*) – 
+  * **payload** (*Any*) – 
+  * **model_version** (*str* *|* *None*) – 
+* **Return type:**
+  [*InferenceResponse*](types.md#mlserver.types.InferenceResponse)
 
 #### *classmethod* encode_response(model_name, payload, model_version=None, \*\*kwargs)
 
 Encode the given payload into an inference response.
 
-* **Return type:**
-  [`mlserver.types.dataplane.InferenceResponse`](types.md#mlserver.types.InferenceResponse)
 * **Parameters:**
-  * **model_name** (*str*)
-  * **payload** (*Any*)
-  * **model_version** (*str* *|* *None*)
+  * **model_name** (*str*) – 
+  * **payload** (*Any*) – 
+  * **model_version** (*str* *|* *None*) – 
+* **Return type:**
+  [*InferenceResponse*](types.md#mlserver.types.InferenceResponse)
 
 #### *classmethod* decode_response(response)
 
 Decode an inference response into a high-level Python object.
 
-* **Return type:**
-  `typing.Any`
 * **Parameters:**
-  **response** ([*InferenceResponse*](types.md#mlserver.types.InferenceResponse))
+  **response** ([*InferenceResponse*](types.md#mlserver.types.InferenceResponse)) – 
+* **Return type:**
+  *Any*
 
 #### *classmethod* encode_request(payload, \*\*kwargs)
 
 Encode the given payload into an inference request.
 
-* **Return type:**
-  [`mlserver.types.dataplane.InferenceRequest`](types.md#mlserver.types.InferenceRequest)
 * **Parameters:**
-  **payload** (*Any*)
-
-#### *classmethod* decode(cls, request)
-
+  **payload** (*Any*) – 
 * **Return type:**
-  `typing.Any`
+  [*InferenceRequest*](types.md#mlserver.types.InferenceRequest)
+
+#### *classmethod* decode(request)
+
 * **Parameters:**
-  **request** ([*InferenceRequest*](types.md#mlserver.types.InferenceRequest))
+  **request** ([*InferenceRequest*](types.md#mlserver.types.InferenceRequest)) – 
+* **Return type:**
+  *Any*
 
 #### *classmethod* decode_request(request)
 
 Decode an inference request into a high-level Python object.
 
-* **Return type:**
-  `typing.Any`
 * **Parameters:**
-  **request** ([*InferenceRequest*](types.md#mlserver.types.InferenceRequest))
+  **request** ([*InferenceRequest*](types.md#mlserver.types.InferenceRequest)) – 
+* **Return type:**
+  *Any*

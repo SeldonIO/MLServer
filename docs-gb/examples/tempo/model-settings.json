@@ -1,7 +1,0 @@
-{
-    "name": "inference-pipeline",
-    "implementation": "tempo.mlserver.InferenceRuntime",
-    "parameters": {
-        "uri": "./models/inference-pipeline"
-    }
-}

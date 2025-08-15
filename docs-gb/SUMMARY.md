@@ -25,7 +25,7 @@
   * [HuggingFace](runtimes/huggingface.md)
   * [Custom](runtimes/custom.md)
 * [Reference](reference/README.md)
-  * [MLServer Settings](reference/settings.md)
+  * [MLServer Settings](_build/markdown/index.md)
   * [Model Settings](reference/model-settings.md)
   * [MLServer CLI](reference/cli.md)
   * [Python API](reference/python-api/README.md)

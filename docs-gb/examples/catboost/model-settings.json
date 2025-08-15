@@ -1,8 +1,0 @@
-{
-    "name": "catboost",
-    "implementation": "mlserver_catboost.CatboostModel",
-    "parameters": {
-        "uri": "./model.cbm",
-        "version": "v0.1.0"
-    }
-}

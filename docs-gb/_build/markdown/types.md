@@ -1,64 +1,89 @@
 # Types
 
-### *class* mlserver.types.MetadataServerResponse(\*\*data)
+### *pydantic model* mlserver.types.MetadataServerResponse
 
 Bases: `BaseModel`
 
-* **Parameters:**
-  * **name** (*str*)
-  * **version** (*str*)
-  * **extensions** (*List* *[**str* *]*)
+<p><details  class="autodoc_pydantic_collapsable_json">
+<summary>Show JSON schema</summary>
+```json
+{
+   "title": "MetadataServerResponse",
+   "type": "object",
+   "properties": {
+      "name": {
+         "title": "Name",
+         "type": "string"
+      },
+      "version": {
+         "title": "Version",
+         "type": "string"
+      },
+      "extensions": {
+         "items": {
+            "type": "string"
+         },
+         "title": "Extensions",
+         "type": "array"
+      }
+   },
+   "required": [
+      "name",
+      "version",
+      "extensions"
+   ]
+}
+```
 
-#### name *: str*
+</details></p>
+* **Config:**
+  - **protected_namespaces**: *tuple = ()*
+  - **use_enum_values**: *bool = True*
+* **Fields:**
+  - `extensions (List[str])`
+  - `name (str)`
+  - `version (str)`
 
-#### version *: str*
+#### *field* extensions *: List[str]* *[Required]*
 
-#### extensions *: List[str]*
+#### *field* name *: str* *[Required]*
 
-#### model_computed_fields *: ClassVar[Dict[str, ComputedFieldInfo]]* *= {}*
+#### *field* version *: str* *[Required]*
 
-A dictionary of computed field names and their corresponding ComputedFieldInfo objects.
-
-#### model_config *: ClassVar[ConfigDict]* *= {'protected_namespaces': (), 'use_enum_values': True}*
-
-Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
-
-#### model_fields *: ClassVar[Dict[str, FieldInfo]]* *= {'extensions': FieldInfo(annotation=List[str], required=True), 'name': FieldInfo(annotation=str, required=True), 'version': FieldInfo(annotation=str, required=True)}*
-
-Metadata about the fields defined on the model,
-mapping of field names to [FieldInfo][pydantic.fields.FieldInfo] objects.
-
-This replaces Model._\_fields_\_ from Pydantic V1.
-
-### *class* mlserver.types.MetadataServerErrorResponse(\*\*data)
+### *pydantic model* mlserver.types.MetadataServerErrorResponse
 
 Bases: `BaseModel`
 
-* **Parameters:**
-  **error** (*str*)
+<p><details  class="autodoc_pydantic_collapsable_json">
+<summary>Show JSON schema</summary>
+```json
+{
+   "title": "MetadataServerErrorResponse",
+   "type": "object",
+   "properties": {
+      "error": {
+         "title": "Error",
+         "type": "string"
+      }
+   },
+   "required": [
+      "error"
+   ]
+}
+```
 
-#### error *: str*
+</details></p>
+* **Config:**
+  - **protected_namespaces**: *tuple = ()*
+  - **use_enum_values**: *bool = True*
+* **Fields:**
+  - `error (str)`
 
-#### model_computed_fields *: ClassVar[Dict[str, ComputedFieldInfo]]* *= {}*
+#### *field* error *: str* *[Required]*
 
-A dictionary of computed field names and their corresponding ComputedFieldInfo objects.
-
-#### model_config *: ClassVar[ConfigDict]* *= {'protected_namespaces': (), 'use_enum_values': True}*
-
-Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
-
-#### model_fields *: ClassVar[Dict[str, FieldInfo]]* *= {'error': FieldInfo(annotation=str, required=True)}*
-
-Metadata about the fields defined on the model,
-mapping of field names to [FieldInfo][pydantic.fields.FieldInfo] objects.
-
-This replaces Model._\_fields_\_ from Pydantic V1.
-
-### *class* mlserver.types.Datatype(value)
+### *class* mlserver.types.Datatype(value, names=None, \*, module=None, qualname=None, type=None, start=1, boundary=None)
 
 Bases: `Enum`
-
-An enumeration.
 
 #### BOOL *= 'BOOL'*
 
@@ -86,408 +111,1311 @@ An enumeration.
 
 #### BYTES *= 'BYTES'*
 
-### *class* mlserver.types.MetadataTensor(\*\*data)
+### *pydantic model* mlserver.types.MetadataTensor
 
 Bases: `BaseModel`
 
-* **Parameters:**
-  * **name** (*str*)
-  * **datatype** ([*Datatype*](#mlserver.types.Datatype))
-  * **shape** (*List* *[**int* *]*)
-  * **parameters** ([*Parameters*](#mlserver.types.Parameters) *|* *None*)
+<p><details  class="autodoc_pydantic_collapsable_json">
+<summary>Show JSON schema</summary>
+```json
+{
+   "title": "MetadataTensor",
+   "type": "object",
+   "properties": {
+      "name": {
+         "title": "Name",
+         "type": "string"
+      },
+      "datatype": {
+         "$ref": "#/$defs/Datatype"
+      },
+      "shape": {
+         "items": {
+            "type": "integer"
+         },
+         "title": "Shape",
+         "type": "array"
+      },
+      "parameters": {
+         "anyOf": [
+            {
+               "$ref": "#/$defs/Parameters"
+            },
+            {
+               "type": "null"
+            }
+         ],
+         "default": null
+      }
+   },
+   "$defs": {
+      "Datatype": {
+         "enum": [
+            "BOOL",
+            "UINT8",
+            "UINT16",
+            "UINT32",
+            "UINT64",
+            "INT8",
+            "INT16",
+            "INT32",
+            "INT64",
+            "FP16",
+            "FP32",
+            "FP64",
+            "BYTES"
+         ],
+         "title": "Datatype",
+         "type": "string"
+      },
+      "Parameters": {
+         "additionalProperties": true,
+         "properties": {
+            "content_type": {
+               "anyOf": [
+                  {
+                     "type": "string"
+                  },
+                  {
+                     "type": "null"
+                  }
+               ],
+               "default": null,
+               "title": "Content Type"
+            },
+            "headers": {
+               "anyOf": [
+                  {
+                     "type": "object"
+                  },
+                  {
+                     "type": "null"
+                  }
+               ],
+               "default": null,
+               "title": "Headers"
+            }
+         },
+         "title": "Parameters",
+         "type": "object"
+      }
+   },
+   "required": [
+      "name",
+      "datatype",
+      "shape"
+   ]
+}
+```
 
-#### name *: str*
+</details></p>
+* **Config:**
+  - **protected_namespaces**: *tuple = ()*
+  - **use_enum_values**: *bool = True*
+* **Fields:**
+  - `datatype (mlserver.types.dataplane.Datatype)`
+  - `name (str)`
+  - `parameters (mlserver.types.dataplane.Parameters | None)`
+  - `shape (List[int])`
 
-#### datatype *: Datatype*
+#### *field* datatype *: [Datatype](#mlserver.types.Datatype)* *[Required]*
 
-#### shape *: List[int]*
+#### *field* name *: str* *[Required]*
 
-#### parameters *: Optional[Parameters]*
+#### *field* parameters *: [Parameters](#mlserver.types.Parameters) | None* *= None*
 
-#### model_computed_fields *: ClassVar[Dict[str, ComputedFieldInfo]]* *= {}*
+#### *field* shape *: List[int]* *[Required]*
 
-A dictionary of computed field names and their corresponding ComputedFieldInfo objects.
-
-#### model_config *: ClassVar[ConfigDict]* *= {'protected_namespaces': (), 'use_enum_values': True}*
-
-Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
-
-#### model_fields *: ClassVar[Dict[str, FieldInfo]]* *= {'datatype': FieldInfo(annotation=Datatype, required=True), 'name': FieldInfo(annotation=str, required=True), 'parameters': FieldInfo(annotation=Union[Parameters, NoneType], required=False, default=None), 'shape': FieldInfo(annotation=List[int], required=True)}*
-
-Metadata about the fields defined on the model,
-mapping of field names to [FieldInfo][pydantic.fields.FieldInfo] objects.
-
-This replaces Model._\_fields_\_ from Pydantic V1.
-
-### *class* mlserver.types.MetadataModelErrorResponse(\*\*data)
+### *pydantic model* mlserver.types.MetadataModelErrorResponse
 
 Bases: `BaseModel`
 
-* **Parameters:**
-  **error** (*str*)
+<p><details  class="autodoc_pydantic_collapsable_json">
+<summary>Show JSON schema</summary>
+```json
+{
+   "title": "MetadataModelErrorResponse",
+   "type": "object",
+   "properties": {
+      "error": {
+         "title": "Error",
+         "type": "string"
+      }
+   },
+   "required": [
+      "error"
+   ]
+}
+```
 
-#### error *: str*
+</details></p>
+* **Config:**
+  - **protected_namespaces**: *tuple = ()*
+  - **use_enum_values**: *bool = True*
+* **Fields:**
+  - `error (str)`
 
-#### model_computed_fields *: ClassVar[Dict[str, ComputedFieldInfo]]* *= {}*
+#### *field* error *: str* *[Required]*
 
-A dictionary of computed field names and their corresponding ComputedFieldInfo objects.
-
-#### model_config *: ClassVar[ConfigDict]* *= {'protected_namespaces': (), 'use_enum_values': True}*
-
-Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
-
-#### model_fields *: ClassVar[Dict[str, FieldInfo]]* *= {'error': FieldInfo(annotation=str, required=True)}*
-
-Metadata about the fields defined on the model,
-mapping of field names to [FieldInfo][pydantic.fields.FieldInfo] objects.
-
-This replaces Model._\_fields_\_ from Pydantic V1.
-
-### *class* mlserver.types.Parameters(\*\*data)
+### *pydantic model* mlserver.types.Parameters
 
 Bases: `BaseModel`
 
-* **Parameters:**
-  * **content_type** (*str* *|* *None*)
-  * **headers** (*Dict* *[**str* *,* *Any* *]*  *|* *None*)
-  * **extra_data** (*Any*)
+<p><details  class="autodoc_pydantic_collapsable_json">
+<summary>Show JSON schema</summary>
+```json
+{
+   "title": "Parameters",
+   "type": "object",
+   "properties": {
+      "content_type": {
+         "anyOf": [
+            {
+               "type": "string"
+            },
+            {
+               "type": "null"
+            }
+         ],
+         "default": null,
+         "title": "Content Type"
+      },
+      "headers": {
+         "anyOf": [
+            {
+               "type": "object"
+            },
+            {
+               "type": "null"
+            }
+         ],
+         "default": null,
+         "title": "Headers"
+      }
+   },
+   "additionalProperties": true
+}
+```
 
-#### model_config *: ClassVar[ConfigDict]* *= {'extra': 'allow', 'protected_namespaces': (), 'use_enum_values': True}*
+</details></p>
+* **Config:**
+  - **protected_namespaces**: *tuple = ()*
+  - **use_enum_values**: *bool = True*
+  - **extra**: *str = allow*
+* **Fields:**
+  - `content_type (str | None)`
+  - `headers (Dict[str, Any] | None)`
 
-Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+#### *field* content_type *: str | None* *= None*
 
-#### content_type *: Optional[str]*
+#### *field* headers *: Dict[str, Any] | None* *= None*
 
-#### headers *: Optional[Dict[str, Any]]*
-
-#### model_computed_fields *: ClassVar[Dict[str, ComputedFieldInfo]]* *= {}*
-
-A dictionary of computed field names and their corresponding ComputedFieldInfo objects.
-
-#### model_fields *: ClassVar[Dict[str, FieldInfo]]* *= {'content_type': FieldInfo(annotation=Union[str, NoneType], required=False, default=None), 'headers': FieldInfo(annotation=Union[Dict[str, Any], NoneType], required=False, default=None)}*
-
-Metadata about the fields defined on the model,
-mapping of field names to [FieldInfo][pydantic.fields.FieldInfo] objects.
-
-This replaces Model._\_fields_\_ from Pydantic V1.
-
-### *class* mlserver.types.TensorData(root=PydanticUndefined, \*\*data)
+### *pydantic model* mlserver.types.TensorData
 
 Bases: `RootModel[Union[List, Any]]`
 
-* **Parameters:**
-  **root** (*List* *|* *Any*)
+<p><details  class="autodoc_pydantic_collapsable_json">
+<summary>Show JSON schema</summary>
+```json
+{
+   "title": "TensorData",
+   "anyOf": [
+      {
+         "items": {},
+         "type": "array"
+      },
+      {}
+   ]
+}
+```
 
-#### root *: Union[List, Any]*
+</details></p>
+* **Fields:**
+  - `root (List | Any)`
 
-#### model_computed_fields *: ClassVar[Dict[str, ComputedFieldInfo]]* *= {}*
+#### *field* root *: List | Any* *[Required]*
 
-A dictionary of computed field names and their corresponding ComputedFieldInfo objects.
-
-#### model_config *: ClassVar[ConfigDict]* *= {}*
-
-Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
-
-#### model_fields *: ClassVar[Dict[str, FieldInfo]]* *= {'root': FieldInfo(annotation=Union[List, Any], required=True, title='TensorData')}*
-
-Metadata about the fields defined on the model,
-mapping of field names to [FieldInfo][pydantic.fields.FieldInfo] objects.
-
-This replaces Model._\_fields_\_ from Pydantic V1.
-
-### *class* mlserver.types.RequestOutput(\*\*data)
-
-Bases: `BaseModel`
-
-* **Parameters:**
-  * **name** (*str*)
-  * **parameters** ([*Parameters*](#mlserver.types.Parameters) *|* *None*)
-
-#### name *: str*
-
-#### parameters *: Optional[Parameters]*
-
-#### model_computed_fields *: ClassVar[Dict[str, ComputedFieldInfo]]* *= {}*
-
-A dictionary of computed field names and their corresponding ComputedFieldInfo objects.
-
-#### model_config *: ClassVar[ConfigDict]* *= {'protected_namespaces': (), 'use_enum_values': True}*
-
-Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
-
-#### model_fields *: ClassVar[Dict[str, FieldInfo]]* *= {'name': FieldInfo(annotation=str, required=True), 'parameters': FieldInfo(annotation=Union[Parameters, NoneType], required=False, default=None)}*
-
-Metadata about the fields defined on the model,
-mapping of field names to [FieldInfo][pydantic.fields.FieldInfo] objects.
-
-This replaces Model._\_fields_\_ from Pydantic V1.
-
-### *class* mlserver.types.ResponseOutput(\*\*data)
+### *pydantic model* mlserver.types.RequestOutput
 
 Bases: `BaseModel`
 
-* **Parameters:**
-  * **name** (*str*)
-  * **shape** (*List* *[**int* *]*)
-  * **datatype** ([*Datatype*](#mlserver.types.Datatype))
-  * **parameters** ([*Parameters*](#mlserver.types.Parameters) *|* *None*)
-  * **data** ([*TensorData*](#mlserver.types.TensorData))
+<p><details  class="autodoc_pydantic_collapsable_json">
+<summary>Show JSON schema</summary>
+```json
+{
+   "title": "RequestOutput",
+   "type": "object",
+   "properties": {
+      "name": {
+         "title": "Name",
+         "type": "string"
+      },
+      "parameters": {
+         "anyOf": [
+            {
+               "$ref": "#/$defs/Parameters"
+            },
+            {
+               "type": "null"
+            }
+         ],
+         "default": null
+      }
+   },
+   "$defs": {
+      "Parameters": {
+         "additionalProperties": true,
+         "properties": {
+            "content_type": {
+               "anyOf": [
+                  {
+                     "type": "string"
+                  },
+                  {
+                     "type": "null"
+                  }
+               ],
+               "default": null,
+               "title": "Content Type"
+            },
+            "headers": {
+               "anyOf": [
+                  {
+                     "type": "object"
+                  },
+                  {
+                     "type": "null"
+                  }
+               ],
+               "default": null,
+               "title": "Headers"
+            }
+         },
+         "title": "Parameters",
+         "type": "object"
+      }
+   },
+   "required": [
+      "name"
+   ]
+}
+```
 
-#### name *: str*
+</details></p>
+* **Config:**
+  - **protected_namespaces**: *tuple = ()*
+  - **use_enum_values**: *bool = True*
+* **Fields:**
+  - `name (str)`
+  - `parameters (mlserver.types.dataplane.Parameters | None)`
 
-#### shape *: List[int]*
+#### *field* name *: str* *[Required]*
 
-#### datatype *: Datatype*
+#### *field* parameters *: [Parameters](#mlserver.types.Parameters) | None* *= None*
 
-#### parameters *: Optional[Parameters]*
-
-#### data *: TensorData*
-
-#### model_computed_fields *: ClassVar[Dict[str, ComputedFieldInfo]]* *= {}*
-
-A dictionary of computed field names and their corresponding ComputedFieldInfo objects.
-
-#### model_config *: ClassVar[ConfigDict]* *= {'protected_namespaces': (), 'use_enum_values': True}*
-
-Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
-
-#### model_fields *: ClassVar[Dict[str, FieldInfo]]* *= {'data': FieldInfo(annotation=TensorData, required=True), 'datatype': FieldInfo(annotation=Datatype, required=True), 'name': FieldInfo(annotation=str, required=True), 'parameters': FieldInfo(annotation=Union[Parameters, NoneType], required=False, default=None), 'shape': FieldInfo(annotation=List[int], required=True)}*
-
-Metadata about the fields defined on the model,
-mapping of field names to [FieldInfo][pydantic.fields.FieldInfo] objects.
-
-This replaces Model._\_fields_\_ from Pydantic V1.
-
-### *class* mlserver.types.InferenceResponse(\*\*data)
-
-Bases: `BaseModel`
-
-* **Parameters:**
-  * **model_name** (*str*)
-  * **model_version** (*str* *|* *None*)
-  * **id** (*str* *|* *None*)
-  * **parameters** ([*Parameters*](#mlserver.types.Parameters) *|* *None*)
-  * **outputs** (*List* *[*[*ResponseOutput*](#mlserver.types.ResponseOutput) *]*)
-
-#### model_name *: str*
-
-#### model_version *: Optional[str]*
-
-#### id *: Optional[str]*
-
-#### parameters *: Optional[Parameters]*
-
-#### outputs *: List[ResponseOutput]*
-
-#### model_computed_fields *: ClassVar[Dict[str, ComputedFieldInfo]]* *= {}*
-
-A dictionary of computed field names and their corresponding ComputedFieldInfo objects.
-
-#### model_config *: ClassVar[ConfigDict]* *= {'protected_namespaces': (), 'use_enum_values': True}*
-
-Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
-
-#### model_fields *: ClassVar[Dict[str, FieldInfo]]* *= {'id': FieldInfo(annotation=Union[str, NoneType], required=False, default=None), 'model_name': FieldInfo(annotation=str, required=True), 'model_version': FieldInfo(annotation=Union[str, NoneType], required=False, default=None), 'outputs': FieldInfo(annotation=List[mlserver.types.dataplane.ResponseOutput], required=True), 'parameters': FieldInfo(annotation=Union[Parameters, NoneType], required=False, default=None)}*
-
-Metadata about the fields defined on the model,
-mapping of field names to [FieldInfo][pydantic.fields.FieldInfo] objects.
-
-This replaces Model._\_fields_\_ from Pydantic V1.
-
-### *class* mlserver.types.InferenceErrorResponse(\*\*data)
-
-Bases: `BaseModel`
-
-* **Parameters:**
-  **error** (*str* *|* *None*)
-
-#### error *: Optional[str]*
-
-#### model_computed_fields *: ClassVar[Dict[str, ComputedFieldInfo]]* *= {}*
-
-A dictionary of computed field names and their corresponding ComputedFieldInfo objects.
-
-#### model_config *: ClassVar[ConfigDict]* *= {'protected_namespaces': (), 'use_enum_values': True}*
-
-Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
-
-#### model_fields *: ClassVar[Dict[str, FieldInfo]]* *= {'error': FieldInfo(annotation=Union[str, NoneType], required=False, default=None)}*
-
-Metadata about the fields defined on the model,
-mapping of field names to [FieldInfo][pydantic.fields.FieldInfo] objects.
-
-This replaces Model._\_fields_\_ from Pydantic V1.
-
-### *class* mlserver.types.MetadataModelResponse(\*\*data)
+### *pydantic model* mlserver.types.ResponseOutput
 
 Bases: `BaseModel`
 
-* **Parameters:**
-  * **name** (*str*)
-  * **versions** (*List* *[**str* *]*  *|* *None*)
-  * **platform** (*str*)
-  * **inputs** (*List* *[*[*MetadataTensor*](#mlserver.types.MetadataTensor) *]*  *|* *None*)
-  * **outputs** (*List* *[*[*MetadataTensor*](#mlserver.types.MetadataTensor) *]*  *|* *None*)
-  * **parameters** ([*Parameters*](#mlserver.types.Parameters) *|* *None*)
+<p><details  class="autodoc_pydantic_collapsable_json">
+<summary>Show JSON schema</summary>
+```json
+{
+   "title": "ResponseOutput",
+   "type": "object",
+   "properties": {
+      "name": {
+         "title": "Name",
+         "type": "string"
+      },
+      "shape": {
+         "items": {
+            "type": "integer"
+         },
+         "title": "Shape",
+         "type": "array"
+      },
+      "datatype": {
+         "$ref": "#/$defs/Datatype"
+      },
+      "parameters": {
+         "anyOf": [
+            {
+               "$ref": "#/$defs/Parameters"
+            },
+            {
+               "type": "null"
+            }
+         ],
+         "default": null
+      },
+      "data": {
+         "$ref": "#/$defs/TensorData"
+      }
+   },
+   "$defs": {
+      "Datatype": {
+         "enum": [
+            "BOOL",
+            "UINT8",
+            "UINT16",
+            "UINT32",
+            "UINT64",
+            "INT8",
+            "INT16",
+            "INT32",
+            "INT64",
+            "FP16",
+            "FP32",
+            "FP64",
+            "BYTES"
+         ],
+         "title": "Datatype",
+         "type": "string"
+      },
+      "Parameters": {
+         "additionalProperties": true,
+         "properties": {
+            "content_type": {
+               "anyOf": [
+                  {
+                     "type": "string"
+                  },
+                  {
+                     "type": "null"
+                  }
+               ],
+               "default": null,
+               "title": "Content Type"
+            },
+            "headers": {
+               "anyOf": [
+                  {
+                     "type": "object"
+                  },
+                  {
+                     "type": "null"
+                  }
+               ],
+               "default": null,
+               "title": "Headers"
+            }
+         },
+         "title": "Parameters",
+         "type": "object"
+      },
+      "TensorData": {
+         "anyOf": [
+            {
+               "items": {},
+               "type": "array"
+            },
+            {}
+         ],
+         "title": "TensorData"
+      }
+   },
+   "required": [
+      "name",
+      "shape",
+      "datatype",
+      "data"
+   ]
+}
+```
 
-#### name *: str*
+</details></p>
+* **Config:**
+  - **protected_namespaces**: *tuple = ()*
+  - **use_enum_values**: *bool = True*
+* **Fields:**
+  - `data (mlserver.types.dataplane.TensorData)`
+  - `datatype (mlserver.types.dataplane.Datatype)`
+  - `name (str)`
+  - `parameters (mlserver.types.dataplane.Parameters | None)`
+  - `shape (List[int])`
 
-#### versions *: Optional[List[str]]*
+#### *field* data *: [TensorData](#mlserver.types.TensorData)* *[Required]*
 
-#### platform *: str*
+#### *field* datatype *: [Datatype](#mlserver.types.Datatype)* *[Required]*
 
-#### inputs *: Optional[List[MetadataTensor]]*
+#### *field* name *: str* *[Required]*
 
-#### outputs *: Optional[List[MetadataTensor]]*
+#### *field* parameters *: [Parameters](#mlserver.types.Parameters) | None* *= None*
 
-#### parameters *: Optional[Parameters]*
+#### *field* shape *: List[int]* *[Required]*
 
-#### model_computed_fields *: ClassVar[Dict[str, ComputedFieldInfo]]* *= {}*
-
-A dictionary of computed field names and their corresponding ComputedFieldInfo objects.
-
-#### model_config *: ClassVar[ConfigDict]* *= {'protected_namespaces': (), 'use_enum_values': True}*
-
-Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
-
-#### model_fields *: ClassVar[Dict[str, FieldInfo]]* *= {'inputs': FieldInfo(annotation=Union[List[mlserver.types.dataplane.MetadataTensor], NoneType], required=False, default=None), 'name': FieldInfo(annotation=str, required=True), 'outputs': FieldInfo(annotation=Union[List[mlserver.types.dataplane.MetadataTensor], NoneType], required=False, default=None), 'parameters': FieldInfo(annotation=Union[Parameters, NoneType], required=False, default=None), 'platform': FieldInfo(annotation=str, required=True), 'versions': FieldInfo(annotation=Union[List[str], NoneType], required=False, default=None)}*
-
-Metadata about the fields defined on the model,
-mapping of field names to [FieldInfo][pydantic.fields.FieldInfo] objects.
-
-This replaces Model._\_fields_\_ from Pydantic V1.
-
-### *class* mlserver.types.RequestInput(\*\*data)
+### *pydantic model* mlserver.types.InferenceResponse
 
 Bases: `BaseModel`
 
-* **Parameters:**
-  * **name** (*str*)
-  * **shape** (*List* *[**int* *]*)
-  * **datatype** ([*Datatype*](#mlserver.types.Datatype))
-  * **parameters** ([*Parameters*](#mlserver.types.Parameters) *|* *None*)
-  * **data** ([*TensorData*](#mlserver.types.TensorData))
+<p><details  class="autodoc_pydantic_collapsable_json">
+<summary>Show JSON schema</summary>
+```json
+{
+   "title": "InferenceResponse",
+   "type": "object",
+   "properties": {
+      "model_name": {
+         "title": "Model Name",
+         "type": "string"
+      },
+      "model_version": {
+         "anyOf": [
+            {
+               "type": "string"
+            },
+            {
+               "type": "null"
+            }
+         ],
+         "default": null,
+         "title": "Model Version"
+      },
+      "id": {
+         "anyOf": [
+            {
+               "type": "string"
+            },
+            {
+               "type": "null"
+            }
+         ],
+         "default": null,
+         "title": "Id"
+      },
+      "parameters": {
+         "anyOf": [
+            {
+               "$ref": "#/$defs/Parameters"
+            },
+            {
+               "type": "null"
+            }
+         ],
+         "default": null
+      },
+      "outputs": {
+         "items": {
+            "$ref": "#/$defs/ResponseOutput"
+         },
+         "title": "Outputs",
+         "type": "array"
+      }
+   },
+   "$defs": {
+      "Datatype": {
+         "enum": [
+            "BOOL",
+            "UINT8",
+            "UINT16",
+            "UINT32",
+            "UINT64",
+            "INT8",
+            "INT16",
+            "INT32",
+            "INT64",
+            "FP16",
+            "FP32",
+            "FP64",
+            "BYTES"
+         ],
+         "title": "Datatype",
+         "type": "string"
+      },
+      "Parameters": {
+         "additionalProperties": true,
+         "properties": {
+            "content_type": {
+               "anyOf": [
+                  {
+                     "type": "string"
+                  },
+                  {
+                     "type": "null"
+                  }
+               ],
+               "default": null,
+               "title": "Content Type"
+            },
+            "headers": {
+               "anyOf": [
+                  {
+                     "type": "object"
+                  },
+                  {
+                     "type": "null"
+                  }
+               ],
+               "default": null,
+               "title": "Headers"
+            }
+         },
+         "title": "Parameters",
+         "type": "object"
+      },
+      "ResponseOutput": {
+         "properties": {
+            "name": {
+               "title": "Name",
+               "type": "string"
+            },
+            "shape": {
+               "items": {
+                  "type": "integer"
+               },
+               "title": "Shape",
+               "type": "array"
+            },
+            "datatype": {
+               "$ref": "#/$defs/Datatype"
+            },
+            "parameters": {
+               "anyOf": [
+                  {
+                     "$ref": "#/$defs/Parameters"
+                  },
+                  {
+                     "type": "null"
+                  }
+               ],
+               "default": null
+            },
+            "data": {
+               "$ref": "#/$defs/TensorData"
+            }
+         },
+         "required": [
+            "name",
+            "shape",
+            "datatype",
+            "data"
+         ],
+         "title": "ResponseOutput",
+         "type": "object"
+      },
+      "TensorData": {
+         "anyOf": [
+            {
+               "items": {},
+               "type": "array"
+            },
+            {}
+         ],
+         "title": "TensorData"
+      }
+   },
+   "required": [
+      "model_name",
+      "outputs"
+   ]
+}
+```
 
-#### name *: str*
+</details></p>
+* **Config:**
+  - **protected_namespaces**: *tuple = ()*
+  - **use_enum_values**: *bool = True*
+* **Fields:**
+  - `id (str | None)`
+  - `model_name (str)`
+  - `model_version (str | None)`
+  - `outputs (List[mlserver.types.dataplane.ResponseOutput])`
+  - `parameters (mlserver.types.dataplane.Parameters | None)`
 
-#### shape *: List[int]*
+#### *field* id *: str | None* *= None*
 
-#### datatype *: Datatype*
+#### *field* model_name *: str* *[Required]*
 
-#### parameters *: Optional[Parameters]*
+#### *field* model_version *: str | None* *= None*
 
-#### data *: TensorData*
+#### *field* outputs *: List[[ResponseOutput](#mlserver.types.ResponseOutput)]* *[Required]*
 
-#### model_computed_fields *: ClassVar[Dict[str, ComputedFieldInfo]]* *= {}*
+#### *field* parameters *: [Parameters](#mlserver.types.Parameters) | None* *= None*
 
-A dictionary of computed field names and their corresponding ComputedFieldInfo objects.
-
-#### model_config *: ClassVar[ConfigDict]* *= {'protected_namespaces': (), 'use_enum_values': True}*
-
-Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
-
-#### model_fields *: ClassVar[Dict[str, FieldInfo]]* *= {'data': FieldInfo(annotation=TensorData, required=True), 'datatype': FieldInfo(annotation=Datatype, required=True), 'name': FieldInfo(annotation=str, required=True), 'parameters': FieldInfo(annotation=Union[Parameters, NoneType], required=False, default=None), 'shape': FieldInfo(annotation=List[int], required=True)}*
-
-Metadata about the fields defined on the model,
-mapping of field names to [FieldInfo][pydantic.fields.FieldInfo] objects.
-
-This replaces Model._\_fields_\_ from Pydantic V1.
-
-### *class* mlserver.types.InferenceRequest(\*\*data)
+### *pydantic model* mlserver.types.InferenceErrorResponse
 
 Bases: `BaseModel`
 
-* **Parameters:**
-  * **id** (*str* *|* *None*)
-  * **parameters** ([*Parameters*](#mlserver.types.Parameters) *|* *None*)
-  * **inputs** (*List* *[*[*RequestInput*](#mlserver.types.RequestInput) *]*)
-  * **outputs** (*List* *[*[*RequestOutput*](#mlserver.types.RequestOutput) *]*  *|* *None*)
+<p><details  class="autodoc_pydantic_collapsable_json">
+<summary>Show JSON schema</summary>
+```json
+{
+   "title": "InferenceErrorResponse",
+   "type": "object",
+   "properties": {
+      "error": {
+         "anyOf": [
+            {
+               "type": "string"
+            },
+            {
+               "type": "null"
+            }
+         ],
+         "default": null,
+         "title": "Error"
+      }
+   }
+}
+```
 
-#### id *: Optional[str]*
+</details></p>
+* **Config:**
+  - **protected_namespaces**: *tuple = ()*
+  - **use_enum_values**: *bool = True*
+* **Fields:**
+  - `error (str | None)`
 
-#### parameters *: Optional[Parameters]*
+#### *field* error *: str | None* *= None*
 
-#### inputs *: List[RequestInput]*
-
-#### outputs *: Optional[List[RequestOutput]]*
-
-#### model_computed_fields *: ClassVar[Dict[str, ComputedFieldInfo]]* *= {}*
-
-A dictionary of computed field names and their corresponding ComputedFieldInfo objects.
-
-#### model_config *: ClassVar[ConfigDict]* *= {'protected_namespaces': (), 'use_enum_values': True}*
-
-Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
-
-#### model_fields *: ClassVar[Dict[str, FieldInfo]]* *= {'id': FieldInfo(annotation=Union[str, NoneType], required=False, default=None), 'inputs': FieldInfo(annotation=List[mlserver.types.dataplane.RequestInput], required=True), 'outputs': FieldInfo(annotation=Union[List[mlserver.types.dataplane.RequestOutput], NoneType], required=False, default=None), 'parameters': FieldInfo(annotation=Union[Parameters, NoneType], required=False, default=None)}*
-
-Metadata about the fields defined on the model,
-mapping of field names to [FieldInfo][pydantic.fields.FieldInfo] objects.
-
-This replaces Model._\_fields_\_ from Pydantic V1.
-
-### *class* mlserver.types.RepositoryIndexRequest(\*\*data)
-
-Bases: `BaseModel`
-
-* **Parameters:**
-  **ready** (*bool* *|* *None*)
-
-#### ready *: Optional[bool]*
-
-#### model_computed_fields *: ClassVar[Dict[str, ComputedFieldInfo]]* *= {}*
-
-A dictionary of computed field names and their corresponding ComputedFieldInfo objects.
-
-#### model_config *: ClassVar[ConfigDict]* *= {'protected_namespaces': (), 'use_enum_values': True}*
-
-Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
-
-#### model_fields *: ClassVar[Dict[str, FieldInfo]]* *= {'ready': FieldInfo(annotation=Union[bool, NoneType], required=False, default=None)}*
-
-Metadata about the fields defined on the model,
-mapping of field names to [FieldInfo][pydantic.fields.FieldInfo] objects.
-
-This replaces Model._\_fields_\_ from Pydantic V1.
-
-### *class* mlserver.types.RepositoryIndexResponseItem(\*\*data)
+### *pydantic model* mlserver.types.MetadataModelResponse
 
 Bases: `BaseModel`
 
-* **Parameters:**
-  * **name** (*str*)
-  * **version** (*str* *|* *None*)
-  * **state** ([*State*](#mlserver.types.State))
-  * **reason** (*str*)
+<p><details  class="autodoc_pydantic_collapsable_json">
+<summary>Show JSON schema</summary>
+```json
+{
+   "title": "MetadataModelResponse",
+   "type": "object",
+   "properties": {
+      "name": {
+         "title": "Name",
+         "type": "string"
+      },
+      "versions": {
+         "anyOf": [
+            {
+               "items": {
+                  "type": "string"
+               },
+               "type": "array"
+            },
+            {
+               "type": "null"
+            }
+         ],
+         "default": null,
+         "title": "Versions"
+      },
+      "platform": {
+         "title": "Platform",
+         "type": "string"
+      },
+      "inputs": {
+         "anyOf": [
+            {
+               "items": {
+                  "$ref": "#/$defs/MetadataTensor"
+               },
+               "type": "array"
+            },
+            {
+               "type": "null"
+            }
+         ],
+         "default": null,
+         "title": "Inputs"
+      },
+      "outputs": {
+         "anyOf": [
+            {
+               "items": {
+                  "$ref": "#/$defs/MetadataTensor"
+               },
+               "type": "array"
+            },
+            {
+               "type": "null"
+            }
+         ],
+         "default": null,
+         "title": "Outputs"
+      },
+      "parameters": {
+         "anyOf": [
+            {
+               "$ref": "#/$defs/Parameters"
+            },
+            {
+               "type": "null"
+            }
+         ],
+         "default": null
+      }
+   },
+   "$defs": {
+      "Datatype": {
+         "enum": [
+            "BOOL",
+            "UINT8",
+            "UINT16",
+            "UINT32",
+            "UINT64",
+            "INT8",
+            "INT16",
+            "INT32",
+            "INT64",
+            "FP16",
+            "FP32",
+            "FP64",
+            "BYTES"
+         ],
+         "title": "Datatype",
+         "type": "string"
+      },
+      "MetadataTensor": {
+         "properties": {
+            "name": {
+               "title": "Name",
+               "type": "string"
+            },
+            "datatype": {
+               "$ref": "#/$defs/Datatype"
+            },
+            "shape": {
+               "items": {
+                  "type": "integer"
+               },
+               "title": "Shape",
+               "type": "array"
+            },
+            "parameters": {
+               "anyOf": [
+                  {
+                     "$ref": "#/$defs/Parameters"
+                  },
+                  {
+                     "type": "null"
+                  }
+               ],
+               "default": null
+            }
+         },
+         "required": [
+            "name",
+            "datatype",
+            "shape"
+         ],
+         "title": "MetadataTensor",
+         "type": "object"
+      },
+      "Parameters": {
+         "additionalProperties": true,
+         "properties": {
+            "content_type": {
+               "anyOf": [
+                  {
+                     "type": "string"
+                  },
+                  {
+                     "type": "null"
+                  }
+               ],
+               "default": null,
+               "title": "Content Type"
+            },
+            "headers": {
+               "anyOf": [
+                  {
+                     "type": "object"
+                  },
+                  {
+                     "type": "null"
+                  }
+               ],
+               "default": null,
+               "title": "Headers"
+            }
+         },
+         "title": "Parameters",
+         "type": "object"
+      }
+   },
+   "required": [
+      "name",
+      "platform"
+   ]
+}
+```
 
-#### name *: str*
+</details></p>
+* **Config:**
+  - **protected_namespaces**: *tuple = ()*
+  - **use_enum_values**: *bool = True*
+* **Fields:**
+  - `inputs (List[mlserver.types.dataplane.MetadataTensor] | None)`
+  - `name (str)`
+  - `outputs (List[mlserver.types.dataplane.MetadataTensor] | None)`
+  - `parameters (mlserver.types.dataplane.Parameters | None)`
+  - `platform (str)`
+  - `versions (List[str] | None)`
 
-#### version *: Optional[str]*
+#### *field* inputs *: List[[MetadataTensor](#mlserver.types.MetadataTensor)] | None* *= None*
 
-#### state *: State*
+#### *field* name *: str* *[Required]*
 
-#### reason *: str*
+#### *field* outputs *: List[[MetadataTensor](#mlserver.types.MetadataTensor)] | None* *= None*
 
-#### model_computed_fields *: ClassVar[Dict[str, ComputedFieldInfo]]* *= {}*
+#### *field* parameters *: [Parameters](#mlserver.types.Parameters) | None* *= None*
 
-A dictionary of computed field names and their corresponding ComputedFieldInfo objects.
+#### *field* platform *: str* *[Required]*
 
-#### model_config *: ClassVar[ConfigDict]* *= {'protected_namespaces': (), 'use_enum_values': True}*
+#### *field* versions *: List[str] | None* *= None*
 
-Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+### *pydantic model* mlserver.types.RequestInput
 
-#### model_fields *: ClassVar[Dict[str, FieldInfo]]* *= {'name': FieldInfo(annotation=str, required=True), 'reason': FieldInfo(annotation=str, required=True), 'state': FieldInfo(annotation=State, required=True), 'version': FieldInfo(annotation=Union[str, NoneType], required=False, default=None)}*
+Bases: `BaseModel`
 
-Metadata about the fields defined on the model,
-mapping of field names to [FieldInfo][pydantic.fields.FieldInfo] objects.
+<p><details  class="autodoc_pydantic_collapsable_json">
+<summary>Show JSON schema</summary>
+```json
+{
+   "title": "RequestInput",
+   "type": "object",
+   "properties": {
+      "name": {
+         "title": "Name",
+         "type": "string"
+      },
+      "shape": {
+         "items": {
+            "type": "integer"
+         },
+         "title": "Shape",
+         "type": "array"
+      },
+      "datatype": {
+         "$ref": "#/$defs/Datatype"
+      },
+      "parameters": {
+         "anyOf": [
+            {
+               "$ref": "#/$defs/Parameters"
+            },
+            {
+               "type": "null"
+            }
+         ],
+         "default": null
+      },
+      "data": {
+         "$ref": "#/$defs/TensorData"
+      }
+   },
+   "$defs": {
+      "Datatype": {
+         "enum": [
+            "BOOL",
+            "UINT8",
+            "UINT16",
+            "UINT32",
+            "UINT64",
+            "INT8",
+            "INT16",
+            "INT32",
+            "INT64",
+            "FP16",
+            "FP32",
+            "FP64",
+            "BYTES"
+         ],
+         "title": "Datatype",
+         "type": "string"
+      },
+      "Parameters": {
+         "additionalProperties": true,
+         "properties": {
+            "content_type": {
+               "anyOf": [
+                  {
+                     "type": "string"
+                  },
+                  {
+                     "type": "null"
+                  }
+               ],
+               "default": null,
+               "title": "Content Type"
+            },
+            "headers": {
+               "anyOf": [
+                  {
+                     "type": "object"
+                  },
+                  {
+                     "type": "null"
+                  }
+               ],
+               "default": null,
+               "title": "Headers"
+            }
+         },
+         "title": "Parameters",
+         "type": "object"
+      },
+      "TensorData": {
+         "anyOf": [
+            {
+               "items": {},
+               "type": "array"
+            },
+            {}
+         ],
+         "title": "TensorData"
+      }
+   },
+   "required": [
+      "name",
+      "shape",
+      "datatype",
+      "data"
+   ]
+}
+```
 
-This replaces Model._\_fields_\_ from Pydantic V1.
+</details></p>
+* **Config:**
+  - **protected_namespaces**: *tuple = ()*
+  - **use_enum_values**: *bool = True*
+* **Fields:**
+  - `data (mlserver.types.dataplane.TensorData)`
+  - `datatype (mlserver.types.dataplane.Datatype)`
+  - `name (str)`
+  - `parameters (mlserver.types.dataplane.Parameters | None)`
+  - `shape (List[int])`
 
-### *class* mlserver.types.State(value)
+#### *field* data *: [TensorData](#mlserver.types.TensorData)* *[Required]*
+
+#### *field* datatype *: [Datatype](#mlserver.types.Datatype)* *[Required]*
+
+#### *field* name *: str* *[Required]*
+
+#### *field* parameters *: [Parameters](#mlserver.types.Parameters) | None* *= None*
+
+#### *field* shape *: List[int]* *[Required]*
+
+### *pydantic model* mlserver.types.InferenceRequest
+
+Bases: `BaseModel`
+
+<p><details  class="autodoc_pydantic_collapsable_json">
+<summary>Show JSON schema</summary>
+```json
+{
+   "title": "InferenceRequest",
+   "type": "object",
+   "properties": {
+      "id": {
+         "anyOf": [
+            {
+               "type": "string"
+            },
+            {
+               "type": "null"
+            }
+         ],
+         "default": null,
+         "title": "Id"
+      },
+      "parameters": {
+         "anyOf": [
+            {
+               "$ref": "#/$defs/Parameters"
+            },
+            {
+               "type": "null"
+            }
+         ],
+         "default": null
+      },
+      "inputs": {
+         "items": {
+            "$ref": "#/$defs/RequestInput"
+         },
+         "title": "Inputs",
+         "type": "array"
+      },
+      "outputs": {
+         "anyOf": [
+            {
+               "items": {
+                  "$ref": "#/$defs/RequestOutput"
+               },
+               "type": "array"
+            },
+            {
+               "type": "null"
+            }
+         ],
+         "default": null,
+         "title": "Outputs"
+      }
+   },
+   "$defs": {
+      "Datatype": {
+         "enum": [
+            "BOOL",
+            "UINT8",
+            "UINT16",
+            "UINT32",
+            "UINT64",
+            "INT8",
+            "INT16",
+            "INT32",
+            "INT64",
+            "FP16",
+            "FP32",
+            "FP64",
+            "BYTES"
+         ],
+         "title": "Datatype",
+         "type": "string"
+      },
+      "Parameters": {
+         "additionalProperties": true,
+         "properties": {
+            "content_type": {
+               "anyOf": [
+                  {
+                     "type": "string"
+                  },
+                  {
+                     "type": "null"
+                  }
+               ],
+               "default": null,
+               "title": "Content Type"
+            },
+            "headers": {
+               "anyOf": [
+                  {
+                     "type": "object"
+                  },
+                  {
+                     "type": "null"
+                  }
+               ],
+               "default": null,
+               "title": "Headers"
+            }
+         },
+         "title": "Parameters",
+         "type": "object"
+      },
+      "RequestInput": {
+         "properties": {
+            "name": {
+               "title": "Name",
+               "type": "string"
+            },
+            "shape": {
+               "items": {
+                  "type": "integer"
+               },
+               "title": "Shape",
+               "type": "array"
+            },
+            "datatype": {
+               "$ref": "#/$defs/Datatype"
+            },
+            "parameters": {
+               "anyOf": [
+                  {
+                     "$ref": "#/$defs/Parameters"
+                  },
+                  {
+                     "type": "null"
+                  }
+               ],
+               "default": null
+            },
+            "data": {
+               "$ref": "#/$defs/TensorData"
+            }
+         },
+         "required": [
+            "name",
+            "shape",
+            "datatype",
+            "data"
+         ],
+         "title": "RequestInput",
+         "type": "object"
+      },
+      "RequestOutput": {
+         "properties": {
+            "name": {
+               "title": "Name",
+               "type": "string"
+            },
+            "parameters": {
+               "anyOf": [
+                  {
+                     "$ref": "#/$defs/Parameters"
+                  },
+                  {
+                     "type": "null"
+                  }
+               ],
+               "default": null
+            }
+         },
+         "required": [
+            "name"
+         ],
+         "title": "RequestOutput",
+         "type": "object"
+      },
+      "TensorData": {
+         "anyOf": [
+            {
+               "items": {},
+               "type": "array"
+            },
+            {}
+         ],
+         "title": "TensorData"
+      }
+   },
+   "required": [
+      "inputs"
+   ]
+}
+```
+
+</details></p>
+* **Config:**
+  - **protected_namespaces**: *tuple = ()*
+  - **use_enum_values**: *bool = True*
+* **Fields:**
+  - `id (str | None)`
+  - `inputs (List[mlserver.types.dataplane.RequestInput])`
+  - `outputs (List[mlserver.types.dataplane.RequestOutput] | None)`
+  - `parameters (mlserver.types.dataplane.Parameters | None)`
+
+#### *field* id *: str | None* *= None*
+
+#### *field* inputs *: List[[RequestInput](#mlserver.types.RequestInput)]* *[Required]*
+
+#### *field* outputs *: List[[RequestOutput](#mlserver.types.RequestOutput)] | None* *= None*
+
+#### *field* parameters *: [Parameters](#mlserver.types.Parameters) | None* *= None*
+
+### *pydantic model* mlserver.types.RepositoryIndexRequest
+
+Bases: `BaseModel`
+
+<p><details  class="autodoc_pydantic_collapsable_json">
+<summary>Show JSON schema</summary>
+```json
+{
+   "title": "RepositoryIndexRequest",
+   "type": "object",
+   "properties": {
+      "ready": {
+         "anyOf": [
+            {
+               "type": "boolean"
+            },
+            {
+               "type": "null"
+            }
+         ],
+         "default": null,
+         "title": "Ready"
+      }
+   }
+}
+```
+
+</details></p>
+* **Config:**
+  - **protected_namespaces**: *tuple = ()*
+  - **use_enum_values**: *bool = True*
+* **Fields:**
+  - `ready (bool | None)`
+
+#### *field* ready *: bool | None* *= None*
+
+### *pydantic model* mlserver.types.RepositoryIndexResponseItem
+
+Bases: `BaseModel`
+
+<p><details  class="autodoc_pydantic_collapsable_json">
+<summary>Show JSON schema</summary>
+```json
+{
+   "title": "RepositoryIndexResponseItem",
+   "type": "object",
+   "properties": {
+      "name": {
+         "title": "Name",
+         "type": "string"
+      },
+      "version": {
+         "anyOf": [
+            {
+               "type": "string"
+            },
+            {
+               "type": "null"
+            }
+         ],
+         "default": null,
+         "title": "Version"
+      },
+      "state": {
+         "$ref": "#/$defs/State"
+      },
+      "reason": {
+         "title": "Reason",
+         "type": "string"
+      }
+   },
+   "$defs": {
+      "State": {
+         "enum": [
+            "UNKNOWN",
+            "READY",
+            "UNAVAILABLE",
+            "LOADING",
+            "UNLOADING"
+         ],
+         "title": "State",
+         "type": "string"
+      }
+   },
+   "required": [
+      "name",
+      "state",
+      "reason"
+   ]
+}
+```
+
+</details></p>
+* **Config:**
+  - **protected_namespaces**: *tuple = ()*
+  - **use_enum_values**: *bool = True*
+* **Fields:**
+  - `name (str)`
+  - `reason (str)`
+  - `state (mlserver.types.model_repository.State)`
+  - `version (str | None)`
+
+#### *field* name *: str* *[Required]*
+
+#### *field* reason *: str* *[Required]*
+
+#### *field* state *: [State](#mlserver.types.State)* *[Required]*
+
+#### *field* version *: str | None* *= None*
+
+### *class* mlserver.types.State(value, names=None, \*, module=None, qualname=None, type=None, start=1, boundary=None)
 
 Bases: `Enum`
-
-An enumeration.
 
 #### UNKNOWN *= 'UNKNOWN'*
 
@@ -499,74 +1427,143 @@ An enumeration.
 
 #### UNLOADING *= 'UNLOADING'*
 
-### *class* mlserver.types.RepositoryIndexResponse(root=PydanticUndefined, \*\*data)
+### *pydantic model* mlserver.types.RepositoryIndexResponse
 
-Bases: `RepositoryIndexResponseItem]]`
+Bases: `RootModel[List[RepositoryIndexResponseItem]]`
 
-* **Parameters:**
-  **root** (*List* *[*[*RepositoryIndexResponseItem*](#mlserver.types.RepositoryIndexResponseItem) *]*)
+<p><details  class="autodoc_pydantic_collapsable_json">
+<summary>Show JSON schema</summary>
+```json
+{
+   "title": "RepositoryIndexResponse",
+   "type": "array",
+   "$defs": {
+      "RepositoryIndexResponseItem": {
+         "properties": {
+            "name": {
+               "title": "Name",
+               "type": "string"
+            },
+            "version": {
+               "anyOf": [
+                  {
+                     "type": "string"
+                  },
+                  {
+                     "type": "null"
+                  }
+               ],
+               "default": null,
+               "title": "Version"
+            },
+            "state": {
+               "$ref": "#/$defs/State"
+            },
+            "reason": {
+               "title": "Reason",
+               "type": "string"
+            }
+         },
+         "required": [
+            "name",
+            "state",
+            "reason"
+         ],
+         "title": "RepositoryIndexResponseItem",
+         "type": "object"
+      },
+      "State": {
+         "enum": [
+            "UNKNOWN",
+            "READY",
+            "UNAVAILABLE",
+            "LOADING",
+            "UNLOADING"
+         ],
+         "title": "State",
+         "type": "string"
+      }
+   },
+   "items": {
+      "$ref": "#/$defs/RepositoryIndexResponseItem"
+   }
+}
+```
 
-#### root *: List[RepositoryIndexResponseItem]*
+</details></p>
+* **Fields:**
+  - `root (List[mlserver.types.model_repository.RepositoryIndexResponseItem])`
 
-#### model_computed_fields *: ClassVar[Dict[str, ComputedFieldInfo]]* *= {}*
+#### *field* root *: List[[RepositoryIndexResponseItem](#mlserver.types.RepositoryIndexResponseItem)]* *[Required]*
 
-A dictionary of computed field names and their corresponding ComputedFieldInfo objects.
-
-#### model_config *: ClassVar[ConfigDict]* *= {}*
-
-Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
-
-#### model_fields *: ClassVar[Dict[str, FieldInfo]]* *= {'root': FieldInfo(annotation=List[mlserver.types.model_repository.RepositoryIndexResponseItem], required=True, title='RepositoryIndexResponse')}*
-
-Metadata about the fields defined on the model,
-mapping of field names to [FieldInfo][pydantic.fields.FieldInfo] objects.
-
-This replaces Model._\_fields_\_ from Pydantic V1.
-
-### *class* mlserver.types.RepositoryLoadErrorResponse(\*\*data)
+### *pydantic model* mlserver.types.RepositoryLoadErrorResponse
 
 Bases: `BaseModel`
 
-* **Parameters:**
-  **error** (*str* *|* *None*)
+<p><details  class="autodoc_pydantic_collapsable_json">
+<summary>Show JSON schema</summary>
+```json
+{
+   "title": "RepositoryLoadErrorResponse",
+   "type": "object",
+   "properties": {
+      "error": {
+         "anyOf": [
+            {
+               "type": "string"
+            },
+            {
+               "type": "null"
+            }
+         ],
+         "default": null,
+         "title": "Error"
+      }
+   }
+}
+```
 
-#### error *: Optional[str]*
+</details></p>
+* **Config:**
+  - **protected_namespaces**: *tuple = ()*
+  - **use_enum_values**: *bool = True*
+* **Fields:**
+  - `error (str | None)`
 
-#### model_computed_fields *: ClassVar[Dict[str, ComputedFieldInfo]]* *= {}*
+#### *field* error *: str | None* *= None*
 
-A dictionary of computed field names and their corresponding ComputedFieldInfo objects.
-
-#### model_config *: ClassVar[ConfigDict]* *= {'protected_namespaces': (), 'use_enum_values': True}*
-
-Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
-
-#### model_fields *: ClassVar[Dict[str, FieldInfo]]* *= {'error': FieldInfo(annotation=Union[str, NoneType], required=False, default=None)}*
-
-Metadata about the fields defined on the model,
-mapping of field names to [FieldInfo][pydantic.fields.FieldInfo] objects.
-
-This replaces Model._\_fields_\_ from Pydantic V1.
-
-### *class* mlserver.types.RepositoryUnloadErrorResponse(\*\*data)
+### *pydantic model* mlserver.types.RepositoryUnloadErrorResponse
 
 Bases: `BaseModel`
 
-* **Parameters:**
-  **error** (*str* *|* *None*)
+<p><details  class="autodoc_pydantic_collapsable_json">
+<summary>Show JSON schema</summary>
+```json
+{
+   "title": "RepositoryUnloadErrorResponse",
+   "type": "object",
+   "properties": {
+      "error": {
+         "anyOf": [
+            {
+               "type": "string"
+            },
+            {
+               "type": "null"
+            }
+         ],
+         "default": null,
+         "title": "Error"
+      }
+   }
+}
+```
 
-#### error *: Optional[str]*
+</details></p>
+* **Config:**
+  - **protected_namespaces**: *tuple = ()*
+  - **use_enum_values**: *bool = True*
+* **Fields:**
+  - `error (str | None)`
 
-#### model_computed_fields *: ClassVar[Dict[str, ComputedFieldInfo]]* *= {}*
-
-A dictionary of computed field names and their corresponding ComputedFieldInfo objects.
-
-#### model_config *: ClassVar[ConfigDict]* *= {'protected_namespaces': (), 'use_enum_values': True}*
-
-Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
-
-#### model_fields *: ClassVar[Dict[str, FieldInfo]]* *= {'error': FieldInfo(annotation=Union[str, NoneType], required=False, default=None)}*
-
-Metadata about the fields defined on the model,
-mapping of field names to [FieldInfo][pydantic.fields.FieldInfo] objects.
-
-This replaces Model._\_fields_\_ from Pydantic V1.
+#### *field* error *: str | None* *= None*
