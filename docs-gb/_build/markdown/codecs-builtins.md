@@ -17,7 +17,7 @@ alias of `ndarray`
 Evaluate whether the codec can encode (decode) the payload.
 
 * **Parameters:**
-  **payload** (*Any*) – 
+  **payload** (*Any*)
 * **Return type:**
   bool
 
@@ -26,8 +26,8 @@ Evaluate whether the codec can encode (decode) the payload.
 Encode the given payload into a response output.
 
 * **Parameters:**
-  * **name** (*str*) – 
-  * **payload** (*ndarray*) – 
+  * **name** (*str*)
+  * **payload** (*ndarray*)
 * **Return type:**
   [*ResponseOutput*](types.md#mlserver.types.ResponseOutput)
 
@@ -36,7 +36,7 @@ Encode the given payload into a response output.
 Decode a response output into a high-level Python type.
 
 * **Parameters:**
-  **response_output** ([*ResponseOutput*](types.md#mlserver.types.ResponseOutput)) – 
+  **response_output** ([*ResponseOutput*](types.md#mlserver.types.ResponseOutput))
 * **Return type:**
   *ndarray*
 
@@ -45,8 +45,8 @@ Decode a response output into a high-level Python type.
 Encode the given payload into a `RequestInput`.
 
 * **Parameters:**
-  * **name** (*str*) – 
-  * **payload** (*ndarray*) – 
+  * **name** (*str*)
+  * **payload** (*ndarray*)
 * **Return type:**
   [*RequestInput*](types.md#mlserver.types.RequestInput)
 
@@ -55,7 +55,7 @@ Encode the given payload into a `RequestInput`.
 Decode a request input into a high-level Python type.
 
 * **Parameters:**
-  **request_input** ([*RequestInput*](types.md#mlserver.types.RequestInput)) – 
+  **request_input** ([*RequestInput*](types.md#mlserver.types.RequestInput))
 * **Return type:**
   *ndarray*
 
@@ -90,7 +90,7 @@ alias of `List`[`str`]
 Evaluate whether the codec can encode (decode) the payload.
 
 * **Parameters:**
-  **payload** (*Any*) – 
+  **payload** (*Any*)
 * **Return type:**
   bool
 
@@ -99,9 +99,9 @@ Evaluate whether the codec can encode (decode) the payload.
 Encode the given payload into a response output.
 
 * **Parameters:**
-  * **name** (*str*) – 
-  * **payload** (*List* *[**str* *]*) – 
-  * **use_bytes** (*bool*) – 
+  * **name** (*str*)
+  * **payload** (*List* *[**str* *]*)
+  * **use_bytes** (*bool*)
 * **Return type:**
   [*ResponseOutput*](types.md#mlserver.types.ResponseOutput)
 
@@ -110,7 +110,7 @@ Encode the given payload into a response output.
 Decode a response output into a high-level Python type.
 
 * **Parameters:**
-  **response_output** ([*ResponseOutput*](types.md#mlserver.types.ResponseOutput)) – 
+  **response_output** ([*ResponseOutput*](types.md#mlserver.types.ResponseOutput))
 * **Return type:**
   *List*[str]
 
@@ -119,7 +119,7 @@ Decode a response output into a high-level Python type.
 Decode a request input into a high-level Python type.
 
 * **Parameters:**
-  **request_input** ([*RequestInput*](types.md#mlserver.types.RequestInput)) – 
+  **request_input** ([*RequestInput*](types.md#mlserver.types.RequestInput))
 * **Return type:**
   *List*[str]
 
@@ -128,9 +128,9 @@ Decode a request input into a high-level Python type.
 Encode the given payload into a `RequestInput`.
 
 * **Parameters:**
-  * **name** (*str*) – 
-  * **payload** (*List* *[**str* *]*) – 
-  * **use_bytes** (*bool*) – 
+  * **name** (*str*)
+  * **payload** (*List* *[**str* *]*)
+  * **use_bytes** (*bool*)
 * **Return type:**
   [*RequestInput*](types.md#mlserver.types.RequestInput)
 
@@ -170,7 +170,7 @@ alias of `List`[`bytes`]
 Evaluate whether the codec can encode (decode) the payload.
 
 * **Parameters:**
-  **payload** (*Any*) – 
+  **payload** (*Any*)
 * **Return type:**
   bool
 
@@ -179,9 +179,9 @@ Evaluate whether the codec can encode (decode) the payload.
 Encode the given payload into a response output.
 
 * **Parameters:**
-  * **name** (*str*) – 
-  * **payload** (*List* *[**bytes* *]*) – 
-  * **use_bytes** (*bool*) – 
+  * **name** (*str*)
+  * **payload** (*List* *[**bytes* *]*)
+  * **use_bytes** (*bool*)
 * **Return type:**
   [*ResponseOutput*](types.md#mlserver.types.ResponseOutput)
 
@@ -190,7 +190,7 @@ Encode the given payload into a response output.
 Decode a response output into a high-level Python type.
 
 * **Parameters:**
-  **response_output** ([*ResponseOutput*](types.md#mlserver.types.ResponseOutput)) – 
+  **response_output** ([*ResponseOutput*](types.md#mlserver.types.ResponseOutput))
 * **Return type:**
   *List*[bytes]
 
@@ -199,9 +199,9 @@ Decode a response output into a high-level Python type.
 Encode the given payload into a `RequestInput`.
 
 * **Parameters:**
-  * **name** (*str*) – 
-  * **payload** (*List* *[**bytes* *]*) – 
-  * **use_bytes** (*bool*) – 
+  * **name** (*str*)
+  * **payload** (*List* *[**bytes* *]*)
+  * **use_bytes** (*bool*)
 * **Return type:**
   [*RequestInput*](types.md#mlserver.types.RequestInput)
 
@@ -210,7 +210,7 @@ Encode the given payload into a `RequestInput`.
 Decode a request input into a high-level Python type.
 
 * **Parameters:**
-  **request_input** ([*RequestInput*](types.md#mlserver.types.RequestInput)) – 
+  **request_input** ([*RequestInput*](types.md#mlserver.types.RequestInput))
 * **Return type:**
   *List*[bytes]
 
@@ -224,14 +224,14 @@ Codec that convers to / from a datetime input.
 
 #### TypeHint
 
-alias of `List`[`Union`[`str`, `datetime`]]
+alias of `List`[`str` | `datetime`]
 
 #### *classmethod* can_encode(payload)
 
 Evaluate whether the codec can encode (decode) the payload.
 
 * **Parameters:**
-  **payload** (*Any*) – 
+  **payload** (*Any*)
 * **Return type:**
   bool
 
@@ -240,9 +240,9 @@ Evaluate whether the codec can encode (decode) the payload.
 Encode the given payload into a response output.
 
 * **Parameters:**
-  * **name** (*str*) – 
-  * **payload** (*List* *[**str* *|* *datetime* *]*) – 
-  * **use_bytes** (*bool*) – 
+  * **name** (*str*)
+  * **payload** (*List* *[**str* *|* *datetime* *]*)
+  * **use_bytes** (*bool*)
 * **Return type:**
   [*ResponseOutput*](types.md#mlserver.types.ResponseOutput)
 
@@ -251,7 +251,7 @@ Encode the given payload into a response output.
 Decode a response output into a high-level Python type.
 
 * **Parameters:**
-  **response_output** ([*ResponseOutput*](types.md#mlserver.types.ResponseOutput)) – 
+  **response_output** ([*ResponseOutput*](types.md#mlserver.types.ResponseOutput))
 * **Return type:**
   *List*[*datetime*]
 
@@ -260,9 +260,9 @@ Decode a response output into a high-level Python type.
 Encode the given payload into a `RequestInput`.
 
 * **Parameters:**
-  * **name** (*str*) – 
-  * **payload** (*List* *[**str* *|* *datetime* *]*) – 
-  * **use_bytes** (*bool*) – 
+  * **name** (*str*)
+  * **payload** (*List* *[**str* *|* *datetime* *]*)
+  * **use_bytes** (*bool*)
 * **Return type:**
   [*RequestInput*](types.md#mlserver.types.RequestInput)
 
@@ -271,7 +271,7 @@ Encode the given payload into a `RequestInput`.
 Decode a request input into a high-level Python type.
 
 * **Parameters:**
-  **request_input** ([*RequestInput*](types.md#mlserver.types.RequestInput)) – 
+  **request_input** ([*RequestInput*](types.md#mlserver.types.RequestInput))
 * **Return type:**
   *List*[*datetime*]
 
@@ -295,7 +295,7 @@ alias of `DataFrame`
 Evaluate whether the codec can encode (decode) the payload.
 
 * **Parameters:**
-  **payload** (*Any*) – 
+  **payload** (*Any*)
 * **Return type:**
   bool
 
@@ -304,10 +304,10 @@ Evaluate whether the codec can encode (decode) the payload.
 Encode the given payload into an inference response.
 
 * **Parameters:**
-  * **model_name** (*str*) – 
-  * **payload** (*DataFrame*) – 
-  * **model_version** (*str* *|* *None*) – 
-  * **use_bytes** (*bool*) – 
+  * **model_name** (*str*)
+  * **payload** (*DataFrame*)
+  * **model_version** (*str* *|* *None*)
+  * **use_bytes** (*bool*)
 * **Return type:**
   [*InferenceResponse*](types.md#mlserver.types.InferenceResponse)
 
@@ -316,15 +316,15 @@ Encode the given payload into an inference response.
 Decode an inference response into a high-level Python object.
 
 * **Parameters:**
-  **response** ([*InferenceResponse*](types.md#mlserver.types.InferenceResponse)) – 
+  **response** ([*InferenceResponse*](types.md#mlserver.types.InferenceResponse))
 * **Return type:**
   *DataFrame*
 
 #### *classmethod* encode_outputs(payload, use_bytes=True)
 
 * **Parameters:**
-  * **payload** (*DataFrame*) – 
-  * **use_bytes** (*bool*) – 
+  * **payload** (*DataFrame*)
+  * **use_bytes** (*bool*)
 * **Return type:**
   *List*[[*ResponseOutput*](types.md#mlserver.types.ResponseOutput)]
 
@@ -333,8 +333,8 @@ Decode an inference response into a high-level Python object.
 Encode the given payload into an inference request.
 
 * **Parameters:**
-  * **payload** (*DataFrame*) – 
-  * **use_bytes** (*bool*) – 
+  * **payload** (*DataFrame*)
+  * **use_bytes** (*bool*)
 * **Return type:**
   [*InferenceRequest*](types.md#mlserver.types.InferenceRequest)
 
@@ -343,6 +343,6 @@ Encode the given payload into an inference request.
 Decode an inference request into a high-level Python object.
 
 * **Parameters:**
-  **request** ([*InferenceRequest*](types.md#mlserver.types.InferenceRequest)) – 
+  **request** ([*InferenceRequest*](types.md#mlserver.types.InferenceRequest))
 * **Return type:**
   *DataFrame*

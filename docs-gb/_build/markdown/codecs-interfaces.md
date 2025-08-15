@@ -22,15 +22,15 @@ alias of `None`
 Evaluate whether the codec can encode (decode) the payload.
 
 * **Parameters:**
-  **payload** (*Any*) – 
+  **payload** (*Any*)
 * **Return type:**
   bool
 
 #### *classmethod* encode(name, payload)
 
 * **Parameters:**
-  * **name** (*str*) – 
-  * **payload** (*Any*) – 
+  * **name** (*str*)
+  * **payload** (*Any*)
 * **Return type:**
   [*ResponseOutput*](types.md#mlserver.types.ResponseOutput)
 
@@ -39,8 +39,8 @@ Evaluate whether the codec can encode (decode) the payload.
 Encode the given payload into a response output.
 
 * **Parameters:**
-  * **name** (*str*) – 
-  * **payload** (*Any*) – 
+  * **name** (*str*)
+  * **payload** (*Any*)
 * **Return type:**
   [*ResponseOutput*](types.md#mlserver.types.ResponseOutput)
 
@@ -49,7 +49,7 @@ Encode the given payload into a response output.
 Decode a response output into a high-level Python type.
 
 * **Parameters:**
-  **response_output** ([*ResponseOutput*](types.md#mlserver.types.ResponseOutput)) – 
+  **response_output** ([*ResponseOutput*](types.md#mlserver.types.ResponseOutput))
 * **Return type:**
   *Any*
 
@@ -58,15 +58,15 @@ Decode a response output into a high-level Python type.
 Encode the given payload into a `RequestInput`.
 
 * **Parameters:**
-  * **name** (*str*) – 
-  * **payload** (*Any*) – 
+  * **name** (*str*)
+  * **payload** (*Any*)
 * **Return type:**
   [*RequestInput*](types.md#mlserver.types.RequestInput)
 
 #### *classmethod* decode(request_input)
 
 * **Parameters:**
-  **request_input** ([*RequestInput*](types.md#mlserver.types.RequestInput)) – 
+  **request_input** ([*RequestInput*](types.md#mlserver.types.RequestInput))
 * **Return type:**
   *Any*
 
@@ -75,7 +75,7 @@ Encode the given payload into a `RequestInput`.
 Decode a request input into a high-level Python type.
 
 * **Parameters:**
-  **request_input** ([*RequestInput*](types.md#mlserver.types.RequestInput)) – 
+  **request_input** ([*RequestInput*](types.md#mlserver.types.RequestInput))
 * **Return type:**
   *Any*
 
@@ -103,16 +103,16 @@ alias of `None`
 Evaluate whether the codec can encode (decode) the payload.
 
 * **Parameters:**
-  **payload** (*Any*) – 
+  **payload** (*Any*)
 * **Return type:**
   bool
 
 #### *classmethod* encode(model_name, payload, model_version=None)
 
 * **Parameters:**
-  * **model_name** (*str*) – 
-  * **payload** (*Any*) – 
-  * **model_version** (*str* *|* *None*) – 
+  * **model_name** (*str*)
+  * **payload** (*Any*)
+  * **model_version** (*str* *|* *None*)
 * **Return type:**
   [*InferenceResponse*](types.md#mlserver.types.InferenceResponse)
 
@@ -121,9 +121,9 @@ Evaluate whether the codec can encode (decode) the payload.
 Encode the given payload into an inference response.
 
 * **Parameters:**
-  * **model_name** (*str*) – 
-  * **payload** (*Any*) – 
-  * **model_version** (*str* *|* *None*) – 
+  * **model_name** (*str*)
+  * **payload** (*Any*)
+  * **model_version** (*str* *|* *None*)
 * **Return type:**
   [*InferenceResponse*](types.md#mlserver.types.InferenceResponse)
 
@@ -132,7 +132,7 @@ Encode the given payload into an inference response.
 Decode an inference response into a high-level Python object.
 
 * **Parameters:**
-  **response** ([*InferenceResponse*](types.md#mlserver.types.InferenceResponse)) – 
+  **response** ([*InferenceResponse*](types.md#mlserver.types.InferenceResponse))
 * **Return type:**
   *Any*
 
@@ -141,14 +141,14 @@ Decode an inference response into a high-level Python object.
 Encode the given payload into an inference request.
 
 * **Parameters:**
-  **payload** (*Any*) – 
+  **payload** (*Any*)
 * **Return type:**
   [*InferenceRequest*](types.md#mlserver.types.InferenceRequest)
 
 #### *classmethod* decode(request)
 
 * **Parameters:**
-  **request** ([*InferenceRequest*](types.md#mlserver.types.InferenceRequest)) – 
+  **request** ([*InferenceRequest*](types.md#mlserver.types.InferenceRequest))
 * **Return type:**
   *Any*
 
@@ -157,6 +157,6 @@ Encode the given payload into an inference request.
 Decode an inference request into a high-level Python object.
 
 * **Parameters:**
-  **request** ([*InferenceRequest*](types.md#mlserver.types.InferenceRequest)) – 
+  **request** ([*InferenceRequest*](types.md#mlserver.types.InferenceRequest))
 * **Return type:**
   *Any*

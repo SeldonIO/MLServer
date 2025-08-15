@@ -301,10 +301,6 @@ Bases: `BaseSettings`
 ```
 
 </details></p>
-* **Config:**
-  - **extra**: *str = ignore*
-  - **env_prefix**: *str = MLSERVER_MODEL_*
-  - **env_file**: *str = .env*
 * **Fields:**
   - [`cache_enabled (bool)`](#mlserver.settings.ModelSettings.cache_enabled)
   - [`implementation_ (str)`](#mlserver.settings.ModelSettings.implementation_)
@@ -362,18 +358,6 @@ Framework used to train and serialise the model (e.g. sklearn).
 Versions of dependencies used to train the model (e.g.
 sklearn/0.20.1).
 
-#### model_post_init(context, /)
-
-This function is meant to behave like a BaseModel method to initialise private attributes.
-
-It takes context as an argument since that’s what pydantic-core passes when calling it.
-
-* **Parameters:**
-  * **self** (*BaseModel*) – The BaseModel instance.
-  * **context** (*Any*) – The context.
-* **Return type:**
-  None
-
 #### *classmethod* model_validate(obj)
 
 Validate a pydantic model instance.
@@ -393,9 +377,30 @@ Validate a pydantic model instance.
 #### *classmethod* parse_file(path)
 
 * **Parameters:**
-  **path** (*str*) – 
+  **path** (*str*)
 * **Return type:**
   [*ModelSettings*](#mlserver.settings.ModelSettings)
+
+#### \_\_init_\_(\*args, \*\*kwargs)
+
+Create a new model by parsing and validating input data from keyword arguments.
+
+Raises [ValidationError][pydantic_core.ValidationError] if the input data cannot be
+validated to form a valid model.
+
+self is explicitly positional-only to allow self as a field name.
+
+#### model_post_init(context,)
+
+This function is meant to behave like a BaseModel method to initialise private attributes.
+
+It takes context as an argument since that’s what pydantic-core passes when calling it.
+
+* **Parameters:**
+  * **self** (*BaseModel*) – The BaseModel instance.
+  * **context** (*Any*) – The context.
+* **Return type:**
+  None
 
 #### *property* implementation *: Type[MLModel]*
 
@@ -560,10 +565,6 @@ can change on each instance (e.g. each version) of the model.
 ```
 
 </details></p>
-* **Config:**
-  - **extra**: *str = allow*
-  - **env_prefix**: *str = MLSERVER_MODEL_*
-  - **env_file**: *str = .env*
 * **Fields:**
   - [`autogenerate_inference_pool_gid (bool)`](#mlserver.settings.ModelParameters.autogenerate_inference_pool_gid)
   - [`content_type (str | None)`](#mlserver.settings.ModelParameters.content_type)

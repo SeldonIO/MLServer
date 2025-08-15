@@ -36,9 +36,6 @@ Bases: `BaseModel`
 ```
 
 </details></p>
-* **Config:**
-  - **protected_namespaces**: *tuple = ()*
-  - **use_enum_values**: *bool = True*
 * **Fields:**
   - `extensions (List[str])`
   - `name (str)`
@@ -73,15 +70,12 @@ Bases: `BaseModel`
 ```
 
 </details></p>
-* **Config:**
-  - **protected_namespaces**: *tuple = ()*
-  - **use_enum_values**: *bool = True*
 * **Fields:**
   - `error (str)`
 
 #### *field* error *: str* *[Required]*
 
-### *class* mlserver.types.Datatype(value, names=None, \*, module=None, qualname=None, type=None, start=1, boundary=None)
+### *class* mlserver.types.Datatype
 
 Bases: `Enum`
 
@@ -209,9 +203,6 @@ Bases: `BaseModel`
 ```
 
 </details></p>
-* **Config:**
-  - **protected_namespaces**: *tuple = ()*
-  - **use_enum_values**: *bool = True*
 * **Fields:**
   - `datatype (mlserver.types.dataplane.Datatype)`
   - `name (str)`
@@ -249,9 +240,6 @@ Bases: `BaseModel`
 ```
 
 </details></p>
-* **Config:**
-  - **protected_namespaces**: *tuple = ()*
-  - **use_enum_values**: *bool = True*
 * **Fields:**
   - `error (str)`
 
@@ -298,10 +286,6 @@ Bases: `BaseModel`
 ```
 
 </details></p>
-* **Config:**
-  - **protected_namespaces**: *tuple = ()*
-  - **use_enum_values**: *bool = True*
-  - **extra**: *str = allow*
 * **Fields:**
   - `content_type (str | None)`
   - `headers (Dict[str, Any] | None)`
@@ -402,9 +386,6 @@ Bases: `BaseModel`
 ```
 
 </details></p>
-* **Config:**
-  - **protected_namespaces**: *tuple = ()*
-  - **use_enum_values**: *bool = True*
 * **Fields:**
   - `name (str)`
   - `parameters (mlserver.types.dataplane.Parameters | None)`
@@ -525,9 +506,6 @@ Bases: `BaseModel`
 ```
 
 </details></p>
-* **Config:**
-  - **protected_namespaces**: *tuple = ()*
-  - **use_enum_values**: *bool = True*
 * **Fields:**
   - `data (mlserver.types.dataplane.TensorData)`
   - `datatype (mlserver.types.dataplane.Datatype)`
@@ -713,9 +691,6 @@ Bases: `BaseModel`
 ```
 
 </details></p>
-* **Config:**
-  - **protected_namespaces**: *tuple = ()*
-  - **use_enum_values**: *bool = True*
 * **Fields:**
   - `id (str | None)`
   - `model_name (str)`
@@ -761,9 +736,6 @@ Bases: `BaseModel`
 ```
 
 </details></p>
-* **Config:**
-  - **protected_namespaces**: *tuple = ()*
-  - **use_enum_values**: *bool = True*
 * **Fields:**
   - `error (str | None)`
 
@@ -941,9 +913,6 @@ Bases: `BaseModel`
 ```
 
 </details></p>
-* **Config:**
-  - **protected_namespaces**: *tuple = ()*
-  - **use_enum_values**: *bool = True*
 * **Fields:**
   - `inputs (List[mlserver.types.dataplane.MetadataTensor] | None)`
   - `name (str)`
@@ -1076,9 +1045,6 @@ Bases: `BaseModel`
 ```
 
 </details></p>
-* **Config:**
-  - **protected_namespaces**: *tuple = ()*
-  - **use_enum_values**: *bool = True*
 * **Fields:**
   - `data (mlserver.types.dataplane.TensorData)`
   - `datatype (mlserver.types.dataplane.Datatype)`
@@ -1286,9 +1252,6 @@ Bases: `BaseModel`
 ```
 
 </details></p>
-* **Config:**
-  - **protected_namespaces**: *tuple = ()*
-  - **use_enum_values**: *bool = True*
 * **Fields:**
   - `id (str | None)`
   - `inputs (List[mlserver.types.dataplane.RequestInput])`
@@ -1331,9 +1294,6 @@ Bases: `BaseModel`
 ```
 
 </details></p>
-* **Config:**
-  - **protected_namespaces**: *tuple = ()*
-  - **use_enum_values**: *bool = True*
 * **Fields:**
   - `ready (bool | None)`
 
@@ -1396,9 +1356,6 @@ Bases: `BaseModel`
 ```
 
 </details></p>
-* **Config:**
-  - **protected_namespaces**: *tuple = ()*
-  - **use_enum_values**: *bool = True*
 * **Fields:**
   - `name (str)`
   - `reason (str)`
@@ -1413,7 +1370,7 @@ Bases: `BaseModel`
 
 #### *field* version *: str | None* *= None*
 
-### *class* mlserver.types.State(value, names=None, \*, module=None, qualname=None, type=None, start=1, boundary=None)
+### *class* mlserver.types.State
 
 Bases: `Enum`
 
@@ -1524,9 +1481,6 @@ Bases: `BaseModel`
 ```
 
 </details></p>
-* **Config:**
-  - **protected_namespaces**: *tuple = ()*
-  - **use_enum_values**: *bool = True*
 * **Fields:**
   - `error (str | None)`
 
@@ -1560,9 +1514,6 @@ Bases: `BaseModel`
 ```
 
 </details></p>
-* **Config:**
-  - **protected_namespaces**: *tuple = ()*
-  - **use_enum_values**: *bool = True*
 * **Fields:**
   - `error (str | None)`
 

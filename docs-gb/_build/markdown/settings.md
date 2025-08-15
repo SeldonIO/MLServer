@@ -324,11 +324,6 @@ Bases: `BaseSettings`
 ```
 
 </details></p>
-* **Config:**
-  - **extra**: *str = ignore*
-  - **env_prefix**: *str = MLSERVER_*
-  - **env_file**: *str = .env*
-  - **protected_namespaces**: *tuple = ()*
 * **Fields:**
   - [`cache_enabled (bool)`](#mlserver.settings.Settings.cache_enabled)
   - [`cache_size (int)`](#mlserver.settings.Settings.cache_size)
@@ -484,7 +479,7 @@ Server name used to export OpenTelemetry tracing to collector service.
 
 Use JSON-formatted structured logging instead of default format.
 
-#### model_post_init(context, /)
+#### model_post_init(context,)
 
 This function is meant to behave like a BaseModel method to initialise private attributes.
 
