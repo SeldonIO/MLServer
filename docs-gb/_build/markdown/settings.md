@@ -1,11 +1,4 @@
-<a id="settings"></a>
-
-# Settings
-
-<a id="mlserver.settings.Settings"></a>
-
-### *pydantic settings* mlserver.settings.Settings
-
+# Settings {#settings}### *pydantic settings* mlserver.settings.Settings {#mlserver.settings.Settings}
 * **Fields:**
   - [`cache_enabled (bool)`](#mlserver.settings.Settings.cache_enabled)
   - [`cache_size (int)`](#mlserver.settings.Settings.cache_size)
@@ -38,195 +31,67 @@
   - [`server_version (str)`](#mlserver.settings.Settings.server_version)
   - [`tracing_server (str | None)`](#mlserver.settings.Settings.tracing_server)
   - [`use_structured_logging (bool)`](#mlserver.settings.Settings.use_structured_logging)
-
-<a id="mlserver.settings.Settings.cache_enabled"></a>
-
-#### *field* cache_enabled *: bool* *= False*
-
+#### *field* cache_enabled *: bool* *= False* {#mlserver.settings.Settings.cache_enabled}
 Enable caching for the model predictions.
-
-<a id="mlserver.settings.Settings.cache_size"></a>
-
-#### *field* cache_size *: int* *= 100*
-
+#### *field* cache_size *: int* *= 100* {#mlserver.settings.Settings.cache_size}
 Cache size to be used if caching is enabled.
-
-<a id="mlserver.settings.Settings.cors_settings"></a>
-
-#### *field* cors_settings *: CORSSettings | None* *= None*
-
-<a id="mlserver.settings.Settings.debug"></a>
-
-#### *field* debug *: bool* *= True*
-
-<a id="mlserver.settings.Settings.environments_dir"></a>
-
-#### *field* environments_dir *: str* *= '/Users/paul.bridi/Projects/MLServer/docs-gb/.envs'*
-
+#### *field* cors_settings *: CORSSettings | None* *= None* {#mlserver.settings.Settings.cors_settings}#### *field* debug *: bool* *= True* {#mlserver.settings.Settings.debug}#### *field* environments_dir *: str* *= '/Users/paul.bridi/Projects/MLServer/docs-gb/.envs'* {#mlserver.settings.Settings.environments_dir}
 Directory used to store custom environments.
 By default, the .envs folder of the current working directory will be
 used.
-
-<a id="mlserver.settings.Settings.extensions"></a>
-
-#### *field* extensions *: List[str]* *= []*
-
+#### *field* extensions *: List[str]* *= []* {#mlserver.settings.Settings.extensions}
 Server extensions loaded.
-
-<a id="mlserver.settings.Settings.grpc_max_message_length"></a>
-
-#### *field* grpc_max_message_length *: int | None* *= None*
-
+#### *field* grpc_max_message_length *: int | None* *= None* {#mlserver.settings.Settings.grpc_max_message_length}
 Maximum length (i.e. size) of gRPC payloads.
-
-<a id="mlserver.settings.Settings.grpc_port"></a>
-
-#### *field* grpc_port *: int* *= 8081*
-
+#### *field* grpc_port *: int* *= 8081* {#mlserver.settings.Settings.grpc_port}
 Port where to listen for gRPC connections.
-
-<a id="mlserver.settings.Settings.gzip_enabled"></a>
-
-#### *field* gzip_enabled *: bool* *= True*
-
+#### *field* gzip_enabled *: bool* *= True* {#mlserver.settings.Settings.gzip_enabled}
 Enable GZipMiddleware.
-
-<a id="mlserver.settings.Settings.host"></a>
-
-#### *field* host *: str* *= '0.0.0.0'*
-
+#### *field* host *: str* *= '0.0.0.0'* {#mlserver.settings.Settings.host}
 Host where to listen for connections.
-
-<a id="mlserver.settings.Settings.http_port"></a>
-
-#### *field* http_port *: int* *= 8080*
-
+#### *field* http_port *: int* *= 8080* {#mlserver.settings.Settings.http_port}
 Port where to listen for HTTP / REST connections.
-
-<a id="mlserver.settings.Settings.kafka_enabled"></a>
-
-#### *field* kafka_enabled *: bool* *= False*
-
-<a id="mlserver.settings.Settings.kafka_servers"></a>
-
-#### *field* kafka_servers *: str* *= 'localhost:9092'*
-
-<a id="mlserver.settings.Settings.kafka_topic_input"></a>
-
-#### *field* kafka_topic_input *: str* *= 'mlserver-input'*
-
-<a id="mlserver.settings.Settings.kafka_topic_output"></a>
-
-#### *field* kafka_topic_output *: str* *= 'mlserver-output'*
-
-<a id="mlserver.settings.Settings.load_models_at_startup"></a>
-
-#### *field* load_models_at_startup *: bool* *= True*
-
+#### *field* kafka_enabled *: bool* *= False* {#mlserver.settings.Settings.kafka_enabled}#### *field* kafka_servers *: str* *= 'localhost:9092'* {#mlserver.settings.Settings.kafka_servers}#### *field* kafka_topic_input *: str* *= 'mlserver-input'* {#mlserver.settings.Settings.kafka_topic_input}#### *field* kafka_topic_output *: str* *= 'mlserver-output'* {#mlserver.settings.Settings.kafka_topic_output}#### *field* load_models_at_startup *: bool* *= True* {#mlserver.settings.Settings.load_models_at_startup}
 Flag to load all available models automatically at startup.
-
-<a id="mlserver.settings.Settings.logging_settings"></a>
-
-#### *field* logging_settings *: str | Dict | None* *= None*
-
+#### *field* logging_settings *: str | Dict | None* *= None* {#mlserver.settings.Settings.logging_settings}
 Path to logging config file or dictionary configuration.
-
-<a id="mlserver.settings.Settings.metrics_dir"></a>
-
-#### *field* metrics_dir *: str* *= '/Users/paul.bridi/Projects/MLServer/docs-gb/.metrics'*
-
+#### *field* metrics_dir *: str* *= '/Users/paul.bridi/Projects/MLServer/docs-gb/.metrics'* {#mlserver.settings.Settings.metrics_dir}
 Directory used to share metrics across parallel workers.
 Equivalent to the PROMETHEUS_MULTIPROC_DIR env var in
 prometheus-client.
 Note that this won’t be used if the parallel_workers flag is disabled.
 By default, the .metrics folder of the current working directory will be
 used.
-
-<a id="mlserver.settings.Settings.metrics_endpoint"></a>
-
-#### *field* metrics_endpoint *: str | None* *= '/metrics'*
-
+#### *field* metrics_endpoint *: str | None* *= '/metrics'* {#mlserver.settings.Settings.metrics_endpoint}
 Endpoint used to expose Prometheus metrics. Alternatively, can be set to
 None to disable it.
-
-<a id="mlserver.settings.Settings.metrics_port"></a>
-
-#### *field* metrics_port *: int* *= 8082*
-
+#### *field* metrics_port *: int* *= 8082* {#mlserver.settings.Settings.metrics_port}
 Port used to expose metrics endpoint.
-
-<a id="mlserver.settings.Settings.metrics_rest_server_prefix"></a>
-
-#### *field* metrics_rest_server_prefix *: str* *= 'rest_server'*
-
+#### *field* metrics_rest_server_prefix *: str* *= 'rest_server'* {#mlserver.settings.Settings.metrics_rest_server_prefix}
 Metrics rest server string prefix to be exported.
-
-<a id="mlserver.settings.Settings.model_repository_implementation"></a>
-
-#### *field* model_repository_implementation *: ImportString | None* *= None*
-
+#### *field* model_repository_implementation *: ImportString | None* *= None* {#mlserver.settings.Settings.model_repository_implementation}
 *Python path* to the inference runtime to model repository (e.g.
 `mlserver.repository.repository.SchemalessModelRepository`).
-
-<a id="mlserver.settings.Settings.model_repository_implementation_args"></a>
-
-#### *field* model_repository_implementation_args *: dict* *= {}*
-
+#### *field* model_repository_implementation_args *: dict* *= {}* {#mlserver.settings.Settings.model_repository_implementation_args}
 Extra parameters for model repository.
-
-<a id="mlserver.settings.Settings.model_repository_root"></a>
-
-#### *field* model_repository_root *: str* *= '.'*
-
+#### *field* model_repository_root *: str* *= '.'* {#mlserver.settings.Settings.model_repository_root}
 Root of the model repository, where we will search for models.
-
-<a id="mlserver.settings.Settings.parallel_workers"></a>
-
-#### *field* parallel_workers *: int* *= 1*
-
+#### *field* parallel_workers *: int* *= 1* {#mlserver.settings.Settings.parallel_workers}
 When parallel inference is enabled, number of workers to run inference
 across.
-
-<a id="mlserver.settings.Settings.parallel_workers_timeout"></a>
-
-#### *field* parallel_workers_timeout *: int* *= 5*
-
+#### *field* parallel_workers_timeout *: int* *= 5* {#mlserver.settings.Settings.parallel_workers_timeout}
 Grace timeout to wait until the workers shut down when stopping MLServer.
-
-<a id="mlserver.settings.Settings.root_path"></a>
-
-#### *field* root_path *: str* *= ''*
-
+#### *field* root_path *: str* *= ''* {#mlserver.settings.Settings.root_path}
 Set the ASGI root_path for applications submounted below a given URL path.
-
-<a id="mlserver.settings.Settings.server_name"></a>
-
-#### *field* server_name *: str* *= 'mlserver'*
-
+#### *field* server_name *: str* *= 'mlserver'* {#mlserver.settings.Settings.server_name}
 Name of the server.
-
-<a id="mlserver.settings.Settings.server_version"></a>
-
-#### *field* server_version *: str* *= '1.7.0.dev0'*
-
+#### *field* server_version *: str* *= '1.7.0.dev0'* {#mlserver.settings.Settings.server_version}
 Version of the server.
-
-<a id="mlserver.settings.Settings.tracing_server"></a>
-
-#### *field* tracing_server *: str | None* *= None*
-
+#### *field* tracing_server *: str | None* *= None* {#mlserver.settings.Settings.tracing_server}
 Server name used to export OpenTelemetry tracing to collector service.
-
-<a id="mlserver.settings.Settings.use_structured_logging"></a>
-
-#### *field* use_structured_logging *: bool* *= False*
-
+#### *field* use_structured_logging *: bool* *= False* {#mlserver.settings.Settings.use_structured_logging}
 Use JSON-formatted structured logging instead of default format.
-
-<a id="mlserver.settings.Settings.model_post_init"></a>
-
-#### model_post_init(context,)
-
+#### model_post_init(context,) {#mlserver.settings.Settings.model_post_init}
 This function is meant to behave like a BaseModel method to initialise private attributes.
 
 It takes context as an argument since that’s what pydantic-core passes when calling it.

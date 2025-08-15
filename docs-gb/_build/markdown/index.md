@@ -1,3 +1,1 @@
-<a id="api-reference"></a>
-
-# API Reference
+# API Reference {#api-reference}
