@@ -322,6 +322,7 @@
 ```
 
 </details></p>
+
 * **Fields:**
   - [`cache_enabled (bool)`](#mlserver.settings.Settings.cache_enabled)
   - [`cache_size (int)`](#mlserver.settings.Settings.cache_size)
