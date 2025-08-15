@@ -1,7 +1,26 @@
+# Settings
 
-## Settings
+```{autopydantic_settings} mlserver.settings.Settings
+:show-json: false
+:show-config: false
+:show-config-summary: false
+:show-field-summary: true
+:list-fields: all
+:list-validators: true
+:field-show-default: true
+:field-show-required: true
+:field-show-alias: true
+```
 
-```{eval-rst}
+# Extra Model Parameters
 
-.. autopydantic_settings:: mlserver.settings.Settings
+:show-json: false
+:show-config: false
+:show-config-summary: false
+:show-field-summary: true
+:list-fields: all
+:list-validators: true
+:field-show-default: true
+:field-show-required: true
+:field-show-alias: true
 ```

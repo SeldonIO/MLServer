@@ -1,5 +1,9 @@
 from __future__ import annotations
 import os, sys
+
+import re
+from sphinx.application import Sphinx
+
 sys.path.insert(0, os.path.abspath(".."))  # make 'mlserver' importable
 
 extensions = [
@@ -24,8 +28,8 @@ autodoc_typehints = "description"  # (keep only once)
 # Model / Settings summaries
 autodoc_pydantic_model_show_field_summary = True        # summary table of fields
 autodoc_pydantic_model_show_validator_summary = True
-autodoc_pydantic_settings_show_json = True              # JSON example for Settings (optional)
-autodoc_pydantic_model_show_json = True                 # JSON example for Models (optional)
+autodoc_pydantic_settings_show_json = False             
+autodoc_pydantic_model_show_json = False
 
 # Field details after the summary
 autodoc_pydantic_field_list_all = True
@@ -45,3 +49,24 @@ autodoc_pydantic_settings_show_config_summary = False
 # autosectionlabel_prefix_document = True
 
 root_doc = "index"
+
+_RX_MODEL = re.compile(r"^\s*### \*pydantic (?:model|settings)\* (?P<qual>[\w\.]+)\s*$")
+_RX_FIELD = re.compile(r"^\s*#### \*field\* (?P<name>[A-Za-z_]\w*)\b")
+
+def _inject_field_anchors(app, what, name, obj, options, lines):
+    qual = None
+    out = []
+    for line in lines:
+        m_model = _RX_MODEL.match(line)
+        if m_model:
+            qual = m_model.group("qual")
+            out.append(line)
+            continue
+        m_field = _RX_FIELD.match(line)
+        if m_field and qual:
+            out.append(f'<a id="{qual}.{m_field.group("name")}"></a>')
+        out.append(line)
+    lines[:] = out
+
+def setup(app: Sphinx):
+    app.connect("autodoc-process-docstring", _inject_field_anchors)
