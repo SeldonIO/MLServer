@@ -299,6 +299,7 @@
 ```
 
 </details></p>
+
 * **Fields:**
   - [`cache_enabled (bool)`](#mlserver.settings.ModelSettings.cache_enabled)
   - [`implementation_ (str)`](#mlserver.settings.ModelSettings.implementation_)
