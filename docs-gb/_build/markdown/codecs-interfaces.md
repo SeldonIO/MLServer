@@ -11,12 +11,6 @@ Note that this codec applies at the individual input (output) level.
 For request-wide transformations (e.g. dataframes), use the
 `RequestCodec` interface instead.
 
-#### ContentType *: ClassVar[str]* *= ''*
-
-#### TypeHint
-
-alias of `None`
-
 #### *classmethod* can_encode(payload)
 
 Evaluate whether the codec can encode (decode) the payload.
@@ -25,14 +19,6 @@ Evaluate whether the codec can encode (decode) the payload.
   **payload** (*Any*)
 * **Return type:**
   bool
-
-#### *classmethod* encode(name, payload)
-
-* **Parameters:**
-  * **name** (*str*)
-  * **payload** (*Any*)
-* **Return type:**
-  [*ResponseOutput*](types.md#mlserver.types.ResponseOutput)
 
 #### *classmethod* encode_output(name, payload, \*\*kwargs)
 
@@ -63,13 +49,6 @@ Encode the given payload into a `RequestInput`.
 * **Return type:**
   [*RequestInput*](types.md#mlserver.types.RequestInput)
 
-#### *classmethod* decode(request_input)
-
-* **Parameters:**
-  **request_input** ([*RequestInput*](types.md#mlserver.types.RequestInput))
-* **Return type:**
-  *Any*
-
 #### *classmethod* decode_input(request_input)
 
 Decode a request input into a high-level Python type.
@@ -92,12 +71,6 @@ separate input head).
 For individual input-level encoding / decoding, use the `InputCodec`
 interface instead.
 
-#### ContentType *: ClassVar[str]* *= ''*
-
-#### TypeHint
-
-alias of `None`
-
 #### *classmethod* can_encode(payload)
 
 Evaluate whether the codec can encode (decode) the payload.
@@ -106,15 +79,6 @@ Evaluate whether the codec can encode (decode) the payload.
   **payload** (*Any*)
 * **Return type:**
   bool
-
-#### *classmethod* encode(model_name, payload, model_version=None)
-
-* **Parameters:**
-  * **model_name** (*str*)
-  * **payload** (*Any*)
-  * **model_version** (*str* *|* *None*)
-* **Return type:**
-  [*InferenceResponse*](types.md#mlserver.types.InferenceResponse)
 
 #### *classmethod* encode_response(model_name, payload, model_version=None, \*\*kwargs)
 
@@ -144,13 +108,6 @@ Encode the given payload into an inference request.
   **payload** (*Any*)
 * **Return type:**
   [*InferenceRequest*](types.md#mlserver.types.InferenceRequest)
-
-#### *classmethod* decode(request)
-
-* **Parameters:**
-  **request** ([*InferenceRequest*](types.md#mlserver.types.InferenceRequest))
-* **Return type:**
-  *Any*
 
 #### *classmethod* decode_request(request)
 

@@ -2,8 +2,6 @@
 
 ### *pydantic settings* mlserver.settings.Settings
 
-Bases: `BaseSettings`
-
 <p><details  class="autodoc_pydantic_collapsable_json">
 <summary>Show JSON schema</summary>
 ```json

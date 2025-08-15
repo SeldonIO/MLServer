@@ -2,11 +2,7 @@
 
 ### *class* mlserver.codecs.NumpyCodec
 
-Bases: [`InputCodec`](codecs-interfaces.md#mlserver.codecs.InputCodec)
-
 Decodes an request input (response output) as a NumPy array.
-
-#### ContentType *: ClassVar[str]* *= 'np'*
 
 #### TypeHint
 
@@ -61,8 +57,6 @@ Decode a request input into a high-level Python type.
 
 ### *class* mlserver.codecs.NumpyRequestCodec
 
-Bases: `SingleInputRequestCodec`
-
 Decodes the first input (output) of request (response) as a NumPy array.
 This codec can be useful for cases where the whole payload is a single
 NumPy tensor.
@@ -71,19 +65,9 @@ NumPy tensor.
 
 alias of [`NumpyCodec`](#mlserver.codecs.NumpyCodec)
 
-#### ContentType *: ClassVar[str]* *= 'np'*
-
 ### *class* mlserver.codecs.StringCodec
 
-Bases: [`InputCodec`](codecs-interfaces.md#mlserver.codecs.InputCodec)
-
 Encodes a list of Python strings as a BYTES input (output).
-
-#### ContentType *: ClassVar[str]* *= 'str'*
-
-#### TypeHint
-
-alias of `List`[`str`]
 
 #### *classmethod* can_encode(payload)
 
@@ -136,8 +120,6 @@ Encode the given payload into a `RequestInput`.
 
 ### *class* mlserver.codecs.StringRequestCodec
 
-Bases: `SingleInputRequestCodec`
-
 Decodes the first input (output) of request (response) as a list of
 strings.
 This codec can be useful for cases where the whole payload is a single
@@ -147,23 +129,9 @@ list of strings.
 
 alias of [`StringCodec`](#mlserver.codecs.StringCodec)
 
-#### ContentType *: ClassVar[str]* *= 'str'*
-
-#### TypeHint
-
-alias of `List`[`str`]
-
 ### *class* mlserver.codecs.Base64Codec
 
-Bases: [`InputCodec`](codecs-interfaces.md#mlserver.codecs.InputCodec)
-
 Codec that convers to / from a base64 input.
-
-#### ContentType *: ClassVar[str]* *= 'base64'*
-
-#### TypeHint
-
-alias of `List`[`bytes`]
 
 #### *classmethod* can_encode(payload)
 
@@ -216,15 +184,7 @@ Decode a request input into a high-level Python type.
 
 ### *class* mlserver.codecs.DatetimeCodec
 
-Bases: [`InputCodec`](codecs-interfaces.md#mlserver.codecs.InputCodec)
-
 Codec that convers to / from a datetime input.
-
-#### ContentType *: ClassVar[str]* *= 'datetime'*
-
-#### TypeHint
-
-alias of `List`[`str` | `datetime`]
 
 #### *classmethod* can_encode(payload)
 
@@ -277,14 +237,8 @@ Decode a request input into a high-level Python type.
 
 ### *class* mlserver.codecs.PandasCodec
 
-Bases: [`RequestCodec`](codecs-interfaces.md#mlserver.codecs.RequestCodec)
-
 Decodes a request (response) into a Pandas DataFrame, assuming each input
 (output) head corresponds to a column of the DataFrame.
-
-#### ContentType *: ClassVar[str]* *= 'pd'*
-
-#### JsonContentType *= 'pd_json'*
 
 #### TypeHint
 
@@ -319,14 +273,6 @@ Decode an inference response into a high-level Python object.
   **response** ([*InferenceResponse*](types.md#mlserver.types.InferenceResponse))
 * **Return type:**
   *DataFrame*
-
-#### *classmethod* encode_outputs(payload, use_bytes=True)
-
-* **Parameters:**
-  * **payload** (*DataFrame*)
-  * **use_bytes** (*bool*)
-* **Return type:**
-  *List*[[*ResponseOutput*](types.md#mlserver.types.ResponseOutput)]
 
 #### *classmethod* encode_request(payload, use_bytes=True, \*\*kwargs)
 

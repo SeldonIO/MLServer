@@ -2,8 +2,6 @@
 
 ### *pydantic settings* mlserver.settings.ModelSettings
 
-Bases: `BaseSettings`
-
 <p><details  class="autodoc_pydantic_collapsable_json">
 <summary>Show JSON schema</summary>
 ```json
@@ -441,8 +439,6 @@ The name of the field being deprecated.
 # Extra Model Parameters
 
 ### *pydantic settings* mlserver.settings.ModelParameters
-
-Bases: `BaseSettings`
 
 Parameters that apply only to a particular instance of a model.
 This can include things like model weights, or arbitrary `extra`
