@@ -1,4 +1,8 @@
+<a id="codecs-interfaces"></a>
+
 # Codecs — Interfaces
+
+<a id="mlserver.codecs.InputCodec"></a>
 
 ### *class* mlserver.codecs.InputCodec
 
@@ -11,6 +15,8 @@ Note that this codec applies at the individual input (output) level.
 For request-wide transformations (e.g. dataframes), use the
 `RequestCodec` interface instead.
 
+<a id="mlserver.codecs.InputCodec.can_encode"></a>
+
 #### *classmethod* can_encode(payload)
 
 Evaluate whether the codec can encode (decode) the payload.
@@ -19,6 +25,8 @@ Evaluate whether the codec can encode (decode) the payload.
   **payload** (*Any*)
 * **Return type:**
   bool
+
+<a id="mlserver.codecs.InputCodec.encode_output"></a>
 
 #### *classmethod* encode_output(name, payload, \*\*kwargs)
 
@@ -30,6 +38,8 @@ Encode the given payload into a response output.
 * **Return type:**
   [*ResponseOutput*](types.md#mlserver.types.ResponseOutput)
 
+<a id="mlserver.codecs.InputCodec.decode_output"></a>
+
 #### *classmethod* decode_output(response_output)
 
 Decode a response output into a high-level Python type.
@@ -38,6 +48,8 @@ Decode a response output into a high-level Python type.
   **response_output** ([*ResponseOutput*](types.md#mlserver.types.ResponseOutput))
 * **Return type:**
   *Any*
+
+<a id="mlserver.codecs.InputCodec.encode_input"></a>
 
 #### *classmethod* encode_input(name, payload, \*\*kwargs)
 
@@ -49,6 +61,8 @@ Encode the given payload into a `RequestInput`.
 * **Return type:**
   [*RequestInput*](types.md#mlserver.types.RequestInput)
 
+<a id="mlserver.codecs.InputCodec.decode_input"></a>
+
 #### *classmethod* decode_input(request_input)
 
 Decode a request input into a high-level Python type.
@@ -57,6 +71,8 @@ Decode a request input into a high-level Python type.
   **request_input** ([*RequestInput*](types.md#mlserver.types.RequestInput))
 * **Return type:**
   *Any*
+
+<a id="mlserver.codecs.RequestCodec"></a>
 
 ### *class* mlserver.codecs.RequestCodec
 
@@ -71,6 +87,8 @@ separate input head).
 For individual input-level encoding / decoding, use the `InputCodec`
 interface instead.
 
+<a id="mlserver.codecs.RequestCodec.can_encode"></a>
+
 #### *classmethod* can_encode(payload)
 
 Evaluate whether the codec can encode (decode) the payload.
@@ -79,6 +97,8 @@ Evaluate whether the codec can encode (decode) the payload.
   **payload** (*Any*)
 * **Return type:**
   bool
+
+<a id="mlserver.codecs.RequestCodec.encode_response"></a>
 
 #### *classmethod* encode_response(model_name, payload, model_version=None, \*\*kwargs)
 
@@ -91,6 +111,8 @@ Encode the given payload into an inference response.
 * **Return type:**
   [*InferenceResponse*](types.md#mlserver.types.InferenceResponse)
 
+<a id="mlserver.codecs.RequestCodec.decode_response"></a>
+
 #### *classmethod* decode_response(response)
 
 Decode an inference response into a high-level Python object.
@@ -100,6 +122,8 @@ Decode an inference response into a high-level Python object.
 * **Return type:**
   *Any*
 
+<a id="mlserver.codecs.RequestCodec.encode_request"></a>
+
 #### *classmethod* encode_request(payload, \*\*kwargs)
 
 Encode the given payload into an inference request.
@@ -108,6 +132,8 @@ Encode the given payload into an inference request.
   **payload** (*Any*)
 * **Return type:**
   [*InferenceRequest*](types.md#mlserver.types.InferenceRequest)
+
+<a id="mlserver.codecs.RequestCodec.decode_request"></a>
 
 #### *classmethod* decode_request(request)
 

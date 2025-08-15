@@ -16,7 +16,7 @@ extensions = [
 
 # --- MyST (helps stability of Markdown output) ---
 myst_enable_extensions = ["colon_fence", "deflist", "fieldlist", "tasklist"]
-myst_heading_anchors = 3   # stable anchors on h1..h3 for GitBook
+myst_heading_anchors = 6  # stable anchors 
 
 # --- Autodoc ---
 autodoc_member_order = "bysource"
@@ -50,23 +50,6 @@ autodoc_pydantic_settings_show_config_summary = False
 
 root_doc = "index"
 
-_RX_MODEL = re.compile(r"^\s*### \*pydantic (?:model|settings)\* (?P<qual>[\w\.]+)\s*$")
-_RX_FIELD = re.compile(r"^\s*#### \*field\* (?P<name>[A-Za-z_]\w*)\b")
 
-def _inject_field_anchors(app, what, name, obj, options, lines):
-    qual = None
-    out = []
-    for line in lines:
-        m_model = _RX_MODEL.match(line)
-        if m_model:
-            qual = m_model.group("qual")
-            out.append(line)
-            continue
-        m_field = _RX_FIELD.match(line)
-        if m_field and qual:
-            out.append(f'<a id="{qual}.{m_field.group("name")}"></a>')
-        out.append(line)
-    lines[:] = out
-
-def setup(app: Sphinx):
-    app.connect("autodoc-process-docstring", _inject_field_anchors)
+markdown_anchor_sections = True
+markdown_anchor_signatures = True
