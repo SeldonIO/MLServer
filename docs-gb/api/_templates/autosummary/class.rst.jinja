@@ -1,0 +1,51 @@
+
+{# Give the page a stable anchor and heading that GitBook will preserve #}
+({{ name | replace('.', '-') }})=
+# {{ objname }} class
+
+*Module:* `{{ module }}`  
+*Qualified name:* `{{ fullname }}`
+
+{{ objdoc | default('') | trim }}
+
+## Signature
+```python
+{{ signature }}
+```
+
+{% if parameters %}
+## Parameters
+{{ parameters | trim }}
+{% endif %}
+
+{% if attributes %}
+## Attributes
+{{ attributes | trim }}
+{% endif %}
+
+{% if methods %}
+## Methods
+{% for item in methods -%}
+
+* [{{ item.name }}](#{{ item.name | lower | replace('_','-') }})
+{%- endfor %}
+{% endif %}
+
+{% for item in methods %}
+({{ item.name | lower | replace('_','-') }})=
+## {{ item.name }}
+
+{% if signature %}
+```python
+{{ item.signature }}
+```
+{% endif %}
+
+{{ item.docstring | default('') | trim }}
+{% endfor %}
+
+{% if examples %}
+## Examples
+
+{{ examples | trim }}
+{% endif %}

@@ -1,10 +1,8 @@
-from __future__ import annotations
+# Make sure imports work from the repo root
 import os, sys
+sys.path.insert(0, os.path.abspath(".."))
 
-import re
-from sphinx.application import Sphinx
-
-sys.path.insert(0, os.path.abspath(".."))  # make 'mlserver' importable
+print("CONF LOADED FROM:", __file__)
 
 extensions = [
     "myst_parser",
@@ -12,45 +10,43 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
     "sphinxcontrib.autodoc_pydantic",  # you're using the contrib variant
-    
+    "sphinx.ext.autosummary",
+    "sphinx_markdown_builder",
 ]
 
-# --- MyST (helps stability of Markdown output) ---
-myst_enable_extensions = ["colon_fence", "deflist", "fieldlist", "tasklist"]
-myst_heading_anchors = 6  # stable anchors 
 
-# --- Autodoc ---
-autodoc_member_order = "bysource"
-autodoc_class_signature = "separated"
-set_type_checking_flag = True
-autodoc_typehints = "description"  # (keep only once)
-
-# --- Pydantic (structure the output as tables/sections) ---
-# Model / Settings summaries
-autodoc_pydantic_model_show_field_summary = True        # summary table of fields
-autodoc_pydantic_model_show_validator_summary = True
-autodoc_pydantic_settings_show_json = False             
-autodoc_pydantic_model_show_json = False
-
-# Field details after the summary
-autodoc_pydantic_field_list_all = True
-autodoc_pydantic_field_list_validators = True
-autodoc_pydantic_field_show_default = True
-autodoc_pydantic_field_show_required = True
-autodoc_pydantic_field_show_alias = True
-
-# Hide noisy Config blocks (these often collapse into bullet soup in GitBook)
-autodoc_pydantic_model_show_config = False
-autodoc_pydantic_model_show_config_summary = False
-autodoc_pydantic_settings_show_config = False
-autodoc_pydantic_settings_show_config_summary = False
-
-# Optional: label headings for easier cross-refs if you use them
-# extensions += ["sphinx.ext.autosectionlabel"]
-# autosectionlabel_prefix_document = True
+source_suffix = {
+    ".rst": "restructuredtext",
+    ".md": "myst",
+}
 
 root_doc = "index"
 
+# Autosummary: force generation (and allow re-creation)
+# autosummary_generate = ["types.md"]   # because source dir is docs-gb
 
-markdown_anchor_sections = True
-markdown_anchor_signatures = True
+autosummary_generate = True
+autosummary_generate_overwrite = True
+
+autosummary_imported_members = True
+autosummary_generate_overwrite = True
+
+# Templates (adjust if your Jinja lives elsewhere)
+templates_path = ["_templates", "api/_templates"]
+
+autodoc_mock_imports = ["torch", "tensorflow", "onnxruntime"]
+
+
+exclude_patterns = [
+    "_build", ".doctrees", "Thumbs.db", ".DS_Store",
+    "**/PULL_REQUEST_TEMPLATE/**",  # ignore repo hygiene files
+    "**/.github/**",                # if present
+]
+
+myst_enable_extensions = ["colon_fence", "deflist", "fieldlist", "tasklist"]
+myst_heading_anchors = 6
+
+
+print("CONF: autosummary_generate =", globals().get("autosummary_generate"))
+print("CONF: myst_enable_extensions =", globals().get("myst_enable_extensions"))
+

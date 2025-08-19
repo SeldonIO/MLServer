@@ -1,8 +1,7 @@
-# Project Documentation
+API Documentation
+=================
 
-```{toctree}
-:maxdepth: 2
-:caption: API
+.. toctree::
+   :maxdepth: 2
 
-api/index
-```
+   api/index
