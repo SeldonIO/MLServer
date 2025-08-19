@@ -35,6 +35,12 @@
       * [Codecs — Built-ins](_build/markdown/codecs-builtins.md)
       * [Codecs - Interfaces](_build/markdown/codecs-interfaces.md)
     * [Metrics](reference/api/metrics.md)
+    * [Types Reference](_build/api_markdown/types.md)
+      * [mlserver.types](_build/api_markdown/_generated/mlserver.types.md)
+      * [InferenceRequest](_build/api_markdown/_generated/mlserver.types.InferenceRequest.md)
+      * [InferenceErrorResponse](_build/api_markdown/_generated/mlserver.types.InferenceErrorResponse.md)
+    * [Types All](_build/api_markdown/types_all.md)
+
 * [Examples](examples/README.md)
   * [Serving Scikit-Learn models](examples/sklearn/README.md)
   * [Serving XGBoost models](examples/xgboost/README.md)
