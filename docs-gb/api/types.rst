@@ -2,14 +2,7 @@ Types
 =====
 
 .. autosummary::
-   :toctree: _generated
-   :template: module.rst.jinja
-
-   mlserver.types
-
-.. autosummary::
-   :toctree: _generated
-   :template: class.rst.jinja
+   :toctree: _autosummary
 
    mlserver.types.InferenceErrorResponse
    mlserver.types.InferenceRequest
