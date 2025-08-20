@@ -1,84 +1,60 @@
-
-{{ fullname }}
-{{ "=" * fullname|length }}
+{{ objname }}
+============
 
 .. currentmodule:: {{ module }}
 
-.. _{{ fullname|replace(".", "-") }}:
-
-**Module:** ``{{ module }}``  
-**Class:** ``{{ objname }}``{% if bases %}  
+**Qualified name:** ``{{ fullname }}``{% if bases %}  
 **Bases:** {{ ", ".join(bases) }}{% endif %}
-
-.. note::
-   This page was auto-generated. Edit the docstring of ``{{ fullname }}`` for content changes.
 
 Overview
 --------
-
 .. autoclass:: {{ fullname }}
-   :show-inheritance:
+   :noindex:
    :member-order: bysource
-   :special-members: __init__
-   :inherited-members:
-   :undoc-members:
 
-Quick Reference
----------------
+{# Normalize helpers: attributes/methods may be strings or objects #}
+{% set _attrs = attributes or [] %}
+{% set _meths = methods or [] %}
 
-:ref:`Jump to Methods <{{ fullname|replace(".", "-") }}-methods>` ·
-:ref:`Jump to Attributes <{{ fullname|replace(".", "-") }}-attributes>`{% if methods or attributes %} ·
-:ref:`All Members <{{ fullname|replace(".", "-") }}-members>`{% endif %}
-
-Signature
----------
-
-.. autodata:: {{ fullname }}.__init__
-   :no-value:
-
-Source Link
+{% if "__init__" in (_meths if _meths and (_meths[0] is string) else (_meths | map(attribute="name") | list)) %}
+Constructor
 -----------
+.. automethod:: {{ fullname }}.__init__
+   :noindex:
+{% endif %}
 
-.. rubric:: Where did this come from?
+{% set has_pub_attrs = false %}
+{% for a in _attrs %}
+  {% set aname = a if (a is string) else a.name %}
+  {% if not aname.startswith('_') %}{% set has_pub_attrs = true %}{% endif %}
+{% endfor %}
 
-If :mod:`sphinx.ext.linkcode` is enabled, a "View source" link will appear near the class and members in GitBook.
+{% if has_pub_attrs %}
+Fields
+------
+{% for a in _attrs %}
+  {% set aname = a if (a is string) else a.name %}
+  {% if not aname.startswith('_') %}
+.. autoattribute:: {{ fullname }}.{{ aname }}
+   :noindex:
+  {% endif %}
+{% endfor %}
+{% endif %}
 
-.. _{{ fullname|replace(".", "-") }}-members:
+{% set has_pub_methods = false %}
+{% for m in _meths %}
+  {% set mname = m if (m is string) else m.name %}
+  {% if not mname.startswith('_') and mname != "__init__" %}{% set has_pub_methods = true %}{% endif %}
+{% endfor %}
 
-All Members
------------
-
-.. autosummary::
-   :toctree:
-   :nosignatures:
-   :template: attribute.rst
-   {% for item in members %}
-   {{ item }}
-   {% endfor %}
-
-.. _{{ fullname|replace(".", "-") }}-methods:
-
+{% if has_pub_methods %}
 Methods
 -------
-
-.. autosummary::
-   :toctree:
-   :nosignatures:
-   :template: method.rst
-   {% for item in methods %}
-   {{ item }}
-   {% endfor %}
-
-.. _{{ fullname|replace(".", "-") }}-attributes:
-
-Attributes
-----------
-
-.. autosummary::
-   :toctree:
-   :nosignatures:
-   :template: attribute.rst
-   {% for item in attributes %}
-   {{ item }}
-   {% endfor %}
-
+{% for m in _meths %}
+  {% set mname = m if (m is string) else m.name %}
+  {% if not mname.startswith('_') and mname != "__init__" %}
+.. automethod:: {{ fullname }}.{{ mname }}
+   :noindex:
+  {% endif %}
+{% endfor %}
+{% endif %}

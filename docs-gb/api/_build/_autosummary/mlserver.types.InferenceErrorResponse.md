@@ -1,22 +1,16 @@
-# mlserver.types.InferenceErrorResponse
+# InferenceErrorResponse
 
-<a id="id1"></a>
-
-**Module:** `mlserver.types`
-**Class:** `InferenceErrorResponse`
-
-#### NOTE
-This page was auto-generated. Edit the docstring of `mlserver.types.InferenceErrorResponse` for content changes.
+**Qualified name:** `mlserver.types.InferenceErrorResponse`
 
 ## Overview
 
-### *class* mlserver.types.InferenceErrorResponse(\*, error: str | None = None)
+### *class* mlserver.types.InferenceErrorResponse
 
 Bases: `BaseModel`
 
 #### error *: str | None*
 
-#### \_\_init_\_(\*\*data: Any) → None
+#### \_\_init_\_(\*\*data)
 
 Create a new model by parsing and validating input data from keyword arguments.
 
@@ -25,9 +19,20 @@ validated to form a valid model.
 
 self is explicitly positional-only to allow self as a field name.
 
-#### *classmethod* construct(\_fields_set: set[str] | None = None, \*\*values: Any) → Self
+* **Parameters:**
+  **data** (*Any*) – 
+* **Return type:**
+  *None*
 
-#### copy(\*, include: AbstractSetIntStr | MappingIntStrAny | None = None, exclude: AbstractSetIntStr | MappingIntStrAny | None = None, update: Dict[str, Any] | None = None, deep: bool = False) → Self
+#### *classmethod* construct(\_fields_set=None, \*\*values)
+
+* **Parameters:**
+  * **\_fields_set** (*set* *[**str* *]*  *|* *None*) – 
+  * **values** (*Any*) – 
+* **Return type:**
+  *Self*
+
+#### copy(\*, include=None, exclude=None, update=None, deep=False)
 
 Returns a copy of the model.
 
@@ -43,18 +48,48 @@ copied = self.model_validate(data)
 ``
 
 * **Parameters:**
-  * **include** – Optional set or mapping specifying which fields to include in the copied model.
-  * **exclude** – Optional set or mapping specifying which fields to exclude in the copied model.
-  * **update** – Optional dictionary of field-value pairs to override field values in the copied model.
-  * **deep** – If True, the values of fields that are Pydantic models will be deep-copied.
+  * **include** (*AbstractSetIntStr* *|* *MappingIntStrAny* *|* *None*) – Optional set or mapping specifying which fields to include in the copied model.
+  * **exclude** (*AbstractSetIntStr* *|* *MappingIntStrAny* *|* *None*) – Optional set or mapping specifying which fields to exclude in the copied model.
+  * **update** (*Dict* *[**str* *,* *Any* *]*  *|* *None*) – Optional dictionary of field-value pairs to override field values in the copied model.
+  * **deep** (*bool*) – If True, the values of fields that are Pydantic models will be deep-copied.
 * **Returns:**
   A copy of the model with included, excluded and updated fields as specified.
+* **Return type:**
+  *Self*
 
-#### dict(\*, include: Set[int] | Set[str] | Mapping[int, Set[int] | Set[str] | Mapping[int, IncEx | Literal[True]] | Mapping[str, IncEx | Literal[True]] | Literal[True]] | Mapping[str, Set[int] | Set[str] | Mapping[int, IncEx | Literal[True]] | Mapping[str, IncEx | Literal[True]] | Literal[True]] | None = None, exclude: Set[int] | Set[str] | Mapping[int, Set[int] | Set[str] | Mapping[int, IncEx | Literal[True]] | Mapping[str, IncEx | Literal[True]] | Literal[True]] | Mapping[str, Set[int] | Set[str] | Mapping[int, IncEx | Literal[True]] | Mapping[str, IncEx | Literal[True]] | Literal[True]] | None = None, by_alias: bool = False, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False) → Dict[str, Any]
+#### dict(\*, include=None, exclude=None, by_alias=False, exclude_unset=False, exclude_defaults=False, exclude_none=False)
 
-#### *classmethod* from_orm(obj: Any) → Self
+* **Parameters:**
+  * **include** (*Set* *[**int* *]*  *|* *Set* *[**str* *]*  *|* *Mapping* *[**int* *,* *Set* *[**int* *]*  *|* *Set* *[**str* *]*  *|* *Mapping* *[**int* *,* *IncEx* *|* *Literal* *[**True* *]* *]*  *|*  *~typing.Mapping* *[**str* *,* *IncEx* *|*  *~typing.Literal* *[**True* *]* *]*  *|*  *~typing.Literal* *[**True* *]* *]*  *|*  *~typing.Mapping* *[**str* *,*  *~typing.Set* *[**int* *]*  *|*  *~typing.Set* *[**str* *]*  *|*  *~typing.Mapping* *[**int* *,* *IncEx* *|*  *~typing.Literal* *[**True* *]* *]*  *|*  *~typing.Mapping* *[**str* *,* *IncEx* *|*  *~typing.Literal* *[**True* *]* *]*  *|*  *~typing.Literal* *[**True* *]* *]*  *|* *None*) – 
+  * **exclude** (*Set* *[**int* *]*  *|* *Set* *[**str* *]*  *|* *Mapping* *[**int* *,* *Set* *[**int* *]*  *|* *Set* *[**str* *]*  *|* *Mapping* *[**int* *,* *IncEx* *|* *Literal* *[**True* *]* *]*  *|*  *~typing.Mapping* *[**str* *,* *IncEx* *|*  *~typing.Literal* *[**True* *]* *]*  *|*  *~typing.Literal* *[**True* *]* *]*  *|*  *~typing.Mapping* *[**str* *,*  *~typing.Set* *[**int* *]*  *|*  *~typing.Set* *[**str* *]*  *|*  *~typing.Mapping* *[**int* *,* *IncEx* *|*  *~typing.Literal* *[**True* *]* *]*  *|*  *~typing.Mapping* *[**str* *,* *IncEx* *|*  *~typing.Literal* *[**True* *]* *]*  *|*  *~typing.Literal* *[**True* *]* *]*  *|* *None*) – 
+  * **by_alias** (*bool*) – 
+  * **exclude_unset** (*bool*) – 
+  * **exclude_defaults** (*bool*) – 
+  * **exclude_none** (*bool*) – 
+* **Return type:**
+  *Dict*[*str*, *Any*]
 
-#### json(\*, include: Set[int] | Set[str] | Mapping[int, Set[int] | Set[str] | Mapping[int, IncEx | Literal[True]] | Mapping[str, IncEx | Literal[True]] | Literal[True]] | Mapping[str, Set[int] | Set[str] | Mapping[int, IncEx | Literal[True]] | Mapping[str, IncEx | Literal[True]] | Literal[True]] | None = None, exclude: Set[int] | Set[str] | Mapping[int, Set[int] | Set[str] | Mapping[int, IncEx | Literal[True]] | Mapping[str, IncEx | Literal[True]] | Literal[True]] | Mapping[str, Set[int] | Set[str] | Mapping[int, IncEx | Literal[True]] | Mapping[str, IncEx | Literal[True]] | Literal[True]] | None = None, by_alias: bool = False, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False, encoder: Callable[[Any], Any] | None = PydanticUndefined, models_as_dict: bool = PydanticUndefined, \*\*dumps_kwargs: Any) → str
+#### *classmethod* from_orm(obj)
+
+* **Parameters:**
+  **obj** (*Any*) – 
+* **Return type:**
+  *Self*
+
+#### json(\*, include=None, exclude=None, by_alias=False, exclude_unset=False, exclude_defaults=False, exclude_none=False, encoder=PydanticUndefined, models_as_dict=PydanticUndefined, \*\*dumps_kwargs)
+
+* **Parameters:**
+  * **include** (*Set* *[**int* *]*  *|* *Set* *[**str* *]*  *|* *Mapping* *[**int* *,* *Set* *[**int* *]*  *|* *Set* *[**str* *]*  *|* *Mapping* *[**int* *,* *IncEx* *|* *Literal* *[**True* *]* *]*  *|*  *~typing.Mapping* *[**str* *,* *IncEx* *|*  *~typing.Literal* *[**True* *]* *]*  *|*  *~typing.Literal* *[**True* *]* *]*  *|*  *~typing.Mapping* *[**str* *,*  *~typing.Set* *[**int* *]*  *|*  *~typing.Set* *[**str* *]*  *|*  *~typing.Mapping* *[**int* *,* *IncEx* *|*  *~typing.Literal* *[**True* *]* *]*  *|*  *~typing.Mapping* *[**str* *,* *IncEx* *|*  *~typing.Literal* *[**True* *]* *]*  *|*  *~typing.Literal* *[**True* *]* *]*  *|* *None*) – 
+  * **exclude** (*Set* *[**int* *]*  *|* *Set* *[**str* *]*  *|* *Mapping* *[**int* *,* *Set* *[**int* *]*  *|* *Set* *[**str* *]*  *|* *Mapping* *[**int* *,* *IncEx* *|* *Literal* *[**True* *]* *]*  *|*  *~typing.Mapping* *[**str* *,* *IncEx* *|*  *~typing.Literal* *[**True* *]* *]*  *|*  *~typing.Literal* *[**True* *]* *]*  *|*  *~typing.Mapping* *[**str* *,*  *~typing.Set* *[**int* *]*  *|*  *~typing.Set* *[**str* *]*  *|*  *~typing.Mapping* *[**int* *,* *IncEx* *|*  *~typing.Literal* *[**True* *]* *]*  *|*  *~typing.Mapping* *[**str* *,* *IncEx* *|*  *~typing.Literal* *[**True* *]* *]*  *|*  *~typing.Literal* *[**True* *]* *]*  *|* *None*) – 
+  * **by_alias** (*bool*) – 
+  * **exclude_unset** (*bool*) – 
+  * **exclude_defaults** (*bool*) – 
+  * **exclude_none** (*bool*) – 
+  * **encoder** (*Callable* *[* *[**Any* *]* *,* *Any* *]*  *|* *None*) – 
+  * **models_as_dict** (*bool*) – 
+  * **dumps_kwargs** (*Any*) – 
+* **Return type:**
+  *str*
 
 #### model_computed_fields *: ClassVar[Dict[str, ComputedFieldInfo]]* *= {}*
 
@@ -64,7 +99,7 @@ A dictionary of computed field names and their corresponding ComputedFieldInfo o
 
 Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
 
-#### *classmethod* model_construct(\_fields_set: set[str] | None = None, \*\*values: Any) → Self
+#### *classmethod* model_construct(\_fields_set=None, \*\*values)
 
 Creates a new instance of the Model class with validated data.
 
@@ -79,25 +114,29 @@ Default values are respected, but no other validation is performed.
   an error if extra values are passed, but they will be ignored.
 
 * **Parameters:**
-  * **\_fields_set** – A set of field names that were originally explicitly set during instantiation. If provided,
+  * **\_fields_set** (*set* *[**str* *]*  *|* *None*) – A set of field names that were originally explicitly set during instantiation. If provided,
     this is directly used for the [model_fields_set][pydantic.BaseModel.model_fields_set] attribute.
     Otherwise, the field names from the values argument will be used.
-  * **values** – Trusted or pre-validated data dictionary.
+  * **values** (*Any*) – Trusted or pre-validated data dictionary.
 * **Returns:**
   A new instance of the Model class with validated data.
+* **Return type:**
+  *Self*
 
-#### model_copy(\*, update: dict[str, Any] | None = None, deep: bool = False) → Self
+#### model_copy(\*, update=None, deep=False)
 
 Usage docs: [https://docs.pydantic.dev/2.9/concepts/serialization/#model_copy](https://docs.pydantic.dev/2.9/concepts/serialization/#model_copy)
 
 Returns a copy of the model.
 
 * **Parameters:**
-  * **update** – Values to change/add in the new model. Note: the data is not validated
+  * **update** (*dict* *[**str* *,* *Any* *]*  *|* *None*) – Values to change/add in the new model. Note: the data is not validated
     before creating the new model. You should trust this data.
-  * **deep** – Set to True to make a deep copy of the model.
+  * **deep** (*bool*) – Set to True to make a deep copy of the model.
 * **Returns:**
   New model instance.
+* **Return type:**
+  *Self*
 
 #### model_dump(exclude_unset=True, exclude_none=True, \*\*kwargs)
 
@@ -167,40 +206,49 @@ Returns the set of fields that have been explicitly set on this model instance.
   A set of strings representing the fields that have been set,
   : i.e. that were not filled from defaults.
 
-#### *classmethod* model_json_schema(by_alias: bool = True, ref_template: str = '#/$defs/{model}', schema_generator: type[pydantic.json_schema.GenerateJsonSchema] = <class 'pydantic.json_schema.GenerateJsonSchema'>, mode: ~typing.Literal['validation', 'serialization'] = 'validation') → dict[str, Any]
+#### *classmethod* model_json_schema(by_alias=True, ref_template='#/$defs/{model}', schema_generator=<class 'pydantic.json_schema.GenerateJsonSchema'>, mode='validation')
 
 Generates a JSON schema for a model class.
 
 * **Parameters:**
-  * **by_alias** – Whether to use attribute aliases or not.
-  * **ref_template** – The reference template.
-  * **schema_generator** – To override the logic used to generate the JSON schema, as a subclass of
+  * **by_alias** (*bool*) – Whether to use attribute aliases or not.
+  * **ref_template** (*str*) – The reference template.
+  * **schema_generator** (*type* *[**pydantic.json_schema.GenerateJsonSchema* *]*) – To override the logic used to generate the JSON schema, as a subclass of
     GenerateJsonSchema with your desired modifications
-  * **mode** – The mode in which to generate the schema.
+  * **mode** (*Literal* *[* *'validation'* *,*  *'serialization'* *]*) – The mode in which to generate the schema.
 * **Returns:**
   The JSON schema for the given model class.
+* **Return type:**
+  *dict*[*str*, *Any*]
 
-#### *classmethod* model_parametrized_name(params: tuple[type[Any], ...]) → str
+#### *classmethod* model_parametrized_name(params)
 
 Compute the class name for parametrizations of generic classes.
 
 This method can be overridden to achieve a custom naming scheme for generic BaseModels.
 
 * **Parameters:**
-  **params** – Tuple of types of the class. Given a generic class
+  **params** (*tuple* *[**type* *[**Any* *]* *,*  *...* *]*) – Tuple of types of the class. Given a generic class
   Model with 2 type variables and a concrete model Model[str, int],
   the value (str, int) would be passed to params.
 * **Returns:**
   String representing the new class where params are passed to cls as type variables.
 * **Raises:**
   **TypeError** – Raised when trying to generate concrete names for non-generic models.
+* **Return type:**
+  *str*
 
-#### model_post_init(\_BaseModel_\_context: Any) → None
+#### model_post_init(\_BaseModel_\_context)
 
 Override this method to perform additional initialization after \_\_init_\_ and model_construct.
 This is useful if you want to do some validation that requires the entire model to be initialized.
 
-#### *classmethod* model_rebuild(\*, force: bool = False, raise_errors: bool = True, \_parent_namespace_depth: int = 2, \_types_namespace: dict[str, Any] | None = None) → bool | None
+* **Parameters:**
+  **\_BaseModel_\_context** (*Any*) – 
+* **Return type:**
+  *None*
+
+#### *classmethod* model_rebuild(\*, force=False, raise_errors=True, \_parent_namespace_depth=2, \_types_namespace=None)
 
 Try to rebuild the pydantic-core schema for the model.
 
@@ -208,77 +256,125 @@ This may be necessary when one of the annotations is a ForwardRef which could no
 the initial attempt to build the schema, and automatic rebuilding fails.
 
 * **Parameters:**
-  * **force** – Whether to force the rebuilding of the model schema, defaults to False.
-  * **raise_errors** – Whether to raise errors, defaults to True.
-  * **\_parent_namespace_depth** – The depth level of the parent namespace, defaults to 2.
-  * **\_types_namespace** – The types namespace, defaults to None.
+  * **force** (*bool*) – Whether to force the rebuilding of the model schema, defaults to False.
+  * **raise_errors** (*bool*) – Whether to raise errors, defaults to True.
+  * **\_parent_namespace_depth** (*int*) – The depth level of the parent namespace, defaults to 2.
+  * **\_types_namespace** (*dict* *[**str* *,* *Any* *]*  *|* *None*) – The types namespace, defaults to None.
 * **Returns:**
   Returns None if the schema is already “complete” and rebuilding was not required.
   If rebuilding \_was_ required, returns True if rebuilding was successful, otherwise False.
+* **Return type:**
+  *bool* | *None*
 
-#### *classmethod* model_validate(obj: Any, \*, strict: bool | None = None, from_attributes: bool | None = None, context: Any | None = None) → Self
+#### *classmethod* model_validate(obj, \*, strict=None, from_attributes=None, context=None)
 
 Validate a pydantic model instance.
 
 * **Parameters:**
-  * **obj** – The object to validate.
-  * **strict** – Whether to enforce types strictly.
-  * **from_attributes** – Whether to extract data from object attributes.
-  * **context** – Additional context to pass to the validator.
+  * **obj** (*Any*) – The object to validate.
+  * **strict** (*bool* *|* *None*) – Whether to enforce types strictly.
+  * **from_attributes** (*bool* *|* *None*) – Whether to extract data from object attributes.
+  * **context** (*Any* *|* *None*) – Additional context to pass to the validator.
 * **Raises:**
   **ValidationError** – If the object could not be validated.
 * **Returns:**
   The validated model instance.
+* **Return type:**
+  *Self*
 
-#### *classmethod* model_validate_json(json_data: str | bytes | bytearray, \*, strict: bool | None = None, context: Any | None = None) → Self
+#### *classmethod* model_validate_json(json_data, \*, strict=None, context=None)
 
 Usage docs: [https://docs.pydantic.dev/2.9/concepts/json/#json-parsing](https://docs.pydantic.dev/2.9/concepts/json/#json-parsing)
 
 Validate the given JSON data against the Pydantic model.
 
 * **Parameters:**
-  * **json_data** – The JSON data to validate.
-  * **strict** – Whether to enforce types strictly.
-  * **context** – Extra variables to pass to the validator.
+  * **json_data** (*str* *|* *bytes* *|* *bytearray*) – The JSON data to validate.
+  * **strict** (*bool* *|* *None*) – Whether to enforce types strictly.
+  * **context** (*Any* *|* *None*) – Extra variables to pass to the validator.
 * **Returns:**
   The validated Pydantic model.
 * **Raises:**
   **ValidationError** – If json_data is not a JSON string or the object could not be validated.
+* **Return type:**
+  *Self*
 
-#### *classmethod* model_validate_strings(obj: Any, \*, strict: bool | None = None, context: Any | None = None) → Self
+#### *classmethod* model_validate_strings(obj, \*, strict=None, context=None)
 
 Validate the given object with string data against the Pydantic model.
 
 * **Parameters:**
-  * **obj** – The object containing string data to validate.
-  * **strict** – Whether to enforce types strictly.
-  * **context** – Extra variables to pass to the validator.
+  * **obj** (*Any*) – The object containing string data to validate.
+  * **strict** (*bool* *|* *None*) – Whether to enforce types strictly.
+  * **context** (*Any* *|* *None*) – Extra variables to pass to the validator.
 * **Returns:**
   The validated Pydantic model.
+* **Return type:**
+  *Self*
 
-#### *classmethod* parse_file(path: str | Path, \*, content_type: str | None = None, encoding: str = 'utf8', proto: DeprecatedParseProtocol | None = None, allow_pickle: bool = False) → Self
+#### *classmethod* parse_file(path, \*, content_type=None, encoding='utf8', proto=None, allow_pickle=False)
 
-#### *classmethod* parse_obj(obj: Any) → Self
+* **Parameters:**
+  * **path** (*str* *|* *Path*) – 
+  * **content_type** (*str* *|* *None*) – 
+  * **encoding** (*str*) – 
+  * **proto** (*DeprecatedParseProtocol* *|* *None*) – 
+  * **allow_pickle** (*bool*) – 
+* **Return type:**
+  *Self*
 
-#### *classmethod* parse_raw(b: str | bytes, \*, content_type: str | None = None, encoding: str = 'utf8', proto: DeprecatedParseProtocol | None = None, allow_pickle: bool = False) → Self
+#### *classmethod* parse_obj(obj)
 
-#### *classmethod* schema(by_alias: bool = True, ref_template: str = '#/$defs/{model}') → Dict[str, Any]
+* **Parameters:**
+  **obj** (*Any*) – 
+* **Return type:**
+  *Self*
 
-#### *classmethod* schema_json(\*, by_alias: bool = True, ref_template: str = '#/$defs/{model}', \*\*dumps_kwargs: Any) → str
+#### *classmethod* parse_raw(b, \*, content_type=None, encoding='utf8', proto=None, allow_pickle=False)
 
-#### *classmethod* update_forward_refs(\*\*localns: Any) → None
+* **Parameters:**
+  * **b** (*str* *|* *bytes*) – 
+  * **content_type** (*str* *|* *None*) – 
+  * **encoding** (*str*) – 
+  * **proto** (*DeprecatedParseProtocol* *|* *None*) – 
+  * **allow_pickle** (*bool*) – 
+* **Return type:**
+  *Self*
 
-#### *classmethod* validate(value: Any) → Self
+#### *classmethod* schema(by_alias=True, ref_template='#/$defs/{model}')
 
-## Quick Reference
+* **Parameters:**
+  * **by_alias** (*bool*) – 
+  * **ref_template** (*str*) – 
+* **Return type:**
+  *Dict*[*str*, *Any*]
 
-Jump to Methods ·
-Jump to Attributes ·
-[All Members](#mlserver-types-inferenceerrorresponse-members)
+#### *classmethod* schema_json(\*, by_alias=True, ref_template='#/$defs/{model}', \*\*dumps_kwargs)
 
-## Signature
+* **Parameters:**
+  * **by_alias** (*bool*) – 
+  * **ref_template** (*str*) – 
+  * **dumps_kwargs** (*Any*) – 
+* **Return type:**
+  *str*
 
-### mlserver.types.InferenceErrorResponse.\_\_init_\_
+#### *classmethod* update_forward_refs(\*\*localns)
+
+* **Parameters:**
+  **localns** (*Any*) – 
+* **Return type:**
+  *None*
+
+#### *classmethod* validate(value)
+
+* **Parameters:**
+  **value** (*Any*) – 
+* **Return type:**
+  *Self*
+
+## Constructor
+
+#### InferenceErrorResponse.\_\_init_\_(\*\*data)
 
 Create a new model by parsing and validating input data from keyword arguments.
 
@@ -287,154 +383,7 @@ validated to form a valid model.
 
 self is explicitly positional-only to allow self as a field name.
 
-## Source Link
-
-### Where did this come from?
-
-If `sphinx.ext.linkcode` is enabled, a “View source” link will appear near the class and members in GitBook.
-
-<!-- All Members -->
-<!-- ----------- -->
-<!-- .. autosummary:: -->
-<!-- :toctree: -->
-<!-- :nosignatures: -->
-<!-- :template: attribute.rst -->
-<!-- __abstractmethods__ -->
-<!-- __annotations__ -->
-<!-- __class__ -->
-<!-- __class_getitem__ -->
-<!-- __class_vars__ -->
-<!-- __copy__ -->
-<!-- __deepcopy__ -->
-<!-- __delattr__ -->
-<!-- __dict__ -->
-<!-- __dir__ -->
-<!-- __doc__ -->
-<!-- __eq__ -->
-<!-- __fields_set__ -->
-<!-- __format__ -->
-<!-- __ge__ -->
-<!-- __get_pydantic_core_schema__ -->
-<!-- __get_pydantic_json_schema__ -->
-<!-- __getattr__ -->
-<!-- __getattribute__ -->
-<!-- __getstate__ -->
-<!-- __gt__ -->
-<!-- __hash__ -->
-<!-- __init__ -->
-<!-- __init_subclass__ -->
-<!-- __iter__ -->
-<!-- __le__ -->
-<!-- __lt__ -->
-<!-- __module__ -->
-<!-- __ne__ -->
-<!-- __new__ -->
-<!-- __pretty__ -->
-<!-- __private_attributes__ -->
-<!-- __pydantic_complete__ -->
-<!-- __pydantic_core_schema__ -->
-<!-- __pydantic_custom_init__ -->
-<!-- __pydantic_decorators__ -->
-<!-- __pydantic_extra__ -->
-<!-- __pydantic_fields_set__ -->
-<!-- __pydantic_generic_metadata__ -->
-<!-- __pydantic_init_subclass__ -->
-<!-- __pydantic_parent_namespace__ -->
-<!-- __pydantic_post_init__ -->
-<!-- __pydantic_private__ -->
-<!-- __pydantic_root_model__ -->
-<!-- __pydantic_serializer__ -->
-<!-- __pydantic_validator__ -->
-<!-- __reduce__ -->
-<!-- __reduce_ex__ -->
-<!-- __repr__ -->
-<!-- __repr_args__ -->
-<!-- __repr_name__ -->
-<!-- __repr_str__ -->
-<!-- __rich_repr__ -->
-<!-- __setattr__ -->
-<!-- __setstate__ -->
-<!-- __signature__ -->
-<!-- __sizeof__ -->
-<!-- __slots__ -->
-<!-- __str__ -->
-<!-- __subclasshook__ -->
-<!-- __weakref__ -->
-<!-- _abc_impl -->
-<!-- _calculate_keys -->
-<!-- _check_frozen -->
-<!-- _copy_and_set_values -->
-<!-- _get_value -->
-<!-- _iter -->
-<!-- construct -->
-<!-- copy -->
-<!-- dict -->
-<!-- from_orm -->
-<!-- json -->
-<!-- model_computed_fields -->
-<!-- model_config -->
-<!-- model_construct -->
-<!-- model_copy -->
-<!-- model_dump -->
-<!-- model_dump_json -->
-<!-- model_extra -->
-<!-- model_fields -->
-<!-- model_fields_set -->
-<!-- model_json_schema -->
-<!-- model_parametrized_name -->
-<!-- model_post_init -->
-<!-- model_rebuild -->
-<!-- model_validate -->
-<!-- model_validate_json -->
-<!-- model_validate_strings -->
-<!-- parse_file -->
-<!-- parse_obj -->
-<!-- parse_raw -->
-<!-- schema -->
-<!-- schema_json -->
-<!-- update_forward_refs -->
-<!-- validate -->
-<!-- .. _mlserver-types-InferenceErrorResponse-methods: -->
-<!-- Methods -->
-<!-- ------- -->
-<!-- .. autosummary:: -->
-<!-- :toctree: -->
-<!-- :nosignatures: -->
-<!-- :template: method.rst -->
-<!-- __init__ -->
-<!-- construct -->
-<!-- copy -->
-<!-- dict -->
-<!-- from_orm -->
-<!-- json -->
-<!-- model_construct -->
-<!-- model_copy -->
-<!-- model_dump -->
-<!-- model_dump_json -->
-<!-- model_json_schema -->
-<!-- model_parametrized_name -->
-<!-- model_post_init -->
-<!-- model_rebuild -->
-<!-- model_validate -->
-<!-- model_validate_json -->
-<!-- model_validate_strings -->
-<!-- parse_file -->
-<!-- parse_obj -->
-<!-- parse_raw -->
-<!-- schema -->
-<!-- schema_json -->
-<!-- update_forward_refs -->
-<!-- validate -->
-<!-- .. _mlserver-types-InferenceErrorResponse-attributes: -->
-<!-- Attributes -->
-<!-- ---------- -->
-<!-- .. autosummary:: -->
-<!-- :toctree: -->
-<!-- :nosignatures: -->
-<!-- :template: attribute.rst -->
-<!-- model_computed_fields -->
-<!-- model_config -->
-<!-- model_extra -->
-<!-- model_fields -->
-<!-- model_fields_set -->
-<!-- error -->
+* **Parameters:**
+  **data** (*Any*) – 
+* **Return type:**
+  *None*

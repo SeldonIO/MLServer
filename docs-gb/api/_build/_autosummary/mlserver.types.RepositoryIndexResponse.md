@@ -1,22 +1,16 @@
-# InferenceRequest
+# RepositoryIndexResponse
 
-**Qualified name:** `mlserver.types.InferenceRequest`
+**Qualified name:** `mlserver.types.RepositoryIndexResponse`
 
 ## Overview
 
-### *class* mlserver.types.InferenceRequest
+### *class* mlserver.types.RepositoryIndexResponse
 
-Bases: `BaseModel`
+Bases: `RootModel[List[RepositoryIndexResponseItem]]`
 
-#### id *: str | None*
+#### root *: List[RepositoryIndexResponseItem]*
 
-#### parameters *: Parameters | None*
-
-#### inputs *: List[RequestInput]*
-
-#### outputs *: List[RequestOutput] | None*
-
-#### \_\_init_\_(\*\*data)
+#### \_\_init_\_(root=PydanticUndefined, \*\*data)
 
 Create a new model by parsing and validating input data from keyword arguments.
 
@@ -26,7 +20,7 @@ validated to form a valid model.
 self is explicitly positional-only to allow self as a field name.
 
 * **Parameters:**
-  **data** (*Any*) – 
+  **root** (*RootModelRootType*) – 
 * **Return type:**
   *None*
 
@@ -101,31 +95,21 @@ copied = self.model_validate(data)
 
 A dictionary of computed field names and their corresponding ComputedFieldInfo objects.
 
-#### model_config *: ClassVar[ConfigDict]* *= {'protected_namespaces': (), 'use_enum_values': True}*
+#### model_config *: ClassVar[ConfigDict]* *= {}*
 
 Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
 
-#### *classmethod* model_construct(\_fields_set=None, \*\*values)
+#### *classmethod* model_construct(root, \_fields_set=None)
 
-Creates a new instance of the Model class with validated data.
-
-Creates a new model setting \_\_dict_\_ and \_\_pydantic_fields_set_\_ from trusted or pre-validated data.
-Default values are respected, but no other validation is performed.
-
-!!! note
-: model_construct() generally respects the model_config.extra setting on the provided model.
-  That is, if model_config.extra == ‘allow’, then all extra passed values are added to the model instance’s \_\_dict_\_
-  and \_\_pydantic_extra_\_ fields. If model_config.extra == ‘ignore’ (the default), then all extra passed values are ignored.
-  Because no validation is performed with a call to model_construct(), having model_config.extra == ‘forbid’ does not result in
-  an error if extra values are passed, but they will be ignored.
+Create a new model using the provided root object and update fields set.
 
 * **Parameters:**
-  * **\_fields_set** (*set* *[**str* *]*  *|* *None*) – A set of field names that were originally explicitly set during instantiation. If provided,
-    this is directly used for the [model_fields_set][pydantic.BaseModel.model_fields_set] attribute.
-    Otherwise, the field names from the values argument will be used.
-  * **values** (*Any*) – Trusted or pre-validated data dictionary.
+  * **root** (*RootModelRootType*) – The root object of the model.
+  * **\_fields_set** (*set* *[**str* *]*  *|* *None*) – The set of fields to be updated.
 * **Returns:**
-  A new instance of the Model class with validated data.
+  The new model.
+* **Raises:**
+  **NotImplemented** – If the model is not a subclass of RootModel.
 * **Return type:**
   *Self*
 
@@ -144,51 +128,55 @@ Returns a copy of the model.
 * **Return type:**
   *Self*
 
-#### model_dump(exclude_unset=True, exclude_none=True, \*\*kwargs)
+#### model_dump(\*, mode='python', include=None, exclude=None, context=None, by_alias=False, exclude_unset=False, exclude_defaults=False, exclude_none=False, round_trip=False, warnings=True, serialize_as_any=False)
 
 Usage docs: [https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump](https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump)
 
 Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
 
 * **Parameters:**
-  * **mode** – The mode in which to_python should run.
+  * **mode** (*Literal* *[* *'json'* *,*  *'python'* *]*  *|* *str*) – The mode in which to_python should run.
     If mode is ‘json’, the output will only contain JSON serializable types.
     If mode is ‘python’, the output may contain non-JSON-serializable Python objects.
-  * **include** – A set of fields to include in the output.
-  * **exclude** – A set of fields to exclude from the output.
-  * **context** – Additional context to pass to the serializer.
-  * **by_alias** – Whether to use the field’s alias in the dictionary key if defined.
-  * **exclude_unset** – Whether to exclude fields that have not been explicitly set.
-  * **exclude_defaults** – Whether to exclude fields that are set to their default value.
-  * **exclude_none** – Whether to exclude fields that have a value of None.
-  * **round_trip** – If True, dumped values should be valid as input for non-idempotent types such as Json[T].
-  * **warnings** – How to handle serialization errors. False/”none” ignores them, True/”warn” logs errors,
+  * **include** (*Set* *[**int* *]*  *|* *Set* *[**str* *]*  *|* *Mapping* *[**int* *,* *Set* *[**int* *]*  *|* *Set* *[**str* *]*  *|* *Mapping* *[**int* *,* *IncEx* *|* *Literal* *[**True* *]* *]*  *|*  *~typing.Mapping* *[**str* *,* *IncEx* *|*  *~typing.Literal* *[**True* *]* *]*  *|*  *~typing.Literal* *[**True* *]* *]*  *|*  *~typing.Mapping* *[**str* *,*  *~typing.Set* *[**int* *]*  *|*  *~typing.Set* *[**str* *]*  *|*  *~typing.Mapping* *[**int* *,* *IncEx* *|*  *~typing.Literal* *[**True* *]* *]*  *|*  *~typing.Mapping* *[**str* *,* *IncEx* *|*  *~typing.Literal* *[**True* *]* *]*  *|*  *~typing.Literal* *[**True* *]* *]*  *|* *None*) – A set of fields to include in the output.
+  * **exclude** (*Set* *[**int* *]*  *|* *Set* *[**str* *]*  *|* *Mapping* *[**int* *,* *Set* *[**int* *]*  *|* *Set* *[**str* *]*  *|* *Mapping* *[**int* *,* *IncEx* *|* *Literal* *[**True* *]* *]*  *|*  *~typing.Mapping* *[**str* *,* *IncEx* *|*  *~typing.Literal* *[**True* *]* *]*  *|*  *~typing.Literal* *[**True* *]* *]*  *|*  *~typing.Mapping* *[**str* *,*  *~typing.Set* *[**int* *]*  *|*  *~typing.Set* *[**str* *]*  *|*  *~typing.Mapping* *[**int* *,* *IncEx* *|*  *~typing.Literal* *[**True* *]* *]*  *|*  *~typing.Mapping* *[**str* *,* *IncEx* *|*  *~typing.Literal* *[**True* *]* *]*  *|*  *~typing.Literal* *[**True* *]* *]*  *|* *None*) – A set of fields to exclude from the output.
+  * **context** (*Any* *|* *None*) – Additional context to pass to the serializer.
+  * **by_alias** (*bool*) – Whether to use the field’s alias in the dictionary key if defined.
+  * **exclude_unset** (*bool*) – Whether to exclude fields that have not been explicitly set.
+  * **exclude_defaults** (*bool*) – Whether to exclude fields that are set to their default value.
+  * **exclude_none** (*bool*) – Whether to exclude fields that have a value of None.
+  * **round_trip** (*bool*) – If True, dumped values should be valid as input for non-idempotent types such as Json[T].
+  * **warnings** (*bool* *|* *Literal* *[* *'none'* *,*  *'warn'* *,*  *'error'* *]*) – How to handle serialization errors. False/”none” ignores them, True/”warn” logs errors,
     “error” raises a [PydanticSerializationError][pydantic_core.PydanticSerializationError].
-  * **serialize_as_any** – Whether to serialize fields with duck-typing serialization behavior.
+  * **serialize_as_any** (*bool*) – Whether to serialize fields with duck-typing serialization behavior.
 * **Returns:**
   A dictionary representation of the model.
+* **Return type:**
+  *dict*[*str*, *Any*]
 
-#### model_dump_json(exclude_unset=True, exclude_none=True, \*\*kwargs)
+#### model_dump_json(\*, indent=None, include=None, exclude=None, context=None, by_alias=False, exclude_unset=False, exclude_defaults=False, exclude_none=False, round_trip=False, warnings=True, serialize_as_any=False)
 
 Usage docs: [https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump_json](https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump_json)
 
 Generates a JSON representation of the model using Pydantic’s to_json method.
 
 * **Parameters:**
-  * **indent** – Indentation to use in the JSON output. If None is passed, the output will be compact.
-  * **include** – Field(s) to include in the JSON output.
-  * **exclude** – Field(s) to exclude from the JSON output.
-  * **context** – Additional context to pass to the serializer.
-  * **by_alias** – Whether to serialize using field aliases.
-  * **exclude_unset** – Whether to exclude fields that have not been explicitly set.
-  * **exclude_defaults** – Whether to exclude fields that are set to their default value.
-  * **exclude_none** – Whether to exclude fields that have a value of None.
-  * **round_trip** – If True, dumped values should be valid as input for non-idempotent types such as Json[T].
-  * **warnings** – How to handle serialization errors. False/”none” ignores them, True/”warn” logs errors,
+  * **indent** (*int* *|* *None*) – Indentation to use in the JSON output. If None is passed, the output will be compact.
+  * **include** (*Set* *[**int* *]*  *|* *Set* *[**str* *]*  *|* *Mapping* *[**int* *,* *Set* *[**int* *]*  *|* *Set* *[**str* *]*  *|* *Mapping* *[**int* *,* *IncEx* *|* *Literal* *[**True* *]* *]*  *|*  *~typing.Mapping* *[**str* *,* *IncEx* *|*  *~typing.Literal* *[**True* *]* *]*  *|*  *~typing.Literal* *[**True* *]* *]*  *|*  *~typing.Mapping* *[**str* *,*  *~typing.Set* *[**int* *]*  *|*  *~typing.Set* *[**str* *]*  *|*  *~typing.Mapping* *[**int* *,* *IncEx* *|*  *~typing.Literal* *[**True* *]* *]*  *|*  *~typing.Mapping* *[**str* *,* *IncEx* *|*  *~typing.Literal* *[**True* *]* *]*  *|*  *~typing.Literal* *[**True* *]* *]*  *|* *None*) – Field(s) to include in the JSON output.
+  * **exclude** (*Set* *[**int* *]*  *|* *Set* *[**str* *]*  *|* *Mapping* *[**int* *,* *Set* *[**int* *]*  *|* *Set* *[**str* *]*  *|* *Mapping* *[**int* *,* *IncEx* *|* *Literal* *[**True* *]* *]*  *|*  *~typing.Mapping* *[**str* *,* *IncEx* *|*  *~typing.Literal* *[**True* *]* *]*  *|*  *~typing.Literal* *[**True* *]* *]*  *|*  *~typing.Mapping* *[**str* *,*  *~typing.Set* *[**int* *]*  *|*  *~typing.Set* *[**str* *]*  *|*  *~typing.Mapping* *[**int* *,* *IncEx* *|*  *~typing.Literal* *[**True* *]* *]*  *|*  *~typing.Mapping* *[**str* *,* *IncEx* *|*  *~typing.Literal* *[**True* *]* *]*  *|*  *~typing.Literal* *[**True* *]* *]*  *|* *None*) – Field(s) to exclude from the JSON output.
+  * **context** (*Any* *|* *None*) – Additional context to pass to the serializer.
+  * **by_alias** (*bool*) – Whether to serialize using field aliases.
+  * **exclude_unset** (*bool*) – Whether to exclude fields that have not been explicitly set.
+  * **exclude_defaults** (*bool*) – Whether to exclude fields that are set to their default value.
+  * **exclude_none** (*bool*) – Whether to exclude fields that have a value of None.
+  * **round_trip** (*bool*) – If True, dumped values should be valid as input for non-idempotent types such as Json[T].
+  * **warnings** (*bool* *|* *Literal* *[* *'none'* *,*  *'warn'* *,*  *'error'* *]*) – How to handle serialization errors. False/”none” ignores them, True/”warn” logs errors,
     “error” raises a [PydanticSerializationError][pydantic_core.PydanticSerializationError].
-  * **serialize_as_any** – Whether to serialize fields with duck-typing serialization behavior.
+  * **serialize_as_any** (*bool*) – Whether to serialize fields with duck-typing serialization behavior.
 * **Returns:**
   A JSON string representation of the model.
+* **Return type:**
+  *str*
 
 #### *property* model_extra *: dict[str, Any] | None*
 
@@ -197,7 +185,7 @@ Get extra fields set during validation.
 * **Returns:**
   A dictionary of extra fields, or None if config.extra is not set to “allow”.
 
-#### model_fields *: ClassVar[Dict[str, FieldInfo]]* *= {'id': FieldInfo(annotation=Union[str, NoneType], required=False, default=None), 'inputs': FieldInfo(annotation=List[RequestInput], required=True), 'outputs': FieldInfo(annotation=Union[List[RequestOutput], NoneType], required=False, default=None), 'parameters': FieldInfo(annotation=Union[Parameters, NoneType], required=False, default=None)}*
+#### model_fields *: ClassVar[Dict[str, FieldInfo]]* *= {'root': FieldInfo(annotation=List[RepositoryIndexResponseItem], required=True, title='RepositoryIndexResponse')}*
 
 Metadata about the fields defined on the model,
 mapping of field names to [FieldInfo][pydantic.fields.FieldInfo] objects.
@@ -380,7 +368,7 @@ Validate the given object with string data against the Pydantic model.
 
 ## Constructor
 
-#### InferenceRequest.\_\_init_\_(\*\*data)
+#### RepositoryIndexResponse.\_\_init_\_(root=PydanticUndefined, \*\*data)
 
 Create a new model by parsing and validating input data from keyword arguments.
 
@@ -390,6 +378,6 @@ validated to form a valid model.
 self is explicitly positional-only to allow self as a field name.
 
 * **Parameters:**
-  **data** (*Any*) – 
+  **root** (*RootModelRootType*) – 
 * **Return type:**
   *None*

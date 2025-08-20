@@ -1,13 +1,13 @@
-﻿InferenceErrorResponse
+﻿RepositoryIndexResponseItem
 ============
 
 .. currentmodule:: mlserver.types
 
-**Qualified name:** ``mlserver.types.InferenceErrorResponse``
+**Qualified name:** ``mlserver.types.RepositoryIndexResponseItem``
 
 Overview
 --------
-.. autoclass:: mlserver.types.InferenceErrorResponse
+.. autoclass:: mlserver.types.RepositoryIndexResponseItem
    :noindex:
    :member-order: bysource
 
@@ -18,11 +18,20 @@ Overview
 
 Constructor
 -----------
-.. automethod:: mlserver.types.InferenceErrorResponse.__init__
+.. automethod:: mlserver.types.RepositoryIndexResponseItem.__init__
    :noindex:
 
 
 
+
+  
+  
+
+  
+  
+
+  
+  
 
   
   

@@ -1,20 +1,22 @@
-# InferenceRequest
+# RequestInput
 
-**Qualified name:** `mlserver.types.InferenceRequest`
+**Qualified name:** `mlserver.types.RequestInput`
 
 ## Overview
 
-### *class* mlserver.types.InferenceRequest
+### *class* mlserver.types.RequestInput
 
 Bases: `BaseModel`
 
-#### id *: str | None*
+#### name *: str*
+
+#### shape *: List[int]*
+
+#### datatype *: Datatype*
 
 #### parameters *: Parameters | None*
 
-#### inputs *: List[RequestInput]*
-
-#### outputs *: List[RequestOutput] | None*
+#### data *: TensorData*
 
 #### \_\_init_\_(\*\*data)
 
@@ -197,7 +199,7 @@ Get extra fields set during validation.
 * **Returns:**
   A dictionary of extra fields, or None if config.extra is not set to “allow”.
 
-#### model_fields *: ClassVar[Dict[str, FieldInfo]]* *= {'id': FieldInfo(annotation=Union[str, NoneType], required=False, default=None), 'inputs': FieldInfo(annotation=List[RequestInput], required=True), 'outputs': FieldInfo(annotation=Union[List[RequestOutput], NoneType], required=False, default=None), 'parameters': FieldInfo(annotation=Union[Parameters, NoneType], required=False, default=None)}*
+#### model_fields *: ClassVar[Dict[str, FieldInfo]]* *= {'data': FieldInfo(annotation=TensorData, required=True), 'datatype': FieldInfo(annotation=Datatype, required=True), 'name': FieldInfo(annotation=str, required=True), 'parameters': FieldInfo(annotation=Union[Parameters, NoneType], required=False, default=None), 'shape': FieldInfo(annotation=List[int], required=True)}*
 
 Metadata about the fields defined on the model,
 mapping of field names to [FieldInfo][pydantic.fields.FieldInfo] objects.
@@ -380,7 +382,7 @@ Validate the given object with string data against the Pydantic model.
 
 ## Constructor
 
-#### InferenceRequest.\_\_init_\_(\*\*data)
+#### RequestInput.\_\_init_\_(\*\*data)
 
 Create a new model by parsing and validating input data from keyword arguments.
 

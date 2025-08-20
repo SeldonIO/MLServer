@@ -1,20 +1,24 @@
-# InferenceRequest
+# MetadataModelResponse
 
-**Qualified name:** `mlserver.types.InferenceRequest`
+**Qualified name:** `mlserver.types.MetadataModelResponse`
 
 ## Overview
 
-### *class* mlserver.types.InferenceRequest
+### *class* mlserver.types.MetadataModelResponse
 
 Bases: `BaseModel`
 
-#### id *: str | None*
+#### name *: str*
+
+#### versions *: List[str] | None*
+
+#### platform *: str*
+
+#### inputs *: List[MetadataTensor] | None*
+
+#### outputs *: List[MetadataTensor] | None*
 
 #### parameters *: Parameters | None*
-
-#### inputs *: List[RequestInput]*
-
-#### outputs *: List[RequestOutput] | None*
 
 #### \_\_init_\_(\*\*data)
 
@@ -197,7 +201,7 @@ Get extra fields set during validation.
 * **Returns:**
   A dictionary of extra fields, or None if config.extra is not set to “allow”.
 
-#### model_fields *: ClassVar[Dict[str, FieldInfo]]* *= {'id': FieldInfo(annotation=Union[str, NoneType], required=False, default=None), 'inputs': FieldInfo(annotation=List[RequestInput], required=True), 'outputs': FieldInfo(annotation=Union[List[RequestOutput], NoneType], required=False, default=None), 'parameters': FieldInfo(annotation=Union[Parameters, NoneType], required=False, default=None)}*
+#### model_fields *: ClassVar[Dict[str, FieldInfo]]* *= {'inputs': FieldInfo(annotation=Union[List[MetadataTensor], NoneType], required=False, default=None), 'name': FieldInfo(annotation=str, required=True), 'outputs': FieldInfo(annotation=Union[List[MetadataTensor], NoneType], required=False, default=None), 'parameters': FieldInfo(annotation=Union[Parameters, NoneType], required=False, default=None), 'platform': FieldInfo(annotation=str, required=True), 'versions': FieldInfo(annotation=Union[List[str], NoneType], required=False, default=None)}*
 
 Metadata about the fields defined on the model,
 mapping of field names to [FieldInfo][pydantic.fields.FieldInfo] objects.
@@ -380,7 +384,7 @@ Validate the given object with string data against the Pydantic model.
 
 ## Constructor
 
-#### InferenceRequest.\_\_init_\_(\*\*data)
+#### MetadataModelResponse.\_\_init_\_(\*\*data)
 
 Create a new model by parsing and validating input data from keyword arguments.
 

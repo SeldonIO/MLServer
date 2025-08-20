@@ -46,6 +46,16 @@ templates_path = ["_templates"]
 
 autodoc_mock_imports = ["torch", "tensorflow", "onnxruntime"]
 
+# put the __init__ signature in a separate block (not in the heading)
+autodoc_class_signature = "separated"   # default is "mixed"
+
+# move type hints into the description instead of the signature
+autodoc_typehints = "description"
+
+# shorten fully-qualified type names (e.g., List[int] instead of typing.List[int])
+python_use_unqualified_type_names = True
+
+
 
 exclude_patterns = [
     "_build", ".doctrees", "Thumbs.db", ".DS_Store",

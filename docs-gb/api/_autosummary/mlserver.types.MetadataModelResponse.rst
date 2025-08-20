@@ -1,13 +1,13 @@
-﻿InferenceErrorResponse
+﻿MetadataModelResponse
 ============
 
 .. currentmodule:: mlserver.types
 
-**Qualified name:** ``mlserver.types.InferenceErrorResponse``
+**Qualified name:** ``mlserver.types.MetadataModelResponse``
 
 Overview
 --------
-.. autoclass:: mlserver.types.InferenceErrorResponse
+.. autoclass:: mlserver.types.MetadataModelResponse
    :noindex:
    :member-order: bysource
 
@@ -18,11 +18,26 @@ Overview
 
 Constructor
 -----------
-.. automethod:: mlserver.types.InferenceErrorResponse.__init__
+.. automethod:: mlserver.types.MetadataModelResponse.__init__
    :noindex:
 
 
 
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
 
   
   

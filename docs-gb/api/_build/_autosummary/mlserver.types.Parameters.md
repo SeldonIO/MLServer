@@ -1,20 +1,20 @@
-# InferenceRequest
+# Parameters
 
-**Qualified name:** `mlserver.types.InferenceRequest`
+**Qualified name:** `mlserver.types.Parameters`
 
 ## Overview
 
-### *class* mlserver.types.InferenceRequest
+### *class* mlserver.types.Parameters
 
 Bases: `BaseModel`
 
-#### id *: str | None*
+#### model_config *: ClassVar[ConfigDict]* *= {'extra': 'allow', 'protected_namespaces': (), 'use_enum_values': True}*
 
-#### parameters *: Parameters | None*
+Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
 
-#### inputs *: List[RequestInput]*
+#### content_type *: str | None*
 
-#### outputs *: List[RequestOutput] | None*
+#### headers *: Dict[str, Any] | None*
 
 #### \_\_init_\_(\*\*data)
 
@@ -100,10 +100,6 @@ copied = self.model_validate(data)
 #### model_computed_fields *: ClassVar[Dict[str, ComputedFieldInfo]]* *= {}*
 
 A dictionary of computed field names and their corresponding ComputedFieldInfo objects.
-
-#### model_config *: ClassVar[ConfigDict]* *= {'protected_namespaces': (), 'use_enum_values': True}*
-
-Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
 
 #### *classmethod* model_construct(\_fields_set=None, \*\*values)
 
@@ -197,7 +193,7 @@ Get extra fields set during validation.
 * **Returns:**
   A dictionary of extra fields, or None if config.extra is not set to “allow”.
 
-#### model_fields *: ClassVar[Dict[str, FieldInfo]]* *= {'id': FieldInfo(annotation=Union[str, NoneType], required=False, default=None), 'inputs': FieldInfo(annotation=List[RequestInput], required=True), 'outputs': FieldInfo(annotation=Union[List[RequestOutput], NoneType], required=False, default=None), 'parameters': FieldInfo(annotation=Union[Parameters, NoneType], required=False, default=None)}*
+#### model_fields *: ClassVar[Dict[str, FieldInfo]]* *= {'content_type': FieldInfo(annotation=Union[str, NoneType], required=False, default=None), 'headers': FieldInfo(annotation=Union[Dict[str, Any], NoneType], required=False, default=None)}*
 
 Metadata about the fields defined on the model,
 mapping of field names to [FieldInfo][pydantic.fields.FieldInfo] objects.
@@ -380,7 +376,7 @@ Validate the given object with string data against the Pydantic model.
 
 ## Constructor
 
-#### InferenceRequest.\_\_init_\_(\*\*data)
+#### Parameters.\_\_init_\_(\*\*data)
 
 Create a new model by parsing and validating input data from keyword arguments.
 
