@@ -62,8 +62,8 @@ gevent = "*"
 aiofiles = "*"
 orjson = "*"
 uvloop = {version = "*", markers = "sys_platform != 'win32' and (sys_platform != 'cygwin' and platform_python_implementation != 'PyPy')"}
-pydantic = "2.7.1"
-pydantic-settings = "2.2.1"
+pydantic = "^2.7.1"
+pydantic-settings = "^2.2.1"
 python-multipart = "*"
 h11 = "0.16.0"
 

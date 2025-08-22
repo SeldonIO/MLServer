@@ -3698,7 +3698,7 @@ url = "runtimes/catboost"
 
 [[package]]
 name = "mlserver-huggingface"
-version = "2.0.14"
+version = "2.0.16"
 description = "HuggingFace runtime for MLServer"
 optional = false
 python-versions = ">=3.9,<3.12"
@@ -3711,7 +3711,7 @@ bitsandbytes = "^0.42.0"
 mlserver = "*"
 optimum = {version = ">=1.4,<2.0", extras = ["onnxruntime"]}
 pillow = "*"
-pydantic = "2.7.1"
+pydantic = "^2.7.1"
 sentence-transformers = "2.5.1"
 tensorflow = "*"
 timm = "^1.0.13"
@@ -8614,4 +8614,4 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<3.12"
-content-hash = "d03b8d726210caa2afdd46f7341a81d2b494f4cf59af47f58c7796a9aed36ed4"
+content-hash = "34460288962c20fc619916f7d25a5309c53957f619a72f4a00c0cc37028fba85"

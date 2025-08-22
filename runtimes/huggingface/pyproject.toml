@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mlserver-huggingface"
-version = "2.0.15"
+version = "2.0.16"
 description = "HuggingFace runtime for MLServer"
 authors = ["Seldon Technologies Ltd. <hello@seldon.io>"]
 license = "Apache-2.0"
@@ -13,7 +13,7 @@ mlserver = "*"
 tensorflow = "*"
 pillow = "*"
 optimum = {extras = ["onnxruntime"], version = ">=1.4,<2.0"}
-pydantic = "2.7.1"
+pydantic = "^2.7.1"
 accelerate = "^0.27.2"
 bitsandbytes = "^0.42.0"
 sentence-transformers = "2.5.1"
