@@ -15,60 +15,114 @@ from typing import Dict, Type, Any
 
 import inspect
 from types import ModuleType
-from typing import Any, Union
-
+from typing import Any, Union, get_args, get_origin, get_type_hints
+from pydantic.fields import PydanticUndefined
 
 # Optional overrides for any fields that don't have comments
 FIELD_OVERRIDES: Dict[str, Dict[str, str]] = {
-    "Settings": {
-        # Add overrides here if needed
-    },
-    "ModelSettings": {
-        # Add overrides here if needed
-    },
+    "Settings": {},
+    "ModelSettings": {},
+    "ModelParameters": {},
 }
 
+# ---------------------------
+# Small helpers
+# ---------------------------
+def _type_to_str(tp: Any) -> str:
+    """Pretty-print typing annotations: Optional, Union, List, Dict, Literal, etc."""
+    if tp is None:
+        return "None"
+    if isinstance(tp, str):
+        return tp
+    origin = get_origin(tp)
+    args = get_args(tp)
+    # Builtins
+    if origin is None:
+        # Clean module-qualnames like <class 'int'> or typing.Any
+        if getattr(tp, "__module__", "") in ("builtins", "typing"):
+            return getattr(tp, "__name__", str(tp)).replace("NoneType", "None")
+        return getattr(tp, "__name__", str(tp)).replace("NoneType", "None")
+    # typing constructs
+    name = getattr(origin, "_name", None) or getattr(origin, "__name__", str(origin))
+    if origin is Union:
+        # Optional[T] is Union[T, None]
+        non_none = [a for a in args if a is not type(None)]  # noqa: E721
+        if len(args) == 2 and len(non_none) == 1:
+            return f"Optional[{_type_to_str(non_none[0])}]"
+        return "Union[" + ", ".join(_type_to_str(a) for a in args) + "]"
+    if name in ("List", "list"):
+        return f"List[{_type_to_str(args[0])}]" if args else "List[Any]"
+    if name in ("Dict", "dict"):
+        return f"Dict[{_type_to_str(args[0])}, {_type_to_str(args[1])}]" if len(args) == 2 else "Dict[Any, Any]"
+    if name in ("Tuple", "tuple"):
+        return "Tuple[" + ", ".join(_type_to_str(a) for a in args) + "]" if args else "Tuple"
+    if name == "Literal":
+        return "Literal[" + ", ".join(repr(a) for a in args) + "]"
+    return f"{name}[" + ", ".join(_type_to_str(a) for a in args) + "]" if args else name
+
+def _format_default(field: Any) -> str:
+    """Default rendering for Pydantic v2 fields."""
+    if getattr(field, "default", PydanticUndefined) is not PydanticUndefined:
+        return repr(field.default)
+    factory = getattr(field, "default_factory", None)
+    if factory is not None:
+        return "<factory>"
+    return "-"
+
+def _format_signature(func) -> str:
+    """Build a nicer signature: resolve ForwardRef and typing to readable strings."""
+    try:
+        hints = get_type_hints(func)
+    except Exception:
+        hints = {}
+    sig = inspect.signature(func)
+    parts = []
+    for name, param in sig.parameters.items():
+        ann = hints.get(name, param.annotation)
+        ann_str = "" if ann is inspect._empty else f": {_type_to_str(ann)}"
+        if param.default is not inspect._empty:
+            parts.append(f"{name}{ann_str} = {repr(param.default)}")
+        else:
+            parts.append(f"{name}{ann_str}")
+    ret_ann = hints.get("return", sig.return_annotation)
+    ret_str = "" if ret_ann is inspect._empty else f" -> {_type_to_str(ret_ann)}"
+    return f"{func.__name__}(" + ", ".join(parts) + ")" + ret_str
+
+# ---------------------------
+# Pydantic model docs
+# ---------------------------
 def document_pydantic_model(model_cls: Type[Any], source_path: str = None) -> str:
     """
-    Generate a Markdown table for a Pydantic v2 model, including:
-    - Config settings (extra, env_prefix, env_file, etc.)
-    - Field types, defaults, and descriptions from Field(description=...) or FIELD_OVERRIDES.
-    Fields are sorted alphabetically by name.
+    Generate Markdown for a Pydantic v2 model:
+    - Config section (with attribute type + default)
+    - Fields section (alphabetical), with type, default, description
     """
-    lines = []
+    lines: list[str] = []
 
+    # --- Config ---
     lines.append("### Config\n")
     lines.append("| Attribute | Type | Default |")
     lines.append("|-----------|------|---------|")
-
-    # Pydantic v2: model_config is a ConfigDict
-    config = getattr(model_cls, "model_config", {})
-
+    config = getattr(model_cls, "model_config", {}) or {}
+    # Access as dict to get real values
     config_attrs = {
         "extra": ("str", "ignore"),
         "env_prefix": ("str", "MLSERVER_"),
         "env_file": ("str", ".env"),
         "protected_namespaces": ("tuple", "()"),
     }
-
     for attr, (attr_type, default) in config_attrs.items():
-        # Use the actual value from config if available, fallback to default
-        value = getattr(config, attr, default)
-        # For strings, wrap in quotes to match Python syntax
-        if isinstance(value, str):
-            value_repr = f'"{value}"'
-        else:
-            value_repr = str(value)
+        value = config.get(attr, default) if isinstance(config, dict) else getattr(config, attr, default)
+        value_repr = f'"{value}"' if isinstance(value, str) else repr(value) if value is not None else "-"
         lines.append(f"| `{attr}` | `{attr_type}` | `{value_repr}` |")
 
-    lines.append("")  # empty line for spacing
+    lines.append("")  # spacing
 
-    # --- Add model docstring ---
+    # --- Model docstring (if any) ---
     if model_cls.__doc__:
-        docstring = model_cls.__doc__.strip()
-        lines.append(f"**Model Description:** {docstring}\n")
+        lines.append(f"**Model Description:** {inspect.cleandoc(model_cls.__doc__)}\n")
 
-    # --- Add Fields table ---
+    # --- Fields ---
     lines.append("### Fields\n")
     lines.append("| Field | Type | Default | Description |")
     lines.append("|-------|------|---------|-------------|")
@@ -77,125 +131,103 @@ def document_pydantic_model(model_cls: Type[Any], source_path: str = None) -> st
     overrides = FIELD_OVERRIDES.get(model_name, {})
 
     sorted_fields = sorted(model_cls.model_fields.items(), key=lambda item: item[0])
-
     for name, field in sorted_fields:
-        # Type
-        field_type = getattr(field.annotation, "__name__", str(field.annotation))
-        # Default
-        default = field.default if field.default is not None else "-"
-        if callable(default):
-            default = "<callable>"
-        # Description: Field.description first, then override
-        desc = field.description or overrides.get(name, "-")
-        # Add row
-        lines.append(f"| `{name}` | `{field_type}` | `{default}` | {desc} |")
+        ftype = _type_to_str(getattr(field, "annotation", Any))
+        default = _format_default(field)
+        desc = getattr(field, "description", None) or overrides.get(name, "-")
+        lines.append(f"| `{name}` | `{ftype}` | `{default}` | {desc} |")
 
     return "\n".join(lines)
 
-    
 # ---------------------------
-# Helpers for normal classes
+# Classes and modules
 # ---------------------------
-import inspect
-from types import ModuleType
-from typing import Any, Union
-
-
 def document_class_or_module(obj: Union[type, ModuleType],
                              include_private: bool = False,
-                             include_inherited: bool = False) -> str:
+                             include_inherited: bool = False,
+                             add_top_title: bool = False) -> str:
     """
-    Generate GitBook-friendly Markdown documentation for a class or module.
-    Handles classes, modules, static/class/instance methods.
-    Avoids empty sections and duplicated headings.
+    Render methods for classes, and classes + functions for modules.
+    - Method headings use 'name()' for GitBook RHS nav.
+    - Full signature is shown in a Python block.
+    - Omits empty sections.
+    - Does not add a top-level H1 unless add_top_title=True.
     """
-    lines = []
-
-    def format_signature(func):
-        return str(inspect.signature(func))
-
-    def document_method(name, func):
-        sig_str = format_signature(func)
-        doc = inspect.getdoc(func) or "-"
-        return "\n".join([
-            f"### `{name}`",
-            "```python",
-            f"{name}{sig_str}",
-            "```",
-            doc + "\n"
-        ])
+    lines: list[str] = []
 
     if inspect.isclass(obj):
-        # Document class
-        lines.append(f"# Class `{obj.__name__}`\n")
-        if obj.__doc__:
-            lines.append(inspect.cleandoc(obj.__doc__) + "\n")
+        if add_top_title:
+            lines.append(f"# {obj.__name__}\n")
+            if obj.__doc__:
+                lines.append(inspect.cleandoc(obj.__doc__) + "\n")
 
-        # Gather all methods first
-        methods = []
-        for name, member in inspect.getmembers(obj):
+        # Collect methods
+        method_blocks: list[str] = []
+        for name, func in inspect.getmembers(obj, inspect.isfunction):
             if not include_private and name.startswith("_"):
                 continue
-            if not include_inherited and inspect.isfunction(member):
-                if member.__qualname__.split(".")[0] != obj.__name__:
-                    continue
-            if inspect.isfunction(member) or inspect.ismethod(member):
-                methods.append(document_method(name, member))
-            elif isinstance(member, (staticmethod, classmethod)):
-                methods.append(document_method(name, member.__func__))
+            if not include_inherited and func.__qualname__.split(".")[0] != obj.__name__:
+                continue
+            doc = inspect.getdoc(func) or "_No description available._"
+            sig_str = _format_signature(func)
+            method_blocks.append(f"### {name}()\n")
+            method_blocks.append(f"```python\n{sig_str}\n```\n")
+            method_blocks.append(f"{doc}\n")
 
-        # Only add Methods section if there are any
-        if methods:
+        if method_blocks:
             lines.append("## Methods\n")
-            lines.extend(methods)
+            lines.extend(method_blocks)
+        return "\n".join(lines)
 
-    elif inspect.ismodule(obj):
-        lines.append(f"# Module `{obj.__name__}`\n")
-        if obj.__doc__:
-            lines.append(inspect.cleandoc(obj.__doc__) + "\n")
+    if inspect.ismodule(obj):
+        if add_top_title:
+            lines.append(f"# {obj.__name__}\n")
+            if obj.__doc__:
+                lines.append(inspect.cleandoc(obj.__doc__) + "\n")
 
-        # Document classes first
-        for name, cls in inspect.getmembers(obj, inspect.isclass):
-            if not include_private and name.startswith("_"):
+        # Classes
+        class_sections: list[str] = []
+        for cname, cls in inspect.getmembers(obj, inspect.isclass):
+            if not include_private and cname.startswith("_"):
                 continue
-
-            # Only document classes defined in this module
-            if cls.__module__ != obj.__name__:
-                continue
-
-            lines.append(f"## Class `{name}`\n")
+            section: list[str] = [f"## {cname}\n"]
             if cls.__doc__:
-                lines.append(inspect.cleandoc(cls.__doc__) + "\n")
-
-            # Gather methods
-            methods = []
-            for mname, member in inspect.getmembers(cls):
+                section.append(inspect.cleandoc(cls.__doc__) + "\n")
+            # Methods inside the class
+            method_blocks: list[str] = []
+            for mname, func in inspect.getmembers(cls, inspect.isfunction):
                 if not include_private and mname.startswith("_"):
                     continue
-                if inspect.isfunction(member) or inspect.ismethod(member):
-                    methods.append(document_method(mname, member))
-                elif isinstance(member, (staticmethod, classmethod)):
-                    methods.append(document_method(mname, member.__func__))
-            if methods:
-                lines.append("### Methods\n")
-                lines.extend(methods)
+                doc = inspect.getdoc(func) or "_No description available._"
+                sig_str = _format_signature(func)
+                method_blocks.append(f"### {mname}()\n")
+                method_blocks.append(f"```python\n{sig_str}\n```\n")
+                method_blocks.append(f"{doc}\n")
+            if method_blocks:
+                section.append("### Methods\n")
+                section.extend(method_blocks)
+            class_sections.append("\n".join(section))
 
-        # Document top-level functions
-        functions = []
-        for name, member in inspect.getmembers(obj, inspect.isfunction):
-            if not include_private and name.startswith("_"):
+        if class_sections:
+            lines.extend(class_sections)
+
+        # Standalone functions
+        func_sections: list[str] = []
+        for fname, func in inspect.getmembers(obj, inspect.isfunction):
+            if not include_private and fname.startswith("_"):
                 continue
-            functions.append(document_method(name, member))
+            doc = inspect.getdoc(func) or "_No description available._"
+            sig_str = _format_signature(func)
+            func_sections.append(f"## {fname}()\n")
+            func_sections.append(f"```python\n{sig_str}\n```\n")
+            func_sections.append(f"{doc}\n")
 
-        if functions:
-            lines.append("## Functions\n")
-            lines.extend(functions)
+        if func_sections:
+            lines.extend(func_sections)
 
-    else:
-        raise TypeError(f"Object {obj} is not a class or module")
+        return "\n".join(lines)
 
-    return "\n".join(lines)
-
+    raise TypeError(f"Object {obj} is not a class or module")
 
 # ---------------------------
 # Main driver
@@ -204,39 +236,50 @@ def main():
     outdir = "./docs-gb/api"
     os.makedirs(outdir, exist_ok=True)
 
-    # Classes to document
     targets = [
         (Settings, "Settings", True, "mlserver/settings.py"),
         (ModelSettings, "ModelSettings", True, "mlserver/settings.py"),
-        (ModelParameters, "ModelParameters", True, "mlserver/settings.py"),  # Added ModelParameters
+        (ModelParameters, "ModelParameters", True, "mlserver/settings.py"),
         (MLModel, "MLModel", False, "mlserver/model.py"),
         (Types, "Types", False, "mlserver/types.py"),
         (Codecs, "Codecs", False, "mlserver/codecs.py"),
         (Metrics, "Metrics", False, "mlserver/metrics.py"),
     ]
 
-    for cls, name, is_pydantic, source_path in targets:
+    for obj, name, is_pydantic, source_path in targets:
         print(f"Generating docs for {name}...")
         filepath = os.path.join(outdir, f"{name}.md")
         with open(filepath, "w") as f:
+            # Single H1 per page
             f.write(f"# {name}\n\n")
 
-            # Add docstring
-            if cls.__doc__:
-                f.write(inspect.cleandoc(cls.__doc__) + "\n\n")
+            # Top-level docstring (class or module)
+            if getattr(obj, "__doc__", None):
+                f.write(inspect.cleandoc(obj.__doc__) + "\n\n")
 
-            # Special case: pydantic settings
             if is_pydantic:
-                f.write("## Fields\n\n")
-                # Pass the source_path to document_pydantic_model
-                f.write(document_pydantic_model(cls, source_path) + "\n\n")
+                # Titles are included by document_pydantic_model (### Config, ### Fields)
+                f.write(document_pydantic_model(obj, source_path) + "\n")
             else:
-                f.write("## Methods\n\n")
-                # Use document_class_or_module instead of document_class
-                f.write(document_class_or_module(cls) + "\n\n")
+                # Classes: show Methods section if available
+                if inspect.isclass(obj):
+                    methods_md = document_class_or_module(obj, add_top_title=False)
+                    if methods_md.strip():
+                        f.write("## Methods\n\n")  # section title once
+                        # document_class_or_module already adds ### method() blocks
+                        # but not the "## Methods" header when add_top_title=False
+                        # so remove our just-added header and write content directly
+                        # We already wrote the header; ensure we don't duplicate
+                        # Instead, re-call and write without adding "## Methods"
+                        f.seek(f.tell() - len("## Methods\n\n"))
+                        f.write(document_class_or_module(obj, add_top_title=False))
+                else:
+                    # Modules: let helper render classes + functions (no duplicate H1)
+                    module_md = document_class_or_module(obj, add_top_title=False)
+                    if module_md.strip():
+                        f.write(module_md + "\n")
 
     print("Docs generated in docs-gb/api/")
-
 
 if __name__ == "__main__":
     main()

@@ -5,17 +5,12 @@ with ML models.
 
 ## Methods
 
-# Class `MLModel`
+### decode()
 
-Abstract inference runtime which exposes the main interface to interact
-with ML models.
-
-## Methods
-
-### `decode`
 ```python
-decode(self, request_input: mlserver.types.dataplane.RequestInput, default_codec: Union[Type[ForwardRef('InputCodec')], ForwardRef('InputCodec'), NoneType] = None) -> Any
+decode(self, request_input: RequestInput, default_codec: Union[type[ForwardRef('InputCodec')], ForwardRef('InputCodec'), None] = None) -> Any
 ```
+
 Helper to decode a **request input** into its corresponding high-level
 Python object.
 This method will find the most appropiate :doc:`input codec
@@ -24,10 +19,12 @@ input's content type.
 Otherwise, it will fall back to the codec specified in the
 ``default_codec`` kwarg.
 
-### `decode_request`
+### decode_request()
+
 ```python
-decode_request(self, inference_request: mlserver.types.dataplane.InferenceRequest, default_codec: Union[Type[ForwardRef('RequestCodec')], ForwardRef('RequestCodec'), NoneType] = None) -> Any
+decode_request(self, inference_request: InferenceRequest, default_codec: Union[type[ForwardRef('RequestCodec')], ForwardRef('RequestCodec'), None] = None) -> Any
 ```
+
 Helper to decode an **inference request** into its corresponding
 high-level Python object.
 This method will find the most appropiate :doc:`request codec
@@ -36,10 +33,12 @@ requests's content type.
 Otherwise, it will fall back to the codec specified in the
 ``default_codec`` kwarg.
 
-### `encode`
+### encode()
+
 ```python
-encode(self, payload: Any, request_output: mlserver.types.dataplane.RequestOutput, default_codec: Union[Type[ForwardRef('InputCodec')], ForwardRef('InputCodec'), NoneType] = None) -> mlserver.types.dataplane.ResponseOutput
+encode(self, payload: Any, request_output: RequestOutput, default_codec: Union[type[ForwardRef('InputCodec')], ForwardRef('InputCodec'), None] = None) -> ResponseOutput
 ```
+
 Helper to encode a high-level Python object into its corresponding
 **response output**.
 This method will find the most appropiate :doc:`input codec
@@ -48,10 +47,12 @@ output's content type or payload's type.
 Otherwise, it will fall back to the codec specified in the
 ``default_codec`` kwarg.
 
-### `encode_response`
+### encode_response()
+
 ```python
-encode_response(self, payload: Any, default_codec: Union[Type[ForwardRef('RequestCodec')], ForwardRef('RequestCodec'), NoneType] = None) -> mlserver.types.dataplane.InferenceResponse
+encode_response(self, payload: Any, default_codec: Union[type[ForwardRef('RequestCodec')], ForwardRef('RequestCodec'), None] = None) -> InferenceResponse
 ```
+
 Helper to encode a high-level Python object into its corresponding
 **inference response**.
 This method will find the most appropiate :doc:`request codec
@@ -59,10 +60,12 @@ This method will find the most appropiate :doc:`request codec
 Otherwise, it will fall back to the codec specified in the
 ``default_codec`` kwarg.
 
-### `load`
+### load()
+
 ```python
 load(self) -> bool
 ```
+
 Method responsible for loading the model from a model artefact.
 This method will be called on each of the parallel workers (when
 :doc:`parallel inference </user-guide/parallel-inference>`) is
@@ -73,26 +76,32 @@ A return value of ``True`` will mean the model is ready.
 **This method can be overriden to implement your custom load
 logic.**
 
-### `metadata`
-```python
-metadata(self) -> mlserver.types.dataplane.MetadataModelResponse
-```
--
+### metadata()
 
-### `predict`
 ```python
-predict(self, payload: mlserver.types.dataplane.InferenceRequest) -> mlserver.types.dataplane.InferenceResponse
+metadata(self) -> MetadataModelResponse
 ```
+
+_No description available._
+
+### predict()
+
+```python
+predict(self, payload: InferenceRequest) -> InferenceResponse
+```
+
 Method responsible for running inference on the model.
 
 
 **This method can be overriden to implement your custom inference
 logic.**
 
-### `predict_stream`
+### predict_stream()
+
 ```python
-predict_stream(self, payloads: AsyncIterator[mlserver.types.dataplane.InferenceRequest]) -> AsyncIterator[mlserver.types.dataplane.InferenceResponse]
+predict_stream(self, payloads: AsyncIterator[InferenceRequest]) -> AsyncIterator[InferenceResponse]
 ```
+
 Method responsible for running generation on the model, streaming a set
 of responses back to the client.
 
@@ -100,10 +109,12 @@ of responses back to the client.
 **This method can be overriden to implement your custom inference
 logic.**
 
-### `unload`
+### unload()
+
 ```python
 unload(self) -> bool
 ```
+
 Method responsible for unloading the model, freeing any resources (e.g.
 CPU memory, GPU memory, etc.).
 This method will be called on each of the parallel workers (when
@@ -113,5 +124,3 @@ A return value of ``True`` will mean the model is now unloaded.
 
 **This method can be overriden to implement your custom unload
 logic.**
-
-
