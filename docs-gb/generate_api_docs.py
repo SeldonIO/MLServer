@@ -13,6 +13,11 @@ import ast
 from pathlib import Path
 from typing import Dict, Type, Any
 
+import inspect
+from types import ModuleType
+from typing import Any, Union
+
+
 # Optional overrides for any fields that don't have comments
 FIELD_OVERRIDES: Dict[str, Dict[str, str]] = {
     "Settings": {
@@ -91,23 +96,79 @@ def document_pydantic_model(model_cls: Type[Any], source_path: str = None) -> st
 # ---------------------------
 # Helpers for normal classes
 # ---------------------------
-def document_class(cls, include=None, exclude=None):
-    """Generate Markdown for class methods, filtering as needed."""
-    methods = []
-    for name, func in inspect.getmembers(cls, inspect.isfunction):
-        if name.startswith("_"):
-            continue
-        if include and name not in include:
-            continue
-        if exclude and name in exclude:
-            continue
-        if func.__qualname__.split(".")[0] != cls.__name__:
-            # Skip inherited
-            continue
-        sig = inspect.signature(func)
-        doc = inspect.getdoc(func) or ""
-        methods.append(f"### `{name}{sig}`\n\n{doc}\n")
-    return "\n".join(methods)
+def document_class_or_module(obj: Union[type, ModuleType], 
+                             include_private: bool = False,
+                             include_inherited: bool = False) -> str:
+    """
+    Generate Markdown documentation for a class or module.
+    
+    For classes:
+        - Document methods: signature, defaults, docstring
+    For modules:
+        - Document functions and classes
+    
+    Args:
+        obj: Class or module to document
+        include_private: If True, include methods/functions starting with "_"
+        include_inherited: If True, include inherited methods (for classes)
+    """
+    lines = []
+    
+    if inspect.isclass(obj):
+        lines.append(f"# Class `{obj.__name__}`\n")
+        if obj.__doc__:
+            lines.append(inspect.cleandoc(obj.__doc__) + "\n")
+        
+        lines.append("## Methods\n")
+        
+        for name, func in inspect.getmembers(obj, inspect.isfunction):
+            # Skip private methods unless requested
+            if not include_private and name.startswith("_"):
+                continue
+            
+            # Skip inherited if requested
+            if not include_inherited:
+                # Only document methods defined on this class
+                if func.__qualname__.split(".")[0] != obj.__name__:
+                    continue
+            
+            sig = inspect.signature(func)
+            doc = inspect.getdoc(func) or "-"
+            
+            lines.append(f"### `{name}{sig}`\n\n{doc}\n")
+    
+    elif inspect.ismodule(obj):
+        lines.append(f"# Module `{obj.__name__}`\n")
+        if obj.__doc__:
+            lines.append(inspect.cleandoc(obj.__doc__) + "\n")
+        
+        # Document classes first
+        for name, cls in inspect.getmembers(obj, inspect.isclass):
+            if not include_private and name.startswith("_"):
+                continue
+            lines.append(f"## Class `{name}`\n")
+            if cls.__doc__:
+                lines.append(inspect.cleandoc(cls.__doc__) + "\n")
+            lines.append("### Methods\n")
+            for mname, func in inspect.getmembers(cls, inspect.isfunction):
+                if not include_private and mname.startswith("_"):
+                    continue
+                sig = inspect.signature(func)
+                doc = inspect.getdoc(func) or "-"
+                lines.append(f"#### `{mname}{sig}`\n\n{doc}\n")
+        
+        # Document standalone functions
+        for name, func in inspect.getmembers(obj, inspect.isfunction):
+            if not include_private and name.startswith("_"):
+                continue
+            sig = inspect.signature(func)
+            doc = inspect.getdoc(func) or "-"
+            lines.append(f"## Function `{name}{sig}`\n\n{doc}\n")
+    
+    else:
+        raise TypeError(f"Object {obj} is not a class or module")
+    
+    return "\n".join(lines)
 
 
 # ---------------------------
@@ -145,7 +206,8 @@ def main():
                 f.write(document_pydantic_model(cls, source_path) + "\n\n")
             else:
                 f.write("## Methods\n\n")
-                f.write(document_class(cls) + "\n\n")
+                # Use document_class_or_module instead of document_class
+                f.write(document_class_or_module(cls) + "\n\n")
 
     print("Docs generated in docs-gb/api/")
 

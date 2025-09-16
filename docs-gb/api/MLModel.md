@@ -5,6 +5,13 @@ with ML models.
 
 ## Methods
 
+# Class `MLModel`
+
+Abstract inference runtime which exposes the main interface to interact
+with ML models.
+
+## Methods
+
 ### `decode(self, request_input: mlserver.types.dataplane.RequestInput, default_codec: Union[Type[ForwardRef('InputCodec')], ForwardRef('InputCodec'), NoneType] = None) -> Any`
 
 Helper to decode a **request input** into its corresponding high-level
@@ -58,7 +65,7 @@ logic.**
 
 ### `metadata(self) -> mlserver.types.dataplane.MetadataModelResponse`
 
-
+-
 
 ### `predict(self, payload: mlserver.types.dataplane.InferenceRequest) -> mlserver.types.dataplane.InferenceResponse`
 
