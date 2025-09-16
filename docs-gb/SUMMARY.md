@@ -35,15 +35,15 @@
     * [Metrics](reference/api/metrics.md)
 
 * [Reference - Generated]
-  * [MLServer Settings](api-reference/Settings.md)
-  * [Model Settings](api-reference/ModelSettings.md)
-  * [Model Parameters](api-reference/ModelParameters.md)
+  * [MLServer Settings](api/Settings.md)
+  * [Model Settings](api/ModelSettings.md)
+  * [Model Parameters](api/ModelParameters.md)
   <!-- * [MLServer CLI](api-reference/mlserver_cli.md) -->
   * [Python API]
-    * [MLModel](api-reference/MLModel.md)
-    * [Types](api-reference/Types.md)
-    * [Codecs](api-reference/Codecs.md)
-    * [Metrics](api-reference/Metrics.md)
+    * [MLModel](api/MLModel.md)
+    * [Types](api/Types.md)
+    * [Codecs](api/Codecs.md)
+    * [Metrics](api/Metrics.md)
 
 * [Examples](examples/README.md)
   * [Serving Scikit-Learn models](examples/sklearn/README.md)
