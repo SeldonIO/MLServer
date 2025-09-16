@@ -13,11 +13,9 @@ with ML models.
 ## Methods
 
 ### `decode`
-
 ```python
 decode(self, request_input: mlserver.types.dataplane.RequestInput, default_codec: Union[Type[ForwardRef('InputCodec')], ForwardRef('InputCodec'), NoneType] = None) -> Any
 ```
-
 Helper to decode a **request input** into its corresponding high-level
 Python object.
 This method will find the most appropiate :doc:`input codec
@@ -27,11 +25,9 @@ Otherwise, it will fall back to the codec specified in the
 ``default_codec`` kwarg.
 
 ### `decode_request`
-
 ```python
 decode_request(self, inference_request: mlserver.types.dataplane.InferenceRequest, default_codec: Union[Type[ForwardRef('RequestCodec')], ForwardRef('RequestCodec'), NoneType] = None) -> Any
 ```
-
 Helper to decode an **inference request** into its corresponding
 high-level Python object.
 This method will find the most appropiate :doc:`request codec
@@ -41,11 +37,9 @@ Otherwise, it will fall back to the codec specified in the
 ``default_codec`` kwarg.
 
 ### `encode`
-
 ```python
 encode(self, payload: Any, request_output: mlserver.types.dataplane.RequestOutput, default_codec: Union[Type[ForwardRef('InputCodec')], ForwardRef('InputCodec'), NoneType] = None) -> mlserver.types.dataplane.ResponseOutput
 ```
-
 Helper to encode a high-level Python object into its corresponding
 **response output**.
 This method will find the most appropiate :doc:`input codec
@@ -55,11 +49,9 @@ Otherwise, it will fall back to the codec specified in the
 ``default_codec`` kwarg.
 
 ### `encode_response`
-
 ```python
 encode_response(self, payload: Any, default_codec: Union[Type[ForwardRef('RequestCodec')], ForwardRef('RequestCodec'), NoneType] = None) -> mlserver.types.dataplane.InferenceResponse
 ```
-
 Helper to encode a high-level Python object into its corresponding
 **inference response**.
 This method will find the most appropiate :doc:`request codec
@@ -68,11 +60,9 @@ Otherwise, it will fall back to the codec specified in the
 ``default_codec`` kwarg.
 
 ### `load`
-
 ```python
 load(self) -> bool
 ```
-
 Method responsible for loading the model from a model artefact.
 This method will be called on each of the parallel workers (when
 :doc:`parallel inference </user-guide/parallel-inference>`) is
@@ -84,19 +74,15 @@ A return value of ``True`` will mean the model is ready.
 logic.**
 
 ### `metadata`
-
 ```python
 metadata(self) -> mlserver.types.dataplane.MetadataModelResponse
 ```
-
 -
 
 ### `predict`
-
 ```python
 predict(self, payload: mlserver.types.dataplane.InferenceRequest) -> mlserver.types.dataplane.InferenceResponse
 ```
-
 Method responsible for running inference on the model.
 
 
@@ -104,11 +90,9 @@ Method responsible for running inference on the model.
 logic.**
 
 ### `predict_stream`
-
 ```python
 predict_stream(self, payloads: AsyncIterator[mlserver.types.dataplane.InferenceRequest]) -> AsyncIterator[mlserver.types.dataplane.InferenceResponse]
 ```
-
 Method responsible for running generation on the model, streaming a set
 of responses back to the client.
 
@@ -117,11 +101,9 @@ of responses back to the client.
 logic.**
 
 ### `unload`
-
 ```python
 unload(self) -> bool
 ```
-
 Method responsible for unloading the model, freeing any resources (e.g.
 CPU memory, GPU memory, etc.).
 This method will be called on each of the parallel workers (when

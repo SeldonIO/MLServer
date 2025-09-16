@@ -96,17 +96,21 @@ def document_pydantic_model(model_cls: Type[Any], source_path: str = None) -> st
 # ---------------------------
 # Helpers for normal classes
 # ---------------------------
+import inspect
+from types import ModuleType
+from typing import Any, Union
+
 def document_class_or_module(obj: Union[type, ModuleType],
                              include_private: bool = False,
                              include_inherited: bool = False) -> str:
     """
     Generate GitBook-friendly Markdown documentation for a class or module.
 
-    Classes:
-        - Methods: name, signature (code block), docstring
-
-    Modules:
-        - Functions and classes
+    Features:
+        - Classes: methods (instance, static, class) with signatures + docstrings
+        - Modules: functions + classes + class methods
+        - Signatures in code blocks for readability
+        - Docstrings below code blocks
 
     Args:
         include_private: include _private methods/functions
@@ -114,41 +118,54 @@ def document_class_or_module(obj: Union[type, ModuleType],
     """
     lines = []
 
+    def format_signature(func):
+        """Return a string representation of the function signature."""
+        sig = inspect.signature(func)
+        return str(sig)
+
+    def document_method(name, func):
+        """Return Markdown for a method/function."""
+        sig_str = format_signature(func)
+        doc = inspect.getdoc(func) or "-"
+        md = [
+            f"### `{name}`",
+            "```python",
+            f"{name}{sig_str}",
+            "```",
+            doc + "\n"
+        ]
+        return "\n".join(md)
+
     if inspect.isclass(obj):
         lines.append(f"# Class `{obj.__name__}`\n")
         if obj.__doc__:
             lines.append(inspect.cleandoc(obj.__doc__) + "\n")
-        
+
         lines.append("## Methods\n")
-        for name, func in inspect.getmembers(obj, inspect.isfunction):
+
+        # Iterate over all methods of the class
+        for name, member in inspect.getmembers(obj):
+            # Skip private if requested
             if not include_private and name.startswith("_"):
                 continue
-            if not include_inherited and func.__qualname__.split(".")[0] != obj.__name__:
-                continue
-            
-            sig = inspect.signature(func)
-            doc = inspect.getdoc(func) or "-"
-            
-            # Add method heading
-            lines.append(f"### `{name}`\n")
-            
-            # Add signature in a code block, wrapped nicely
-            sig_str = str(sig)
-            # Optional: wrap long signatures manually (e.g., 80 chars)
-            # For now just show as code block
-            lines.append("```python")
-            lines.append(f"{name}{sig_str}")
-            lines.append("```\n")
-            
-            # Add docstring
-            lines.append(doc + "\n")
-    
+
+            # Skip inherited if requested
+            if not include_inherited and inspect.isfunction(member):
+                if member.__qualname__.split(".")[0] != obj.__name__:
+                    continue
+
+            # Detect instance, static, class methods
+            if inspect.isfunction(member) or inspect.ismethod(member):
+                lines.append(document_method(name, member))
+            elif isinstance(member, (staticmethod, classmethod)):
+                lines.append(document_method(name, member.__func__))
+
     elif inspect.ismodule(obj):
         lines.append(f"# Module `{obj.__name__}`\n")
         if obj.__doc__:
             lines.append(inspect.cleandoc(obj.__doc__) + "\n")
-        
-        # Document classes
+
+        # Document classes first
         for name, cls in inspect.getmembers(obj, inspect.isclass):
             if not include_private and name.startswith("_"):
                 continue
@@ -156,32 +173,24 @@ def document_class_or_module(obj: Union[type, ModuleType],
             if cls.__doc__:
                 lines.append(inspect.cleandoc(cls.__doc__) + "\n")
             lines.append("### Methods\n")
-            for mname, func in inspect.getmembers(cls, inspect.isfunction):
+            for mname, member in inspect.getmembers(cls):
                 if not include_private and mname.startswith("_"):
                     continue
-                sig = inspect.signature(func)
-                doc = inspect.getdoc(func) or "-"
-                lines.append(f"#### `{mname}`\n")
-                lines.append("```python")
-                lines.append(f"{mname}{sig}")
-                lines.append("```\n")
-                lines.append(doc + "\n")
-        
-        # Document standalone functions
-        for name, func in inspect.getmembers(obj, inspect.isfunction):
+                if inspect.isfunction(member) or inspect.ismethod(member):
+                    lines.append(document_method(mname, member))
+                elif isinstance(member, (staticmethod, classmethod)):
+                    lines.append(document_method(mname, member.__func__))
+
+        # Document top-level functions
+        for name, member in inspect.getmembers(obj, inspect.isfunction):
             if not include_private and name.startswith("_"):
                 continue
-            sig = inspect.signature(func)
-            doc = inspect.getdoc(func) or "-"
             lines.append(f"## Function `{name}`\n")
-            lines.append("```python")
-            lines.append(f"{name}{sig}")
-            lines.append("```\n")
-            lines.append(doc + "\n")
-    
+            lines.append(document_method(name, member))
+
     else:
         raise TypeError(f"Object {obj} is not a class or module")
-    
+
     return "\n".join(lines)
 
 
