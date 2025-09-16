@@ -33,6 +33,17 @@
     * [Types](reference/api/types.md)
     * [Codecs](reference/api/codecs.md)
     * [Metrics](reference/api/metrics.md)
+
+* [Reference - Generated]
+  * [MLServer Settings](api-reference/mlserver_settings.md)
+  * [Model Settings](api-reference/model_settings.md)
+  * [MLServer CLI](api-reference/mlserver_cli.md)
+  * [Python API](api-reference/python-api.md)
+    * [MLModel](api-reference/mlmodel.md)
+    * [Types](api-reference/types.md)
+    * [Codecs](api-reference/codecs.md)
+    * [Metrics](api-reference/metrics.md)
+
 * [Examples](examples/README.md)
   * [Serving Scikit-Learn models](examples/sklearn/README.md)
   * [Serving XGBoost models](examples/xgboost/README.md)
