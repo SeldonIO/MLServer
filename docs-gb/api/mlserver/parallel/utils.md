@@ -22,7 +22,7 @@
 ## Function `terminate_queue`
 
 
-**Signature:** `terminate_queue(queue: <bound method BaseContext.Queue of <multiprocessing.context.DefaultContext object at 0x106851550>>)`
+**Signature:** `terminate_queue(queue: <bound method BaseContext.Queue of <multiprocessing.context.DefaultContext object at 0x106151550>>)`
 
 
 **Description:**
