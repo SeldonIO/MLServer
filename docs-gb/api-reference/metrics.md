@@ -1,4 +1,0 @@
-# Metrics
-
-## Module `mlserver.metrics`
-

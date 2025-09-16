@@ -1,4 +1,0 @@
-# Types
-
-## Module `mlserver.types`
-

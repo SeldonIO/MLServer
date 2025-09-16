@@ -1,4 +1,0 @@
-# Codecs
-
-## Module `mlserver.codecs`
-

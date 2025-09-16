@@ -1,4 +1,0 @@
-# Python API
-
-## Module `mlserver`
-
