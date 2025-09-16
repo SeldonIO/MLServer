@@ -12,7 +12,11 @@
 
 ### Methods
 
-#### `copy(self, *, include: 'AbstractSetIntStr | MappingIntStrAny | None' = None, exclude: 'AbstractSetIntStr | MappingIntStrAny | None' = None, update: 'Dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'`
+#### `copy`
+
+```python
+copy(self, *, include: 'AbstractSetIntStr | MappingIntStrAny | None' = None, exclude: 'AbstractSetIntStr | MappingIntStrAny | None' = None, update: 'Dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'
+```
 
 Returns a copy of the model.
 
@@ -36,15 +40,27 @@ Args:
 Returns:
     A copy of the model with included, excluded and updated fields as specified.
 
-#### `dict(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False) -> 'Dict[str, Any]'`
+#### `dict`
+
+```python
+dict(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False) -> 'Dict[str, Any]'
+```
 
 -
 
-#### `json(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False, encoder: 'Callable[[Any], Any] | None' = PydanticUndefined, models_as_dict: 'bool' = PydanticUndefined, **dumps_kwargs: 'Any') -> 'str'`
+#### `json`
+
+```python
+json(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False, encoder: 'Callable[[Any], Any] | None' = PydanticUndefined, models_as_dict: 'bool' = PydanticUndefined, **dumps_kwargs: 'Any') -> 'str'
+```
 
 -
 
-#### `model_copy(self, *, update: 'dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'`
+#### `model_copy`
+
+```python
+model_copy(self, *, update: 'dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#model_copy
 
@@ -58,7 +74,11 @@ Args:
 Returns:
     New model instance.
 
-#### `model_dump(self, exclude_unset=True, exclude_none=True, **kwargs)`
+#### `model_dump`
+
+```python
+model_dump(self, exclude_unset=True, exclude_none=True, **kwargs)
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump
 
@@ -83,7 +103,11 @@ Args:
 Returns:
     A dictionary representation of the model.
 
-#### `model_dump_json(self, exclude_unset=True, exclude_none=True, **kwargs)`
+#### `model_dump_json`
+
+```python
+model_dump_json(self, exclude_unset=True, exclude_none=True, **kwargs)
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump_json
 
@@ -106,7 +130,11 @@ Args:
 Returns:
     A JSON string representation of the model.
 
-#### `model_post_init(self, _BaseModel__context: 'Any') -> 'None'`
+#### `model_post_init`
+
+```python
+model_post_init(self, _BaseModel__context: 'Any') -> 'None'
+```
 
 Override this method to perform additional initialization after `__init__` and `model_construct`.
 This is useful if you want to do some validation that requires the entire model to be initialized.
@@ -115,7 +143,11 @@ This is useful if you want to do some validation that requires the entire model 
 
 ### Methods
 
-#### `copy(self, *, include: 'AbstractSetIntStr | MappingIntStrAny | None' = None, exclude: 'AbstractSetIntStr | MappingIntStrAny | None' = None, update: 'Dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'`
+#### `copy`
+
+```python
+copy(self, *, include: 'AbstractSetIntStr | MappingIntStrAny | None' = None, exclude: 'AbstractSetIntStr | MappingIntStrAny | None' = None, update: 'Dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'
+```
 
 Returns a copy of the model.
 
@@ -139,15 +171,27 @@ Args:
 Returns:
     A copy of the model with included, excluded and updated fields as specified.
 
-#### `dict(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False) -> 'Dict[str, Any]'`
+#### `dict`
+
+```python
+dict(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False) -> 'Dict[str, Any]'
+```
 
 -
 
-#### `json(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False, encoder: 'Callable[[Any], Any] | None' = PydanticUndefined, models_as_dict: 'bool' = PydanticUndefined, **dumps_kwargs: 'Any') -> 'str'`
+#### `json`
+
+```python
+json(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False, encoder: 'Callable[[Any], Any] | None' = PydanticUndefined, models_as_dict: 'bool' = PydanticUndefined, **dumps_kwargs: 'Any') -> 'str'
+```
 
 -
 
-#### `model_copy(self, *, update: 'dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'`
+#### `model_copy`
+
+```python
+model_copy(self, *, update: 'dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#model_copy
 
@@ -161,7 +205,11 @@ Args:
 Returns:
     New model instance.
 
-#### `model_dump(self, exclude_unset=True, exclude_none=True, **kwargs)`
+#### `model_dump`
+
+```python
+model_dump(self, exclude_unset=True, exclude_none=True, **kwargs)
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump
 
@@ -186,7 +234,11 @@ Args:
 Returns:
     A dictionary representation of the model.
 
-#### `model_dump_json(self, exclude_unset=True, exclude_none=True, **kwargs)`
+#### `model_dump_json`
+
+```python
+model_dump_json(self, exclude_unset=True, exclude_none=True, **kwargs)
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump_json
 
@@ -209,7 +261,11 @@ Args:
 Returns:
     A JSON string representation of the model.
 
-#### `model_post_init(self, _BaseModel__context: 'Any') -> 'None'`
+#### `model_post_init`
+
+```python
+model_post_init(self, _BaseModel__context: 'Any') -> 'None'
+```
 
 Override this method to perform additional initialization after `__init__` and `model_construct`.
 This is useful if you want to do some validation that requires the entire model to be initialized.
@@ -218,7 +274,11 @@ This is useful if you want to do some validation that requires the entire model 
 
 ### Methods
 
-#### `copy(self, *, include: 'AbstractSetIntStr | MappingIntStrAny | None' = None, exclude: 'AbstractSetIntStr | MappingIntStrAny | None' = None, update: 'Dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'`
+#### `copy`
+
+```python
+copy(self, *, include: 'AbstractSetIntStr | MappingIntStrAny | None' = None, exclude: 'AbstractSetIntStr | MappingIntStrAny | None' = None, update: 'Dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'
+```
 
 Returns a copy of the model.
 
@@ -242,15 +302,27 @@ Args:
 Returns:
     A copy of the model with included, excluded and updated fields as specified.
 
-#### `dict(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False) -> 'Dict[str, Any]'`
+#### `dict`
+
+```python
+dict(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False) -> 'Dict[str, Any]'
+```
 
 -
 
-#### `json(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False, encoder: 'Callable[[Any], Any] | None' = PydanticUndefined, models_as_dict: 'bool' = PydanticUndefined, **dumps_kwargs: 'Any') -> 'str'`
+#### `json`
+
+```python
+json(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False, encoder: 'Callable[[Any], Any] | None' = PydanticUndefined, models_as_dict: 'bool' = PydanticUndefined, **dumps_kwargs: 'Any') -> 'str'
+```
 
 -
 
-#### `model_copy(self, *, update: 'dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'`
+#### `model_copy`
+
+```python
+model_copy(self, *, update: 'dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#model_copy
 
@@ -264,7 +336,11 @@ Args:
 Returns:
     New model instance.
 
-#### `model_dump(self, exclude_unset=True, exclude_none=True, **kwargs)`
+#### `model_dump`
+
+```python
+model_dump(self, exclude_unset=True, exclude_none=True, **kwargs)
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump
 
@@ -289,7 +365,11 @@ Args:
 Returns:
     A dictionary representation of the model.
 
-#### `model_dump_json(self, exclude_unset=True, exclude_none=True, **kwargs)`
+#### `model_dump_json`
+
+```python
+model_dump_json(self, exclude_unset=True, exclude_none=True, **kwargs)
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump_json
 
@@ -312,7 +392,11 @@ Args:
 Returns:
     A JSON string representation of the model.
 
-#### `model_post_init(self, _BaseModel__context: 'Any') -> 'None'`
+#### `model_post_init`
+
+```python
+model_post_init(self, _BaseModel__context: 'Any') -> 'None'
+```
 
 Override this method to perform additional initialization after `__init__` and `model_construct`.
 This is useful if you want to do some validation that requires the entire model to be initialized.
@@ -321,7 +405,11 @@ This is useful if you want to do some validation that requires the entire model 
 
 ### Methods
 
-#### `copy(self, *, include: 'AbstractSetIntStr | MappingIntStrAny | None' = None, exclude: 'AbstractSetIntStr | MappingIntStrAny | None' = None, update: 'Dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'`
+#### `copy`
+
+```python
+copy(self, *, include: 'AbstractSetIntStr | MappingIntStrAny | None' = None, exclude: 'AbstractSetIntStr | MappingIntStrAny | None' = None, update: 'Dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'
+```
 
 Returns a copy of the model.
 
@@ -345,15 +433,27 @@ Args:
 Returns:
     A copy of the model with included, excluded and updated fields as specified.
 
-#### `dict(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False) -> 'Dict[str, Any]'`
+#### `dict`
+
+```python
+dict(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False) -> 'Dict[str, Any]'
+```
 
 -
 
-#### `json(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False, encoder: 'Callable[[Any], Any] | None' = PydanticUndefined, models_as_dict: 'bool' = PydanticUndefined, **dumps_kwargs: 'Any') -> 'str'`
+#### `json`
+
+```python
+json(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False, encoder: 'Callable[[Any], Any] | None' = PydanticUndefined, models_as_dict: 'bool' = PydanticUndefined, **dumps_kwargs: 'Any') -> 'str'
+```
 
 -
 
-#### `model_copy(self, *, update: 'dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'`
+#### `model_copy`
+
+```python
+model_copy(self, *, update: 'dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#model_copy
 
@@ -367,7 +467,11 @@ Args:
 Returns:
     New model instance.
 
-#### `model_dump(self, exclude_unset=True, exclude_none=True, **kwargs)`
+#### `model_dump`
+
+```python
+model_dump(self, exclude_unset=True, exclude_none=True, **kwargs)
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump
 
@@ -392,7 +496,11 @@ Args:
 Returns:
     A dictionary representation of the model.
 
-#### `model_dump_json(self, exclude_unset=True, exclude_none=True, **kwargs)`
+#### `model_dump_json`
+
+```python
+model_dump_json(self, exclude_unset=True, exclude_none=True, **kwargs)
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump_json
 
@@ -415,7 +523,11 @@ Args:
 Returns:
     A JSON string representation of the model.
 
-#### `model_post_init(self, _BaseModel__context: 'Any') -> 'None'`
+#### `model_post_init`
+
+```python
+model_post_init(self, _BaseModel__context: 'Any') -> 'None'
+```
 
 Override this method to perform additional initialization after `__init__` and `model_construct`.
 This is useful if you want to do some validation that requires the entire model to be initialized.
@@ -424,7 +536,11 @@ This is useful if you want to do some validation that requires the entire model 
 
 ### Methods
 
-#### `copy(self, *, include: 'AbstractSetIntStr | MappingIntStrAny | None' = None, exclude: 'AbstractSetIntStr | MappingIntStrAny | None' = None, update: 'Dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'`
+#### `copy`
+
+```python
+copy(self, *, include: 'AbstractSetIntStr | MappingIntStrAny | None' = None, exclude: 'AbstractSetIntStr | MappingIntStrAny | None' = None, update: 'Dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'
+```
 
 Returns a copy of the model.
 
@@ -448,15 +564,27 @@ Args:
 Returns:
     A copy of the model with included, excluded and updated fields as specified.
 
-#### `dict(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False) -> 'Dict[str, Any]'`
+#### `dict`
+
+```python
+dict(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False) -> 'Dict[str, Any]'
+```
 
 -
 
-#### `json(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False, encoder: 'Callable[[Any], Any] | None' = PydanticUndefined, models_as_dict: 'bool' = PydanticUndefined, **dumps_kwargs: 'Any') -> 'str'`
+#### `json`
+
+```python
+json(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False, encoder: 'Callable[[Any], Any] | None' = PydanticUndefined, models_as_dict: 'bool' = PydanticUndefined, **dumps_kwargs: 'Any') -> 'str'
+```
 
 -
 
-#### `model_copy(self, *, update: 'dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'`
+#### `model_copy`
+
+```python
+model_copy(self, *, update: 'dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#model_copy
 
@@ -470,7 +598,11 @@ Args:
 Returns:
     New model instance.
 
-#### `model_dump(self, exclude_unset=True, exclude_none=True, **kwargs)`
+#### `model_dump`
+
+```python
+model_dump(self, exclude_unset=True, exclude_none=True, **kwargs)
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump
 
@@ -495,7 +627,11 @@ Args:
 Returns:
     A dictionary representation of the model.
 
-#### `model_dump_json(self, exclude_unset=True, exclude_none=True, **kwargs)`
+#### `model_dump_json`
+
+```python
+model_dump_json(self, exclude_unset=True, exclude_none=True, **kwargs)
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump_json
 
@@ -518,7 +654,11 @@ Args:
 Returns:
     A JSON string representation of the model.
 
-#### `model_post_init(self, _BaseModel__context: 'Any') -> 'None'`
+#### `model_post_init`
+
+```python
+model_post_init(self, _BaseModel__context: 'Any') -> 'None'
+```
 
 Override this method to perform additional initialization after `__init__` and `model_construct`.
 This is useful if you want to do some validation that requires the entire model to be initialized.
@@ -527,7 +667,11 @@ This is useful if you want to do some validation that requires the entire model 
 
 ### Methods
 
-#### `copy(self, *, include: 'AbstractSetIntStr | MappingIntStrAny | None' = None, exclude: 'AbstractSetIntStr | MappingIntStrAny | None' = None, update: 'Dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'`
+#### `copy`
+
+```python
+copy(self, *, include: 'AbstractSetIntStr | MappingIntStrAny | None' = None, exclude: 'AbstractSetIntStr | MappingIntStrAny | None' = None, update: 'Dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'
+```
 
 Returns a copy of the model.
 
@@ -551,15 +695,27 @@ Args:
 Returns:
     A copy of the model with included, excluded and updated fields as specified.
 
-#### `dict(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False) -> 'Dict[str, Any]'`
+#### `dict`
+
+```python
+dict(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False) -> 'Dict[str, Any]'
+```
 
 -
 
-#### `json(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False, encoder: 'Callable[[Any], Any] | None' = PydanticUndefined, models_as_dict: 'bool' = PydanticUndefined, **dumps_kwargs: 'Any') -> 'str'`
+#### `json`
+
+```python
+json(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False, encoder: 'Callable[[Any], Any] | None' = PydanticUndefined, models_as_dict: 'bool' = PydanticUndefined, **dumps_kwargs: 'Any') -> 'str'
+```
 
 -
 
-#### `model_copy(self, *, update: 'dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'`
+#### `model_copy`
+
+```python
+model_copy(self, *, update: 'dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#model_copy
 
@@ -573,7 +729,11 @@ Args:
 Returns:
     New model instance.
 
-#### `model_dump(self, exclude_unset=True, exclude_none=True, **kwargs)`
+#### `model_dump`
+
+```python
+model_dump(self, exclude_unset=True, exclude_none=True, **kwargs)
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump
 
@@ -598,7 +758,11 @@ Args:
 Returns:
     A dictionary representation of the model.
 
-#### `model_dump_json(self, exclude_unset=True, exclude_none=True, **kwargs)`
+#### `model_dump_json`
+
+```python
+model_dump_json(self, exclude_unset=True, exclude_none=True, **kwargs)
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump_json
 
@@ -621,7 +785,11 @@ Args:
 Returns:
     A JSON string representation of the model.
 
-#### `model_post_init(self, _BaseModel__context: 'Any') -> 'None'`
+#### `model_post_init`
+
+```python
+model_post_init(self, _BaseModel__context: 'Any') -> 'None'
+```
 
 Override this method to perform additional initialization after `__init__` and `model_construct`.
 This is useful if you want to do some validation that requires the entire model to be initialized.
@@ -630,7 +798,11 @@ This is useful if you want to do some validation that requires the entire model 
 
 ### Methods
 
-#### `copy(self, *, include: 'AbstractSetIntStr | MappingIntStrAny | None' = None, exclude: 'AbstractSetIntStr | MappingIntStrAny | None' = None, update: 'Dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'`
+#### `copy`
+
+```python
+copy(self, *, include: 'AbstractSetIntStr | MappingIntStrAny | None' = None, exclude: 'AbstractSetIntStr | MappingIntStrAny | None' = None, update: 'Dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'
+```
 
 Returns a copy of the model.
 
@@ -654,15 +826,27 @@ Args:
 Returns:
     A copy of the model with included, excluded and updated fields as specified.
 
-#### `dict(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False) -> 'Dict[str, Any]'`
+#### `dict`
+
+```python
+dict(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False) -> 'Dict[str, Any]'
+```
 
 -
 
-#### `json(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False, encoder: 'Callable[[Any], Any] | None' = PydanticUndefined, models_as_dict: 'bool' = PydanticUndefined, **dumps_kwargs: 'Any') -> 'str'`
+#### `json`
+
+```python
+json(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False, encoder: 'Callable[[Any], Any] | None' = PydanticUndefined, models_as_dict: 'bool' = PydanticUndefined, **dumps_kwargs: 'Any') -> 'str'
+```
 
 -
 
-#### `model_copy(self, *, update: 'dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'`
+#### `model_copy`
+
+```python
+model_copy(self, *, update: 'dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#model_copy
 
@@ -676,7 +860,11 @@ Args:
 Returns:
     New model instance.
 
-#### `model_dump(self, exclude_unset=True, exclude_none=True, **kwargs)`
+#### `model_dump`
+
+```python
+model_dump(self, exclude_unset=True, exclude_none=True, **kwargs)
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump
 
@@ -701,7 +889,11 @@ Args:
 Returns:
     A dictionary representation of the model.
 
-#### `model_dump_json(self, exclude_unset=True, exclude_none=True, **kwargs)`
+#### `model_dump_json`
+
+```python
+model_dump_json(self, exclude_unset=True, exclude_none=True, **kwargs)
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump_json
 
@@ -724,7 +916,11 @@ Args:
 Returns:
     A JSON string representation of the model.
 
-#### `model_post_init(self, _BaseModel__context: 'Any') -> 'None'`
+#### `model_post_init`
+
+```python
+model_post_init(self, _BaseModel__context: 'Any') -> 'None'
+```
 
 Override this method to perform additional initialization after `__init__` and `model_construct`.
 This is useful if you want to do some validation that requires the entire model to be initialized.
@@ -733,7 +929,11 @@ This is useful if you want to do some validation that requires the entire model 
 
 ### Methods
 
-#### `copy(self, *, include: 'AbstractSetIntStr | MappingIntStrAny | None' = None, exclude: 'AbstractSetIntStr | MappingIntStrAny | None' = None, update: 'Dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'`
+#### `copy`
+
+```python
+copy(self, *, include: 'AbstractSetIntStr | MappingIntStrAny | None' = None, exclude: 'AbstractSetIntStr | MappingIntStrAny | None' = None, update: 'Dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'
+```
 
 Returns a copy of the model.
 
@@ -757,15 +957,27 @@ Args:
 Returns:
     A copy of the model with included, excluded and updated fields as specified.
 
-#### `dict(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False) -> 'Dict[str, Any]'`
+#### `dict`
+
+```python
+dict(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False) -> 'Dict[str, Any]'
+```
 
 -
 
-#### `json(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False, encoder: 'Callable[[Any], Any] | None' = PydanticUndefined, models_as_dict: 'bool' = PydanticUndefined, **dumps_kwargs: 'Any') -> 'str'`
+#### `json`
+
+```python
+json(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False, encoder: 'Callable[[Any], Any] | None' = PydanticUndefined, models_as_dict: 'bool' = PydanticUndefined, **dumps_kwargs: 'Any') -> 'str'
+```
 
 -
 
-#### `model_copy(self, *, update: 'dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'`
+#### `model_copy`
+
+```python
+model_copy(self, *, update: 'dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#model_copy
 
@@ -779,7 +991,11 @@ Args:
 Returns:
     New model instance.
 
-#### `model_dump(self, exclude_unset=True, exclude_none=True, **kwargs)`
+#### `model_dump`
+
+```python
+model_dump(self, exclude_unset=True, exclude_none=True, **kwargs)
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump
 
@@ -804,7 +1020,11 @@ Args:
 Returns:
     A dictionary representation of the model.
 
-#### `model_dump_json(self, exclude_unset=True, exclude_none=True, **kwargs)`
+#### `model_dump_json`
+
+```python
+model_dump_json(self, exclude_unset=True, exclude_none=True, **kwargs)
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump_json
 
@@ -827,7 +1047,11 @@ Args:
 Returns:
     A JSON string representation of the model.
 
-#### `model_post_init(self, _BaseModel__context: 'Any') -> 'None'`
+#### `model_post_init`
+
+```python
+model_post_init(self, _BaseModel__context: 'Any') -> 'None'
+```
 
 Override this method to perform additional initialization after `__init__` and `model_construct`.
 This is useful if you want to do some validation that requires the entire model to be initialized.
@@ -836,7 +1060,11 @@ This is useful if you want to do some validation that requires the entire model 
 
 ### Methods
 
-#### `copy(self, *, include: 'AbstractSetIntStr | MappingIntStrAny | None' = None, exclude: 'AbstractSetIntStr | MappingIntStrAny | None' = None, update: 'Dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'`
+#### `copy`
+
+```python
+copy(self, *, include: 'AbstractSetIntStr | MappingIntStrAny | None' = None, exclude: 'AbstractSetIntStr | MappingIntStrAny | None' = None, update: 'Dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'
+```
 
 Returns a copy of the model.
 
@@ -860,15 +1088,27 @@ Args:
 Returns:
     A copy of the model with included, excluded and updated fields as specified.
 
-#### `dict(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False) -> 'Dict[str, Any]'`
+#### `dict`
+
+```python
+dict(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False) -> 'Dict[str, Any]'
+```
 
 -
 
-#### `json(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False, encoder: 'Callable[[Any], Any] | None' = PydanticUndefined, models_as_dict: 'bool' = PydanticUndefined, **dumps_kwargs: 'Any') -> 'str'`
+#### `json`
+
+```python
+json(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False, encoder: 'Callable[[Any], Any] | None' = PydanticUndefined, models_as_dict: 'bool' = PydanticUndefined, **dumps_kwargs: 'Any') -> 'str'
+```
 
 -
 
-#### `model_copy(self, *, update: 'dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'`
+#### `model_copy`
+
+```python
+model_copy(self, *, update: 'dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#model_copy
 
@@ -882,7 +1122,11 @@ Args:
 Returns:
     New model instance.
 
-#### `model_dump(self, exclude_unset=True, exclude_none=True, **kwargs)`
+#### `model_dump`
+
+```python
+model_dump(self, exclude_unset=True, exclude_none=True, **kwargs)
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump
 
@@ -907,7 +1151,11 @@ Args:
 Returns:
     A dictionary representation of the model.
 
-#### `model_dump_json(self, exclude_unset=True, exclude_none=True, **kwargs)`
+#### `model_dump_json`
+
+```python
+model_dump_json(self, exclude_unset=True, exclude_none=True, **kwargs)
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump_json
 
@@ -930,7 +1178,11 @@ Args:
 Returns:
     A JSON string representation of the model.
 
-#### `model_post_init(self, _BaseModel__context: 'Any') -> 'None'`
+#### `model_post_init`
+
+```python
+model_post_init(self, _BaseModel__context: 'Any') -> 'None'
+```
 
 Override this method to perform additional initialization after `__init__` and `model_construct`.
 This is useful if you want to do some validation that requires the entire model to be initialized.
@@ -939,7 +1191,11 @@ This is useful if you want to do some validation that requires the entire model 
 
 ### Methods
 
-#### `copy(self, *, include: 'AbstractSetIntStr | MappingIntStrAny | None' = None, exclude: 'AbstractSetIntStr | MappingIntStrAny | None' = None, update: 'Dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'`
+#### `copy`
+
+```python
+copy(self, *, include: 'AbstractSetIntStr | MappingIntStrAny | None' = None, exclude: 'AbstractSetIntStr | MappingIntStrAny | None' = None, update: 'Dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'
+```
 
 Returns a copy of the model.
 
@@ -963,15 +1219,27 @@ Args:
 Returns:
     A copy of the model with included, excluded and updated fields as specified.
 
-#### `dict(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False) -> 'Dict[str, Any]'`
+#### `dict`
+
+```python
+dict(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False) -> 'Dict[str, Any]'
+```
 
 -
 
-#### `json(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False, encoder: 'Callable[[Any], Any] | None' = PydanticUndefined, models_as_dict: 'bool' = PydanticUndefined, **dumps_kwargs: 'Any') -> 'str'`
+#### `json`
+
+```python
+json(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False, encoder: 'Callable[[Any], Any] | None' = PydanticUndefined, models_as_dict: 'bool' = PydanticUndefined, **dumps_kwargs: 'Any') -> 'str'
+```
 
 -
 
-#### `model_copy(self, *, update: 'dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'`
+#### `model_copy`
+
+```python
+model_copy(self, *, update: 'dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#model_copy
 
@@ -985,7 +1253,11 @@ Args:
 Returns:
     New model instance.
 
-#### `model_dump(self, exclude_unset=True, exclude_none=True, **kwargs)`
+#### `model_dump`
+
+```python
+model_dump(self, exclude_unset=True, exclude_none=True, **kwargs)
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump
 
@@ -1010,7 +1282,11 @@ Args:
 Returns:
     A dictionary representation of the model.
 
-#### `model_dump_json(self, exclude_unset=True, exclude_none=True, **kwargs)`
+#### `model_dump_json`
+
+```python
+model_dump_json(self, exclude_unset=True, exclude_none=True, **kwargs)
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump_json
 
@@ -1033,7 +1309,11 @@ Args:
 Returns:
     A JSON string representation of the model.
 
-#### `model_post_init(self, _BaseModel__context: 'Any') -> 'None'`
+#### `model_post_init`
+
+```python
+model_post_init(self, _BaseModel__context: 'Any') -> 'None'
+```
 
 Override this method to perform additional initialization after `__init__` and `model_construct`.
 This is useful if you want to do some validation that requires the entire model to be initialized.
@@ -1042,7 +1322,11 @@ This is useful if you want to do some validation that requires the entire model 
 
 ### Methods
 
-#### `copy(self, *, include: 'AbstractSetIntStr | MappingIntStrAny | None' = None, exclude: 'AbstractSetIntStr | MappingIntStrAny | None' = None, update: 'Dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'`
+#### `copy`
+
+```python
+copy(self, *, include: 'AbstractSetIntStr | MappingIntStrAny | None' = None, exclude: 'AbstractSetIntStr | MappingIntStrAny | None' = None, update: 'Dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'
+```
 
 Returns a copy of the model.
 
@@ -1066,15 +1350,27 @@ Args:
 Returns:
     A copy of the model with included, excluded and updated fields as specified.
 
-#### `dict(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False) -> 'Dict[str, Any]'`
+#### `dict`
+
+```python
+dict(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False) -> 'Dict[str, Any]'
+```
 
 -
 
-#### `json(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False, encoder: 'Callable[[Any], Any] | None' = PydanticUndefined, models_as_dict: 'bool' = PydanticUndefined, **dumps_kwargs: 'Any') -> 'str'`
+#### `json`
+
+```python
+json(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False, encoder: 'Callable[[Any], Any] | None' = PydanticUndefined, models_as_dict: 'bool' = PydanticUndefined, **dumps_kwargs: 'Any') -> 'str'
+```
 
 -
 
-#### `model_copy(self, *, update: 'dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'`
+#### `model_copy`
+
+```python
+model_copy(self, *, update: 'dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#model_copy
 
@@ -1088,7 +1384,11 @@ Args:
 Returns:
     New model instance.
 
-#### `model_dump(self, *, mode: "Literal['json', 'python'] | str" = 'python', include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, context: 'Any | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False, round_trip: 'bool' = False, warnings: "bool | Literal['none', 'warn', 'error']" = True, serialize_as_any: 'bool' = False) -> 'dict[str, Any]'`
+#### `model_dump`
+
+```python
+model_dump(self, *, mode: "Literal['json', 'python'] | str" = 'python', include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, context: 'Any | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False, round_trip: 'bool' = False, warnings: "bool | Literal['none', 'warn', 'error']" = True, serialize_as_any: 'bool' = False) -> 'dict[str, Any]'
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump
 
@@ -1113,7 +1413,11 @@ Args:
 Returns:
     A dictionary representation of the model.
 
-#### `model_dump_json(self, *, indent: 'int | None' = None, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, context: 'Any | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False, round_trip: 'bool' = False, warnings: "bool | Literal['none', 'warn', 'error']" = True, serialize_as_any: 'bool' = False) -> 'str'`
+#### `model_dump_json`
+
+```python
+model_dump_json(self, *, indent: 'int | None' = None, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, context: 'Any | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False, round_trip: 'bool' = False, warnings: "bool | Literal['none', 'warn', 'error']" = True, serialize_as_any: 'bool' = False) -> 'str'
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump_json
 
@@ -1136,7 +1440,11 @@ Args:
 Returns:
     A JSON string representation of the model.
 
-#### `model_post_init(self, _BaseModel__context: 'Any') -> 'None'`
+#### `model_post_init`
+
+```python
+model_post_init(self, _BaseModel__context: 'Any') -> 'None'
+```
 
 Override this method to perform additional initialization after `__init__` and `model_construct`.
 This is useful if you want to do some validation that requires the entire model to be initialized.
@@ -1145,7 +1453,11 @@ This is useful if you want to do some validation that requires the entire model 
 
 ### Methods
 
-#### `copy(self, *, include: 'AbstractSetIntStr | MappingIntStrAny | None' = None, exclude: 'AbstractSetIntStr | MappingIntStrAny | None' = None, update: 'Dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'`
+#### `copy`
+
+```python
+copy(self, *, include: 'AbstractSetIntStr | MappingIntStrAny | None' = None, exclude: 'AbstractSetIntStr | MappingIntStrAny | None' = None, update: 'Dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'
+```
 
 Returns a copy of the model.
 
@@ -1169,15 +1481,27 @@ Args:
 Returns:
     A copy of the model with included, excluded and updated fields as specified.
 
-#### `dict(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False) -> 'Dict[str, Any]'`
+#### `dict`
+
+```python
+dict(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False) -> 'Dict[str, Any]'
+```
 
 -
 
-#### `json(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False, encoder: 'Callable[[Any], Any] | None' = PydanticUndefined, models_as_dict: 'bool' = PydanticUndefined, **dumps_kwargs: 'Any') -> 'str'`
+#### `json`
+
+```python
+json(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False, encoder: 'Callable[[Any], Any] | None' = PydanticUndefined, models_as_dict: 'bool' = PydanticUndefined, **dumps_kwargs: 'Any') -> 'str'
+```
 
 -
 
-#### `model_copy(self, *, update: 'dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'`
+#### `model_copy`
+
+```python
+model_copy(self, *, update: 'dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#model_copy
 
@@ -1191,7 +1515,11 @@ Args:
 Returns:
     New model instance.
 
-#### `model_dump(self, exclude_unset=True, exclude_none=True, **kwargs)`
+#### `model_dump`
+
+```python
+model_dump(self, exclude_unset=True, exclude_none=True, **kwargs)
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump
 
@@ -1216,7 +1544,11 @@ Args:
 Returns:
     A dictionary representation of the model.
 
-#### `model_dump_json(self, exclude_unset=True, exclude_none=True, **kwargs)`
+#### `model_dump_json`
+
+```python
+model_dump_json(self, exclude_unset=True, exclude_none=True, **kwargs)
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump_json
 
@@ -1239,7 +1571,11 @@ Args:
 Returns:
     A JSON string representation of the model.
 
-#### `model_post_init(self, _BaseModel__context: 'Any') -> 'None'`
+#### `model_post_init`
+
+```python
+model_post_init(self, _BaseModel__context: 'Any') -> 'None'
+```
 
 Override this method to perform additional initialization after `__init__` and `model_construct`.
 This is useful if you want to do some validation that requires the entire model to be initialized.
@@ -1248,7 +1584,11 @@ This is useful if you want to do some validation that requires the entire model 
 
 ### Methods
 
-#### `copy(self, *, include: 'AbstractSetIntStr | MappingIntStrAny | None' = None, exclude: 'AbstractSetIntStr | MappingIntStrAny | None' = None, update: 'Dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'`
+#### `copy`
+
+```python
+copy(self, *, include: 'AbstractSetIntStr | MappingIntStrAny | None' = None, exclude: 'AbstractSetIntStr | MappingIntStrAny | None' = None, update: 'Dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'
+```
 
 Returns a copy of the model.
 
@@ -1272,15 +1612,27 @@ Args:
 Returns:
     A copy of the model with included, excluded and updated fields as specified.
 
-#### `dict(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False) -> 'Dict[str, Any]'`
+#### `dict`
+
+```python
+dict(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False) -> 'Dict[str, Any]'
+```
 
 -
 
-#### `json(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False, encoder: 'Callable[[Any], Any] | None' = PydanticUndefined, models_as_dict: 'bool' = PydanticUndefined, **dumps_kwargs: 'Any') -> 'str'`
+#### `json`
+
+```python
+json(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False, encoder: 'Callable[[Any], Any] | None' = PydanticUndefined, models_as_dict: 'bool' = PydanticUndefined, **dumps_kwargs: 'Any') -> 'str'
+```
 
 -
 
-#### `model_copy(self, *, update: 'dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'`
+#### `model_copy`
+
+```python
+model_copy(self, *, update: 'dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#model_copy
 
@@ -1294,7 +1646,11 @@ Args:
 Returns:
     New model instance.
 
-#### `model_dump(self, exclude_unset=True, exclude_none=True, **kwargs)`
+#### `model_dump`
+
+```python
+model_dump(self, exclude_unset=True, exclude_none=True, **kwargs)
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump
 
@@ -1319,7 +1675,11 @@ Args:
 Returns:
     A dictionary representation of the model.
 
-#### `model_dump_json(self, exclude_unset=True, exclude_none=True, **kwargs)`
+#### `model_dump_json`
+
+```python
+model_dump_json(self, exclude_unset=True, exclude_none=True, **kwargs)
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump_json
 
@@ -1342,7 +1702,11 @@ Args:
 Returns:
     A JSON string representation of the model.
 
-#### `model_post_init(self, _BaseModel__context: 'Any') -> 'None'`
+#### `model_post_init`
+
+```python
+model_post_init(self, _BaseModel__context: 'Any') -> 'None'
+```
 
 Override this method to perform additional initialization after `__init__` and `model_construct`.
 This is useful if you want to do some validation that requires the entire model to be initialized.
@@ -1351,7 +1715,11 @@ This is useful if you want to do some validation that requires the entire model 
 
 ### Methods
 
-#### `copy(self, *, include: 'AbstractSetIntStr | MappingIntStrAny | None' = None, exclude: 'AbstractSetIntStr | MappingIntStrAny | None' = None, update: 'Dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'`
+#### `copy`
+
+```python
+copy(self, *, include: 'AbstractSetIntStr | MappingIntStrAny | None' = None, exclude: 'AbstractSetIntStr | MappingIntStrAny | None' = None, update: 'Dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'
+```
 
 Returns a copy of the model.
 
@@ -1375,15 +1743,27 @@ Args:
 Returns:
     A copy of the model with included, excluded and updated fields as specified.
 
-#### `dict(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False) -> 'Dict[str, Any]'`
+#### `dict`
+
+```python
+dict(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False) -> 'Dict[str, Any]'
+```
 
 -
 
-#### `json(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False, encoder: 'Callable[[Any], Any] | None' = PydanticUndefined, models_as_dict: 'bool' = PydanticUndefined, **dumps_kwargs: 'Any') -> 'str'`
+#### `json`
+
+```python
+json(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False, encoder: 'Callable[[Any], Any] | None' = PydanticUndefined, models_as_dict: 'bool' = PydanticUndefined, **dumps_kwargs: 'Any') -> 'str'
+```
 
 -
 
-#### `model_copy(self, *, update: 'dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'`
+#### `model_copy`
+
+```python
+model_copy(self, *, update: 'dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#model_copy
 
@@ -1397,7 +1777,11 @@ Args:
 Returns:
     New model instance.
 
-#### `model_dump(self, exclude_unset=True, exclude_none=True, **kwargs)`
+#### `model_dump`
+
+```python
+model_dump(self, exclude_unset=True, exclude_none=True, **kwargs)
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump
 
@@ -1422,7 +1806,11 @@ Args:
 Returns:
     A dictionary representation of the model.
 
-#### `model_dump_json(self, exclude_unset=True, exclude_none=True, **kwargs)`
+#### `model_dump_json`
+
+```python
+model_dump_json(self, exclude_unset=True, exclude_none=True, **kwargs)
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump_json
 
@@ -1445,7 +1833,11 @@ Args:
 Returns:
     A JSON string representation of the model.
 
-#### `model_post_init(self, _BaseModel__context: 'Any') -> 'None'`
+#### `model_post_init`
+
+```python
+model_post_init(self, _BaseModel__context: 'Any') -> 'None'
+```
 
 Override this method to perform additional initialization after `__init__` and `model_construct`.
 This is useful if you want to do some validation that requires the entire model to be initialized.
@@ -1454,7 +1846,11 @@ This is useful if you want to do some validation that requires the entire model 
 
 ### Methods
 
-#### `copy(self, *, include: 'AbstractSetIntStr | MappingIntStrAny | None' = None, exclude: 'AbstractSetIntStr | MappingIntStrAny | None' = None, update: 'Dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'`
+#### `copy`
+
+```python
+copy(self, *, include: 'AbstractSetIntStr | MappingIntStrAny | None' = None, exclude: 'AbstractSetIntStr | MappingIntStrAny | None' = None, update: 'Dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'
+```
 
 Returns a copy of the model.
 
@@ -1478,15 +1874,27 @@ Args:
 Returns:
     A copy of the model with included, excluded and updated fields as specified.
 
-#### `dict(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False) -> 'Dict[str, Any]'`
+#### `dict`
+
+```python
+dict(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False) -> 'Dict[str, Any]'
+```
 
 -
 
-#### `json(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False, encoder: 'Callable[[Any], Any] | None' = PydanticUndefined, models_as_dict: 'bool' = PydanticUndefined, **dumps_kwargs: 'Any') -> 'str'`
+#### `json`
+
+```python
+json(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False, encoder: 'Callable[[Any], Any] | None' = PydanticUndefined, models_as_dict: 'bool' = PydanticUndefined, **dumps_kwargs: 'Any') -> 'str'
+```
 
 -
 
-#### `model_copy(self, *, update: 'dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'`
+#### `model_copy`
+
+```python
+model_copy(self, *, update: 'dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#model_copy
 
@@ -1500,7 +1908,11 @@ Args:
 Returns:
     New model instance.
 
-#### `model_dump(self, exclude_unset=True, exclude_none=True, **kwargs)`
+#### `model_dump`
+
+```python
+model_dump(self, exclude_unset=True, exclude_none=True, **kwargs)
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump
 
@@ -1525,7 +1937,11 @@ Args:
 Returns:
     A dictionary representation of the model.
 
-#### `model_dump_json(self, exclude_unset=True, exclude_none=True, **kwargs)`
+#### `model_dump_json`
+
+```python
+model_dump_json(self, exclude_unset=True, exclude_none=True, **kwargs)
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump_json
 
@@ -1548,7 +1964,11 @@ Args:
 Returns:
     A JSON string representation of the model.
 
-#### `model_post_init(self, _BaseModel__context: 'Any') -> 'None'`
+#### `model_post_init`
+
+```python
+model_post_init(self, _BaseModel__context: 'Any') -> 'None'
+```
 
 Override this method to perform additional initialization after `__init__` and `model_construct`.
 This is useful if you want to do some validation that requires the entire model to be initialized.
@@ -1557,7 +1977,11 @@ This is useful if you want to do some validation that requires the entire model 
 
 ### Methods
 
-#### `copy(self, *, include: 'AbstractSetIntStr | MappingIntStrAny | None' = None, exclude: 'AbstractSetIntStr | MappingIntStrAny | None' = None, update: 'Dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'`
+#### `copy`
+
+```python
+copy(self, *, include: 'AbstractSetIntStr | MappingIntStrAny | None' = None, exclude: 'AbstractSetIntStr | MappingIntStrAny | None' = None, update: 'Dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'
+```
 
 Returns a copy of the model.
 
@@ -1581,15 +2005,27 @@ Args:
 Returns:
     A copy of the model with included, excluded and updated fields as specified.
 
-#### `dict(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False) -> 'Dict[str, Any]'`
+#### `dict`
+
+```python
+dict(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False) -> 'Dict[str, Any]'
+```
 
 -
 
-#### `json(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False, encoder: 'Callable[[Any], Any] | None' = PydanticUndefined, models_as_dict: 'bool' = PydanticUndefined, **dumps_kwargs: 'Any') -> 'str'`
+#### `json`
+
+```python
+json(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False, encoder: 'Callable[[Any], Any] | None' = PydanticUndefined, models_as_dict: 'bool' = PydanticUndefined, **dumps_kwargs: 'Any') -> 'str'
+```
 
 -
 
-#### `model_copy(self, *, update: 'dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'`
+#### `model_copy`
+
+```python
+model_copy(self, *, update: 'dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#model_copy
 
@@ -1603,7 +2039,11 @@ Args:
 Returns:
     New model instance.
 
-#### `model_dump(self, exclude_unset=True, exclude_none=True, **kwargs)`
+#### `model_dump`
+
+```python
+model_dump(self, exclude_unset=True, exclude_none=True, **kwargs)
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump
 
@@ -1628,7 +2068,11 @@ Args:
 Returns:
     A dictionary representation of the model.
 
-#### `model_dump_json(self, exclude_unset=True, exclude_none=True, **kwargs)`
+#### `model_dump_json`
+
+```python
+model_dump_json(self, exclude_unset=True, exclude_none=True, **kwargs)
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump_json
 
@@ -1651,7 +2095,11 @@ Args:
 Returns:
     A JSON string representation of the model.
 
-#### `model_post_init(self, _BaseModel__context: 'Any') -> 'None'`
+#### `model_post_init`
+
+```python
+model_post_init(self, _BaseModel__context: 'Any') -> 'None'
+```
 
 Override this method to perform additional initialization after `__init__` and `model_construct`.
 This is useful if you want to do some validation that requires the entire model to be initialized.
@@ -1660,7 +2108,11 @@ This is useful if you want to do some validation that requires the entire model 
 
 ### Methods
 
-#### `copy(self, *, include: 'AbstractSetIntStr | MappingIntStrAny | None' = None, exclude: 'AbstractSetIntStr | MappingIntStrAny | None' = None, update: 'Dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'`
+#### `copy`
+
+```python
+copy(self, *, include: 'AbstractSetIntStr | MappingIntStrAny | None' = None, exclude: 'AbstractSetIntStr | MappingIntStrAny | None' = None, update: 'Dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'
+```
 
 Returns a copy of the model.
 
@@ -1684,15 +2136,27 @@ Args:
 Returns:
     A copy of the model with included, excluded and updated fields as specified.
 
-#### `dict(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False) -> 'Dict[str, Any]'`
+#### `dict`
+
+```python
+dict(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False) -> 'Dict[str, Any]'
+```
 
 -
 
-#### `json(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False, encoder: 'Callable[[Any], Any] | None' = PydanticUndefined, models_as_dict: 'bool' = PydanticUndefined, **dumps_kwargs: 'Any') -> 'str'`
+#### `json`
+
+```python
+json(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False, encoder: 'Callable[[Any], Any] | None' = PydanticUndefined, models_as_dict: 'bool' = PydanticUndefined, **dumps_kwargs: 'Any') -> 'str'
+```
 
 -
 
-#### `model_copy(self, *, update: 'dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'`
+#### `model_copy`
+
+```python
+model_copy(self, *, update: 'dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#model_copy
 
@@ -1706,7 +2170,11 @@ Args:
 Returns:
     New model instance.
 
-#### `model_dump(self, exclude_unset=True, exclude_none=True, **kwargs)`
+#### `model_dump`
+
+```python
+model_dump(self, exclude_unset=True, exclude_none=True, **kwargs)
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump
 
@@ -1731,7 +2199,11 @@ Args:
 Returns:
     A dictionary representation of the model.
 
-#### `model_dump_json(self, exclude_unset=True, exclude_none=True, **kwargs)`
+#### `model_dump_json`
+
+```python
+model_dump_json(self, exclude_unset=True, exclude_none=True, **kwargs)
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump_json
 
@@ -1754,7 +2226,11 @@ Args:
 Returns:
     A JSON string representation of the model.
 
-#### `model_post_init(self, _BaseModel__context: 'Any') -> 'None'`
+#### `model_post_init`
+
+```python
+model_post_init(self, _BaseModel__context: 'Any') -> 'None'
+```
 
 Override this method to perform additional initialization after `__init__` and `model_construct`.
 This is useful if you want to do some validation that requires the entire model to be initialized.
@@ -1767,7 +2243,11 @@ This is useful if you want to do some validation that requires the entire model 
 
 ### Methods
 
-#### `copy(self, *, include: 'AbstractSetIntStr | MappingIntStrAny | None' = None, exclude: 'AbstractSetIntStr | MappingIntStrAny | None' = None, update: 'Dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'`
+#### `copy`
+
+```python
+copy(self, *, include: 'AbstractSetIntStr | MappingIntStrAny | None' = None, exclude: 'AbstractSetIntStr | MappingIntStrAny | None' = None, update: 'Dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'
+```
 
 Returns a copy of the model.
 
@@ -1791,15 +2271,27 @@ Args:
 Returns:
     A copy of the model with included, excluded and updated fields as specified.
 
-#### `dict(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False) -> 'Dict[str, Any]'`
+#### `dict`
+
+```python
+dict(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False) -> 'Dict[str, Any]'
+```
 
 -
 
-#### `json(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False, encoder: 'Callable[[Any], Any] | None' = PydanticUndefined, models_as_dict: 'bool' = PydanticUndefined, **dumps_kwargs: 'Any') -> 'str'`
+#### `json`
+
+```python
+json(self, *, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False, encoder: 'Callable[[Any], Any] | None' = PydanticUndefined, models_as_dict: 'bool' = PydanticUndefined, **dumps_kwargs: 'Any') -> 'str'
+```
 
 -
 
-#### `model_copy(self, *, update: 'dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'`
+#### `model_copy`
+
+```python
+model_copy(self, *, update: 'dict[str, Any] | None' = None, deep: 'bool' = False) -> 'Self'
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#model_copy
 
@@ -1813,7 +2305,11 @@ Args:
 Returns:
     New model instance.
 
-#### `model_dump(self, *, mode: "Literal['json', 'python'] | str" = 'python', include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, context: 'Any | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False, round_trip: 'bool' = False, warnings: "bool | Literal['none', 'warn', 'error']" = True, serialize_as_any: 'bool' = False) -> 'dict[str, Any]'`
+#### `model_dump`
+
+```python
+model_dump(self, *, mode: "Literal['json', 'python'] | str" = 'python', include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, context: 'Any | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False, round_trip: 'bool' = False, warnings: "bool | Literal['none', 'warn', 'error']" = True, serialize_as_any: 'bool' = False) -> 'dict[str, Any]'
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump
 
@@ -1838,7 +2334,11 @@ Args:
 Returns:
     A dictionary representation of the model.
 
-#### `model_dump_json(self, *, indent: 'int | None' = None, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, context: 'Any | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False, round_trip: 'bool' = False, warnings: "bool | Literal['none', 'warn', 'error']" = True, serialize_as_any: 'bool' = False) -> 'str'`
+#### `model_dump_json`
+
+```python
+model_dump_json(self, *, indent: 'int | None' = None, include: 'IncEx | None' = None, exclude: 'IncEx | None' = None, context: 'Any | None' = None, by_alias: 'bool' = False, exclude_unset: 'bool' = False, exclude_defaults: 'bool' = False, exclude_none: 'bool' = False, round_trip: 'bool' = False, warnings: "bool | Literal['none', 'warn', 'error']" = True, serialize_as_any: 'bool' = False) -> 'str'
+```
 
 Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump_json
 
@@ -1861,7 +2361,11 @@ Args:
 Returns:
     A JSON string representation of the model.
 
-#### `model_post_init(self, _BaseModel__context: 'Any') -> 'None'`
+#### `model_post_init`
+
+```python
+model_post_init(self, _BaseModel__context: 'Any') -> 'None'
+```
 
 Override this method to perform additional initialization after `__init__` and `model_construct`.
 This is useful if you want to do some validation that requires the entire model to be initialized.

@@ -80,43 +80,83 @@ list of strings.
 
 ### Methods
 
-## Function `decode_args(predict: Callable) -> Callable[[ForwardRef('MLModel'), mlserver.types.dataplane.InferenceRequest], Coroutine[Any, Any, mlserver.types.dataplane.InferenceResponse]]`
+## Function `decode_args`
+
+```python
+decode_args(predict: Callable) -> Callable[[ForwardRef('MLModel'), mlserver.types.dataplane.InferenceRequest], Coroutine[Any, Any, mlserver.types.dataplane.InferenceResponse]]
+```
 
 -
 
-## Function `decode_inference_request(inference_request: mlserver.types.dataplane.InferenceRequest, model_settings: Optional[mlserver.settings.ModelSettings] = None, metadata_inputs: Dict[str, mlserver.types.dataplane.MetadataTensor] = {}) -> Optional[Any]`
+## Function `decode_inference_request`
+
+```python
+decode_inference_request(inference_request: mlserver.types.dataplane.InferenceRequest, model_settings: Optional[mlserver.settings.ModelSettings] = None, metadata_inputs: Dict[str, mlserver.types.dataplane.MetadataTensor] = {}) -> Optional[Any]
+```
 
 -
 
-## Function `decode_request_input(request_input: mlserver.types.dataplane.RequestInput, metadata_inputs: Dict[str, mlserver.types.dataplane.MetadataTensor] = {}) -> Optional[Any]`
+## Function `decode_request_input`
+
+```python
+decode_request_input(request_input: mlserver.types.dataplane.RequestInput, metadata_inputs: Dict[str, mlserver.types.dataplane.MetadataTensor] = {}) -> Optional[Any]
+```
 
 -
 
-## Function `encode_inference_response(payload: Any, model_settings: mlserver.settings.ModelSettings) -> Optional[mlserver.types.dataplane.InferenceResponse]`
+## Function `encode_inference_response`
+
+```python
+encode_inference_response(payload: Any, model_settings: mlserver.settings.ModelSettings) -> Optional[mlserver.types.dataplane.InferenceResponse]
+```
 
 -
 
-## Function `encode_response_output(payload: Any, request_output: mlserver.types.dataplane.RequestOutput, metadata_outputs: Dict[str, mlserver.types.dataplane.MetadataTensor] = {}) -> Optional[mlserver.types.dataplane.ResponseOutput]`
+## Function `encode_response_output`
+
+```python
+encode_response_output(payload: Any, request_output: mlserver.types.dataplane.RequestOutput, metadata_outputs: Dict[str, mlserver.types.dataplane.MetadataTensor] = {}) -> Optional[mlserver.types.dataplane.ResponseOutput]
+```
 
 -
 
-## Function `get_decoded(parametrised_obj: Union[mlserver.types.dataplane.InferenceRequest, mlserver.types.dataplane.RequestInput, mlserver.types.dataplane.RequestOutput, mlserver.types.dataplane.ResponseOutput, mlserver.types.dataplane.InferenceResponse]) -> Any`
+## Function `get_decoded`
+
+```python
+get_decoded(parametrised_obj: Union[mlserver.types.dataplane.InferenceRequest, mlserver.types.dataplane.RequestInput, mlserver.types.dataplane.RequestOutput, mlserver.types.dataplane.ResponseOutput, mlserver.types.dataplane.InferenceResponse]) -> Any
+```
 
 -
 
-## Function `get_decoded_or_raw(parametrised_obj: Union[mlserver.types.dataplane.InferenceRequest, mlserver.types.dataplane.RequestInput, mlserver.types.dataplane.RequestOutput, mlserver.types.dataplane.ResponseOutput, mlserver.types.dataplane.InferenceResponse]) -> Any`
+## Function `get_decoded_or_raw`
+
+```python
+get_decoded_or_raw(parametrised_obj: Union[mlserver.types.dataplane.InferenceRequest, mlserver.types.dataplane.RequestInput, mlserver.types.dataplane.RequestOutput, mlserver.types.dataplane.ResponseOutput, mlserver.types.dataplane.InferenceResponse]) -> Any
+```
 
 -
 
-## Function `has_decoded(parametrised_obj: Union[mlserver.types.dataplane.InferenceRequest, mlserver.types.dataplane.RequestInput, mlserver.types.dataplane.RequestOutput, mlserver.types.dataplane.ResponseOutput, mlserver.types.dataplane.InferenceResponse]) -> bool`
+## Function `has_decoded`
+
+```python
+has_decoded(parametrised_obj: Union[mlserver.types.dataplane.InferenceRequest, mlserver.types.dataplane.RequestInput, mlserver.types.dataplane.RequestOutput, mlserver.types.dataplane.ResponseOutput, mlserver.types.dataplane.InferenceResponse]) -> bool
+```
 
 -
 
-## Function `register_input_codec(CodecKlass: Union[Type[ForwardRef('InputCodec')], ForwardRef('InputCodec')])`
+## Function `register_input_codec`
+
+```python
+register_input_codec(CodecKlass: Union[Type[ForwardRef('InputCodec')], ForwardRef('InputCodec')])
+```
 
 -
 
-## Function `register_request_codec(CodecKlass: Union[Type[ForwardRef('RequestCodec')], ForwardRef('RequestCodec')])`
+## Function `register_request_codec`
+
+```python
+register_request_codec(CodecKlass: Union[Type[ForwardRef('RequestCodec')], ForwardRef('RequestCodec')])
+```
 
 -
 

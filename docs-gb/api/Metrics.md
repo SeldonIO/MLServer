@@ -8,23 +8,43 @@
 
 ### Methods
 
-#### `on_worker_stop(self, worker: 'Worker') -> None`
+#### `on_worker_stop`
+
+```python
+on_worker_stop(self, worker: 'Worker') -> None
+```
 
 -
 
-#### `start(self)`
+#### `start`
+
+```python
+start(self)
+```
 
 -
 
-#### `stop(self, sig: Optional[int] = None)`
+#### `stop`
+
+```python
+stop(self, sig: Optional[int] = None)
+```
 
 -
 
-## Function `configure_metrics(settings: mlserver.settings.Settings)`
+## Function `configure_metrics`
+
+```python
+configure_metrics(settings: mlserver.settings.Settings)
+```
 
 -
 
-## Function `log(**metrics)`
+## Function `log`
+
+```python
+log(**metrics)
+```
 
 Logs a new set of metric values.
 Each kwarg of this method will be treated as a separate metric / value
@@ -32,7 +52,11 @@ pair.
 If any of the metrics does not exist, a new one will be created with a
 default description.
 
-## Function `register(name: str, description: str) -> prometheus_client.metrics.Histogram`
+## Function `register`
+
+```python
+register(name: str, description: str) -> prometheus_client.metrics.Histogram
+```
 
 Registers a new metric with its description.
 If the metric already exists, it will just return the existing one.
