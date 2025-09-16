@@ -2,56 +2,10 @@
 
 ## Datatype
 
-Create a collection of name/value pairs.
-
-Example enumeration:
-
->>> class Color(Enum):
-...     RED = 1
-...     BLUE = 2
-...     GREEN = 3
-
-Access them by:
-
-- attribute access::
-
->>> Color.RED
-<Color.RED: 1>
-
-- value lookup:
-
->>> Color(1)
-<Color.RED: 1>
-
-- name lookup:
-
->>> Color['RED']
-<Color.RED: 1>
-
-Enumerations can be iterated over, and know how many members they have:
-
->>> len(Color)
-3
-
->>> list(Color)
-[<Color.RED: 1>, <Color.BLUE: 2>, <Color.GREEN: 3>]
-
-Methods can be added to enumerations, and members can have their own
-attributes -- see the documentation for details.
+An enumeration.
 
 ## InferenceErrorResponse
 
-Override Pydantic's BaseModel class to ensure all payloads exclude unset
-fields by default.
-
-From:
-    https://github.com/pydantic/pydantic/issues/1387#issuecomment-612901525
-
-### Fields
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `error` | `Optional[str]` | `None` | - |
 <details><summary>JSON Schema</summary>
 
 
@@ -83,20 +37,6 @@ From:
 
 ## InferenceRequest
 
-Override Pydantic's BaseModel class to ensure all payloads exclude unset
-fields by default.
-
-From:
-    https://github.com/pydantic/pydantic/issues/1387#issuecomment-612901525
-
-### Fields
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `id` | `Optional[str]` | `None` | - |
-| `inputs` | `List[RequestInput]` | `-` | - |
-| `outputs` | `Optional[List[RequestOutput]]` | `None` | - |
-| `parameters` | `Optional[Parameters]` | `None` | - |
 <details><summary>JSON Schema</summary>
 
 
@@ -290,21 +230,6 @@ From:
 
 ## InferenceResponse
 
-Override Pydantic's BaseModel class to ensure all payloads exclude unset
-fields by default.
-
-From:
-    https://github.com/pydantic/pydantic/issues/1387#issuecomment-612901525
-
-### Fields
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `id` | `Optional[str]` | `None` | - |
-| `model_name` | `str` | `-` | - |
-| `model_version` | `Optional[str]` | `None` | - |
-| `outputs` | `List[ResponseOutput]` | `-` | - |
-| `parameters` | `Optional[Parameters]` | `None` | - |
 <details><summary>JSON Schema</summary>
 
 
@@ -476,17 +401,6 @@ From:
 
 ## MetadataModelErrorResponse
 
-Override Pydantic's BaseModel class to ensure all payloads exclude unset
-fields by default.
-
-From:
-    https://github.com/pydantic/pydantic/issues/1387#issuecomment-612901525
-
-### Fields
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `error` | `str` | `-` | - |
 <details><summary>JSON Schema</summary>
 
 
@@ -513,22 +427,6 @@ From:
 
 ## MetadataModelResponse
 
-Override Pydantic's BaseModel class to ensure all payloads exclude unset
-fields by default.
-
-From:
-    https://github.com/pydantic/pydantic/issues/1387#issuecomment-612901525
-
-### Fields
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `inputs` | `Optional[List[MetadataTensor]]` | `None` | - |
-| `name` | `str` | `-` | - |
-| `outputs` | `Optional[List[MetadataTensor]]` | `None` | - |
-| `parameters` | `Optional[Parameters]` | `None` | - |
-| `platform` | `str` | `-` | - |
-| `versions` | `Optional[List[str]]` | `None` | - |
 <details><summary>JSON Schema</summary>
 
 
@@ -704,17 +602,6 @@ From:
 
 ## MetadataServerErrorResponse
 
-Override Pydantic's BaseModel class to ensure all payloads exclude unset
-fields by default.
-
-From:
-    https://github.com/pydantic/pydantic/issues/1387#issuecomment-612901525
-
-### Fields
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `error` | `str` | `-` | - |
 <details><summary>JSON Schema</summary>
 
 
@@ -741,19 +628,6 @@ From:
 
 ## MetadataServerResponse
 
-Override Pydantic's BaseModel class to ensure all payloads exclude unset
-fields by default.
-
-From:
-    https://github.com/pydantic/pydantic/issues/1387#issuecomment-612901525
-
-### Fields
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `extensions` | `List[str]` | `-` | - |
-| `name` | `str` | `-` | - |
-| `version` | `str` | `-` | - |
 <details><summary>JSON Schema</summary>
 
 
@@ -793,20 +667,6 @@ From:
 
 ## MetadataTensor
 
-Override Pydantic's BaseModel class to ensure all payloads exclude unset
-fields by default.
-
-From:
-    https://github.com/pydantic/pydantic/issues/1387#issuecomment-612901525
-
-### Fields
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `datatype` | `Datatype` | `-` | - |
-| `name` | `str` | `-` | - |
-| `parameters` | `Optional[Parameters]` | `None` | - |
-| `shape` | `List[int]` | `-` | - |
 <details><summary>JSON Schema</summary>
 
 
@@ -908,18 +768,6 @@ From:
 
 ## Parameters
 
-Override Pydantic's BaseModel class to ensure all payloads exclude unset
-fields by default.
-
-From:
-    https://github.com/pydantic/pydantic/issues/1387#issuecomment-612901525
-
-### Fields
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `content_type` | `Optional[str]` | `None` | - |
-| `headers` | `Optional[Dict[str, Any]]` | `None` | - |
 <details><summary>JSON Schema</summary>
 
 
@@ -964,17 +812,6 @@ From:
 
 ## RepositoryIndexRequest
 
-Override Pydantic's BaseModel class to ensure all payloads exclude unset
-fields by default.
-
-From:
-    https://github.com/pydantic/pydantic/issues/1387#issuecomment-612901525
-
-### Fields
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `ready` | `Optional[bool]` | `None` | - |
 <details><summary>JSON Schema</summary>
 
 
@@ -1006,21 +843,6 @@ From:
 
 ## RepositoryIndexResponse
 
-Usage docs: https://docs.pydantic.dev/2.9/concepts/models/#rootmodel-and-custom-root-types
-
-A Pydantic `BaseModel` for the root object of the model.
-
-Attributes:
-    root: The root object of the model.
-    __pydantic_root_model__: Whether the model is a RootModel.
-    __pydantic_private__: Private fields in the model.
-    __pydantic_extra__: Extra fields in the model.
-
-### Fields
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `root` | `List[RepositoryIndexResponseItem]` | `-` | - |
 <details><summary>JSON Schema</summary>
 
 
@@ -1088,20 +910,6 @@ Attributes:
 
 ## RepositoryIndexResponseItem
 
-Override Pydantic's BaseModel class to ensure all payloads exclude unset
-fields by default.
-
-From:
-    https://github.com/pydantic/pydantic/issues/1387#issuecomment-612901525
-
-### Fields
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `name` | `str` | `-` | - |
-| `reason` | `str` | `-` | - |
-| `state` | `State` | `-` | - |
-| `version` | `Optional[str]` | `None` | - |
 <details><summary>JSON Schema</summary>
 
 
@@ -1162,17 +970,6 @@ From:
 
 ## RepositoryLoadErrorResponse
 
-Override Pydantic's BaseModel class to ensure all payloads exclude unset
-fields by default.
-
-From:
-    https://github.com/pydantic/pydantic/issues/1387#issuecomment-612901525
-
-### Fields
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `error` | `Optional[str]` | `None` | - |
 <details><summary>JSON Schema</summary>
 
 
@@ -1204,17 +1001,6 @@ From:
 
 ## RepositoryUnloadErrorResponse
 
-Override Pydantic's BaseModel class to ensure all payloads exclude unset
-fields by default.
-
-From:
-    https://github.com/pydantic/pydantic/issues/1387#issuecomment-612901525
-
-### Fields
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `error` | `Optional[str]` | `None` | - |
 <details><summary>JSON Schema</summary>
 
 
@@ -1246,21 +1032,6 @@ From:
 
 ## RequestInput
 
-Override Pydantic's BaseModel class to ensure all payloads exclude unset
-fields by default.
-
-From:
-    https://github.com/pydantic/pydantic/issues/1387#issuecomment-612901525
-
-### Fields
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `data` | `TensorData` | `-` | - |
-| `datatype` | `Datatype` | `-` | - |
-| `name` | `str` | `-` | - |
-| `parameters` | `Optional[Parameters]` | `None` | - |
-| `shape` | `List[int]` | `-` | - |
 <details><summary>JSON Schema</summary>
 
 
@@ -1376,18 +1147,6 @@ From:
 
 ## RequestOutput
 
-Override Pydantic's BaseModel class to ensure all payloads exclude unset
-fields by default.
-
-From:
-    https://github.com/pydantic/pydantic/issues/1387#issuecomment-612901525
-
-### Fields
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `name` | `str` | `-` | - |
-| `parameters` | `Optional[Parameters]` | `None` | - |
 <details><summary>JSON Schema</summary>
 
 
@@ -1458,21 +1217,6 @@ From:
 
 ## ResponseOutput
 
-Override Pydantic's BaseModel class to ensure all payloads exclude unset
-fields by default.
-
-From:
-    https://github.com/pydantic/pydantic/issues/1387#issuecomment-612901525
-
-### Fields
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `data` | `TensorData` | `-` | - |
-| `datatype` | `Datatype` | `-` | - |
-| `name` | `str` | `-` | - |
-| `parameters` | `Optional[Parameters]` | `None` | - |
-| `shape` | `List[int]` | `-` | - |
 <details><summary>JSON Schema</summary>
 
 
@@ -1588,60 +1332,10 @@ From:
 
 ## State
 
-Create a collection of name/value pairs.
-
-Example enumeration:
-
->>> class Color(Enum):
-...     RED = 1
-...     BLUE = 2
-...     GREEN = 3
-
-Access them by:
-
-- attribute access::
-
->>> Color.RED
-<Color.RED: 1>
-
-- value lookup:
-
->>> Color(1)
-<Color.RED: 1>
-
-- name lookup:
-
->>> Color['RED']
-<Color.RED: 1>
-
-Enumerations can be iterated over, and know how many members they have:
-
->>> len(Color)
-3
-
->>> list(Color)
-[<Color.RED: 1>, <Color.BLUE: 2>, <Color.GREEN: 3>]
-
-Methods can be added to enumerations, and members can have their own
-attributes -- see the documentation for details.
+An enumeration.
 
 ## TensorData
 
-Usage docs: https://docs.pydantic.dev/2.9/concepts/models/#rootmodel-and-custom-root-types
-
-A Pydantic `BaseModel` for the root object of the model.
-
-Attributes:
-    root: The root object of the model.
-    __pydantic_root_model__: Whether the model is a RootModel.
-    __pydantic_private__: Private fields in the model.
-    __pydantic_extra__: Extra fields in the model.
-
-### Fields
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `root` | `Union[List[Any], Any]` | `-` | - |
 <details><summary>JSON Schema</summary>
 
 

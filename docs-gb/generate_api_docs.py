@@ -112,14 +112,23 @@ def _class_description(cls: type) -> str:
     - Enum subclasses: 'An enumeration.'
     - Pydantic models: 'A Pydantic model.'
     """
-    doc = inspect.getdoc(cls)
-    if doc:
-        return inspect.cleandoc(doc)
+    doc_attr = getattr(cls, "__doc__", None)
     try:
-        if issubclass(cls, enum.Enum):
-            return "An enumeration."
+        is_enum = issubclass(cls, enum.Enum)
     except Exception:
-        pass
+        is_enum = False
+
+    if doc_attr:
+        clean = inspect.cleandoc(doc_attr)
+        # If this looks like the generic Enum docs, replace with a short label
+        if is_enum:
+            enum_doc = inspect.getdoc(enum.Enum) or ""
+            if clean.strip() == enum_doc.strip() or clean.startswith("Create a collection of name/value pairs."):
+                return "An enumeration."
+        return clean
+
+    if is_enum:
+        return "An enumeration."
     if _is_pydantic_model(cls):
         return "A Pydantic model."
     return ""
@@ -144,6 +153,10 @@ def _should_include_schema_for_module(module: ModuleType) -> bool:
     # Only include collapsible JSON Schema for the public Types docs
     return getattr(module, "__name__", "") == "mlserver.types"
 
+def _should_include_fields_for_module(module: ModuleType) -> bool:
+    # Suppress Fields tables on the Types page
+    return getattr(module, "__name__", "") != "mlserver.types"
+
 def _render_json_schema_block(cls: type) -> list[str]:
     # Pydantic v2: model_json_schema; v1 fallback: schema
     try:
@@ -167,6 +180,24 @@ def _render_json_schema_block(cls: type) -> list[str]:
         "```\n\n",
         "</details>\n",
     ]
+
+def _get_method_doc_from_mro(cls: type, name: str, member: Any) -> str | None:
+    """Return the first available docstring for a method, searching the MRO."""
+    doc = inspect.getdoc(member)
+    if doc:
+        return doc
+    for base in getattr(cls, "__mro__", ())[1:]:
+        try:
+            cand = getattr(base, name)
+        except Exception:
+            continue
+        d = inspect.getdoc(cand)
+        if d:
+            return d
+    return None
+
+def _is_codecs_module(module: ModuleType) -> bool:
+    return getattr(module, "__name__", "") == "mlserver.codecs"
 
 # ---------------------------
 # Pydantic model docs
@@ -296,12 +327,11 @@ def document_class_or_module(obj: Union[type, ModuleType],
                 except Exception:
                     continue
 
-        # Collect classes re-exported by top-level module (if __all__), else public
+        # Collect classes exposed by this package
         for mod in modules:
             for cname, cls in inspect.getmembers(mod, inspect.isclass):
                 if not is_exported(cname):
                     continue
-                # Only include classes under this package namespace
                 if not getattr(cls, "__module__", "").startswith(obj.__name__):
                     continue
                 classes[cname] = cls
@@ -311,35 +341,54 @@ def document_class_or_module(obj: Union[type, ModuleType],
             cls = classes[cname]
             section: list[str] = [f"## {cname}\n"]
             desc = _class_description(cls)
-            if desc:
-                section.append(desc + "\n")
+
+            # Keep Types clean (as before)
+            if getattr(obj, "__name__", "") == "mlserver.types" and _is_pydantic_model(cls):
+                pass
+            else:
+                if desc:
+                    section.append(desc + "\n")
 
             if _is_pydantic_model(cls):
-                # Only fields for Pydantic classes
-                fields_lines = _render_pydantic_fields_for_class(cls)
-                if fields_lines:
-                    section.extend(fields_lines)
+                if _should_include_fields_for_module(obj):
+                    fields_lines = _render_pydantic_fields_for_class(cls)
+                    if fields_lines:
+                        section.extend(fields_lines)
                 if _should_include_schema_for_module(obj):
                     section.extend(_render_json_schema_block(cls))
             else:
                 # Methods for non-pydantic classes
                 method_blocks: list[str] = []
+
+                # In Codecs: include inherited methods and don’t rely on module __all__ for member filtering
+                include_inherited_here = _is_codecs_module(obj)
+
                 for mname, member in inspect.getmembers(cls):
-                    if not is_exported(mname):
+                    # Don’t use is_exported for class members; it’s for module-level symbols
+                    if not include_private and mname.startswith("_"):
                         continue
                     if not inspect.isroutine(member):
                         continue
                     if getattr(member, "__module__", "").startswith("builtins") or inspect.isbuiltin(member):
                         continue
-                    # Show only methods declared on this class to avoid inherited noise
-                    qn = getattr(member, "__qualname__", "")
-                    if qn.split(".")[0] != cls.__name__:
-                        continue
-                    doc = inspect.getdoc(member) or "_No description available._"
+                    # Outside Codecs, only show methods declared on this class
+                    if not include_inherited_here:
+                        qn = getattr(member, "__qualname__", "")
+                        if qn.split(".")[0] != cls.__name__:
+                            continue
+
+                    # Docstring: for Codecs, look up through MRO to avoid “No description available.”
+                    if include_inherited_here:
+                        doc = _get_method_doc_from_mro(cls, mname, member)
+                    else:
+                        doc = inspect.getdoc(member)
+
                     sig_str = _format_signature(member)
                     method_blocks.append(f"### {mname}()\n")
                     method_blocks.append(f"```python\n{sig_str}\n```\n")
-                    method_blocks.append(f"{doc}\n")
+                    if doc:  # In Codecs, omit placeholder if missing
+                        method_blocks.append(f"{doc}\n")
+
                 if method_blocks:
                     section.append("### Methods\n")
                     section.extend(method_blocks)
@@ -353,7 +402,6 @@ def document_class_or_module(obj: Union[type, ModuleType],
             for fname, func in inspect.getmembers(mod, inspect.isfunction):
                 if not is_exported(fname):
                     continue
-                # Only functions exposed by this package
                 if not getattr(func, "__module__", "").startswith(obj.__name__):
                     continue
                 fqname = f"{func.__module__}.{fname}"

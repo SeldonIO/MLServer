@@ -2,6 +2,26 @@
 
 ## MetricsServer
 
+### Methods
+
+### on_worker_stop()
+
+```python
+on_worker_stop(worker: Worker) -> None
+```
+
+### start()
+
+```python
+start()
+```
+
+### stop()
+
+```python
+stop(sig: Optional[int] = None)
+```
+
 ## configure_metrics()
 
 ```python
