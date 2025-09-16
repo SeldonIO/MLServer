@@ -2,2363 +2,1664 @@
 
 ## Datatype
 
+Create a collection of name/value pairs.
+
+Example enumeration:
+
+>>> class Color(Enum):
+...     RED = 1
+...     BLUE = 2
+...     GREEN = 3
+
+Access them by:
+
+- attribute access::
+
+>>> Color.RED
+<Color.RED: 1>
+
+- value lookup:
+
+>>> Color(1)
+<Color.RED: 1>
+
+- name lookup:
+
+>>> Color['RED']
+<Color.RED: 1>
+
+Enumerations can be iterated over, and know how many members they have:
+
+>>> len(Color)
+3
+
+>>> list(Color)
+[<Color.RED: 1>, <Color.BLUE: 2>, <Color.GREEN: 3>]
+
+Methods can be added to enumerations, and members can have their own
+attributes -- see the documentation for details.
+
 ## InferenceErrorResponse
 
-### Methods
+Override Pydantic's BaseModel class to ensure all payloads exclude unset
+fields by default.
 
-### copy()
+From:
+    https://github.com/pydantic/pydantic/issues/1387#issuecomment-612901525
 
-```python
-copy(self, include: AbstractSetIntStr | MappingIntStrAny | None = None, exclude: AbstractSetIntStr | MappingIntStrAny | None = None, update: Dict[str, Any] | None = None, deep: bool = False) -> Self
+### Fields
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `error` | `Optional[str]` | `None` | - |
+<details><summary>JSON Schema</summary>
+
+
+```json
+
+{
+  "properties": {
+    "error": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Error"
+    }
+  },
+  "title": "InferenceErrorResponse",
+  "type": "object"
+}
+
 ```
 
-Returns a copy of the model.
 
-!!! warning "Deprecated"
-    This method is now deprecated; use `model_copy` instead.
-
-If you need `include` or `exclude`, use:
-
-```py
-data = self.model_dump(include=include, exclude=exclude, round_trip=True)
-data = {**data, **(update or {})}
-copied = self.model_validate(data)
-```
-
-Args:
-    include: Optional set or mapping specifying which fields to include in the copied model.
-    exclude: Optional set or mapping specifying which fields to exclude in the copied model.
-    update: Optional dictionary of field-value pairs to override field values in the copied model.
-    deep: If True, the values of fields that are Pydantic models will be deep-copied.
-
-Returns:
-    A copy of the model with included, excluded and updated fields as specified.
-
-### dict()
-
-```python
-dict(self, include: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, exclude: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, by_alias: bool = False, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False) -> Dict[str, Any]
-```
-
-_No description available._
-
-### json()
-
-```python
-json(self, include: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, exclude: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, by_alias: bool = False, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False, encoder: Optional[Callable[[typing.Any], Any]] = PydanticUndefined, models_as_dict: bool = PydanticUndefined, dumps_kwargs: Any) -> str
-```
-
-_No description available._
-
-### model_copy()
-
-```python
-model_copy(self, update: UnionType[Dict[str, Any], None] = None, deep: bool = False) -> Self
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#model_copy
-
-Returns a copy of the model.
-
-Args:
-    update: Values to change/add in the new model. Note: the data is not validated
-        before creating the new model. You should trust this data.
-    deep: Set to `True` to make a deep copy of the model.
-
-Returns:
-    New model instance.
-
-### model_dump()
-
-```python
-model_dump(self, exclude_unset = True, exclude_none = True, kwargs)
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump
-
-Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
-
-Args:
-    mode: The mode in which `to_python` should run.
-        If mode is 'json', the output will only contain JSON serializable types.
-        If mode is 'python', the output may contain non-JSON-serializable Python objects.
-    include: A set of fields to include in the output.
-    exclude: A set of fields to exclude from the output.
-    context: Additional context to pass to the serializer.
-    by_alias: Whether to use the field's alias in the dictionary key if defined.
-    exclude_unset: Whether to exclude fields that have not been explicitly set.
-    exclude_defaults: Whether to exclude fields that are set to their default value.
-    exclude_none: Whether to exclude fields that have a value of `None`.
-    round_trip: If True, dumped values should be valid as input for non-idempotent types such as Json[T].
-    warnings: How to handle serialization errors. False/"none" ignores them, True/"warn" logs errors,
-        "error" raises a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError].
-    serialize_as_any: Whether to serialize fields with duck-typing serialization behavior.
-
-Returns:
-    A dictionary representation of the model.
-
-### model_dump_json()
-
-```python
-model_dump_json(self, exclude_unset = True, exclude_none = True, kwargs)
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump_json
-
-Generates a JSON representation of the model using Pydantic's `to_json` method.
-
-Args:
-    indent: Indentation to use in the JSON output. If None is passed, the output will be compact.
-    include: Field(s) to include in the JSON output.
-    exclude: Field(s) to exclude from the JSON output.
-    context: Additional context to pass to the serializer.
-    by_alias: Whether to serialize using field aliases.
-    exclude_unset: Whether to exclude fields that have not been explicitly set.
-    exclude_defaults: Whether to exclude fields that are set to their default value.
-    exclude_none: Whether to exclude fields that have a value of `None`.
-    round_trip: If True, dumped values should be valid as input for non-idempotent types such as Json[T].
-    warnings: How to handle serialization errors. False/"none" ignores them, True/"warn" logs errors,
-        "error" raises a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError].
-    serialize_as_any: Whether to serialize fields with duck-typing serialization behavior.
-
-Returns:
-    A JSON string representation of the model.
-
-### model_post_init()
-
-```python
-model_post_init(self, _BaseModel__context: Any) -> None
-```
-
-Override this method to perform additional initialization after `__init__` and `model_construct`.
-This is useful if you want to do some validation that requires the entire model to be initialized.
+</details>
 
 ## InferenceRequest
 
-### Methods
+Override Pydantic's BaseModel class to ensure all payloads exclude unset
+fields by default.
 
-### copy()
+From:
+    https://github.com/pydantic/pydantic/issues/1387#issuecomment-612901525
 
-```python
-copy(self, include: AbstractSetIntStr | MappingIntStrAny | None = None, exclude: AbstractSetIntStr | MappingIntStrAny | None = None, update: Dict[str, Any] | None = None, deep: bool = False) -> Self
+### Fields
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `id` | `Optional[str]` | `None` | - |
+| `inputs` | `List[RequestInput]` | `-` | - |
+| `outputs` | `Optional[List[RequestOutput]]` | `None` | - |
+| `parameters` | `Optional[Parameters]` | `None` | - |
+<details><summary>JSON Schema</summary>
+
+
+```json
+
+{
+  "$defs": {
+    "Datatype": {
+      "enum": [
+        "BOOL",
+        "UINT8",
+        "UINT16",
+        "UINT32",
+        "UINT64",
+        "INT8",
+        "INT16",
+        "INT32",
+        "INT64",
+        "FP16",
+        "FP32",
+        "FP64",
+        "BYTES"
+      ],
+      "title": "Datatype",
+      "type": "string"
+    },
+    "Parameters": {
+      "additionalProperties": true,
+      "properties": {
+        "content_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content Type"
+        },
+        "headers": {
+          "anyOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Headers"
+        }
+      },
+      "title": "Parameters",
+      "type": "object"
+    },
+    "RequestInput": {
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "shape": {
+          "items": {
+            "type": "integer"
+          },
+          "title": "Shape",
+          "type": "array"
+        },
+        "datatype": {
+          "$ref": "#/$defs/Datatype"
+        },
+        "parameters": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Parameters"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "data": {
+          "$ref": "#/$defs/TensorData"
+        }
+      },
+      "required": [
+        "name",
+        "shape",
+        "datatype",
+        "data"
+      ],
+      "title": "RequestInput",
+      "type": "object"
+    },
+    "RequestOutput": {
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "parameters": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Parameters"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "RequestOutput",
+      "type": "object"
+    },
+    "TensorData": {
+      "anyOf": [
+        {
+          "items": {},
+          "type": "array"
+        },
+        {}
+      ],
+      "title": "TensorData"
+    }
+  },
+  "properties": {
+    "id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Id"
+    },
+    "parameters": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Parameters"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "inputs": {
+      "items": {
+        "$ref": "#/$defs/RequestInput"
+      },
+      "title": "Inputs",
+      "type": "array"
+    },
+    "outputs": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/RequestOutput"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Outputs"
+    }
+  },
+  "required": [
+    "inputs"
+  ],
+  "title": "InferenceRequest",
+  "type": "object"
+}
+
 ```
 
-Returns a copy of the model.
 
-!!! warning "Deprecated"
-    This method is now deprecated; use `model_copy` instead.
-
-If you need `include` or `exclude`, use:
-
-```py
-data = self.model_dump(include=include, exclude=exclude, round_trip=True)
-data = {**data, **(update or {})}
-copied = self.model_validate(data)
-```
-
-Args:
-    include: Optional set or mapping specifying which fields to include in the copied model.
-    exclude: Optional set or mapping specifying which fields to exclude in the copied model.
-    update: Optional dictionary of field-value pairs to override field values in the copied model.
-    deep: If True, the values of fields that are Pydantic models will be deep-copied.
-
-Returns:
-    A copy of the model with included, excluded and updated fields as specified.
-
-### dict()
-
-```python
-dict(self, include: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, exclude: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, by_alias: bool = False, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False) -> Dict[str, Any]
-```
-
-_No description available._
-
-### json()
-
-```python
-json(self, include: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, exclude: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, by_alias: bool = False, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False, encoder: Optional[Callable[[typing.Any], Any]] = PydanticUndefined, models_as_dict: bool = PydanticUndefined, dumps_kwargs: Any) -> str
-```
-
-_No description available._
-
-### model_copy()
-
-```python
-model_copy(self, update: UnionType[Dict[str, Any], None] = None, deep: bool = False) -> Self
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#model_copy
-
-Returns a copy of the model.
-
-Args:
-    update: Values to change/add in the new model. Note: the data is not validated
-        before creating the new model. You should trust this data.
-    deep: Set to `True` to make a deep copy of the model.
-
-Returns:
-    New model instance.
-
-### model_dump()
-
-```python
-model_dump(self, exclude_unset = True, exclude_none = True, kwargs)
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump
-
-Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
-
-Args:
-    mode: The mode in which `to_python` should run.
-        If mode is 'json', the output will only contain JSON serializable types.
-        If mode is 'python', the output may contain non-JSON-serializable Python objects.
-    include: A set of fields to include in the output.
-    exclude: A set of fields to exclude from the output.
-    context: Additional context to pass to the serializer.
-    by_alias: Whether to use the field's alias in the dictionary key if defined.
-    exclude_unset: Whether to exclude fields that have not been explicitly set.
-    exclude_defaults: Whether to exclude fields that are set to their default value.
-    exclude_none: Whether to exclude fields that have a value of `None`.
-    round_trip: If True, dumped values should be valid as input for non-idempotent types such as Json[T].
-    warnings: How to handle serialization errors. False/"none" ignores them, True/"warn" logs errors,
-        "error" raises a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError].
-    serialize_as_any: Whether to serialize fields with duck-typing serialization behavior.
-
-Returns:
-    A dictionary representation of the model.
-
-### model_dump_json()
-
-```python
-model_dump_json(self, exclude_unset = True, exclude_none = True, kwargs)
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump_json
-
-Generates a JSON representation of the model using Pydantic's `to_json` method.
-
-Args:
-    indent: Indentation to use in the JSON output. If None is passed, the output will be compact.
-    include: Field(s) to include in the JSON output.
-    exclude: Field(s) to exclude from the JSON output.
-    context: Additional context to pass to the serializer.
-    by_alias: Whether to serialize using field aliases.
-    exclude_unset: Whether to exclude fields that have not been explicitly set.
-    exclude_defaults: Whether to exclude fields that are set to their default value.
-    exclude_none: Whether to exclude fields that have a value of `None`.
-    round_trip: If True, dumped values should be valid as input for non-idempotent types such as Json[T].
-    warnings: How to handle serialization errors. False/"none" ignores them, True/"warn" logs errors,
-        "error" raises a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError].
-    serialize_as_any: Whether to serialize fields with duck-typing serialization behavior.
-
-Returns:
-    A JSON string representation of the model.
-
-### model_post_init()
-
-```python
-model_post_init(self, _BaseModel__context: Any) -> None
-```
-
-Override this method to perform additional initialization after `__init__` and `model_construct`.
-This is useful if you want to do some validation that requires the entire model to be initialized.
+</details>
 
 ## InferenceResponse
 
-### Methods
+Override Pydantic's BaseModel class to ensure all payloads exclude unset
+fields by default.
 
-### copy()
+From:
+    https://github.com/pydantic/pydantic/issues/1387#issuecomment-612901525
 
-```python
-copy(self, include: AbstractSetIntStr | MappingIntStrAny | None = None, exclude: AbstractSetIntStr | MappingIntStrAny | None = None, update: Dict[str, Any] | None = None, deep: bool = False) -> Self
+### Fields
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `id` | `Optional[str]` | `None` | - |
+| `model_name` | `str` | `-` | - |
+| `model_version` | `Optional[str]` | `None` | - |
+| `outputs` | `List[ResponseOutput]` | `-` | - |
+| `parameters` | `Optional[Parameters]` | `None` | - |
+<details><summary>JSON Schema</summary>
+
+
+```json
+
+{
+  "$defs": {
+    "Datatype": {
+      "enum": [
+        "BOOL",
+        "UINT8",
+        "UINT16",
+        "UINT32",
+        "UINT64",
+        "INT8",
+        "INT16",
+        "INT32",
+        "INT64",
+        "FP16",
+        "FP32",
+        "FP64",
+        "BYTES"
+      ],
+      "title": "Datatype",
+      "type": "string"
+    },
+    "Parameters": {
+      "additionalProperties": true,
+      "properties": {
+        "content_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content Type"
+        },
+        "headers": {
+          "anyOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Headers"
+        }
+      },
+      "title": "Parameters",
+      "type": "object"
+    },
+    "ResponseOutput": {
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "shape": {
+          "items": {
+            "type": "integer"
+          },
+          "title": "Shape",
+          "type": "array"
+        },
+        "datatype": {
+          "$ref": "#/$defs/Datatype"
+        },
+        "parameters": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Parameters"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "data": {
+          "$ref": "#/$defs/TensorData"
+        }
+      },
+      "required": [
+        "name",
+        "shape",
+        "datatype",
+        "data"
+      ],
+      "title": "ResponseOutput",
+      "type": "object"
+    },
+    "TensorData": {
+      "anyOf": [
+        {
+          "items": {},
+          "type": "array"
+        },
+        {}
+      ],
+      "title": "TensorData"
+    }
+  },
+  "properties": {
+    "model_name": {
+      "title": "Model Name",
+      "type": "string"
+    },
+    "model_version": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Model Version"
+    },
+    "id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Id"
+    },
+    "parameters": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Parameters"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "outputs": {
+      "items": {
+        "$ref": "#/$defs/ResponseOutput"
+      },
+      "title": "Outputs",
+      "type": "array"
+    }
+  },
+  "required": [
+    "model_name",
+    "outputs"
+  ],
+  "title": "InferenceResponse",
+  "type": "object"
+}
+
 ```
 
-Returns a copy of the model.
 
-!!! warning "Deprecated"
-    This method is now deprecated; use `model_copy` instead.
-
-If you need `include` or `exclude`, use:
-
-```py
-data = self.model_dump(include=include, exclude=exclude, round_trip=True)
-data = {**data, **(update or {})}
-copied = self.model_validate(data)
-```
-
-Args:
-    include: Optional set or mapping specifying which fields to include in the copied model.
-    exclude: Optional set or mapping specifying which fields to exclude in the copied model.
-    update: Optional dictionary of field-value pairs to override field values in the copied model.
-    deep: If True, the values of fields that are Pydantic models will be deep-copied.
-
-Returns:
-    A copy of the model with included, excluded and updated fields as specified.
-
-### dict()
-
-```python
-dict(self, include: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, exclude: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, by_alias: bool = False, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False) -> Dict[str, Any]
-```
-
-_No description available._
-
-### json()
-
-```python
-json(self, include: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, exclude: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, by_alias: bool = False, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False, encoder: Optional[Callable[[typing.Any], Any]] = PydanticUndefined, models_as_dict: bool = PydanticUndefined, dumps_kwargs: Any) -> str
-```
-
-_No description available._
-
-### model_copy()
-
-```python
-model_copy(self, update: UnionType[Dict[str, Any], None] = None, deep: bool = False) -> Self
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#model_copy
-
-Returns a copy of the model.
-
-Args:
-    update: Values to change/add in the new model. Note: the data is not validated
-        before creating the new model. You should trust this data.
-    deep: Set to `True` to make a deep copy of the model.
-
-Returns:
-    New model instance.
-
-### model_dump()
-
-```python
-model_dump(self, exclude_unset = True, exclude_none = True, kwargs)
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump
-
-Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
-
-Args:
-    mode: The mode in which `to_python` should run.
-        If mode is 'json', the output will only contain JSON serializable types.
-        If mode is 'python', the output may contain non-JSON-serializable Python objects.
-    include: A set of fields to include in the output.
-    exclude: A set of fields to exclude from the output.
-    context: Additional context to pass to the serializer.
-    by_alias: Whether to use the field's alias in the dictionary key if defined.
-    exclude_unset: Whether to exclude fields that have not been explicitly set.
-    exclude_defaults: Whether to exclude fields that are set to their default value.
-    exclude_none: Whether to exclude fields that have a value of `None`.
-    round_trip: If True, dumped values should be valid as input for non-idempotent types such as Json[T].
-    warnings: How to handle serialization errors. False/"none" ignores them, True/"warn" logs errors,
-        "error" raises a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError].
-    serialize_as_any: Whether to serialize fields with duck-typing serialization behavior.
-
-Returns:
-    A dictionary representation of the model.
-
-### model_dump_json()
-
-```python
-model_dump_json(self, exclude_unset = True, exclude_none = True, kwargs)
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump_json
-
-Generates a JSON representation of the model using Pydantic's `to_json` method.
-
-Args:
-    indent: Indentation to use in the JSON output. If None is passed, the output will be compact.
-    include: Field(s) to include in the JSON output.
-    exclude: Field(s) to exclude from the JSON output.
-    context: Additional context to pass to the serializer.
-    by_alias: Whether to serialize using field aliases.
-    exclude_unset: Whether to exclude fields that have not been explicitly set.
-    exclude_defaults: Whether to exclude fields that are set to their default value.
-    exclude_none: Whether to exclude fields that have a value of `None`.
-    round_trip: If True, dumped values should be valid as input for non-idempotent types such as Json[T].
-    warnings: How to handle serialization errors. False/"none" ignores them, True/"warn" logs errors,
-        "error" raises a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError].
-    serialize_as_any: Whether to serialize fields with duck-typing serialization behavior.
-
-Returns:
-    A JSON string representation of the model.
-
-### model_post_init()
-
-```python
-model_post_init(self, _BaseModel__context: Any) -> None
-```
-
-Override this method to perform additional initialization after `__init__` and `model_construct`.
-This is useful if you want to do some validation that requires the entire model to be initialized.
+</details>
 
 ## MetadataModelErrorResponse
 
-### Methods
+Override Pydantic's BaseModel class to ensure all payloads exclude unset
+fields by default.
 
-### copy()
+From:
+    https://github.com/pydantic/pydantic/issues/1387#issuecomment-612901525
 
-```python
-copy(self, include: AbstractSetIntStr | MappingIntStrAny | None = None, exclude: AbstractSetIntStr | MappingIntStrAny | None = None, update: Dict[str, Any] | None = None, deep: bool = False) -> Self
+### Fields
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `error` | `str` | `-` | - |
+<details><summary>JSON Schema</summary>
+
+
+```json
+
+{
+  "properties": {
+    "error": {
+      "title": "Error",
+      "type": "string"
+    }
+  },
+  "required": [
+    "error"
+  ],
+  "title": "MetadataModelErrorResponse",
+  "type": "object"
+}
+
 ```
 
-Returns a copy of the model.
 
-!!! warning "Deprecated"
-    This method is now deprecated; use `model_copy` instead.
-
-If you need `include` or `exclude`, use:
-
-```py
-data = self.model_dump(include=include, exclude=exclude, round_trip=True)
-data = {**data, **(update or {})}
-copied = self.model_validate(data)
-```
-
-Args:
-    include: Optional set or mapping specifying which fields to include in the copied model.
-    exclude: Optional set or mapping specifying which fields to exclude in the copied model.
-    update: Optional dictionary of field-value pairs to override field values in the copied model.
-    deep: If True, the values of fields that are Pydantic models will be deep-copied.
-
-Returns:
-    A copy of the model with included, excluded and updated fields as specified.
-
-### dict()
-
-```python
-dict(self, include: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, exclude: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, by_alias: bool = False, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False) -> Dict[str, Any]
-```
-
-_No description available._
-
-### json()
-
-```python
-json(self, include: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, exclude: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, by_alias: bool = False, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False, encoder: Optional[Callable[[typing.Any], Any]] = PydanticUndefined, models_as_dict: bool = PydanticUndefined, dumps_kwargs: Any) -> str
-```
-
-_No description available._
-
-### model_copy()
-
-```python
-model_copy(self, update: UnionType[Dict[str, Any], None] = None, deep: bool = False) -> Self
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#model_copy
-
-Returns a copy of the model.
-
-Args:
-    update: Values to change/add in the new model. Note: the data is not validated
-        before creating the new model. You should trust this data.
-    deep: Set to `True` to make a deep copy of the model.
-
-Returns:
-    New model instance.
-
-### model_dump()
-
-```python
-model_dump(self, exclude_unset = True, exclude_none = True, kwargs)
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump
-
-Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
-
-Args:
-    mode: The mode in which `to_python` should run.
-        If mode is 'json', the output will only contain JSON serializable types.
-        If mode is 'python', the output may contain non-JSON-serializable Python objects.
-    include: A set of fields to include in the output.
-    exclude: A set of fields to exclude from the output.
-    context: Additional context to pass to the serializer.
-    by_alias: Whether to use the field's alias in the dictionary key if defined.
-    exclude_unset: Whether to exclude fields that have not been explicitly set.
-    exclude_defaults: Whether to exclude fields that are set to their default value.
-    exclude_none: Whether to exclude fields that have a value of `None`.
-    round_trip: If True, dumped values should be valid as input for non-idempotent types such as Json[T].
-    warnings: How to handle serialization errors. False/"none" ignores them, True/"warn" logs errors,
-        "error" raises a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError].
-    serialize_as_any: Whether to serialize fields with duck-typing serialization behavior.
-
-Returns:
-    A dictionary representation of the model.
-
-### model_dump_json()
-
-```python
-model_dump_json(self, exclude_unset = True, exclude_none = True, kwargs)
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump_json
-
-Generates a JSON representation of the model using Pydantic's `to_json` method.
-
-Args:
-    indent: Indentation to use in the JSON output. If None is passed, the output will be compact.
-    include: Field(s) to include in the JSON output.
-    exclude: Field(s) to exclude from the JSON output.
-    context: Additional context to pass to the serializer.
-    by_alias: Whether to serialize using field aliases.
-    exclude_unset: Whether to exclude fields that have not been explicitly set.
-    exclude_defaults: Whether to exclude fields that are set to their default value.
-    exclude_none: Whether to exclude fields that have a value of `None`.
-    round_trip: If True, dumped values should be valid as input for non-idempotent types such as Json[T].
-    warnings: How to handle serialization errors. False/"none" ignores them, True/"warn" logs errors,
-        "error" raises a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError].
-    serialize_as_any: Whether to serialize fields with duck-typing serialization behavior.
-
-Returns:
-    A JSON string representation of the model.
-
-### model_post_init()
-
-```python
-model_post_init(self, _BaseModel__context: Any) -> None
-```
-
-Override this method to perform additional initialization after `__init__` and `model_construct`.
-This is useful if you want to do some validation that requires the entire model to be initialized.
+</details>
 
 ## MetadataModelResponse
 
-### Methods
+Override Pydantic's BaseModel class to ensure all payloads exclude unset
+fields by default.
 
-### copy()
+From:
+    https://github.com/pydantic/pydantic/issues/1387#issuecomment-612901525
 
-```python
-copy(self, include: AbstractSetIntStr | MappingIntStrAny | None = None, exclude: AbstractSetIntStr | MappingIntStrAny | None = None, update: Dict[str, Any] | None = None, deep: bool = False) -> Self
+### Fields
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `inputs` | `Optional[List[MetadataTensor]]` | `None` | - |
+| `name` | `str` | `-` | - |
+| `outputs` | `Optional[List[MetadataTensor]]` | `None` | - |
+| `parameters` | `Optional[Parameters]` | `None` | - |
+| `platform` | `str` | `-` | - |
+| `versions` | `Optional[List[str]]` | `None` | - |
+<details><summary>JSON Schema</summary>
+
+
+```json
+
+{
+  "$defs": {
+    "Datatype": {
+      "enum": [
+        "BOOL",
+        "UINT8",
+        "UINT16",
+        "UINT32",
+        "UINT64",
+        "INT8",
+        "INT16",
+        "INT32",
+        "INT64",
+        "FP16",
+        "FP32",
+        "FP64",
+        "BYTES"
+      ],
+      "title": "Datatype",
+      "type": "string"
+    },
+    "MetadataTensor": {
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "datatype": {
+          "$ref": "#/$defs/Datatype"
+        },
+        "shape": {
+          "items": {
+            "type": "integer"
+          },
+          "title": "Shape",
+          "type": "array"
+        },
+        "parameters": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Parameters"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "name",
+        "datatype",
+        "shape"
+      ],
+      "title": "MetadataTensor",
+      "type": "object"
+    },
+    "Parameters": {
+      "additionalProperties": true,
+      "properties": {
+        "content_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content Type"
+        },
+        "headers": {
+          "anyOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Headers"
+        }
+      },
+      "title": "Parameters",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "versions": {
+      "anyOf": [
+        {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Versions"
+    },
+    "platform": {
+      "title": "Platform",
+      "type": "string"
+    },
+    "inputs": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/MetadataTensor"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Inputs"
+    },
+    "outputs": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/MetadataTensor"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Outputs"
+    },
+    "parameters": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Parameters"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "name",
+    "platform"
+  ],
+  "title": "MetadataModelResponse",
+  "type": "object"
+}
+
 ```
 
-Returns a copy of the model.
 
-!!! warning "Deprecated"
-    This method is now deprecated; use `model_copy` instead.
-
-If you need `include` or `exclude`, use:
-
-```py
-data = self.model_dump(include=include, exclude=exclude, round_trip=True)
-data = {**data, **(update or {})}
-copied = self.model_validate(data)
-```
-
-Args:
-    include: Optional set or mapping specifying which fields to include in the copied model.
-    exclude: Optional set or mapping specifying which fields to exclude in the copied model.
-    update: Optional dictionary of field-value pairs to override field values in the copied model.
-    deep: If True, the values of fields that are Pydantic models will be deep-copied.
-
-Returns:
-    A copy of the model with included, excluded and updated fields as specified.
-
-### dict()
-
-```python
-dict(self, include: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, exclude: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, by_alias: bool = False, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False) -> Dict[str, Any]
-```
-
-_No description available._
-
-### json()
-
-```python
-json(self, include: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, exclude: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, by_alias: bool = False, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False, encoder: Optional[Callable[[typing.Any], Any]] = PydanticUndefined, models_as_dict: bool = PydanticUndefined, dumps_kwargs: Any) -> str
-```
-
-_No description available._
-
-### model_copy()
-
-```python
-model_copy(self, update: UnionType[Dict[str, Any], None] = None, deep: bool = False) -> Self
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#model_copy
-
-Returns a copy of the model.
-
-Args:
-    update: Values to change/add in the new model. Note: the data is not validated
-        before creating the new model. You should trust this data.
-    deep: Set to `True` to make a deep copy of the model.
-
-Returns:
-    New model instance.
-
-### model_dump()
-
-```python
-model_dump(self, exclude_unset = True, exclude_none = True, kwargs)
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump
-
-Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
-
-Args:
-    mode: The mode in which `to_python` should run.
-        If mode is 'json', the output will only contain JSON serializable types.
-        If mode is 'python', the output may contain non-JSON-serializable Python objects.
-    include: A set of fields to include in the output.
-    exclude: A set of fields to exclude from the output.
-    context: Additional context to pass to the serializer.
-    by_alias: Whether to use the field's alias in the dictionary key if defined.
-    exclude_unset: Whether to exclude fields that have not been explicitly set.
-    exclude_defaults: Whether to exclude fields that are set to their default value.
-    exclude_none: Whether to exclude fields that have a value of `None`.
-    round_trip: If True, dumped values should be valid as input for non-idempotent types such as Json[T].
-    warnings: How to handle serialization errors. False/"none" ignores them, True/"warn" logs errors,
-        "error" raises a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError].
-    serialize_as_any: Whether to serialize fields with duck-typing serialization behavior.
-
-Returns:
-    A dictionary representation of the model.
-
-### model_dump_json()
-
-```python
-model_dump_json(self, exclude_unset = True, exclude_none = True, kwargs)
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump_json
-
-Generates a JSON representation of the model using Pydantic's `to_json` method.
-
-Args:
-    indent: Indentation to use in the JSON output. If None is passed, the output will be compact.
-    include: Field(s) to include in the JSON output.
-    exclude: Field(s) to exclude from the JSON output.
-    context: Additional context to pass to the serializer.
-    by_alias: Whether to serialize using field aliases.
-    exclude_unset: Whether to exclude fields that have not been explicitly set.
-    exclude_defaults: Whether to exclude fields that are set to their default value.
-    exclude_none: Whether to exclude fields that have a value of `None`.
-    round_trip: If True, dumped values should be valid as input for non-idempotent types such as Json[T].
-    warnings: How to handle serialization errors. False/"none" ignores them, True/"warn" logs errors,
-        "error" raises a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError].
-    serialize_as_any: Whether to serialize fields with duck-typing serialization behavior.
-
-Returns:
-    A JSON string representation of the model.
-
-### model_post_init()
-
-```python
-model_post_init(self, _BaseModel__context: Any) -> None
-```
-
-Override this method to perform additional initialization after `__init__` and `model_construct`.
-This is useful if you want to do some validation that requires the entire model to be initialized.
+</details>
 
 ## MetadataServerErrorResponse
 
-### Methods
+Override Pydantic's BaseModel class to ensure all payloads exclude unset
+fields by default.
 
-### copy()
+From:
+    https://github.com/pydantic/pydantic/issues/1387#issuecomment-612901525
 
-```python
-copy(self, include: AbstractSetIntStr | MappingIntStrAny | None = None, exclude: AbstractSetIntStr | MappingIntStrAny | None = None, update: Dict[str, Any] | None = None, deep: bool = False) -> Self
+### Fields
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `error` | `str` | `-` | - |
+<details><summary>JSON Schema</summary>
+
+
+```json
+
+{
+  "properties": {
+    "error": {
+      "title": "Error",
+      "type": "string"
+    }
+  },
+  "required": [
+    "error"
+  ],
+  "title": "MetadataServerErrorResponse",
+  "type": "object"
+}
+
 ```
 
-Returns a copy of the model.
 
-!!! warning "Deprecated"
-    This method is now deprecated; use `model_copy` instead.
-
-If you need `include` or `exclude`, use:
-
-```py
-data = self.model_dump(include=include, exclude=exclude, round_trip=True)
-data = {**data, **(update or {})}
-copied = self.model_validate(data)
-```
-
-Args:
-    include: Optional set or mapping specifying which fields to include in the copied model.
-    exclude: Optional set or mapping specifying which fields to exclude in the copied model.
-    update: Optional dictionary of field-value pairs to override field values in the copied model.
-    deep: If True, the values of fields that are Pydantic models will be deep-copied.
-
-Returns:
-    A copy of the model with included, excluded and updated fields as specified.
-
-### dict()
-
-```python
-dict(self, include: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, exclude: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, by_alias: bool = False, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False) -> Dict[str, Any]
-```
-
-_No description available._
-
-### json()
-
-```python
-json(self, include: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, exclude: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, by_alias: bool = False, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False, encoder: Optional[Callable[[typing.Any], Any]] = PydanticUndefined, models_as_dict: bool = PydanticUndefined, dumps_kwargs: Any) -> str
-```
-
-_No description available._
-
-### model_copy()
-
-```python
-model_copy(self, update: UnionType[Dict[str, Any], None] = None, deep: bool = False) -> Self
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#model_copy
-
-Returns a copy of the model.
-
-Args:
-    update: Values to change/add in the new model. Note: the data is not validated
-        before creating the new model. You should trust this data.
-    deep: Set to `True` to make a deep copy of the model.
-
-Returns:
-    New model instance.
-
-### model_dump()
-
-```python
-model_dump(self, exclude_unset = True, exclude_none = True, kwargs)
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump
-
-Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
-
-Args:
-    mode: The mode in which `to_python` should run.
-        If mode is 'json', the output will only contain JSON serializable types.
-        If mode is 'python', the output may contain non-JSON-serializable Python objects.
-    include: A set of fields to include in the output.
-    exclude: A set of fields to exclude from the output.
-    context: Additional context to pass to the serializer.
-    by_alias: Whether to use the field's alias in the dictionary key if defined.
-    exclude_unset: Whether to exclude fields that have not been explicitly set.
-    exclude_defaults: Whether to exclude fields that are set to their default value.
-    exclude_none: Whether to exclude fields that have a value of `None`.
-    round_trip: If True, dumped values should be valid as input for non-idempotent types such as Json[T].
-    warnings: How to handle serialization errors. False/"none" ignores them, True/"warn" logs errors,
-        "error" raises a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError].
-    serialize_as_any: Whether to serialize fields with duck-typing serialization behavior.
-
-Returns:
-    A dictionary representation of the model.
-
-### model_dump_json()
-
-```python
-model_dump_json(self, exclude_unset = True, exclude_none = True, kwargs)
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump_json
-
-Generates a JSON representation of the model using Pydantic's `to_json` method.
-
-Args:
-    indent: Indentation to use in the JSON output. If None is passed, the output will be compact.
-    include: Field(s) to include in the JSON output.
-    exclude: Field(s) to exclude from the JSON output.
-    context: Additional context to pass to the serializer.
-    by_alias: Whether to serialize using field aliases.
-    exclude_unset: Whether to exclude fields that have not been explicitly set.
-    exclude_defaults: Whether to exclude fields that are set to their default value.
-    exclude_none: Whether to exclude fields that have a value of `None`.
-    round_trip: If True, dumped values should be valid as input for non-idempotent types such as Json[T].
-    warnings: How to handle serialization errors. False/"none" ignores them, True/"warn" logs errors,
-        "error" raises a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError].
-    serialize_as_any: Whether to serialize fields with duck-typing serialization behavior.
-
-Returns:
-    A JSON string representation of the model.
-
-### model_post_init()
-
-```python
-model_post_init(self, _BaseModel__context: Any) -> None
-```
-
-Override this method to perform additional initialization after `__init__` and `model_construct`.
-This is useful if you want to do some validation that requires the entire model to be initialized.
+</details>
 
 ## MetadataServerResponse
 
-### Methods
+Override Pydantic's BaseModel class to ensure all payloads exclude unset
+fields by default.
 
-### copy()
+From:
+    https://github.com/pydantic/pydantic/issues/1387#issuecomment-612901525
 
-```python
-copy(self, include: AbstractSetIntStr | MappingIntStrAny | None = None, exclude: AbstractSetIntStr | MappingIntStrAny | None = None, update: Dict[str, Any] | None = None, deep: bool = False) -> Self
+### Fields
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `extensions` | `List[str]` | `-` | - |
+| `name` | `str` | `-` | - |
+| `version` | `str` | `-` | - |
+<details><summary>JSON Schema</summary>
+
+
+```json
+
+{
+  "properties": {
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "version": {
+      "title": "Version",
+      "type": "string"
+    },
+    "extensions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Extensions",
+      "type": "array"
+    }
+  },
+  "required": [
+    "name",
+    "version",
+    "extensions"
+  ],
+  "title": "MetadataServerResponse",
+  "type": "object"
+}
+
 ```
 
-Returns a copy of the model.
 
-!!! warning "Deprecated"
-    This method is now deprecated; use `model_copy` instead.
-
-If you need `include` or `exclude`, use:
-
-```py
-data = self.model_dump(include=include, exclude=exclude, round_trip=True)
-data = {**data, **(update or {})}
-copied = self.model_validate(data)
-```
-
-Args:
-    include: Optional set or mapping specifying which fields to include in the copied model.
-    exclude: Optional set or mapping specifying which fields to exclude in the copied model.
-    update: Optional dictionary of field-value pairs to override field values in the copied model.
-    deep: If True, the values of fields that are Pydantic models will be deep-copied.
-
-Returns:
-    A copy of the model with included, excluded and updated fields as specified.
-
-### dict()
-
-```python
-dict(self, include: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, exclude: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, by_alias: bool = False, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False) -> Dict[str, Any]
-```
-
-_No description available._
-
-### json()
-
-```python
-json(self, include: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, exclude: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, by_alias: bool = False, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False, encoder: Optional[Callable[[typing.Any], Any]] = PydanticUndefined, models_as_dict: bool = PydanticUndefined, dumps_kwargs: Any) -> str
-```
-
-_No description available._
-
-### model_copy()
-
-```python
-model_copy(self, update: UnionType[Dict[str, Any], None] = None, deep: bool = False) -> Self
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#model_copy
-
-Returns a copy of the model.
-
-Args:
-    update: Values to change/add in the new model. Note: the data is not validated
-        before creating the new model. You should trust this data.
-    deep: Set to `True` to make a deep copy of the model.
-
-Returns:
-    New model instance.
-
-### model_dump()
-
-```python
-model_dump(self, exclude_unset = True, exclude_none = True, kwargs)
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump
-
-Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
-
-Args:
-    mode: The mode in which `to_python` should run.
-        If mode is 'json', the output will only contain JSON serializable types.
-        If mode is 'python', the output may contain non-JSON-serializable Python objects.
-    include: A set of fields to include in the output.
-    exclude: A set of fields to exclude from the output.
-    context: Additional context to pass to the serializer.
-    by_alias: Whether to use the field's alias in the dictionary key if defined.
-    exclude_unset: Whether to exclude fields that have not been explicitly set.
-    exclude_defaults: Whether to exclude fields that are set to their default value.
-    exclude_none: Whether to exclude fields that have a value of `None`.
-    round_trip: If True, dumped values should be valid as input for non-idempotent types such as Json[T].
-    warnings: How to handle serialization errors. False/"none" ignores them, True/"warn" logs errors,
-        "error" raises a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError].
-    serialize_as_any: Whether to serialize fields with duck-typing serialization behavior.
-
-Returns:
-    A dictionary representation of the model.
-
-### model_dump_json()
-
-```python
-model_dump_json(self, exclude_unset = True, exclude_none = True, kwargs)
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump_json
-
-Generates a JSON representation of the model using Pydantic's `to_json` method.
-
-Args:
-    indent: Indentation to use in the JSON output. If None is passed, the output will be compact.
-    include: Field(s) to include in the JSON output.
-    exclude: Field(s) to exclude from the JSON output.
-    context: Additional context to pass to the serializer.
-    by_alias: Whether to serialize using field aliases.
-    exclude_unset: Whether to exclude fields that have not been explicitly set.
-    exclude_defaults: Whether to exclude fields that are set to their default value.
-    exclude_none: Whether to exclude fields that have a value of `None`.
-    round_trip: If True, dumped values should be valid as input for non-idempotent types such as Json[T].
-    warnings: How to handle serialization errors. False/"none" ignores them, True/"warn" logs errors,
-        "error" raises a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError].
-    serialize_as_any: Whether to serialize fields with duck-typing serialization behavior.
-
-Returns:
-    A JSON string representation of the model.
-
-### model_post_init()
-
-```python
-model_post_init(self, _BaseModel__context: Any) -> None
-```
-
-Override this method to perform additional initialization after `__init__` and `model_construct`.
-This is useful if you want to do some validation that requires the entire model to be initialized.
+</details>
 
 ## MetadataTensor
 
-### Methods
+Override Pydantic's BaseModel class to ensure all payloads exclude unset
+fields by default.
 
-### copy()
+From:
+    https://github.com/pydantic/pydantic/issues/1387#issuecomment-612901525
 
-```python
-copy(self, include: AbstractSetIntStr | MappingIntStrAny | None = None, exclude: AbstractSetIntStr | MappingIntStrAny | None = None, update: Dict[str, Any] | None = None, deep: bool = False) -> Self
+### Fields
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `datatype` | `Datatype` | `-` | - |
+| `name` | `str` | `-` | - |
+| `parameters` | `Optional[Parameters]` | `None` | - |
+| `shape` | `List[int]` | `-` | - |
+<details><summary>JSON Schema</summary>
+
+
+```json
+
+{
+  "$defs": {
+    "Datatype": {
+      "enum": [
+        "BOOL",
+        "UINT8",
+        "UINT16",
+        "UINT32",
+        "UINT64",
+        "INT8",
+        "INT16",
+        "INT32",
+        "INT64",
+        "FP16",
+        "FP32",
+        "FP64",
+        "BYTES"
+      ],
+      "title": "Datatype",
+      "type": "string"
+    },
+    "Parameters": {
+      "additionalProperties": true,
+      "properties": {
+        "content_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content Type"
+        },
+        "headers": {
+          "anyOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Headers"
+        }
+      },
+      "title": "Parameters",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "datatype": {
+      "$ref": "#/$defs/Datatype"
+    },
+    "shape": {
+      "items": {
+        "type": "integer"
+      },
+      "title": "Shape",
+      "type": "array"
+    },
+    "parameters": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Parameters"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "name",
+    "datatype",
+    "shape"
+  ],
+  "title": "MetadataTensor",
+  "type": "object"
+}
+
 ```
 
-Returns a copy of the model.
 
-!!! warning "Deprecated"
-    This method is now deprecated; use `model_copy` instead.
-
-If you need `include` or `exclude`, use:
-
-```py
-data = self.model_dump(include=include, exclude=exclude, round_trip=True)
-data = {**data, **(update or {})}
-copied = self.model_validate(data)
-```
-
-Args:
-    include: Optional set or mapping specifying which fields to include in the copied model.
-    exclude: Optional set or mapping specifying which fields to exclude in the copied model.
-    update: Optional dictionary of field-value pairs to override field values in the copied model.
-    deep: If True, the values of fields that are Pydantic models will be deep-copied.
-
-Returns:
-    A copy of the model with included, excluded and updated fields as specified.
-
-### dict()
-
-```python
-dict(self, include: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, exclude: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, by_alias: bool = False, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False) -> Dict[str, Any]
-```
-
-_No description available._
-
-### json()
-
-```python
-json(self, include: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, exclude: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, by_alias: bool = False, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False, encoder: Optional[Callable[[typing.Any], Any]] = PydanticUndefined, models_as_dict: bool = PydanticUndefined, dumps_kwargs: Any) -> str
-```
-
-_No description available._
-
-### model_copy()
-
-```python
-model_copy(self, update: UnionType[Dict[str, Any], None] = None, deep: bool = False) -> Self
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#model_copy
-
-Returns a copy of the model.
-
-Args:
-    update: Values to change/add in the new model. Note: the data is not validated
-        before creating the new model. You should trust this data.
-    deep: Set to `True` to make a deep copy of the model.
-
-Returns:
-    New model instance.
-
-### model_dump()
-
-```python
-model_dump(self, exclude_unset = True, exclude_none = True, kwargs)
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump
-
-Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
-
-Args:
-    mode: The mode in which `to_python` should run.
-        If mode is 'json', the output will only contain JSON serializable types.
-        If mode is 'python', the output may contain non-JSON-serializable Python objects.
-    include: A set of fields to include in the output.
-    exclude: A set of fields to exclude from the output.
-    context: Additional context to pass to the serializer.
-    by_alias: Whether to use the field's alias in the dictionary key if defined.
-    exclude_unset: Whether to exclude fields that have not been explicitly set.
-    exclude_defaults: Whether to exclude fields that are set to their default value.
-    exclude_none: Whether to exclude fields that have a value of `None`.
-    round_trip: If True, dumped values should be valid as input for non-idempotent types such as Json[T].
-    warnings: How to handle serialization errors. False/"none" ignores them, True/"warn" logs errors,
-        "error" raises a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError].
-    serialize_as_any: Whether to serialize fields with duck-typing serialization behavior.
-
-Returns:
-    A dictionary representation of the model.
-
-### model_dump_json()
-
-```python
-model_dump_json(self, exclude_unset = True, exclude_none = True, kwargs)
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump_json
-
-Generates a JSON representation of the model using Pydantic's `to_json` method.
-
-Args:
-    indent: Indentation to use in the JSON output. If None is passed, the output will be compact.
-    include: Field(s) to include in the JSON output.
-    exclude: Field(s) to exclude from the JSON output.
-    context: Additional context to pass to the serializer.
-    by_alias: Whether to serialize using field aliases.
-    exclude_unset: Whether to exclude fields that have not been explicitly set.
-    exclude_defaults: Whether to exclude fields that are set to their default value.
-    exclude_none: Whether to exclude fields that have a value of `None`.
-    round_trip: If True, dumped values should be valid as input for non-idempotent types such as Json[T].
-    warnings: How to handle serialization errors. False/"none" ignores them, True/"warn" logs errors,
-        "error" raises a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError].
-    serialize_as_any: Whether to serialize fields with duck-typing serialization behavior.
-
-Returns:
-    A JSON string representation of the model.
-
-### model_post_init()
-
-```python
-model_post_init(self, _BaseModel__context: Any) -> None
-```
-
-Override this method to perform additional initialization after `__init__` and `model_construct`.
-This is useful if you want to do some validation that requires the entire model to be initialized.
+</details>
 
 ## Parameters
 
-### Methods
+Override Pydantic's BaseModel class to ensure all payloads exclude unset
+fields by default.
 
-### copy()
+From:
+    https://github.com/pydantic/pydantic/issues/1387#issuecomment-612901525
 
-```python
-copy(self, include: AbstractSetIntStr | MappingIntStrAny | None = None, exclude: AbstractSetIntStr | MappingIntStrAny | None = None, update: Dict[str, Any] | None = None, deep: bool = False) -> Self
+### Fields
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `content_type` | `Optional[str]` | `None` | - |
+| `headers` | `Optional[Dict[str, Any]]` | `None` | - |
+<details><summary>JSON Schema</summary>
+
+
+```json
+
+{
+  "additionalProperties": true,
+  "properties": {
+    "content_type": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Content Type"
+    },
+    "headers": {
+      "anyOf": [
+        {
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Headers"
+    }
+  },
+  "title": "Parameters",
+  "type": "object"
+}
+
 ```
 
-Returns a copy of the model.
 
-!!! warning "Deprecated"
-    This method is now deprecated; use `model_copy` instead.
-
-If you need `include` or `exclude`, use:
-
-```py
-data = self.model_dump(include=include, exclude=exclude, round_trip=True)
-data = {**data, **(update or {})}
-copied = self.model_validate(data)
-```
-
-Args:
-    include: Optional set or mapping specifying which fields to include in the copied model.
-    exclude: Optional set or mapping specifying which fields to exclude in the copied model.
-    update: Optional dictionary of field-value pairs to override field values in the copied model.
-    deep: If True, the values of fields that are Pydantic models will be deep-copied.
-
-Returns:
-    A copy of the model with included, excluded and updated fields as specified.
-
-### dict()
-
-```python
-dict(self, include: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, exclude: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, by_alias: bool = False, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False) -> Dict[str, Any]
-```
-
-_No description available._
-
-### json()
-
-```python
-json(self, include: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, exclude: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, by_alias: bool = False, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False, encoder: Optional[Callable[[typing.Any], Any]] = PydanticUndefined, models_as_dict: bool = PydanticUndefined, dumps_kwargs: Any) -> str
-```
-
-_No description available._
-
-### model_copy()
-
-```python
-model_copy(self, update: UnionType[Dict[str, Any], None] = None, deep: bool = False) -> Self
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#model_copy
-
-Returns a copy of the model.
-
-Args:
-    update: Values to change/add in the new model. Note: the data is not validated
-        before creating the new model. You should trust this data.
-    deep: Set to `True` to make a deep copy of the model.
-
-Returns:
-    New model instance.
-
-### model_dump()
-
-```python
-model_dump(self, exclude_unset = True, exclude_none = True, kwargs)
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump
-
-Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
-
-Args:
-    mode: The mode in which `to_python` should run.
-        If mode is 'json', the output will only contain JSON serializable types.
-        If mode is 'python', the output may contain non-JSON-serializable Python objects.
-    include: A set of fields to include in the output.
-    exclude: A set of fields to exclude from the output.
-    context: Additional context to pass to the serializer.
-    by_alias: Whether to use the field's alias in the dictionary key if defined.
-    exclude_unset: Whether to exclude fields that have not been explicitly set.
-    exclude_defaults: Whether to exclude fields that are set to their default value.
-    exclude_none: Whether to exclude fields that have a value of `None`.
-    round_trip: If True, dumped values should be valid as input for non-idempotent types such as Json[T].
-    warnings: How to handle serialization errors. False/"none" ignores them, True/"warn" logs errors,
-        "error" raises a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError].
-    serialize_as_any: Whether to serialize fields with duck-typing serialization behavior.
-
-Returns:
-    A dictionary representation of the model.
-
-### model_dump_json()
-
-```python
-model_dump_json(self, exclude_unset = True, exclude_none = True, kwargs)
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump_json
-
-Generates a JSON representation of the model using Pydantic's `to_json` method.
-
-Args:
-    indent: Indentation to use in the JSON output. If None is passed, the output will be compact.
-    include: Field(s) to include in the JSON output.
-    exclude: Field(s) to exclude from the JSON output.
-    context: Additional context to pass to the serializer.
-    by_alias: Whether to serialize using field aliases.
-    exclude_unset: Whether to exclude fields that have not been explicitly set.
-    exclude_defaults: Whether to exclude fields that are set to their default value.
-    exclude_none: Whether to exclude fields that have a value of `None`.
-    round_trip: If True, dumped values should be valid as input for non-idempotent types such as Json[T].
-    warnings: How to handle serialization errors. False/"none" ignores them, True/"warn" logs errors,
-        "error" raises a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError].
-    serialize_as_any: Whether to serialize fields with duck-typing serialization behavior.
-
-Returns:
-    A JSON string representation of the model.
-
-### model_post_init()
-
-```python
-model_post_init(self, _BaseModel__context: Any) -> None
-```
-
-Override this method to perform additional initialization after `__init__` and `model_construct`.
-This is useful if you want to do some validation that requires the entire model to be initialized.
+</details>
 
 ## RepositoryIndexRequest
 
-### Methods
+Override Pydantic's BaseModel class to ensure all payloads exclude unset
+fields by default.
 
-### copy()
+From:
+    https://github.com/pydantic/pydantic/issues/1387#issuecomment-612901525
 
-```python
-copy(self, include: AbstractSetIntStr | MappingIntStrAny | None = None, exclude: AbstractSetIntStr | MappingIntStrAny | None = None, update: Dict[str, Any] | None = None, deep: bool = False) -> Self
+### Fields
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `ready` | `Optional[bool]` | `None` | - |
+<details><summary>JSON Schema</summary>
+
+
+```json
+
+{
+  "properties": {
+    "ready": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Ready"
+    }
+  },
+  "title": "RepositoryIndexRequest",
+  "type": "object"
+}
+
 ```
 
-Returns a copy of the model.
 
-!!! warning "Deprecated"
-    This method is now deprecated; use `model_copy` instead.
-
-If you need `include` or `exclude`, use:
-
-```py
-data = self.model_dump(include=include, exclude=exclude, round_trip=True)
-data = {**data, **(update or {})}
-copied = self.model_validate(data)
-```
-
-Args:
-    include: Optional set or mapping specifying which fields to include in the copied model.
-    exclude: Optional set or mapping specifying which fields to exclude in the copied model.
-    update: Optional dictionary of field-value pairs to override field values in the copied model.
-    deep: If True, the values of fields that are Pydantic models will be deep-copied.
-
-Returns:
-    A copy of the model with included, excluded and updated fields as specified.
-
-### dict()
-
-```python
-dict(self, include: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, exclude: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, by_alias: bool = False, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False) -> Dict[str, Any]
-```
-
-_No description available._
-
-### json()
-
-```python
-json(self, include: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, exclude: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, by_alias: bool = False, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False, encoder: Optional[Callable[[typing.Any], Any]] = PydanticUndefined, models_as_dict: bool = PydanticUndefined, dumps_kwargs: Any) -> str
-```
-
-_No description available._
-
-### model_copy()
-
-```python
-model_copy(self, update: UnionType[Dict[str, Any], None] = None, deep: bool = False) -> Self
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#model_copy
-
-Returns a copy of the model.
-
-Args:
-    update: Values to change/add in the new model. Note: the data is not validated
-        before creating the new model. You should trust this data.
-    deep: Set to `True` to make a deep copy of the model.
-
-Returns:
-    New model instance.
-
-### model_dump()
-
-```python
-model_dump(self, exclude_unset = True, exclude_none = True, kwargs)
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump
-
-Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
-
-Args:
-    mode: The mode in which `to_python` should run.
-        If mode is 'json', the output will only contain JSON serializable types.
-        If mode is 'python', the output may contain non-JSON-serializable Python objects.
-    include: A set of fields to include in the output.
-    exclude: A set of fields to exclude from the output.
-    context: Additional context to pass to the serializer.
-    by_alias: Whether to use the field's alias in the dictionary key if defined.
-    exclude_unset: Whether to exclude fields that have not been explicitly set.
-    exclude_defaults: Whether to exclude fields that are set to their default value.
-    exclude_none: Whether to exclude fields that have a value of `None`.
-    round_trip: If True, dumped values should be valid as input for non-idempotent types such as Json[T].
-    warnings: How to handle serialization errors. False/"none" ignores them, True/"warn" logs errors,
-        "error" raises a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError].
-    serialize_as_any: Whether to serialize fields with duck-typing serialization behavior.
-
-Returns:
-    A dictionary representation of the model.
-
-### model_dump_json()
-
-```python
-model_dump_json(self, exclude_unset = True, exclude_none = True, kwargs)
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump_json
-
-Generates a JSON representation of the model using Pydantic's `to_json` method.
-
-Args:
-    indent: Indentation to use in the JSON output. If None is passed, the output will be compact.
-    include: Field(s) to include in the JSON output.
-    exclude: Field(s) to exclude from the JSON output.
-    context: Additional context to pass to the serializer.
-    by_alias: Whether to serialize using field aliases.
-    exclude_unset: Whether to exclude fields that have not been explicitly set.
-    exclude_defaults: Whether to exclude fields that are set to their default value.
-    exclude_none: Whether to exclude fields that have a value of `None`.
-    round_trip: If True, dumped values should be valid as input for non-idempotent types such as Json[T].
-    warnings: How to handle serialization errors. False/"none" ignores them, True/"warn" logs errors,
-        "error" raises a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError].
-    serialize_as_any: Whether to serialize fields with duck-typing serialization behavior.
-
-Returns:
-    A JSON string representation of the model.
-
-### model_post_init()
-
-```python
-model_post_init(self, _BaseModel__context: Any) -> None
-```
-
-Override this method to perform additional initialization after `__init__` and `model_construct`.
-This is useful if you want to do some validation that requires the entire model to be initialized.
+</details>
 
 ## RepositoryIndexResponse
 
-### Methods
+Usage docs: https://docs.pydantic.dev/2.9/concepts/models/#rootmodel-and-custom-root-types
 
-### copy()
+A Pydantic `BaseModel` for the root object of the model.
 
-```python
-copy(self, include: AbstractSetIntStr | MappingIntStrAny | None = None, exclude: AbstractSetIntStr | MappingIntStrAny | None = None, update: Dict[str, Any] | None = None, deep: bool = False) -> Self
+Attributes:
+    root: The root object of the model.
+    __pydantic_root_model__: Whether the model is a RootModel.
+    __pydantic_private__: Private fields in the model.
+    __pydantic_extra__: Extra fields in the model.
+
+### Fields
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `root` | `List[RepositoryIndexResponseItem]` | `-` | - |
+<details><summary>JSON Schema</summary>
+
+
+```json
+
+{
+  "$defs": {
+    "RepositoryIndexResponseItem": {
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Version"
+        },
+        "state": {
+          "$ref": "#/$defs/State"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "state",
+        "reason"
+      ],
+      "title": "RepositoryIndexResponseItem",
+      "type": "object"
+    },
+    "State": {
+      "enum": [
+        "UNKNOWN",
+        "READY",
+        "UNAVAILABLE",
+        "LOADING",
+        "UNLOADING"
+      ],
+      "title": "State",
+      "type": "string"
+    }
+  },
+  "items": {
+    "$ref": "#/$defs/RepositoryIndexResponseItem"
+  },
+  "title": "RepositoryIndexResponse",
+  "type": "array"
+}
+
 ```
 
-Returns a copy of the model.
 
-!!! warning "Deprecated"
-    This method is now deprecated; use `model_copy` instead.
-
-If you need `include` or `exclude`, use:
-
-```py
-data = self.model_dump(include=include, exclude=exclude, round_trip=True)
-data = {**data, **(update or {})}
-copied = self.model_validate(data)
-```
-
-Args:
-    include: Optional set or mapping specifying which fields to include in the copied model.
-    exclude: Optional set or mapping specifying which fields to exclude in the copied model.
-    update: Optional dictionary of field-value pairs to override field values in the copied model.
-    deep: If True, the values of fields that are Pydantic models will be deep-copied.
-
-Returns:
-    A copy of the model with included, excluded and updated fields as specified.
-
-### dict()
-
-```python
-dict(self, include: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, exclude: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, by_alias: bool = False, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False) -> Dict[str, Any]
-```
-
-_No description available._
-
-### json()
-
-```python
-json(self, include: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, exclude: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, by_alias: bool = False, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False, encoder: Optional[Callable[[typing.Any], Any]] = PydanticUndefined, models_as_dict: bool = PydanticUndefined, dumps_kwargs: Any) -> str
-```
-
-_No description available._
-
-### model_copy()
-
-```python
-model_copy(self, update: UnionType[Dict[str, Any], None] = None, deep: bool = False) -> Self
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#model_copy
-
-Returns a copy of the model.
-
-Args:
-    update: Values to change/add in the new model. Note: the data is not validated
-        before creating the new model. You should trust this data.
-    deep: Set to `True` to make a deep copy of the model.
-
-Returns:
-    New model instance.
-
-### model_dump()
-
-```python
-model_dump(self, mode: Union[Literal['json', 'python'], str] = 'python', include: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, exclude: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, context: UnionType[Any, None] = None, by_alias: bool = False, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False, round_trip: bool = False, warnings: Union[bool, Literal['none', 'warn', 'error']] = True, serialize_as_any: bool = False) -> Dict[str, Any]
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump
-
-Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
-
-Args:
-    mode: The mode in which `to_python` should run.
-        If mode is 'json', the output will only contain JSON serializable types.
-        If mode is 'python', the output may contain non-JSON-serializable Python objects.
-    include: A set of fields to include in the output.
-    exclude: A set of fields to exclude from the output.
-    context: Additional context to pass to the serializer.
-    by_alias: Whether to use the field's alias in the dictionary key if defined.
-    exclude_unset: Whether to exclude fields that have not been explicitly set.
-    exclude_defaults: Whether to exclude fields that are set to their default value.
-    exclude_none: Whether to exclude fields that have a value of `None`.
-    round_trip: If True, dumped values should be valid as input for non-idempotent types such as Json[T].
-    warnings: How to handle serialization errors. False/"none" ignores them, True/"warn" logs errors,
-        "error" raises a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError].
-    serialize_as_any: Whether to serialize fields with duck-typing serialization behavior.
-
-Returns:
-    A dictionary representation of the model.
-
-### model_dump_json()
-
-```python
-model_dump_json(self, indent: UnionType[int, None] = None, include: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, exclude: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, context: UnionType[Any, None] = None, by_alias: bool = False, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False, round_trip: bool = False, warnings: Union[bool, Literal['none', 'warn', 'error']] = True, serialize_as_any: bool = False) -> str
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump_json
-
-Generates a JSON representation of the model using Pydantic's `to_json` method.
-
-Args:
-    indent: Indentation to use in the JSON output. If None is passed, the output will be compact.
-    include: Field(s) to include in the JSON output.
-    exclude: Field(s) to exclude from the JSON output.
-    context: Additional context to pass to the serializer.
-    by_alias: Whether to serialize using field aliases.
-    exclude_unset: Whether to exclude fields that have not been explicitly set.
-    exclude_defaults: Whether to exclude fields that are set to their default value.
-    exclude_none: Whether to exclude fields that have a value of `None`.
-    round_trip: If True, dumped values should be valid as input for non-idempotent types such as Json[T].
-    warnings: How to handle serialization errors. False/"none" ignores them, True/"warn" logs errors,
-        "error" raises a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError].
-    serialize_as_any: Whether to serialize fields with duck-typing serialization behavior.
-
-Returns:
-    A JSON string representation of the model.
-
-### model_post_init()
-
-```python
-model_post_init(self, _BaseModel__context: Any) -> None
-```
-
-Override this method to perform additional initialization after `__init__` and `model_construct`.
-This is useful if you want to do some validation that requires the entire model to be initialized.
+</details>
 
 ## RepositoryIndexResponseItem
 
-### Methods
+Override Pydantic's BaseModel class to ensure all payloads exclude unset
+fields by default.
 
-### copy()
+From:
+    https://github.com/pydantic/pydantic/issues/1387#issuecomment-612901525
 
-```python
-copy(self, include: AbstractSetIntStr | MappingIntStrAny | None = None, exclude: AbstractSetIntStr | MappingIntStrAny | None = None, update: Dict[str, Any] | None = None, deep: bool = False) -> Self
+### Fields
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `name` | `str` | `-` | - |
+| `reason` | `str` | `-` | - |
+| `state` | `State` | `-` | - |
+| `version` | `Optional[str]` | `None` | - |
+<details><summary>JSON Schema</summary>
+
+
+```json
+
+{
+  "$defs": {
+    "State": {
+      "enum": [
+        "UNKNOWN",
+        "READY",
+        "UNAVAILABLE",
+        "LOADING",
+        "UNLOADING"
+      ],
+      "title": "State",
+      "type": "string"
+    }
+  },
+  "properties": {
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "version": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Version"
+    },
+    "state": {
+      "$ref": "#/$defs/State"
+    },
+    "reason": {
+      "title": "Reason",
+      "type": "string"
+    }
+  },
+  "required": [
+    "name",
+    "state",
+    "reason"
+  ],
+  "title": "RepositoryIndexResponseItem",
+  "type": "object"
+}
+
 ```
 
-Returns a copy of the model.
 
-!!! warning "Deprecated"
-    This method is now deprecated; use `model_copy` instead.
-
-If you need `include` or `exclude`, use:
-
-```py
-data = self.model_dump(include=include, exclude=exclude, round_trip=True)
-data = {**data, **(update or {})}
-copied = self.model_validate(data)
-```
-
-Args:
-    include: Optional set or mapping specifying which fields to include in the copied model.
-    exclude: Optional set or mapping specifying which fields to exclude in the copied model.
-    update: Optional dictionary of field-value pairs to override field values in the copied model.
-    deep: If True, the values of fields that are Pydantic models will be deep-copied.
-
-Returns:
-    A copy of the model with included, excluded and updated fields as specified.
-
-### dict()
-
-```python
-dict(self, include: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, exclude: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, by_alias: bool = False, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False) -> Dict[str, Any]
-```
-
-_No description available._
-
-### json()
-
-```python
-json(self, include: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, exclude: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, by_alias: bool = False, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False, encoder: Optional[Callable[[typing.Any], Any]] = PydanticUndefined, models_as_dict: bool = PydanticUndefined, dumps_kwargs: Any) -> str
-```
-
-_No description available._
-
-### model_copy()
-
-```python
-model_copy(self, update: UnionType[Dict[str, Any], None] = None, deep: bool = False) -> Self
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#model_copy
-
-Returns a copy of the model.
-
-Args:
-    update: Values to change/add in the new model. Note: the data is not validated
-        before creating the new model. You should trust this data.
-    deep: Set to `True` to make a deep copy of the model.
-
-Returns:
-    New model instance.
-
-### model_dump()
-
-```python
-model_dump(self, exclude_unset = True, exclude_none = True, kwargs)
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump
-
-Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
-
-Args:
-    mode: The mode in which `to_python` should run.
-        If mode is 'json', the output will only contain JSON serializable types.
-        If mode is 'python', the output may contain non-JSON-serializable Python objects.
-    include: A set of fields to include in the output.
-    exclude: A set of fields to exclude from the output.
-    context: Additional context to pass to the serializer.
-    by_alias: Whether to use the field's alias in the dictionary key if defined.
-    exclude_unset: Whether to exclude fields that have not been explicitly set.
-    exclude_defaults: Whether to exclude fields that are set to their default value.
-    exclude_none: Whether to exclude fields that have a value of `None`.
-    round_trip: If True, dumped values should be valid as input for non-idempotent types such as Json[T].
-    warnings: How to handle serialization errors. False/"none" ignores them, True/"warn" logs errors,
-        "error" raises a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError].
-    serialize_as_any: Whether to serialize fields with duck-typing serialization behavior.
-
-Returns:
-    A dictionary representation of the model.
-
-### model_dump_json()
-
-```python
-model_dump_json(self, exclude_unset = True, exclude_none = True, kwargs)
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump_json
-
-Generates a JSON representation of the model using Pydantic's `to_json` method.
-
-Args:
-    indent: Indentation to use in the JSON output. If None is passed, the output will be compact.
-    include: Field(s) to include in the JSON output.
-    exclude: Field(s) to exclude from the JSON output.
-    context: Additional context to pass to the serializer.
-    by_alias: Whether to serialize using field aliases.
-    exclude_unset: Whether to exclude fields that have not been explicitly set.
-    exclude_defaults: Whether to exclude fields that are set to their default value.
-    exclude_none: Whether to exclude fields that have a value of `None`.
-    round_trip: If True, dumped values should be valid as input for non-idempotent types such as Json[T].
-    warnings: How to handle serialization errors. False/"none" ignores them, True/"warn" logs errors,
-        "error" raises a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError].
-    serialize_as_any: Whether to serialize fields with duck-typing serialization behavior.
-
-Returns:
-    A JSON string representation of the model.
-
-### model_post_init()
-
-```python
-model_post_init(self, _BaseModel__context: Any) -> None
-```
-
-Override this method to perform additional initialization after `__init__` and `model_construct`.
-This is useful if you want to do some validation that requires the entire model to be initialized.
+</details>
 
 ## RepositoryLoadErrorResponse
 
-### Methods
+Override Pydantic's BaseModel class to ensure all payloads exclude unset
+fields by default.
 
-### copy()
+From:
+    https://github.com/pydantic/pydantic/issues/1387#issuecomment-612901525
 
-```python
-copy(self, include: AbstractSetIntStr | MappingIntStrAny | None = None, exclude: AbstractSetIntStr | MappingIntStrAny | None = None, update: Dict[str, Any] | None = None, deep: bool = False) -> Self
+### Fields
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `error` | `Optional[str]` | `None` | - |
+<details><summary>JSON Schema</summary>
+
+
+```json
+
+{
+  "properties": {
+    "error": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Error"
+    }
+  },
+  "title": "RepositoryLoadErrorResponse",
+  "type": "object"
+}
+
 ```
 
-Returns a copy of the model.
 
-!!! warning "Deprecated"
-    This method is now deprecated; use `model_copy` instead.
-
-If you need `include` or `exclude`, use:
-
-```py
-data = self.model_dump(include=include, exclude=exclude, round_trip=True)
-data = {**data, **(update or {})}
-copied = self.model_validate(data)
-```
-
-Args:
-    include: Optional set or mapping specifying which fields to include in the copied model.
-    exclude: Optional set or mapping specifying which fields to exclude in the copied model.
-    update: Optional dictionary of field-value pairs to override field values in the copied model.
-    deep: If True, the values of fields that are Pydantic models will be deep-copied.
-
-Returns:
-    A copy of the model with included, excluded and updated fields as specified.
-
-### dict()
-
-```python
-dict(self, include: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, exclude: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, by_alias: bool = False, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False) -> Dict[str, Any]
-```
-
-_No description available._
-
-### json()
-
-```python
-json(self, include: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, exclude: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, by_alias: bool = False, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False, encoder: Optional[Callable[[typing.Any], Any]] = PydanticUndefined, models_as_dict: bool = PydanticUndefined, dumps_kwargs: Any) -> str
-```
-
-_No description available._
-
-### model_copy()
-
-```python
-model_copy(self, update: UnionType[Dict[str, Any], None] = None, deep: bool = False) -> Self
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#model_copy
-
-Returns a copy of the model.
-
-Args:
-    update: Values to change/add in the new model. Note: the data is not validated
-        before creating the new model. You should trust this data.
-    deep: Set to `True` to make a deep copy of the model.
-
-Returns:
-    New model instance.
-
-### model_dump()
-
-```python
-model_dump(self, exclude_unset = True, exclude_none = True, kwargs)
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump
-
-Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
-
-Args:
-    mode: The mode in which `to_python` should run.
-        If mode is 'json', the output will only contain JSON serializable types.
-        If mode is 'python', the output may contain non-JSON-serializable Python objects.
-    include: A set of fields to include in the output.
-    exclude: A set of fields to exclude from the output.
-    context: Additional context to pass to the serializer.
-    by_alias: Whether to use the field's alias in the dictionary key if defined.
-    exclude_unset: Whether to exclude fields that have not been explicitly set.
-    exclude_defaults: Whether to exclude fields that are set to their default value.
-    exclude_none: Whether to exclude fields that have a value of `None`.
-    round_trip: If True, dumped values should be valid as input for non-idempotent types such as Json[T].
-    warnings: How to handle serialization errors. False/"none" ignores them, True/"warn" logs errors,
-        "error" raises a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError].
-    serialize_as_any: Whether to serialize fields with duck-typing serialization behavior.
-
-Returns:
-    A dictionary representation of the model.
-
-### model_dump_json()
-
-```python
-model_dump_json(self, exclude_unset = True, exclude_none = True, kwargs)
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump_json
-
-Generates a JSON representation of the model using Pydantic's `to_json` method.
-
-Args:
-    indent: Indentation to use in the JSON output. If None is passed, the output will be compact.
-    include: Field(s) to include in the JSON output.
-    exclude: Field(s) to exclude from the JSON output.
-    context: Additional context to pass to the serializer.
-    by_alias: Whether to serialize using field aliases.
-    exclude_unset: Whether to exclude fields that have not been explicitly set.
-    exclude_defaults: Whether to exclude fields that are set to their default value.
-    exclude_none: Whether to exclude fields that have a value of `None`.
-    round_trip: If True, dumped values should be valid as input for non-idempotent types such as Json[T].
-    warnings: How to handle serialization errors. False/"none" ignores them, True/"warn" logs errors,
-        "error" raises a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError].
-    serialize_as_any: Whether to serialize fields with duck-typing serialization behavior.
-
-Returns:
-    A JSON string representation of the model.
-
-### model_post_init()
-
-```python
-model_post_init(self, _BaseModel__context: Any) -> None
-```
-
-Override this method to perform additional initialization after `__init__` and `model_construct`.
-This is useful if you want to do some validation that requires the entire model to be initialized.
+</details>
 
 ## RepositoryUnloadErrorResponse
 
-### Methods
+Override Pydantic's BaseModel class to ensure all payloads exclude unset
+fields by default.
 
-### copy()
+From:
+    https://github.com/pydantic/pydantic/issues/1387#issuecomment-612901525
 
-```python
-copy(self, include: AbstractSetIntStr | MappingIntStrAny | None = None, exclude: AbstractSetIntStr | MappingIntStrAny | None = None, update: Dict[str, Any] | None = None, deep: bool = False) -> Self
+### Fields
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `error` | `Optional[str]` | `None` | - |
+<details><summary>JSON Schema</summary>
+
+
+```json
+
+{
+  "properties": {
+    "error": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Error"
+    }
+  },
+  "title": "RepositoryUnloadErrorResponse",
+  "type": "object"
+}
+
 ```
 
-Returns a copy of the model.
 
-!!! warning "Deprecated"
-    This method is now deprecated; use `model_copy` instead.
-
-If you need `include` or `exclude`, use:
-
-```py
-data = self.model_dump(include=include, exclude=exclude, round_trip=True)
-data = {**data, **(update or {})}
-copied = self.model_validate(data)
-```
-
-Args:
-    include: Optional set or mapping specifying which fields to include in the copied model.
-    exclude: Optional set or mapping specifying which fields to exclude in the copied model.
-    update: Optional dictionary of field-value pairs to override field values in the copied model.
-    deep: If True, the values of fields that are Pydantic models will be deep-copied.
-
-Returns:
-    A copy of the model with included, excluded and updated fields as specified.
-
-### dict()
-
-```python
-dict(self, include: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, exclude: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, by_alias: bool = False, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False) -> Dict[str, Any]
-```
-
-_No description available._
-
-### json()
-
-```python
-json(self, include: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, exclude: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, by_alias: bool = False, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False, encoder: Optional[Callable[[typing.Any], Any]] = PydanticUndefined, models_as_dict: bool = PydanticUndefined, dumps_kwargs: Any) -> str
-```
-
-_No description available._
-
-### model_copy()
-
-```python
-model_copy(self, update: UnionType[Dict[str, Any], None] = None, deep: bool = False) -> Self
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#model_copy
-
-Returns a copy of the model.
-
-Args:
-    update: Values to change/add in the new model. Note: the data is not validated
-        before creating the new model. You should trust this data.
-    deep: Set to `True` to make a deep copy of the model.
-
-Returns:
-    New model instance.
-
-### model_dump()
-
-```python
-model_dump(self, exclude_unset = True, exclude_none = True, kwargs)
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump
-
-Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
-
-Args:
-    mode: The mode in which `to_python` should run.
-        If mode is 'json', the output will only contain JSON serializable types.
-        If mode is 'python', the output may contain non-JSON-serializable Python objects.
-    include: A set of fields to include in the output.
-    exclude: A set of fields to exclude from the output.
-    context: Additional context to pass to the serializer.
-    by_alias: Whether to use the field's alias in the dictionary key if defined.
-    exclude_unset: Whether to exclude fields that have not been explicitly set.
-    exclude_defaults: Whether to exclude fields that are set to their default value.
-    exclude_none: Whether to exclude fields that have a value of `None`.
-    round_trip: If True, dumped values should be valid as input for non-idempotent types such as Json[T].
-    warnings: How to handle serialization errors. False/"none" ignores them, True/"warn" logs errors,
-        "error" raises a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError].
-    serialize_as_any: Whether to serialize fields with duck-typing serialization behavior.
-
-Returns:
-    A dictionary representation of the model.
-
-### model_dump_json()
-
-```python
-model_dump_json(self, exclude_unset = True, exclude_none = True, kwargs)
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump_json
-
-Generates a JSON representation of the model using Pydantic's `to_json` method.
-
-Args:
-    indent: Indentation to use in the JSON output. If None is passed, the output will be compact.
-    include: Field(s) to include in the JSON output.
-    exclude: Field(s) to exclude from the JSON output.
-    context: Additional context to pass to the serializer.
-    by_alias: Whether to serialize using field aliases.
-    exclude_unset: Whether to exclude fields that have not been explicitly set.
-    exclude_defaults: Whether to exclude fields that are set to their default value.
-    exclude_none: Whether to exclude fields that have a value of `None`.
-    round_trip: If True, dumped values should be valid as input for non-idempotent types such as Json[T].
-    warnings: How to handle serialization errors. False/"none" ignores them, True/"warn" logs errors,
-        "error" raises a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError].
-    serialize_as_any: Whether to serialize fields with duck-typing serialization behavior.
-
-Returns:
-    A JSON string representation of the model.
-
-### model_post_init()
-
-```python
-model_post_init(self, _BaseModel__context: Any) -> None
-```
-
-Override this method to perform additional initialization after `__init__` and `model_construct`.
-This is useful if you want to do some validation that requires the entire model to be initialized.
+</details>
 
 ## RequestInput
 
-### Methods
+Override Pydantic's BaseModel class to ensure all payloads exclude unset
+fields by default.
 
-### copy()
+From:
+    https://github.com/pydantic/pydantic/issues/1387#issuecomment-612901525
 
-```python
-copy(self, include: AbstractSetIntStr | MappingIntStrAny | None = None, exclude: AbstractSetIntStr | MappingIntStrAny | None = None, update: Dict[str, Any] | None = None, deep: bool = False) -> Self
+### Fields
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `data` | `TensorData` | `-` | - |
+| `datatype` | `Datatype` | `-` | - |
+| `name` | `str` | `-` | - |
+| `parameters` | `Optional[Parameters]` | `None` | - |
+| `shape` | `List[int]` | `-` | - |
+<details><summary>JSON Schema</summary>
+
+
+```json
+
+{
+  "$defs": {
+    "Datatype": {
+      "enum": [
+        "BOOL",
+        "UINT8",
+        "UINT16",
+        "UINT32",
+        "UINT64",
+        "INT8",
+        "INT16",
+        "INT32",
+        "INT64",
+        "FP16",
+        "FP32",
+        "FP64",
+        "BYTES"
+      ],
+      "title": "Datatype",
+      "type": "string"
+    },
+    "Parameters": {
+      "additionalProperties": true,
+      "properties": {
+        "content_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content Type"
+        },
+        "headers": {
+          "anyOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Headers"
+        }
+      },
+      "title": "Parameters",
+      "type": "object"
+    },
+    "TensorData": {
+      "anyOf": [
+        {
+          "items": {},
+          "type": "array"
+        },
+        {}
+      ],
+      "title": "TensorData"
+    }
+  },
+  "properties": {
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "shape": {
+      "items": {
+        "type": "integer"
+      },
+      "title": "Shape",
+      "type": "array"
+    },
+    "datatype": {
+      "$ref": "#/$defs/Datatype"
+    },
+    "parameters": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Parameters"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "data": {
+      "$ref": "#/$defs/TensorData"
+    }
+  },
+  "required": [
+    "name",
+    "shape",
+    "datatype",
+    "data"
+  ],
+  "title": "RequestInput",
+  "type": "object"
+}
+
 ```
 
-Returns a copy of the model.
 
-!!! warning "Deprecated"
-    This method is now deprecated; use `model_copy` instead.
-
-If you need `include` or `exclude`, use:
-
-```py
-data = self.model_dump(include=include, exclude=exclude, round_trip=True)
-data = {**data, **(update or {})}
-copied = self.model_validate(data)
-```
-
-Args:
-    include: Optional set or mapping specifying which fields to include in the copied model.
-    exclude: Optional set or mapping specifying which fields to exclude in the copied model.
-    update: Optional dictionary of field-value pairs to override field values in the copied model.
-    deep: If True, the values of fields that are Pydantic models will be deep-copied.
-
-Returns:
-    A copy of the model with included, excluded and updated fields as specified.
-
-### dict()
-
-```python
-dict(self, include: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, exclude: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, by_alias: bool = False, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False) -> Dict[str, Any]
-```
-
-_No description available._
-
-### json()
-
-```python
-json(self, include: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, exclude: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, by_alias: bool = False, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False, encoder: Optional[Callable[[typing.Any], Any]] = PydanticUndefined, models_as_dict: bool = PydanticUndefined, dumps_kwargs: Any) -> str
-```
-
-_No description available._
-
-### model_copy()
-
-```python
-model_copy(self, update: UnionType[Dict[str, Any], None] = None, deep: bool = False) -> Self
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#model_copy
-
-Returns a copy of the model.
-
-Args:
-    update: Values to change/add in the new model. Note: the data is not validated
-        before creating the new model. You should trust this data.
-    deep: Set to `True` to make a deep copy of the model.
-
-Returns:
-    New model instance.
-
-### model_dump()
-
-```python
-model_dump(self, exclude_unset = True, exclude_none = True, kwargs)
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump
-
-Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
-
-Args:
-    mode: The mode in which `to_python` should run.
-        If mode is 'json', the output will only contain JSON serializable types.
-        If mode is 'python', the output may contain non-JSON-serializable Python objects.
-    include: A set of fields to include in the output.
-    exclude: A set of fields to exclude from the output.
-    context: Additional context to pass to the serializer.
-    by_alias: Whether to use the field's alias in the dictionary key if defined.
-    exclude_unset: Whether to exclude fields that have not been explicitly set.
-    exclude_defaults: Whether to exclude fields that are set to their default value.
-    exclude_none: Whether to exclude fields that have a value of `None`.
-    round_trip: If True, dumped values should be valid as input for non-idempotent types such as Json[T].
-    warnings: How to handle serialization errors. False/"none" ignores them, True/"warn" logs errors,
-        "error" raises a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError].
-    serialize_as_any: Whether to serialize fields with duck-typing serialization behavior.
-
-Returns:
-    A dictionary representation of the model.
-
-### model_dump_json()
-
-```python
-model_dump_json(self, exclude_unset = True, exclude_none = True, kwargs)
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump_json
-
-Generates a JSON representation of the model using Pydantic's `to_json` method.
-
-Args:
-    indent: Indentation to use in the JSON output. If None is passed, the output will be compact.
-    include: Field(s) to include in the JSON output.
-    exclude: Field(s) to exclude from the JSON output.
-    context: Additional context to pass to the serializer.
-    by_alias: Whether to serialize using field aliases.
-    exclude_unset: Whether to exclude fields that have not been explicitly set.
-    exclude_defaults: Whether to exclude fields that are set to their default value.
-    exclude_none: Whether to exclude fields that have a value of `None`.
-    round_trip: If True, dumped values should be valid as input for non-idempotent types such as Json[T].
-    warnings: How to handle serialization errors. False/"none" ignores them, True/"warn" logs errors,
-        "error" raises a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError].
-    serialize_as_any: Whether to serialize fields with duck-typing serialization behavior.
-
-Returns:
-    A JSON string representation of the model.
-
-### model_post_init()
-
-```python
-model_post_init(self, _BaseModel__context: Any) -> None
-```
-
-Override this method to perform additional initialization after `__init__` and `model_construct`.
-This is useful if you want to do some validation that requires the entire model to be initialized.
+</details>
 
 ## RequestOutput
 
-### Methods
+Override Pydantic's BaseModel class to ensure all payloads exclude unset
+fields by default.
 
-### copy()
+From:
+    https://github.com/pydantic/pydantic/issues/1387#issuecomment-612901525
 
-```python
-copy(self, include: AbstractSetIntStr | MappingIntStrAny | None = None, exclude: AbstractSetIntStr | MappingIntStrAny | None = None, update: Dict[str, Any] | None = None, deep: bool = False) -> Self
+### Fields
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `name` | `str` | `-` | - |
+| `parameters` | `Optional[Parameters]` | `None` | - |
+<details><summary>JSON Schema</summary>
+
+
+```json
+
+{
+  "$defs": {
+    "Parameters": {
+      "additionalProperties": true,
+      "properties": {
+        "content_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content Type"
+        },
+        "headers": {
+          "anyOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Headers"
+        }
+      },
+      "title": "Parameters",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "parameters": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Parameters"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "title": "RequestOutput",
+  "type": "object"
+}
+
 ```
 
-Returns a copy of the model.
 
-!!! warning "Deprecated"
-    This method is now deprecated; use `model_copy` instead.
-
-If you need `include` or `exclude`, use:
-
-```py
-data = self.model_dump(include=include, exclude=exclude, round_trip=True)
-data = {**data, **(update or {})}
-copied = self.model_validate(data)
-```
-
-Args:
-    include: Optional set or mapping specifying which fields to include in the copied model.
-    exclude: Optional set or mapping specifying which fields to exclude in the copied model.
-    update: Optional dictionary of field-value pairs to override field values in the copied model.
-    deep: If True, the values of fields that are Pydantic models will be deep-copied.
-
-Returns:
-    A copy of the model with included, excluded and updated fields as specified.
-
-### dict()
-
-```python
-dict(self, include: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, exclude: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, by_alias: bool = False, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False) -> Dict[str, Any]
-```
-
-_No description available._
-
-### json()
-
-```python
-json(self, include: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, exclude: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, by_alias: bool = False, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False, encoder: Optional[Callable[[typing.Any], Any]] = PydanticUndefined, models_as_dict: bool = PydanticUndefined, dumps_kwargs: Any) -> str
-```
-
-_No description available._
-
-### model_copy()
-
-```python
-model_copy(self, update: UnionType[Dict[str, Any], None] = None, deep: bool = False) -> Self
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#model_copy
-
-Returns a copy of the model.
-
-Args:
-    update: Values to change/add in the new model. Note: the data is not validated
-        before creating the new model. You should trust this data.
-    deep: Set to `True` to make a deep copy of the model.
-
-Returns:
-    New model instance.
-
-### model_dump()
-
-```python
-model_dump(self, exclude_unset = True, exclude_none = True, kwargs)
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump
-
-Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
-
-Args:
-    mode: The mode in which `to_python` should run.
-        If mode is 'json', the output will only contain JSON serializable types.
-        If mode is 'python', the output may contain non-JSON-serializable Python objects.
-    include: A set of fields to include in the output.
-    exclude: A set of fields to exclude from the output.
-    context: Additional context to pass to the serializer.
-    by_alias: Whether to use the field's alias in the dictionary key if defined.
-    exclude_unset: Whether to exclude fields that have not been explicitly set.
-    exclude_defaults: Whether to exclude fields that are set to their default value.
-    exclude_none: Whether to exclude fields that have a value of `None`.
-    round_trip: If True, dumped values should be valid as input for non-idempotent types such as Json[T].
-    warnings: How to handle serialization errors. False/"none" ignores them, True/"warn" logs errors,
-        "error" raises a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError].
-    serialize_as_any: Whether to serialize fields with duck-typing serialization behavior.
-
-Returns:
-    A dictionary representation of the model.
-
-### model_dump_json()
-
-```python
-model_dump_json(self, exclude_unset = True, exclude_none = True, kwargs)
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump_json
-
-Generates a JSON representation of the model using Pydantic's `to_json` method.
-
-Args:
-    indent: Indentation to use in the JSON output. If None is passed, the output will be compact.
-    include: Field(s) to include in the JSON output.
-    exclude: Field(s) to exclude from the JSON output.
-    context: Additional context to pass to the serializer.
-    by_alias: Whether to serialize using field aliases.
-    exclude_unset: Whether to exclude fields that have not been explicitly set.
-    exclude_defaults: Whether to exclude fields that are set to their default value.
-    exclude_none: Whether to exclude fields that have a value of `None`.
-    round_trip: If True, dumped values should be valid as input for non-idempotent types such as Json[T].
-    warnings: How to handle serialization errors. False/"none" ignores them, True/"warn" logs errors,
-        "error" raises a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError].
-    serialize_as_any: Whether to serialize fields with duck-typing serialization behavior.
-
-Returns:
-    A JSON string representation of the model.
-
-### model_post_init()
-
-```python
-model_post_init(self, _BaseModel__context: Any) -> None
-```
-
-Override this method to perform additional initialization after `__init__` and `model_construct`.
-This is useful if you want to do some validation that requires the entire model to be initialized.
+</details>
 
 ## ResponseOutput
 
-### Methods
+Override Pydantic's BaseModel class to ensure all payloads exclude unset
+fields by default.
 
-### copy()
+From:
+    https://github.com/pydantic/pydantic/issues/1387#issuecomment-612901525
 
-```python
-copy(self, include: AbstractSetIntStr | MappingIntStrAny | None = None, exclude: AbstractSetIntStr | MappingIntStrAny | None = None, update: Dict[str, Any] | None = None, deep: bool = False) -> Self
+### Fields
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `data` | `TensorData` | `-` | - |
+| `datatype` | `Datatype` | `-` | - |
+| `name` | `str` | `-` | - |
+| `parameters` | `Optional[Parameters]` | `None` | - |
+| `shape` | `List[int]` | `-` | - |
+<details><summary>JSON Schema</summary>
+
+
+```json
+
+{
+  "$defs": {
+    "Datatype": {
+      "enum": [
+        "BOOL",
+        "UINT8",
+        "UINT16",
+        "UINT32",
+        "UINT64",
+        "INT8",
+        "INT16",
+        "INT32",
+        "INT64",
+        "FP16",
+        "FP32",
+        "FP64",
+        "BYTES"
+      ],
+      "title": "Datatype",
+      "type": "string"
+    },
+    "Parameters": {
+      "additionalProperties": true,
+      "properties": {
+        "content_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content Type"
+        },
+        "headers": {
+          "anyOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Headers"
+        }
+      },
+      "title": "Parameters",
+      "type": "object"
+    },
+    "TensorData": {
+      "anyOf": [
+        {
+          "items": {},
+          "type": "array"
+        },
+        {}
+      ],
+      "title": "TensorData"
+    }
+  },
+  "properties": {
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "shape": {
+      "items": {
+        "type": "integer"
+      },
+      "title": "Shape",
+      "type": "array"
+    },
+    "datatype": {
+      "$ref": "#/$defs/Datatype"
+    },
+    "parameters": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Parameters"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "data": {
+      "$ref": "#/$defs/TensorData"
+    }
+  },
+  "required": [
+    "name",
+    "shape",
+    "datatype",
+    "data"
+  ],
+  "title": "ResponseOutput",
+  "type": "object"
+}
+
 ```
 
-Returns a copy of the model.
 
-!!! warning "Deprecated"
-    This method is now deprecated; use `model_copy` instead.
-
-If you need `include` or `exclude`, use:
-
-```py
-data = self.model_dump(include=include, exclude=exclude, round_trip=True)
-data = {**data, **(update or {})}
-copied = self.model_validate(data)
-```
-
-Args:
-    include: Optional set or mapping specifying which fields to include in the copied model.
-    exclude: Optional set or mapping specifying which fields to exclude in the copied model.
-    update: Optional dictionary of field-value pairs to override field values in the copied model.
-    deep: If True, the values of fields that are Pydantic models will be deep-copied.
-
-Returns:
-    A copy of the model with included, excluded and updated fields as specified.
-
-### dict()
-
-```python
-dict(self, include: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, exclude: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, by_alias: bool = False, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False) -> Dict[str, Any]
-```
-
-_No description available._
-
-### json()
-
-```python
-json(self, include: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, exclude: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, by_alias: bool = False, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False, encoder: Optional[Callable[[typing.Any], Any]] = PydanticUndefined, models_as_dict: bool = PydanticUndefined, dumps_kwargs: Any) -> str
-```
-
-_No description available._
-
-### model_copy()
-
-```python
-model_copy(self, update: UnionType[Dict[str, Any], None] = None, deep: bool = False) -> Self
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#model_copy
-
-Returns a copy of the model.
-
-Args:
-    update: Values to change/add in the new model. Note: the data is not validated
-        before creating the new model. You should trust this data.
-    deep: Set to `True` to make a deep copy of the model.
-
-Returns:
-    New model instance.
-
-### model_dump()
-
-```python
-model_dump(self, exclude_unset = True, exclude_none = True, kwargs)
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump
-
-Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
-
-Args:
-    mode: The mode in which `to_python` should run.
-        If mode is 'json', the output will only contain JSON serializable types.
-        If mode is 'python', the output may contain non-JSON-serializable Python objects.
-    include: A set of fields to include in the output.
-    exclude: A set of fields to exclude from the output.
-    context: Additional context to pass to the serializer.
-    by_alias: Whether to use the field's alias in the dictionary key if defined.
-    exclude_unset: Whether to exclude fields that have not been explicitly set.
-    exclude_defaults: Whether to exclude fields that are set to their default value.
-    exclude_none: Whether to exclude fields that have a value of `None`.
-    round_trip: If True, dumped values should be valid as input for non-idempotent types such as Json[T].
-    warnings: How to handle serialization errors. False/"none" ignores them, True/"warn" logs errors,
-        "error" raises a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError].
-    serialize_as_any: Whether to serialize fields with duck-typing serialization behavior.
-
-Returns:
-    A dictionary representation of the model.
-
-### model_dump_json()
-
-```python
-model_dump_json(self, exclude_unset = True, exclude_none = True, kwargs)
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump_json
-
-Generates a JSON representation of the model using Pydantic's `to_json` method.
-
-Args:
-    indent: Indentation to use in the JSON output. If None is passed, the output will be compact.
-    include: Field(s) to include in the JSON output.
-    exclude: Field(s) to exclude from the JSON output.
-    context: Additional context to pass to the serializer.
-    by_alias: Whether to serialize using field aliases.
-    exclude_unset: Whether to exclude fields that have not been explicitly set.
-    exclude_defaults: Whether to exclude fields that are set to their default value.
-    exclude_none: Whether to exclude fields that have a value of `None`.
-    round_trip: If True, dumped values should be valid as input for non-idempotent types such as Json[T].
-    warnings: How to handle serialization errors. False/"none" ignores them, True/"warn" logs errors,
-        "error" raises a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError].
-    serialize_as_any: Whether to serialize fields with duck-typing serialization behavior.
-
-Returns:
-    A JSON string representation of the model.
-
-### model_post_init()
-
-```python
-model_post_init(self, _BaseModel__context: Any) -> None
-```
-
-Override this method to perform additional initialization after `__init__` and `model_construct`.
-This is useful if you want to do some validation that requires the entire model to be initialized.
+</details>
 
 ## State
 
+Create a collection of name/value pairs.
+
+Example enumeration:
+
+>>> class Color(Enum):
+...     RED = 1
+...     BLUE = 2
+...     GREEN = 3
+
+Access them by:
+
+- attribute access::
+
+>>> Color.RED
+<Color.RED: 1>
+
+- value lookup:
+
+>>> Color(1)
+<Color.RED: 1>
+
+- name lookup:
+
+>>> Color['RED']
+<Color.RED: 1>
+
+Enumerations can be iterated over, and know how many members they have:
+
+>>> len(Color)
+3
+
+>>> list(Color)
+[<Color.RED: 1>, <Color.BLUE: 2>, <Color.GREEN: 3>]
+
+Methods can be added to enumerations, and members can have their own
+attributes -- see the documentation for details.
+
 ## TensorData
 
-### Methods
+Usage docs: https://docs.pydantic.dev/2.9/concepts/models/#rootmodel-and-custom-root-types
 
-### copy()
+A Pydantic `BaseModel` for the root object of the model.
 
-```python
-copy(self, include: AbstractSetIntStr | MappingIntStrAny | None = None, exclude: AbstractSetIntStr | MappingIntStrAny | None = None, update: Dict[str, Any] | None = None, deep: bool = False) -> Self
+Attributes:
+    root: The root object of the model.
+    __pydantic_root_model__: Whether the model is a RootModel.
+    __pydantic_private__: Private fields in the model.
+    __pydantic_extra__: Extra fields in the model.
+
+### Fields
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `root` | `Union[List[Any], Any]` | `-` | - |
+<details><summary>JSON Schema</summary>
+
+
+```json
+
+{
+  "anyOf": [
+    {
+      "items": {},
+      "type": "array"
+    },
+    {}
+  ],
+  "title": "TensorData"
+}
+
 ```
 
-Returns a copy of the model.
 
-!!! warning "Deprecated"
-    This method is now deprecated; use `model_copy` instead.
-
-If you need `include` or `exclude`, use:
-
-```py
-data = self.model_dump(include=include, exclude=exclude, round_trip=True)
-data = {**data, **(update or {})}
-copied = self.model_validate(data)
-```
-
-Args:
-    include: Optional set or mapping specifying which fields to include in the copied model.
-    exclude: Optional set or mapping specifying which fields to exclude in the copied model.
-    update: Optional dictionary of field-value pairs to override field values in the copied model.
-    deep: If True, the values of fields that are Pydantic models will be deep-copied.
-
-Returns:
-    A copy of the model with included, excluded and updated fields as specified.
-
-### dict()
-
-```python
-dict(self, include: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, exclude: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, by_alias: bool = False, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False) -> Dict[str, Any]
-```
-
-_No description available._
-
-### json()
-
-```python
-json(self, include: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, exclude: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, by_alias: bool = False, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False, encoder: Optional[Callable[[typing.Any], Any]] = PydanticUndefined, models_as_dict: bool = PydanticUndefined, dumps_kwargs: Any) -> str
-```
-
-_No description available._
-
-### model_copy()
-
-```python
-model_copy(self, update: UnionType[Dict[str, Any], None] = None, deep: bool = False) -> Self
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#model_copy
-
-Returns a copy of the model.
-
-Args:
-    update: Values to change/add in the new model. Note: the data is not validated
-        before creating the new model. You should trust this data.
-    deep: Set to `True` to make a deep copy of the model.
-
-Returns:
-    New model instance.
-
-### model_dump()
-
-```python
-model_dump(self, mode: Union[Literal['json', 'python'], str] = 'python', include: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, exclude: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, context: UnionType[Any, None] = None, by_alias: bool = False, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False, round_trip: bool = False, warnings: Union[bool, Literal['none', 'warn', 'error']] = True, serialize_as_any: bool = False) -> Dict[str, Any]
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump
-
-Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
-
-Args:
-    mode: The mode in which `to_python` should run.
-        If mode is 'json', the output will only contain JSON serializable types.
-        If mode is 'python', the output may contain non-JSON-serializable Python objects.
-    include: A set of fields to include in the output.
-    exclude: A set of fields to exclude from the output.
-    context: Additional context to pass to the serializer.
-    by_alias: Whether to use the field's alias in the dictionary key if defined.
-    exclude_unset: Whether to exclude fields that have not been explicitly set.
-    exclude_defaults: Whether to exclude fields that are set to their default value.
-    exclude_none: Whether to exclude fields that have a value of `None`.
-    round_trip: If True, dumped values should be valid as input for non-idempotent types such as Json[T].
-    warnings: How to handle serialization errors. False/"none" ignores them, True/"warn" logs errors,
-        "error" raises a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError].
-    serialize_as_any: Whether to serialize fields with duck-typing serialization behavior.
-
-Returns:
-    A dictionary representation of the model.
-
-### model_dump_json()
-
-```python
-model_dump_json(self, indent: UnionType[int, None] = None, include: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, exclude: Union[set[int], set[str], Mapping[int, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], Mapping[str, Union[set[int], set[str], Mapping[int, Union[ForwardRef('IncEx'), Literal[True]]], Mapping[str, Union[ForwardRef('IncEx'), Literal[True]]], Literal[True]]], None] = None, context: UnionType[Any, None] = None, by_alias: bool = False, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False, round_trip: bool = False, warnings: Union[bool, Literal['none', 'warn', 'error']] = True, serialize_as_any: bool = False) -> str
-```
-
-Usage docs: https://docs.pydantic.dev/2.9/concepts/serialization/#modelmodel_dump_json
-
-Generates a JSON representation of the model using Pydantic's `to_json` method.
-
-Args:
-    indent: Indentation to use in the JSON output. If None is passed, the output will be compact.
-    include: Field(s) to include in the JSON output.
-    exclude: Field(s) to exclude from the JSON output.
-    context: Additional context to pass to the serializer.
-    by_alias: Whether to serialize using field aliases.
-    exclude_unset: Whether to exclude fields that have not been explicitly set.
-    exclude_defaults: Whether to exclude fields that are set to their default value.
-    exclude_none: Whether to exclude fields that have a value of `None`.
-    round_trip: If True, dumped values should be valid as input for non-idempotent types such as Json[T].
-    warnings: How to handle serialization errors. False/"none" ignores them, True/"warn" logs errors,
-        "error" raises a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError].
-    serialize_as_any: Whether to serialize fields with duck-typing serialization behavior.
-
-Returns:
-    A JSON string representation of the model.
-
-### model_post_init()
-
-```python
-model_post_init(self, _BaseModel__context: Any) -> None
-```
-
-Override this method to perform additional initialization after `__init__` and `model_construct`.
-This is useful if you want to do some validation that requires the entire model to be initialized.
+</details>
 

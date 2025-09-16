@@ -2,32 +2,6 @@
 
 ## MetricsServer
 
-### Methods
-
-### on_worker_stop()
-
-```python
-on_worker_stop(self, worker: Worker) -> None
-```
-
-_No description available._
-
-### start()
-
-```python
-start(self)
-```
-
-_No description available._
-
-### stop()
-
-```python
-stop(self, sig: Optional[int] = None)
-```
-
-_No description available._
-
 ## configure_metrics()
 
 ```python

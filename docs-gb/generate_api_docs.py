@@ -1,6 +1,10 @@
 import os
 import inspect
 import pdoc
+import importlib
+import pkgutil
+import json
+import enum
 
 from mlserver.settings import Settings, ModelSettings, ModelParameters  # Import ModelParameters
 from mlserver.model import MLModel
@@ -75,9 +79,20 @@ def _format_signature(func) -> str:
         hints = get_type_hints(func)
     except Exception:
         hints = {}
-    sig = inspect.signature(func)
+    try:
+        sig = inspect.signature(func)
+    except (ValueError, TypeError):
+        # Builtins or C-implemented callables without signatures
+        name = getattr(func, "__name__", "<callable>")
+        return f"{name}(...)"
+
+    # Drop leading self/cls from display
+    params = list(sig.parameters.items())
+    if params and params[0][0] in ("self", "cls"):
+        params = params[1:]
+
     parts = []
-    for name, param in sig.parameters.items():
+    for name, param in params:
         ann = hints.get(name, param.annotation)
         ann_str = "" if ann is inspect._empty else f": {_type_to_str(ann)}"
         if param.default is not inspect._empty:
@@ -86,7 +101,72 @@ def _format_signature(func) -> str:
             parts.append(f"{name}{ann_str}")
     ret_ann = hints.get("return", sig.return_annotation)
     ret_str = "" if ret_ann is inspect._empty else f" -> {_type_to_str(ret_ann)}"
-    return f"{func.__name__}(" + ", ".join(parts) + ")" + ret_str
+    return f"{getattr(func, '__name__', '<callable>')}(" + ", ".join(parts) + ")" + ret_str
+
+def _is_pydantic_model(cls: type) -> bool:
+    return hasattr(cls, "model_fields")
+
+def _class_description(cls: type) -> str:
+    """
+    Prefer the class docstring; otherwise provide a helpful fallback:
+    - Enum subclasses: 'An enumeration.'
+    - Pydantic models: 'A Pydantic model.'
+    """
+    doc = inspect.getdoc(cls)
+    if doc:
+        return inspect.cleandoc(doc)
+    try:
+        if issubclass(cls, enum.Enum):
+            return "An enumeration."
+    except Exception:
+        pass
+    if _is_pydantic_model(cls):
+        return "A Pydantic model."
+    return ""
+
+def _render_pydantic_fields_for_class(cls: type) -> list[str]:
+    lines: list[str] = []
+    # Title for fields
+    lines.append("### Fields\n")
+    lines.append("| Field | Type | Default | Description |")
+    lines.append("|-------|------|---------|-------------|")
+    model_name = cls.__name__
+    overrides = FIELD_OVERRIDES.get(model_name, {})
+    # Sorted alphabetically
+    for fname, field in sorted(getattr(cls, "model_fields", {}).items(), key=lambda it: it[0]):
+        ftype = _type_to_str(getattr(field, "annotation", Any))
+        default = _format_default(field)
+        desc = getattr(field, "description", None) or overrides.get(fname, "-")
+        lines.append(f"| `{fname}` | `{ftype}` | `{default}` | {desc} |")
+    return lines
+
+def _should_include_schema_for_module(module: ModuleType) -> bool:
+    # Only include collapsible JSON Schema for the public Types docs
+    return getattr(module, "__name__", "") == "mlserver.types"
+
+def _render_json_schema_block(cls: type) -> list[str]:
+    # Pydantic v2: model_json_schema; v1 fallback: schema
+    try:
+        if hasattr(cls, "model_json_schema"):
+            schema = cls.model_json_schema()
+        elif hasattr(cls, "schema"):
+            schema = cls.schema()
+        else:
+            schema = None
+    except Exception:
+        schema = None
+
+    if not schema:
+        return []
+
+    pretty = json.dumps(schema, indent=2, ensure_ascii=False)
+    return [
+        "<details><summary>JSON Schema</summary>\n\n",
+        "```json\n",
+        f"{pretty}\n",
+        "```\n\n",
+        "</details>\n",
+    ]
 
 # ---------------------------
 # Pydantic model docs
@@ -148,29 +228,44 @@ def document_class_or_module(obj: Union[type, ModuleType],
                              add_top_title: bool = False) -> str:
     """
     Render methods for classes, and classes + functions for modules.
+    - Uses __all__ to decide public API when available.
+    - Pydantic classes: render a Fields table, hide methods.
+    - Deduplicates re-exported functions across submodules.
     - Method headings use 'name()' for GitBook RHS nav.
     - Full signature is shown in a Python block.
     - Omits empty sections.
-    - Does not add a top-level H1 unless add_top_title=True.
     """
     lines: list[str] = []
 
     if inspect.isclass(obj):
+        # keep current behavior for single class pages (e.g. MLModel)
         if add_top_title:
             lines.append(f"# {obj.__name__}\n")
-            if obj.__doc__:
-                lines.append(inspect.cleandoc(obj.__doc__) + "\n")
+            desc = _class_description(obj)
+            if desc:
+                lines.append(desc + "\n")
 
-        # Collect methods
+        if _is_pydantic_model(obj):
+            # Only fields for pydantic classes (cleaner output)
+            lines.extend(_render_pydantic_fields_for_class(obj))
+            return "\n".join(lines)
+
+        # Non-pydantic: show methods
         method_blocks: list[str] = []
-        for name, func in inspect.getmembers(obj, inspect.isfunction):
-            if not include_private and name.startswith("_"):
+        for mname, member in inspect.getmembers(obj):
+            if not include_private and mname.startswith("_"):
                 continue
-            if not include_inherited and func.__qualname__.split(".")[0] != obj.__name__:
+            if not inspect.isroutine(member):
                 continue
-            doc = inspect.getdoc(func) or "_No description available._"
-            sig_str = _format_signature(func)
-            method_blocks.append(f"### {name}()\n")
+            if getattr(member, "__module__", "").startswith("builtins") or inspect.isbuiltin(member):
+                continue
+            if not include_inherited:
+                qn = getattr(member, "__qualname__", "")
+                if qn.split(".")[0] != obj.__name__:
+                    continue
+            doc = inspect.getdoc(member) or "_No description available._"
+            sig_str = _format_signature(member)
+            method_blocks.append(f"### {mname}()\n")
             method_blocks.append(f"```python\n{sig_str}\n```\n")
             method_blocks.append(f"{doc}\n")
 
@@ -185,45 +280,93 @@ def document_class_or_module(obj: Union[type, ModuleType],
             if obj.__doc__:
                 lines.append(inspect.cleandoc(obj.__doc__) + "\n")
 
-        # Classes
-        class_sections: list[str] = []
-        for cname, cls in inspect.getmembers(obj, inspect.isclass):
-            if not include_private and cname.startswith("_"):
-                continue
-            section: list[str] = [f"## {cname}\n"]
-            if cls.__doc__:
-                section.append(inspect.cleandoc(cls.__doc__) + "\n")
-            # Methods inside the class
-            method_blocks: list[str] = []
-            for mname, func in inspect.getmembers(cls, inspect.isfunction):
-                if not include_private and mname.startswith("_"):
+        exports = set(getattr(obj, "__all__", []) or [])
+        def is_exported(name: str) -> bool:
+            return (name in exports) if exports else (not name.startswith("_"))
+
+        # Walk package to collect symbols
+        classes: dict[str, type] = {}
+        modules = [obj]
+        pkg_path = getattr(obj, "__path__", None)
+        if pkg_path:
+            for _, modname, _ in pkgutil.walk_packages(pkg_path, prefix=obj.__name__ + "."):
+                try:
+                    mod = importlib.import_module(modname)
+                    modules.append(mod)
+                except Exception:
                     continue
+
+        # Collect classes re-exported by top-level module (if __all__), else public
+        for mod in modules:
+            for cname, cls in inspect.getmembers(mod, inspect.isclass):
+                if not is_exported(cname):
+                    continue
+                # Only include classes under this package namespace
+                if not getattr(cls, "__module__", "").startswith(obj.__name__):
+                    continue
+                classes[cname] = cls
+
+        # Render classes (alphabetical)
+        for cname in sorted(classes):
+            cls = classes[cname]
+            section: list[str] = [f"## {cname}\n"]
+            desc = _class_description(cls)
+            if desc:
+                section.append(desc + "\n")
+
+            if _is_pydantic_model(cls):
+                # Only fields for Pydantic classes
+                fields_lines = _render_pydantic_fields_for_class(cls)
+                if fields_lines:
+                    section.extend(fields_lines)
+                if _should_include_schema_for_module(obj):
+                    section.extend(_render_json_schema_block(cls))
+            else:
+                # Methods for non-pydantic classes
+                method_blocks: list[str] = []
+                for mname, member in inspect.getmembers(cls):
+                    if not is_exported(mname):
+                        continue
+                    if not inspect.isroutine(member):
+                        continue
+                    if getattr(member, "__module__", "").startswith("builtins") or inspect.isbuiltin(member):
+                        continue
+                    # Show only methods declared on this class to avoid inherited noise
+                    qn = getattr(member, "__qualname__", "")
+                    if qn.split(".")[0] != cls.__name__:
+                        continue
+                    doc = inspect.getdoc(member) or "_No description available._"
+                    sig_str = _format_signature(member)
+                    method_blocks.append(f"### {mname}()\n")
+                    method_blocks.append(f"```python\n{sig_str}\n```\n")
+                    method_blocks.append(f"{doc}\n")
+                if method_blocks:
+                    section.append("### Methods\n")
+                    section.extend(method_blocks)
+
+            lines.append("\n".join(section))
+
+        # Collect standalone functions (dedup across submodules)
+        seen_funcs: set[str] = set()
+        func_blocks: list[str] = []
+        for mod in modules:
+            for fname, func in inspect.getmembers(mod, inspect.isfunction):
+                if not is_exported(fname):
+                    continue
+                # Only functions exposed by this package
+                if not getattr(func, "__module__", "").startswith(obj.__name__):
+                    continue
+                fqname = f"{func.__module__}.{fname}"
+                if fqname in seen_funcs:
+                    continue
+                seen_funcs.add(fqname)
                 doc = inspect.getdoc(func) or "_No description available._"
                 sig_str = _format_signature(func)
-                method_blocks.append(f"### {mname}()\n")
-                method_blocks.append(f"```python\n{sig_str}\n```\n")
-                method_blocks.append(f"{doc}\n")
-            if method_blocks:
-                section.append("### Methods\n")
-                section.extend(method_blocks)
-            class_sections.append("\n".join(section))
-
-        if class_sections:
-            lines.extend(class_sections)
-
-        # Standalone functions
-        func_sections: list[str] = []
-        for fname, func in inspect.getmembers(obj, inspect.isfunction):
-            if not include_private and fname.startswith("_"):
-                continue
-            doc = inspect.getdoc(func) or "_No description available._"
-            sig_str = _format_signature(func)
-            func_sections.append(f"## {fname}()\n")
-            func_sections.append(f"```python\n{sig_str}\n```\n")
-            func_sections.append(f"{doc}\n")
-
-        if func_sections:
-            lines.extend(func_sections)
+                func_blocks.append(f"## {fname}()\n")
+                func_blocks.append(f"```python\n{sig_str}\n```\n")
+                func_blocks.append(f"{doc}\n")
+        if func_blocks:
+            lines.extend(func_blocks)
 
         return "\n".join(lines)
 
@@ -250,34 +393,16 @@ def main():
         print(f"Generating docs for {name}...")
         filepath = os.path.join(outdir, f"{name}.md")
         with open(filepath, "w") as f:
-            # Single H1 per page
             f.write(f"# {name}\n\n")
-
-            # Top-level docstring (class or module)
             if getattr(obj, "__doc__", None):
                 f.write(inspect.cleandoc(obj.__doc__) + "\n\n")
 
             if is_pydantic:
-                # Titles are included by document_pydantic_model (### Config, ### Fields)
                 f.write(document_pydantic_model(obj, source_path) + "\n")
             else:
-                # Classes: show Methods section if available
-                if inspect.isclass(obj):
-                    methods_md = document_class_or_module(obj, add_top_title=False)
-                    if methods_md.strip():
-                        f.write("## Methods\n\n")  # section title once
-                        # document_class_or_module already adds ### method() blocks
-                        # but not the "## Methods" header when add_top_title=False
-                        # so remove our just-added header and write content directly
-                        # We already wrote the header; ensure we don't duplicate
-                        # Instead, re-call and write without adding "## Methods"
-                        f.seek(f.tell() - len("## Methods\n\n"))
-                        f.write(document_class_or_module(obj, add_top_title=False))
-                else:
-                    # Modules: let helper render classes + functions (no duplicate H1)
-                    module_md = document_class_or_module(obj, add_top_title=False)
-                    if module_md.strip():
-                        f.write(module_md + "\n")
+                content = document_class_or_module(obj, add_top_title=False)
+                if content.strip():
+                    f.write(content + "\n")
 
     print("Docs generated in docs-gb/api/")
 

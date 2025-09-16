@@ -6,6 +6,8 @@ Codec that convers to / from a base64 input.
 
 ## CodecError
 
+Common base class for all non-exit exceptions.
+
 ## DatetimeCodec
 
 Codec that convers to / from a datetime input.

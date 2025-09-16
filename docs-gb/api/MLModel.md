@@ -8,7 +8,7 @@ with ML models.
 ### decode()
 
 ```python
-decode(self, request_input: RequestInput, default_codec: Union[type[ForwardRef('InputCodec')], ForwardRef('InputCodec'), None] = None) -> Any
+decode(request_input: RequestInput, default_codec: Union[type[ForwardRef('InputCodec')], ForwardRef('InputCodec'), None] = None) -> Any
 ```
 
 Helper to decode a **request input** into its corresponding high-level
@@ -22,7 +22,7 @@ Otherwise, it will fall back to the codec specified in the
 ### decode_request()
 
 ```python
-decode_request(self, inference_request: InferenceRequest, default_codec: Union[type[ForwardRef('RequestCodec')], ForwardRef('RequestCodec'), None] = None) -> Any
+decode_request(inference_request: InferenceRequest, default_codec: Union[type[ForwardRef('RequestCodec')], ForwardRef('RequestCodec'), None] = None) -> Any
 ```
 
 Helper to decode an **inference request** into its corresponding
@@ -36,7 +36,7 @@ Otherwise, it will fall back to the codec specified in the
 ### encode()
 
 ```python
-encode(self, payload: Any, request_output: RequestOutput, default_codec: Union[type[ForwardRef('InputCodec')], ForwardRef('InputCodec'), None] = None) -> ResponseOutput
+encode(payload: Any, request_output: RequestOutput, default_codec: Union[type[ForwardRef('InputCodec')], ForwardRef('InputCodec'), None] = None) -> ResponseOutput
 ```
 
 Helper to encode a high-level Python object into its corresponding
@@ -50,7 +50,7 @@ Otherwise, it will fall back to the codec specified in the
 ### encode_response()
 
 ```python
-encode_response(self, payload: Any, default_codec: Union[type[ForwardRef('RequestCodec')], ForwardRef('RequestCodec'), None] = None) -> InferenceResponse
+encode_response(payload: Any, default_codec: Union[type[ForwardRef('RequestCodec')], ForwardRef('RequestCodec'), None] = None) -> InferenceResponse
 ```
 
 Helper to encode a high-level Python object into its corresponding
@@ -63,7 +63,7 @@ Otherwise, it will fall back to the codec specified in the
 ### load()
 
 ```python
-load(self) -> bool
+load() -> bool
 ```
 
 Method responsible for loading the model from a model artefact.
@@ -79,7 +79,7 @@ logic.**
 ### metadata()
 
 ```python
-metadata(self) -> MetadataModelResponse
+metadata() -> MetadataModelResponse
 ```
 
 _No description available._
@@ -87,7 +87,7 @@ _No description available._
 ### predict()
 
 ```python
-predict(self, payload: InferenceRequest) -> InferenceResponse
+predict(payload: InferenceRequest) -> InferenceResponse
 ```
 
 Method responsible for running inference on the model.
@@ -99,7 +99,7 @@ logic.**
 ### predict_stream()
 
 ```python
-predict_stream(self, payloads: AsyncIterator[InferenceRequest]) -> AsyncIterator[InferenceResponse]
+predict_stream(payloads: AsyncIterator[InferenceRequest]) -> AsyncIterator[InferenceResponse]
 ```
 
 Method responsible for running generation on the model, streaming a set
@@ -112,7 +112,7 @@ logic.**
 ### unload()
 
 ```python
-unload(self) -> bool
+unload() -> bool
 ```
 
 Method responsible for unloading the model, freeing any resources (e.g.
@@ -124,3 +124,4 @@ A return value of ``True`` will mean the model is now unloaded.
 
 **This method can be overriden to implement your custom unload
 logic.**
+
