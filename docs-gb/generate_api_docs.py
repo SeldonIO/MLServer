@@ -3,20 +3,20 @@ import json
 import inspect
 import importlib
 from pathlib import Path
+from typing import Any
 
 # -------------------------------------------------------------------
 # Setup paths
 # -------------------------------------------------------------------
 REPO_ROOT = Path(__file__).resolve().parent.parent
-OUTPUT_DIR = Path.cwd() / "docs-gb" / "api-reference" 
+OUTPUT_DIR = Path.cwd() / "docs-gb" / "api-reference"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-
-# Ensure repo root is importables
+# Ensure repo root is importable
 sys.path.insert(0, str(REPO_ROOT))
 
 # -------------------------------------------------------------------
-# Section mapping (manual control over structure)
+# Section mapping
 # -------------------------------------------------------------------
 SECTIONS = {
     "MLServer Settings": ["mlserver.settings"],
@@ -28,7 +28,6 @@ SECTIONS = {
     "Codecs": ["mlserver.codecs"],
     "Metrics": ["mlserver.metrics"],
 }
-
 
 # -------------------------------------------------------------------
 # Helpers
@@ -49,8 +48,40 @@ def format_signature(obj):
         return "()"
 
 
+def document_pydantic_model(obj):
+    """Return Markdown for Pydantic models, showing only user-facing fields."""
+    from pydantic import BaseModel, Field
+
+    md = ""
+    if not issubclass(obj, BaseModel):
+        return md
+
+    md += "| Field | Type | Default | Description |\n"
+    md += "|-------|------|---------|-------------|\n"
+
+    for field_name, field_info in obj.model_fields.items():
+        # Skip internal/private fields
+        if field_name.startswith("_"):
+            continue
+
+        # Field type
+        field_type = getattr(field_info.annotation, "__name__", str(field_info.annotation))
+
+        # Default
+        default = field_info.default if field_info.default is not None else "-"
+        if callable(default):
+            default = "<callable>"
+
+        # Description
+        description = field_info.field_info.description or "-"
+
+        md += f"| `{field_name}` | {field_type} | {default} | {description} |\n"
+
+    return md + "\n"
+
+
 def document_object(name, obj):
-    """Return Markdown documentation for a given class or function."""
+    """Return Markdown documentation for a class or function."""
     from pydantic import BaseModel
 
     if inspect.isclass(obj):
@@ -59,18 +90,11 @@ def document_object(name, obj):
         doc = inspect.getdoc(obj) or ""
         md = f"{title}\n\n```python\n{sig}\n```\n\n{doc}\n\n"
 
-        # If it's a Pydantic model, add JSON Schema
+        # If it's a Pydantic model, show fields in table format
         try:
             if issubclass(obj, BaseModel):
-                if hasattr(obj, "model_json_schema"):  # Pydantic v2
-                    schema = obj.model_json_schema()
-                else:  # Pydantic v1
-                    schema = obj.schema()
-
-                schema_str = json.dumps(schema, indent=2)
-                md += f"**JSON Schema:**\n\n```json\n{schema_str}\n```\n\n"
+                md += document_pydantic_model(obj)
         except Exception:
-            # ignore if not subclassable or schema fails
             pass
 
         return md
@@ -114,6 +138,7 @@ def main():
 
         filename.write_text("\n".join(out))
         print(f"✅ Wrote {filename}")
+
 
 if __name__ == "__main__":
     main()
