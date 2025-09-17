@@ -13,7 +13,7 @@ Server-wide configuration (e.g., HTTP/GRPC ports) loaded from a `settings.json` 
 
 ## Model Settings
 
-Each model has its own configuration (metadata, parallelism, etc.). Typically provided via a `model-settings.json` next to the model artifacts. Alternatively, use env vars prefixed with `MLSERVER_MODEL_` (e.g., `MLSERVER_MODEL_IMPLEMENTATION`). If no `model-settings.json` is found, MLServer will try to load a default model from these env vars. Note: these env vars are shared across models unless overridden by `model-settings.json`.
+Each model has its own configuration (metadata, parallelism, etc.). Typically provided via a `model-settings.json` next to the model artifacts. Alternatively, use env vars prefixed with `MLSERVER_MODEL_` (e.g., `MLSERVER_MODEL_IMPLEMENTATION`). If no `model-settings.json` is found, MLServer will try to load a default model from these env vars. Note: these env vars are shared across models unless overridden by `model-settings.json`. 
 
 - Scope: per-model
 - Sources: `model-settings.json` or env vars `MLSERVER_MODEL_*`
