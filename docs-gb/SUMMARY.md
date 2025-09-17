@@ -38,6 +38,7 @@
   * [MLServer Settings](api/Settings.md)
   * [Model Settings](api/ModelSettings.md)
   * [Model Parameters](api/ModelParameters.md)
+  * [MLServer CLI](api/CLI.md)
   <!-- * [MLServer CLI](api-reference/mlserver_cli.md) -->
   * [Python API]
     * [MLModel](api/MLModel.md)

@@ -6,8 +6,6 @@ An enumeration.
 
 ## InferenceErrorResponse
 
-### Fields
-
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `error` | `Optional[str]` | `None` | - |
@@ -41,8 +39,6 @@ An enumeration.
 </details>
 
 ## InferenceRequest
-
-### Fields
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
@@ -243,8 +239,6 @@ An enumeration.
 
 ## InferenceResponse
 
-### Fields
-
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `id` | `Optional[str]` | `None` | - |
@@ -423,8 +417,6 @@ An enumeration.
 
 ## MetadataModelErrorResponse
 
-### Fields
-
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `error` | `str` | `-` | - |
@@ -453,8 +445,6 @@ An enumeration.
 </details>
 
 ## MetadataModelResponse
-
-### Fields
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
@@ -639,8 +629,6 @@ An enumeration.
 
 ## MetadataServerErrorResponse
 
-### Fields
-
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `error` | `str` | `-` | - |
@@ -669,8 +657,6 @@ An enumeration.
 </details>
 
 ## MetadataServerResponse
-
-### Fields
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
@@ -715,8 +701,6 @@ An enumeration.
 </details>
 
 ## MetadataTensor
-
-### Fields
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
@@ -825,8 +809,6 @@ An enumeration.
 
 ## Parameters
 
-### Fields
-
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `content_type` | `Optional[str]` | `None` | - |
@@ -875,8 +857,6 @@ An enumeration.
 
 ## RepositoryIndexRequest
 
-### Fields
-
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `ready` | `Optional[bool]` | `None` | - |
@@ -910,8 +890,6 @@ An enumeration.
 </details>
 
 ## RepositoryIndexResponse
-
-### Fields
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
@@ -983,8 +961,6 @@ An enumeration.
 
 ## RepositoryIndexResponseItem
 
-### Fields
-
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `name` | `str` | `-` | - |
@@ -1051,8 +1027,6 @@ An enumeration.
 
 ## RepositoryLoadErrorResponse
 
-### Fields
-
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `error` | `Optional[str]` | `None` | - |
@@ -1087,8 +1061,6 @@ An enumeration.
 
 ## RepositoryUnloadErrorResponse
 
-### Fields
-
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `error` | `Optional[str]` | `None` | - |
@@ -1122,8 +1094,6 @@ An enumeration.
 </details>
 
 ## RequestInput
-
-### Fields
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
@@ -1247,8 +1217,6 @@ An enumeration.
 
 ## RequestOutput
 
-### Fields
-
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `name` | `str` | `-` | - |
@@ -1322,8 +1290,6 @@ An enumeration.
 </details>
 
 ## ResponseOutput
-
-### Fields
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
@@ -1450,8 +1416,6 @@ An enumeration.
 An enumeration.
 
 ## TensorData
-
-### Fields
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|

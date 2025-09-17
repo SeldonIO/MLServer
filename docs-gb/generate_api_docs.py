@@ -5,12 +5,15 @@ import importlib
 import pkgutil
 import json
 import enum
+import re
+import click
 
 from mlserver.settings import Settings, ModelSettings, ModelParameters  # Import ModelParameters
 from mlserver.model import MLModel
 import mlserver.types as Types
 import mlserver.codecs as Codecs
 import mlserver.metrics as Metrics
+import mlserver.cli
 
 from typing import Any, Dict
 import ast
@@ -136,7 +139,6 @@ def _class_description(cls: type) -> str:
 def _render_pydantic_fields_for_class(cls: type) -> list[str]:
     lines: list[str] = []
     # Title for fields
-    lines.append("### Fields\n")
     lines.append("| Field | Type | Default | Description |")
     lines.append("|-------|------|---------|-------------|")
     model_name = cls.__name__
@@ -198,6 +200,62 @@ def _get_method_doc_from_mro(cls: type, name: str, member: Any) -> str | None:
 
 def _is_codecs_module(module: ModuleType) -> bool:
     return getattr(module, "__name__", "") == "mlserver.codecs"
+
+def _deprecation_info(obj: Any) -> tuple[bool, str | None]:
+    """
+    Detect if a callable is deprecated.
+    - Checks common decorator-set flags.
+    - Unwraps decorated objects.
+    - Heuristic: 'deprecated' in the docstring.
+    - Special-case: detects mlserver.codecs.base.deprecated() wrapper by scanning code constants/closure.
+    """
+    def check(target: Any) -> tuple[bool, str | None]:
+        for flag in ("__deprecated__", "deprecated", "is_deprecated", "_deprecated"):
+            if getattr(target, flag, False):
+                reason = (
+                    getattr(target, "__deprecated_reason__", None)
+                    or getattr(target, "deprecated_reason", None)
+                    or getattr(target, "_deprecated_reason", None)
+                )
+                return True, reason
+        # Docstring heuristic
+        doc = inspect.getdoc(target) or ""
+        for line in doc.splitlines():
+            if re.search(r"\bdeprecated\b", line, flags=re.IGNORECASE):
+                return True, line.strip() or None
+
+        # Detect our custom @deprecated(...) wrapper (uses logger.warning("DEPRECATED! ..."))
+        try:
+            code = getattr(target, "__code__", None)
+            consts = getattr(code, "co_consts", ()) or ()
+            if any(isinstance(c, str) and "DEPRECATED" in c.upper() for c in consts):
+                # Try to extract the reason from the closure
+                reason = None
+                closure = getattr(target, "__closure__", None) or ()
+                for cell in closure:
+                    try:
+                        val = cell.cell_contents
+                        if isinstance(val, str):
+                            reason = val
+                            break
+                    except Exception:
+                        continue
+                return True, reason
+        except Exception:
+            pass
+
+        return False, None
+
+    is_dep, reason = check(obj)
+    if is_dep:
+        return is_dep, reason
+    try:
+        unwrapped = inspect.unwrap(obj)
+    except Exception:
+        unwrapped = None
+    if unwrapped is not None and unwrapped is obj:
+        return check(unwrapped)
+    return False, None
 
 # ---------------------------
 # Pydantic model docs
@@ -290,6 +348,10 @@ def document_class_or_module(obj: Union[type, ModuleType],
                 continue
             if getattr(member, "__module__", "").startswith("builtins") or inspect.isbuiltin(member):
                 continue
+            # Skip deprecated methods globally
+            is_dep, _ = _deprecation_info(member)
+            if is_dep:
+                continue
             if not include_inherited:
                 qn = getattr(member, "__qualname__", "")
                 if qn.split(".")[0] != obj.__name__:
@@ -364,12 +426,15 @@ def document_class_or_module(obj: Union[type, ModuleType],
                 include_inherited_here = _is_codecs_module(obj)
 
                 for mname, member in inspect.getmembers(cls):
-                    # Don’t use is_exported for class members; it’s for module-level symbols
                     if not include_private and mname.startswith("_"):
                         continue
                     if not inspect.isroutine(member):
                         continue
                     if getattr(member, "__module__", "").startswith("builtins") or inspect.isbuiltin(member):
+                        continue
+                    # Skip deprecated methods globally
+                    is_dep, _ = _deprecation_info(member)
+                    if is_dep:
                         continue
                     # Outside Codecs, only show methods declared on this class
                     if not include_inherited_here:
@@ -407,6 +472,10 @@ def document_class_or_module(obj: Union[type, ModuleType],
                 fqname = f"{func.__module__}.{fname}"
                 if fqname in seen_funcs:
                     continue
+                # Skip deprecated functions globally
+                is_dep, _ = _deprecation_info(func)
+                if is_dep:
+                    continue
                 seen_funcs.add(fqname)
                 doc = inspect.getdoc(func) or "_No description available._"
                 sig_str = _format_signature(func)
@@ -419,6 +488,204 @@ def document_class_or_module(obj: Union[type, ModuleType],
         return "\n".join(lines)
 
     raise TypeError(f"Object {obj} is not a class or module")
+
+# ---------------------------
+# MLServer CLI (Click) docs
+# ---------------------------
+def _find_click_root(module: ModuleType):
+    """
+    Locate the Click root command for mlserver.cli, even if defined in a submodule.
+    Preference order:
+      1) Group named 'mlserver'
+      2) CommandCollection
+      3) Any Group
+      4) Any Command
+    Also checks common attribute names: cli, main, app.
+    """
+    if not click:
+        return None
+
+    candidates: list[click.core.BaseCommand] = []
+
+    def collect_from(mod: ModuleType):
+        # Common attributes
+        for attr in ("mlserver", "cli", "main", "app"):
+            obj = getattr(mod, attr, None)
+            if isinstance(obj, (click.core.Command, click.core.Group, click.core.CommandCollection)):  # type: ignore[attr-defined]
+                candidates.append(obj)
+        # Any commands defined in the module
+        for _, obj in inspect.getmembers(mod):
+            if isinstance(obj, (click.core.Command, click.core.Group, click.core.CommandCollection)):  # type: ignore[attr-defined]
+                candidates.append(obj)
+
+    # Add module and submodules
+    collect_from(module)
+    pkg_path = getattr(module, "__path__", None)
+    if pkg_path:
+        for _, subname, _ in pkgutil.walk_packages(pkg_path, prefix=module.__name__ + "."):
+            try:
+                submod = importlib.import_module(subname)
+                collect_from(submod)
+            except Exception:
+                continue
+
+    # Rank candidates
+    def score(cmd: click.core.BaseCommand) -> int:
+        # Highest if group named 'mlserver'
+        if isinstance(cmd, click.core.Group) and (getattr(cmd, "name", "") == "mlserver"):
+            return 100
+        # CommandCollection next
+        if isinstance(cmd, getattr(click.core, "CommandCollection", tuple())):
+            return 90
+        # Any Group
+        if isinstance(cmd, click.core.Group):
+            return 80
+        # Any Command
+        if isinstance(cmd, click.core.Command):
+            return 70
+        return 0
+
+    if not candidates:
+        return None
+    candidates.sort(key=score, reverse=True)
+    return candidates[0]
+
+def _click_param_type_name(param_type) -> str:
+    try:
+        # Click types usually have 'name'
+        tname = getattr(param_type, "name", None)
+        if tname:
+            return tname
+        return type(param_type).__name__
+    except Exception:
+        return "value"
+
+def _render_click_usage(cmd: "click.core.BaseCommand", prog: str) -> str:
+    # e.g., mlserver [OPTIONS] COMMAND [ARGS]...
+    try:
+        parts = [prog]
+        if cmd.params:
+            parts.append("[OPTIONS]")
+        if isinstance(cmd, click.core.Group):
+            parts.append("COMMAND [ARGS]...")
+        else:
+            # Arguments for leaf commands
+            for p in cmd.params:
+                if isinstance(p, click.core.Argument):
+                    name = (p.metavar or p.name or "ARG").upper()
+                    parts.append(name if p.required else f"[{name}]")
+        return " ".join(parts)
+    except Exception:
+        return f"{prog} [OPTIONS]"
+
+def _render_click_option(opt: "click.core.Option") -> list[str]:
+    # Flags
+    flags = list(opt.opts) + list(opt.secondary_opts)
+    flags_str = ", ".join(flags) if flags else f"--{opt.name.replace('_','-')}"
+    # Metavar/type
+    metavar = opt.metavar
+    if not metavar and not opt.is_flag:
+        metavar = f"<{_click_param_type_name(opt.type)}>"
+    head = f"{flags_str}" + (f" {metavar}" if metavar else "")
+    # Required/default/choices
+    details = []
+    if getattr(opt, "required", False):
+        details.append("Required")
+    if getattr(opt.type, "choices", None):
+        choices = " | ".join(map(str, opt.type.choices))
+        details.append(f"Options: {choices}")
+    if opt.default not in (None, (), []):
+        details.append(f"Default: {opt.default}")
+    if opt.envvar:
+        details.append(f"Env: {opt.envvar}")
+    suffix = f" ({'; '.join(details)})" if details else ""
+    # Help text
+    help_text = (opt.help or "").strip()
+    return [f"- {head}{suffix}", f"  {help_text}" if help_text else ""]
+
+def _render_click_argument(arg: "click.core.Argument") -> list[str]:
+    name = (arg.metavar or arg.name or "ARG").upper()
+    req = "Required argument" if arg.required else "Optional argument"
+    return [f"- {name}", f"  {req}"]
+
+def _render_click_deprecation(help_text: str | None) -> str | None:
+    if not help_text:
+        return None
+    for line in help_text.splitlines():
+        if re.search(r"\bdeprecated\b", line, re.IGNORECASE):
+            return f"> {line.strip()}"
+    return None
+
+def _render_click_command(cmd: "click.core.BaseCommand", prog: str) -> list[str]:
+    lines: list[str] = []
+    title = cmd.name or prog
+    lines.append(f"## {title}\n")
+
+    # Description/help
+    help_text = (cmd.help or "").strip()
+    dep_note = _render_click_deprecation(help_text)
+    if help_text:
+        lines.append(f"{help_text}\n")
+    if dep_note:
+        lines.append(f"{dep_note}\n")
+
+    # Usage
+    usage = _render_click_usage(cmd, prog)
+    lines.append("```bash")
+    lines.append(usage)
+    lines.append("```\n")
+
+    # Options and arguments
+    options: list[list[str]] = []
+    arguments: list[list[str]] = []
+    for p in cmd.params or []:
+        if isinstance(p, click.core.Option):
+            options.append(_render_click_option(p))
+        elif isinstance(p, click.core.Argument):
+            arguments.append(_render_click_argument(p))
+    if options:
+        lines.append("### Options\n")
+        for block in options:
+            for l in block:
+                if l:
+                    lines.append(l)
+            lines.append("")
+    if arguments:
+        lines.append("### Arguments\n")
+        for block in arguments:
+            for l in block:
+                if l:
+                    lines.append(l)
+            lines.append("")
+
+    # Subcommands (for Group)
+    if isinstance(cmd, click.core.Group):
+        subcmds = sorted(cmd.commands.items(), key=lambda kv: kv[0])
+        for subname, sub in subcmds:
+            # Render subcommand
+            lines.extend(_render_click_command(sub, f"{prog} {subname}"))
+    return lines
+
+def generate_cli_docs() -> str | None:
+    try:
+        mod = importlib.import_module("mlserver.cli")
+    except Exception:
+        return None
+    root = _find_click_root(mod)
+    if not root:
+        return None
+    lines: list[str] = []
+    lines.append("# MLServer CLI\n")
+    lines.append(
+        "The MLServer package includes a mlserver CLI designed to help with common tasks in a model’s lifecycle. "
+        "You can see a high-level outline at any time via:\n"
+    )
+    lines.append("```bash")
+    lines.append("mlserver --help")
+    lines.append("```\n")
+    # Render root (mlserver) and all subcommands
+    lines.extend(_render_click_command(root, root.name or "mlserver"))
+    return "\n".join(lines)
 
 # ---------------------------
 # Main driver
@@ -451,6 +718,12 @@ def main():
                 content = document_class_or_module(obj, add_top_title=False)
                 if content.strip():
                     f.write(content + "\n")
+
+    # Generate CLI docs as a separate page (if click and mlserver.cli are available)
+    cli_md = generate_cli_docs()
+    if cli_md:
+        with open(os.path.join(outdir, "CLI.md"), "w") as f:
+            f.write(cli_md)
 
     print("Docs generated in docs-gb/api/")
 

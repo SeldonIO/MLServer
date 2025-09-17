@@ -14,12 +14,6 @@ can_encode(payload: Any) -> bool
 
 Evaluate whether the codec can encode (decode) the payload.
 
-### decode()
-
-```python
-decode(request_input: RequestInput) -> Any
-```
-
 ### decode_input()
 
 ```python
@@ -35,12 +29,6 @@ decode_output(response_output: ResponseOutput) -> List[bytes]
 ```
 
 Decode a response output into a high-level Python type.
-
-### encode()
-
-```python
-encode(name: str, payload: Any) -> ResponseOutput
-```
 
 ### encode_input()
 
@@ -94,12 +82,6 @@ can_encode(payload: Any) -> bool
 
 Evaluate whether the codec can encode (decode) the payload.
 
-### decode()
-
-```python
-decode(request_input: RequestInput) -> Any
-```
-
 ### decode_input()
 
 ```python
@@ -115,12 +97,6 @@ decode_output(response_output: ResponseOutput) -> List[datetime]
 ```
 
 Decode a response output into a high-level Python type.
-
-### encode()
-
-```python
-encode(name: str, payload: Any) -> ResponseOutput
-```
 
 ### encode_input()
 
@@ -157,12 +133,6 @@ can_encode(payload: Any) -> bool
 
 Evaluate whether the codec can encode (decode) the payload.
 
-### decode()
-
-```python
-decode(request_input: RequestInput) -> Any
-```
-
 ### decode_input()
 
 ```python
@@ -178,12 +148,6 @@ decode_output(response_output: ResponseOutput) -> Any
 ```
 
 Decode a response output into a high-level Python type.
-
-### encode()
-
-```python
-encode(name: str, payload: Any) -> ResponseOutput
-```
 
 ### encode_input()
 
@@ -215,12 +179,6 @@ can_encode(payload: Any) -> bool
 
 Evaluate whether the codec can encode (decode) the payload.
 
-### decode()
-
-```python
-decode(request_input: RequestInput) -> Any
-```
-
 ### decode_input()
 
 ```python
@@ -236,12 +194,6 @@ decode_output(response_output: ResponseOutput) -> ndarray
 ```
 
 Decode a response output into a high-level Python type.
-
-### encode()
-
-```python
-encode(name: str, payload: Any) -> ResponseOutput
-```
 
 ### encode_input()
 
@@ -275,12 +227,6 @@ can_encode(payload: Any) -> bool
 
 Evaluate whether the codec can encode (decode) the payload.
 
-### decode()
-
-```python
-decode(request: InferenceRequest) -> Any
-```
-
 ### decode_request()
 
 ```python
@@ -296,12 +242,6 @@ decode_response(response: InferenceResponse) -> Any
 ```
 
 Decode an inference response into a high-level Python object.
-
-### encode()
-
-```python
-encode(model_name: str, payload: Any, model_version: Optional[str] = None) -> InferenceResponse
-```
 
 ### encode_request()
 
@@ -334,12 +274,6 @@ can_encode(payload: Any) -> bool
 
 Evaluate whether the codec can encode (decode) the payload.
 
-### decode()
-
-```python
-decode(request: InferenceRequest) -> Any
-```
-
 ### decode_request()
 
 ```python
@@ -355,12 +289,6 @@ decode_response(response: InferenceResponse) -> DataFrame
 ```
 
 Decode an inference response into a high-level Python object.
-
-### encode()
-
-```python
-encode(model_name: str, payload: Any, model_version: Optional[str] = None) -> InferenceResponse
-```
 
 ### encode_outputs()
 
@@ -405,12 +333,6 @@ can_encode(payload: Any) -> bool
 
 Evaluate whether the codec can encode (decode) the payload.
 
-### decode()
-
-```python
-decode(request: InferenceRequest) -> Any
-```
-
 ### decode_request()
 
 ```python
@@ -426,12 +348,6 @@ decode_response(response: InferenceResponse) -> Any
 ```
 
 Decode an inference response into a high-level Python object.
-
-### encode()
-
-```python
-encode(model_name: str, payload: Any, model_version: Optional[str] = None) -> InferenceResponse
-```
 
 ### encode_request()
 
@@ -463,12 +379,6 @@ can_encode(payload: Any) -> bool
 
 Evaluate whether the codec can encode (decode) the payload.
 
-### decode()
-
-```python
-decode(request_input: RequestInput) -> Any
-```
-
 ### decode_input()
 
 ```python
@@ -484,12 +394,6 @@ decode_output(response_output: ResponseOutput) -> List[str]
 ```
 
 Decode a response output into a high-level Python type.
-
-### encode()
-
-```python
-encode(name: str, payload: Any) -> ResponseOutput
-```
 
 ### encode_input()
 
@@ -524,12 +428,6 @@ can_encode(payload: Any) -> bool
 
 Evaluate whether the codec can encode (decode) the payload.
 
-### decode()
-
-```python
-decode(request: InferenceRequest) -> Any
-```
-
 ### decode_request()
 
 ```python
@@ -545,12 +443,6 @@ decode_response(response: InferenceResponse) -> Any
 ```
 
 Decode an inference response into a high-level Python object.
-
-### encode()
-
-```python
-encode(model_name: str, payload: Any, model_version: Optional[str] = None) -> InferenceResponse
-```
 
 ### encode_request()
 
