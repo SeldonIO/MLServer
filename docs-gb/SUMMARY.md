@@ -34,13 +34,13 @@
     * [Codecs](reference/api/codecs.md)
     * [Metrics](reference/api/metrics.md)
 
-* [Reference - Generated]
+* [API Reference](api-reference.md)
   * [MLServer Settings](api/Settings.md)
   * [Model Settings](api/ModelSettings.md)
   * [Model Parameters](api/ModelParameters.md)
   * [MLServer CLI](api/CLI.md)
   <!-- * [MLServer CLI](api-reference/mlserver_cli.md) -->
-  * [Python API]
+  * [Python API](api/PythonAPI.md)
     * [MLModel](api/MLModel.md)
     * [Types](api/Types.md)
     * [Codecs](api/Codecs.md)
