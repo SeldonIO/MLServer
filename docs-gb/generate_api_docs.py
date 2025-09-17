@@ -154,8 +154,8 @@ def _should_include_schema_for_module(module: ModuleType) -> bool:
     return getattr(module, "__name__", "") == "mlserver.types"
 
 def _should_include_fields_for_module(module: ModuleType) -> bool:
-    # Suppress Fields tables on the Types page
-    return getattr(module, "__name__", "") != "mlserver.types"
+    # Show Fields tables for all modules, including Types
+    return True
 
 def _render_json_schema_block(cls: type) -> list[str]:
     # Pydantic v2: model_json_schema; v1 fallback: schema

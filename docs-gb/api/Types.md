@@ -6,6 +6,11 @@ An enumeration.
 
 ## InferenceErrorResponse
 
+### Fields
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `error` | `Optional[str]` | `None` | - |
 <details><summary>JSON Schema</summary>
 
 
@@ -37,6 +42,14 @@ An enumeration.
 
 ## InferenceRequest
 
+### Fields
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `id` | `Optional[str]` | `None` | - |
+| `inputs` | `List[RequestInput]` | `-` | - |
+| `outputs` | `Optional[List[RequestOutput]]` | `None` | - |
+| `parameters` | `Optional[Parameters]` | `None` | - |
 <details><summary>JSON Schema</summary>
 
 
@@ -230,6 +243,15 @@ An enumeration.
 
 ## InferenceResponse
 
+### Fields
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `id` | `Optional[str]` | `None` | - |
+| `model_name` | `str` | `-` | - |
+| `model_version` | `Optional[str]` | `None` | - |
+| `outputs` | `List[ResponseOutput]` | `-` | - |
+| `parameters` | `Optional[Parameters]` | `None` | - |
 <details><summary>JSON Schema</summary>
 
 
@@ -401,6 +423,11 @@ An enumeration.
 
 ## MetadataModelErrorResponse
 
+### Fields
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `error` | `str` | `-` | - |
 <details><summary>JSON Schema</summary>
 
 
@@ -427,6 +454,16 @@ An enumeration.
 
 ## MetadataModelResponse
 
+### Fields
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `inputs` | `Optional[List[MetadataTensor]]` | `None` | - |
+| `name` | `str` | `-` | - |
+| `outputs` | `Optional[List[MetadataTensor]]` | `None` | - |
+| `parameters` | `Optional[Parameters]` | `None` | - |
+| `platform` | `str` | `-` | - |
+| `versions` | `Optional[List[str]]` | `None` | - |
 <details><summary>JSON Schema</summary>
 
 
@@ -602,6 +639,11 @@ An enumeration.
 
 ## MetadataServerErrorResponse
 
+### Fields
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `error` | `str` | `-` | - |
 <details><summary>JSON Schema</summary>
 
 
@@ -628,6 +670,13 @@ An enumeration.
 
 ## MetadataServerResponse
 
+### Fields
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `extensions` | `List[str]` | `-` | - |
+| `name` | `str` | `-` | - |
+| `version` | `str` | `-` | - |
 <details><summary>JSON Schema</summary>
 
 
@@ -667,6 +716,14 @@ An enumeration.
 
 ## MetadataTensor
 
+### Fields
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `datatype` | `Datatype` | `-` | - |
+| `name` | `str` | `-` | - |
+| `parameters` | `Optional[Parameters]` | `None` | - |
+| `shape` | `List[int]` | `-` | - |
 <details><summary>JSON Schema</summary>
 
 
@@ -768,6 +825,12 @@ An enumeration.
 
 ## Parameters
 
+### Fields
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `content_type` | `Optional[str]` | `None` | - |
+| `headers` | `Optional[Dict[str, Any]]` | `None` | - |
 <details><summary>JSON Schema</summary>
 
 
@@ -812,6 +875,11 @@ An enumeration.
 
 ## RepositoryIndexRequest
 
+### Fields
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `ready` | `Optional[bool]` | `None` | - |
 <details><summary>JSON Schema</summary>
 
 
@@ -843,6 +911,11 @@ An enumeration.
 
 ## RepositoryIndexResponse
 
+### Fields
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `root` | `List[RepositoryIndexResponseItem]` | `-` | - |
 <details><summary>JSON Schema</summary>
 
 
@@ -910,6 +983,14 @@ An enumeration.
 
 ## RepositoryIndexResponseItem
 
+### Fields
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `name` | `str` | `-` | - |
+| `reason` | `str` | `-` | - |
+| `state` | `State` | `-` | - |
+| `version` | `Optional[str]` | `None` | - |
 <details><summary>JSON Schema</summary>
 
 
@@ -970,6 +1051,11 @@ An enumeration.
 
 ## RepositoryLoadErrorResponse
 
+### Fields
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `error` | `Optional[str]` | `None` | - |
 <details><summary>JSON Schema</summary>
 
 
@@ -1001,6 +1087,11 @@ An enumeration.
 
 ## RepositoryUnloadErrorResponse
 
+### Fields
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `error` | `Optional[str]` | `None` | - |
 <details><summary>JSON Schema</summary>
 
 
@@ -1032,6 +1123,15 @@ An enumeration.
 
 ## RequestInput
 
+### Fields
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `data` | `TensorData` | `-` | - |
+| `datatype` | `Datatype` | `-` | - |
+| `name` | `str` | `-` | - |
+| `parameters` | `Optional[Parameters]` | `None` | - |
+| `shape` | `List[int]` | `-` | - |
 <details><summary>JSON Schema</summary>
 
 
@@ -1147,6 +1247,12 @@ An enumeration.
 
 ## RequestOutput
 
+### Fields
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `name` | `str` | `-` | - |
+| `parameters` | `Optional[Parameters]` | `None` | - |
 <details><summary>JSON Schema</summary>
 
 
@@ -1217,6 +1323,15 @@ An enumeration.
 
 ## ResponseOutput
 
+### Fields
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `data` | `TensorData` | `-` | - |
+| `datatype` | `Datatype` | `-` | - |
+| `name` | `str` | `-` | - |
+| `parameters` | `Optional[Parameters]` | `None` | - |
+| `shape` | `List[int]` | `-` | - |
 <details><summary>JSON Schema</summary>
 
 
@@ -1336,6 +1451,11 @@ An enumeration.
 
 ## TensorData
 
+### Fields
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `root` | `Union[List[Any], Any]` | `-` | - |
 <details><summary>JSON Schema</summary>
 
 
