@@ -581,24 +581,32 @@ def _render_click_usage(cmd: "click.core.BaseCommand", prog: str) -> str:
 def _render_click_option(opt: "click.core.Option") -> list[str]:
     # Flags
     flags = list(opt.opts) + list(opt.secondary_opts)
-    flags_str = ", ".join(flags) if flags else f"--{opt.name.replace('_','-')}"
+    fallback = f"--{opt.name.replace('_','-')}"
+    flags_str = ", ".join(f"`{f}`" for f in flags) if flags else f"`{fallback}`"
+
     # Metavar/type
     metavar = opt.metavar
     if not metavar and not opt.is_flag:
         metavar = f"<{_click_param_type_name(opt.type)}>"
-    head = f"{flags_str}" + (f" {metavar}" if metavar else "")
-    # Required/default/choices
+    head = f"{flags_str}" + (f" `{metavar}`" if metavar else "")
+
+    # Required/default/choices/env
     details = []
     if getattr(opt, "required", False):
         details.append("Required")
     if getattr(opt.type, "choices", None):
-        choices = " | ".join(map(str, opt.type.choices))
+        choices = " | ".join(f"`{c}`" for c in opt.type.choices)
         details.append(f"Options: {choices}")
     if opt.default not in (None, (), []):
-        details.append(f"Default: {opt.default}")
+        details.append(f"Default: `{opt.default}`")
     if opt.envvar:
-        details.append(f"Env: {opt.envvar}")
+        if isinstance(opt.envvar, (list, tuple)):
+            envs = ", ".join(f"`{e}`" for e in opt.envvar)
+        else:
+            envs = f"`{opt.envvar}`"
+        details.append(f"Env: {envs}")
     suffix = f" ({'; '.join(details)})" if details else ""
+
     # Help text
     help_text = (opt.help or "").strip()
     return [f"- {head}{suffix}", f"  {help_text}" if help_text else ""]
@@ -606,7 +614,7 @@ def _render_click_option(opt: "click.core.Option") -> list[str]:
 def _render_click_argument(arg: "click.core.Argument") -> list[str]:
     name = (arg.metavar or arg.name or "ARG").upper()
     req = "Required argument" if arg.required else "Optional argument"
-    return [f"- {name}", f"  {req}"]
+    return [f"- `{name}`", f"  {req}"]
 
 def _render_click_deprecation(help_text: str | None) -> str | None:
     if not help_text:
