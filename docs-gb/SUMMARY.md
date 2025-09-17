@@ -25,7 +25,7 @@
   * [HuggingFace](runtimes/huggingface.md)
   * [Custom](runtimes/custom.md)
 
-* [API Reference](api-reference.md)
+* [API Reference](api/api-reference.md)
   * [MLServer Settings](api/Settings.md)
   * [Model Settings](api/ModelSettings.md)
   * [Model Parameters](api/ModelParameters.md)
