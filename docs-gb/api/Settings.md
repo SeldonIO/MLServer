@@ -17,7 +17,7 @@
 | `cache_size` | `int` | `100` | Cache size to be used if caching is enabled. |
 | `cors_settings` | `Optional[CORSSettings]` | `None` | - |
 | `debug` | `bool` | `True` | - |
-| `environments_dir` | `str` | `'/Users/paul.bridi/Projects/MLServer/.envs'` | - |
+| `environments_dir` | `str` | `'-'` | - |
 | `extensions` | `List[str]` | `[]` | - |
 | `grpc_max_message_length` | `Optional[int]` | `None` | - |
 | `grpc_port` | `int` | `8081` | - |
@@ -30,7 +30,7 @@
 | `kafka_topic_output` | `str` | `'mlserver-output'` | Kafka topic for output messages. |
 | `load_models_at_startup` | `bool` | `True` | - |
 | `logging_settings` | `Union[str, Dict[Any, Any], None]` | `None` | Path to logging config file or dictionary configuration. |
-| `metrics_dir` | `str` | `'/Users/paul.bridi/Projects/MLServer/.metrics'` | Directory used to share metrics across parallel workers. Equivalent to the `PROMETHEUS_MULTIPROC_DIR` env var in `prometheus-client`. Note that this won't be used if the `parallel_workers` flag is disabled. By default, the `.metrics` folder of the current working directory will be used. |
+| `metrics_dir` | `str` | `'-'` | Directory used to share metrics across parallel workers. Equivalent to the `PROMETHEUS_MULTIPROC_DIR` env var in `prometheus-client`. Note that this won't be used if the `parallel_workers` flag is disabled. By default, the `.metrics` folder of the current working directory will be used. |
 | `metrics_endpoint` | `Optional[str]` | `'/metrics'` | Endpoint used to expose Prometheus metrics. Alternatively, can be set to `None` to disable it. |
 | `metrics_port` | `int` | `8082` | Port used to expose metrics endpoint. |
 | `metrics_rest_server_prefix` | `str` | `'rest_server'` | Metrics rest server string prefix to be exported. |
