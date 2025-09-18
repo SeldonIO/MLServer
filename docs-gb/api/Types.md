@@ -1,0 +1,1443 @@
+# Types
+
+## Datatype
+
+An enumeration.
+
+## InferenceErrorResponse
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `error` | `Optional[str]` | `None` | - |
+<details><summary>JSON Schema</summary>
+
+
+```json
+
+{
+  "properties": {
+    "error": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Error"
+    }
+  },
+  "title": "InferenceErrorResponse",
+  "type": "object"
+}
+
+```
+
+
+</details>
+
+## InferenceRequest
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `id` | `Optional[str]` | `None` | - |
+| `inputs` | `List[RequestInput]` | `-` | - |
+| `outputs` | `Optional[List[RequestOutput]]` | `None` | - |
+| `parameters` | `Optional[Parameters]` | `None` | - |
+<details><summary>JSON Schema</summary>
+
+
+```json
+
+{
+  "$defs": {
+    "Datatype": {
+      "enum": [
+        "BOOL",
+        "UINT8",
+        "UINT16",
+        "UINT32",
+        "UINT64",
+        "INT8",
+        "INT16",
+        "INT32",
+        "INT64",
+        "FP16",
+        "FP32",
+        "FP64",
+        "BYTES"
+      ],
+      "title": "Datatype",
+      "type": "string"
+    },
+    "Parameters": {
+      "additionalProperties": true,
+      "properties": {
+        "content_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content Type"
+        },
+        "headers": {
+          "anyOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Headers"
+        }
+      },
+      "title": "Parameters",
+      "type": "object"
+    },
+    "RequestInput": {
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "shape": {
+          "items": {
+            "type": "integer"
+          },
+          "title": "Shape",
+          "type": "array"
+        },
+        "datatype": {
+          "$ref": "#/$defs/Datatype"
+        },
+        "parameters": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Parameters"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "data": {
+          "$ref": "#/$defs/TensorData"
+        }
+      },
+      "required": [
+        "name",
+        "shape",
+        "datatype",
+        "data"
+      ],
+      "title": "RequestInput",
+      "type": "object"
+    },
+    "RequestOutput": {
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "parameters": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Parameters"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "RequestOutput",
+      "type": "object"
+    },
+    "TensorData": {
+      "anyOf": [
+        {
+          "items": {},
+          "type": "array"
+        },
+        {}
+      ],
+      "title": "TensorData"
+    }
+  },
+  "properties": {
+    "id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Id"
+    },
+    "parameters": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Parameters"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "inputs": {
+      "items": {
+        "$ref": "#/$defs/RequestInput"
+      },
+      "title": "Inputs",
+      "type": "array"
+    },
+    "outputs": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/RequestOutput"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Outputs"
+    }
+  },
+  "required": [
+    "inputs"
+  ],
+  "title": "InferenceRequest",
+  "type": "object"
+}
+
+```
+
+
+</details>
+
+## InferenceResponse
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `id` | `Optional[str]` | `None` | - |
+| `model_name` | `str` | `-` | - |
+| `model_version` | `Optional[str]` | `None` | - |
+| `outputs` | `List[ResponseOutput]` | `-` | - |
+| `parameters` | `Optional[Parameters]` | `None` | - |
+<details><summary>JSON Schema</summary>
+
+
+```json
+
+{
+  "$defs": {
+    "Datatype": {
+      "enum": [
+        "BOOL",
+        "UINT8",
+        "UINT16",
+        "UINT32",
+        "UINT64",
+        "INT8",
+        "INT16",
+        "INT32",
+        "INT64",
+        "FP16",
+        "FP32",
+        "FP64",
+        "BYTES"
+      ],
+      "title": "Datatype",
+      "type": "string"
+    },
+    "Parameters": {
+      "additionalProperties": true,
+      "properties": {
+        "content_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content Type"
+        },
+        "headers": {
+          "anyOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Headers"
+        }
+      },
+      "title": "Parameters",
+      "type": "object"
+    },
+    "ResponseOutput": {
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "shape": {
+          "items": {
+            "type": "integer"
+          },
+          "title": "Shape",
+          "type": "array"
+        },
+        "datatype": {
+          "$ref": "#/$defs/Datatype"
+        },
+        "parameters": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Parameters"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "data": {
+          "$ref": "#/$defs/TensorData"
+        }
+      },
+      "required": [
+        "name",
+        "shape",
+        "datatype",
+        "data"
+      ],
+      "title": "ResponseOutput",
+      "type": "object"
+    },
+    "TensorData": {
+      "anyOf": [
+        {
+          "items": {},
+          "type": "array"
+        },
+        {}
+      ],
+      "title": "TensorData"
+    }
+  },
+  "properties": {
+    "model_name": {
+      "title": "Model Name",
+      "type": "string"
+    },
+    "model_version": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Model Version"
+    },
+    "id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Id"
+    },
+    "parameters": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Parameters"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "outputs": {
+      "items": {
+        "$ref": "#/$defs/ResponseOutput"
+      },
+      "title": "Outputs",
+      "type": "array"
+    }
+  },
+  "required": [
+    "model_name",
+    "outputs"
+  ],
+  "title": "InferenceResponse",
+  "type": "object"
+}
+
+```
+
+
+</details>
+
+## MetadataModelErrorResponse
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `error` | `str` | `-` | - |
+<details><summary>JSON Schema</summary>
+
+
+```json
+
+{
+  "properties": {
+    "error": {
+      "title": "Error",
+      "type": "string"
+    }
+  },
+  "required": [
+    "error"
+  ],
+  "title": "MetadataModelErrorResponse",
+  "type": "object"
+}
+
+```
+
+
+</details>
+
+## MetadataModelResponse
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `inputs` | `Optional[List[MetadataTensor]]` | `None` | - |
+| `name` | `str` | `-` | - |
+| `outputs` | `Optional[List[MetadataTensor]]` | `None` | - |
+| `parameters` | `Optional[Parameters]` | `None` | - |
+| `platform` | `str` | `-` | - |
+| `versions` | `Optional[List[str]]` | `None` | - |
+<details><summary>JSON Schema</summary>
+
+
+```json
+
+{
+  "$defs": {
+    "Datatype": {
+      "enum": [
+        "BOOL",
+        "UINT8",
+        "UINT16",
+        "UINT32",
+        "UINT64",
+        "INT8",
+        "INT16",
+        "INT32",
+        "INT64",
+        "FP16",
+        "FP32",
+        "FP64",
+        "BYTES"
+      ],
+      "title": "Datatype",
+      "type": "string"
+    },
+    "MetadataTensor": {
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "datatype": {
+          "$ref": "#/$defs/Datatype"
+        },
+        "shape": {
+          "items": {
+            "type": "integer"
+          },
+          "title": "Shape",
+          "type": "array"
+        },
+        "parameters": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Parameters"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "name",
+        "datatype",
+        "shape"
+      ],
+      "title": "MetadataTensor",
+      "type": "object"
+    },
+    "Parameters": {
+      "additionalProperties": true,
+      "properties": {
+        "content_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content Type"
+        },
+        "headers": {
+          "anyOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Headers"
+        }
+      },
+      "title": "Parameters",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "versions": {
+      "anyOf": [
+        {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Versions"
+    },
+    "platform": {
+      "title": "Platform",
+      "type": "string"
+    },
+    "inputs": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/MetadataTensor"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Inputs"
+    },
+    "outputs": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/MetadataTensor"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Outputs"
+    },
+    "parameters": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Parameters"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "name",
+    "platform"
+  ],
+  "title": "MetadataModelResponse",
+  "type": "object"
+}
+
+```
+
+
+</details>
+
+## MetadataServerErrorResponse
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `error` | `str` | `-` | - |
+<details><summary>JSON Schema</summary>
+
+
+```json
+
+{
+  "properties": {
+    "error": {
+      "title": "Error",
+      "type": "string"
+    }
+  },
+  "required": [
+    "error"
+  ],
+  "title": "MetadataServerErrorResponse",
+  "type": "object"
+}
+
+```
+
+
+</details>
+
+## MetadataServerResponse
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `extensions` | `List[str]` | `-` | - |
+| `name` | `str` | `-` | - |
+| `version` | `str` | `-` | - |
+<details><summary>JSON Schema</summary>
+
+
+```json
+
+{
+  "properties": {
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "version": {
+      "title": "Version",
+      "type": "string"
+    },
+    "extensions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Extensions",
+      "type": "array"
+    }
+  },
+  "required": [
+    "name",
+    "version",
+    "extensions"
+  ],
+  "title": "MetadataServerResponse",
+  "type": "object"
+}
+
+```
+
+
+</details>
+
+## MetadataTensor
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `datatype` | `Datatype` | `-` | - |
+| `name` | `str` | `-` | - |
+| `parameters` | `Optional[Parameters]` | `None` | - |
+| `shape` | `List[int]` | `-` | - |
+<details><summary>JSON Schema</summary>
+
+
+```json
+
+{
+  "$defs": {
+    "Datatype": {
+      "enum": [
+        "BOOL",
+        "UINT8",
+        "UINT16",
+        "UINT32",
+        "UINT64",
+        "INT8",
+        "INT16",
+        "INT32",
+        "INT64",
+        "FP16",
+        "FP32",
+        "FP64",
+        "BYTES"
+      ],
+      "title": "Datatype",
+      "type": "string"
+    },
+    "Parameters": {
+      "additionalProperties": true,
+      "properties": {
+        "content_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content Type"
+        },
+        "headers": {
+          "anyOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Headers"
+        }
+      },
+      "title": "Parameters",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "datatype": {
+      "$ref": "#/$defs/Datatype"
+    },
+    "shape": {
+      "items": {
+        "type": "integer"
+      },
+      "title": "Shape",
+      "type": "array"
+    },
+    "parameters": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Parameters"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "name",
+    "datatype",
+    "shape"
+  ],
+  "title": "MetadataTensor",
+  "type": "object"
+}
+
+```
+
+
+</details>
+
+## Parameters
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `content_type` | `Optional[str]` | `None` | - |
+| `headers` | `Optional[Dict[str, Any]]` | `None` | - |
+<details><summary>JSON Schema</summary>
+
+
+```json
+
+{
+  "additionalProperties": true,
+  "properties": {
+    "content_type": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Content Type"
+    },
+    "headers": {
+      "anyOf": [
+        {
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Headers"
+    }
+  },
+  "title": "Parameters",
+  "type": "object"
+}
+
+```
+
+
+</details>
+
+## RepositoryIndexRequest
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `ready` | `Optional[bool]` | `None` | - |
+<details><summary>JSON Schema</summary>
+
+
+```json
+
+{
+  "properties": {
+    "ready": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Ready"
+    }
+  },
+  "title": "RepositoryIndexRequest",
+  "type": "object"
+}
+
+```
+
+
+</details>
+
+## RepositoryIndexResponse
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `root` | `List[RepositoryIndexResponseItem]` | `-` | - |
+<details><summary>JSON Schema</summary>
+
+
+```json
+
+{
+  "$defs": {
+    "RepositoryIndexResponseItem": {
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Version"
+        },
+        "state": {
+          "$ref": "#/$defs/State"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "state",
+        "reason"
+      ],
+      "title": "RepositoryIndexResponseItem",
+      "type": "object"
+    },
+    "State": {
+      "enum": [
+        "UNKNOWN",
+        "READY",
+        "UNAVAILABLE",
+        "LOADING",
+        "UNLOADING"
+      ],
+      "title": "State",
+      "type": "string"
+    }
+  },
+  "items": {
+    "$ref": "#/$defs/RepositoryIndexResponseItem"
+  },
+  "title": "RepositoryIndexResponse",
+  "type": "array"
+}
+
+```
+
+
+</details>
+
+## RepositoryIndexResponseItem
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `name` | `str` | `-` | - |
+| `reason` | `str` | `-` | - |
+| `state` | `State` | `-` | - |
+| `version` | `Optional[str]` | `None` | - |
+<details><summary>JSON Schema</summary>
+
+
+```json
+
+{
+  "$defs": {
+    "State": {
+      "enum": [
+        "UNKNOWN",
+        "READY",
+        "UNAVAILABLE",
+        "LOADING",
+        "UNLOADING"
+      ],
+      "title": "State",
+      "type": "string"
+    }
+  },
+  "properties": {
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "version": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Version"
+    },
+    "state": {
+      "$ref": "#/$defs/State"
+    },
+    "reason": {
+      "title": "Reason",
+      "type": "string"
+    }
+  },
+  "required": [
+    "name",
+    "state",
+    "reason"
+  ],
+  "title": "RepositoryIndexResponseItem",
+  "type": "object"
+}
+
+```
+
+
+</details>
+
+## RepositoryLoadErrorResponse
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `error` | `Optional[str]` | `None` | - |
+<details><summary>JSON Schema</summary>
+
+
+```json
+
+{
+  "properties": {
+    "error": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Error"
+    }
+  },
+  "title": "RepositoryLoadErrorResponse",
+  "type": "object"
+}
+
+```
+
+
+</details>
+
+## RepositoryUnloadErrorResponse
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `error` | `Optional[str]` | `None` | - |
+<details><summary>JSON Schema</summary>
+
+
+```json
+
+{
+  "properties": {
+    "error": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Error"
+    }
+  },
+  "title": "RepositoryUnloadErrorResponse",
+  "type": "object"
+}
+
+```
+
+
+</details>
+
+## RequestInput
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `data` | `TensorData` | `-` | - |
+| `datatype` | `Datatype` | `-` | - |
+| `name` | `str` | `-` | - |
+| `parameters` | `Optional[Parameters]` | `None` | - |
+| `shape` | `List[int]` | `-` | - |
+<details><summary>JSON Schema</summary>
+
+
+```json
+
+{
+  "$defs": {
+    "Datatype": {
+      "enum": [
+        "BOOL",
+        "UINT8",
+        "UINT16",
+        "UINT32",
+        "UINT64",
+        "INT8",
+        "INT16",
+        "INT32",
+        "INT64",
+        "FP16",
+        "FP32",
+        "FP64",
+        "BYTES"
+      ],
+      "title": "Datatype",
+      "type": "string"
+    },
+    "Parameters": {
+      "additionalProperties": true,
+      "properties": {
+        "content_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content Type"
+        },
+        "headers": {
+          "anyOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Headers"
+        }
+      },
+      "title": "Parameters",
+      "type": "object"
+    },
+    "TensorData": {
+      "anyOf": [
+        {
+          "items": {},
+          "type": "array"
+        },
+        {}
+      ],
+      "title": "TensorData"
+    }
+  },
+  "properties": {
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "shape": {
+      "items": {
+        "type": "integer"
+      },
+      "title": "Shape",
+      "type": "array"
+    },
+    "datatype": {
+      "$ref": "#/$defs/Datatype"
+    },
+    "parameters": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Parameters"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "data": {
+      "$ref": "#/$defs/TensorData"
+    }
+  },
+  "required": [
+    "name",
+    "shape",
+    "datatype",
+    "data"
+  ],
+  "title": "RequestInput",
+  "type": "object"
+}
+
+```
+
+
+</details>
+
+## RequestOutput
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `name` | `str` | `-` | - |
+| `parameters` | `Optional[Parameters]` | `None` | - |
+<details><summary>JSON Schema</summary>
+
+
+```json
+
+{
+  "$defs": {
+    "Parameters": {
+      "additionalProperties": true,
+      "properties": {
+        "content_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content Type"
+        },
+        "headers": {
+          "anyOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Headers"
+        }
+      },
+      "title": "Parameters",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "parameters": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Parameters"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "title": "RequestOutput",
+  "type": "object"
+}
+
+```
+
+
+</details>
+
+## ResponseOutput
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `data` | `TensorData` | `-` | - |
+| `datatype` | `Datatype` | `-` | - |
+| `name` | `str` | `-` | - |
+| `parameters` | `Optional[Parameters]` | `None` | - |
+| `shape` | `List[int]` | `-` | - |
+<details><summary>JSON Schema</summary>
+
+
+```json
+
+{
+  "$defs": {
+    "Datatype": {
+      "enum": [
+        "BOOL",
+        "UINT8",
+        "UINT16",
+        "UINT32",
+        "UINT64",
+        "INT8",
+        "INT16",
+        "INT32",
+        "INT64",
+        "FP16",
+        "FP32",
+        "FP64",
+        "BYTES"
+      ],
+      "title": "Datatype",
+      "type": "string"
+    },
+    "Parameters": {
+      "additionalProperties": true,
+      "properties": {
+        "content_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content Type"
+        },
+        "headers": {
+          "anyOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Headers"
+        }
+      },
+      "title": "Parameters",
+      "type": "object"
+    },
+    "TensorData": {
+      "anyOf": [
+        {
+          "items": {},
+          "type": "array"
+        },
+        {}
+      ],
+      "title": "TensorData"
+    }
+  },
+  "properties": {
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "shape": {
+      "items": {
+        "type": "integer"
+      },
+      "title": "Shape",
+      "type": "array"
+    },
+    "datatype": {
+      "$ref": "#/$defs/Datatype"
+    },
+    "parameters": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Parameters"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "data": {
+      "$ref": "#/$defs/TensorData"
+    }
+  },
+  "required": [
+    "name",
+    "shape",
+    "datatype",
+    "data"
+  ],
+  "title": "ResponseOutput",
+  "type": "object"
+}
+
+```
+
+
+</details>
+
+## State
+
+An enumeration.
+
+## TensorData
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `root` | `Union[List[Any], Any]` | `-` | - |
+<details><summary>JSON Schema</summary>
+
+
+```json
+
+{
+  "anyOf": [
+    {
+      "items": {},
+      "type": "array"
+    },
+    {}
+  ],
+  "title": "TensorData"
+}
+
+```
+
+
+</details>
+
