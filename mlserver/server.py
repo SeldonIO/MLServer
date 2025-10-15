@@ -125,10 +125,15 @@ class MLServer:
         try:
             total_start: float = time.perf_counter()
             await asyncio.gather(
-                *[ self._timed_load(model_settings) for model_settings in models_settings ]
+                *[
+                    self._timed_load(model_settings)
+                    for model_settings in models_settings
+                ]
             )
             total_duration: float = time.perf_counter() - total_start
-            logger.debug(f"Loaded {len(models_settings)} models in {total_duration:3f}s")
+            logger.debug(
+                f"Loaded {len(models_settings)} models in {total_duration:0.3f}s"
+            )
         except Exception:
             # If one of the models failed to load during startup, shutdown the
             # server gracefully
@@ -192,11 +197,12 @@ class MLServer:
 
     async def _timed_load(self, model_settings: ModelSettings) -> MLModel:
         """
-            Load a model while measuring the elapsed time.
+        Load a model while measuring the elapsed time.
         """
         t0: float = time.perf_counter()
         try:
             return await self._model_registry.load(model_settings)
         finally:
             elapsed: float = time.perf_counter() - t0
-            logger.debug(F"Model {getattr(model_settings, 'name', '<unknown>')} loaded in {elapsed:3f}s")
+            model_name = getattr(model_settings, "name", "<unknown>")
+            logger.debug(f"Model {model_name} loaded in {elapsed:0.3f}s")
