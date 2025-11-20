@@ -6,12 +6,12 @@ The MLServer package includes a mlserver CLI designed to help with common tasks 
 mlserver --help
 ```
 
-## root
+## mlserver
 
 Command-line interface to manage MLServer models.
 
 ```bash
-root [OPTIONS] COMMAND [ARGS]...
+mlserver [OPTIONS] COMMAND [ARGS]...
 ```
 
 ### Options
@@ -24,7 +24,7 @@ root [OPTIONS] COMMAND [ARGS]...
 Build a Docker image for a custom MLServer runtime.
 
 ```bash
-root build [OPTIONS] FOLDER
+mlserver build [OPTIONS] FOLDER
 ```
 
 ### Options
@@ -43,7 +43,7 @@ root build [OPTIONS] FOLDER
 Generate a Dockerfile
 
 ```bash
-root dockerfile [OPTIONS] FOLDER
+mlserver dockerfile [OPTIONS] FOLDER
 ```
 
 ### Options
@@ -63,7 +63,7 @@ Deprecated: This experimental feature will be removed in future work.
 > Deprecated: This experimental feature will be removed in future work.
 
 ```bash
-root infer [OPTIONS]
+mlserver infer [OPTIONS]
 ```
 
 ### Options
@@ -122,7 +122,7 @@ root infer [OPTIONS]
 Generate a base project template
 
 ```bash
-root init [OPTIONS]
+mlserver init [OPTIONS]
 ```
 
 ### Options
@@ -134,7 +134,7 @@ root init [OPTIONS]
 Start serving a machine learning model with MLServer.
 
 ```bash
-root start [OPTIONS] FOLDER
+mlserver start [OPTIONS] FOLDER
 ```
 
 ### Arguments
