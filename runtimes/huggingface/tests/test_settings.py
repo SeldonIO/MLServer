@@ -167,3 +167,42 @@ def test_get_huggingface_settings(
 def test_get_huggingface_settings_raises(model_settings_extra_none):
     with pytest.raises(MissingHuggingFaceSettings):
         get_huggingface_settings(model_settings_extra_none)
+
+
+@pytest.mark.parametrize(
+    "extra, expected_model_kwargs",
+    [
+        (
+            {
+                "task": "text-generation",
+                "task_suffix": "_en",
+                "pretrained_model": "gpt2"
+            },
+            {"torch_dtype": "auto"}
+        ),
+        (
+            {
+                "task": "text-generation",
+                "task_suffix": "_en",
+                "pretrained_model": "gpt2",
+                "model_kwargs": {"some_other_key": "value","torch_dtype": "float32"}
+            },
+            {"some_other_key": "value","torch_dtype": "float32"}
+        ),
+        (
+            {
+                "task": "text-generation",
+                "task_suffix": "_en",
+                "pretrained_model": "gpt2",
+                "model_kwargs": {"some_other_key": "value"}
+            },
+            {"some_other_key": "value","torch_dtype": "auto"}
+        )
+    ]
+)
+def test_huggingface_settings(extra, expected_model_kwargs):
+    hf_settings = HuggingFaceSettings(**extra)
+    assert hf_settings.task == extra.get("task", "")
+    assert hf_settings.task_suffix == extra.get("task_suffix", "")
+    assert hf_settings.pretrained_model == extra.get("pretrained_model", None)
+    assert hf_settings.model_kwargs == expected_model_kwargs

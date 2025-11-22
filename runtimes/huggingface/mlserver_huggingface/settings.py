@@ -2,6 +2,8 @@ import os
 import orjson
 
 from typing import Optional, Dict, Union, NewType
+
+from pydantic import model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from distutils.util import strtobool
 from transformers.pipelines import SUPPORTED_TASKS
@@ -64,6 +66,12 @@ class HuggingFaceSettings(BaseSettings):
     Name of the model that should be loaded in the pipeline.
     """
     model_kwargs: Optional[dict] = None
+
+    @model_validator(mode='after')
+    def set_default_model_kwargs(self) -> 'HuggingFaceSettings':
+        self.model_kwargs = self.model_kwargs if self.model_kwargs is not None else {}
+        self.model_kwargs.setdefault("torch_dtype", "auto")
+        return self
     """
     model kwargs that should be loaded in the pipeline.
     """
