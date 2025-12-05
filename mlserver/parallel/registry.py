@@ -138,14 +138,15 @@ class InferencePoolRegistry:
         )
 
         if not env_tarball:
-            return (
-                self._pools.setdefault(
-                    inference_pool_gid,
-                    InferencePool(self._settings, on_worker_stop=self._on_worker_stop),
+            if not inference_pool_gid:
+                return self._default_pool
+
+            if inference_pool_gid not in self._pools:
+                self._pools[inference_pool_gid] = InferencePool(
+                    self._settings, on_worker_stop=self._on_worker_stop
                 )
-                if inference_pool_gid
-                else self._default_pool
-            )
+
+            return self._pools[inference_pool_gid]
 
         env_hash = await compute_hash_of_file(env_tarball)
         if inference_pool_gid is not None:
