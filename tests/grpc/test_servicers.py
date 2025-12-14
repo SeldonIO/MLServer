@@ -1,7 +1,6 @@
 import grpc
 import pytest
-from pytest_lazyfixture import lazy_fixture
-
+from pytest_cases import parametrize, fixture_ref
 
 from mlserver.cloudevents import (
     CLOUDEVENTS_HEADER_SPECVERSION_DEFAULT,
@@ -16,6 +15,13 @@ from mlserver.grpc.converters import (
 from mlserver.raw import pack, unpack
 from mlserver.types import Datatype
 from mlserver import __version__
+
+from ..conftest import (
+    text_model_settings,
+    text_stream_model,
+    settings_stream,
+    text_stream_model_settings,
+)
 
 
 async def test_server_live(inference_service_stub):
@@ -81,11 +87,9 @@ async def test_model_infer(
     assert prediction.outputs[0].contents == expected
 
 
-@pytest.mark.parametrize("settings", [lazy_fixture("settings_stream")])
-@pytest.mark.parametrize(
-    "sum_model_settings", [lazy_fixture("text_stream_model_settings")]
-)
-@pytest.mark.parametrize("sum_model", [lazy_fixture("text_stream_model")])
+@parametrize("settings", [fixture_ref(settings_stream)])
+@parametrize("sum_model_settings", [fixture_ref(text_stream_model_settings)])
+@parametrize("sum_model", [fixture_ref(text_stream_model)])
 @pytest.mark.parametrize(
     "model_name,model_version",
     [("text-stream-model", "v1.2.3"), ("text-stream-model", None)],
@@ -95,6 +99,9 @@ async def test_model_stream_infer(
     model_generate_request,
     model_name,
     model_version,
+    settings,
+    sum_model_settings,
+    sum_model,
 ):
     model_generate_request.model_name = model_name
     if model_version is not None:
@@ -178,12 +185,16 @@ async def test_model_infer_error(inference_service_stub, model_infer_request):
     assert err.value.details() == "Model my-model with version v1.2.3 not found"
 
 
-@pytest.mark.parametrize("settings", [lazy_fixture("settings_stream")])
-@pytest.mark.parametrize(
-    "sum_model_settings", [lazy_fixture("text_stream_model_settings")]
-)
-@pytest.mark.parametrize("sum_model", [lazy_fixture("text_stream_model")])
-async def test_model_stream_infer_error(inference_service_stub, model_generate_request):
+@parametrize("settings", [fixture_ref(settings_stream)])
+@parametrize("sum_model_settings", [fixture_ref(text_stream_model_settings)])
+@parametrize("sum_model", [fixture_ref(text_stream_model)])
+async def test_model_stream_infer_error(
+    inference_service_stub,
+    model_generate_request,
+    settings,
+    sum_model_settings,
+    sum_model,
+):
     async def get_stream_request(request):
         yield request
 

@@ -1,5 +1,6 @@
 import asyncio
 import pytest
+import logging
 
 from multiprocessing import Queue
 
@@ -79,7 +80,6 @@ async def responses(settings: Settings) -> Queue:
 @pytest.fixture
 async def worker(
     settings: Settings,
-    event_loop: asyncio.AbstractEventLoop,
     responses: Queue,
     load_message: ModelUpdateMessage,
 ) -> Worker:
@@ -89,9 +89,9 @@ async def worker(
     # thread to simplify debugging.
     # Note that we call `worker.coro_run` instead of `worker.run` to avoid also
     # triggering the other set up methods of `worker.run`.
-    worker_task = event_loop.run_in_executor(
-        None, lambda: asyncio.run(worker.coro_run())
-    )
+    loop = asyncio.get_running_loop()
+    logging.getLogger().debug("Starting worker coro in executor")
+    worker_task = loop.run_in_executor(None, lambda: asyncio.run(worker.coro_run()))
 
     # Send an update and wait for its response (although we ignore it)
     worker.send_update(load_message)

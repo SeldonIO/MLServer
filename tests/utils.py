@@ -2,6 +2,7 @@ import asyncio
 import aiohttp
 import socket
 import yaml
+import logging
 
 import os
 
@@ -14,12 +15,15 @@ from aiohttp.client_exceptions import (
     ClientConnectorError,
     ClientOSError,
     ServerDisconnectedError,
+    ClientResponseError,
+    ClientConnectionResetError,
 )
 from aiohttp_retry import RetryClient, ExponentialRetry
 
-from mlserver.logging import logger
 from mlserver.utils import generate_uuid
 from mlserver.types import RepositoryIndexResponse, InferenceRequest, InferenceResponse
+
+logger = logging.getLogger()
 
 
 def get_available_ports(n: int = 1) -> List[int]:
@@ -42,11 +46,21 @@ async def _run(cmd):
         cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE
     )
 
-    return_code = await process.wait()
+    # Give some time for the process to start
+    await asyncio.sleep(1)
+
+    stdout, stderr = await process.communicate()
+    return_code = process.returncode
+    if return_code == 255:
+        logging.getLogger().warning(
+            f"Issue while waiting for the command '{cmd}' to finish. Return code: {return_code}"
+        )
+        return
     if return_code != 0:
-        _, stderr = await process.communicate()
-        logger.debug(f"Failed to run command '{cmd}'")
-        logger.debug(stderr.decode("utf-8"))
+        logging.getLogger().debug(f"Failed to run command '{cmd}'")
+        logging.getLogger().debug(stdout.decode("utf-8"))
+        logging.getLogger().debug(stderr.decode("utf-8"))
+        logging.getLogger().debug(f"Command '{cmd}' failed with code '{return_code}'")
         raise Exception(f"Command '{cmd}' failed with code '{return_code}'")
 
 
@@ -107,8 +121,13 @@ async def _pack(version: Tuple[int, int], env_yml: str, tarball_path: str):
             f" -n {env_name}"
             f" -o {tarball_path}"
         )
+        logging.getLogger().debug(
+            f"Finished packing environment tarball: {tarball_path}"
+        )
+
     finally:
-        await _run(f"conda env remove -n {env_name}")
+        logging.getLogger().debug(f"Removing temporary conda environment: {env_name}")
+        await _run(f"conda env remove -y -n {env_name}")
 
 
 def _get_tarball_name(version: Tuple[int, int]) -> str:
@@ -134,12 +153,18 @@ class RESTClient:
                 ClientOSError,
                 ServerDisconnectedError,
                 ConnectionRefusedError,
+                ClientResponseError,
+                ClientConnectionResetError,
             },
         )
-        retry_client = RetryClient(raise_for_status=True, retry_options=retry_options)
+        retry_client = RetryClient(
+            client_session=self._session,
+            raise_for_status=False,
+            retry_options=retry_options,
+        )
 
-        async with retry_client:
-            await retry_client.get(endpoint)
+        async with retry_client.get(endpoint) as response:
+            logger.debug(f"GET {endpoint} -> {response.status}")
 
     async def wait_until_ready(self) -> None:
         endpoint = f"http://{self._http_server}/v2/health/ready"

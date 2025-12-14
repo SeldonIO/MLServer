@@ -440,7 +440,7 @@ class ModelSettings(BaseSettings):
 
     # Parallel settings
     parallel_workers: Optional[int] = Field(
-        None,
+        default=None,
         deprecated=True,
         description=(
             "Use the `parallel_workers` field the server wide settings instead."

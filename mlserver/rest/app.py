@@ -29,14 +29,14 @@ class APIRoute(FastAPIRoute):
         response_model_exclude_unset=True,
         response_model_exclude_none=True,
         response_class=Response,
-        **kwargs
+        **kwargs,
     ):
         super().__init__(
             *args,
             response_model_exclude_unset=response_model_exclude_unset,
             response_model_exclude_none=response_model_exclude_none,
             response_class=Response,
-            **kwargs
+            **kwargs,
         )
 
     def get_route_handler(self) -> Callable:

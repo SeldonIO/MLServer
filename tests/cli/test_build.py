@@ -15,6 +15,8 @@ from mlserver.cli.build import generate_dockerfile, build_image
 
 from ..utils import RESTClient
 
+logger = logging.getLogger()
+
 
 @fixture
 @parametrize_with_cases("custom_runtime_path")
@@ -24,7 +26,8 @@ def custom_image(
     dockerfile = generate_dockerfile()
     current_case = current_cases["custom_image"]["custom_runtime_path"]
     image_name = f"{current_case.id}:0.1.0"
-    build_image(custom_runtime_path, dockerfile, image_name)
+    logger.info(f"Building image {image_name} from {custom_runtime_path}")
+    build_image(custom_runtime_path, dockerfile, image_name, True)
 
     yield image_name
 
@@ -59,8 +62,10 @@ def custom_runtime_server(
         },
         detach=True,
         user=random_user_id,
+        environment={"MLSERVER_MODELS_DIR": "/opt/mlserver"},
     )
 
+    logger.debug(f"running container ${custom_image}")
     yield f"127.0.0.1:{host_http_port}", f"127.0.0.1:{host_grpc_port}"
 
     container.remove(force=True)
@@ -71,7 +76,7 @@ def custom_runtime_server(
     [
         None,
         "customreg/customimage:{version}-slim",
-        "customreg/custonimage:customtag",
+        "customreg/customimage:customtag",
     ],
 )
 def test_generate_dockerfile(base_image: Optional[str]):

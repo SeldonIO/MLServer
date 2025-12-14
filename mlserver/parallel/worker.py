@@ -9,7 +9,7 @@ from contextlib import nullcontext
 from typing import Optional
 
 from ..registry import MultiModelRegistry
-from ..utils import install_uvloop_event_loop, schedule_with_callback
+from ..utils import AsyncManager, schedule_with_callback
 from ..logging import configure_logger
 from ..settings import Settings
 from ..metrics import configure_metrics
@@ -64,13 +64,12 @@ class Worker(Process):
             ctx = self._env
 
         with ctx:
-            install_uvloop_event_loop()
+            async_mgr = AsyncManager(self._ignore_signals)
             configure_logger(self._settings)
             configure_metrics(self._settings)
-            self._ignore_signals()
-            asyncio.run(self.coro_run())
+            async_mgr.run(self.coro_run())
 
-    def _ignore_signals(self):
+    def _ignore_signals(self, loop):
         """
         Uvloop will try to propagate the main process' signals to the
         underlying workers.
@@ -78,8 +77,6 @@ class Worker(Process):
         To avoid this, and be able to properly shut them down, we forcefully
         ignore the signals coming from the main parent process.
         """
-        loop = asyncio.get_event_loop()
-
         for sign in IGNORED_SIGNALS:
             # Ensure that signal handlers are a no-op, to let the main process
             # take care of cleaning up workers
@@ -94,7 +91,7 @@ class Worker(Process):
 
     async def coro_run(self):
         self.__inner_init__()
-        loop = asyncio.get_event_loop()
+        loop = asyncio.get_running_loop()
         while self._active:
             readable = await loop.run_in_executor(self._executor, self._select)
             for r in readable:
