@@ -195,7 +195,7 @@ class Dispatcher:
 
     async def _process_responses(self):
         logger.debug("Starting response processing loop...")
-        loop = asyncio.get_event_loop()
+        loop = asyncio.get_running_loop()
         while self._active:
             response = await loop.run_in_executor(self._executor, self._responses.get)
 

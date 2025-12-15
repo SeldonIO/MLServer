@@ -166,7 +166,7 @@ class MLServer:
         return model
 
     def _add_signal_handlers(self):
-        loop = asyncio.get_event_loop()
+        loop = asyncio.get_running_loop()
 
         for sig in HANDLED_SIGNALS:
             loop.add_signal_handler(

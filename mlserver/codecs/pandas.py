@@ -115,7 +115,7 @@ class PandasCodec(RequestCodec):
         payload: pd.DataFrame,
         model_version: Optional[str] = None,
         use_bytes: bool = True,
-        **kwargs
+        **kwargs,
     ) -> InferenceResponse:
         outputs = cls.encode_outputs(payload, use_bytes=use_bytes)
 

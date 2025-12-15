@@ -1,11 +1,12 @@
 import asyncio
 import pytest
+import logging
 
 from multiprocessing import Queue
 
 from mlserver.settings import Settings, ModelSettings, ModelParameters
 from mlserver.types import InferenceRequest
-from mlserver.utils import generate_uuid
+from mlserver.utils import AsyncManager, generate_uuid
 from mlserver.model import MLModel
 from mlserver.env import Environment
 from mlserver.parallel.dispatcher import Dispatcher
@@ -20,6 +21,11 @@ from mlserver.parallel.messages import (
 )
 
 from ..fixtures import ErrorModel, EnvModel
+
+
+@pytest.fixture(scope="session")
+def event_loop_policy():
+    return AsyncManager().event_loop_policy
 
 
 @pytest.fixture
@@ -79,7 +85,6 @@ async def responses(settings: Settings) -> Queue:
 @pytest.fixture
 async def worker(
     settings: Settings,
-    event_loop: asyncio.AbstractEventLoop,
     responses: Queue,
     load_message: ModelUpdateMessage,
 ) -> Worker:
@@ -89,9 +94,9 @@ async def worker(
     # thread to simplify debugging.
     # Note that we call `worker.coro_run` instead of `worker.run` to avoid also
     # triggering the other set up methods of `worker.run`.
-    worker_task = event_loop.run_in_executor(
-        None, lambda: asyncio.run(worker.coro_run())
-    )
+    loop = asyncio.get_running_loop()
+    logging.getLogger().debug("Starting worker coro in executor")
+    worker_task = loop.run_in_executor(None, lambda: asyncio.run(worker.coro_run()))
 
     # Send an update and wait for its response (although we ignore it)
     worker.send_update(load_message)

@@ -1,6 +1,8 @@
 import pytest
 import os
 import asyncio
+import logging
+
 from copy import deepcopy
 from typing import Optional
 from unittest.mock import patch
@@ -29,6 +31,7 @@ async def env_model(
     env_model = EnvModel(env_model_settings)
     model = await inference_pool_registry.load_model(env_model)
 
+    logging.getLogger().info(f"Yielding env_model with name: {model.settings.name}")
     yield model
 
     await inference_pool_registry.unload_model(model)
@@ -111,6 +114,7 @@ async def test_load_model_with_env(
     env_model: MLModel,
     inference_request: InferenceRequest,
 ):
+    logging.getLogger().info(f"Sending inference request to: {env_model.settings.name}")
     response = await env_model.predict(inference_request)
     check_sklearn_version(response)
 

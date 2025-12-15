@@ -1,19 +1,21 @@
-import pytest
 import asyncio
-import platform
-
+import os
+import signal
 from typing import Dict, Optional
 from unittest.mock import patch
 
+import pytest
+
+from mlserver.model import MLModel
+from mlserver.settings import ModelSettings, ModelParameters
+from mlserver.types import InferenceRequest, InferenceResponse, Parameters
 from mlserver.utils import (
     get_model_uri,
     extract_headers,
     insert_headers,
-    install_uvloop_event_loop,
+    AsyncManager,
+    EventLoopBackend,
 )
-from mlserver.model import MLModel
-from mlserver.types import InferenceRequest, InferenceResponse, Parameters
-from mlserver.settings import ModelSettings, ModelParameters
 
 test_get_model_uri_paramaters = [
     ("s3://bucket/key", None, "s3://bucket/key"),
@@ -94,24 +96,38 @@ def test_extract_headers(parameters: Parameters, expected: Dict[str, str]):
         assert inference_response.parameters.headers is None
 
 
-def _check_uvloop_availability():
-    avail = True
-    try:
-        import uvloop  # noqa: F401
-    except ImportError:  # pragma: no cover
-        avail = False
-    return avail
+def test_async_manager_defaults():
+    async_mgr = AsyncManager()
+    assert async_mgr.event_loop_backend == EventLoopBackend.UVLOOP
+
+    async def in_event_loop():
+        loop = asyncio.get_running_loop()
+        import uvloop
+
+        assert isinstance(loop, uvloop.Loop)
+
+    async_mgr.run(in_event_loop())
 
 
-def test_uvloop_auto_install():
-    uvloop_available = _check_uvloop_availability()
-    install_uvloop_event_loop()
-    policy = asyncio.get_event_loop_policy()
+def test_async_manager_signal_handlers():
+    calls = 0
+    signal_to_test = signal.SIGUSR1
 
-    if uvloop_available:
-        assert type(policy).__module__.startswith("uvloop")
-    else:
-        if platform.system() == "Windows":
-            assert isinstance(policy, asyncio.WindowsProactorEventLoopPolicy)
-        elif platform.python_implementation() != "CPython":
-            assert isinstance(policy, asyncio.DefaultEventLoopPolicy)
+    def sgn_handler():
+        nonlocal calls
+        calls += 1
+
+    def loop_signal_handler_config(loop):
+        nonlocal signal_to_test
+        loop.add_signal_handler(signal_to_test, sgn_handler)
+
+    async def in_event_loop():
+        nonlocal calls
+        pid = os.getpid()
+        await asyncio.sleep(2)
+        os.kill(pid, signal_to_test)
+        await asyncio.sleep(1)
+        assert calls == 1
+
+    async_mgr = AsyncManager(loop_signal_handler_config)
+    async_mgr.run(in_event_loop())

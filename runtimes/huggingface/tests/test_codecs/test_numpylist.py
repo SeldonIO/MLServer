@@ -1,3 +1,5 @@
+# mypy: disable-error-code="arg-type"
+
 import pytest
 import numpy as np
 from mlserver.types import RequestInput, ResponseOutput, Parameters, TensorData

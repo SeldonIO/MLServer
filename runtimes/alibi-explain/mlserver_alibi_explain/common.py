@@ -1,3 +1,5 @@
+# mypy: disable-error-code="arg-type"
+
 import re
 from importlib import import_module
 from typing import Any, Optional, Type, Union, List

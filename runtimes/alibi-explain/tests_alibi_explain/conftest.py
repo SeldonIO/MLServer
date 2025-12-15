@@ -1,9 +1,9 @@
-import asyncio
 import json
 import os
+import functools
+
 import pytest
 import tensorflow as tf
-import functools
 
 from filelock import FileLock
 from typing import AsyncIterable, Dict, Any, Iterable
@@ -26,7 +26,6 @@ from mlserver.repository import ModelRepository, SchemalessModelRepository
 from mlserver.rest import RESTServer
 from mlserver.settings import ModelSettings, ModelParameters, Settings
 from mlserver.types import MetadataModelResponse
-from mlserver.utils import install_uvloop_event_loop
 from mlserver.metrics.registry import MetricsRegistry, REGISTRY as METRICS_REGISTRY
 
 from mlserver_alibi_explain.common import AlibiExplainSettings
@@ -79,15 +78,6 @@ async def inference_pool_registry(
     yield registry
 
     await registry.close()
-
-
-@pytest.fixture
-def event_loop():
-    # By default use uvloop for tests
-    install_uvloop_event_loop()
-    loop = asyncio.get_event_loop()
-    yield loop
-    loop.close()
 
 
 @pytest.fixture
