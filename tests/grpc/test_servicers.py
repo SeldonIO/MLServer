@@ -16,12 +16,7 @@ from mlserver.raw import pack, unpack
 from mlserver.types import Datatype
 from mlserver import __version__
 
-from ..conftest import (
-    text_model_settings,
-    text_stream_model,
-    settings_stream,
-    text_stream_model_settings,
-)
+from ..conftest import text_stream_model, settings_stream, text_stream_model_settings
 
 
 async def test_server_live(inference_service_stub):

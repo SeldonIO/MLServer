@@ -26,7 +26,7 @@ from .utils import (
 )
 
 if TYPE_CHECKING:  # pragma: no cover - type checking only
-    from .pandas import PandasCodec as _PandasCodec
+    from .pandas import PandasCodec  # noqa: F401
 
 __all__ = [
     "CodecError",

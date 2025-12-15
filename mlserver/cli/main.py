@@ -3,7 +3,6 @@ Command-line interface to manage MLServer models.
 """
 
 import click
-import asyncio
 
 from functools import wraps
 

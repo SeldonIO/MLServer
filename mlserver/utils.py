@@ -1,8 +1,11 @@
+# mypy: disable-error-code="call-arg"
+
 import os
 import sys
 import uuid
 import asyncio
 from enum import Enum
+from typing import cast
 import warnings
 import urllib.parse
 
@@ -17,6 +20,9 @@ from .errors import InvalidModelURI
 
 _CoroRetT = TypeVar("_CoroRetT")
 EventLoopSignalHandleConfigFn = Callable[[asyncio.AbstractEventLoop], None]
+_RUN_IN_LOOP_ERROR = (
+    "AsyncManager::run() cannot be called from within an existing event loop"
+)
 
 
 class EventLoopBackend(Enum):
@@ -61,9 +67,10 @@ class AsyncManager:
     @property
     def event_loop_policy(self) -> asyncio.AbstractEventLoopPolicy:
         """
-        In python versions < 3.16, return the event loop policy, preferring the one returned by
-        uvloop where available. Deprecated from python 3.12, but used within pytest tests until
-        pytest-async itself provides an alternative way to manage event loops across different
+        In python versions < 3.16, return the event loop policy.
+        It prefers the policy returned by uvloop where available.
+        Deprecated from python 3.12, but used within pytest tests until pytest-async
+        itself provides an alternative way to manage event loops across different
         python versions.
         """
         python_version_info = sys.version_info[:2]
@@ -80,7 +87,7 @@ class AsyncManager:
 
             return uvloop.EventLoopPolicy()
         else:
-            return asyncio.DefaultEventLoopPolicy
+            return cast(asyncio.AbstractEventLoopPolicy, asyncio.DefaultEventLoopPolicy)
 
     def run(
         self, coro: Coroutine[Any, Any, _CoroRetT], *, debug: Optional[bool] = None
@@ -93,10 +100,12 @@ class AsyncManager:
             available, and falls back on standard the default asyncio implementation
             otherwise.
             - At the time of initialising the AsyncManager object, the resulting
-            loop can also be configured with custom handlers for os signals (i.e SIGINT).
+            loop can also be configured with custom handlers for os signals
+            (i.e SIGINT).
 
-        This function is compatible with different python versions from 3.9 to 3.16, and papers
-        over the differences in deprecated functions across these versions.
+        This function is compatible with different python versions from 3.9 to 3.16,
+        and papers over the differences in deprecated functions across these
+        versions.
         """
         if self._event_loop_backend == EventLoopBackend.UVLOOP:
             # uvloop handles differences between python versions internally
@@ -107,9 +116,7 @@ class AsyncManager:
         if python_version_info < (3, 11):
             try:
                 asyncio.get_running_loop()
-                raise RuntimeError(
-                    "AsyncManager::run() cannot be called from within an existing event loop"
-                )
+                raise RuntimeError(_RUN_IN_LOOP_ERROR)
             except RuntimeError:
                 pass
 
@@ -135,9 +142,7 @@ class AsyncManager:
         elif python_version_info == (3, 11):
             try:
                 asyncio.get_running_loop()
-                raise RuntimeError(
-                    "AsyncManager::run() cannot be called from within an existing event loop"
-                )
+                raise RuntimeError(_RUN_IN_LOOP_ERROR)
             except RuntimeError:
                 pass
 

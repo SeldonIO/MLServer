@@ -1,12 +1,14 @@
-import pytest
 import asyncio
-import platform
-import signal
 import os
-
+import signal
 from typing import Dict, Optional
 from unittest.mock import patch
 
+import pytest
+
+from mlserver.model import MLModel
+from mlserver.settings import ModelSettings, ModelParameters
+from mlserver.types import InferenceRequest, InferenceResponse, Parameters
 from mlserver.utils import (
     get_model_uri,
     extract_headers,
@@ -14,9 +16,6 @@ from mlserver.utils import (
     AsyncManager,
     EventLoopBackend,
 )
-from mlserver.model import MLModel
-from mlserver.types import InferenceRequest, InferenceResponse, Parameters
-from mlserver.settings import ModelSettings, ModelParameters
 
 test_get_model_uri_paramaters = [
     ("s3://bucket/key", None, "s3://bucket/key"),

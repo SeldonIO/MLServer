@@ -1,9 +1,9 @@
-import asyncio
 import json
 import os
+import functools
+
 import pytest
 import tensorflow as tf
-import functools
 
 from filelock import FileLock
 from typing import AsyncIterable, Dict, Any, Iterable
@@ -26,7 +26,6 @@ from mlserver.repository import ModelRepository, SchemalessModelRepository
 from mlserver.rest import RESTServer
 from mlserver.settings import ModelSettings, ModelParameters, Settings
 from mlserver.types import MetadataModelResponse
-from mlserver.utils import AsyncManager
 from mlserver.metrics.registry import MetricsRegistry, REGISTRY as METRICS_REGISTRY
 
 from mlserver_alibi_explain.common import AlibiExplainSettings

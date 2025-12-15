@@ -53,7 +53,8 @@ async def _run(cmd):
     return_code = process.returncode
     if return_code == 255:
         logging.getLogger().warning(
-            f"Issue while waiting for the command '{cmd}' to finish. Return code: {return_code}"
+            f"Issue while waiting for the command '{cmd}' to finish. "
+            f"Return code: {return_code}"
         )
         return
     if return_code != 0:
