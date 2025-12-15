@@ -6,7 +6,7 @@ from multiprocessing import Queue
 
 from mlserver.settings import Settings, ModelSettings, ModelParameters
 from mlserver.types import InferenceRequest
-from mlserver.utils import generate_uuid
+from mlserver.utils import AsyncManager, generate_uuid
 from mlserver.model import MLModel
 from mlserver.env import Environment
 from mlserver.parallel.dispatcher import Dispatcher
@@ -21,6 +21,11 @@ from mlserver.parallel.messages import (
 )
 
 from ..fixtures import ErrorModel, EnvModel
+
+
+@pytest.fixture(scope="session")
+def event_loop_policy():
+    return AsyncManager().event_loop_policy
 
 
 @pytest.fixture
