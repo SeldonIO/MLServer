@@ -165,7 +165,7 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
-    debug: bool = True
+    debug: bool = False
 
     parallel_workers: int = DEFAULT_PARALLEL_WORKERS
     """When parallel inference is enabled, number of workers to run inference
