@@ -1,4 +1,8 @@
-# mypy: disable-error-code="call-arg"
+# mypy: disable-error-code="call-arg,attr-defined"
+#
+# The typechecking exceptions referenced above are needed because code in this file
+# dynamically considers different python versions, and some called functions are
+# deprecated or take different arguments across versions.
 
 import os
 import sys
