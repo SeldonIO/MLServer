@@ -77,6 +77,17 @@ def test_can_encode(payload: Any, expected: bool):
             ),
         ),
         (
+            pd.Series(data=["hey", None, "abc"], name="bar"),
+            False,
+            ResponseOutput(
+                name="bar",
+                shape=[3, 1],
+                data=["hey", None, "abc"],
+                datatype="BYTES",
+                parameters=Parameters(content_type=StringCodec.ContentType),
+            ),
+        ),
+        (
             pd.Series(data=[1, 2, 3], name="bar"),
             True,
             ResponseOutput(name="bar", shape=[3, 1], data=[1, 2, 3], datatype="INT64"),
