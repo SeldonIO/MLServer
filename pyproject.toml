@@ -14,17 +14,17 @@ classifiers = [
 include =  ["mlserver/rest/openapi/*.json"]
 dependencies = [
     "click",
-    "fastapi>=0.88.0,!=0.89.0,<0.116.0",
+    "fastapi>=0.88.0,!=0.89.0,<0.125.0",
     "python-dotenv",
     "grpcio>=1.67.1",
     "numpy",
     "pandas",
-    "protobuf>=5.27.2,<7.0.0",
-    "uvicorn",
+    "protobuf>=5.29.5,<7.0.0",
+    "uvicorn>=0.38.0",
     "starlette-exporter",
     "py-grpc-prometheus",
     "aiokafka",
-    "tritonclient[http]>=2.42",
+    "tritonclient[http]>=2.63",
     "geventhttpclient",
     "gevent",
     "aiofiles",
@@ -87,7 +87,7 @@ pytest-mock = "3.15.1"
 pytest-cases = "3.9.1"
 tox = "4.24.2"
 docker = "7.1.0"
-aiohttp = "3.12.8"
+aiohttp = "3.12.14"
 aiohttp-retry = "2.9.1"
 ## Used for FastAPI Async testing
 httpx = "0.27.0"
