@@ -44,6 +44,7 @@ _main() {
   _buildWheel . $_outputPath
 
   for _runtime in "$ROOT_FOLDER/runtimes/"*/; do
+    [ -d "$_runtime" ] || continue
     echo "---> Building MLServer runtime: '$_runtime'"
     _buildWheel $_runtime $_outputPath
   done
