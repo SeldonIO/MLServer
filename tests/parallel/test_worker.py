@@ -1,3 +1,5 @@
+import logging
+
 from multiprocessing import Queue
 
 from mlserver.settings import ModelSettings
@@ -12,6 +14,7 @@ async def test_predict(
     inference_request_message: ModelRequestMessage,
     responses: Queue,
 ):
+    logging.getLogger().info("Sending inference request to worker")
     worker.send_request(inference_request_message)
     response = responses.get()
 

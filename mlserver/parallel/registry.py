@@ -199,7 +199,7 @@ class InferencePoolRegistry:
                 "has now been deprecated and moved "
                 "to the top-level server "
                 "settings. "
-                "This field will be removed in MLServer 1.2.0. "
+                "This field will be removed in MLServer 1.8.0. "
                 "To access the new field, you can either update the "
                 "`settings.json` file, or update the `MLSERVER_PARALLEL_WORKERS` "
                 "environment variable. "

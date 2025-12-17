@@ -4,75 +4,80 @@ isort:skip_file
 """
 
 import builtins
+import collections.abc
 import google.protobuf.descriptor
 import google.protobuf.internal.containers
 import google.protobuf.message
+import sys
 import typing
-import typing_extensions
 
-DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
+if sys.version_info >= (3, 10):
+    import typing as typing_extensions
+else:
+    import typing_extensions
 
+DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
+
+@typing.final
 class RepositoryIndexRequest(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
     REPOSITORY_NAME_FIELD_NUMBER: builtins.int
     READY_FIELD_NUMBER: builtins.int
-    repository_name: typing.Text = ...
+    repository_name: builtins.str
     """The name of the repository. If empty the index is returned
     for all repositories.
     """
-
-    ready: builtins.bool = ...
+    ready: builtins.bool
     """If true return only models currently ready for inferencing."""
-
     def __init__(
         self,
         *,
-        repository_name: typing.Text = ...,
+        repository_name: builtins.str = ...,
         ready: builtins.bool = ...,
     ) -> None: ...
     def ClearField(
         self,
-        field_name: typing_extensions.Literal[
+        field_name: typing.Literal[
             "ready", b"ready", "repository_name", b"repository_name"
         ],
     ) -> None: ...
 
-global___RepositoryIndexRequest = RepositoryIndexRequest
+Global___RepositoryIndexRequest: typing_extensions.TypeAlias = RepositoryIndexRequest
 
+@typing.final
 class RepositoryIndexResponse(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
+    @typing.final
     class ModelIndex(google.protobuf.message.Message):
         """Index entry for a model."""
 
-        DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+        DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
         NAME_FIELD_NUMBER: builtins.int
         VERSION_FIELD_NUMBER: builtins.int
         STATE_FIELD_NUMBER: builtins.int
         REASON_FIELD_NUMBER: builtins.int
-        name: typing.Text = ...
+        name: builtins.str
         """The name of the model."""
-
-        version: typing.Text = ...
+        version: builtins.str
         """The version of the model."""
-
-        state: typing.Text = ...
+        state: builtins.str
         """The state of the model."""
-
-        reason: typing.Text = ...
+        reason: builtins.str
         """The reason, if any, that the model is in the given state."""
-
         def __init__(
             self,
             *,
-            name: typing.Text = ...,
-            version: typing.Text = ...,
-            state: typing.Text = ...,
-            reason: typing.Text = ...,
+            name: builtins.str = ...,
+            version: builtins.str = ...,
+            state: builtins.str = ...,
+            reason: builtins.str = ...,
         ) -> None: ...
         def ClearField(
             self,
-            field_name: typing_extensions.Literal[
+            field_name: typing.Literal[
                 "name",
                 b"name",
                 "reason",
@@ -89,90 +94,99 @@ class RepositoryIndexResponse(google.protobuf.message.Message):
     def models(
         self,
     ) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[
-        global___RepositoryIndexResponse.ModelIndex
+        Global___RepositoryIndexResponse.ModelIndex
     ]:
         """An index entry for each model."""
-        pass
 
     def __init__(
         self,
         *,
-        models: typing.Optional[
-            typing.Iterable[global___RepositoryIndexResponse.ModelIndex]
-        ] = ...,
+        models: (
+            collections.abc.Iterable[Global___RepositoryIndexResponse.ModelIndex] | None
+        ) = ...,
     ) -> None: ...
-    def ClearField(
-        self, field_name: typing_extensions.Literal["models", b"models"]
-    ) -> None: ...
+    def ClearField(self, field_name: typing.Literal["models", b"models"]) -> None: ...
 
-global___RepositoryIndexResponse = RepositoryIndexResponse
+Global___RepositoryIndexResponse: typing_extensions.TypeAlias = RepositoryIndexResponse
 
+@typing.final
 class RepositoryModelLoadRequest(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
     REPOSITORY_NAME_FIELD_NUMBER: builtins.int
     MODEL_NAME_FIELD_NUMBER: builtins.int
-    repository_name: typing.Text = ...
+    repository_name: builtins.str
     """The name of the repository to load from. If empty the model
     is loaded from any repository.
     """
-
-    model_name: typing.Text = ...
+    model_name: builtins.str
     """The name of the model to load, or reload."""
-
     def __init__(
         self,
         *,
-        repository_name: typing.Text = ...,
-        model_name: typing.Text = ...,
+        repository_name: builtins.str = ...,
+        model_name: builtins.str = ...,
     ) -> None: ...
     def ClearField(
         self,
-        field_name: typing_extensions.Literal[
+        field_name: typing.Literal[
             "model_name", b"model_name", "repository_name", b"repository_name"
         ],
     ) -> None: ...
 
-global___RepositoryModelLoadRequest = RepositoryModelLoadRequest
+Global___RepositoryModelLoadRequest: typing_extensions.TypeAlias = (
+    RepositoryModelLoadRequest
+)
 
+@typing.final
 class RepositoryModelLoadResponse(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
     def __init__(
         self,
     ) -> None: ...
 
-global___RepositoryModelLoadResponse = RepositoryModelLoadResponse
+Global___RepositoryModelLoadResponse: typing_extensions.TypeAlias = (
+    RepositoryModelLoadResponse
+)
 
+@typing.final
 class RepositoryModelUnloadRequest(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
     REPOSITORY_NAME_FIELD_NUMBER: builtins.int
     MODEL_NAME_FIELD_NUMBER: builtins.int
-    repository_name: typing.Text = ...
+    repository_name: builtins.str
     """The name of the repository from which the model was originally
     loaded. If empty the repository is not considered.
     """
-
-    model_name: typing.Text = ...
+    model_name: builtins.str
     """The name of the model to unload."""
-
     def __init__(
         self,
         *,
-        repository_name: typing.Text = ...,
-        model_name: typing.Text = ...,
+        repository_name: builtins.str = ...,
+        model_name: builtins.str = ...,
     ) -> None: ...
     def ClearField(
         self,
-        field_name: typing_extensions.Literal[
+        field_name: typing.Literal[
             "model_name", b"model_name", "repository_name", b"repository_name"
         ],
     ) -> None: ...
 
-global___RepositoryModelUnloadRequest = RepositoryModelUnloadRequest
+Global___RepositoryModelUnloadRequest: typing_extensions.TypeAlias = (
+    RepositoryModelUnloadRequest
+)
 
+@typing.final
 class RepositoryModelUnloadResponse(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
     def __init__(
         self,
     ) -> None: ...
 
-global___RepositoryModelUnloadResponse = RepositoryModelUnloadResponse
+Global___RepositoryModelUnloadResponse: typing_extensions.TypeAlias = (
+    RepositoryModelUnloadResponse
+)

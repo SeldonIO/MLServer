@@ -4,232 +4,239 @@ isort:skip_file
 """
 
 import builtins
+import collections.abc
 import google.protobuf.descriptor
 import google.protobuf.internal.containers
 import google.protobuf.message
+import sys
 import typing
-import typing_extensions
 
-DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
+if sys.version_info >= (3, 10):
+    import typing as typing_extensions
+else:
+    import typing_extensions
 
+DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
+
+@typing.final
 class ServerLiveRequest(google.protobuf.message.Message):
     """
     ServerLive messages.
     """
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
     def __init__(
         self,
     ) -> None: ...
 
-global___ServerLiveRequest = ServerLiveRequest
+Global___ServerLiveRequest: typing_extensions.TypeAlias = ServerLiveRequest
 
+@typing.final
 class ServerLiveResponse(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
-    LIVE_FIELD_NUMBER: builtins.int
-    live: builtins.bool = ...
-    """True if the inference server is live, false if not live."""
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
+    LIVE_FIELD_NUMBER: builtins.int
+    live: builtins.bool
+    """True if the inference server is live, false if not live."""
     def __init__(
         self,
         *,
         live: builtins.bool = ...,
     ) -> None: ...
-    def ClearField(
-        self, field_name: typing_extensions.Literal["live", b"live"]
-    ) -> None: ...
+    def ClearField(self, field_name: typing.Literal["live", b"live"]) -> None: ...
 
-global___ServerLiveResponse = ServerLiveResponse
+Global___ServerLiveResponse: typing_extensions.TypeAlias = ServerLiveResponse
 
+@typing.final
 class ServerReadyRequest(google.protobuf.message.Message):
     """
     ServerReady messages.
     """
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
     def __init__(
         self,
     ) -> None: ...
 
-global___ServerReadyRequest = ServerReadyRequest
+Global___ServerReadyRequest: typing_extensions.TypeAlias = ServerReadyRequest
 
+@typing.final
 class ServerReadyResponse(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
-    READY_FIELD_NUMBER: builtins.int
-    ready: builtins.bool = ...
-    """True if the inference server is ready, false if not ready."""
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
+    READY_FIELD_NUMBER: builtins.int
+    ready: builtins.bool
+    """True if the inference server is ready, false if not ready."""
     def __init__(
         self,
         *,
         ready: builtins.bool = ...,
     ) -> None: ...
-    def ClearField(
-        self, field_name: typing_extensions.Literal["ready", b"ready"]
-    ) -> None: ...
+    def ClearField(self, field_name: typing.Literal["ready", b"ready"]) -> None: ...
 
-global___ServerReadyResponse = ServerReadyResponse
+Global___ServerReadyResponse: typing_extensions.TypeAlias = ServerReadyResponse
 
+@typing.final
 class ModelReadyRequest(google.protobuf.message.Message):
     """
     ModelReady messages.
     """
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
     NAME_FIELD_NUMBER: builtins.int
     VERSION_FIELD_NUMBER: builtins.int
-    name: typing.Text = ...
+    name: builtins.str
     """The name of the model to check for readiness."""
-
-    version: typing.Text = ...
+    version: builtins.str
     """The version of the model to check for readiness. If not given the
     server will choose a version based on the model and internal policy.
     """
-
     def __init__(
         self,
         *,
-        name: typing.Text = ...,
-        version: typing.Text = ...,
+        name: builtins.str = ...,
+        version: builtins.str = ...,
     ) -> None: ...
     def ClearField(
-        self,
-        field_name: typing_extensions.Literal["name", b"name", "version", b"version"],
+        self, field_name: typing.Literal["name", b"name", "version", b"version"]
     ) -> None: ...
 
-global___ModelReadyRequest = ModelReadyRequest
+Global___ModelReadyRequest: typing_extensions.TypeAlias = ModelReadyRequest
 
+@typing.final
 class ModelReadyResponse(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
-    READY_FIELD_NUMBER: builtins.int
-    ready: builtins.bool = ...
-    """True if the model is ready, false if not ready."""
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
+    READY_FIELD_NUMBER: builtins.int
+    ready: builtins.bool
+    """True if the model is ready, false if not ready."""
     def __init__(
         self,
         *,
         ready: builtins.bool = ...,
     ) -> None: ...
-    def ClearField(
-        self, field_name: typing_extensions.Literal["ready", b"ready"]
-    ) -> None: ...
+    def ClearField(self, field_name: typing.Literal["ready", b"ready"]) -> None: ...
 
-global___ModelReadyResponse = ModelReadyResponse
+Global___ModelReadyResponse: typing_extensions.TypeAlias = ModelReadyResponse
 
+@typing.final
 class ServerMetadataRequest(google.protobuf.message.Message):
     """
     ServerMetadata messages.
     """
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
     def __init__(
         self,
     ) -> None: ...
 
-global___ServerMetadataRequest = ServerMetadataRequest
+Global___ServerMetadataRequest: typing_extensions.TypeAlias = ServerMetadataRequest
 
+@typing.final
 class ServerMetadataResponse(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
     NAME_FIELD_NUMBER: builtins.int
     VERSION_FIELD_NUMBER: builtins.int
     EXTENSIONS_FIELD_NUMBER: builtins.int
-    name: typing.Text = ...
+    name: builtins.str
     """The server name."""
-
-    version: typing.Text = ...
+    version: builtins.str
     """The server version."""
-
     @property
     def extensions(
         self,
-    ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[typing.Text]:
+    ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]:
         """The extensions supported by the server."""
-        pass
 
     def __init__(
         self,
         *,
-        name: typing.Text = ...,
-        version: typing.Text = ...,
-        extensions: typing.Optional[typing.Iterable[typing.Text]] = ...,
+        name: builtins.str = ...,
+        version: builtins.str = ...,
+        extensions: collections.abc.Iterable[builtins.str] | None = ...,
     ) -> None: ...
     def ClearField(
         self,
-        field_name: typing_extensions.Literal[
+        field_name: typing.Literal[
             "extensions", b"extensions", "name", b"name", "version", b"version"
         ],
     ) -> None: ...
 
-global___ServerMetadataResponse = ServerMetadataResponse
+Global___ServerMetadataResponse: typing_extensions.TypeAlias = ServerMetadataResponse
 
+@typing.final
 class ModelMetadataRequest(google.protobuf.message.Message):
     """
     ModelMetadata messages.
     """
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
     NAME_FIELD_NUMBER: builtins.int
     VERSION_FIELD_NUMBER: builtins.int
-    name: typing.Text = ...
+    name: builtins.str
     """The name of the model."""
-
-    version: typing.Text = ...
+    version: builtins.str
     """The version of the model to check for readiness. If not given the
     server will choose a version based on the model and internal policy.
     """
-
     def __init__(
         self,
         *,
-        name: typing.Text = ...,
-        version: typing.Text = ...,
+        name: builtins.str = ...,
+        version: builtins.str = ...,
     ) -> None: ...
     def ClearField(
-        self,
-        field_name: typing_extensions.Literal["name", b"name", "version", b"version"],
+        self, field_name: typing.Literal["name", b"name", "version", b"version"]
     ) -> None: ...
 
-global___ModelMetadataRequest = ModelMetadataRequest
+Global___ModelMetadataRequest: typing_extensions.TypeAlias = ModelMetadataRequest
 
+@typing.final
 class ModelMetadataResponse(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
+    @typing.final
     class TensorMetadata(google.protobuf.message.Message):
         """Metadata for a tensor."""
 
-        DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+        DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
+        @typing.final
         class ParametersEntry(google.protobuf.message.Message):
-            DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+            DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
             KEY_FIELD_NUMBER: builtins.int
             VALUE_FIELD_NUMBER: builtins.int
-            key: typing.Text = ...
+            key: builtins.str
             @property
-            def value(self) -> global___InferParameter: ...
+            def value(self) -> Global___InferParameter: ...
             def __init__(
                 self,
                 *,
-                key: typing.Text = ...,
-                value: typing.Optional[global___InferParameter] = ...,
+                key: builtins.str = ...,
+                value: Global___InferParameter | None = ...,
             ) -> None: ...
             def HasField(
-                self, field_name: typing_extensions.Literal["value", b"value"]
+                self, field_name: typing.Literal["value", b"value"]
             ) -> builtins.bool: ...
             def ClearField(
-                self,
-                field_name: typing_extensions.Literal["key", b"key", "value", b"value"],
+                self, field_name: typing.Literal["key", b"key", "value", b"value"]
             ) -> None: ...
 
         NAME_FIELD_NUMBER: builtins.int
         DATATYPE_FIELD_NUMBER: builtins.int
         SHAPE_FIELD_NUMBER: builtins.int
         PARAMETERS_FIELD_NUMBER: builtins.int
-        name: typing.Text = ...
+        name: builtins.str
         """The tensor name."""
-
-        datatype: typing.Text = ...
+        datatype: builtins.str
         """The tensor data type."""
-
         @property
         def shape(
             self,
@@ -239,32 +246,30 @@ class ModelMetadataResponse(google.protobuf.message.Message):
             """The tensor shape. A variable-size dimension is represented
             by a -1 value.
             """
-            pass
 
         @property
         def parameters(
             self,
         ) -> google.protobuf.internal.containers.MessageMap[
-            typing.Text, global___InferParameter
+            builtins.str, Global___InferParameter
         ]:
             """Optional default parameters for input.
             NOTE: This is an extension to the standard
             """
-            pass
 
         def __init__(
             self,
             *,
-            name: typing.Text = ...,
-            datatype: typing.Text = ...,
-            shape: typing.Optional[typing.Iterable[builtins.int]] = ...,
-            parameters: typing.Optional[
-                typing.Mapping[typing.Text, global___InferParameter]
-            ] = ...,
+            name: builtins.str = ...,
+            datatype: builtins.str = ...,
+            shape: collections.abc.Iterable[builtins.int] | None = ...,
+            parameters: (
+                collections.abc.Mapping[builtins.str, Global___InferParameter] | None
+            ) = ...,
         ) -> None: ...
         def ClearField(
             self,
-            field_name: typing_extensions.Literal[
+            field_name: typing.Literal[
                 "datatype",
                 b"datatype",
                 "name",
@@ -276,25 +281,26 @@ class ModelMetadataResponse(google.protobuf.message.Message):
             ],
         ) -> None: ...
 
+    @typing.final
     class ParametersEntry(google.protobuf.message.Message):
-        DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+        DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
         KEY_FIELD_NUMBER: builtins.int
         VALUE_FIELD_NUMBER: builtins.int
-        key: typing.Text = ...
+        key: builtins.str
         @property
-        def value(self) -> global___InferParameter: ...
+        def value(self) -> Global___InferParameter: ...
         def __init__(
             self,
             *,
-            key: typing.Text = ...,
-            value: typing.Optional[global___InferParameter] = ...,
+            key: builtins.str = ...,
+            value: Global___InferParameter | None = ...,
         ) -> None: ...
         def HasField(
-            self, field_name: typing_extensions.Literal["value", b"value"]
+            self, field_name: typing.Literal["value", b"value"]
         ) -> builtins.bool: ...
         def ClearField(
-            self,
-            field_name: typing_extensions.Literal["key", b"key", "value", b"value"],
+            self, field_name: typing.Literal["key", b"key", "value", b"value"]
         ) -> None: ...
 
     NAME_FIELD_NUMBER: builtins.int
@@ -303,66 +309,63 @@ class ModelMetadataResponse(google.protobuf.message.Message):
     INPUTS_FIELD_NUMBER: builtins.int
     OUTPUTS_FIELD_NUMBER: builtins.int
     PARAMETERS_FIELD_NUMBER: builtins.int
-    name: typing.Text = ...
+    name: builtins.str
     """The model name."""
-
+    platform: builtins.str
+    """The model's platform. See Platforms."""
     @property
     def versions(
         self,
-    ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[typing.Text]:
+    ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]:
         """The versions of the model available on the server."""
-        pass
-    platform: typing.Text = ...
-    """The model's platform. See Platforms."""
 
     @property
     def inputs(
         self,
     ) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[
-        global___ModelMetadataResponse.TensorMetadata
+        Global___ModelMetadataResponse.TensorMetadata
     ]:
         """The model's inputs."""
-        pass
 
     @property
     def outputs(
         self,
     ) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[
-        global___ModelMetadataResponse.TensorMetadata
+        Global___ModelMetadataResponse.TensorMetadata
     ]:
         """The model's outputs."""
-        pass
 
     @property
     def parameters(
         self,
     ) -> google.protobuf.internal.containers.MessageMap[
-        typing.Text, global___InferParameter
+        builtins.str, Global___InferParameter
     ]:
         """Optional default parameters for the request / response.
         NOTE: This is an extension to the standard
         """
-        pass
 
     def __init__(
         self,
         *,
-        name: typing.Text = ...,
-        versions: typing.Optional[typing.Iterable[typing.Text]] = ...,
-        platform: typing.Text = ...,
-        inputs: typing.Optional[
-            typing.Iterable[global___ModelMetadataResponse.TensorMetadata]
-        ] = ...,
-        outputs: typing.Optional[
-            typing.Iterable[global___ModelMetadataResponse.TensorMetadata]
-        ] = ...,
-        parameters: typing.Optional[
-            typing.Mapping[typing.Text, global___InferParameter]
-        ] = ...,
+        name: builtins.str = ...,
+        versions: collections.abc.Iterable[builtins.str] | None = ...,
+        platform: builtins.str = ...,
+        inputs: (
+            collections.abc.Iterable[Global___ModelMetadataResponse.TensorMetadata]
+            | None
+        ) = ...,
+        outputs: (
+            collections.abc.Iterable[Global___ModelMetadataResponse.TensorMetadata]
+            | None
+        ) = ...,
+        parameters: (
+            collections.abc.Mapping[builtins.str, Global___InferParameter] | None
+        ) = ...,
     ) -> None: ...
     def ClearField(
         self,
-        field_name: typing_extensions.Literal[
+        field_name: typing.Literal[
             "inputs",
             b"inputs",
             "name",
@@ -378,39 +381,42 @@ class ModelMetadataResponse(google.protobuf.message.Message):
         ],
     ) -> None: ...
 
-global___ModelMetadataResponse = ModelMetadataResponse
+Global___ModelMetadataResponse: typing_extensions.TypeAlias = ModelMetadataResponse
 
+@typing.final
 class ModelInferRequest(google.protobuf.message.Message):
     """
     ModelInfer messages.
     """
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
+    @typing.final
     class InferInputTensor(google.protobuf.message.Message):
         """An input tensor for an inference request."""
 
-        DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+        DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
+        @typing.final
         class ParametersEntry(google.protobuf.message.Message):
-            DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+            DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
             KEY_FIELD_NUMBER: builtins.int
             VALUE_FIELD_NUMBER: builtins.int
-            key: typing.Text = ...
+            key: builtins.str
             @property
-            def value(self) -> global___InferParameter: ...
+            def value(self) -> Global___InferParameter: ...
             def __init__(
                 self,
                 *,
-                key: typing.Text = ...,
-                value: typing.Optional[global___InferParameter] = ...,
+                key: builtins.str = ...,
+                value: Global___InferParameter | None = ...,
             ) -> None: ...
             def HasField(
-                self, field_name: typing_extensions.Literal["value", b"value"]
+                self, field_name: typing.Literal["value", b"value"]
             ) -> builtins.bool: ...
             def ClearField(
-                self,
-                field_name: typing_extensions.Literal["key", b"key", "value", b"value"],
+                self, field_name: typing.Literal["key", b"key", "value", b"value"]
             ) -> None: ...
 
         NAME_FIELD_NUMBER: builtins.int
@@ -418,12 +424,10 @@ class ModelInferRequest(google.protobuf.message.Message):
         SHAPE_FIELD_NUMBER: builtins.int
         PARAMETERS_FIELD_NUMBER: builtins.int
         CONTENTS_FIELD_NUMBER: builtins.int
-        name: typing.Text = ...
+        name: builtins.str
         """The tensor name."""
-
-        datatype: typing.Text = ...
+        datatype: builtins.str
         """The tensor data type."""
-
         @property
         def shape(
             self,
@@ -431,42 +435,39 @@ class ModelInferRequest(google.protobuf.message.Message):
             builtins.int
         ]:
             """The tensor shape."""
-            pass
 
         @property
         def parameters(
             self,
         ) -> google.protobuf.internal.containers.MessageMap[
-            typing.Text, global___InferParameter
+            builtins.str, Global___InferParameter
         ]:
             """Optional inference input tensor parameters."""
-            pass
 
         @property
-        def contents(self) -> global___InferTensorContents:
+        def contents(self) -> Global___InferTensorContents:
             """The input tensor data.
             This field must not be specified if tensor contents are being specified
             in ModelInferRequest.raw_input_contents.
             """
-            pass
 
         def __init__(
             self,
             *,
-            name: typing.Text = ...,
-            datatype: typing.Text = ...,
-            shape: typing.Optional[typing.Iterable[builtins.int]] = ...,
-            parameters: typing.Optional[
-                typing.Mapping[typing.Text, global___InferParameter]
-            ] = ...,
-            contents: typing.Optional[global___InferTensorContents] = ...,
+            name: builtins.str = ...,
+            datatype: builtins.str = ...,
+            shape: collections.abc.Iterable[builtins.int] | None = ...,
+            parameters: (
+                collections.abc.Mapping[builtins.str, Global___InferParameter] | None
+            ) = ...,
+            contents: Global___InferTensorContents | None = ...,
         ) -> None: ...
         def HasField(
-            self, field_name: typing_extensions.Literal["contents", b"contents"]
+            self, field_name: typing.Literal["contents", b"contents"]
         ) -> builtins.bool: ...
         def ClearField(
             self,
-            field_name: typing_extensions.Literal[
+            field_name: typing.Literal[
                 "contents",
                 b"contents",
                 "datatype",
@@ -480,80 +481,79 @@ class ModelInferRequest(google.protobuf.message.Message):
             ],
         ) -> None: ...
 
+    @typing.final
     class InferRequestedOutputTensor(google.protobuf.message.Message):
         """An output tensor requested for an inference request."""
 
-        DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+        DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
+        @typing.final
         class ParametersEntry(google.protobuf.message.Message):
-            DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+            DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
             KEY_FIELD_NUMBER: builtins.int
             VALUE_FIELD_NUMBER: builtins.int
-            key: typing.Text = ...
+            key: builtins.str
             @property
-            def value(self) -> global___InferParameter: ...
+            def value(self) -> Global___InferParameter: ...
             def __init__(
                 self,
                 *,
-                key: typing.Text = ...,
-                value: typing.Optional[global___InferParameter] = ...,
+                key: builtins.str = ...,
+                value: Global___InferParameter | None = ...,
             ) -> None: ...
             def HasField(
-                self, field_name: typing_extensions.Literal["value", b"value"]
+                self, field_name: typing.Literal["value", b"value"]
             ) -> builtins.bool: ...
             def ClearField(
-                self,
-                field_name: typing_extensions.Literal["key", b"key", "value", b"value"],
+                self, field_name: typing.Literal["key", b"key", "value", b"value"]
             ) -> None: ...
 
         NAME_FIELD_NUMBER: builtins.int
         PARAMETERS_FIELD_NUMBER: builtins.int
-        name: typing.Text = ...
+        name: builtins.str
         """The tensor name."""
-
         @property
         def parameters(
             self,
         ) -> google.protobuf.internal.containers.MessageMap[
-            typing.Text, global___InferParameter
+            builtins.str, Global___InferParameter
         ]:
             """Optional requested output tensor parameters."""
-            pass
 
         def __init__(
             self,
             *,
-            name: typing.Text = ...,
-            parameters: typing.Optional[
-                typing.Mapping[typing.Text, global___InferParameter]
-            ] = ...,
+            name: builtins.str = ...,
+            parameters: (
+                collections.abc.Mapping[builtins.str, Global___InferParameter] | None
+            ) = ...,
         ) -> None: ...
         def ClearField(
             self,
-            field_name: typing_extensions.Literal[
-                "name", b"name", "parameters", b"parameters"
-            ],
+            field_name: typing.Literal["name", b"name", "parameters", b"parameters"],
         ) -> None: ...
 
+    @typing.final
     class ParametersEntry(google.protobuf.message.Message):
-        DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+        DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
         KEY_FIELD_NUMBER: builtins.int
         VALUE_FIELD_NUMBER: builtins.int
-        key: typing.Text = ...
+        key: builtins.str
         @property
-        def value(self) -> global___InferParameter: ...
+        def value(self) -> Global___InferParameter: ...
         def __init__(
             self,
             *,
-            key: typing.Text = ...,
-            value: typing.Optional[global___InferParameter] = ...,
+            key: builtins.str = ...,
+            value: Global___InferParameter | None = ...,
         ) -> None: ...
         def HasField(
-            self, field_name: typing_extensions.Literal["value", b"value"]
+            self, field_name: typing.Literal["value", b"value"]
         ) -> builtins.bool: ...
         def ClearField(
-            self,
-            field_name: typing_extensions.Literal["key", b"key", "value", b"value"],
+            self, field_name: typing.Literal["key", b"key", "value", b"value"]
         ) -> None: ...
 
     MODEL_NAME_FIELD_NUMBER: builtins.int
@@ -563,47 +563,41 @@ class ModelInferRequest(google.protobuf.message.Message):
     INPUTS_FIELD_NUMBER: builtins.int
     OUTPUTS_FIELD_NUMBER: builtins.int
     RAW_INPUT_CONTENTS_FIELD_NUMBER: builtins.int
-    model_name: typing.Text = ...
+    model_name: builtins.str
     """The name of the model to use for inferencing."""
-
-    model_version: typing.Text = ...
+    model_version: builtins.str
     """The version of the model to use for inference. If not given the
     server will choose a version based on the model and internal policy.
     """
-
-    id: typing.Text = ...
+    id: builtins.str
     """Optional identifier for the request. If specified will be
     returned in the response.
     """
-
     @property
     def parameters(
         self,
     ) -> google.protobuf.internal.containers.MessageMap[
-        typing.Text, global___InferParameter
+        builtins.str, Global___InferParameter
     ]:
         """Optional inference parameters."""
-        pass
 
     @property
     def inputs(
         self,
     ) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[
-        global___ModelInferRequest.InferInputTensor
+        Global___ModelInferRequest.InferInputTensor
     ]:
         """The input tensors for the inference."""
-        pass
 
     @property
     def outputs(
         self,
     ) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[
-        global___ModelInferRequest.InferRequestedOutputTensor
+        Global___ModelInferRequest.InferRequestedOutputTensor
     ]:
         """The requested output tensors for the inference. Optional, if not
         specified all outputs produced by the model will be returned.
         """
-        pass
 
     @property
     def raw_input_contents(
@@ -629,28 +623,30 @@ class ModelInferRequest(google.protobuf.message.Message):
         If this field is specified then InferInputTensor::contents must not be
         specified for any input tensor.
         """
-        pass
 
     def __init__(
         self,
         *,
-        model_name: typing.Text = ...,
-        model_version: typing.Text = ...,
-        id: typing.Text = ...,
-        parameters: typing.Optional[
-            typing.Mapping[typing.Text, global___InferParameter]
-        ] = ...,
-        inputs: typing.Optional[
-            typing.Iterable[global___ModelInferRequest.InferInputTensor]
-        ] = ...,
-        outputs: typing.Optional[
-            typing.Iterable[global___ModelInferRequest.InferRequestedOutputTensor]
-        ] = ...,
-        raw_input_contents: typing.Optional[typing.Iterable[builtins.bytes]] = ...,
+        model_name: builtins.str = ...,
+        model_version: builtins.str = ...,
+        id: builtins.str = ...,
+        parameters: (
+            collections.abc.Mapping[builtins.str, Global___InferParameter] | None
+        ) = ...,
+        inputs: (
+            collections.abc.Iterable[Global___ModelInferRequest.InferInputTensor] | None
+        ) = ...,
+        outputs: (
+            collections.abc.Iterable[
+                Global___ModelInferRequest.InferRequestedOutputTensor
+            ]
+            | None
+        ) = ...,
+        raw_input_contents: collections.abc.Iterable[builtins.bytes] | None = ...,
     ) -> None: ...
     def ClearField(
         self,
-        field_name: typing_extensions.Literal[
+        field_name: typing.Literal[
             "id",
             b"id",
             "inputs",
@@ -668,35 +664,38 @@ class ModelInferRequest(google.protobuf.message.Message):
         ],
     ) -> None: ...
 
-global___ModelInferRequest = ModelInferRequest
+Global___ModelInferRequest: typing_extensions.TypeAlias = ModelInferRequest
 
+@typing.final
 class ModelInferResponse(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
+    @typing.final
     class InferOutputTensor(google.protobuf.message.Message):
         """An output tensor returned for an inference request."""
 
-        DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+        DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
+        @typing.final
         class ParametersEntry(google.protobuf.message.Message):
-            DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+            DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
             KEY_FIELD_NUMBER: builtins.int
             VALUE_FIELD_NUMBER: builtins.int
-            key: typing.Text = ...
+            key: builtins.str
             @property
-            def value(self) -> global___InferParameter: ...
+            def value(self) -> Global___InferParameter: ...
             def __init__(
                 self,
                 *,
-                key: typing.Text = ...,
-                value: typing.Optional[global___InferParameter] = ...,
+                key: builtins.str = ...,
+                value: Global___InferParameter | None = ...,
             ) -> None: ...
             def HasField(
-                self, field_name: typing_extensions.Literal["value", b"value"]
+                self, field_name: typing.Literal["value", b"value"]
             ) -> builtins.bool: ...
             def ClearField(
-                self,
-                field_name: typing_extensions.Literal["key", b"key", "value", b"value"],
+                self, field_name: typing.Literal["key", b"key", "value", b"value"]
             ) -> None: ...
 
         NAME_FIELD_NUMBER: builtins.int
@@ -704,12 +703,10 @@ class ModelInferResponse(google.protobuf.message.Message):
         SHAPE_FIELD_NUMBER: builtins.int
         PARAMETERS_FIELD_NUMBER: builtins.int
         CONTENTS_FIELD_NUMBER: builtins.int
-        name: typing.Text = ...
+        name: builtins.str
         """The tensor name."""
-
-        datatype: typing.Text = ...
+        datatype: builtins.str
         """The tensor data type."""
-
         @property
         def shape(
             self,
@@ -717,42 +714,39 @@ class ModelInferResponse(google.protobuf.message.Message):
             builtins.int
         ]:
             """The tensor shape."""
-            pass
 
         @property
         def parameters(
             self,
         ) -> google.protobuf.internal.containers.MessageMap[
-            typing.Text, global___InferParameter
+            builtins.str, Global___InferParameter
         ]:
             """Optional output tensor parameters."""
-            pass
 
         @property
-        def contents(self) -> global___InferTensorContents:
+        def contents(self) -> Global___InferTensorContents:
             """The output tensor data.
             This field must not be specified if tensor contents are being specified
             in ModelInferResponse.raw_output_contents.
             """
-            pass
 
         def __init__(
             self,
             *,
-            name: typing.Text = ...,
-            datatype: typing.Text = ...,
-            shape: typing.Optional[typing.Iterable[builtins.int]] = ...,
-            parameters: typing.Optional[
-                typing.Mapping[typing.Text, global___InferParameter]
-            ] = ...,
-            contents: typing.Optional[global___InferTensorContents] = ...,
+            name: builtins.str = ...,
+            datatype: builtins.str = ...,
+            shape: collections.abc.Iterable[builtins.int] | None = ...,
+            parameters: (
+                collections.abc.Mapping[builtins.str, Global___InferParameter] | None
+            ) = ...,
+            contents: Global___InferTensorContents | None = ...,
         ) -> None: ...
         def HasField(
-            self, field_name: typing_extensions.Literal["contents", b"contents"]
+            self, field_name: typing.Literal["contents", b"contents"]
         ) -> builtins.bool: ...
         def ClearField(
             self,
-            field_name: typing_extensions.Literal[
+            field_name: typing.Literal[
                 "contents",
                 b"contents",
                 "datatype",
@@ -766,25 +760,26 @@ class ModelInferResponse(google.protobuf.message.Message):
             ],
         ) -> None: ...
 
+    @typing.final
     class ParametersEntry(google.protobuf.message.Message):
-        DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+        DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
         KEY_FIELD_NUMBER: builtins.int
         VALUE_FIELD_NUMBER: builtins.int
-        key: typing.Text = ...
+        key: builtins.str
         @property
-        def value(self) -> global___InferParameter: ...
+        def value(self) -> Global___InferParameter: ...
         def __init__(
             self,
             *,
-            key: typing.Text = ...,
-            value: typing.Optional[global___InferParameter] = ...,
+            key: builtins.str = ...,
+            value: Global___InferParameter | None = ...,
         ) -> None: ...
         def HasField(
-            self, field_name: typing_extensions.Literal["value", b"value"]
+            self, field_name: typing.Literal["value", b"value"]
         ) -> builtins.bool: ...
         def ClearField(
-            self,
-            field_name: typing_extensions.Literal["key", b"key", "value", b"value"],
+            self, field_name: typing.Literal["key", b"key", "value", b"value"]
         ) -> None: ...
 
     MODEL_NAME_FIELD_NUMBER: builtins.int
@@ -793,32 +788,27 @@ class ModelInferResponse(google.protobuf.message.Message):
     PARAMETERS_FIELD_NUMBER: builtins.int
     OUTPUTS_FIELD_NUMBER: builtins.int
     RAW_OUTPUT_CONTENTS_FIELD_NUMBER: builtins.int
-    model_name: typing.Text = ...
+    model_name: builtins.str
     """The name of the model used for inference."""
-
-    model_version: typing.Text = ...
+    model_version: builtins.str
     """The version of the model used for inference."""
-
-    id: typing.Text = ...
+    id: builtins.str
     """The id of the inference request if one was specified."""
-
     @property
     def parameters(
         self,
     ) -> google.protobuf.internal.containers.MessageMap[
-        typing.Text, global___InferParameter
+        builtins.str, Global___InferParameter
     ]:
         """Optional inference response parameters."""
-        pass
 
     @property
     def outputs(
         self,
     ) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[
-        global___ModelInferResponse.InferOutputTensor
+        Global___ModelInferResponse.InferOutputTensor
     ]:
         """The output tensors holding inference results."""
-        pass
 
     @property
     def raw_output_contents(
@@ -844,25 +834,25 @@ class ModelInferResponse(google.protobuf.message.Message):
         If this field is specified then InferOutputTensor::contents must not be
         specified for any output tensor.
         """
-        pass
 
     def __init__(
         self,
         *,
-        model_name: typing.Text = ...,
-        model_version: typing.Text = ...,
-        id: typing.Text = ...,
-        parameters: typing.Optional[
-            typing.Mapping[typing.Text, global___InferParameter]
-        ] = ...,
-        outputs: typing.Optional[
-            typing.Iterable[global___ModelInferResponse.InferOutputTensor]
-        ] = ...,
-        raw_output_contents: typing.Optional[typing.Iterable[builtins.bytes]] = ...,
+        model_name: builtins.str = ...,
+        model_version: builtins.str = ...,
+        id: builtins.str = ...,
+        parameters: (
+            collections.abc.Mapping[builtins.str, Global___InferParameter] | None
+        ) = ...,
+        outputs: (
+            collections.abc.Iterable[Global___ModelInferResponse.InferOutputTensor]
+            | None
+        ) = ...,
+        raw_output_contents: collections.abc.Iterable[builtins.bytes] | None = ...,
     ) -> None: ...
     def ClearField(
         self,
-        field_name: typing_extensions.Literal[
+        field_name: typing.Literal[
             "id",
             b"id",
             "model_name",
@@ -878,36 +868,35 @@ class ModelInferResponse(google.protobuf.message.Message):
         ],
     ) -> None: ...
 
-global___ModelInferResponse = ModelInferResponse
+Global___ModelInferResponse: typing_extensions.TypeAlias = ModelInferResponse
 
+@typing.final
 class InferParameter(google.protobuf.message.Message):
     """
     An inference parameter value.
     """
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
     BOOL_PARAM_FIELD_NUMBER: builtins.int
     INT64_PARAM_FIELD_NUMBER: builtins.int
     STRING_PARAM_FIELD_NUMBER: builtins.int
-    bool_param: builtins.bool = ...
+    bool_param: builtins.bool
     """A boolean parameter value."""
-
-    int64_param: builtins.int = ...
+    int64_param: builtins.int
     """An int64 parameter value."""
-
-    string_param: typing.Text = ...
+    string_param: builtins.str
     """A string parameter value."""
-
     def __init__(
         self,
         *,
         bool_param: builtins.bool = ...,
         int64_param: builtins.int = ...,
-        string_param: typing.Text = ...,
+        string_param: builtins.str = ...,
     ) -> None: ...
     def HasField(
         self,
-        field_name: typing_extensions.Literal[
+        field_name: typing.Literal[
             "bool_param",
             b"bool_param",
             "int64_param",
@@ -920,7 +909,7 @@ class InferParameter(google.protobuf.message.Message):
     ) -> builtins.bool: ...
     def ClearField(
         self,
-        field_name: typing_extensions.Literal[
+        field_name: typing.Literal[
             "bool_param",
             b"bool_param",
             "int64_param",
@@ -932,14 +921,12 @@ class InferParameter(google.protobuf.message.Message):
         ],
     ) -> None: ...
     def WhichOneof(
-        self,
-        oneof_group: typing_extensions.Literal["parameter_choice", b"parameter_choice"],
-    ) -> typing.Optional[
-        typing_extensions.Literal["bool_param", "int64_param", "string_param"]
-    ]: ...
+        self, oneof_group: typing.Literal["parameter_choice", b"parameter_choice"]
+    ) -> typing.Literal["bool_param", "int64_param", "string_param"] | None: ...
 
-global___InferParameter = InferParameter
+Global___InferParameter: typing_extensions.TypeAlias = InferParameter
 
+@typing.final
 class InferTensorContents(google.protobuf.message.Message):
     """
     The data contained in a tensor. For a given data type the
@@ -948,7 +935,8 @@ class InferTensorContents(google.protobuf.message.Message):
     oneof is not used because oneofs cannot contain repeated fields.
     """
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
     BOOL_CONTENTS_FIELD_NUMBER: builtins.int
     INT_CONTENTS_FIELD_NUMBER: builtins.int
     INT64_CONTENTS_FIELD_NUMBER: builtins.int
@@ -967,7 +955,6 @@ class InferTensorContents(google.protobuf.message.Message):
         expected by the tensor's shape. The contents must be the flattened,
         one-dimensional, row-major order of the tensor elements.
         """
-        pass
 
     @property
     def int_contents(
@@ -978,7 +965,6 @@ class InferTensorContents(google.protobuf.message.Message):
         must be the flattened, one-dimensional, row-major order of the
         tensor elements.
         """
-        pass
 
     @property
     def int64_contents(
@@ -988,7 +974,6 @@ class InferTensorContents(google.protobuf.message.Message):
         is expected by the tensor's shape. The contents must be the
         flattened, one-dimensional, row-major order of the tensor elements.
         """
-        pass
 
     @property
     def uint_contents(
@@ -999,7 +984,6 @@ class InferTensorContents(google.protobuf.message.Message):
         must be the flattened, one-dimensional, row-major order of the
         tensor elements.
         """
-        pass
 
     @property
     def uint64_contents(
@@ -1009,7 +993,6 @@ class InferTensorContents(google.protobuf.message.Message):
         is expected by the tensor's shape. The contents must be the
         flattened, one-dimensional, row-major order of the tensor elements.
         """
-        pass
 
     @property
     def fp32_contents(
@@ -1021,7 +1004,6 @@ class InferTensorContents(google.protobuf.message.Message):
         expected by the tensor's shape. The contents must be the flattened,
         one-dimensional, row-major order of the tensor elements.
         """
-        pass
 
     @property
     def fp64_contents(
@@ -1033,7 +1015,6 @@ class InferTensorContents(google.protobuf.message.Message):
         expected by the tensor's shape. The contents must be the flattened,
         one-dimensional, row-major order of the tensor elements.
         """
-        pass
 
     @property
     def bytes_contents(
@@ -1045,23 +1026,22 @@ class InferTensorContents(google.protobuf.message.Message):
         expected by the tensor's shape. The contents must be the flattened,
         one-dimensional, row-major order of the tensor elements.
         """
-        pass
 
     def __init__(
         self,
         *,
-        bool_contents: typing.Optional[typing.Iterable[builtins.bool]] = ...,
-        int_contents: typing.Optional[typing.Iterable[builtins.int]] = ...,
-        int64_contents: typing.Optional[typing.Iterable[builtins.int]] = ...,
-        uint_contents: typing.Optional[typing.Iterable[builtins.int]] = ...,
-        uint64_contents: typing.Optional[typing.Iterable[builtins.int]] = ...,
-        fp32_contents: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        fp64_contents: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        bytes_contents: typing.Optional[typing.Iterable[builtins.bytes]] = ...,
+        bool_contents: collections.abc.Iterable[builtins.bool] | None = ...,
+        int_contents: collections.abc.Iterable[builtins.int] | None = ...,
+        int64_contents: collections.abc.Iterable[builtins.int] | None = ...,
+        uint_contents: collections.abc.Iterable[builtins.int] | None = ...,
+        uint64_contents: collections.abc.Iterable[builtins.int] | None = ...,
+        fp32_contents: collections.abc.Iterable[builtins.float] | None = ...,
+        fp64_contents: collections.abc.Iterable[builtins.float] | None = ...,
+        bytes_contents: collections.abc.Iterable[builtins.bytes] | None = ...,
     ) -> None: ...
     def ClearField(
         self,
-        field_name: typing_extensions.Literal[
+        field_name: typing.Literal[
             "bool_contents",
             b"bool_contents",
             "bytes_contents",
@@ -1081,8 +1061,9 @@ class InferTensorContents(google.protobuf.message.Message):
         ],
     ) -> None: ...
 
-global___InferTensorContents = InferTensorContents
+Global___InferTensorContents: typing_extensions.TypeAlias = InferTensorContents
 
+@typing.final
 class ModelRepositoryParameter(google.protobuf.message.Message):
     """
     Messages for the Repository API
@@ -1094,34 +1075,31 @@ class ModelRepositoryParameter(google.protobuf.message.Message):
     An model repository parameter value.
     """
 
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
     BOOL_PARAM_FIELD_NUMBER: builtins.int
     INT64_PARAM_FIELD_NUMBER: builtins.int
     STRING_PARAM_FIELD_NUMBER: builtins.int
     BYTES_PARAM_FIELD_NUMBER: builtins.int
-    bool_param: builtins.bool = ...
+    bool_param: builtins.bool
     """A boolean parameter value."""
-
-    int64_param: builtins.int = ...
+    int64_param: builtins.int
     """An int64 parameter value."""
-
-    string_param: typing.Text = ...
+    string_param: builtins.str
     """A string parameter value."""
-
-    bytes_param: builtins.bytes = ...
+    bytes_param: builtins.bytes
     """A bytes parameter value."""
-
     def __init__(
         self,
         *,
         bool_param: builtins.bool = ...,
         int64_param: builtins.int = ...,
-        string_param: typing.Text = ...,
+        string_param: builtins.str = ...,
         bytes_param: builtins.bytes = ...,
     ) -> None: ...
     def HasField(
         self,
-        field_name: typing_extensions.Literal[
+        field_name: typing.Literal[
             "bool_param",
             b"bool_param",
             "bytes_param",
@@ -1136,7 +1114,7 @@ class ModelRepositoryParameter(google.protobuf.message.Message):
     ) -> builtins.bool: ...
     def ClearField(
         self,
-        field_name: typing_extensions.Literal[
+        field_name: typing.Literal[
             "bool_param",
             b"bool_param",
             "bytes_param",
@@ -1150,77 +1128,76 @@ class ModelRepositoryParameter(google.protobuf.message.Message):
         ],
     ) -> None: ...
     def WhichOneof(
-        self,
-        oneof_group: typing_extensions.Literal["parameter_choice", b"parameter_choice"],
-    ) -> typing.Optional[
-        typing_extensions.Literal[
-            "bool_param", "int64_param", "string_param", "bytes_param"
-        ]
-    ]: ...
+        self, oneof_group: typing.Literal["parameter_choice", b"parameter_choice"]
+    ) -> (
+        typing.Literal["bool_param", "int64_param", "string_param", "bytes_param"]
+        | None
+    ): ...
 
-global___ModelRepositoryParameter = ModelRepositoryParameter
+Global___ModelRepositoryParameter: typing_extensions.TypeAlias = (
+    ModelRepositoryParameter
+)
 
+@typing.final
 class RepositoryIndexRequest(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
     REPOSITORY_NAME_FIELD_NUMBER: builtins.int
     READY_FIELD_NUMBER: builtins.int
-    repository_name: typing.Text = ...
+    repository_name: builtins.str
     """The name of the repository. If empty the index is returned
     for all repositories.
     """
-
-    ready: builtins.bool = ...
+    ready: builtins.bool
     """If true return only models currently ready for inferencing."""
-
     def __init__(
         self,
         *,
-        repository_name: typing.Text = ...,
+        repository_name: builtins.str = ...,
         ready: builtins.bool = ...,
     ) -> None: ...
     def ClearField(
         self,
-        field_name: typing_extensions.Literal[
+        field_name: typing.Literal[
             "ready", b"ready", "repository_name", b"repository_name"
         ],
     ) -> None: ...
 
-global___RepositoryIndexRequest = RepositoryIndexRequest
+Global___RepositoryIndexRequest: typing_extensions.TypeAlias = RepositoryIndexRequest
 
+@typing.final
 class RepositoryIndexResponse(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
+    @typing.final
     class ModelIndex(google.protobuf.message.Message):
         """Index entry for a model."""
 
-        DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+        DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
         NAME_FIELD_NUMBER: builtins.int
         VERSION_FIELD_NUMBER: builtins.int
         STATE_FIELD_NUMBER: builtins.int
         REASON_FIELD_NUMBER: builtins.int
-        name: typing.Text = ...
+        name: builtins.str
         """The name of the model."""
-
-        version: typing.Text = ...
+        version: builtins.str
         """The version of the model."""
-
-        state: typing.Text = ...
+        state: builtins.str
         """The state of the model."""
-
-        reason: typing.Text = ...
+        reason: builtins.str
         """The reason, if any, that the model is in the given state."""
-
         def __init__(
             self,
             *,
-            name: typing.Text = ...,
-            version: typing.Text = ...,
-            state: typing.Text = ...,
-            reason: typing.Text = ...,
+            name: builtins.str = ...,
+            version: builtins.str = ...,
+            state: builtins.str = ...,
+            reason: builtins.str = ...,
         ) -> None: ...
         def ClearField(
             self,
-            field_name: typing_extensions.Literal[
+            field_name: typing.Literal[
                 "name",
                 b"name",
                 "reason",
@@ -1237,80 +1214,77 @@ class RepositoryIndexResponse(google.protobuf.message.Message):
     def models(
         self,
     ) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[
-        global___RepositoryIndexResponse.ModelIndex
+        Global___RepositoryIndexResponse.ModelIndex
     ]:
         """An index entry for each model."""
-        pass
 
     def __init__(
         self,
         *,
-        models: typing.Optional[
-            typing.Iterable[global___RepositoryIndexResponse.ModelIndex]
-        ] = ...,
+        models: (
+            collections.abc.Iterable[Global___RepositoryIndexResponse.ModelIndex] | None
+        ) = ...,
     ) -> None: ...
-    def ClearField(
-        self, field_name: typing_extensions.Literal["models", b"models"]
-    ) -> None: ...
+    def ClearField(self, field_name: typing.Literal["models", b"models"]) -> None: ...
 
-global___RepositoryIndexResponse = RepositoryIndexResponse
+Global___RepositoryIndexResponse: typing_extensions.TypeAlias = RepositoryIndexResponse
 
+@typing.final
 class RepositoryModelLoadRequest(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
+    @typing.final
     class ParametersEntry(google.protobuf.message.Message):
-        DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+        DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
         KEY_FIELD_NUMBER: builtins.int
         VALUE_FIELD_NUMBER: builtins.int
-        key: typing.Text = ...
+        key: builtins.str
         @property
-        def value(self) -> global___ModelRepositoryParameter: ...
+        def value(self) -> Global___ModelRepositoryParameter: ...
         def __init__(
             self,
             *,
-            key: typing.Text = ...,
-            value: typing.Optional[global___ModelRepositoryParameter] = ...,
+            key: builtins.str = ...,
+            value: Global___ModelRepositoryParameter | None = ...,
         ) -> None: ...
         def HasField(
-            self, field_name: typing_extensions.Literal["value", b"value"]
+            self, field_name: typing.Literal["value", b"value"]
         ) -> builtins.bool: ...
         def ClearField(
-            self,
-            field_name: typing_extensions.Literal["key", b"key", "value", b"value"],
+            self, field_name: typing.Literal["key", b"key", "value", b"value"]
         ) -> None: ...
 
     REPOSITORY_NAME_FIELD_NUMBER: builtins.int
     MODEL_NAME_FIELD_NUMBER: builtins.int
     PARAMETERS_FIELD_NUMBER: builtins.int
-    repository_name: typing.Text = ...
+    repository_name: builtins.str
     """The name of the repository to load from. If empty the model
     is loaded from any repository.
     """
-
-    model_name: typing.Text = ...
+    model_name: builtins.str
     """The name of the model to load, or reload."""
-
     @property
     def parameters(
         self,
     ) -> google.protobuf.internal.containers.MessageMap[
-        typing.Text, global___ModelRepositoryParameter
+        builtins.str, Global___ModelRepositoryParameter
     ]:
         """Optional model repository request parameters."""
-        pass
 
     def __init__(
         self,
         *,
-        repository_name: typing.Text = ...,
-        model_name: typing.Text = ...,
-        parameters: typing.Optional[
-            typing.Mapping[typing.Text, global___ModelRepositoryParameter]
-        ] = ...,
+        repository_name: builtins.str = ...,
+        model_name: builtins.str = ...,
+        parameters: (
+            collections.abc.Mapping[builtins.str, Global___ModelRepositoryParameter]
+            | None
+        ) = ...,
     ) -> None: ...
     def ClearField(
         self,
-        field_name: typing_extensions.Literal[
+        field_name: typing.Literal[
             "model_name",
             b"model_name",
             "parameters",
@@ -1320,72 +1294,78 @@ class RepositoryModelLoadRequest(google.protobuf.message.Message):
         ],
     ) -> None: ...
 
-global___RepositoryModelLoadRequest = RepositoryModelLoadRequest
+Global___RepositoryModelLoadRequest: typing_extensions.TypeAlias = (
+    RepositoryModelLoadRequest
+)
 
+@typing.final
 class RepositoryModelLoadResponse(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
     def __init__(
         self,
     ) -> None: ...
 
-global___RepositoryModelLoadResponse = RepositoryModelLoadResponse
+Global___RepositoryModelLoadResponse: typing_extensions.TypeAlias = (
+    RepositoryModelLoadResponse
+)
 
+@typing.final
 class RepositoryModelUnloadRequest(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
+    @typing.final
     class ParametersEntry(google.protobuf.message.Message):
-        DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+        DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
         KEY_FIELD_NUMBER: builtins.int
         VALUE_FIELD_NUMBER: builtins.int
-        key: typing.Text = ...
+        key: builtins.str
         @property
-        def value(self) -> global___ModelRepositoryParameter: ...
+        def value(self) -> Global___ModelRepositoryParameter: ...
         def __init__(
             self,
             *,
-            key: typing.Text = ...,
-            value: typing.Optional[global___ModelRepositoryParameter] = ...,
+            key: builtins.str = ...,
+            value: Global___ModelRepositoryParameter | None = ...,
         ) -> None: ...
         def HasField(
-            self, field_name: typing_extensions.Literal["value", b"value"]
+            self, field_name: typing.Literal["value", b"value"]
         ) -> builtins.bool: ...
         def ClearField(
-            self,
-            field_name: typing_extensions.Literal["key", b"key", "value", b"value"],
+            self, field_name: typing.Literal["key", b"key", "value", b"value"]
         ) -> None: ...
 
     REPOSITORY_NAME_FIELD_NUMBER: builtins.int
     MODEL_NAME_FIELD_NUMBER: builtins.int
     PARAMETERS_FIELD_NUMBER: builtins.int
-    repository_name: typing.Text = ...
+    repository_name: builtins.str
     """The name of the repository from which the model was originally
     loaded. If empty the repository is not considered.
     """
-
-    model_name: typing.Text = ...
+    model_name: builtins.str
     """The name of the model to unload."""
-
     @property
     def parameters(
         self,
     ) -> google.protobuf.internal.containers.MessageMap[
-        typing.Text, global___ModelRepositoryParameter
+        builtins.str, Global___ModelRepositoryParameter
     ]:
         """Optional model repository request parameters."""
-        pass
 
     def __init__(
         self,
         *,
-        repository_name: typing.Text = ...,
-        model_name: typing.Text = ...,
-        parameters: typing.Optional[
-            typing.Mapping[typing.Text, global___ModelRepositoryParameter]
-        ] = ...,
+        repository_name: builtins.str = ...,
+        model_name: builtins.str = ...,
+        parameters: (
+            collections.abc.Mapping[builtins.str, Global___ModelRepositoryParameter]
+            | None
+        ) = ...,
     ) -> None: ...
     def ClearField(
         self,
-        field_name: typing_extensions.Literal[
+        field_name: typing.Literal[
             "model_name",
             b"model_name",
             "parameters",
@@ -1395,12 +1375,18 @@ class RepositoryModelUnloadRequest(google.protobuf.message.Message):
         ],
     ) -> None: ...
 
-global___RepositoryModelUnloadRequest = RepositoryModelUnloadRequest
+Global___RepositoryModelUnloadRequest: typing_extensions.TypeAlias = (
+    RepositoryModelUnloadRequest
+)
 
+@typing.final
 class RepositoryModelUnloadResponse(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
     def __init__(
         self,
     ) -> None: ...
 
-global___RepositoryModelUnloadResponse = RepositoryModelUnloadResponse
+Global___RepositoryModelUnloadResponse: typing_extensions.TypeAlias = (
+    RepositoryModelUnloadResponse
+)

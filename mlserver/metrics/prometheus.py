@@ -31,6 +31,13 @@ def configure_metrics(settings: Settings):
     values.ValueClass = values.get_value_class()
 
 
+async def try_remove(filename: str):
+    try:
+        await remove(filename)
+    except FileNotFoundError:
+        pass
+
+
 async def stop_metrics(settings: Settings, pid: int):
     if not settings.parallel_workers:
         return
@@ -38,7 +45,8 @@ async def stop_metrics(settings: Settings, pid: int):
     mark_process_dead(pid)
     pattern = os.path.join(settings.metrics_dir, f"*_{pid}.db")
     matching_files = glob.glob(pattern)
-    await asyncio.gather(*[remove(f) for f in matching_files])
+    if len(matching_files) > 0:
+        await asyncio.gather(*[try_remove(f) for f in matching_files])
 
 
 class PrometheusEndpoint:

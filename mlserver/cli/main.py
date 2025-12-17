@@ -3,7 +3,6 @@ Command-line interface to manage MLServer models.
 """
 
 import click
-import asyncio
 
 from functools import wraps
 
@@ -11,28 +10,33 @@ from .init_project import init_cookiecutter_project
 
 from ..server import MLServer
 from ..logging import logger, configure_logger
-from ..utils import install_uvloop_event_loop
+from ..utils import AsyncManager
 
 from .build import generate_dockerfile, build_image, write_dockerfile
 from .serve import load_settings
 from ..batch_processing import process_batch, CHOICES_TRANSPORT
 
+CTX_ASYNC_MGR_KEY = "async_manager"
+
 
 def click_async(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
-        return asyncio.run(f(*args, **kwargs))
+        ctx = click.get_current_context()
+        async_mgr = ctx.obj[CTX_ASYNC_MGR_KEY]
+        return async_mgr.run(f(*args, **kwargs))
 
     return wrapper
 
 
 @click.group()
 @click.version_option()
-def root():
+@click.pass_context
+def root(ctx):
     """
     Command-line interface to manage MLServer models.
     """
-    pass
+    ctx.ensure_object(dict)
 
 
 @root.command("start")
@@ -265,8 +269,8 @@ async def infer(
 
 def main():
     configure_logger()
-    install_uvloop_event_loop()
-    root()
+    async_mgr = AsyncManager()
+    root(obj={CTX_ASYNC_MGR_KEY: async_mgr})
 
 
 if __name__ == "__main__":

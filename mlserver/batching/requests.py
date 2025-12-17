@@ -18,6 +18,7 @@ def _get_data(payload: Union[RequestInput, ResponseOutput]):
 
 def _get_parameters(payload: ResponseOutput) -> DefaultDict[Any, Any]:
     parameters = defaultdict(list)
+    payload_parameters = {}
     if payload.parameters is not None:
         payload_parameters = payload.parameters.model_dump()
     for param_name, param_values in payload_parameters.items():

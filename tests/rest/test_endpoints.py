@@ -1,11 +1,12 @@
 import pytest
-from pytest_lazyfixture import lazy_fixture
+from pytest_cases import parametrize, fixture_ref
 
 from typing import Optional
 from httpx import AsyncClient
 from httpx_sse import aconnect_sse
 
 from mlserver import __version__
+from mlserver import Settings
 from mlserver.settings import ModelSettings
 from mlserver.model import MLModel
 from mlserver.types import (
@@ -20,6 +21,8 @@ from mlserver.cloudevents import (
     CLOUDEVENTS_HEADER_SPECVERSION_DEFAULT,
     CLOUDEVENTS_HEADER_SPECVERSION,
 )
+from ..conftest import text_model, text_stream_model, settings_stream
+from ..fixtures import SumModel
 
 
 async def test_live(rest_client: AsyncClient):
@@ -137,7 +140,7 @@ async def test_infer(
     assert prediction.outputs[0].data == TensorData(root=[6])
 
 
-@pytest.mark.parametrize("sum_model", [lazy_fixture("text_model")])
+@parametrize("sum_model", [fixture_ref(text_model)])
 @pytest.mark.parametrize(
     "model_name,model_version", [("text-model", "v1.2.3"), ("text-model", None)]
 )
@@ -146,6 +149,7 @@ async def test_generate(
     generate_request: InferenceRequest,
     model_name: str,
     model_version: Optional[str],
+    sum_model: MLModel,
 ):
     endpoint = f"/v2/models/{model_name}/generate"
     if model_version is not None:
@@ -161,13 +165,15 @@ async def test_generate(
     )
 
 
-@pytest.mark.parametrize("settings", [lazy_fixture("settings_stream")])
-@pytest.mark.parametrize("sum_model", [lazy_fixture("text_stream_model")])
+@parametrize("settings", [fixture_ref(settings_stream)])
+@parametrize("sum_model", [fixture_ref(text_stream_model)])
 @pytest.mark.parametrize("endpoint", ["generate_stream", "infer_stream"])
 async def test_generate_stream(
     rest_client: AsyncClient,
     generate_request: InferenceRequest,
     text_stream_model: MLModel,
+    settings: Settings,
+    sum_model: SumModel,
     endpoint: str,
 ):
     endpoint = f"/v2/models/{text_stream_model.name}/{endpoint}"

@@ -38,7 +38,7 @@ class TensorDictCodec(RequestCodec):
         model_name: str,
         payload: TensorDict,
         model_version: Optional[str] = None,
-        **kwargs
+        **kwargs,
     ) -> InferenceResponse:
         outputs = [
             NumpyCodec.encode_output(name, value, **kwargs)

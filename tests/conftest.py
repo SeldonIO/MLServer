@@ -1,9 +1,12 @@
-import pytest
 import os
 import shutil
 import asyncio
 import glob
 import json
+import logging
+
+import pytest
+from pytest_cases import fixture
 
 from filelock import FileLock
 from typing import Dict, Any, Tuple
@@ -19,11 +22,11 @@ from mlserver.repository import (
     DEFAULT_MODEL_SETTINGS_FILENAME,
 )
 from mlserver.parallel import InferencePoolRegistry
-from mlserver.utils import install_uvloop_event_loop
 from mlserver.logging import configure_logger
 from mlserver.env import Environment
 from mlserver.metrics.registry import MetricsRegistry, REGISTRY as METRICS_REGISTRY
 from mlserver import types, Settings, ModelSettings, MLServer
+from mlserver.utils import AsyncManager
 
 from .metrics.utils import unregister_metrics
 from .fixtures import SumModel, TextModel, TextStreamModel, ErrorModel, SimpleModel
@@ -39,6 +42,11 @@ PYTHON_VERSIONS = [
 TESTS_PATH = os.path.dirname(__file__)
 TESTDATA_PATH = os.path.join(TESTS_PATH, "testdata")
 TESTDATA_CACHE_PATH = os.path.join(TESTDATA_PATH, ".cache")
+
+
+@pytest.fixture(scope="session")
+def event_loop_policy():
+    return AsyncManager().event_loop_policy
 
 
 def assert_not_called_with(self, *args, **kwargs):
@@ -89,6 +97,7 @@ async def env_tarball(
         env_yml = os.path.join(TESTDATA_PATH, "environment.yml")
         await _pack(env_python_version, env_yml, tarball_path)
 
+    logging.getLogger().debug(f"Using environment tarball at: {tarball_path}")
     return tarball_path
 
 
@@ -99,7 +108,7 @@ async def env(env_tarball: str, tmp_path: str) -> Environment:
 
 
 @pytest.fixture(autouse=True)
-def logger(settings: Settings):
+def logger_setup(settings: Settings):
     return configure_logger(settings)
 
 
@@ -129,15 +138,6 @@ def prometheus_registry(metrics_registry: MetricsRegistry) -> CollectorRegistry:
     # Clean metrics from `starlette_exporter` as well, as otherwise they won't
     # get re-created
     PrometheusMiddleware._metrics.clear()
-
-
-@pytest.fixture
-def event_loop():
-    # By default use uvloop for tests
-    install_uvloop_event_loop()
-    loop = asyncio.get_event_loop()
-    yield loop
-    loop.close()
 
 
 @pytest.fixture
@@ -197,7 +197,7 @@ def text_model_settings() -> ModelSettings:
     )
 
 
-@pytest.fixture
+@fixture
 async def text_model(
     model_registry: MultiModelRegistry, text_model_settings: ModelSettings
 ) -> TextModel:

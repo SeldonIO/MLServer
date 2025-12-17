@@ -9,7 +9,7 @@ from docker.client import DockerClient
 from typing import Tuple
 
 from mlserver.types import InferenceRequest
-from mlserver.utils import generate_uuid, install_uvloop_event_loop
+from mlserver.utils import generate_uuid
 from mlserver.settings import Settings, ModelSettings
 from mlserver.handlers import DataPlane
 from mlserver.kafka.server import KafkaServer
@@ -24,17 +24,6 @@ from ..utils import get_available_ports
 from .utils import create_test_topics, bootstrap
 
 logger = logging.getLogger()
-
-
-@pytest.fixture(scope="module")
-def event_loop():
-    # NOTE: We need to override the `event_loop` fixture to change its scope to
-    # `module`, so that it can be used downstream on other `module`-scoped
-    # fixtures
-    install_uvloop_event_loop()
-    loop = asyncio.get_event_loop()
-    yield loop
-    loop.close()
 
 
 @pytest.fixture(scope="module")
@@ -69,49 +58,27 @@ def kafka_network(docker_client: DockerClient) -> str:
 
 
 @pytest.fixture(scope="module")
-def zookeeper(docker_client: DockerClient, kafka_network: str) -> str:
-    [zookeeper_port] = get_available_ports()
-    zookeeper_name = f"zookeeper-{generate_uuid()}"
-
-    container = docker_client.containers.run(
-        name=zookeeper_name,
-        image="confluentinc/cp-zookeeper:latest",
-        ports={
-            f"{zookeeper_port}/tcp": str(zookeeper_port),
-        },
-        environment={
-            "ZOOKEEPER_CLIENT_PORT": str(zookeeper_port),
-            "ZOOKEEPER_TICK_TIME": "2000",
-        },
-        network=kafka_network,
-        detach=True,
-    )
-
-    zookeeper_addr = f"{zookeeper_name}:{zookeeper_port}"
-    logger.debug(f"Zookeeper server: {zookeeper_addr}")
-
-    yield zookeeper_addr
-
-    container.remove(force=True)
-
-
-@pytest.fixture(scope="module")
-async def kafka(docker_client: DockerClient, zookeeper: str, kafka_network: str) -> str:
+async def kafka(docker_client: DockerClient, kafka_network: str) -> str:
     [kafka_port] = get_available_ports()
     kafka_name = f"kafka-{generate_uuid()}"
 
     container = docker_client.containers.run(
         name=kafka_name,
-        image="confluentinc/cp-kafka:latest",
+        image="confluentinc/cp-kafka:8.1.0",
         ports={
             f"{kafka_port}/tcp": str(kafka_port),
         },
         environment={
-            "KAFKA_BROKER_ID": 1,
-            "KAFKA_ZOOKEEPER_CONNECT": zookeeper,
-            "KAFKA_ADVERTISED_LISTENERS": f"PLAINTEXT://{kafka_name}:9092,PLAINTEXT_INTERNAL://localhost:{kafka_port}",  # noqa: E501
-            "KAFKA_LISTENER_SECURITY_PROTOCOL_MAP": "PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT",  # noqa: E501
+            "KAFKA_NODE_ID": 1,
+            "KAFKA_PROCESS_ROLES": "broker,controller",
+            "KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR": 1,
+            "KAFKA_CONTROLLER_QUORUM_VOTERS": f"1@{kafka_name}:29093",
+            "KAFKA_ADVERTISED_LISTENERS": f"PLAINTEXT://{kafka_name}:29092,PLAINTEXT_INTERNAL://localhost:{kafka_port}",  # noqa: E501
+            "KAFKA_LISTENERS": f"PLAINTEXT://{kafka_name}:29092,CONTROLLER://{kafka_name}:29093,PLAINTEXT_INTERNAL://0.0.0.0:{kafka_port}",  # noqa: E501
+            "KAFKA_LISTENER_SECURITY_PROTOCOL_MAP": "PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT",  # noqa: E501
             "KAFKA_INTER_BROKER_LISTENER_NAME": "PLAINTEXT",
+            "KAFKA_CONTROLLER_LISTENER_NAMES": "CONTROLLER",
+            "CLUSTER_ID": "SLDN3OEVBNTcwBLAENDM2Qk",
         },
         network=kafka_network,
         detach=True,

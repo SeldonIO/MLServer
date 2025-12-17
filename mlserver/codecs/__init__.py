@@ -1,5 +1,6 @@
+from typing import TYPE_CHECKING
+
 from .numpy import NumpyCodec, NumpyRequestCodec
-from .pandas import PandasCodec
 from .string import StringCodec, StringRequestCodec
 from .base64 import Base64Codec
 from .datetime import DatetimeCodec
@@ -23,6 +24,9 @@ from .utils import (
     decode_request_input,
     decode_inference_request,
 )
+
+if TYPE_CHECKING:  # pragma: no cover - type checking only
+    from .pandas import PandasCodec  # noqa: F401
 
 __all__ = [
     "CodecError",
@@ -49,3 +53,22 @@ __all__ = [
     "decode_inference_request",
     "decode_args",
 ]
+
+
+def __getattr__(name: str):  # pragma: no cover - lightweight lazy import
+    if name == "PandasCodec":
+        return _load_pandas_codec()
+
+    raise AttributeError(f"module 'mlserver.codecs' has no attribute {name!r}")
+
+
+def _load_pandas_codec():
+    try:
+        from .pandas import PandasCodec as _PandasCodec  # Local import to stay optional
+    except Exception as exc:  # pragma: no cover - propagate useful context
+        raise ImportError(
+            "PandasCodec requires the optional 'pandas' dependency"
+        ) from exc
+
+    globals()["PandasCodec"] = _PandasCodec
+    return _PandasCodec

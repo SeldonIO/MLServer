@@ -165,7 +165,7 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
-    debug: bool = True
+    debug: bool = False
 
     parallel_workers: int = DEFAULT_PARALLEL_WORKERS
     """When parallel inference is enabled, number of workers to run inference
@@ -440,7 +440,7 @@ class ModelSettings(BaseSettings):
 
     # Parallel settings
     parallel_workers: Optional[int] = Field(
-        None,
+        default=None,
         deprecated=True,
         description=(
             "Use the `parallel_workers` field the server wide settings instead."
