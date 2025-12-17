@@ -24,7 +24,7 @@ dependencies = [
     "starlette-exporter",
     "py-grpc-prometheus",
     "aiokafka",
-    "tritonclient[http]>=2.63",
+    "tritonclient[http]>=2.5,<2.61",
     "geventhttpclient",
     "gevent",
     "aiofiles",

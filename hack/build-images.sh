@@ -38,7 +38,7 @@ _main() {
   _buildImage "all" $_version
   _buildImage "" $_version-slim
 
-  for _runtimePath in "$ROOT_FOLDER/runtimes/"*; do
+  for _runtimePath in "$ROOT_FOLDER/runtimes/"*/; do
     _buildRuntimeImage $_runtimePath $_version
   done
 }
