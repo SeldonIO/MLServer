@@ -5686,18 +5686,6 @@ files = [
 ]
 
 [[package]]
-name = "perf-analyzer"
-version = "2.59.1"
-description = "Triton Performance Analyzer"
-optional = false
-python-versions = "*"
-groups = ["main"]
-files = [
-    {file = "perf_analyzer-2.59.1-py3-none-manylinux_2_38_aarch64.whl", hash = "sha256:493ac232e55fa4467aeb007aafe48e0ace67198b5012d4a43489c5d5d543fed4"},
-    {file = "perf_analyzer-2.59.1-py3-none-manylinux_2_38_x86_64.whl", hash = "sha256:1719ad97306f442eed16a8abe7930ab81cd84c61658b8bbe864bee6520c7a656"},
-]
-
-[[package]]
 name = "pillow"
 version = "10.4.0"
 description = "Python Imaging Library (Fork)"
@@ -8909,22 +8897,21 @@ tutorials = ["matplotlib", "pandas", "tabulate"]
 
 [[package]]
 name = "tritonclient"
-version = "2.63.0"
+version = "2.60.0"
 description = "Python client library and utilities for communicating with Triton Inference Server"
 optional = false
 python-versions = "*"
 groups = ["main"]
 files = [
-    {file = "tritonclient-2.63.0-py3-none-any.whl", hash = "sha256:aee07908b87e05338ec2224c4aa6f540d86dc71bfcb6a228b3a37048d63fe5b6"},
-    {file = "tritonclient-2.63.0-py3-none-manylinux1_x86_64.whl", hash = "sha256:b2c3e67a213bed3a2c3c0c0f023d92b69dcfc8bb6446bb355c2126c407b6606f"},
-    {file = "tritonclient-2.63.0-py3-none-manylinux2014_aarch64.whl", hash = "sha256:85b7cab3b5c2b7266bb7021d78d8da990935e50791d034f4d4505dc063b3f2c4"},
+    {file = "tritonclient-2.60.0-py3-none-any.whl", hash = "sha256:4953bcf0e30bdd2a63960ed5b37f3939df5d9416f0036d1eec0bcec4c42f8928"},
+    {file = "tritonclient-2.60.0-py3-none-manylinux1_x86_64.whl", hash = "sha256:778ef1561092be6b3ef65a4b0f2f3c641263703ac0f43ddf4a172c5a9bfb8cd7"},
+    {file = "tritonclient-2.60.0-py3-none-manylinux2014_aarch64.whl", hash = "sha256:0438157a940c549dd88e29eb37139cf8d90ee86bf8fb8f0b3568995edfbb7c4d"},
 ]
 
 [package.dependencies]
 aiohttp = {version = ">=3.8.1,<4.0.0", optional = true, markers = "extra == \"http\""}
 geventhttpclient = {version = ">=2.3.3", optional = true, markers = "extra == \"http\""}
 numpy = ">=1.19.1"
-perf-analyzer = "*"
 python-rapidjson = ">=0.9.1"
 urllib3 = ">=2.0.7"
 
@@ -9897,4 +9884,4 @@ testing = ["coverage[toml]", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.9,<3.13"
-content-hash = "4b59bc424d19f0f89a621b0cc201df0035041e07ba49217585fb5aa747523789"
+content-hash = "9dd853d90c6e0c364d105f8b5eb3b88c3a5a3767598ab520d22840b97e554dbc"
