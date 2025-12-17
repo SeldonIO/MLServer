@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mlserver-catboost"
-version = "1.7.1"
+version = "1.7.2-rc1"
 description = "Catboost runtime for MLServer"
 authors = ["Theofilos Papapanagiotou <theofilos@gmail.com>"]
 maintainers = ["Seldon Technologies Ltd. <hello@seldon.io>"]
