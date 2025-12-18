@@ -104,7 +104,7 @@ jobs:
           preflight check container \
             $QUAY_MLSERVER_IMAGE \
             --docker-config=${HOME}/.docker/config.json \
-            --certification-project-id=$PROJECT_ID \
+            --certification-component-id=$PROJECT_ID \
             --pyxis-api-token=$PYXIS_API_TOKEN \
             --artifacts ./artifacts/mlserver-slim \
             --submit
@@ -182,7 +182,7 @@ jobs:
           preflight check container \
             $QUAY_MLSERVER_IMAGE-slim \
             --docker-config=${HOME}/.docker/config.json \
-            --certification-project-id=$PROJECT_ID \
+            --certification-component-id=$PROJECT_ID \
             --pyxis-api-token=$PYXIS_API_TOKEN \
             --artifacts ./artifacts/mlserver \
             --submit
@@ -312,7 +312,7 @@ jobs:
           preflight check container \
             $QUAY_MLSERVER_IMAGE-${{ matrix.runtime }} \
             --docker-config=${HOME}/.docker/config.json \
-            --certification-project-id=$PROJECT_ID \
+            --certification-component-id=$PROJECT_ID \
             --pyxis-api-token=$PYXIS_API_TOKEN \
             --artifacts ./artifacts/mlserver-${{ matrix.runtime }} \
             --submit
