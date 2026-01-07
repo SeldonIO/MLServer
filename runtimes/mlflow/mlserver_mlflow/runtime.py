@@ -1,5 +1,6 @@
 import mlflow
 
+import asyncio
 from io import StringIO
 from fastapi import Depends, Header, Request, Response
 
@@ -155,6 +156,11 @@ class MLflowRuntime(MLModel):
     async def load(self) -> bool:
         # TODO: Log info message
         model_uri = await get_model_uri(self._settings)
+
+        if getattr(self._settings.parameters.extra, "auto_install_dependencies", False):
+            # INFO: Install dependencies before loading the model
+            await self._install_dependencies(model_uri)
+
         self._model = mlflow.pyfunc.load_model(model_uri)
 
         self._input_schema = self._model.metadata.get_input_schema()
@@ -162,6 +168,22 @@ class MLflowRuntime(MLModel):
         self._sync_metadata()
 
         return True
+
+    async def _install_dependencies(self, model_uri: str):
+        model_dependencies = mlflow.pyfunc.mlflow.artifacts.download_artifacts(
+            f"{model_uri}/requirements.txt"
+        )
+
+        cmd = ["pip", "install", "-r", model_dependencies]
+
+        # Execute command asynchronously
+        process = await asyncio.create_subprocess_exec(
+            *cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+        )
+        stdout, stderr = await process.communicate()
+        if process.returncode != 0:
+            error_msg = stderr.decode() if stderr else "Unknown error"
+            raise RuntimeError(f"Failed to install dependencies: {error_msg}")
 
     def _sync_metadata(self) -> None:
         # Update metadata from model signature (if present)
