@@ -42,9 +42,10 @@ def _to_response_output(series: pd.Series, use_bytes: bool = True) -> ResponseOu
     data = series.tolist()
 
     # Replace NaN with null
-    has_nan = series.isnull().any()
-    if has_nan:
-        data = list(map(convert_nan, data))
+    if datatype != Datatype.BYTES:
+        has_nan = series.isnull().any()
+        if has_nan:
+            data = list(map(convert_nan, data))
 
     content_type = None
     if datatype == Datatype.BYTES:
@@ -81,7 +82,7 @@ def _process_bytes(
     content_type: Optional[str] = StringCodec.ContentType
     for elem in data:
         converted = elem
-        if not isinstance(elem, (str, bytes)):
+        if elem is not None and not isinstance(elem, (str, bytes)):
             # There was a non-string element, so we can't determine a content
             # type
             content_type = None
