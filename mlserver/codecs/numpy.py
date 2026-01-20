@@ -31,6 +31,7 @@ _NumpyToDatatype = {value: key for key, value in _DatatypeToNumpy.items()}
 _NumpyToDatatype["object"] = Datatype.BYTES
 _NumpyToDatatype["S"] = Datatype.BYTES
 _NumpyToDatatype["U"] = Datatype.BYTES
+_NumpyToDatatype["M"] = Datatype.BYTES
 
 
 def to_dtype(input_or_output: InputOrOutput) -> "np.dtype":
