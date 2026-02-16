@@ -22,15 +22,18 @@ WELLKNOWN_MODEL_FILENAMES = ["model.bst", "model.json", "model.ubj"]
 
 
 def _load_sklearn_interface(model_uri: str) -> XGBModel:
+    with open(model_uri, "rb") as f:
+        model_bytes = bytearray(f.read())
+
     try:
         regressor = xgb.XGBRegressor()
-        regressor.load_model(model_uri)
+        regressor.load_model(model_bytes)
         return regressor
     except TypeError:
         # If there was an error, it's likely due to the model being a
         # classifier
         classifier = xgb.XGBClassifier()
-        classifier.load_model(model_uri)
+        classifier.load_model(model_bytes)
         return classifier
 
 
