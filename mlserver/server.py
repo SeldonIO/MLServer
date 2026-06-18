@@ -174,9 +174,6 @@ class MLServer:
             )
 
     async def stop(self, sig: Optional[int] = None):
-        if self._inference_pool_registry:
-            await self._inference_pool_registry.close()
-
         if self._kafka_server:
             await self._kafka_server.stop()
 
@@ -185,6 +182,9 @@ class MLServer:
 
         if self._rest_server:
             await self._rest_server.stop(sig)
+
+        if self._inference_pool_registry:
+            await self._inference_pool_registry.close()
 
         if self._metrics_server:
             await self._metrics_server.stop(sig)
