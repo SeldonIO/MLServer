@@ -17,6 +17,7 @@ from asyncio import Task
 from typing import Any, Optional, TypeVar
 from collections.abc import Callable, Coroutine
 
+from . import llmman
 from .logging import logger
 from .types import InferenceRequest, InferenceResponse, Parameters
 from .settings import ModelSettings
@@ -201,7 +202,17 @@ async def get_model_uri(
     if not model_uri:
         raise InvalidModelURI(settings.name)
 
-    model_uri_components = urllib.parse.urlparse(model_uri, scheme="file")
+    if llmman.is_oci_uri(model_uri):
+        # A CNCF ModelPack artifact is pulled through an llmman daemon and
+        # extracted; from here it is an ordinary local path, so the
+        # well-known-filename search below applies to it unchanged.
+        model_uri = await asyncio.get_running_loop().run_in_executor(
+            None, llmman.resolve_uri, model_uri
+        )
+        model_uri_components = urllib.parse.urlparse(model_uri, scheme="file")
+    else:
+        model_uri_components = urllib.parse.urlparse(model_uri, scheme="file")
+
     if model_uri_components.scheme != "file":
         return model_uri
 
