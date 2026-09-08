@@ -78,7 +78,14 @@ class Worker(Process):
         To avoid this, and be able to properly shut them down, we forcefully
         ignore the signals coming from the main parent process.
         """
-        loop = asyncio.get_event_loop()
+        # Fix for Python 3.10.10+ / 3.11+ compatibility where asyncio.get_event_loop() 
+        # no longer creates a new loop automatically in child process threads, causing 
+        # RuntimeError when uvloop is active in worker processes.
+        try:
+            loop = asyncio.get_event_loop()
+        except RuntimeError:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
 
         for sign in IGNORED_SIGNALS:
             # Ensure that signal handlers are a no-op, to let the main process

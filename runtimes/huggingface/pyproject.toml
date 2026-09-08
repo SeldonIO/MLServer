@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mlserver-huggingface"
-version = "2.1.0"
+version = "2.1.1"
 description = "HuggingFace runtime for MLServer"
 authors = ["Seldon Technologies Ltd. <hello@seldon.io>"]
 license = "Apache-2.0"
@@ -8,7 +8,7 @@ readme = "README.md"
 packages = [{include = "mlserver_huggingface"}]
 
 [tool.poetry.dependencies]
-python = ">=3.10,<3.12"
+python = ">=3.11,<3.12"
 mlserver = "*"
 tensorflow = "*"
 pillow = "*"

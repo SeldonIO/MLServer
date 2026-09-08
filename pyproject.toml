@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mlserver"
-version = "1.6.1"
+version = "1.6.2"
 description = "MLServer"
 authors = ["Seldon Technologies Ltd. <hello@seldon.io>"]
 license = "Apache-2.0"
@@ -43,7 +43,7 @@ asyncio_mode = "auto"
 addopts = "--import-mode=importlib"
 
 [tool.poetry.dependencies]
-python = ">=3.10,<3.12"
+python = ">=3.11,<3.12"
 click = "*"
 fastapi = ">=0.88.0,!=0.89.0,<=0.110.0"
 python-dotenv = "*"
@@ -68,9 +68,11 @@ pydantic-settings = "2.2.1"
 python-multipart = "*"
 h11 = "0.16.*"
 werkzeug = "^3.0.6"
-keras = "3.*"
+# Replaced keras with tf-keras for transformers compatibility
+tf-keras = ">=2.16.0"
 filelock = "3.20.1"
-
+# Explicitly add setuptools pinned below v80 to preserve pkg_resources
+setuptools = ">=68.0.0,<=80.0.0"
 ## The importlib-resources backport is required to use some
 ## functionality added in Python 3.10
 ## https://setuptools.pypa.io/en/latest/userguide/datafiles.html#accessing-data-files-at-runtime
@@ -88,7 +90,7 @@ tox = "4.14.2"
 
 [tool.poetry.group.dev.dependencies]
 datamodel-code-generator = "0.25.5"
-grpcio-tools = "1.48.2"
+grpcio-tools = "^1.62.0"
 pytest = "7.4.4"
 pytest-asyncio = "0.21.1"
 pytest-mock = "3.12.0"
@@ -107,7 +109,7 @@ conda-pack = "0.7.1"
 flake8 = "7.0.0"
 flake8-black = "0.3.6"
 mypy = "1.10.0"
-mypy-protobuf = "3.1.0"
+mypy-protobuf = ">=3.4.0"
 types-protobuf = "5.26.0.20240422"
 types-orjson = "3.6.2"
 types-aiofiles = "23.2.0.20240106"
@@ -119,7 +121,7 @@ filelock = "^3.13.1"
 httpx-sse = "^0.3.1"
 
 [tool.poetry.group.docker.dependencies]
-protobuf = "3.20.3"
+protobuf = "^4.21.6"
 # tensorflow = "<2.15" #TODO(strive): is this really needed?
 
 [tool.poetry.group.all-runtimes]
@@ -144,10 +146,10 @@ requests-mock = "~1.11.0"
 types-requests = ">=2.28.11.5,<2.32.0.0"
 
 ## Dev dependencies from MLflow
-torch = "2.2.1"
+torch = "2.3.1"
 pytorch-lightning = "2.3.1"
 torchmetrics = "1.4.0.post0"
-torchvision = "0.17.1"
+torchvision = "0.18.1"
 mlflow = "2.13.1"
 
 ## Dev dependencies from HuggingFace

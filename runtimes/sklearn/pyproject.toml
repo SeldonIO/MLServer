@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mlserver-sklearn"
-version = "1.6.1"
+version = "1.6.2"
 description = "Scikit-Learn runtime for MLServer"
 authors = ["Seldon Technologies Ltd. <hello@seldon.io>"]
 license = "Apache-2.0"
@@ -8,10 +8,10 @@ readme = "README.md"
 packages = [{include = "mlserver_sklearn"}]
 
 [tool.poetry.dependencies]
-python = ">=3.10,<3.12"
+python = ">=3.11,<3.12"
 scikit-learn = "1.8.0"
 joblib = "1.4.2"
-mlserver = "1.6.1"
+mlserver = "*"
 h11 = "0.16.*"
 werkzeug = "3.*"
 keras = "3.*"

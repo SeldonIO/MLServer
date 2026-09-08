@@ -280,6 +280,39 @@ METADATA: Dict[str, Dict[str, List[MetadataTensor]]] = {
         ],
         outputs=[],
     ),
+    "zero-shot-object-detection": dict(
+        inputs=[
+            # File path inputs (e.g., local image paths or URLs)
+            MetadataTensor(
+                name="array_inputs",
+                shape=[-1],
+                datatype="BYTES",
+                parameters=dict(content_type="str"),
+            ),
+            # File content bytes inputs (e.g., raw base64 image strings)
+            MetadataTensor(
+                name="array_inputs",
+                shape=[-1],
+                datatype="BYTES",
+                parameters=dict(content_type="base64"),
+            ),
+            # Raw pixel matrix inputs (e.g., preprocessed NumPy/Torch tensors)
+            MetadataTensor(
+                name="array_inputs",
+                shape=[-1],
+                datatype="FP32",
+                parameters=dict(content_type="nplist"),
+            ),
+            # Candidate text labels/prompts for object detection
+            MetadataTensor(
+                name="candidate_labels",
+                shape=[-1],
+                datatype="BYTES",
+                parameters=dict(content_type="str"),
+            ),
+        ],
+        outputs=[],
+    ),
     "image-classification": dict(
         inputs=[
             # file path inputs
