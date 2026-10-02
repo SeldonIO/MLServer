@@ -243,8 +243,8 @@ def test_pipeline_cpu_device_set(
             "hf-internal-testing/tiny-bert-for-token-classification",
             "token-classification",
             10,
-            1,
-        ),  # Neither pad_token nor eos_token defined revert to 1
+            10,
+        ),
     ],
 )
 def test_pipeline_checks_for_eos_and_pad_token(
@@ -265,3 +265,45 @@ def test_pipeline_checks_for_eos_and_pad_token(
     m = load_pipeline_from_settings(hf_settings, model_settings)
 
     assert m._batch_size == expected_batch_size
+
+
+@pytest.mark.parametrize("pad_token_id", [0, 1])
+@pytest.mark.parametrize("eos_token_id", [None, 2])
+@patch("mlserver_huggingface.common._get_pipeline_class")
+def test_pipeline_preserves_configured_padding(
+    mock_pipeline_factory, pad_token_id: int, eos_token_id: Optional[int], caplog
+):
+    hf_settings = HuggingFaceSettings(pretrained_model="some-model")
+    model_settings = ModelSettings(
+        name="foo", implementation=HuggingFaceRuntime, max_batch_size=8
+    )
+    mock_pipeline = mock_pipeline_factory.return_value.return_value
+    mock_pipeline.tokenizer.pad_token_id = pad_token_id
+    mock_pipeline.model.config.eos_token_id = eos_token_id
+    mock_pipeline._batch_size = model_settings.max_batch_size
+
+    pipeline = load_pipeline_from_settings(hf_settings, model_settings)
+
+    assert pipeline._batch_size == model_settings.max_batch_size
+    assert pipeline.tokenizer.pad_token_id == pad_token_id
+    assert "setting batch size to 1" not in caplog.text
+
+
+@patch("mlserver_huggingface.common._get_pipeline_class")
+def test_pipeline_without_padding_or_eos_uses_single_batch(
+    mock_pipeline_factory, caplog
+):
+    hf_settings = HuggingFaceSettings(pretrained_model="some-model")
+    model_settings = ModelSettings(
+        name="foo", implementation=HuggingFaceRuntime, max_batch_size=8
+    )
+    mock_pipeline = mock_pipeline_factory.return_value.return_value
+    mock_pipeline.tokenizer.pad_token_id = None
+    mock_pipeline.model.config.eos_token_id = None
+    mock_pipeline._batch_size = model_settings.max_batch_size
+
+    pipeline = load_pipeline_from_settings(hf_settings, model_settings)
+
+    assert pipeline._batch_size == 1
+    assert pipeline.tokenizer.pad_token_id is None
+    assert "setting batch size to 1" in caplog.text
