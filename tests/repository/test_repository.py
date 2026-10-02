@@ -7,6 +7,8 @@ from mlserver.repository import (
     DEFAULT_MODEL_SETTINGS_FILENAME,
 )
 from mlserver.settings import ModelSettings, ENV_PREFIX_MODEL_SETTINGS
+from mlserver.errors import InvalidModelName
+from mlserver.registry import MultiModelRegistry
 
 
 @pytest.fixture
@@ -106,6 +108,31 @@ async def test_list_fallback(
         == sum_model_settings.parameters.version  # type: ignore
     )
     assert default_model_settings._source is None
+
+
+@pytest.mark.parametrize("name", [None, "", " \t", "env-model"])
+async def test_register_environment_model_name(monkeypatch, tmp_path, name):
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.delenv("MLSERVER_MODEL_NAME", raising=False)
+    monkeypatch.setenv("MLSERVER_MODEL_IMPLEMENTATION", "mlserver.MLModel")
+    if name is not None:
+        monkeypatch.setenv("MLSERVER_MODEL_NAME", name)
+    repository = SchemalessModelRepository(str(tmp_path))
+    registry = MultiModelRegistry()
+
+    settings_list = await repository.list()
+
+    assert len(settings_list) == 1
+    if name and name.strip():
+        model = await registry.load(settings_list[0])
+        assert model.name == name
+        assert await registry.get_model(name) is model
+    else:
+        with pytest.raises(
+            InvalidModelName, match="Model name must not be empty or whitespace"
+        ):
+            await registry.load(settings_list[0])
+        assert list(await registry.get_models()) == []
 
 
 async def test_find(

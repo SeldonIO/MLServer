@@ -6,7 +6,7 @@ from functools import cmp_to_key
 
 from .context import model_context
 from .model import MLModel
-from .errors import ModelNotFound
+from .errors import InvalidModelName, ModelNotFound
 from .logging import logger
 from .settings import ModelSettings
 
@@ -287,6 +287,11 @@ class MultiModelRegistry:
         self._model_initialiser = model_initialiser
 
     async def load(self, model_settings: ModelSettings) -> MLModel:
+        # Repository loading may infer the name from the model's folder.
+        # Validate the resolved name before initialisation or registration.
+        if not model_settings.name.strip():
+            raise InvalidModelName()
+
         if model_settings.name not in self._models:
             self._models[model_settings.name] = SingleModelRegistry(
                 model_settings,
