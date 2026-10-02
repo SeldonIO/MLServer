@@ -5,6 +5,7 @@ import shutil
 import sys
 
 from mlserver.model import MLModel
+from mlserver.registry import MultiModelRegistry
 from mlserver.repository.repository import DEFAULT_MODEL_SETTINGS_FILENAME
 from mlserver.repository.load import load_model_settings
 from mlserver.settings import ModelSettings
@@ -46,17 +47,21 @@ async def test_load_model_settings(
     assert model_settings._source == model_settings_path
 
 
+@pytest.mark.parametrize("name", [None, ""])
 async def test_name_fallback(
     sum_model_settings: ModelSettings,
     model_folder: str,  # This is effectively the Pytest-provided `tmp_path` fixture
+    name,
 ):
-    # Overwrite `model-settings.json` file to be missing the `name` field
+    # Overwrite `model-settings.json` with a missing or empty `name` field
     model_settings_path = os.path.join(model_folder, DEFAULT_MODEL_SETTINGS_FILENAME)
     with open(model_settings_path, "w") as model_settings_file:
         d = sum_model_settings.model_dump(by_alias=True)
 
-        # Remove the `name` field from the JSON representation
-        del d["name"]
+        if name is None:
+            del d["name"]
+        else:
+            d["name"] = name
 
         # Overwrite the model settings in the temporary path
         json.dump(d, model_settings_file)
@@ -66,6 +71,11 @@ async def test_name_fallback(
     # Check that it picked up the model name from the
     # `model-settings.json`'s containing folder.
     assert model_settings.name == os.path.basename(model_folder)
+
+    registry = MultiModelRegistry()
+    model = await registry.load(model_settings)
+    assert model.ready
+    assert await registry.get_model(model_settings.name) is model
 
 
 async def test_load_custom_module(

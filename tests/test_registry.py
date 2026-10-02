@@ -5,7 +5,7 @@ from asyncio import CancelledError
 from typing import List, Union
 
 from mlserver.model import MLModel
-from mlserver.errors import MLServerError, ModelNotFound
+from mlserver.errors import InvalidModelName, MLServerError, ModelNotFound
 from mlserver.registry import MultiModelRegistry, SingleModelRegistry
 from mlserver.settings import ModelSettings, ModelParameters
 
@@ -40,6 +40,45 @@ async def model_registry(
         single_registry._on_model_unload = [unload_stub]
 
     return model_registry
+
+
+@pytest.mark.parametrize("name", [None, "", " ", "\t\r\n"])
+async def test_load_invalid_name(model_registry, name, monkeypatch, mocker):
+    monkeypatch.delenv("MLSERVER_MODEL_NAME", raising=False)
+    kwargs = {} if name is None else {"name": name}
+    model_settings = ModelSettings(implementation=MLModel, _env_file=None, **kwargs)
+    existing_models = list(await model_registry.get_models())
+    initialiser = mocker.spy(model_registry, "_model_initialiser")
+
+    with pytest.raises(
+        InvalidModelName, match="Model name must not be empty or whitespace"
+    ) as exc:
+        await model_registry.load(model_settings)
+
+    assert exc.value.status_code == 422
+    assert "MLSERVER_MODEL_NAME" in str(exc.value)
+    initialiser.assert_not_called()
+    for callback in (
+        model_registry._on_model_load
+        + model_registry._on_model_reload
+        + model_registry._on_model_unload
+    ):
+        callback.assert_not_called()
+    with pytest.raises(ModelNotFound):
+        await model_registry.get_models(model_settings.name)
+    assert list(await model_registry.get_models()) == existing_models
+
+
+@pytest.mark.parametrize("name", ["model", "model-1_v2.3", "模型", " model "])
+async def test_load_valid_name(name):
+    registry = MultiModelRegistry()
+    model_settings = ModelSettings(name=name, implementation=MLModel)
+
+    model = await registry.load(model_settings)
+
+    assert model.name == name
+    assert model.ready
+    assert await registry.get_model(name) is model
 
 
 @pytest.mark.parametrize(

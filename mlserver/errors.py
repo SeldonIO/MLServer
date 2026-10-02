@@ -17,6 +17,15 @@ class InvalidModelURI(MLServerError):
         super().__init__(msg, status.HTTP_422_UNPROCESSABLE_ENTITY)
 
 
+class InvalidModelName(MLServerError):
+    def __init__(self):
+        msg = (
+            "Model name must not be empty or whitespace. "
+            "Set 'name' in model-settings.json or MLSERVER_MODEL_NAME."
+        )
+        super().__init__(msg, status.HTTP_422_UNPROCESSABLE_ENTITY)
+
+
 class ModelNotFound(MLServerError):
     def __init__(self, name: str, version: Optional[str] = None):
         msg = f"Model {name} not found"
