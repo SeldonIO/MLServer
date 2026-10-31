@@ -12,6 +12,25 @@ from mlserver.utils import generate_uuid
 from .conftest import TestRequestSender
 
 
+async def test_clear_queue_with_cancelled_response(
+    adaptive_batcher: AdaptiveBatcher, send_request: TestRequestSender
+):
+    cancelled_id, _ = await send_request()
+    pending_id, _ = await send_request()
+    cancelled_response = adaptive_batcher._async_responses[cancelled_id]
+    pending_response = adaptive_batcher._async_responses[pending_id]
+    cancelled_response.cancel()
+    error = RuntimeError("batching failed")
+
+    adaptive_batcher._clear_queue(error)
+
+    assert cancelled_response.cancelled()
+    assert adaptive_batcher._requests.empty()
+    with pytest.raises(RuntimeError) as raised:
+        await pending_response
+    assert raised.value is error
+
+
 async def test_batch_requests(
     adaptive_batcher: AdaptiveBatcher,
     send_request: TestRequestSender,

@@ -1,8 +1,91 @@
+import asyncio
 import pytest
 
 from mlserver.model import MLModel
 from mlserver.types import InferenceRequest, InferenceResponse
 from mlserver.batching.hooks import load_batching
+
+from ..fixtures import SumModel
+
+
+@pytest.mark.parametrize("cancelled_index", [None, 0, 1])
+@pytest.mark.parametrize("fail_prediction", [False, True])
+async def test_batching_cancelled_request(
+    sum_model_settings, cancelled_index, fail_prediction
+):
+    started = asyncio.Event()
+    release = asyncio.Event()
+    model_error = RuntimeError("prediction failed")
+    batch_shapes = []
+
+    class GatedSumModel(SumModel):
+        async def predict(self, payload):
+            batch_shapes.append(payload.inputs[0].shape)
+            started.set()
+            await release.wait()
+            if fail_prediction:
+                raise model_error
+            return await super().predict(payload)
+
+    sum_model_settings.max_batch_size = 2
+    sum_model_settings.max_batch_time = 0.01
+    model = await load_batching(GatedSumModel(sum_model_settings))
+    requests = [
+        InferenceRequest(
+            id=f"request-{idx}",
+            inputs=[
+                {
+                    "name": "input-0",
+                    "shape": [1, 3],
+                    "datatype": "INT32",
+                    "data": [idx, idx + 1, idx + 2],
+                }
+            ],
+        )
+        for idx in range(2)
+    ]
+    tasks = [asyncio.create_task(model.predict(request)) for request in requests]
+    loop = asyncio.get_running_loop()
+    callback_errors = []
+    previous_handler = loop.get_exception_handler()
+    loop.set_exception_handler(lambda loop, context: callback_errors.append(context))
+    try:
+        await asyncio.wait_for(started.wait(), timeout=1)
+        assert batch_shapes == [[2, 3]]
+        if cancelled_index is not None:
+            tasks[cancelled_index].cancel()
+            with pytest.raises(asyncio.CancelledError):
+                await tasks[cancelled_index]
+
+        release.set()
+        active_indices = [idx for idx in range(2) if idx != cancelled_index]
+        responses = await asyncio.wait_for(
+            asyncio.gather(
+                *(tasks[idx] for idx in active_indices), return_exceptions=True
+            ),
+            timeout=1,
+        )
+        for idx, response in zip(active_indices, responses):
+            if fail_prediction:
+                assert response is model_error
+            else:
+                assert response.id == requests[idx].id
+                assert response.outputs[0].shape == [1, 1]
+                assert response.outputs[0].data.root == [3 * idx + 3]
+        assert not callback_errors
+
+        # The same batcher must remain usable after cancellation or a model error.
+        fail_prediction = False
+        following = await asyncio.wait_for(model.predict(requests[0]), timeout=1)
+        assert following.id == requests[0].id
+        assert following.outputs[0].data.root == [3]
+        assert not callback_errors
+    finally:
+        release.set()
+        for task in tasks:
+            task.cancel()
+        await asyncio.gather(*tasks, return_exceptions=True)
+        loop.set_exception_handler(previous_handler)
 
 
 async def test_batching_predict(
