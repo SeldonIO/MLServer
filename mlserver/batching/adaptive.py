@@ -95,7 +95,8 @@ class AdaptiveBatcher:
     def _clear_queue(self, err: BaseException):
         # Cancel all pending async responses
         for async_response in self._async_responses.values():
-            async_response.set_exception(err)
+            if not async_response.done():
+                async_response.set_exception(err)
 
         # Empty queue
         for _ in range(self._requests.qsize()):
@@ -116,10 +117,15 @@ class AdaptiveBatcher:
             batched_response = predict_task.result()
             responses = batched.split_response(batched_response)
             for internal_id, response in responses.items():
-                self._async_responses[internal_id].set_result(response)
+                # A cancelled request may have already removed its response.
+                async_response = self._async_responses.get(internal_id)
+                if async_response is not None and not async_response.done():
+                    async_response.set_result(response)
         except Exception as err:
             for internal_id in batched.inference_requests.keys():
-                self._async_responses[internal_id].set_exception(err)
+                async_response = self._async_responses.get(internal_id)
+                if async_response is not None and not async_response.done():
+                    async_response.set_exception(err)
 
     async def _batch_requests(self) -> AsyncIterator[BatchedRequests]:
         while not self._requests.empty():
